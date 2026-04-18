@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-display), ui-serif, Georgia, serif;
+
+  --color-paper: #f4f2ed;
+  --color-ink: #0f1114;
+  --color-muted: #6b6f76;
+  --color-line: rgb(15 17 20 / 0.08);
+
+  --color-digital: #22d3ee;
+  --color-digital-dim: #0e7490;
+  --color-luxe: #c9a252;
+  --color-luxe-dim: #8b6b2a;
+
+  --shadow-card: 0 24px 60px rgb(15 17 20 / 0.08);
+  --shadow-glow-digital: 0 0 80px rgb(34 211 238 / 0.18);
+}
+
+@keyframes cart-bump {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-cart-bump {
+  animation: cart-bump 0.55s cubic-bezier(0.34, 1.45, 0.64, 1);
+}
+
+/* Product page: “+1” flies toward header bag (CSS vars --fly-dx, --fly-dy) */
+@keyframes fly-to-bag-particle {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  12% {
+    transform: translate(0, -6px) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--fly-dx, 0px), var(--fly-dy, 0px)) scale(0.28);
+    opacity: 0;
+  }
+}
+
+.fly-to-bag-particle {
+  animation: fly-to-bag-particle 0.72s cubic-bezier(0.22, 0.72, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fly-to-bag-particle {
+    animation-duration: 0.01ms;
+    opacity: 0;
+  }
+}
+
+@layer base {
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    @apply bg-paper text-ink antialiased;
+  }
+
+  ::selection {
+    @apply bg-ink text-paper;
+  }
+}

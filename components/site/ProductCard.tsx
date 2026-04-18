@@ -1,0 +1,52 @@
+import Image from "next/image";
+import Link from "next/link";
+import type { Product } from "@/lib/catalog";
+import { formatPrice } from "@/lib/catalog";
+
+export function ProductCard({ product }: { product: Product }) {
+  return (
+    <Link
+      href={`/product/${product.slug}`}
+      className="group flex flex-col overflow-hidden rounded-2xl border border-[color:var(--color-line)] bg-white/60 shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 hover:shadow-lg"
+    >
+      <div className="relative aspect-square overflow-hidden bg-paper">
+        <div className="absolute left-3 top-3 z-10 rounded-full bg-ink px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-paper">
+          Sale
+        </div>
+        <Image
+          src={product.image}
+          alt={product.name}
+          fill
+          sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
+          className="object-cover object-center transition duration-500 group-hover:scale-[1.03]"
+        />
+      </div>
+      <div className="flex flex-1 flex-col p-4">
+        <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
+          {product.categoryLabel}
+        </div>
+        <div className="mt-2 font-serif text-base leading-snug text-ink">
+          {product.name}
+        </div>
+        <p className="mt-2 line-clamp-2 flex-1 text-[13px] leading-relaxed text-muted">
+          {product.shortDescription}
+        </p>
+        <div className="mt-4 flex items-end justify-between gap-3">
+          <div>
+            <div className="text-base font-semibold tabular-nums">
+              {formatPrice(product.price)}
+            </div>
+            {product.compareAtPrice != null && (
+              <div className="text-[12px] text-muted line-through tabular-nums">
+                {formatPrice(product.compareAtPrice)}
+              </div>
+            )}
+          </div>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/70 underline-offset-4 group-hover:underline">
+            View
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
