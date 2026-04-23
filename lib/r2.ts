@@ -45,6 +45,16 @@ function humpbuck2301FirstWebpUrl(): string {
 }
 
 /**
+ * Hero background — `home/digitemp-space.mp4` on R2.
+ * Bump `NEXT_PUBLIC_R2_DIGI_SPACE_MP4_REV` after same-name overwrites.
+ */
+function digitempSpaceMp4Url(): string {
+  const rev =
+    process.env.NEXT_PUBLIC_R2_DIGI_SPACE_MP4_REV?.trim() || "2";
+  return `${R2_PUBLIC_BASE}/home/digitemp-space.mp4?v=${encodeURIComponent(rev)}`;
+}
+
+/**
  * About page — `About/HUMPBUCK Promotional Video.mp4` on R2.
  * Bump `NEXT_PUBLIC_R2_ABOUT_PROMO_REV` after same-name overwrites.
  */
@@ -271,7 +281,7 @@ export const R2 = {
     rdStarWebp: rdStarWebpUrl(),
     /** DIGI-TEMP — `home/Spaceship.webp` (URL includes `?v=` cache bust) */
     spaceshipWebp: spaceshipWebpUrl(),
-    digitempSpaceMp4: `${R2_PUBLIC_BASE}/home/digitemp-space.mp4`,
+    digitempSpaceMp4: digitempSpaceMp4Url(),
   },
   products: {
     digitemp2301: {

@@ -2,7 +2,7 @@ import { R2 } from "@/lib/r2";
 
 /**
  * Deep-space hero loop for DIGI-TEMP.
- * Default: R2 `home/digitemp-space.mp4`.
+ * Default: R2 `home/digitemp-space.mp4` (URL includes `?v=` cache bust — see `r2.ts`).
  * Override: `NEXT_PUBLIC_DIGI_HERO_VIDEO` = public path or full https URL.
  */
 const envSrc = process.env.NEXT_PUBLIC_DIGI_HERO_VIDEO?.trim();
