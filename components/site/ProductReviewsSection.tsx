@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@/auth";
+import type { Session } from "next-auth";
 import { ReviewerAvatar } from "@/components/site/ReviewerAvatar";
 import { PdpReviewWriteCta } from "@/components/site/pdp-review-write-cta";
 import { MAX_REVIEW_APPENDS } from "@/lib/review-append-constants";
@@ -19,11 +20,11 @@ export async function ProductReviewsSection({
   productSlug: string;
   productName: string;
 }) {
-  let session: Awaited<ReturnType<typeof auth>> = null;
+  let session: Session | null = null;
   let rows: Awaited<ReturnType<typeof getProductReviewsWithUsers>> = [];
   let reviewsLoadError = false;
   try {
-    session = await auth();
+    session = (await auth()) as Session | null;
     rows = await getProductReviewsWithUsers(productSlug, 50);
   } catch (err) {
     reviewsLoadError = true;
