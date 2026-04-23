@@ -13,6 +13,7 @@
     "db:seed-reviews": "npx tsx prisma/seed-reviews.ts",
     "db:fix-review-avatars": "npx tsx scripts/fix-reviewer-avatars.ts",
     "db:seed-demo-orders": "npx tsx scripts/seed-admin-demo-orders.ts",
+    "audit:reviews": "npx tsx scripts/audit-product-reviews-by-slug.ts",
     "r2:upload-avatar-presets": "npx tsx scripts/upload-open-peep-presets-to-r2.ts",
     "db:seed-test-review-order": "npx tsx scripts/seed-test-order-for-review.ts"
   },

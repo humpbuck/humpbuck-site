@@ -2,8 +2,8 @@ import { randomBytes } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import {
+  getReviewR2ProductFolderName,
   isR2ReviewUploadConfigured,
-  safeReviewProductFolderSegment,
 } from "@/lib/r2-review-upload";
 
 const TTL_MS = 5 * 60_000;
@@ -31,13 +31,13 @@ function pruneExpired() {
 }
 
 function newRelativePath(productSlug: string, userId: string): string {
-  const folder = safeReviewProductFolderSegment(productSlug);
+  const folder = getReviewR2ProductFolderName(productSlug);
   const rid = randomBytes(8).toString("hex");
   return `review-uploads/${folder}/${userId}/${Date.now()}-${rid}.webp`;
 }
 
 function newAppendRelativePath(productSlug: string, userId: string): string {
-  const folder = safeReviewProductFolderSegment(productSlug);
+  const folder = getReviewR2ProductFolderName(productSlug);
   const rid = randomBytes(8).toString("hex");
   return `review-uploads/${folder}/append/${userId}/${Date.now()}-${rid}.webp`;
 }

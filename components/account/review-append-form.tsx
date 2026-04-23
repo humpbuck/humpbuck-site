@@ -1,7 +1,7 @@
 "use client";
 
-import imageCompression from "browser-image-compression";
 import Link from "next/link";
+import { compressReviewImageToWebP } from "@/lib/review-image-compress-webp";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -26,14 +26,7 @@ export function ReviewAppendForm({ reviewId, productSlug, productName }: Props) 
       const imageUrls: string[] = [];
       const slice = files.slice(0, 4);
       for (const file of slice) {
-        const out = await imageCompression(file, {
-          maxSizeMB: 1.2,
-          maxWidthOrHeight: 1600,
-          useWebWorker: true,
-          fileType: "image/webp",
-        });
-        const blob: Blob =
-          out instanceof File ? out : new Blob([out], { type: "image/webp" });
+        const blob = await compressReviewImageToWebP(file);
 
         const pre = await fetch("/api/reviews/presign", {
           method: "POST",
@@ -102,8 +95,8 @@ export function ReviewAppendForm({ reviewId, productSlug, productName }: Props) 
   return (
     <form onSubmit={submit} className="space-y-6">
       <p className="text-sm text-muted">
-        Optional photos are compressed to WebP before upload. Up to 4 images, max
-        ~2 MB each.
+        Optional photos are resized, compressed, and saved as WebP before upload. Up
+        to 4 images, under 2 MB each (typical 0.6–1.5 MB).
       </p>
       <div>
         <label

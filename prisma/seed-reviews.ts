@@ -4,7 +4,7 @@
  * from this Prisma data only — the
  * `reviews/` folder on R2 is for *uploaded* review photos, not a directory listing for the app.
  * R2 upload paths use the product **slug** folder (`digitemp-2301` …), not the display name — see
- * `lib/r2-review-upload.ts` (`safeReviewProductFolderSegment`).
+ * `lib/r2-review-upload.ts` (`getReviewR2ProductFolderName` for new uploads; legacy slug-only folders still valid in the bucket).
  *
  * Safe to re-run: deletes prior seed users with `@reviews.seed.humpbuck` and their reviews.
  * Run: `npm run db:seed-reviews` (or `npx tsx prisma/seed-reviews.ts` with env loaded).

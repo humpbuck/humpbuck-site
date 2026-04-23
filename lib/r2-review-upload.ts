@@ -1,6 +1,7 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { randomBytes } from "crypto";
+import { getProductBySlug } from "@/lib/catalog";
 import { R2_PUBLIC_BASE } from "@/lib/r2";
 
 export function isR2ReviewUploadConfigured(): boolean {
@@ -25,19 +26,45 @@ function reviewsS3(): S3Client {
 }
 
 /**
- * R2 object prefix `reviews/{productSlug}/` — **slug matches catalog / product URL**
- * (e.g. `rm-m10`), so folders map 1:1 to product titles in your admin/catalog.
+ * **Legacy** folder segment: slug characters only. Still used to validate old image URLs
+ * (objects uploaded before title-based paths).
  */
 export function safeReviewProductFolderSegment(productSlug: string): string {
   const s = productSlug.replace(/[^a-z0-9-]/gi, "").toLowerCase();
   return s || "product";
 }
 
+/**
+ * R2: `reviews/{title-slug}__{product-slug}/` — readable product title, plus `__` + URL slug
+ * for uniqueness and stable keys when the display name changes. Title is from `getProductBySlug().name`.
+ */
+export function slugifyProductTitleForR2Folder(name: string): string {
+  const n = name.normalize("NFKC").trim();
+  const cleaned = n
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .replace(/[/\\?#]+/g, " ");
+  const slug = cleaned
+    .replace(/[^a-z0-9]+/gi, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .toLowerCase();
+  const max = 80;
+  return (slug.length > max ? slug.slice(0, max).replace(/-+$/g, "") : slug) || "product";
+}
+
+export function getReviewR2ProductFolderName(productSlug: string): string {
+  const p = getProductBySlug(productSlug);
+  if (!p) {
+    return safeReviewProductFolderSegment(productSlug);
+  }
+  return `${slugifyProductTitleForR2Folder(p.name)}__${p.slug}`;
+}
+
 export function reviewImageObjectKey(
   productSlug: string,
   userId: string,
 ): string {
-  const folder = safeReviewProductFolderSegment(productSlug);
+  const folder = getReviewR2ProductFolderName(productSlug);
   const rid = randomBytes(8).toString("hex");
   return `reviews/${folder}/${userId}/${Date.now()}-${rid}.webp`;
 }
@@ -47,7 +74,7 @@ export function reviewAppendImageObjectKey(
   productSlug: string,
   userId: string,
 ): string {
-  const folder = safeReviewProductFolderSegment(productSlug);
+  const folder = getReviewR2ProductFolderName(productSlug);
   const rid = randomBytes(8).toString("hex");
   return `reviews/${folder}/append/${userId}/${Date.now()}-${rid}.webp`;
 }
@@ -88,9 +115,27 @@ function urlPathname(u: string): string {
 
 /** Dev/local: `public/review-uploads/{folder}/…` (see `lib/review-local-dev-upload.ts`). */
 function isLocalDevReviewPathForProduct(u: string, productSlug: string): boolean {
-  const folder = safeReviewProductFolderSegment(productSlug);
   const p = urlPathname(u);
-  return p.startsWith(`/review-uploads/${folder}/`);
+  for (const folder of localReviewPathFoldersForProduct(productSlug)) {
+    if (p.startsWith(`/review-uploads/${folder}/`)) return true;
+  }
+  return false;
+}
+
+function r2PathPrefixesForProduct(productSlug: string): string[] {
+  const base = publicBaseUrlForReviewAssets();
+  return [
+    `${base}/reviews/${getReviewR2ProductFolderName(productSlug)}/`,
+    // Legacy: slug-only folder (and optional duplicate sanitize)
+    `${base}/reviews/${safeReviewProductFolderSegment(productSlug)}/`,
+  ];
+}
+
+function localReviewPathFoldersForProduct(productSlug: string): string[] {
+  return [
+    getReviewR2ProductFolderName(productSlug),
+    safeReviewProductFolderSegment(productSlug),
+  ];
 }
 
 export function assertReviewImageUrlsBelongToProduct(
@@ -101,11 +146,11 @@ export function assertReviewImageUrlsBelongToProduct(
   if (urls.length > maxImages) {
     throw new Error(`At most ${maxImages} images`);
   }
-  const folder = safeReviewProductFolderSegment(productSlug);
-  const prefix = `${publicBaseUrlForReviewAssets()}/reviews/${folder}/`;
+  const r2Ok = (u: string) =>
+    r2PathPrefixesForProduct(productSlug).some((p) => u.startsWith(p));
   for (const u of urls) {
     if (isLocalDevReviewPathForProduct(u, productSlug)) continue;
-    if (!u.startsWith(prefix)) {
+    if (!r2Ok(u)) {
       throw new Error("Invalid image URL for this product");
     }
   }
