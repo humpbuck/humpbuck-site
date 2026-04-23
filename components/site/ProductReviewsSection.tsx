@@ -19,8 +19,16 @@ export async function ProductReviewsSection({
   productSlug: string;
   productName: string;
 }) {
-  const session = await auth();
-  const rows = await getProductReviewsWithUsers(productSlug, 50);
+  let session: Awaited<ReturnType<typeof auth>> = null;
+  let rows: Awaited<ReturnType<typeof getProductReviewsWithUsers>> = [];
+  let reviewsLoadError = false;
+  try {
+    session = await auth();
+    rows = await getProductReviewsWithUsers(productSlug, 50);
+  } catch (err) {
+    reviewsLoadError = true;
+    console.error("[ProductReviewsSection] failed to load reviews", err);
+  }
 
   return (
     <section className="mt-16 border-t border-[color:var(--color-line)] pt-14">
@@ -43,7 +51,12 @@ export async function ProductReviewsSection({
         />
       </div>
 
-      {rows.length === 0 ? (
+      {reviewsLoadError ? (
+        <p className="mt-8 text-sm text-amber-800">
+          Reviews could not be loaded right now. The rest of this page should
+          still work — please try again later.
+        </p>
+      ) : rows.length === 0 ? (
         <p className="mt-8 text-sm text-muted">No reviews yet for this product.</p>
       ) : (
         <ul className="mt-10 flex flex-col gap-8">

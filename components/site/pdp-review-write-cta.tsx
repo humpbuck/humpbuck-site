@@ -13,7 +13,13 @@ export async function PdpReviewWriteCta({
   userId: string | undefined;
 }) {
   if (!userId) return null;
-  const cta = await getPdpWriteReviewCta(userId, productSlug);
+  let cta: { orderId: string } | null;
+  try {
+    cta = await getPdpWriteReviewCta(userId, productSlug);
+  } catch (err) {
+    console.error("[PdpReviewWriteCta] failed", err);
+    return null;
+  }
   if (!cta) return null;
   return (
     <p className="text-sm text-ink/90">
