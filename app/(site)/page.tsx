@@ -113,13 +113,16 @@ export default function HomePage() {
           </div>
 
           <div className="relative mx-auto w-full max-w-lg min-w-0 md:max-w-none md:mx-0">
-            <div className="relative aspect-square overflow-hidden rounded-[24px] border border-white/10 bg-gradient-to-b from-white/10 to-white/0 shadow-[var(--shadow-glow-digital)] sm:rounded-[28px]">
+            <Link
+              href={`/product/${heroFeatured.slug}`}
+              className="group relative block aspect-square overflow-hidden rounded-[24px] border border-white/10 bg-gradient-to-b from-white/10 to-white/0 shadow-[var(--shadow-glow-digital)] transition outline-offset-4 focus-visible:outline-2 focus-visible:outline-cyan-400/80 sm:rounded-[28px]"
+            >
               <Image
                 src={R2.home.digitemp2301Webp}
                 alt="HUMPBUCK DIGI-TEMP 2301"
                 fill
                 priority
-                className="object-cover opacity-95"
+                className="object-cover opacity-95 transition group-hover:opacity-100"
                 sizes="(max-width:767px) 100vw, 50vw"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#070a10] via-transparent to-transparent opacity-70" />
@@ -142,14 +145,11 @@ export default function HomePage() {
                     )}
                   </div>
                 </div>
-                <Link
-                  href={`/product/${heroFeatured.slug}`}
-                  className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-cyan-400/90 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[#06252d] transition hover:bg-cyan-300"
-                >
+                <span className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-cyan-400/90 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[#06252d] transition group-hover:bg-cyan-300">
                   View product
-                </Link>
+                </span>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </section>
