@@ -86,14 +86,25 @@ export function SiteHeader() {
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              className="rounded-lg p-2 text-ink/80 hover:bg-ink/[0.04] hover:text-ink md:hidden"
-              aria-label={open ? "Close menu" : "Open menu"}
-              onClick={() => setOpen((v) => !v)}
-            >
-              {open ? <X size={22} /> : <Menu size={22} />}
-            </button>
+            {/* When drawer is open, hide the header control (z-50) so it does not overlay the
+                drawer label; close via the X inside the panel or the backdrop. */}
+            {open ? (
+              <div
+                className="shrink-0 rounded-lg p-2 md:hidden"
+                aria-hidden
+              >
+                <div className="h-[22px] w-[22px]" />
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="rounded-lg p-2 text-ink/80 hover:bg-ink/[0.04] hover:text-ink md:hidden"
+                aria-label="Open menu"
+                onClick={() => setOpen(true)}
+              >
+                <Menu size={22} />
+              </button>
+            )}
             <Link
               href="/"
               className="font-serif text-xl tracking-tight text-ink sm:text-2xl"
