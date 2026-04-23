@@ -3,11 +3,22 @@
  * null so the UI uses **Gravatar** per seed email; text only — `imageUrlsJson` is empty. Reviews come
  * from this Prisma data only — the
  * `reviews/` folder on R2 is for *uploaded* review photos, not a directory listing for the app.
- * R2 upload paths use the product **slug** folder (`digitemp-2301` …), not the display name — see
- * `lib/r2-review-upload.ts` (`getReviewR2ProductFolderName` for new uploads; legacy slug-only folders still valid in the bucket).
+ * R2 upload paths: see `lib/r2-review-upload.ts` (`getReviewR2ProductFolderName` for new uploads; legacy slug-only folders still valid in the bucket).
  *
  * Safe to re-run: deletes prior seed users with `@reviews.seed.humpbuck` and their reviews.
+ * **Real** buyer reviews (any other user email) are **not** deleted.
  * Run: `npm run db:seed-reviews` (or `npx tsx prisma/seed-reviews.ts` with env loaded).
+ *
+ * **Why `www` shows "No reviews" but `localhost` has them?**
+ * The storefront reads the **Postgres** bound to `DATABASE_URL`. Vercel Production must use the same
+ * database you seed. If you only ever ran this script on your laptop, the **Neon** DB behind production
+ * has no (or not enough) `ProductReview` rows for that `productSlug`.
+ *
+ * **Fill production (run from a private machine, do not commit secrets):**
+ * 1. Vercel → Project → Settings → Environment Variables → copy **Production** `DATABASE_URL`.
+ * 2. PowerShell: `$env:DATABASE_URL = "paste-neon-string"` then `npm run db:seed-reviews`
+ * 3. If the pooler times out, use Neon's **direct** (non-`-pooler`) connection for this one-off command.
+ * 4. Redeploy or open the product PDP; reviews are from DB, not R2.
  */
 import { randomUUID } from "node:crypto";
 import { loadEnvConfig } from "@next/env";
