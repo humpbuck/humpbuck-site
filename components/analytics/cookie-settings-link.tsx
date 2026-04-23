@@ -19,7 +19,7 @@ export function CookieSettingsLink() {
         }
         window.location.reload();
       }}
-      className="text-[12px] text-ink/75 underline-offset-2 transition hover:text-ink hover:underline"
+      className="w-fit text-left text-[12px] text-ink/75 underline-offset-2 transition hover:text-ink hover:underline"
     >
       Cookie settings
     </button>

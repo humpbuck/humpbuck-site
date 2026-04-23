@@ -77,35 +77,27 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-4 border-t border-[color:var(--color-line)] pt-7 sm:mt-12 sm:flex-row sm:items-start sm:justify-between sm:gap-6 sm:pt-8">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-            <p className="text-[12px] text-muted">
-              © {new Date().getFullYear()} HUMPBUCK. All rights reserved.
-            </p>
-            <CookieSettingsLink />
-          </div>
-          <p className="text-[12px] leading-relaxed text-muted sm:max-w-xl sm:text-right">
-            <span className="sm:hidden">
-              Final prices & shipping at checkout. Policies under Support.{" "}
-              <a
-                href={`mailto:${supportMail}`}
-                className="text-ink/80 underline underline-offset-2 transition hover:text-ink"
-              >
-                {supportMail}
-              </a>
-            </span>
-            <span className="hidden sm:inline">
+        <div className="mt-10 space-y-4 border-t border-[color:var(--color-line)] pt-7 sm:mt-12 sm:pt-8">
+          <div className="grid gap-4 sm:grid-cols-[1fr_1.1fr] sm:items-start sm:gap-10">
+            <div className="min-w-0 space-y-2.5 text-left">
+              <p className="text-[12px] leading-relaxed text-muted">
+                © {new Date().getFullYear()} HUMPBUCK. All rights reserved.
+              </p>
+              <div>
+                <CookieSettingsLink />
+              </div>
+            </div>
+            <p className="min-w-0 text-[12px] leading-relaxed text-muted sm:text-balance sm:text-right">
               Prices, taxes, and shipping are confirmed at checkout. For shipping,
               refunds, privacy, and terms, see Support above. Questions:{" "}
               <a
                 href={`mailto:${supportMail}`}
-                className="text-ink/80 underline underline-offset-2 transition hover:text-ink"
+                className="break-words text-ink/80 underline underline-offset-2 transition hover:text-ink"
               >
                 {supportMail}
               </a>
-              .
-            </span>
-          </p>
+            </p>
+          </div>
         </div>
       </div>
     </footer>
