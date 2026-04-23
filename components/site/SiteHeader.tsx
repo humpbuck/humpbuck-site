@@ -7,6 +7,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import { AccountMenu } from "@/components/site/AccountMenu";
+import { HeaderUserAvatar } from "@/components/site/HeaderUserAvatar";
 import { buildLoginHref } from "@/lib/auth-callback-url";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
 
@@ -43,8 +44,13 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [bagBump, setBagBump] = useState(false);
-  const { itemCount } = useCart();
+  const { itemCount, openCartDrawer } = useCart();
   const { data: session, status } = useSession();
+
+  const accountAvatarLabel =
+    session?.user?.name?.trim() ||
+    session?.user?.email?.split("@")[0]?.trim() ||
+    "Account";
 
   useEffect(() => {
     const onAdded = () => {
@@ -116,7 +122,13 @@ export function SiteHeader() {
               Catalog
             </Link>
             {status === "authenticated" ? (
-              <AccountMenu userEmail={session?.user?.email} />
+              <AccountMenu
+                userEmail={session?.user?.email}
+                userImage={
+                  session?.user?.displayAvatarUrl ?? session?.user?.image
+                }
+                userName={session?.user?.name}
+              />
             ) : (
               <Suspense
                 fallback={
@@ -131,19 +143,20 @@ export function SiteHeader() {
                 <HeaderLoginLink className="hidden rounded-full px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/75 transition hover:text-ink md:inline-flex" />
               </Suspense>
             )}
-            <Link
-              href="/cart"
+            <button
+              type="button"
               data-bag-fly-target
+              onClick={() => openCartDrawer()}
               onAnimationEnd={(e) => {
                 if (e.animationName === "cart-bump") setBagBump(false);
               }}
               className={`inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90 ${bagBump ? "animate-cart-bump" : ""}`}
-              aria-label={`Shopping bag, ${itemCount} items`}
+              aria-label={`Open shopping bag, ${itemCount} items`}
             >
               <ShoppingBag size={16} strokeWidth={1.75} />
               <span className="hidden sm:inline">Bag</span>
               <span className="tabular-nums">{itemCount}</span>
-            </Link>
+            </button>
           </div>
         </div>
       </header>
@@ -157,8 +170,8 @@ export function SiteHeader() {
         onClick={() => setOpen(false)}
       />
       <div
-        className={`fixed left-0 top-0 z-40 h-full w-[min(88vw,360px)] border-r border-[color:var(--color-line)] bg-paper shadow-2xl transition-transform duration-300 ease-out md:hidden ${
-          open ? "translate-x-0" : "-translate-x-full"
+        className={`fixed left-0 top-0 z-40 h-full w-[min(88vw,360px)] border-r border-[color:var(--color-line)] bg-paper transition-[transform,box-shadow] duration-300 ease-out md:hidden ${
+          open ? "translate-x-0 shadow-2xl" : "-translate-x-full shadow-none"
         }`}
       >
         <div className="flex h-16 items-center justify-between border-b border-[color:var(--color-line)] px-4">
@@ -197,20 +210,30 @@ export function SiteHeader() {
           >
             Refunds
           </Link>
-          <Link
-            href="/cart"
-            onClick={() => setOpen(false)}
-            className="rounded-xl px-4 py-3 text-sm font-semibold text-ink/85 hover:bg-ink/[0.04]"
+          <button
+            type="button"
+            onClick={() => {
+              setOpen(false);
+              openCartDrawer();
+            }}
+            className="w-full rounded-xl px-4 py-3 text-left text-sm font-semibold text-ink/85 hover:bg-ink/[0.04]"
           >
             Bag ({itemCount})
-          </Link>
+          </button>
           {status === "authenticated" ? (
             <>
               <Link
                 href="/account"
                 onClick={() => setOpen(false)}
-                className="mt-4 rounded-xl px-4 py-3 text-sm font-semibold text-ink/85 hover:bg-ink/[0.04]"
+                className="mt-4 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-ink/85 hover:bg-ink/[0.04]"
               >
+                <HeaderUserAvatar
+                  src={
+                    session?.user?.displayAvatarUrl ?? session?.user?.image
+                  }
+                  label={accountAvatarLabel}
+                  size={36}
+                />
                 My account
               </Link>
               <button

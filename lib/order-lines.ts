@@ -1,4 +1,4 @@
-import { getProductBySlug } from "@/lib/catalog";
+import { getProductBySlug, isVariantAvailableForSale } from "@/lib/catalog";
 import type { CartLine } from "@/lib/cart-types";
 
 export type ValidatedLine = {
@@ -23,7 +23,7 @@ export function validateCartLines(items: CartLine[]): {
       throw new Error("Invalid cart line");
     }
     const product = getProductBySlug(item.slug);
-    if (!product || !product.inStock) {
+    if (!product || !isVariantAvailableForSale(product, item.variantId)) {
       throw new Error(`Unavailable: ${item.slug}`);
     }
     const unitAmountCents = Math.round(product.price * 100);

@@ -1,3 +1,6 @@
+import { Suspense } from "react";
+import { GoogleAnalyticsPageviews } from "@/components/analytics/google-analytics-pageviews";
+import { SiteAnalyticsConsent } from "@/components/analytics/site-analytics-consent";
 import { AttributionCapture } from "@/components/attribution-capture";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -10,6 +13,10 @@ export default function SiteLayout({
 }) {
   return (
     <>
+      <SiteAnalyticsConsent />
+      <Suspense fallback={null}>
+        <GoogleAnalyticsPageviews />
+      </Suspense>
       <AttributionCapture />
       <SiteHeader />
       <main className="min-w-0 flex-1 overflow-x-clip pt-[72px] md:pt-[80px]">

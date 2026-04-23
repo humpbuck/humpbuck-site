@@ -4,6 +4,9 @@ import { PolicyContactCard } from "@/components/site/PolicyContactCard";
 export const metadata = {
   title: "Terms of service",
   description: "Terms and conditions for using HUMPBUCK and our Services.",
+  alternates: {
+    canonical: "/terms",
+  },
 };
 
 const LAST_UPDATED = "April 18, 2026";

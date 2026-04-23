@@ -17,16 +17,22 @@
 /.next/
 /out/
 
+# local dev review image uploads (see lib/review-local-dev-upload.ts)
+/public/review-uploads/
+
 # production
 /build
 
 # misc
 .DS_Store
 *.pem
+.cursor/
 
 # local sqlite (migrations are committed)
 /prisma/dev.db
 /prisma/*.db
+# accidental nested prisma dir (e.g. wrong cwd migrate)
+/prisma/prisma/
 /prisma/*.db-journal
 *.db-journal
 

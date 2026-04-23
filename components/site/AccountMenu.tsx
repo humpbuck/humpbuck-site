@@ -4,11 +4,16 @@ import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
+import { HeaderUserAvatar } from "@/components/site/HeaderUserAvatar";
 
 export function AccountMenu({
   userEmail,
+  userImage,
+  userName,
 }: {
   userEmail?: string | null;
+  userImage?: string | null;
+  userName?: string | null;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -28,6 +33,11 @@ export function AccountMenu({
     };
   }, []);
 
+  const avatarLabel =
+    userName?.trim() ||
+    userEmail?.split("@")[0]?.trim() ||
+    "Account";
+
   return (
     <div ref={rootRef} className="relative hidden md:block">
       <button
@@ -35,8 +45,9 @@ export function AccountMenu({
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="inline-flex max-w-[200px] items-center gap-1 rounded-full px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/75 transition hover:bg-ink/[0.04] hover:text-ink"
+        className="inline-flex max-w-[220px] items-center gap-2 rounded-full py-1.5 pl-1.5 pr-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/75 transition hover:bg-ink/[0.04] hover:text-ink"
       >
+        <HeaderUserAvatar src={userImage} label={avatarLabel} size={30} />
         <span className="truncate" title={userEmail ?? undefined}>
           My account
         </span>

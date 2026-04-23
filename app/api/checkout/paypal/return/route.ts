@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { notifyMerchantOrderPaid } from "@/lib/merchant-order-email";
 import { paypalCaptureOrder } from "@/lib/paypal";
 import { prisma } from "@/lib/prisma";
+import { syncOrderAddressesToUserAccount } from "@/lib/sync-order-addresses-to-user";
 
 /** PayPal redirects here with ?token=PAYPAL_ORDER_ID */
 export async function GET(req: Request) {
@@ -24,9 +25,21 @@ export async function GET(req: Request) {
 
   const paid = await prisma.order.findFirst({
     where: { provider: "paypal", providerRef: orderId },
-    select: { id: true },
+    select: {
+      id: true,
+      userId: true,
+      billingJson: true,
+      shippingJson: true,
+    },
   });
   if (paid) {
+    if (paid.userId) {
+      await syncOrderAddressesToUserAccount(
+        paid.userId,
+        paid.billingJson,
+        paid.shippingJson,
+      );
+    }
     await notifyMerchantOrderPaid(paid.id);
   }
 

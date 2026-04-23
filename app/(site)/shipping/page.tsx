@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { PolicyContactCard } from "@/components/site/PolicyContactCard";
+import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/whatsapp";
 
 export const metadata = {
   title: "Shipping & tax",
   description:
     "Shipping policy, processing times, tracking, customs, taxes, and contact — HUMPBUCK.",
+  alternates: {
+    canonical: "/shipping",
+  },
 };
 
 const linkContact =
@@ -142,8 +146,16 @@ export default function ShippingPage() {
             <li>
               <strong>Invoices:</strong> If you require a formal invoice, please
               leave a note during payment or contact us via email at{" "}
-              <strong>support@humpbuck.com</strong> or WhatsApp at{" "}
-              <strong>+86 189 2816 0416</strong>.
+              <strong>support@humpbuck.com</strong> or{" "}
+              <a
+                href={WHATSAPP_URL}
+                className={linkContact}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                WhatsApp {WHATSAPP_DISPLAY}
+              </a>
+              .
             </li>
           </ul>
         </section>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { AdminOrdersTable } from "@/components/admin/admin-orders-table";
 import {
   ordersListPath,
@@ -27,7 +28,8 @@ export default async function AdminOrdersPage({
 
   const orders = await prisma.order.findMany({
     where,
-    orderBy: { createdAt: "desc" },
+    // Primary: newest first. Secondary: stable id so edits (same createdAt) never reshuffle rows.
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     skip,
     take: PAGE_SIZE,
   });
@@ -44,6 +46,7 @@ export default async function AdminOrdersPage({
     provider: o.provider,
     trafficSource: o.trafficSource,
     createdAt: o.createdAt.toISOString(),
+    merchantOrderCode: o.merchantOrderCode,
   }));
 
   const filterHint =
@@ -55,6 +58,7 @@ export default async function AdminOrdersPage({
 
   return (
     <div>
+      <AdminBackLink href="/admin" label="Overview" />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-serif text-3xl tracking-tight">Orders</h1>

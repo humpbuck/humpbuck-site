@@ -8,6 +8,8 @@ type Profile = {
   lastName: string | null;
   displayName: string | null;
   email: string | null;
+  /** Ignored by this form; optional so the page can pass full `user` select. */
+  image?: string | null;
 };
 
 export function AccountDetailsForm({ initial }: { initial: Profile }) {

@@ -1,37 +1,9 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { normalizeUserAddressInput } from "@/lib/user-address-normalize";
 
 const TYPES = ["billing", "shipping"] as const;
-
-type AddrBody = {
-  line1: string;
-  line2?: string | null;
-  city: string;
-  state?: string | null;
-  postalCode: string;
-  country: string;
-  phone?: string | null;
-};
-
-function normalizeAddr(raw: unknown): AddrBody | null {
-  if (!raw || typeof raw !== "object") return null;
-  const o = raw as Record<string, unknown>;
-  const line1 = String(o.line1 || "").trim();
-  const city = String(o.city || "").trim();
-  const postalCode = String(o.postalCode || "").trim();
-  const country = String(o.country || "").trim();
-  if (!line1 || !city || !postalCode || !country) return null;
-  return {
-    line1,
-    line2: o.line2 != null ? String(o.line2).trim() || null : null,
-    city,
-    state: o.state != null ? String(o.state).trim() || null : null,
-    postalCode,
-    country,
-    phone: o.phone != null ? String(o.phone).trim() || null : null,
-  };
-}
 
 export async function GET() {
   const session = await auth();
@@ -39,14 +11,26 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const rows = await prisma.userAddress.findMany({
-    where: { userId: session.user.id },
-  });
+  const uid = session.user.id;
+  const [rows, profile] = await Promise.all([
+    prisma.userAddress.findMany({ where: { userId: uid } }),
+    prisma.user.findUnique({
+      where: { id: uid },
+      select: { firstName: true, lastName: true },
+    }),
+  ]);
 
   const billing = rows.find((r) => r.type === "billing") ?? null;
   const shipping = rows.find((r) => r.type === "shipping") ?? null;
 
-  return NextResponse.json({ billing, shipping });
+  return NextResponse.json({
+    billing,
+    shipping,
+    profile: {
+      firstName: profile?.firstName ?? null,
+      lastName: profile?.lastName ?? null,
+    },
+  });
 }
 
 export async function PATCH(req: Request) {
@@ -74,7 +58,7 @@ export async function PATCH(req: Request) {
       });
       continue;
     }
-    const addr = normalizeAddr(raw);
+    const addr = normalizeUserAddressInput(raw);
     if (!addr) {
       return NextResponse.json(
         { error: `Invalid ${t} address (line1, city, postal code, country required)` },

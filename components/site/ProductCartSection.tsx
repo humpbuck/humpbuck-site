@@ -1,7 +1,6 @@
 "use client";
 
 import { Check } from "lucide-react";
-import Link from "next/link";
 import { createPortal } from "react-dom";
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
@@ -9,6 +8,7 @@ import { useCart } from "@/components/cart/cart-context";
 import type { ProductVariantOption } from "@/lib/catalog";
 import { ProductStyleVariants } from "@/components/site/ProductStyleVariants";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
+import { WhatsAppChatLink } from "@/components/site/WhatsAppChatLink";
 
 export function ProductCartSection({
   slug,
@@ -21,7 +21,7 @@ export function ProductCartSection({
   inStock: boolean;
   variantOptions?: ProductVariantOption[] | null;
 }) {
-  const { addItem } = useCart();
+  const { addItem, openCartDrawer } = useCart();
   const addButtonRef = useRef<HTMLButtonElement>(null);
   const [variantIndex, setVariantIndex] = useState(0);
   /** Incrementing tick resets the "Added" timer on repeat clicks. */
@@ -36,6 +36,8 @@ export function ProductCartSection({
   } | null>(null);
   const opts = variantOptions ?? [];
   const current = opts[variantIndex];
+  const variantSellable = current ? current.inStock !== false : true;
+  const canAdd = inStock && variantSellable;
   const showAdded = addedTick > 0;
 
   useEffect(() => {
@@ -49,7 +51,7 @@ export function ProductCartSection({
   }, [addedTick]);
 
   function handleAdd() {
-    if (!inStock) return;
+    if (!canAdd) return;
     addItem({
       slug,
       qty: 1,
@@ -58,6 +60,7 @@ export function ProductCartSection({
     });
     setAddedTick((n) => n + 1);
     window.dispatchEvent(new CustomEvent(CART_ADDED_EVENT));
+    openCartDrawer();
 
     requestAnimationFrame(() => {
       const btn = addButtonRef.current;
@@ -93,15 +96,21 @@ export function ProductCartSection({
         />
       )}
 
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-start">
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
+      {opts.length > 0 && !variantSellable && (
+        <p className="mt-3 text-sm text-muted" role="status">
+          This style is currently unavailable.
+        </p>
+      )}
+
+      <div className="mt-8 flex flex-col gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-3">
           <button
             ref={addButtonRef}
             type="button"
-            disabled={!inStock}
+            disabled={!canAdd}
             onClick={handleAdd}
             aria-live="polite"
-            className={`inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl px-8 py-3.5 text-[12px] font-bold uppercase tracking-[0.14em] transition disabled:cursor-not-allowed disabled:opacity-50 ${
+            className={`inline-flex min-h-[48px] w-full min-w-0 flex-1 items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-[12px] font-bold uppercase tracking-[0.14em] transition disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 ${
               showAdded
                 ? "bg-emerald-800 text-paper ring-2 ring-emerald-600/40 ring-offset-2 ring-offset-paper"
                 : "bg-ink text-paper hover:bg-ink/90"
@@ -112,31 +121,22 @@ export function ProductCartSection({
                 <Check className="size-4 shrink-0 stroke-[2.5]" aria-hidden />
                 Added to bag
               </>
-            ) : inStock ? (
+            ) : canAdd ? (
               "Add to bag"
             ) : (
               "Out of stock"
             )}
           </button>
-          {showAdded && (
-            <p className="text-[13px] text-muted">
-              <Link
-                href="/cart"
-                className="font-medium text-ink underline decoration-ink/25 underline-offset-2 hover:decoration-ink/60"
-              >
-                View bag
-              </Link>
-              {" · "}
-              Continue shopping
-            </p>
-          )}
+          <WhatsAppChatLink
+            productName={name}
+            className="inline-flex min-h-[48px] w-full min-w-0 flex-1 items-center justify-center rounded-2xl border border-[color:var(--color-line)] bg-white/70 px-5 py-3.5 text-center text-[12px] font-semibold uppercase tracking-[0.12em] text-ink/80 transition hover:border-ink/20 sm:px-6"
+          />
         </div>
-        <Link
-          href="/wholesale"
-          className="inline-flex items-center justify-center rounded-2xl border border-[color:var(--color-line)] bg-white/70 px-8 py-3.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-ink/80 transition hover:border-ink/20"
-        >
-          Request wholesale quote
-        </Link>
+        {showAdded && (
+          <p className="text-[13px] text-muted">
+            Review your bag in the panel — or keep browsing here.
+          </p>
+        )}
       </div>
 
       {typeof document !== "undefined" &&

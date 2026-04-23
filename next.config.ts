@@ -3,6 +3,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   async redirects() {
     return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "humpbuck.com" }],
+        destination: "https://www.humpbuck.com/:path*",
+        permanent: true,
+      },
       { source: "/series/astral", destination: "/series/rd-astral", permanent: true },
       {
         source: "/shop",
@@ -32,6 +38,26 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "pub-c8982b0d0821469baad86145989f3f64.r2.dev",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "i.pravatar.cc",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "api.dicebear.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.gravatar.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "secure.gravatar.com",
         pathname: "/**",
       },
     ],

@@ -23,6 +23,7 @@ model User {
   addresses     UserAddress[]
   paymentMethods SavedPaymentMethod[]
   passwordResetTokens PasswordResetToken[]
+  productReviews ProductReview[]
 }
 
 model PasswordResetToken {
@@ -80,14 +81,30 @@ model Order {
   totalCents     Int
   currency       String   @default("usd")
   itemsJson      String
+  billingJson    String? // card / invoice; may differ from shipping
   shippingJson   String?
+  orderNotes     String? // optional message from checkout (delivery instructions, etc.)
   carrier        String?
   trackingNumber String?
+  // Optional merchant-facing label (emails / account). Falls back to id tail when null.
+  merchantOrderCode String?
   // First-touch traffic: utm_source or inferred referrer (google, direct, …)
   trafficSource  String   @default("unknown")
   merchantNotifySentAt DateTime?
+  // Customer shipped notification email sent at (Brevo); idempotent.
+  customerShippedEmailSentAt DateTime?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+// Promo/newsletter opt-out per email + one-click unsubscribe token.
+model EmailMarketingPreference {
+  id                 String   @id @default(cuid())
+  email              String   @unique
+  unsubscribeToken String   @unique
+  marketingOptOut    Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }
 
 model UserAddress {
@@ -117,4 +134,36 @@ model SavedPaymentMethod {
   expMonth  Int?
   expYear   Int?
   createdAt DateTime @default(now())
+}
+
+// Buyer review; images on R2 under reviews/{productSlug}/
+model ProductReview {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderId       String
+  productSlug   String
+  rating        Int
+  body          String
+  imageUrlsJson String   @default("[]")
+  merchantReply   String?
+  merchantRepliedAt DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  appends       ProductReviewAppend[]
+
+  @@unique([userId, orderId, productSlug])
+  @@index([productSlug])
+}
+
+// Buyer follow-up (追加) on an existing review, same product, optional photos.
+model ProductReviewAppend {
+  id            String   @id @default(cuid())
+  reviewId      String
+  review        ProductReview @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  body          String
+  imageUrlsJson String   @default("[]")
+  createdAt     DateTime @default(now())
+
+  @@index([reviewId, createdAt])
 }

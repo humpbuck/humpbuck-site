@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { AccountAvatarPicker } from "@/components/account/account-avatar-picker";
 import { AccountDetailsForm } from "@/components/account/account-details-form";
 import { prisma } from "@/lib/prisma";
 
@@ -11,6 +12,7 @@ export default async function AccountDetailsPage() {
       lastName: true,
       displayName: true,
       email: true,
+      image: true,
     },
   });
 
@@ -27,7 +29,8 @@ export default async function AccountDetailsPage() {
       <p className="mt-2 text-sm text-muted">
         Update how we address you and manage your password.
       </p>
-      <div className="mt-10">
+      <div className="mt-10 space-y-10">
+        <AccountAvatarPicker initialImage={user.image} />
         <AccountDetailsForm initial={user} />
       </div>
     </div>

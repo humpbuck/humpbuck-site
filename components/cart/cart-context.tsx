@@ -41,6 +41,9 @@ type CartContextValue = {
   setQty: (slug: string, qty: number, variantId?: string) => void;
   removeItem: (slug: string, variantId?: string) => void;
   clear: () => void;
+  cartDrawerOpen: boolean;
+  openCartDrawer: () => void;
+  closeCartDrawer: () => void;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -68,6 +71,10 @@ function loadCart(): CartLine[] {
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartLine[]>([]);
   const [ready, setReady] = useState(false);
+  const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+
+  const openCartDrawer = useCallback(() => setCartDrawerOpen(true), []);
+  const closeCartDrawer = useCallback(() => setCartDrawerOpen(false), []);
 
   useEffect(() => {
     setItems(loadCart());
@@ -139,8 +146,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setQty,
       removeItem,
       clear,
+      cartDrawerOpen,
+      openCartDrawer,
+      closeCartDrawer,
     }),
-    [items, itemCount, addItem, setQty, removeItem, clear],
+    [
+      items,
+      itemCount,
+      addItem,
+      setQty,
+      removeItem,
+      clear,
+      cartDrawerOpen,
+      openCartDrawer,
+      closeCartDrawer,
+    ],
   );
 
   return (

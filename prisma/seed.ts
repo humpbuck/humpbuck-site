@@ -1,5 +1,5 @@
 /**
- * Demo order for admin UI preview. Safe to re-run: removes prior seed by providerRef.
+ * Demo order for admin UI preview. Re-run is a no-op if the demo row already exists (no auto-delete).
  * Run: npx prisma db seed
  */
 import { PrismaClient } from "@prisma/client";
@@ -9,7 +9,16 @@ const prisma = new PrismaClient();
 const DEMO_REF = "demo_preview_seed";
 
 async function main() {
-  await prisma.order.deleteMany({ where: { providerRef: DEMO_REF } });
+  const existing = await prisma.order.findFirst({
+    where: { providerRef: DEMO_REF },
+  });
+  if (existing) {
+    console.log("Demo order already exists; skipping seed.");
+    console.log("  id:", existing.id);
+    console.log("  admin URL: /admin/orders/" + existing.id);
+    console.log("  (Delete it in Admin if you need a fresh demo order.)");
+    return;
+  }
 
   const items = [
     {
@@ -33,16 +42,31 @@ async function main() {
       providerRef: DEMO_REF,
       totalCents,
       itemsJson: JSON.stringify(items),
-      shippingJson: JSON.stringify({
+      billingJson: JSON.stringify({
+        firstName: "Antonio",
+        lastName: "Ybarra",
         fullName: "Antonio Ybarra",
+        line1: "1200 Commerce Plaza",
+        line2: "Suite 400",
+        city: "Los Angeles",
+        state: "CA",
+        postalCode: "90017",
+        country: "United States of America",
+        phone: "5593500083",
+      }),
+      shippingJson: JSON.stringify({
+        firstName: "Maria",
+        lastName: "Ybarra",
+        fullName: "Maria Ybarra",
         line1: "2067 E Muncie Ave",
         line2: "",
         city: "Fresno",
         state: "CA",
         postalCode: "93720",
-        country: "United States",
-        phone: "5593500083",
+        country: "United States of America",
+        phone: "5595550199",
       }),
+      orderNotes: "Please leave package at front desk if no answer.",
       carrier: "USPS",
       trackingNumber: "LP1000043960094CN",
       trafficSource: "google",

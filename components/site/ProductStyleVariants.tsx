@@ -37,7 +37,9 @@ export function ProductStyleVariants({
         {options[selected]?.label}
       </p>
       <div className="mt-4 grid w-full min-w-0 grid-cols-4 gap-2 sm:grid-cols-6">
-        {options.map((opt, i) => (
+        {options.map((opt, i) => {
+          const unavailable = opt.inStock === false;
+          return (
           <button
             key={opt.id}
             type="button"
@@ -46,9 +48,13 @@ export function ProductStyleVariants({
               selected === i
                 ? "border-ink ring-2 ring-inset ring-ink/10"
                 : "border-[color:var(--color-line)] hover:border-ink/30"
-            }`}
+            } ${unavailable ? "opacity-45" : ""}`}
             aria-pressed={selected === i}
-            aria-label={`${opt.label} for ${productName}`}
+            aria-label={
+              unavailable
+                ? `${opt.label} for ${productName} — out of stock`
+                : `${opt.label} for ${productName}`
+            }
           >
             <Image
               src={opt.image}
@@ -58,7 +64,8 @@ export function ProductStyleVariants({
               sizes="(max-width:640px) 22vw, 96px"
             />
           </button>
-        ))}
+        );
+        })}
       </div>
     </div>
   );

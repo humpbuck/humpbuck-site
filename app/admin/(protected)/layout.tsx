@@ -2,11 +2,17 @@ import Link from "next/link";
 import { assertAdmin } from "@/lib/admin-auth";
 
 async function LogoutButton() {
+  const navItemClass =
+    "text-[11px] font-semibold uppercase tracking-[0.12em] text-muted hover:text-ink";
   return (
-    <form action="/api/admin/logout" method="post">
+    <form
+      action="/api/admin/logout"
+      method="post"
+      className="m-0 inline-flex shrink-0 items-center p-0 align-middle"
+    >
       <button
         type="submit"
-        className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted hover:text-ink"
+        className={`${navItemClass} cursor-pointer border-0 bg-transparent p-0 align-middle leading-none`}
       >
         Sign out
       </button>
@@ -26,24 +32,30 @@ export default async function AdminProtectedLayout({
       <header className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-6">
         <div>
           <p className="font-serif text-xl tracking-tight">HUMPBUCK Admin</p>
-          <p className="mt-1 text-xs text-muted">Orders & fulfillment</p>
+          <p className="mt-1 text-xs text-muted">Orders, reviews & fulfillment</p>
         </div>
-        <nav className="flex flex-wrap items-center gap-6">
+        <nav className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <Link
             href="/admin"
-            className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/75 hover:text-ink"
+            className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
           >
             Overview
           </Link>
           <Link
             href="/admin/orders"
-            className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/75 hover:text-ink"
+            className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
           >
             Orders
           </Link>
           <Link
+            href="/admin/reviews"
+            className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
+          >
+            Reviews
+          </Link>
+          <Link
             href="/"
-            className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted hover:text-ink"
+            className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-muted hover:text-ink"
           >
             View site
           </Link>

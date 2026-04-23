@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { OrderStatusBadge } from "@/components/admin/order-status-badge";
 import { formatPrice } from "@/lib/catalog";
+import { SITE_LOCALE } from "@/lib/site-locale";
 import {
   customerNameFromEmail,
-  orderDisplayId,
+  orderDisplayCode,
   paymentProviderLabel,
   trafficSourceLabel,
 } from "@/lib/admin/order-ui";
@@ -22,6 +23,7 @@ export type AdminOrderRow = {
   provider: string;
   trafficSource: string;
   createdAt: string;
+  merchantOrderCode: string | null;
 };
 
 export function AdminOrdersTable({ rows }: { rows: AdminOrderRow[] }) {
@@ -163,10 +165,13 @@ export function AdminOrdersTable({ rows }: { rows: AdminOrderRow[] }) {
           </thead>
           <tbody>
             {rows.map((o) => {
-              const displayId = orderDisplayId(o.id);
+              const displayId = orderDisplayCode({
+                id: o.id,
+                merchantOrderCode: o.merchantOrderCode,
+              });
               const name = customerNameFromEmail(o.email);
               const dateStr = new Date(o.createdAt).toLocaleDateString(
-                undefined,
+                SITE_LOCALE,
                 {
                   year: "numeric",
                   month: "short",

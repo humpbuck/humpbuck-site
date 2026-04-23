@@ -2,12 +2,13 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
 export default async function AdminHomePage() {
-  const [total, completed, unshipped] = await Promise.all([
+  const [total, completed, unshipped, reviewCount] = await Promise.all([
     prisma.order.count(),
     prisma.order.count({ where: { status: "shipped" } }),
     prisma.order.count({
       where: { status: { in: ["paid", "processing"] } },
     }),
+    prisma.productReview.count(),
   ]);
 
   const numLink =
@@ -19,7 +20,7 @@ export default async function AdminHomePage() {
       <p className="mt-2 text-sm text-muted">
         Quick stats from your database (all payment providers).
       </p>
-      <ul className="mt-10 grid gap-4 sm:grid-cols-3">
+      <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <li className="rounded-2xl border border-line bg-white/60 px-5 py-4">
           <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
             Total orders
@@ -58,13 +59,34 @@ export default async function AdminHomePage() {
           </Link>
           <p className="mt-1 text-[10px] text-muted">Paid or processing</p>
         </li>
+        <li className="rounded-2xl border border-line bg-white/60 px-5 py-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+            Buyer reviews
+          </p>
+          <Link
+            href="/admin/reviews"
+            className={numLink}
+            aria-label={`Manage ${reviewCount} buyer reviews`}
+          >
+            {reviewCount}
+          </Link>
+          <p className="mt-1 text-[10px] text-muted">Published on PDP</p>
+        </li>
       </ul>
-      <Link
-        href="/admin/orders"
-        className="mt-10 inline-flex rounded-2xl bg-ink px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
-      >
-        View all orders
-      </Link>
+      <div className="mt-10 flex flex-wrap gap-3">
+        <Link
+          href="/admin/orders"
+          className="inline-flex rounded-2xl bg-ink px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
+        >
+          View all orders
+        </Link>
+        <Link
+          href="/admin/reviews"
+          className="inline-flex rounded-2xl border border-line bg-white/70 px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20"
+        >
+          Manage reviews
+        </Link>
+      </div>
     </div>
   );
 }

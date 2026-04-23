@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { notifyMerchantOrderPaid } from "@/lib/merchant-order-email";
+import { syncOrderAddressesToUserAccount } from "@/lib/sync-order-addresses-to-user";
 import { getStripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 
@@ -40,6 +41,21 @@ export async function POST(req: Request) {
           providerRef: session.id,
         },
       });
+      const paidOrder = await prisma.order.findFirst({
+        where: { id: orderId, provider: "stripe" },
+        select: {
+          userId: true,
+          billingJson: true,
+          shippingJson: true,
+        },
+      });
+      if (paidOrder?.userId) {
+        await syncOrderAddressesToUserAccount(
+          paidOrder.userId,
+          paidOrder.billingJson,
+          paidOrder.shippingJson,
+        );
+      }
       await notifyMerchantOrderPaid(orderId);
     }
   }

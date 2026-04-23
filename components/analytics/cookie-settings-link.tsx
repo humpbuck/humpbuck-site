@@ -1,0 +1,27 @@
+"use client";
+
+import { CONSENT_STORAGE_KEY } from "@/lib/analytics-consent";
+
+const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim();
+
+/** Clears analytics consent and reloads so the banner shows again (GA must be configured). */
+export function CookieSettingsLink() {
+  if (!GA_ID) return null;
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        try {
+          localStorage.removeItem(CONSENT_STORAGE_KEY);
+        } catch {
+          /* ignore */
+        }
+        window.location.reload();
+      }}
+      className="text-[12px] text-ink/75 underline-offset-2 transition hover:text-ink hover:underline"
+    >
+      Cookie settings
+    </button>
+  );
+}

@@ -8,9 +8,16 @@ import {
   getAllProducts,
   getSeriesBySlug,
 } from "@/lib/catalog";
+import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
+import { R2_GALLERY_SPECS_BY_SLUG } from "@/lib/r2";
+import { getPdpR2Media } from "@/lib/r2-pdp-media";
 import { ProductCard } from "@/components/site/ProductCard";
-import { ProductImageCarousel } from "@/components/site/ProductImageCarousel";
+import { ProductPdpMediaColumn } from "@/components/site/ProductPdpMediaColumn";
+import { ProductReviewsSection } from "@/components/site/ProductReviewsSection";
 import { ProductCartSection } from "@/components/site/ProductCartSection";
+
+/** Fresh buyer reviews + R2 gallery discovery on each request (avoid stale static PDP). */
+export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
   return getAllProducts().map((p) => ({ slug: p.slug }));
@@ -24,9 +31,28 @@ export async function generateMetadata({
   const { slug } = await params;
   const product = getProductBySlug(slug);
   if (!product) return { title: "Product" };
+  const pageUrl = `${getSiteUrl()}/product/${encodeURIComponent(slug)}`;
+  const og = absoluteOgImageUrl(product.image);
   return {
     title: product.name,
     description: product.shortDescription,
+    alternates: {
+      canonical: `/product/${encodeURIComponent(slug)}`,
+    },
+    openGraph: {
+      type: "website",
+      url: pageUrl,
+      title: product.name,
+      description: product.shortDescription,
+      siteName: "HUMPBUCK",
+      images: [{ url: og, width: 1200, height: 1200, alt: product.name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.name,
+      description: product.shortDescription,
+      images: [og],
+    },
   };
 }
 
@@ -51,7 +77,49 @@ export default async function ProductPage({
         ? "from-[color:var(--color-luxe)]/15 to-transparent"
         : "from-violet-500/10 to-transparent";
 
-  const gallerySlides = product.galleryImages ?? product.images;
+  const gallerySpec = R2_GALLERY_SPECS_BY_SLUG[slug];
+  const pdpR2 = gallerySpec != null ? await getPdpR2Media(gallerySpec) : null;
+
+  const gallerySlides =
+    pdpR2?.gallery && pdpR2.gallery.length > 0
+      ? pdpR2.gallery
+      : (product.galleryImages ?? product.images);
+
+  const catalogVariants = product.variantOptions ?? [];
+  const discoveredVariants =
+    pdpR2?.variants && pdpR2.variants.length > 0 ? pdpR2.variants : null;
+  const variantOptions =
+    discoveredVariants != null
+      ? discoveredVariants.map((src, i) => ({
+          id: `style-${String(i + 1).padStart(2, "0")}`,
+          label: `Style ${String(i + 1).padStart(2, "0")}`,
+          image: src,
+          ...(catalogVariants[i]?.inStock === false ? { inStock: false as const } : {}),
+        }))
+      : product.variantOptions;
+
+  const detailImages =
+    pdpR2?.detail && pdpR2.detail.length > 0
+      ? pdpR2.detail
+      : (product.detailImages ?? []);
+
+  const firstSlide =
+    gallerySlides[0] ??
+    (product.galleryImages?.[0] ?? product.images[0] ?? product.promoVideo?.poster);
+  const promoVideosForMedia: { src: string; poster?: string }[] | null =
+    pdpR2?.videos && pdpR2.videos.length > 0
+      ? pdpR2.videos.map((src) => ({
+          src,
+          poster: firstSlide,
+        }))
+      : product.promoVideo
+        ? [
+            {
+              src: product.promoVideo.src,
+              poster: firstSlide ?? product.promoVideo.poster,
+            },
+          ]
+        : null;
 
   return (
     <div>
@@ -64,16 +132,15 @@ export default async function ProductPage({
           Back to shop
         </Link>
 
-        <div className="mt-8 grid min-w-0 grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14">
-          <div className="min-w-0">
-            <ProductImageCarousel
-              alt={product.name}
-              images={gallerySlides}
-              themeGlowClass={theme}
-            />
-          </div>
+        <div className="mt-8 grid min-w-0 grid-cols-1 gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-x-14 lg:gap-y-10">
+          <ProductPdpMediaColumn
+            productName={product.name}
+            gallerySlides={gallerySlides}
+            themeGlowClass={theme}
+            promoVideos={promoVideosForMedia ?? undefined}
+          />
 
-          <div className="min-w-0">
+          <div className="flex min-h-0 min-w-0 flex-col lg:h-full lg:min-h-0">
             <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
               {product.categoryLabel}
             </div>
@@ -110,7 +177,7 @@ export default async function ProductPage({
               slug={product.slug}
               name={product.name}
               inStock={product.inStock}
-              variantOptions={product.variantOptions}
+              variantOptions={variantOptions}
             />
 
             <div className="mt-10 space-y-3">
@@ -146,7 +213,7 @@ export default async function ProductPage({
               </dl>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-4 text-[12px] text-muted">
+            <div className="mt-auto flex flex-wrap gap-4 pt-8 text-[12px] text-muted">
               <Link href="/shipping" className="underline-offset-4 hover:underline">
                 Shipping & tax
               </Link>
@@ -158,14 +225,14 @@ export default async function ProductPage({
           </div>
         </div>
 
-        {product.detailImages != null && product.detailImages.length > 0 && (
+        {detailImages.length > 0 && (
           <section className="mt-16 border-t border-[color:var(--color-line)] pt-14">
             <h2 className="font-serif text-2xl tracking-tight">Closer look</h2>
             <p className="mt-2 max-w-2xl text-sm text-muted">
               Detail photography and specifications for {product.name}.
             </p>
             <div className="mt-10 flex flex-col gap-6">
-              {product.detailImages.map((src, i) => (
+              {detailImages.map((src, i) => (
                 <div
                   key={src}
                   className="relative overflow-hidden rounded-2xl border border-[color:var(--color-line)] bg-paper shadow-sm"
@@ -183,6 +250,11 @@ export default async function ProductPage({
             </div>
           </section>
         )}
+
+        <ProductReviewsSection
+          productSlug={product.slug}
+          productName={product.name}
+        />
       </div>
 
       {related.length > 0 && (

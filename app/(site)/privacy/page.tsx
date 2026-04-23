@@ -5,6 +5,9 @@ export const metadata = {
   title: "Privacy policy",
   description:
     "How HUMPBUCK collects, uses, and discloses personal information.",
+  alternates: {
+    canonical: "/privacy",
+  },
 };
 
 const linkContact =
@@ -175,6 +178,13 @@ export default function PrivacyPage() {
             experience. You can choose to remove or reject Cookies through your
             browser settings, but please be aware that this may affect certain
             functions and features of the Services.
+          </p>
+          <p className="mt-4 text-ink/85">
+            Where we use Google Analytics, we apply Google Consent Mode: analytics
+            storage stays off until you accept via the on-site banner; essential
+            cookies for security and checkout may still apply. You can reopen the
+            banner using <strong className="font-medium text-ink">Cookie settings</strong>{" "}
+            in the site footer, or clear site data for this domain in your browser.
           </p>
         </section>
 

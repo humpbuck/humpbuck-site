@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ProductCard } from "@/components/site/ProductCard";
 import {
@@ -9,6 +10,15 @@ import {
 
 const slugOk = (s: string | undefined): s is SeriesSlug =>
   s === "digitemp" || s === "tonneau" || s === "rd-astral";
+
+export const metadata: Metadata = {
+  title: "Shop — DIGI-TEMP & full catalog",
+  description:
+    "Browse the HUMPBUCK catalog: DIGI-TEMP ana-digi watches, RM-TONNEAU barrel cases, and RD-ASTRAL — filter by collection.",
+  alternates: {
+    canonical: "/shop",
+  },
+};
 
 export default async function ShopPage({
   searchParams,

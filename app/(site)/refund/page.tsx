@@ -1,10 +1,14 @@
 import Link from "next/link";
 import { PolicyContactCard } from "@/components/site/PolicyContactCard";
+import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/whatsapp";
 
 export const metadata = {
   title: "Refund policy",
   description:
     "Returns, exchanges, refunds, and exceptions — HUMPBUCK.",
+  alternates: {
+    canonical: "/refund",
+  },
 };
 
 const linkContact =
@@ -43,12 +47,12 @@ export default function RefundPage() {
             </a>{" "}
             or via{" "}
             <a
-              href="https://wa.me/8618928160416"
+              href={WHATSAPP_URL}
               className={linkContact}
               target="_blank"
               rel="noopener noreferrer"
             >
-              WhatsApp at +86 189 2816 0416
+              WhatsApp at {WHATSAPP_DISPLAY}
             </a>
             . Please note that returns will need to be sent to the following
             address:

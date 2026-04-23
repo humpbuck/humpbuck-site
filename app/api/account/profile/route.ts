@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { normalizeBuyerProfileImage } from "@/lib/buyer-profile-image";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
@@ -15,6 +16,7 @@ export async function GET() {
       displayName: true,
       email: true,
       name: true,
+      image: true,
     },
   });
   if (!user) {
@@ -33,11 +35,24 @@ export async function PATCH(req: Request) {
     firstName?: string | null;
     lastName?: string | null;
     displayName?: string | null;
+    image?: string | null;
   };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  let image: string | null | undefined;
+  if (body.image !== undefined) {
+    try {
+      image = normalizeBuyerProfileImage(session.user.id, body.image);
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid profile photo URL." },
+        { status: 400 },
+      );
+    }
   }
 
   await prisma.user.update({
@@ -55,6 +70,7 @@ export async function PATCH(req: Request) {
         body.displayName === undefined
           ? undefined
           : String(body.displayName || "").trim() || null,
+      ...(image !== undefined ? { image } : {}),
     },
   });
 

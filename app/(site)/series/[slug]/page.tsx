@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/site/ProductCard";
 import { getProductsBySeries, getSeriesBySlug, seriesList } from "@/lib/catalog";
+import { getSiteUrl } from "@/lib/seo";
 
 export async function generateStaticParams() {
   return seriesList.map((s) => ({ slug: s.slug }));
@@ -16,7 +17,18 @@ export async function generateMetadata({
   const { slug } = await params;
   const s = getSeriesBySlug(slug);
   if (!s) return { title: "Series" };
-  return { title: s.name, description: s.description };
+  const path = `/series/${encodeURIComponent(slug)}`;
+  return {
+    title: s.name,
+    description: s.description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website",
+      url: `${getSiteUrl()}${path}`,
+      title: `${s.name} · HUMPBUCK`,
+      description: s.description,
+    },
+  };
 }
 
 export default async function SeriesPage({

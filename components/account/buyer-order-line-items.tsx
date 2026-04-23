@@ -1,0 +1,114 @@
+import Image from "next/image";
+import Link from "next/link";
+import {
+  formatPrice,
+  getCartLineImage,
+  getProductBySlug,
+} from "@/lib/catalog";
+import type { ValidatedLine } from "@/lib/order-lines";
+import { orderStatusAllowsReview } from "@/lib/review-eligibility";
+
+type Props = {
+  lines: ValidatedLine[];
+  /** Order history cards: smaller thumbs; avoid nested links inside outer order `<Link>`. */
+  compact?: boolean;
+  /** When true, product name links to `/product/[slug]` (use on order detail only). */
+  linkToProduct?: boolean;
+  className?: string;
+  /** When set with a paid order, eligible lines show “Write review”. */
+  reviewContext?: {
+    orderId: string;
+    orderStatus: string;
+    reviewedProductSlugs: string[];
+  };
+};
+
+export function BuyerOrderLineItems({
+  lines,
+  compact = false,
+  linkToProduct,
+  className = "",
+  reviewContext,
+}: Props) {
+  const resolvedLink = linkToProduct ?? !compact;
+  const imgBox = compact
+    ? "relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-zinc-100 ring-1 ring-[color:var(--color-line)]"
+    : "relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-zinc-100 ring-1 ring-[color:var(--color-line)]";
+  const sizes = compact ? "48px" : "64px";
+
+  return (
+    <ul className={`space-y-3 text-sm text-ink/90 ${className}`}>
+      {lines.map((line, li) => {
+        const product = getProductBySlug(line.slug);
+        const imgSrc = product
+          ? getCartLineImage(product, line.variantId)
+          : undefined;
+        const alt =
+          line.variantLabel != null && line.variantLabel !== ""
+            ? `${line.name} — ${line.variantLabel}`
+            : line.name;
+
+        const title = (
+          <>
+            {line.name}
+            {line.variantLabel ? ` — ${line.variantLabel}` : ""} × {line.qty}
+          </>
+        );
+
+        return (
+          <li
+            key={`${line.slug}-${li}`}
+            className="flex flex-wrap items-start justify-between gap-2 border-b border-line/60 pb-3 last:border-0 last:pb-0"
+          >
+            <div className="flex min-w-0 flex-1 items-start gap-3">
+              <div className={imgBox}>
+                {imgSrc ? (
+                  <Image
+                    src={imgSrc}
+                    alt={alt}
+                    fill
+                    className="object-cover"
+                    sizes={sizes}
+                  />
+                ) : null}
+              </div>
+              <div className="min-w-0 pt-0.5">
+                {resolvedLink && product ? (
+                  <Link
+                    href={`/product/${line.slug}`}
+                    className="font-medium text-ink underline-offset-4 hover:underline"
+                  >
+                    {title}
+                  </Link>
+                ) : (
+                  <span>{title}</span>
+                )}
+              </div>
+            </div>
+            <div className="flex shrink-0 flex-col items-end gap-1">
+              <span className="tabular-nums text-muted">
+                {formatPrice(line.lineTotalCents / 100)}
+              </span>
+              {reviewContext &&
+              orderStatusAllowsReview(reviewContext.orderStatus) &&
+              product ? (
+                reviewContext.reviewedProductSlugs.includes(line.slug) ? (
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted">
+                    Review submitted
+                  </span>
+                ) : (
+                  <Link
+                    href={`/account/orders/${reviewContext.orderId}/review/${line.slug}`}
+                    className="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4 hover:underline"
+                  >
+                    Write review
+                  </Link>
+                )
+              ) : null}
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}

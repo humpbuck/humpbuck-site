@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/app-providers";
+import { OrganizationJsonLd } from "@/components/seo/organization-json-ld";
+import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 
 const fontBody = DM_Sans({
   subsets: ["latin"],
@@ -13,17 +15,39 @@ const fontDisplay = Fraunces({
   variable: "--font-display",
 });
 
+const siteUrl = getSiteUrl();
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "HUMPBUCK — DIGI-TEMP Ana-Digi Watches & RM-TONNEAU",
     template: "%s · HUMPBUCK",
   },
   description:
     "HUMPBUCK DIGI-TEMP flagship ana-digi watches — dual LCD, TIME/DATE/ALM/OUT/STW modes, stainless steel. RM-TONNEAU barrel-case line & wholesale programs.",
+  applicationName: "HUMPBUCK",
+  authors: [{ name: "HUMPBUCK" }],
   openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    siteName: "HUMPBUCK",
     title: "HUMPBUCK — DIGI-TEMP & RM-TONNEAU",
     description:
       "Official DIGI-TEMP ana-digi collection plus RM-TONNEAU quartz. Factory programs available.",
+    images: [defaultOgImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "HUMPBUCK — DIGI-TEMP & RM-TONNEAU",
+    description:
+      "Official DIGI-TEMP ana-digi collection plus RM-TONNEAU quartz. Factory programs available.",
+    images: [defaultOgImage.url],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
   },
 };
 
@@ -39,6 +63,7 @@ export default function RootLayout({
       className={`${fontBody.variable} ${fontDisplay.variable} h-full`}
     >
       <body className="flex min-h-full flex-col font-sans">
+        <OrganizationJsonLd />
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

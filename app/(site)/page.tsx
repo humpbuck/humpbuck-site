@@ -7,10 +7,13 @@ import { NewsletterSubscribe } from "@/components/site/NewsletterSubscribe";
 import { ProductCard } from "@/components/site/ProductCard";
 import {
   formatPrice,
-  getAllProducts,
+  getHomeFeaturedProducts,
   getProductBySlug,
+  getProductsBySeries,
   seriesList,
 } from "@/lib/catalog";
+import { R2 } from "@/lib/r2";
+import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -20,18 +23,33 @@ export const metadata: Metadata = {
   },
   description:
     "Shop the HUMPBUCK DIGI-TEMP flagship — dual LCD ana-digi watches with TIME, DATE, ALM, OUT (outdoor temperature), and STW modes; stainless steel, mineral glass, 30 m WR. Also explore RM-TONNEAU barrel-case quartz.",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
+    url: getSiteUrl(),
+    type: "website",
     title: "HUMPBUCK DIGI-TEMP — Ana-Digi Multifunction Watch",
     description:
       "DIGI-TEMP dual LCD line plus RM-TONNEAU & RD-ASTRAL. Secure checkout · global shipping.",
+    images: [defaultOgImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "HUMPBUCK DIGI-TEMP — Ana-Digi Multifunction Watch",
+    description:
+      "DIGI-TEMP dual LCD line plus RM-TONNEAU & RD-ASTRAL. Secure checkout · global shipping.",
+    images: [defaultOgImage.url],
   },
 };
 
 export default function HomePage() {
-  const featured = getAllProducts().slice(0, 4);
+  const featured = getHomeFeaturedProducts(12);
   const tonneau = seriesList.find((s) => s.slug === "tonneau")!;
   const rdAstral = seriesList.find((s) => s.slug === "rd-astral")!;
   const heroFeatured = getProductBySlug("digitemp-2301")!;
+  const tonneauCount = getProductsBySeries("tonneau").length;
+  const rdAstralCount = getProductsBySeries("rd-astral").length;
 
   return (
     <div>
@@ -97,7 +115,7 @@ export default function HomePage() {
           <div className="relative mx-auto w-full max-w-lg min-w-0 md:max-w-none md:mx-0">
             <div className="relative aspect-square overflow-hidden rounded-[24px] border border-white/10 bg-gradient-to-b from-white/10 to-white/0 shadow-[var(--shadow-glow-digital)] sm:rounded-[28px]">
               <Image
-                src={heroFeatured.image}
+                src={R2.home.digitemp2301Webp}
                 alt="HUMPBUCK DIGI-TEMP 2301"
                 fill
                 priority
@@ -157,6 +175,10 @@ export default function HomePage() {
               <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[color:var(--color-luxe)]">
                 RM-TONNEAU
               </div>
+              <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/55">
+                Shop the series · {tonneauCount}{" "}
+                {tonneauCount === 1 ? "product" : "products"}
+              </p>
               <h2 className="mt-4 max-w-md font-serif text-3xl leading-tight sm:text-4xl">
                 Keep your foot down when life asks you to lift.
                 <span className="mt-2 block text-lg font-normal text-white/75">
@@ -166,33 +188,57 @@ export default function HomePage() {
               <p className="mt-4 max-w-md text-sm leading-relaxed text-white/72">
                 {tonneau.description}
               </p>
-              <span className="mt-8 inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/90 underline-offset-8 group-hover:underline">
+              <span className="mt-8 inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/90 underline-offset-8 group-hover:underline">
                 Explore series
-                <ArrowRight size={16} />
+                <span className="font-normal text-white/45" aria-hidden>
+                  ·
+                </span>
+                <span>View watches</span>
+                <ArrowRight size={16} className="shrink-0" />
               </span>
             </div>
           </Link>
 
           <Link
             href="/series/rd-astral"
-            className="group rounded-3xl border border-[color:var(--color-line)] bg-white/70 p-8 shadow-[var(--shadow-card)] transition hover:bg-white"
+            className="group relative overflow-hidden rounded-3xl border border-[color:var(--color-line)] bg-[#1a1224] p-8 text-white shadow-[var(--shadow-card)]"
           >
-            <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-violet-900/70">
-              RD-ASTRAL
+            <div className="pointer-events-none absolute inset-0 opacity-45">
+              <Image
+                src={rdAstral.heroImage}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="(max-width:1024px) 100vw, 50vw"
+              />
             </div>
-            <h2 className="mt-4 max-w-md font-serif text-3xl leading-tight sm:text-4xl text-ink">
-              Under the same stars—the courage to keep dreaming.
-              <span className="mt-2 block text-lg font-normal text-muted">
-                {rdAstral.tagline}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-violet-950/80 via-black/50 to-[#1a1224]/25" />
+            <div className="relative">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-violet-200/90">
+                RD-ASTRAL
+              </div>
+              <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/55">
+                Shop the series · {rdAstralCount}{" "}
+                {rdAstralCount === 1 ? "product" : "products"}
+              </p>
+              <h2 className="mt-4 max-w-md font-serif text-3xl leading-tight sm:text-4xl">
+                Under the same stars—the courage to keep dreaming.
+                <span className="mt-2 block text-lg font-normal text-white/75">
+                  {rdAstral.tagline}
+                </span>
+              </h2>
+              <p className="mt-4 max-w-md text-sm leading-relaxed text-white/72">
+                {rdAstral.description}
+              </p>
+              <span className="mt-8 inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/90 underline-offset-8 group-hover:underline">
+                Explore series
+                <span className="font-normal text-white/45" aria-hidden>
+                  ·
+                </span>
+                <span>View watches</span>
+                <ArrowRight size={16} className="shrink-0" />
               </span>
-            </h2>
-            <p className="mt-4 max-w-md text-sm leading-relaxed text-muted">
-              {rdAstral.description}
-            </p>
-            <span className="mt-8 inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink/80 underline-offset-8 group-hover:underline">
-              Explore series
-              <ArrowRight size={16} />
-            </span>
+            </div>
           </Link>
         </div>
       </section>
@@ -320,7 +366,10 @@ export default function HomePage() {
       </section>
 
       {/* Newsletter */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20">
+      <section
+        id="newsletter"
+        className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20"
+      >
         <div className="rounded-3xl border border-[color:var(--color-line)] bg-white/70 p-8 sm:p-10">
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div>

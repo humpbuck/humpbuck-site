@@ -1,7 +1,11 @@
-function apiBase(): string {
+export function paypalApiBase(): string {
   return process.env.PAYPAL_MODE === "production"
     ? "https://api-m.paypal.com"
     : "https://api-m.sandbox.paypal.com";
+}
+
+function apiBase(): string {
+  return paypalApiBase();
 }
 
 export async function paypalAccessToken(): Promise<string> {
@@ -87,4 +91,60 @@ export async function paypalCaptureOrder(orderId: string): Promise<unknown> {
     );
   }
   return data;
+}
+
+/** First capture id for a captured PayPal Checkout order (needed for refunds). */
+export async function paypalGetCaptureIdFromOrder(
+  paypalOrderId: string,
+): Promise<string | null> {
+  const token = await paypalAccessToken();
+  const res = await fetch(
+    `${apiBase()}/v2/checkout/orders/${encodeURIComponent(paypalOrderId)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  const data = (await res.json()) as {
+    purchase_units?: {
+      payments?: { captures?: { id?: string }[] };
+    }[];
+    message?: string;
+  };
+  if (!res.ok) {
+    throw new Error(data.message || "PayPal order lookup failed");
+  }
+  const cap =
+    data.purchase_units?.[0]?.payments?.captures?.[0]?.id ?? null;
+  return cap && typeof cap === "string" ? cap : null;
+}
+
+/** Full refund in USD for a capture. */
+export async function paypalRefundCapture(
+  captureId: string,
+  totalUsd: string,
+): Promise<void> {
+  const token = await paypalAccessToken();
+  const res = await fetch(
+    `${apiBase()}/v2/payments/captures/${encodeURIComponent(captureId)}/refund`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        amount: {
+          currency_code: "USD",
+          value: totalUsd,
+        },
+      }),
+    },
+  );
+  const data = (await res.json()) as { message?: string; name?: string };
+  if (!res.ok) {
+    throw new Error(data.message || data.name || "PayPal refund failed");
+  }
 }

@@ -62,8 +62,15 @@
 }
 
 @layer base {
+  /* `stable` alone reserves gutter on the scrollbar side only → content looks left-heavy.
+     `both-edges` keeps left/right balance when the scrollbar occupies space. */
   html {
     scrollbar-gutter: stable;
+  }
+  @supports (scrollbar-gutter: stable both-edges) {
+    html {
+      scrollbar-gutter: stable both-edges;
+    }
   }
 
   body {

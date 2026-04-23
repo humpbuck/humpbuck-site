@@ -1,3 +1,5 @@
+import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/whatsapp";
+
 const linkContact =
   "font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-[3px] transition hover:text-blue-800 hover:decoration-blue-800/50";
 
@@ -24,12 +26,12 @@ export function PolicyContactCard({ intro }: PolicyContactCardProps) {
         <li>
           <strong>WhatsApp:</strong>{" "}
           <a
-            href="https://wa.me/8618928160416"
+            href={WHATSAPP_URL}
             className={linkContact}
             target="_blank"
             rel="noopener noreferrer"
           >
-            +86 189 2816 0416
+            {WHATSAPP_DISPLAY}
           </a>
         </li>
         <li>

@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { BUYER_AVATAR_PRESET_URLS } from "@/lib/avatar-presets";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
-  let body: { email?: string; password?: string; name?: string };
+  let body: { email?: string; password?: string; name?: string; avatarPreset?: number };
   try {
     body = await req.json();
   } catch {
@@ -34,9 +35,27 @@ export async function POST(req: Request) {
     );
   }
 
+  let image: string | null = null;
+  if (body.avatarPreset !== undefined && body.avatarPreset !== null) {
+    const idx = Number(body.avatarPreset);
+    if (
+      !Number.isInteger(idx) ||
+      idx < 0 ||
+      idx >= BUYER_AVATAR_PRESET_URLS.length
+    ) {
+      return NextResponse.json(
+        {
+          error: `Invalid avatar choice (use 0–${BUYER_AVATAR_PRESET_URLS.length - 1} or omit).`,
+        },
+        { status: 400 },
+      );
+    }
+    image = BUYER_AVATAR_PRESET_URLS[idx] ?? null;
+  }
+
   const passwordHash = await bcrypt.hash(password, 12);
   await prisma.user.create({
-    data: { email, name, passwordHash },
+    data: { email, name, passwordHash, image },
   });
 
   return NextResponse.json({ ok: true });

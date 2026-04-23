@@ -1,0 +1,3786 @@
+{
+  "cainiaoVolumetricDivisor": 8000,
+  "yanwenVolumetricDivisor": 18000,
+  "yanwenDomesticToWarehouseCny": 5,
+  "freeInternationalLegCny": 50,
+  "cainiaoPreferenceMarginCny": 5,
+  "cainiao": {
+    "S5059": {
+      "美国": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.1,
+          "rmbPerKg": 119.0,
+          "regRmb": 20.0
+        },
+        {
+          "wMin": 0.1,
+          "wMax": 0.2,
+          "rmbPerKg": 117.0,
+          "regRmb": 18.0
+        }
+      ],
+      "加拿大": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.2,
+          "rmbPerKg": 97.0,
+          "regRmb": 21.0
+        }
+      ],
+      "墨西哥": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.1,
+          "rmbPerKg": 81.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 0.1,
+          "wMax": 0.2,
+          "rmbPerKg": 81.0,
+          "regRmb": 18.0
+        }
+      ],
+      "英国": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.05,
+          "rmbPerKg": 69.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 0.05,
+          "wMax": 0.1,
+          "rmbPerKg": 71.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 0.1,
+          "wMax": 0.2,
+          "rmbPerKg": 73.0,
+          "regRmb": 16.0
+        }
+      ],
+      "瑞典": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.05,
+          "rmbPerKg": 97.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 0.05,
+          "wMax": 0.1,
+          "rmbPerKg": 99.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 0.1,
+          "wMax": 0.2,
+          "rmbPerKg": 101.0,
+          "regRmb": 16.0
+        }
+      ],
+      "丹麦": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.05,
+          "rmbPerKg": 116.0,
+          "regRmb": 24.0
+        },
+        {
+          "wMin": 0.05,
+          "wMax": 0.1,
+          "rmbPerKg": 118.0,
+          "regRmb": 24.0
+        },
+        {
+          "wMin": 0.1,
+          "wMax": 0.2,
+          "rmbPerKg": 120.0,
+          "regRmb": 24.0
+        }
+      ],
+      "爱尔兰": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.05,
+          "rmbPerKg": 118.0,
+          "regRmb": 23.0
+        },
+        {
+          "wMin": 0.05,
+          "wMax": 0.1,
+          "rmbPerKg": 120.0,
+          "regRmb": 23.0
+        },
+        {
+          "wMin": 0.1,
+          "wMax": 0.2,
+          "rmbPerKg": 122.0,
+          "regRmb": 23.0
+        }
+      ],
+      "奥地利": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.05,
+          "rmbPerKg": 124.0,
+          "regRmb": 23.0
+        },
+        {
+          "wMin": 0.05,
+          "wMax": 0.1,
+          "rmbPerKg": 124.0,
+          "regRmb": 23.0
+        },
+        {
+          "wMin": 0.1,
+          "wMax": 0.2,
+          "rmbPerKg": 124.0,
+          "regRmb": 23.0
+        }
+      ],
+      "匈牙利": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.05,
+          "rmbPerKg": 114.0,
+          "regRmb": 19.0
+        },
+        {
+          "wMin": 0.05,
+          "wMax": 0.1,
+          "rmbPerKg": 114.0,
+          "regRmb": 19.0
+        },
+        {
+          "wMin": 0.1,
+          "wMax": 0.2,
+          "rmbPerKg": 114.0,
+          "regRmb": 19.0
+        }
+      ],
+      "波兰": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.05,
+          "rmbPerKg": 95.0,
+          "regRmb": 12.0
+        },
+        {
+          "wMin": 0.05,
+          "wMax": 0.1,
+          "rmbPerKg": 95.0,
+          "regRmb": 12.0
+        },
+        {
+          "wMin": 0.1,
+          "wMax": 0.2,
+          "rmbPerKg": 95.0,
+          "regRmb": 12.0
+        }
+      ],
+      "捷克": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.05,
+          "rmbPerKg": 99.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 0.05,
+          "wMax": 0.1,
+          "rmbPerKg": 99.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 0.1,
+          "wMax": 0.2,
+          "rmbPerKg": 99.0,
+          "regRmb": 18.0
+        }
+      ],
+      "德国": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.2,
+          "rmbPerKg": 110.0,
+          "regRmb": 21.0
+        }
+      ],
+      "法国": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.2,
+          "rmbPerKg": 112.0,
+          "regRmb": 19.0
+        }
+      ],
+      "意大利": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.2,
+          "rmbPerKg": 98.0,
+          "regRmb": 24.0
+        }
+      ],
+      "西班牙": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.2,
+          "rmbPerKg": 111.0,
+          "regRmb": 17.0
+        }
+      ],
+      "韩国": [
+        {
+          "wMin": 0.0,
+          "wMax": 1.0,
+          "rmbPerKg": 6.0,
+          "regRmb": 19.0
+        }
+      ],
+      "日本": [
+        {
+          "wMin": 0.0,
+          "wMax": 1.0,
+          "rmbPerKg": 21.0,
+          "regRmb": 16.0
+        }
+      ]
+    },
+    "OH": {
+      "美国": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.1,
+          "rmbPerKg": 169.0,
+          "regRmb": 20.0
+        },
+        {
+          "wMin": 0.1,
+          "wMax": 0.2,
+          "rmbPerKg": 164.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 0.2,
+          "wMax": 0.45,
+          "rmbPerKg": 158.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 0.45,
+          "wMax": 0.7,
+          "rmbPerKg": 156.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 0.7,
+          "wMax": 1.0,
+          "rmbPerKg": 156.0,
+          "regRmb": 9.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 3.0,
+          "rmbPerKg": 156.0,
+          "regRmb": 9.0
+        },
+        {
+          "wMin": 3.0,
+          "wMax": 6.0,
+          "rmbPerKg": 156.0,
+          "regRmb": 9.0
+        },
+        {
+          "wMin": 6.0,
+          "wMax": 30.0,
+          "rmbPerKg": 156.0,
+          "regRmb": 9.0
+        }
+      ],
+      "加拿大": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.15,
+          "rmbPerKg": 107.0,
+          "regRmb": 21.0
+        },
+        {
+          "wMin": 0.15,
+          "wMax": 0.3,
+          "rmbPerKg": 107.0,
+          "regRmb": 21.0
+        },
+        {
+          "wMin": 0.3,
+          "wMax": 0.45,
+          "rmbPerKg": 107.0,
+          "regRmb": 21.0
+        },
+        {
+          "wMin": 0.45,
+          "wMax": 0.75,
+          "rmbPerKg": 111.0,
+          "regRmb": 22.0
+        },
+        {
+          "wMin": 0.75,
+          "wMax": 1.0,
+          "rmbPerKg": 111.0,
+          "regRmb": 22.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 1.5,
+          "rmbPerKg": 111.0,
+          "regRmb": 23.0
+        },
+        {
+          "wMin": 1.5,
+          "wMax": 2.0,
+          "rmbPerKg": 116.0,
+          "regRmb": 23.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 30.0,
+          "rmbPerKg": 118.0,
+          "regRmb": 23.0
+        }
+      ],
+      "墨西哥": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.25,
+          "rmbPerKg": 100.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 0.25,
+          "wMax": 0.5,
+          "rmbPerKg": 100.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 100.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 1.5,
+          "rmbPerKg": 107.0,
+          "regRmb": 20.0
+        },
+        {
+          "wMin": 1.5,
+          "wMax": 2.0,
+          "rmbPerKg": 107.0,
+          "regRmb": 20.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 10.0,
+          "rmbPerKg": 107.0,
+          "regRmb": 20.0
+        }
+      ],
+      "英国": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 88.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 85.0,
+          "regRmb": 18.0
+        }
+      ],
+      "德国": [
+        {
+          "wMin": 0.0,
+          "wMax": 5.0,
+          "rmbPerKg": 141.0,
+          "regRmb": 25.0
+        },
+        {
+          "wMin": 5.0,
+          "wMax": 30.0,
+          "rmbPerKg": 146.0,
+          "regRmb": 25.0
+        }
+      ],
+      "法国": [
+        {
+          "wMin": 0.0,
+          "wMax": 3.0,
+          "rmbPerKg": 122.0,
+          "regRmb": 25.0
+        },
+        {
+          "wMin": 3.0,
+          "wMax": 30.0,
+          "rmbPerKg": 118.0,
+          "regRmb": 25.0
+        }
+      ],
+      "意大利": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 98.0,
+          "regRmb": 25.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 10.0,
+          "rmbPerKg": 99.0,
+          "regRmb": 25.0
+        }
+      ],
+      "西班牙": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 111.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 30.0,
+          "rmbPerKg": 114.0,
+          "regRmb": 18.0
+        }
+      ],
+      "奥地利": [
+        {
+          "wMin": 0.0,
+          "wMax": 3.0,
+          "rmbPerKg": 127.0,
+          "regRmb": 23.0
+        },
+        {
+          "wMin": 3.0,
+          "wMax": 30.0,
+          "rmbPerKg": 125.0,
+          "regRmb": 23.0
+        }
+      ],
+      "匈牙利": [
+        {
+          "wMin": 0.0,
+          "wMax": 30.0,
+          "rmbPerKg": 118.0,
+          "regRmb": 21.0
+        }
+      ],
+      "斯洛伐克": [
+        {
+          "wMin": 0.0,
+          "wMax": 30.0,
+          "rmbPerKg": 126.0,
+          "regRmb": 20.0
+        }
+      ],
+      "斯洛文尼亚": [
+        {
+          "wMin": 0.0,
+          "wMax": 30.0,
+          "rmbPerKg": 135.0,
+          "regRmb": 24.0
+        }
+      ],
+      "克罗地亚": [
+        {
+          "wMin": 0.0,
+          "wMax": 30.0,
+          "rmbPerKg": 142.0,
+          "regRmb": 24.0
+        }
+      ],
+      "罗马尼亚": [
+        {
+          "wMin": 0.0,
+          "wMax": 30.0,
+          "rmbPerKg": 114.0,
+          "regRmb": 20.0
+        }
+      ],
+      "保加利亚": [
+        {
+          "wMin": 0.0,
+          "wMax": 30.0,
+          "rmbPerKg": 106.0,
+          "regRmb": 17.0
+        }
+      ],
+      "留尼汪": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 122.0,
+          "regRmb": 69.0
+        }
+      ],
+      "波斯尼亚和黑塞哥维那": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 140.0,
+          "regRmb": 20.0
+        }
+      ],
+      "塞尔维亚": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 108.0,
+          "regRmb": 28.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 10.0,
+          "rmbPerKg": 113.0,
+          "regRmb": 36.0
+        },
+        {
+          "wMin": 10.0,
+          "wMax": 20.0,
+          "rmbPerKg": 113.0,
+          "regRmb": 50.0
+        }
+      ],
+      "黑山共和国": [
+        {
+          "wMin": 0.0,
+          "wMax": 5.0,
+          "rmbPerKg": 126.0,
+          "regRmb": 17.0
+        }
+      ],
+      "马其顿": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 131.0,
+          "regRmb": 18.0
+        }
+      ],
+      "阿尔巴尼亚": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 140.0,
+          "regRmb": 26.0
+        }
+      ],
+      "波兰": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.3,
+          "rmbPerKg": 103.0,
+          "regRmb": 12.0
+        },
+        {
+          "wMin": 0.3,
+          "wMax": 2.0,
+          "rmbPerKg": 103.0,
+          "regRmb": 13.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 103.0,
+          "regRmb": 14.0
+        }
+      ],
+      "瑞士": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.2,
+          "rmbPerKg": 156.0,
+          "regRmb": 22.0
+        },
+        {
+          "wMin": 0.2,
+          "wMax": 0.5,
+          "rmbPerKg": 141.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 2.0,
+          "rmbPerKg": 131.0,
+          "regRmb": 18.0
+        }
+      ],
+      "瑞典": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.3,
+          "rmbPerKg": 121.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 0.3,
+          "wMax": 20.0,
+          "rmbPerKg": 118.0,
+          "regRmb": 21.0
+        }
+      ],
+      "丹麦": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.3,
+          "rmbPerKg": 143.0,
+          "regRmb": 24.0
+        },
+        {
+          "wMin": 0.3,
+          "wMax": 2.0,
+          "rmbPerKg": 130.0,
+          "regRmb": 24.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 121.0,
+          "regRmb": 24.0
+        }
+      ],
+      "芬兰": [
+        {
+          "wMin": 0.0,
+          "wMax": 20.0,
+          "rmbPerKg": 115.0,
+          "regRmb": 26.0
+        }
+      ],
+      "荷兰": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.1,
+          "rmbPerKg": 130.0,
+          "regRmb": 21.0
+        },
+        {
+          "wMin": 0.1,
+          "wMax": 2.0,
+          "rmbPerKg": 130.0,
+          "regRmb": 21.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 128.0,
+          "regRmb": 23.0
+        }
+      ],
+      "卢森堡": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 156.0,
+          "regRmb": 25.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 161.0,
+          "regRmb": 25.0
+        }
+      ],
+      "比利时": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.2,
+          "rmbPerKg": 120.0,
+          "regRmb": 21.0
+        },
+        {
+          "wMin": 0.2,
+          "wMax": 2.0,
+          "rmbPerKg": 120.0,
+          "regRmb": 21.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 118.0,
+          "regRmb": 23.0
+        }
+      ],
+      "马耳他": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 181.0,
+          "regRmb": 30.0
+        }
+      ],
+      "希腊": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 114.0,
+          "regRmb": 17.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 114.0,
+          "regRmb": 17.0
+        }
+      ],
+      "捷克": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 99.0,
+          "regRmb": 20.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 30.0,
+          "rmbPerKg": 104.0,
+          "regRmb": 20.0
+        }
+      ],
+      "塞浦路斯": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 149.0,
+          "regRmb": 27.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 149.0,
+          "regRmb": 27.0
+        }
+      ],
+      "乌克兰": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.2,
+          "rmbPerKg": 115.0,
+          "regRmb": 12.0
+        },
+        {
+          "wMin": 0.2,
+          "wMax": 2.0,
+          "rmbPerKg": 115.0,
+          "regRmb": 12.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 115.0,
+          "regRmb": 12.0
+        }
+      ],
+      "立陶宛": [
+        {
+          "wMin": 0.0,
+          "wMax": 5.0,
+          "rmbPerKg": 110.0,
+          "regRmb": 20.0
+        }
+      ],
+      "爱沙尼亚": [
+        {
+          "wMin": 0.0,
+          "wMax": 5.0,
+          "rmbPerKg": 108.0,
+          "regRmb": 20.0
+        }
+      ],
+      "拉脱维亚": [
+        {
+          "wMin": 0.0,
+          "wMax": 5.0,
+          "rmbPerKg": 110.0,
+          "regRmb": 20.0
+        }
+      ],
+      "爱尔兰": [
+        {
+          "wMin": 0.0,
+          "wMax": 20.0,
+          "rmbPerKg": 142.0,
+          "regRmb": 23.0
+        }
+      ],
+      "葡萄牙": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 130.0,
+          "regRmb": 19.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 30.0,
+          "rmbPerKg": 132.0,
+          "regRmb": 19.0
+        }
+      ],
+      "俄罗斯": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 47.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 47.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 1.5,
+          "rmbPerKg": 47.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 1.5,
+          "wMax": 2.0,
+          "rmbPerKg": 47.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 5.0,
+          "rmbPerKg": 47.0,
+          "regRmb": 18.0
+        }
+      ],
+      "摩尔多瓦": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.15,
+          "rmbPerKg": 74.0,
+          "regRmb": 15.0
+        },
+        {
+          "wMin": 0.15,
+          "wMax": 0.3,
+          "rmbPerKg": 74.0,
+          "regRmb": 15.0
+        },
+        {
+          "wMin": 0.3,
+          "wMax": 0.5,
+          "rmbPerKg": 74.0,
+          "regRmb": 15.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 74.0,
+          "regRmb": 15.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 2.0,
+          "rmbPerKg": 74.0,
+          "regRmb": 15.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 79.0,
+          "regRmb": 50.0
+        }
+      ],
+      "冰岛": [
+        {
+          "wMin": 0.0,
+          "wMax": 5.0,
+          "rmbPerKg": 143.0,
+          "regRmb": 38.0
+        },
+        {
+          "wMin": 5.0,
+          "wMax": 10.0,
+          "rmbPerKg": 143.0,
+          "regRmb": 58.0
+        },
+        {
+          "wMin": 10.0,
+          "wMax": 20.0,
+          "rmbPerKg": 143.0,
+          "regRmb": 78.0
+        }
+      ],
+      "挪威": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.1,
+          "rmbPerKg": 133.0,
+          "regRmb": 21.0
+        },
+        {
+          "wMin": 0.1,
+          "wMax": 0.3,
+          "rmbPerKg": 118.0,
+          "regRmb": 20.0
+        },
+        {
+          "wMin": 0.3,
+          "wMax": 5.0,
+          "rmbPerKg": 113.0,
+          "regRmb": 20.0
+        }
+      ],
+      "澳大利亚/3区": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.3,
+          "rmbPerKg": 55.0,
+          "regRmb": 52.0
+        },
+        {
+          "wMin": 0.3,
+          "wMax": 0.5,
+          "rmbPerKg": 55.0,
+          "regRmb": 52.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 55.0,
+          "regRmb": 72.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 3.0,
+          "rmbPerKg": 59.0,
+          "regRmb": 77.0
+        },
+        {
+          "wMin": 3.0,
+          "wMax": 20.0,
+          "rmbPerKg": 59.0,
+          "regRmb": 116.0
+        }
+      ],
+      "澳大利亚/2区": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.3,
+          "rmbPerKg": 55.0,
+          "regRmb": 29.0
+        },
+        {
+          "wMin": 0.3,
+          "wMax": 0.5,
+          "rmbPerKg": 55.0,
+          "regRmb": 30.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 55.0,
+          "regRmb": 34.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 3.0,
+          "rmbPerKg": 59.0,
+          "regRmb": 36.0
+        },
+        {
+          "wMin": 3.0,
+          "wMax": 20.0,
+          "rmbPerKg": 59.0,
+          "regRmb": 53.0
+        }
+      ],
+      "澳大利亚/1区": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.3,
+          "rmbPerKg": 55.0,
+          "regRmb": 21.0
+        },
+        {
+          "wMin": 0.3,
+          "wMax": 0.5,
+          "rmbPerKg": 55.0,
+          "regRmb": 24.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 55.0,
+          "regRmb": 25.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 3.0,
+          "rmbPerKg": 59.0,
+          "regRmb": 27.0
+        },
+        {
+          "wMin": 3.0,
+          "wMax": 20.0,
+          "rmbPerKg": 59.0,
+          "regRmb": 42.0
+        }
+      ],
+      "澳大利亚/4区": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.3,
+          "rmbPerKg": 62.0,
+          "regRmb": 55.0
+        },
+        {
+          "wMin": 0.3,
+          "wMax": 0.5,
+          "rmbPerKg": 62.0,
+          "regRmb": 55.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 62.0,
+          "regRmb": 110.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 3.0,
+          "rmbPerKg": 66.0,
+          "regRmb": 120.0
+        },
+        {
+          "wMin": 3.0,
+          "wMax": 20.0,
+          "rmbPerKg": 67.0,
+          "regRmb": 116.0
+        }
+      ],
+      "新西兰": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 99.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 2.0,
+          "rmbPerKg": 99.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 25.0,
+          "rmbPerKg": 92.0,
+          "regRmb": 16.0
+        }
+      ],
+      "秘鲁": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.25,
+          "rmbPerKg": 175.0,
+          "regRmb": 30.0
+        },
+        {
+          "wMin": 0.25,
+          "wMax": 0.5,
+          "rmbPerKg": 175.0,
+          "regRmb": 21.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 175.0,
+          "regRmb": 21.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 2.0,
+          "rmbPerKg": 175.0,
+          "regRmb": 21.0
+        }
+      ],
+      "哥伦比亚": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 124.0,
+          "regRmb": 24.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 2.0,
+          "rmbPerKg": 128.0,
+          "regRmb": 24.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 5.0,
+          "rmbPerKg": 130.0,
+          "regRmb": 24.0
+        }
+      ],
+      "巴西": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.2,
+          "rmbPerKg": 86.0,
+          "regRmb": 35.0
+        },
+        {
+          "wMin": 0.2,
+          "wMax": 0.5,
+          "rmbPerKg": 86.0,
+          "regRmb": 35.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 86.0,
+          "regRmb": 40.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 1.5,
+          "rmbPerKg": 86.0,
+          "regRmb": 46.0
+        },
+        {
+          "wMin": 1.5,
+          "wMax": 2.0,
+          "rmbPerKg": 86.0,
+          "regRmb": 52.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 2.5,
+          "rmbPerKg": 89.0,
+          "regRmb": 55.0
+        },
+        {
+          "wMin": 2.5,
+          "wMax": 30.0,
+          "rmbPerKg": 93.0,
+          "regRmb": 60.0
+        }
+      ],
+      "厄瓜多尔": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 245.0,
+          "regRmb": 25.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 245.0,
+          "regRmb": 25.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 2.0,
+          "rmbPerKg": 245.0,
+          "regRmb": 25.0
+        }
+      ],
+      "智利": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 90.0,
+          "regRmb": 23.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 90.0,
+          "regRmb": 25.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 1.5,
+          "rmbPerKg": 90.0,
+          "regRmb": 30.0
+        },
+        {
+          "wMin": 1.5,
+          "wMax": 2.0,
+          "rmbPerKg": 90.0,
+          "regRmb": 35.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 5.0,
+          "rmbPerKg": 90.0,
+          "regRmb": 50.0
+        },
+        {
+          "wMin": 5.0,
+          "wMax": 10.0,
+          "rmbPerKg": 90.0,
+          "regRmb": 90.0
+        },
+        {
+          "wMin": 10.0,
+          "wMax": 15.0,
+          "rmbPerKg": 90.0,
+          "regRmb": 130.0
+        }
+      ],
+      "乌拉圭": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 245.0,
+          "regRmb": 24.0
+        }
+      ],
+      "巴拉圭": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 240.0,
+          "regRmb": 24.0
+        }
+      ],
+      "洪都拉斯": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 211.0,
+          "regRmb": 22.0
+        }
+      ],
+      "尼加拉瓜": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 208.0,
+          "regRmb": 22.0
+        }
+      ],
+      "玻利维亚": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 248.0,
+          "regRmb": 24.0
+        }
+      ],
+      "萨尔瓦多": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 203.0,
+          "regRmb": 22.0
+        }
+      ],
+      "哥斯达黎加": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 193.0,
+          "regRmb": 24.0
+        }
+      ],
+      "危地马拉": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 127.0,
+          "regRmb": 40.0
+        }
+      ],
+      "巴拿马": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 230.0,
+          "regRmb": 41.0
+        }
+      ],
+      "多米尼加共和国": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 212.0,
+          "regRmb": 22.0
+        }
+      ],
+      "特立尼达和多巴哥": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 230.0,
+          "regRmb": 46.0
+        }
+      ],
+      "新加坡": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 46.0,
+          "regRmb": 15.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 46.0,
+          "regRmb": 15.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 1.5,
+          "rmbPerKg": 46.0,
+          "regRmb": 15.0
+        },
+        {
+          "wMin": 1.5,
+          "wMax": 2.0,
+          "rmbPerKg": 46.0,
+          "regRmb": 15.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 46.0,
+          "regRmb": 15.0
+        }
+      ],
+      "马来西亚/东马": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 40.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 40.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 1.5,
+          "rmbPerKg": 45.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 1.5,
+          "wMax": 2.0,
+          "rmbPerKg": 45.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 45.0,
+          "regRmb": 16.0
+        }
+      ],
+      "马来西亚/西马": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 35.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 35.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 1.5,
+          "rmbPerKg": 35.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 1.5,
+          "wMax": 2.0,
+          "rmbPerKg": 35.0,
+          "regRmb": 16.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 35.0,
+          "regRmb": 16.0
+        }
+      ],
+      "菲律宾/菲律宾其他地区": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 50.0,
+          "regRmb": 10.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 50.0,
+          "regRmb": 13.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 1.5,
+          "rmbPerKg": 52.0,
+          "regRmb": 49.0
+        },
+        {
+          "wMin": 1.5,
+          "wMax": 2.0,
+          "rmbPerKg": 52.0,
+          "regRmb": 49.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 52.0,
+          "regRmb": 50.0
+        }
+      ],
+      "菲律宾/菲律宾马尼拉大都": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 47.0,
+          "regRmb": 10.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 47.0,
+          "regRmb": 13.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 1.5,
+          "rmbPerKg": 49.0,
+          "regRmb": 49.0
+        },
+        {
+          "wMin": 1.5,
+          "wMax": 2.0,
+          "rmbPerKg": 49.0,
+          "regRmb": 49.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 49.0,
+          "regRmb": 50.0
+        }
+      ],
+      "泰国": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 28.0,
+          "regRmb": 7.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 28.0,
+          "regRmb": 7.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 1.5,
+          "rmbPerKg": 28.0,
+          "regRmb": 7.0
+        },
+        {
+          "wMin": 1.5,
+          "wMax": 2.0,
+          "rmbPerKg": 28.0,
+          "regRmb": 7.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 28.0,
+          "regRmb": 7.0
+        }
+      ],
+      "越南": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 27.0,
+          "regRmb": 9.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 27.0,
+          "regRmb": 9.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 1.5,
+          "rmbPerKg": 27.0,
+          "regRmb": 9.0
+        },
+        {
+          "wMin": 1.5,
+          "wMax": 2.0,
+          "rmbPerKg": 27.0,
+          "regRmb": 9.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 27.0,
+          "regRmb": 9.0
+        }
+      ],
+      "韩国": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 8.0,
+          "regRmb": 23.5
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 5.0,
+          "rmbPerKg": 8.0,
+          "regRmb": 23.5
+        },
+        {
+          "wMin": 5.0,
+          "wMax": 10.0,
+          "rmbPerKg": 9.0,
+          "regRmb": 23.5
+        },
+        {
+          "wMin": 10.0,
+          "wMax": 20.0,
+          "rmbPerKg": 10.0,
+          "regRmb": 23.5
+        },
+        {
+          "wMin": 20.0,
+          "wMax": 30.0,
+          "rmbPerKg": 15.0,
+          "regRmb": 23.5
+        }
+      ],
+      "蒙古": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 27.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 27.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 1.5,
+          "rmbPerKg": 27.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 1.5,
+          "wMax": 2.0,
+          "rmbPerKg": 27.0,
+          "regRmb": 18.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 27.0,
+          "regRmb": 18.0
+        }
+      ],
+      "斯里兰卡": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 67.0,
+          "regRmb": 7.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 1.0,
+          "rmbPerKg": 67.0,
+          "regRmb": 8.0
+        },
+        {
+          "wMin": 1.0,
+          "wMax": 1.5,
+          "rmbPerKg": 67.0,
+          "regRmb": 10.0
+        },
+        {
+          "wMin": 1.5,
+          "wMax": 2.0,
+          "rmbPerKg": 67.0,
+          "regRmb": 12.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 20.0,
+          "rmbPerKg": 67.0,
+          "regRmb": 15.0
+        }
+      ],
+      "以色列": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 176.0,
+          "regRmb": 21.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 3.0,
+          "rmbPerKg": 192.0,
+          "regRmb": 26.0
+        },
+        {
+          "wMin": 3.0,
+          "wMax": 5.0,
+          "rmbPerKg": 192.0,
+          "regRmb": 30.0
+        },
+        {
+          "wMin": 5.0,
+          "wMax": 10.0,
+          "rmbPerKg": 192.0,
+          "regRmb": 60.0
+        }
+      ],
+      "沙特阿拉伯": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 91.0,
+          "regRmb": 36.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 2.0,
+          "rmbPerKg": 91.0,
+          "regRmb": 36.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 5.0,
+          "rmbPerKg": 93.0,
+          "regRmb": 36.0
+        },
+        {
+          "wMin": 5.0,
+          "wMax": 30.0,
+          "rmbPerKg": 93.0,
+          "regRmb": 36.0
+        }
+      ],
+      "阿联酋": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 75.0,
+          "regRmb": 20.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 2.0,
+          "rmbPerKg": 75.0,
+          "regRmb": 20.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 5.0,
+          "rmbPerKg": 75.0,
+          "regRmb": 20.0
+        },
+        {
+          "wMin": 5.0,
+          "wMax": 30.0,
+          "rmbPerKg": 84.0,
+          "regRmb": 20.0
+        }
+      ],
+      "卡塔尔": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 76.0,
+          "regRmb": 45.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 2.0,
+          "rmbPerKg": 76.0,
+          "regRmb": 45.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 5.0,
+          "rmbPerKg": 76.0,
+          "regRmb": 45.0
+        },
+        {
+          "wMin": 5.0,
+          "wMax": 20.0,
+          "rmbPerKg": 76.0,
+          "regRmb": 45.0
+        }
+      ],
+      "科威特": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 80.0,
+          "regRmb": 40.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 2.0,
+          "rmbPerKg": 80.0,
+          "regRmb": 40.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 5.0,
+          "rmbPerKg": 80.0,
+          "regRmb": 40.0
+        },
+        {
+          "wMin": 5.0,
+          "wMax": 20.0,
+          "rmbPerKg": 80.0,
+          "regRmb": 40.0
+        }
+      ],
+      "巴林": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 77.0,
+          "regRmb": 40.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 2.0,
+          "rmbPerKg": 77.0,
+          "regRmb": 40.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 5.0,
+          "rmbPerKg": 77.0,
+          "regRmb": 40.0
+        },
+        {
+          "wMin": 5.0,
+          "wMax": 20.0,
+          "rmbPerKg": 77.0,
+          "regRmb": 40.0
+        }
+      ],
+      "阿曼": [
+        {
+          "wMin": 0.0,
+          "wMax": 0.5,
+          "rmbPerKg": 88.0,
+          "regRmb": 38.0
+        },
+        {
+          "wMin": 0.5,
+          "wMax": 2.0,
+          "rmbPerKg": 88.0,
+          "regRmb": 38.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 5.0,
+          "rmbPerKg": 88.0,
+          "regRmb": 38.0
+        },
+        {
+          "wMin": 5.0,
+          "wMax": 20.0,
+          "rmbPerKg": 88.0,
+          "regRmb": 38.0
+        }
+      ],
+      "伊拉克": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 110.0,
+          "regRmb": 30.0
+        },
+        {
+          "wMin": 2.0,
+          "wMax": 5.0,
+          "rmbPerKg": 112.0,
+          "regRmb": 30.0
+        },
+        {
+          "wMin": 5.0,
+          "wMax": 30.0,
+          "rmbPerKg": 122.0,
+          "regRmb": 30.0
+        }
+      ],
+      "尼日利亚": [
+        {
+          "wMin": 0.0,
+          "wMax": 30.0,
+          "rmbPerKg": 118.0,
+          "regRmb": 24.0
+        }
+      ],
+      "加纳": [
+        {
+          "wMin": 0.0,
+          "wMax": 30.0,
+          "rmbPerKg": 165.0,
+          "regRmb": 22.0
+        }
+      ],
+      "乌干达": [
+        {
+          "wMin": 0.0,
+          "wMax": 30.0,
+          "rmbPerKg": 152.0,
+          "regRmb": 22.0
+        }
+      ],
+      "肯尼亚": [
+        {
+          "wMin": 0.0,
+          "wMax": 30.0,
+          "rmbPerKg": 113.0,
+          "regRmb": 22.0
+        }
+      ],
+      "摩洛哥": [
+        {
+          "wMin": 0.0,
+          "wMax": 5.0,
+          "rmbPerKg": 100.0,
+          "regRmb": 47.0
+        }
+      ],
+      "坦桑尼亚": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 118.0,
+          "regRmb": 18.0
+        }
+      ],
+      "卢旺达": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 135.0,
+          "regRmb": 18.0
+        }
+      ],
+      "安哥拉": [
+        {
+          "wMin": 0.0,
+          "wMax": 2.0,
+          "rmbPerKg": 149.0,
+          "regRmb": 23.0
+        }
+      ]
+    }
+  },
+  "yanwen484": {
+    "US": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.1,
+        "rmbPerKg": 149.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 0.101,
+        "wMax": 0.2,
+        "rmbPerKg": 143.0,
+        "pieceRmb": 18.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 0.201,
+        "wMax": 0.45,
+        "rmbPerKg": 139.0,
+        "pieceRmb": 16.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 0.451,
+        "wMax": 0.7,
+        "rmbPerKg": 132.0,
+        "pieceRmb": 16.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 0.701,
+        "wMax": 1.5,
+        "rmbPerKg": 132.0,
+        "pieceRmb": 9.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 1.501,
+        "wMax": 2.0,
+        "rmbPerKg": 132.0,
+        "pieceRmb": 9.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 125.0,
+        "pieceRmb": 9.0,
+        "minChargeKg": 0.03
+      }
+    ],
+    "MX": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.5,
+        "rmbPerKg": 101.0,
+        "pieceRmb": 18.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.501,
+        "wMax": 1.0,
+        "rmbPerKg": 103.0,
+        "pieceRmb": 19.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 1.001,
+        "wMax": 5.0,
+        "rmbPerKg": 106.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 5.001,
+        "wMax": 10.0,
+        "rmbPerKg": 106.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "PR": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.2,
+        "rmbPerKg": 134.0,
+        "pieceRmb": 32.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 0.201,
+        "wMax": 0.34,
+        "rmbPerKg": 134.0,
+        "pieceRmb": 35.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 0.341,
+        "wMax": 0.45,
+        "rmbPerKg": 134.0,
+        "pieceRmb": 35.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 0.451,
+        "wMax": 0.7,
+        "rmbPerKg": 139.0,
+        "pieceRmb": 45.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 0.701,
+        "wMax": 1.0,
+        "rmbPerKg": 139.0,
+        "pieceRmb": 45.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 1.001,
+        "wMax": 30.0,
+        "rmbPerKg": 139.0,
+        "pieceRmb": 55.0,
+        "minChargeKg": 0.03
+      }
+    ],
+    "RA": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.2,
+        "rmbPerKg": 134.0,
+        "pieceRmb": 32.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 0.201,
+        "wMax": 0.34,
+        "rmbPerKg": 134.0,
+        "pieceRmb": 35.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 0.341,
+        "wMax": 0.45,
+        "rmbPerKg": 134.0,
+        "pieceRmb": 35.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 0.451,
+        "wMax": 0.7,
+        "rmbPerKg": 139.0,
+        "pieceRmb": 45.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 0.701,
+        "wMax": 1.0,
+        "rmbPerKg": 139.0,
+        "pieceRmb": 45.0,
+        "minChargeKg": 0.03
+      },
+      {
+        "wMin": 1.001,
+        "wMax": 30.0,
+        "rmbPerKg": 139.0,
+        "pieceRmb": 55.0,
+        "minChargeKg": 0.03
+      }
+    ],
+    "FR": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.5,
+        "rmbPerKg": 113.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 0.501,
+        "wMax": 30.0,
+        "rmbPerKg": 111.0,
+        "pieceRmb": 23.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "GB": [
+      {
+        "wMin": 0.001,
+        "wMax": 1.0,
+        "rmbPerKg": 83.0,
+        "pieceRmb": 16.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 1.001,
+        "wMax": 20.0,
+        "rmbPerKg": 85.0,
+        "pieceRmb": 16.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "DE": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.1,
+        "rmbPerKg": 115.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 0.101,
+        "wMax": 0.3,
+        "rmbPerKg": 115.0,
+        "pieceRmb": 21.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 0.301,
+        "wMax": 30.0,
+        "rmbPerKg": 118.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "IT": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 101.0,
+        "pieceRmb": 25.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 103.0,
+        "pieceRmb": 25.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "ES": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 114.0,
+        "pieceRmb": 18.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 117.0,
+        "pieceRmb": 18.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "NL": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.1,
+        "rmbPerKg": 142.0,
+        "pieceRmb": 23.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 0.101,
+        "wMax": 0.2,
+        "rmbPerKg": 135.0,
+        "pieceRmb": 23.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 0.201,
+        "wMax": 2.0,
+        "rmbPerKg": 132.0,
+        "pieceRmb": 23.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 134.0,
+        "pieceRmb": 23.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "AT": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 135.0,
+        "pieceRmb": 23.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 135.0,
+        "pieceRmb": 23.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "AU": {
+      "1": [
+        {
+          "wMin": 0.001,
+          "wMax": 0.25,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 20.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.251,
+          "wMax": 0.3,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 20.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.301,
+          "wMax": 0.5,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 20.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.501,
+          "wMax": 1.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 20.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 21.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 3.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 25.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 3.001,
+          "wMax": 4.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 40.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 4.001,
+          "wMax": 5.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 40.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 5.001,
+          "wMax": 7.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 40.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 7.001,
+          "wMax": 10.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 40.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 10.001,
+          "wMax": 15.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 55.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 15.001,
+          "wMax": 22.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 55.0,
+          "minChargeKg": 0.001
+        }
+      ],
+      "2": [
+        {
+          "wMin": 0.001,
+          "wMax": 0.25,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 27.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.251,
+          "wMax": 0.3,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 27.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.301,
+          "wMax": 0.5,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 28.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.501,
+          "wMax": 1.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 32.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 34.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 3.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 34.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 3.001,
+          "wMax": 4.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 50.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 4.001,
+          "wMax": 5.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 50.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 5.001,
+          "wMax": 7.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 50.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 7.001,
+          "wMax": 10.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 50.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 10.001,
+          "wMax": 15.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 66.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 15.001,
+          "wMax": 22.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 66.0,
+          "minChargeKg": 0.001
+        }
+      ],
+      "3": [
+        {
+          "wMin": 0.001,
+          "wMax": 0.25,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 49.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.251,
+          "wMax": 0.3,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 49.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.301,
+          "wMax": 0.5,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 49.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.501,
+          "wMax": 1.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 72.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 72.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 3.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 85.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 3.001,
+          "wMax": 4.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 110.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 4.001,
+          "wMax": 5.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 110.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 5.001,
+          "wMax": 7.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 110.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 7.001,
+          "wMax": 10.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 110.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 10.001,
+          "wMax": 15.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 125.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 15.001,
+          "wMax": 22.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 125.0,
+          "minChargeKg": 0.001
+        }
+      ],
+      "4": [
+        {
+          "wMin": 0.001,
+          "wMax": 0.25,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 55.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.251,
+          "wMax": 0.3,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 55.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.301,
+          "wMax": 0.5,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 55.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.501,
+          "wMax": 1.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 95.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 115.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 3.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 117.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 3.001,
+          "wMax": 4.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 140.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 4.001,
+          "wMax": 5.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 140.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 5.001,
+          "wMax": 7.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 140.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 7.001,
+          "wMax": 10.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 140.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 10.001,
+          "wMax": 15.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 155.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 15.001,
+          "wMax": 22.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 155.0,
+          "minChargeKg": 0.001
+        }
+      ]
+    },
+    "BE": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.2,
+        "rmbPerKg": 128.0,
+        "pieceRmb": 23.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.201,
+        "wMax": 2.0,
+        "rmbPerKg": 128.0,
+        "pieceRmb": 21.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 124.0,
+        "pieceRmb": 21.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "BG": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 111.0,
+        "pieceRmb": 17.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 111.0,
+        "pieceRmb": 17.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "CA": {
+      "1": [
+        {
+          "wMin": 0.001,
+          "wMax": 0.15,
+          "rmbPerKg": 101.0,
+          "pieceRmb": 19.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.151,
+          "wMax": 0.45,
+          "rmbPerKg": 102.0,
+          "pieceRmb": 20.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.451,
+          "wMax": 0.75,
+          "rmbPerKg": 104.0,
+          "pieceRmb": 21.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.751,
+          "wMax": 1.0,
+          "rmbPerKg": 106.0,
+          "pieceRmb": 22.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 106.0,
+          "pieceRmb": 22.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 30.0,
+          "rmbPerKg": 106.0,
+          "pieceRmb": 22.0,
+          "minChargeKg": 0.05
+        }
+      ],
+      "2": [
+        {
+          "wMin": 0.001,
+          "wMax": 0.15,
+          "rmbPerKg": 95.0,
+          "pieceRmb": 24.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.151,
+          "wMax": 0.45,
+          "rmbPerKg": 96.0,
+          "pieceRmb": 23.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.451,
+          "wMax": 0.75,
+          "rmbPerKg": 98.0,
+          "pieceRmb": 23.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.751,
+          "wMax": 1.0,
+          "rmbPerKg": 100.0,
+          "pieceRmb": 23.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 100.0,
+          "pieceRmb": 23.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 30.0,
+          "rmbPerKg": 100.0,
+          "pieceRmb": 23.0,
+          "minChargeKg": 0.05
+        }
+      ],
+      "3": [
+        {
+          "wMin": 0.001,
+          "wMax": 0.15,
+          "rmbPerKg": 102.0,
+          "pieceRmb": 36.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.151,
+          "wMax": 0.45,
+          "rmbPerKg": 103.0,
+          "pieceRmb": 36.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.451,
+          "wMax": 0.75,
+          "rmbPerKg": 105.0,
+          "pieceRmb": 36.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.751,
+          "wMax": 1.0,
+          "rmbPerKg": 107.0,
+          "pieceRmb": 36.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 107.0,
+          "pieceRmb": 36.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 30.0,
+          "rmbPerKg": 107.0,
+          "pieceRmb": 36.0,
+          "minChargeKg": 0.05
+        }
+      ],
+      "4": [
+        {
+          "wMin": 0.001,
+          "wMax": 0.15,
+          "rmbPerKg": 112.0,
+          "pieceRmb": 116.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.151,
+          "wMax": 0.45,
+          "rmbPerKg": 113.0,
+          "pieceRmb": 116.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.451,
+          "wMax": 0.75,
+          "rmbPerKg": 115.0,
+          "pieceRmb": 116.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.751,
+          "wMax": 1.0,
+          "rmbPerKg": 117.0,
+          "pieceRmb": 116.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 117.0,
+          "pieceRmb": 116.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 30.0,
+          "rmbPerKg": 117.0,
+          "pieceRmb": 116.0,
+          "minChargeKg": 0.05
+        }
+      ]
+    },
+    "CH": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.2,
+        "rmbPerKg": 123.0,
+        "pieceRmb": 24.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.201,
+        "wMax": 0.5,
+        "rmbPerKg": 128.0,
+        "pieceRmb": 24.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.501,
+        "wMax": 1.0,
+        "rmbPerKg": 138.0,
+        "pieceRmb": 24.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 1.001,
+        "wMax": 2.0,
+        "rmbPerKg": 138.0,
+        "pieceRmb": 24.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 138.0,
+        "pieceRmb": 34.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "CY": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.2,
+        "rmbPerKg": 162.0,
+        "pieceRmb": 29.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 0.201,
+        "wMax": 20.0,
+        "rmbPerKg": 162.0,
+        "pieceRmb": 29.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "CZ": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 114.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 120.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "DK": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.3,
+        "rmbPerKg": 147.0,
+        "pieceRmb": 24.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.301,
+        "wMax": 2.0,
+        "rmbPerKg": 131.0,
+        "pieceRmb": 24.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 20.0,
+        "rmbPerKg": 122.0,
+        "pieceRmb": 24.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "EE": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 117.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 121.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "FI": [
+      {
+        "wMin": 0.001,
+        "wMax": 20.0,
+        "rmbPerKg": 120.0,
+        "pieceRmb": 26.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "GR": [
+      {
+        "wMin": 0.001,
+        "wMax": 30.0,
+        "rmbPerKg": 120.0,
+        "pieceRmb": 18.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "HR": [
+      {
+        "wMin": 0.001,
+        "wMax": 30.0,
+        "rmbPerKg": 160.0,
+        "pieceRmb": 24.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "HU": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 133.0,
+        "pieceRmb": 21.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 137.0,
+        "pieceRmb": 21.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "IE": [
+      {
+        "wMin": 0.001,
+        "wMax": 20.0,
+        "rmbPerKg": 142.0,
+        "pieceRmb": 23.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "LT": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 118.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 121.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "LU": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.2,
+        "rmbPerKg": 163.0,
+        "pieceRmb": 29.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.201,
+        "wMax": 2.0,
+        "rmbPerKg": 160.0,
+        "pieceRmb": 26.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 158.0,
+        "pieceRmb": 26.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "LV": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 122.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 123.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "MT": [
+      {
+        "wMin": 0.001,
+        "wMax": 20.0,
+        "rmbPerKg": 189.0,
+        "pieceRmb": 30.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "NO": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.1,
+        "rmbPerKg": 139.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.101,
+        "wMax": 0.3,
+        "rmbPerKg": 124.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.301,
+        "wMax": 5.0,
+        "rmbPerKg": 119.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "PL": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.2,
+        "rmbPerKg": 114.0,
+        "pieceRmb": 13.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 0.201,
+        "wMax": 30.0,
+        "rmbPerKg": 116.0,
+        "pieceRmb": 15.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "PT": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 132.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 135.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "RO": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 118.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 118.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "SE": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.3,
+        "rmbPerKg": 122.0,
+        "pieceRmb": 16.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.301,
+        "wMax": 2.0,
+        "rmbPerKg": 119.0,
+        "pieceRmb": 21.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 20.0,
+        "rmbPerKg": 119.0,
+        "pieceRmb": 21.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "SI": [
+      {
+        "wMin": 0.001,
+        "wMax": 30.0,
+        "rmbPerKg": 151.0,
+        "pieceRmb": 24.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "SK": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 135.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 30.0,
+        "rmbPerKg": 138.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "UA": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.15,
+        "rmbPerKg": 134.0,
+        "pieceRmb": 20.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 0.151,
+        "wMax": 30.0,
+        "rmbPerKg": 119.0,
+        "pieceRmb": 12.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "BR": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.5,
+        "rmbPerKg": 105.0,
+        "pieceRmb": 45.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.501,
+        "wMax": 1.0,
+        "rmbPerKg": 105.0,
+        "pieceRmb": 46.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 1.001,
+        "wMax": 1.5,
+        "rmbPerKg": 105.0,
+        "pieceRmb": 48.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 1.501,
+        "wMax": 2.0,
+        "rmbPerKg": 105.0,
+        "pieceRmb": 52.5,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 3.0,
+        "rmbPerKg": 105.0,
+        "pieceRmb": 69.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 3.001,
+        "wMax": 5.0,
+        "rmbPerKg": 105.0,
+        "pieceRmb": 79.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "AR": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.25,
+        "rmbPerKg": 140.0,
+        "pieceRmb": 75.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.251,
+        "wMax": 0.5,
+        "rmbPerKg": 140.0,
+        "pieceRmb": 80.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.501,
+        "wMax": 1.0,
+        "rmbPerKg": 140.0,
+        "pieceRmb": 92.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 1.001,
+        "wMax": 2.0,
+        "rmbPerKg": 140.0,
+        "pieceRmb": 110.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "CL": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.5,
+        "rmbPerKg": 97.0,
+        "pieceRmb": 23.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.501,
+        "wMax": 1.0,
+        "rmbPerKg": 110.0,
+        "pieceRmb": 25.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 1.001,
+        "wMax": 5.0,
+        "rmbPerKg": 110.0,
+        "pieceRmb": 27.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "CO": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 134.0,
+        "pieceRmb": 26.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 3.0,
+        "rmbPerKg": 134.0,
+        "pieceRmb": 26.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "PE": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 185.0,
+        "pieceRmb": 21.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "NZ": [
+      {
+        "wMin": 0.001,
+        "wMax": 25.0,
+        "rmbPerKg": 98.0,
+        "pieceRmb": 26.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "HK": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 15.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 20.0,
+        "rmbPerKg": 15.0,
+        "pieceRmb": 40.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "IN": [
+      {
+        "wMin": 0.0,
+        "wMax": 30.0,
+        "rmbPerKg": 118.0,
+        "pieceRmb": 13.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "KR": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 6.0,
+        "pieceRmb": 17.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 20.0,
+        "rmbPerKg": 8.0,
+        "pieceRmb": 17.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "MY": [
+      {
+        "wMin": 0.0,
+        "wMax": 1.0,
+        "rmbPerKg": 32.5,
+        "pieceRmb": 21.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 1.001,
+        "wMax": 30.0,
+        "rmbPerKg": 35.5,
+        "pieceRmb": 16.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "PH": [
+      {
+        "wMin": 0.0,
+        "wMax": 0.5,
+        "rmbPerKg": 92.0,
+        "pieceRmb": 12.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 0.501,
+        "wMax": 10.0,
+        "rmbPerKg": 88.0,
+        "pieceRmb": 12.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 10.001,
+        "wMax": 30.0,
+        "rmbPerKg": 88.0,
+        "pieceRmb": 11.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "SG": [
+      {
+        "wMin": 0.001,
+        "wMax": 30.0,
+        "rmbPerKg": 45.0,
+        "pieceRmb": 16.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "TH": [
+      {
+        "wMin": 0.001,
+        "wMax": 30.0,
+        "rmbPerKg": 50.0,
+        "pieceRmb": 25.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "AE": [
+      {
+        "wMin": 0.001,
+        "wMax": 1.0,
+        "rmbPerKg": 75.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 1.001,
+        "wMax": 5.0,
+        "rmbPerKg": 75.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 5.001,
+        "wMax": 30.0,
+        "rmbPerKg": 75.0,
+        "pieceRmb": 24.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "BH": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.3,
+        "rmbPerKg": 64.0,
+        "pieceRmb": 37.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.301,
+        "wMax": 0.5,
+        "rmbPerKg": 75.0,
+        "pieceRmb": 40.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.501,
+        "wMax": 1.5,
+        "rmbPerKg": 95.0,
+        "pieceRmb": 55.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 1.501,
+        "wMax": 5.0,
+        "rmbPerKg": 110.0,
+        "pieceRmb": 65.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "JO": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.5,
+        "rmbPerKg": 120.0,
+        "pieceRmb": 37.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.501,
+        "wMax": 2.0,
+        "rmbPerKg": 120.0,
+        "pieceRmb": 30.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 5.0,
+        "rmbPerKg": 118.0,
+        "pieceRmb": 25.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 5.001,
+        "wMax": 15.0,
+        "rmbPerKg": 118.0,
+        "pieceRmb": 25.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "OM": [
+      {
+        "wMin": 0.001,
+        "wMax": 20.0,
+        "rmbPerKg": 103.0,
+        "pieceRmb": 37.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "QA": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.5,
+        "rmbPerKg": 75.0,
+        "pieceRmb": 45.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.501,
+        "wMax": 2.0,
+        "rmbPerKg": 80.0,
+        "pieceRmb": 45.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 5.0,
+        "rmbPerKg": 95.0,
+        "pieceRmb": 55.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 5.001,
+        "wMax": 30.0,
+        "rmbPerKg": 95.0,
+        "pieceRmb": 55.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "SA": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.5,
+        "rmbPerKg": 83.0,
+        "pieceRmb": 40.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.501,
+        "wMax": 1.0,
+        "rmbPerKg": 84.0,
+        "pieceRmb": 35.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 1.001,
+        "wMax": 2.0,
+        "rmbPerKg": 84.0,
+        "pieceRmb": 35.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 5.0,
+        "rmbPerKg": 84.0,
+        "pieceRmb": 35.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 5.001,
+        "wMax": 30.0,
+        "rmbPerKg": 84.0,
+        "pieceRmb": 25.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "VN": [
+      {
+        "wMin": 0.001,
+        "wMax": 30.0,
+        "rmbPerKg": 31.0,
+        "pieceRmb": 11.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "AO": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 180.0,
+        "pieceRmb": 24.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "GH": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 170.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 10.0,
+        "rmbPerKg": 260.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 10.001,
+        "wMax": 30.0,
+        "rmbPerKg": 230.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "KE": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 135.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 10.0,
+        "rmbPerKg": 190.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 10.001,
+        "wMax": 30.0,
+        "rmbPerKg": 170.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "MA": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 130.0,
+        "pieceRmb": 48.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "NG": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 140.0,
+        "pieceRmb": 27.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 10.0,
+        "rmbPerKg": 195.0,
+        "pieceRmb": 27.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 10.001,
+        "wMax": 30.0,
+        "rmbPerKg": 175.0,
+        "pieceRmb": 27.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "RW": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 155.0,
+        "pieceRmb": 18.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "TZ": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 125.0,
+        "pieceRmb": 21.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "UG": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 160.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 10.0,
+        "rmbPerKg": 250.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 10.001,
+        "wMax": 30.0,
+        "rmbPerKg": 220.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "ZA": [
+      {
+        "wMin": 0.001,
+        "wMax": 8.0,
+        "rmbPerKg": 171.0,
+        "pieceRmb": 28.0,
+        "minChargeKg": 0.05
+      }
+    ]
+  },
+  "cainiaoIsoFallback": {
+    "HK": {
+      "S5059": [
+        {
+          "wMin": 0,
+          "wMax": 2,
+          "rmbPerKg": 15,
+          "regRmb": 22
+        },
+        {
+          "wMin": 2,
+          "wMax": 20,
+          "rmbPerKg": 15,
+          "regRmb": 40
+        }
+      ],
+      "OH": [
+        {
+          "wMin": 0,
+          "wMax": 2,
+          "rmbPerKg": 20,
+          "regRmb": 21
+        },
+        {
+          "wMin": 2,
+          "wMax": 20,
+          "rmbPerKg": 15,
+          "regRmb": 40
+        }
+      ]
+    }
+  },
+  "cainiaoCountryToIso": {
+    "美国": "US",
+    "墨西哥": "MX",
+    "波多黎各": "PR",
+    "美国偏远地区": "RA",
+    "法国": "FR",
+    "德国": "DE",
+    "意大利": "IT",
+    "西班牙": "ES",
+    "荷兰": "NL",
+    "奥地利": "AT",
+    "比利时": "BE",
+    "保加利亚": "BG",
+    "瑞士": "CH",
+    "塞浦路斯": "CY",
+    "捷克": "CZ",
+    "丹麦": "DK",
+    "爱沙尼亚": "EE",
+    "芬兰": "FI",
+    "希腊": "GR",
+    "克罗地亚": "HR",
+    "匈牙利": "HU",
+    "爱尔兰": "IE",
+    "立陶宛": "LT",
+    "卢森堡": "LU",
+    "拉脱维亚": "LV",
+    "马耳他": "MT",
+    "挪威": "NO",
+    "波兰": "PL",
+    "葡萄牙": "PT",
+    "罗马尼亚": "RO",
+    "瑞典": "SE",
+    "斯洛文尼亚": "SI",
+    "斯洛伐克": "SK",
+    "乌克兰": "UA",
+    "巴西": "BR",
+    "阿根廷": "AR",
+    "智利": "CL",
+    "哥伦比亚": "CO",
+    "秘鲁": "PE",
+    "新西兰": "NZ",
+    "中国香港": "HK",
+    "印度": "IN",
+    "韩国": "KR",
+    "马来西亚": "MY",
+    "菲律宾": "PH",
+    "新加坡": "SG",
+    "泰国": "TH",
+    "阿联酋": "AE",
+    "巴林": "BH",
+    "约旦": "JO",
+    "阿曼": "OM",
+    "卡塔尔": "QA",
+    "沙特阿拉伯": "SA",
+    "越南": "VN",
+    "安哥拉": "AO",
+    "加纳": "GH",
+    "肯尼亚": "KE",
+    "摩洛哥": "MA",
+    "尼日利亚": "NG",
+    "卢旺达": "RW",
+    "坦桑尼亚": "TZ",
+    "乌干达": "UG",
+    "南非": "ZA",
+    "日本": "JP",
+    "加拿大": "CA",
+    "英国": "GB",
+    "澳大利亚": "AU"
+  }
+}

@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { Mail, MessageCircle, Package, PenTool, Truck } from "lucide-react";
+import { publicSupportEmail } from "@/lib/support-contact";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 
 export const metadata = {
   title: "Wholesale — DIGI-TEMP & RM-TONNEAU programs",
   description:
     "B2B programs for HUMPBUCK lines: DIGI-TEMP ana-digi and RM-TONNEAU tonneau — MOQ tiers, sampling, dial and packaging customization.",
+  alternates: {
+    canonical: "/wholesale",
+  },
 };
 
 const steps = [
@@ -16,6 +20,11 @@ const steps = [
 ] as const;
 
 export default function WholesalePage() {
+  const supportMail = publicSupportEmail();
+  const mailtoMockupHref = `mailto:${supportMail}?subject=${encodeURIComponent(
+    "HUMPBUCK wholesale — mockup request",
+  )}`;
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
       <div className="max-w-3xl">
@@ -39,9 +48,9 @@ export default function WholesalePage() {
             MOQ starting points
           </div>
           <ul className="mt-4 space-y-2 text-sm text-ink/85">
-            <li>Express lane: 100–300 units</li>
-            <li>Growth lane: 300–800 units</li>
-            <li>Brand lane: 800+ with deeper customization</li>
+            <li>Express lane: 500–800 pcs</li>
+            <li>Growth lane: 800–2,000 pcs</li>
+            <li>Brand lane: 2,000+ pcs with deeper customization</li>
           </ul>
           <p className="mt-4 text-xs text-muted">
             Exact MOQs depend on dial complexity, materials, and packaging.
@@ -83,45 +92,50 @@ export default function WholesalePage() {
         ))}
       </div>
 
-      <div className="mt-12 rounded-[28px] border border-[color:var(--color-line)] bg-ink p-8 text-paper sm:p-10">
+      <div className="mt-12 rounded-3xl border border-stone-400/25 bg-stone-300/90 p-8 shadow-[var(--shadow-card)] sm:p-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
-            <h2 className="font-serif text-2xl">Start with a structured brief</h2>
-            <p className="mt-3 text-sm text-white/70">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
+              Next step
+            </p>
+            <h2 className="mt-3 font-serif text-2xl text-ink">
+              Start with a structured brief
+            </h2>
+            <p className="mt-3 text-sm text-muted">
               Email works—but WhatsApp is fastest for photos, references, and
               quick iterations.
             </p>
             <form className="mt-6 grid gap-3 sm:grid-cols-2">
               <label className="sm:col-span-2">
-                <span className="text-[10px] uppercase tracking-[0.16em] text-white/50">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
                   Company / project name
                 </span>
-                <input className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none placeholder:text-white/35" />
+                <input className="mt-2 w-full rounded-2xl border border-stone-400/30 bg-paper px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-muted/90 focus:border-digital-dim/45 focus:ring-2 focus:ring-digital/15" />
               </label>
               <label>
-                <span className="text-[10px] uppercase tracking-[0.16em] text-white/50">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
                   Target region
                 </span>
-                <input className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none placeholder:text-white/35" />
+                <input className="mt-2 w-full rounded-2xl border border-stone-400/30 bg-paper px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-muted/90 focus:border-digital-dim/45 focus:ring-2 focus:ring-digital/15" />
               </label>
               <label>
-                <span className="text-[10px] uppercase tracking-[0.16em] text-white/50">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
                   Estimated qty
                 </span>
-                <input className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none placeholder:text-white/35" />
+                <input className="mt-2 w-full rounded-2xl border border-stone-400/30 bg-paper px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-muted/90 focus:border-digital-dim/45 focus:ring-2 focus:ring-digital/15" />
               </label>
               <label className="sm:col-span-2">
-                <span className="text-[10px] uppercase tracking-[0.16em] text-white/50">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
                   Notes
                 </span>
                 <textarea
                   rows={4}
-                  className="mt-2 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none placeholder:text-white/35"
+                  className="mt-2 w-full rounded-2xl border border-stone-400/30 bg-paper px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-muted/90 focus:border-digital-dim/45 focus:ring-2 focus:ring-digital/15"
                   placeholder="Materials, references, deadline…"
                 />
               </label>
             </form>
-            <p className="mt-4 text-xs text-white/45">
+            <p className="mt-4 text-xs text-muted">
               Demo form—wire to your CRM or email endpoint before launch.
             </p>
           </div>
@@ -135,16 +149,17 @@ export default function WholesalePage() {
               <MessageCircle size={18} />
               WhatsApp
             </a>
-            <button
-              type="button"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/90"
+            <a
+              href={mailtoMockupHref}
+              className="inline-flex items-center justify-center gap-2 rounded-2xl border border-stone-400/35 bg-paper px-6 py-4 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink/90 shadow-sm transition hover:border-ink/20 hover:bg-stone-100/90"
+              aria-label={`Email ${supportMail} for a wholesale mockup request`}
             >
               <Mail size={18} />
               Email mockup request
-            </button>
+            </a>
             <Link
               href="/shop"
-              className="text-center text-[12px] text-white/60 underline-offset-4 hover:text-white hover:underline"
+              className="text-center text-[12px] text-muted underline-offset-4 hover:text-ink hover:underline"
             >
               Browse retail catalog
             </Link>
