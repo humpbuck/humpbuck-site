@@ -181,17 +181,20 @@ export function SiteHeader() {
         onClick={() => setOpen(false)}
       />
       <div
-        className={`fixed left-0 top-0 z-40 h-full w-[min(88vw,360px)] border-r border-[color:var(--color-line)] bg-paper transition-[transform,box-shadow] duration-300 ease-out md:hidden ${
+        className={`fixed left-0 top-0 z-[60] h-full w-[min(88vw,360px)] border-r border-[color:var(--color-line)] bg-paper transition-[transform,box-shadow] duration-300 ease-out md:hidden ${
           open ? "translate-x-0 shadow-2xl" : "-translate-x-full shadow-none"
         }`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Main navigation"
+        aria-hidden={!open}
       >
-        <div className="flex h-16 items-center justify-between border-b border-[color:var(--color-line)] px-4">
-          <span className="font-serif text-lg">Menu</span>
+        <div className="flex h-16 items-center justify-end border-b border-[color:var(--color-line)] px-3 sm:px-4">
           <button
             type="button"
-            className="rounded-lg p-2 text-ink/70 hover:bg-ink/[0.04]"
+            className="rounded-lg p-2 text-ink/70 hover:bg-ink/[0.04] active:bg-ink/10"
             onClick={() => setOpen(false)}
-            aria-label="Close"
+            aria-label="Close menu"
           >
             <X size={22} />
           </button>
