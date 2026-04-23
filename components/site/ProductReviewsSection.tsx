@@ -10,7 +10,7 @@ import {
   parseReviewImageUrls,
   reviewAuthorLabel,
 } from "@/lib/product-reviews-queries";
-import { getBuyerAvatarDisplayUrl } from "@/lib/avatar-resolve";
+import { getReviewAvatarDisplayUrl } from "@/lib/avatar-resolve";
 import { SITE_LOCALE } from "@/lib/site-locale";
 
 export async function ProductReviewsSection({
@@ -68,7 +68,7 @@ export async function ProductReviewsSection({
             });
             const imgs = parseReviewImageUrls(r.imageUrlsJson);
             const author = reviewAuthorLabel(r);
-            const avatarSrc = getBuyerAvatarDisplayUrl({
+            const avatarSrc = getReviewAvatarDisplayUrl({
               image: r.user.image,
               email: r.user.email,
             });

@@ -40,7 +40,24 @@ export function getBuyerAvatarDisplayUrl(input: {
   if (raw) return raw;
   if (!isGravatarAvatarsEnabled()) return null;
   const em = input.email?.trim();
-  /* `mp` = grey “mystery person” (looks like a missing avatar). `identicon` = unique pattern per email when the user has no custom Gravatar. */
+  /* `mp` = grey “mystery person”; `identicon` = geometric pattern. Header/account use this path. */
   if (em) return gravatarUrlForEmail(em, 200, "identicon");
+  return null;
+}
+
+/**
+ * **PDP buyer reviews only:** custom `User.image` first, else a deterministic stock portrait
+ * (same style as the old DB `https://i.pravatar.cc/...` URLs) via `?u=email` — no row migration needed.
+ */
+export function getReviewAvatarDisplayUrl(input: {
+  image: string | null | undefined;
+  email: string | null | undefined;
+}): string | null {
+  const raw = input.image?.trim();
+  if (raw) return raw;
+  const em = input.email?.trim();
+  if (em) {
+    return `https://i.pravatar.cc/200?u=${encodeURIComponent(em)}`;
+  }
   return null;
 }

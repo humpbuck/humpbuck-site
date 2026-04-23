@@ -5,8 +5,8 @@ declare module "next-auth" {
     user: {
       id: string;
       /**
-       * Resolved URL to show in header: DB `image` (upload or preset) or Gravatar from email.
-       * Matches `getBuyerAvatarDisplayUrl` used on product reviews.
+       * Resolved URL to show in header: DB `image` (upload or preset) or Gravatar from email
+       * (`getBuyerAvatarDisplayUrl`). PDP reviews use `getReviewAvatarDisplayUrl` (Pravatar fallback).
        */
       displayAvatarUrl?: string | null;
     } & DefaultSession["user"];
