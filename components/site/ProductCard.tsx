@@ -3,7 +3,14 @@ import Link from "next/link";
 import type { Product } from "@/lib/catalog";
 import { formatPrice } from "@/lib/catalog";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({
+  product,
+  imagePriority = false,
+}: {
+  product: Product;
+  /** First viewport row(s) of grids — LCP + avoid lazy for above-the-fold. */
+  imagePriority?: boolean;
+}) {
   return (
     <Link
       href={`/product/${product.slug}`}
@@ -17,6 +24,8 @@ export function ProductCard({ product }: { product: Product }) {
           src={product.image}
           alt={product.name}
           fill
+          priority={imagePriority}
+          fetchPriority={imagePriority ? "high" : undefined}
           sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
           className="object-cover object-center transition duration-500 group-hover:scale-[1.03]"
         />

@@ -122,6 +122,7 @@ export default function HomePage() {
                 alt="HUMPBUCK DIGI-TEMP 2301"
                 fill
                 priority
+                fetchPriority="high"
                 className="object-cover opacity-95 transition group-hover:opacity-100"
                 sizes="(max-width:767px) 100vw, 50vw"
               />
@@ -258,8 +259,12 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
-            {featured.map((p) => (
-              <ProductCard key={p.slug} product={p} />
+            {featured.map((p, i) => (
+              <ProductCard
+                key={p.slug}
+                product={p}
+                imagePriority={i < 4}
+              />
             ))}
           </div>
         </div>

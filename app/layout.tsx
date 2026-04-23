@@ -3,6 +3,7 @@ import { DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/app-providers";
 import { OrganizationJsonLd } from "@/components/seo/organization-json-ld";
+import { R2_PUBLIC_BASE } from "@/lib/r2";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 
 const fontBody = DM_Sans({
@@ -62,6 +63,10 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       className={`${fontBody.variable} ${fontDisplay.variable} h-full`}
     >
+      <head>
+        <link rel="preconnect" href={R2_PUBLIC_BASE} crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href={R2_PUBLIC_BASE} />
+      </head>
       <body className="flex min-h-full flex-col font-sans">
         <OrganizationJsonLd />
         <AppProviders>{children}</AppProviders>

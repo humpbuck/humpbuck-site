@@ -1,4 +1,7 @@
-/** Cloudflare R2 public development URL (bucket: humpbuck-assets). */
+/**
+ * Cloudflare R2 public development URL (bucket: humpbuck-assets).
+ * For Lighthouse “cache lifetime” on large media, set per-object `Cache-Control` in R2 (see `.env.example` → R2 public object caching).
+ */
 export const R2_PUBLIC_BASE =
   "https://pub-c8982b0d0821469baad86145989f3f64.r2.dev" as const;
 

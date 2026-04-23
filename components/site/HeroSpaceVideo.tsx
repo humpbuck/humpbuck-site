@@ -67,7 +67,7 @@ export function HeroSpaceVideo() {
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="none"
           aria-hidden
           onError={tryNext}
         >
