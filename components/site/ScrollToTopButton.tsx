@@ -2,15 +2,14 @@
 
 import { ChevronUp } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-
-const SHOW_AFTER_PX = 480;
+import { FAB_SHOW_AFTER_SCROLL_PX } from "@/lib/floating-actions";
 
 export function ScrollToTopButton() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
-      setVisible(window.scrollY > SHOW_AFTER_PX);
+      setVisible(window.scrollY > FAB_SHOW_AFTER_SCROLL_PX);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -26,7 +25,7 @@ export function ScrollToTopButton() {
       type="button"
       onClick={scrollTop}
       aria-label="Back to top"
-      className={`fixed bottom-28 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--color-line)] bg-paper/95 text-ink shadow-[var(--shadow-card)] backdrop-blur-sm transition-all duration-200 hover:bg-white hover:shadow-lg md:bottom-32 md:right-8 ${
+      className={`fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--color-line)] bg-paper/95 text-ink shadow-[var(--shadow-card)] backdrop-blur-sm transition-all duration-200 hover:bg-white hover:shadow-lg md:bottom-8 md:right-8 ${
         visible
           ? "pointer-events-auto translate-y-0 opacity-100"
           : "pointer-events-none translate-y-2 opacity-0"
