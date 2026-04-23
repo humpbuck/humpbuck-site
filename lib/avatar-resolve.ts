@@ -40,6 +40,7 @@ export function getBuyerAvatarDisplayUrl(input: {
   if (raw) return raw;
   if (!isGravatarAvatarsEnabled()) return null;
   const em = input.email?.trim();
-  if (em) return gravatarUrlForEmail(em, 200, "mp");
+  /* `mp` = grey “mystery person” (looks like a missing avatar). `identicon` = unique pattern per email when the user has no custom Gravatar. */
+  if (em) return gravatarUrlForEmail(em, 200, "identicon");
   return null;
 }
