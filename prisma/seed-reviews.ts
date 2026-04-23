@@ -21,11 +21,26 @@
  * 4. Redeploy or open the product PDP; reviews are from DB, not R2.
  */
 import { randomUUID } from "node:crypto";
+import { readFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
 import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
 import { getAllProducts } from "../lib/catalog";
 
 loadEnvConfig(process.cwd());
+/** Shell/IDE may set DATABASE_URL to localhost; for this script, `.env.local` wins. */
+const el = join(process.cwd(), ".env.local");
+if (existsSync(el)) {
+  for (const line of readFileSync(el, "utf8").split("\n")) {
+    const t = line.trim();
+    if (!t.startsWith("DATABASE_URL=")) continue;
+    let v = t.slice("DATABASE_URL=".length).trim();
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'")))
+      v = v.slice(1, -1);
+    process.env.DATABASE_URL = v;
+    break;
+  }
+}
 
 const prisma = new PrismaClient();
 
