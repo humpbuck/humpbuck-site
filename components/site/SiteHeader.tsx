@@ -189,10 +189,17 @@ export function SiteHeader() {
         aria-label="Main navigation"
         aria-hidden={!open}
       >
-        <div className="flex h-16 items-center justify-end border-b border-[color:var(--color-line)] px-3 sm:px-4">
+        <div className="flex h-16 min-w-0 items-center justify-between border-b border-[color:var(--color-line)] px-3 sm:px-4">
+          <Link
+            href="/"
+            onClick={() => setOpen(false)}
+            className="min-w-0 truncate font-serif text-xl tracking-tight text-ink"
+          >
+            HUMPBUCK
+          </Link>
           <button
             type="button"
-            className="rounded-lg p-2 text-ink/70 hover:bg-ink/[0.04] active:bg-ink/10"
+            className="shrink-0 rounded-lg p-2 text-ink/70 hover:bg-ink/[0.04] active:bg-ink/10"
             onClick={() => setOpen(false)}
             aria-label="Close menu"
           >
