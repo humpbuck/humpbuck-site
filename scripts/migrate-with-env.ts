@@ -13,12 +13,6 @@ if (!process.env.DATABASE_URL?.trim()) {
   );
   process.exit(1);
 }
-if (!process.env.DIRECT_URL?.trim()) {
-  console.error(
-    "DIRECT_URL is missing. With Neon, add the direct (non-pooler) connection string from the Neon console (see .env.example).",
-  );
-  process.exit(1);
-}
 
 execSync("npx prisma migrate deploy", {
   stdio: "inherit",
