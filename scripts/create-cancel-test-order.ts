@@ -10,6 +10,7 @@
  */
 import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
+import { notifyMerchantOrderPaid } from "../lib/merchant-order-email";
 
 loadEnvConfig(process.cwd());
 
@@ -98,6 +99,8 @@ async function main() {
     },
   });
 
+  await notifyMerchantOrderPaid(order.id);
+
   const base = publicBaseUrl();
 
   console.log("");
@@ -110,7 +113,10 @@ async function main() {
   console.log("  ", `${base}/account/orders/${order.id}`);
   console.log("");
   console.log(
-    "Emails need BREVO_API_KEY + BREVO_SENDER_EMAIL in .env.local.",
+    "Merchant new-order email (Brevo): sent to MERCHANT_NOTIFY_EMAIL or humpbuck@outlook.com if BREVO_API_KEY + BREVO_SENDER_EMAIL are set.",
+  );
+  console.log(
+    "Buyer receipt: use PayPal/Stripe — this script does not email the buyer.",
   );
   console.log("");
 }
