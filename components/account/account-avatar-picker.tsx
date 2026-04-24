@@ -122,17 +122,9 @@ export function AccountAvatarPicker({ initialImage }: Props) {
       <p className="mt-2 max-w-lg text-sm text-muted">
         If you do not use a custom photo, we show your{" "}
         <strong className="font-medium text-ink/90">Gravatar</strong> for this
-        email (header and reviews).         You can also pick one of 30{" "}
-        <a
-          href="https://www.openpeeps.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-medium text-ink/90 underline-offset-4 hover:underline"
-        >
-          Open Peeps
-        </a>
-        -style busts (hand-drawn look) or upload your own. Uploads are
-        compressed to WebP in your browser, then stored in R2{" "}
+        email (header and reviews). Choose one of 30 built-in avatars
+        (hosted on our CDN) or upload your own. Uploads are compressed to WebP
+        in your browser, then stored in R2 under{" "}
         <code className="rounded bg-paper px-1 text-xs">Avatar/</code>.
       </p>
 
@@ -186,7 +178,7 @@ export function AccountAvatarPicker({ initialImage }: Props) {
 
       <div className="mt-6">
         <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          30 Open Peeps–style picks
+          30 built-in avatars
         </p>
         <div className="mt-3 flex max-h-56 flex-wrap gap-2 overflow-y-auto pr-1">
           {BUYER_AVATAR_PRESET_URLS.map((url) => (
@@ -200,7 +192,7 @@ export function AccountAvatarPicker({ initialImage }: Props) {
                   ? "ring-ink"
                   : "ring-transparent hover:ring-ink/30"
               } disabled:opacity-50`}
-              aria-label="Choose Open Peeps style avatar"
+              aria-label="Choose built-in avatar"
             >
               <PresetAvatarImage src={url} sizes="48px" />
             </button>

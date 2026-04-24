@@ -4,6 +4,7 @@ export function shouldUnoptimizeAvatarUrl(url: string | null | undefined): boole
   return (
     url.includes("i.pravatar.cc") ||
     url.includes("gravatar.com") ||
-    url.includes("api.dicebear.com")
+    url.includes("api.dicebear.com") ||
+    url.includes("r2.dev")
   );
 }

@@ -29,7 +29,7 @@
 - **页面上能看到的评论**来自数据库表 `ProductReview`（Prisma），**不是**扫 R2 的 `reviews/` 目录。仅有 R2 文件夹而没有数据库记录，PDP 仍会显示 “No reviews yet”。  
 - 本地/新库在迁移后需要演示数据时：`npm run db:seed-reviews`（每品约 5–8 条、五星、主贴无图，见 `prisma/seed-reviews.ts`）。  
 - 用户上传的**评论图**：压缩并 WebP 后走 presign 上传到 R2，路径规则为 `reviews/{slug}/…`，其中 **`{slug}` 为商品 URL slug**（与 `lib/catalog` 一致），**不要**用长商品标题作文件夹名，否则与 `lib/r2-review-upload.ts` 中逻辑不一致。  
-- **头像（顶栏 = 评论）**：`User.image` 有值 → 本站图（R2 或 30 个 **Open Peeps 风** 预设，DiceBear `open-peeps`，见 [openpeeps.com](https://www.openpeeps.com/)）；**为空**且允许 Gravatar → **Gravatar**（`lib/avatar-resolve.ts`）。否则 → **首字母**。旧数据可 `npm run db:fix-review-avatars`。
+- **头像（顶栏 = 评论）**：`User.image` 有值 → 本站图（R2 或 30 个**内置**预设 PNG，路径 `Avatar/avatars-default/avatars 01.png`…）；**为空**且允许 Gravatar → **Gravatar**（`lib/avatar-resolve.ts`）。否则 → **首字母**。旧数据可 `npm run db:fix-review-avatars`。
 
 ## 4. 数据库与迁移
 

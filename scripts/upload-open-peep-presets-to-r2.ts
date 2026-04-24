@@ -1,4 +1,7 @@
 /**
+ * Optional: uploads DiceBear open-peeps to `Avatar/presets/open-peep-NN.png`.
+ * Production presets are hand-managed under `Avatar/avatars-default/` (see
+ * `lib/avatar-presets.ts`).
  * Fetches 30 Open Peeps–style PNGs (same seeds as the previous DiceBear URLs)
  * and uploads them to R2: Avatar/presets/open-peep-01.png … open-peep-30.png
  *

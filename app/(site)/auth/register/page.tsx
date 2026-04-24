@@ -135,8 +135,8 @@ function RegisterForm() {
             Optional — or skip to use your{" "}
             <strong className="font-medium text-ink/90">Gravatar</strong> for
             this email everywhere (header, reviews). You can also add a photo
-            later under Account → Profile (30 Open Peeps–style picks or R2 WebP
-            upload).
+            later under Account → Profile (30 built-in avatars or a WebP
+            upload to R2).
           </p>
           <div className="mt-3 flex max-h-40 flex-wrap gap-2 overflow-y-auto rounded-xl border border-[color:var(--color-line)] bg-paper/50 p-3">
             <button
@@ -158,7 +158,7 @@ function RegisterForm() {
                 className={`relative h-11 w-11 shrink-0 overflow-hidden rounded-full ring-2 transition ${
                   avatarPreset === idx ? "ring-ink" : "ring-transparent hover:ring-ink/25"
                 }`}
-                aria-label={`Open Peeps style avatar ${idx + 1}`}
+                aria-label={`Built-in avatar ${idx + 1}`}
               >
                 <PresetAvatarImage src={url} sizes="44px" />
               </button>
