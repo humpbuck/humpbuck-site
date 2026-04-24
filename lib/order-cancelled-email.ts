@@ -13,6 +13,7 @@ import { getProductBySlug } from "@/lib/catalog";
 import { parseOrderItemsJson } from "@/lib/parse-order-items";
 import { publicSupportEmail } from "@/lib/support-contact";
 import { SITE_LOCALE } from "@/lib/site-locale";
+import { adminPath } from "@/lib/admin-path";
 import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/whatsapp";
 
 const DEFAULT_MERCHANT_EMAIL = "humpbuck@outlook.com";
@@ -234,7 +235,7 @@ export async function buildOrderCancelledEmailPayload(
 
   const ctaUrl = isBuyer
     ? `${base}/account/orders`
-    : `${base}/admin/orders/${encodeURIComponent(order.id)}`;
+    : `${base}${adminPath(`/orders/${order.id}`)}`;
   const ctaLabel = isBuyer ? "View order history" : "Open order in admin";
 
   let buyerEngagementRows = "";

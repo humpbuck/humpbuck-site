@@ -13,6 +13,7 @@ import {
   paymentProviderLabel,
   trafficSourceLabel,
 } from "@/lib/admin/order-ui";
+import { adminPath } from "@/lib/admin-path";
 
 export type AdminOrderRow = {
   id: string;
@@ -195,7 +196,7 @@ export function AdminOrdersTable({ rows }: { rows: AdminOrderRow[] }) {
                   </td>
                   <td className="px-3 py-3 align-middle">
                     <Link
-                      href={`/admin/orders/${o.id}`}
+                      href={adminPath(`/orders/${o.id}`)}
                       className="font-medium text-sky-800 underline-offset-2 hover:underline"
                     >
                       #{displayId} {name}
@@ -228,7 +229,7 @@ export function AdminOrdersTable({ rows }: { rows: AdminOrderRow[] }) {
                   <td className="px-2 py-3 align-middle">
                     <div className="flex items-center justify-end gap-0.5">
                       <Link
-                        href={`/admin/orders/${o.id}`}
+                        href={adminPath(`/orders/${o.id}`)}
                         className="inline-flex rounded-lg p-1.5 text-sky-700 hover:bg-sky-50"
                         aria-label="View order"
                       >

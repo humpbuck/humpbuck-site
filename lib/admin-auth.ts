@@ -1,6 +1,7 @@
 import { createHash, createHmac, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { adminLoginPath } from "@/lib/admin-path";
 
 export const ADMIN_COOKIE = "humpbuck_admin";
 
@@ -48,7 +49,7 @@ export async function getAdminToken(): Promise<string | undefined> {
 export async function assertAdmin(): Promise<void> {
   const token = await getAdminToken();
   if (!token || !verifyAdminSession(token)) {
-    redirect("/admin/login");
+    redirect(adminLoginPath());
   }
 }
 
@@ -58,7 +59,7 @@ export function adminCookieOptions() {
     httpOnly: true,
     sameSite: "lax" as const,
     secure,
-    /** `/` so both `/admin/*` and `/api/admin/*` receive the cookie. */
+    /** `/` so admin pages and `/api/admin/*` both receive the cookie. */
     path: "/",
     maxAge: MAX_AGE_SEC,
   };

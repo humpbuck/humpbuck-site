@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
+import { adminPath } from "@/lib/admin-path";
 import { AdminOrdersTable } from "@/components/admin/admin-orders-table";
 import {
   ordersListPath,
@@ -58,7 +59,7 @@ export default async function AdminOrdersPage({
 
   return (
     <div>
-      <AdminBackLink href="/admin" label="Overview" />
+      <AdminBackLink href={adminPath()} label="Overview" />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-serif text-3xl tracking-tight">Orders</h1>
@@ -72,7 +73,7 @@ export default async function AdminOrdersPage({
               Showing: <span className="font-medium">{filterHint}</span>
               {" · "}
               <Link
-                href="/admin/orders"
+                href={adminPath("/orders")}
                 className="font-semibold text-sky-800 underline-offset-2 hover:underline"
               >
                 Clear filter
@@ -93,7 +94,7 @@ export default async function AdminOrdersPage({
             : "No orders match this filter."}{" "}
           {filter !== "all" && (
             <Link
-              href="/admin/orders"
+              href={adminPath("/orders")}
               className="font-medium text-sky-800 underline-offset-2 hover:underline"
             >
               View all orders

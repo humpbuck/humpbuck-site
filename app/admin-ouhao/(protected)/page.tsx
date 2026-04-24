@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { adminPath } from "@/lib/admin-path";
 import { prisma } from "@/lib/prisma";
 
 export default async function AdminHomePage() {
@@ -26,7 +27,7 @@ export default async function AdminHomePage() {
             Total orders
           </p>
           <Link
-            href="/admin/orders"
+            href={adminPath("/orders")}
             className={numLink}
             aria-label={`View all ${total} orders`}
           >
@@ -38,7 +39,7 @@ export default async function AdminHomePage() {
             Completed orders
           </p>
           <Link
-            href="/admin/orders?filter=completed"
+            href={`${adminPath("/orders")}?filter=completed`}
             className={numLink}
             aria-label={`View ${completed} completed orders`}
           >
@@ -51,7 +52,7 @@ export default async function AdminHomePage() {
             Unshipped orders
           </p>
           <Link
-            href="/admin/orders?filter=unshipped"
+            href={`${adminPath("/orders")}?filter=unshipped`}
             className={numLink}
             aria-label={`View ${unshipped} unshipped orders`}
           >
@@ -64,7 +65,7 @@ export default async function AdminHomePage() {
             Buyer reviews
           </p>
           <Link
-            href="/admin/reviews"
+            href={adminPath("/reviews")}
             className={numLink}
             aria-label={`Manage ${reviewCount} buyer reviews`}
           >
@@ -75,13 +76,13 @@ export default async function AdminHomePage() {
       </ul>
       <div className="mt-10 flex flex-wrap gap-3">
         <Link
-          href="/admin/orders"
+          href={adminPath("/orders")}
           className="inline-flex rounded-2xl bg-ink px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
         >
           View all orders
         </Link>
         <Link
-          href="/admin/reviews"
+          href={adminPath("/reviews")}
           className="inline-flex rounded-2xl border border-line bg-white/70 px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20"
         >
           Manage reviews

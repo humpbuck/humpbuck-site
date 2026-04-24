@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
+import { adminPath } from "@/lib/admin-path";
 import { DeleteReviewButton } from "@/components/admin/delete-review-button";
 import { MerchantReplyBox } from "@/components/admin/merchant-reply-box";
 import { getProductBySlug } from "@/lib/catalog";
@@ -21,7 +22,7 @@ export default async function AdminReviewsPage() {
 
   return (
     <div>
-      <AdminBackLink href="/admin" label="Overview" />
+      <AdminBackLink href={adminPath()} label="Overview" />
       <h1 className="font-serif text-3xl tracking-tight">Reviews</h1>
       <p className="mt-2 max-w-2xl text-sm text-muted">
         Buyer reviews are published as soon as they submit (verified purchase

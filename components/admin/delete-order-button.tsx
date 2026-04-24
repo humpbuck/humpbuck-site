@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { adminPath } from "@/lib/admin-path";
 
 export function DeleteOrderButton({ orderId }: { orderId: string }) {
   const router = useRouter();
@@ -28,7 +29,7 @@ export function DeleteOrderButton({ orderId }: { orderId: string }) {
         setLoading(false);
         return;
       }
-      router.push("/admin/orders");
+      router.push(adminPath("/orders"));
       router.refresh();
     } catch {
       setErr("Network error");

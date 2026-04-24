@@ -9,6 +9,7 @@
  */
 import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
+import { adminPath } from "@/lib/admin-path";
 import {
   isShippingMethodId,
   quoteCheckoutShipping,
@@ -122,7 +123,7 @@ async function main() {
   console.log("  Order total:    ", `$${(orderTotalCents / 100).toFixed(2)}`);
   console.log("  Buyer email:    ", email);
   console.log("");
-  console.log("Admin:", `${base}/admin/orders/${order.id}`);
+  console.log("Admin:", `${base}${adminPath(`/orders/${order.id}`)}`);
   console.log("");
 }
 

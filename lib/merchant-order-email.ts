@@ -12,6 +12,7 @@ import { getProductBySlug } from "@/lib/catalog";
 import { parseOrderItemsJson } from "@/lib/parse-order-items";
 import { prisma } from "@/lib/prisma";
 import { SITE_LOCALE } from "@/lib/site-locale";
+import { adminPath } from "@/lib/admin-path";
 
 const DEFAULT_MERCHANT_EMAIL = "humpbuck@outlook.com";
 
@@ -244,10 +245,10 @@ function buildHtml(order: Order, lines: ReturnType<typeof parseOrderItemsJson>):
         </table>
         <table width="100%" cellspacing="0" cellpadding="0" style="margin-top:18px;">
           <tr><td align="center">
-            <a href="${escapeHtml(base)}/admin/orders/${escapeHtml(order.id)}" style="display:inline-block;padding:12px 28px;background:${brand};color:#ffffff !important;font-size:14px;font-weight:600;text-decoration:none;border-radius:999px;letter-spacing:0.02em;">Open order in admin</a>
+            <a href="${escapeHtml(`${base}${adminPath(`/orders/${order.id}`)}`)}" style="display:inline-block;padding:12px 28px;background:${brand};color:#ffffff !important;font-size:14px;font-weight:600;text-decoration:none;border-radius:999px;letter-spacing:0.02em;">Open order in admin</a>
           </td></tr>
           <tr><td align="center" style="padding-top:12px;">
-            <p style="margin:0;font-size:11px;color:#a8a49e;word-break:break-all;">${escapeHtml(base)}/admin/orders/${escapeHtml(order.id)}</p>
+            <p style="margin:0;font-size:11px;color:#a8a49e;word-break:break-all;">${escapeHtml(`${base}${adminPath(`/orders/${order.id}`)}`)}</p>
           </td></tr>
         </table>
       </td></tr>

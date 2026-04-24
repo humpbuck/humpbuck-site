@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { ADMIN_PATH } from "./lib/admin-path";
 
 const nextConfig: NextConfig = {
   async redirects() {
@@ -7,6 +8,16 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         has: [{ type: "host", value: "humpbuck.com" }],
         destination: "https://www.humpbuck.com/:path*",
+        permanent: true,
+      },
+      {
+        source: "/admin",
+        destination: ADMIN_PATH,
+        permanent: true,
+      },
+      {
+        source: "/admin/:path*",
+        destination: `${ADMIN_PATH}/:path*`,
         permanent: true,
       },
       { source: "/series/astral", destination: "/series/rd-astral", permanent: true },

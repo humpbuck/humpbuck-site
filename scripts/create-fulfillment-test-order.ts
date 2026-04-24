@@ -12,6 +12,7 @@
  */
 import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
+import { adminPath } from "../lib/admin-path";
 
 loadEnvConfig(process.cwd());
 
@@ -82,7 +83,7 @@ async function main() {
   console.log("  Buyer email:  ", email, "  ← shipped email goes here");
   console.log("");
   console.log("Next steps (admin):");
-  console.log("  1. Open:", `${base}/admin/orders/${order.id}`);
+  console.log("  1. Open:", `${base}${adminPath(`/orders/${order.id}`)}`);
   console.log("  2. Set Order status to «Completed (shipped)».");
   console.log("  3. Choose Carrier from the dropdown.");
   console.log("  4. Paste your real tracking number.");

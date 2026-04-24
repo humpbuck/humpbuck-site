@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { ADMIN_PATH } from "@/lib/admin-path";
 import { getSiteUrl } from "@/lib/seo";
 
 export default function robots(): MetadataRoute.Robots {
@@ -10,7 +11,8 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         disallow: [
           "/api/",
-          "/admin",
+          `${ADMIN_PATH}/`,
+          "/admin/",
           "/account/",
           "/auth/",
           "/checkout",

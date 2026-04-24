@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ADMIN_PATH } from "@/lib/admin-path";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -26,7 +27,7 @@ export default function AdminLoginPage() {
         setLoading(false);
         return;
       }
-      router.push("/admin");
+      router.push(ADMIN_PATH);
       router.refresh();
     } catch {
       setError("Network error");

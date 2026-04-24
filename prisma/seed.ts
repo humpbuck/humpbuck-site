@@ -3,6 +3,7 @@
  * Run: npx prisma db seed
  */
 import { PrismaClient } from "@prisma/client";
+import { adminPath } from "../lib/admin-path";
 
 const prisma = new PrismaClient();
 
@@ -15,7 +16,7 @@ async function main() {
   if (existing) {
     console.log("Demo order already exists; skipping seed.");
     console.log("  id:", existing.id);
-    console.log("  admin URL: /admin/orders/" + existing.id);
+    console.log("  admin URL: " + adminPath(`/orders/${existing.id}`));
     console.log("  (Delete it in Admin if you need a fresh demo order.)");
     return;
   }
@@ -75,9 +76,7 @@ async function main() {
 
   console.log("Demo order created.");
   console.log("  id:", order.id);
-  console.log(
-    "  admin URL: /admin/orders/" + order.id,
-  );
+  console.log("  admin URL: " + adminPath(`/orders/${order.id}`));
 }
 
 main()

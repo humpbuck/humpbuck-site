@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { adminPath } from "@/lib/admin-path";
 import { notFound } from "next/navigation";
 import { AdminRefundButton } from "@/components/admin/admin-refund-button";
 import { DeleteOrderButton } from "@/components/admin/delete-order-button";
@@ -242,7 +243,7 @@ export default async function AdminOrderDetailPage({
   return (
     <div>
       <Link
-        href="/admin/orders"
+        href={adminPath("/orders")}
         className="inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted transition hover:text-ink"
       >
         <ArrowLeft size={14} strokeWidth={2} className="shrink-0" aria-hidden />

@@ -6,6 +6,7 @@
  */
 import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
+import { adminPath } from "../lib/admin-path";
 
 loadEnvConfig(process.cwd());
 
@@ -95,7 +96,9 @@ async function main() {
       },
     });
 
-    console.log(`  [${i + 1}] ${o.status.padEnd(12)} ${order.id} → ${base}/admin/orders/${order.id}`);
+    console.log(
+      `  [${i + 1}] ${o.status.padEnd(12)} ${order.id} → ${base}${adminPath(`/orders/${order.id}`)}`,
+    );
   }
 
   console.log(

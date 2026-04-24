@@ -8,6 +8,7 @@
  */
 import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
+import { adminPath } from "@/lib/admin-path";
 import { mergeDerivedLogisticsZone } from "@/lib/checkout-address";
 import { quoteCheckoutShipping } from "@/lib/checkout-shipping-quote";
 
@@ -112,7 +113,7 @@ async function createOne(
     `(≈¥${shipQ.shippingCny.toFixed(2)} top-up)`,
   );
   console.log("  Order total:    ", `$${(orderTotalCents / 100).toFixed(2)}`);
-  console.log("  Admin:          ", `${base}/admin/orders/${order.id}`);
+  console.log("  Admin:          ", `${base}${adminPath(`/orders/${order.id}`)}`);
 }
 
 async function main() {

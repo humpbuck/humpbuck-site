@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { assertAdmin } from "@/lib/admin-auth";
+import { adminPath } from "@/lib/admin-path";
 
 async function LogoutButton() {
   const navItemClass =
@@ -36,19 +37,19 @@ export default async function AdminProtectedLayout({
         </div>
         <nav className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <Link
-            href="/admin"
+            href={adminPath()}
             className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
           >
             Overview
           </Link>
           <Link
-            href="/admin/orders"
+            href={adminPath("/orders")}
             className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
           >
             Orders
           </Link>
           <Link
-            href="/admin/reviews"
+            href={adminPath("/reviews")}
             className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
           >
             Reviews

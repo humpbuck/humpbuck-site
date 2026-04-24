@@ -19,6 +19,7 @@ import { prisma } from "@/lib/prisma";
 import { buildSubscribeMagicUrl } from "@/lib/subscribe-magic-link";
 import { trackingUrlForCarrier } from "@/lib/tracking-url";
 import { SITE_LOCALE } from "@/lib/site-locale";
+import { adminPath } from "@/lib/admin-path";
 import { WHATSAPP_DISPLAY, WHATSAPP_E164 } from "@/lib/whatsapp";
 
 function formatUsdEmail(amount: number): string {
@@ -286,7 +287,7 @@ export async function buildShippingAddressChangeEmailPayload(
     : `<p style="color:#8a8680;margin:0;font-size:14px;">—</p>`;
 
   const orderUrl = `${base}/account/orders/${encodeURIComponent(order.id)}`;
-  const adminUrl = `${base}/admin/orders/${encodeURIComponent(order.id)}`;
+  const adminUrl = `${base}${adminPath(`/orders/${order.id}`)}`;
 
   const headerTitle = isBuyer
     ? "Address updated successfully"

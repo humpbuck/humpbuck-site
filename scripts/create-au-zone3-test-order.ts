@@ -9,6 +9,7 @@
  */
 import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
+import { adminPath } from "@/lib/admin-path";
 import { mergeDerivedLogisticsZone } from "@/lib/checkout-address";
 import { quoteCheckoutShipping } from "@/lib/checkout-shipping-quote";
 import { effectiveZonedLaneDigit, estimateLogistics } from "@/lib/logistics-estimate";
@@ -149,7 +150,7 @@ async function main() {
 
   console.log("");
   console.log("Created order", order.id);
-  console.log("  Admin:", `${base}/admin/orders/${order.id}`);
+  console.log("  Admin:", `${base}${adminPath(`/orders/${order.id}`)}`);
   console.log("  logisticsZone on shipping JSON:", shipping.logisticsZone);
   console.log(
     "  Buyer shipping USD:",
