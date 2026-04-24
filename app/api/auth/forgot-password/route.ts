@@ -31,12 +31,18 @@ export async function POST(req: Request) {
 
     const user = await prisma.user.findUnique({
       where: { email },
-      select: { id: true, passwordHash: true },
+      select: { id: true },
     });
 
-    if (!user?.passwordHash) {
+    /** No user → same generic response (do not reveal whether email exists). */
+    if (!user) {
       return generic;
     }
+
+    /**
+     * Send a reset link for both normal accounts and placeholder rows without
+     * passwordHash (e.g. script-created user). Reset API sets passwordHash on submit.
+     */
 
     const token = randomBytes(TOKEN_BYTES).toString("hex");
     const expiresAt = new Date(Date.now() + EXPIRY_MS);
@@ -61,7 +67,7 @@ export async function POST(req: Request) {
 <!DOCTYPE html>
 <html>
 <body style="font-family: system-ui, sans-serif; line-height: 1.5; color: #0f1114;">
-  <p>We received a request to reset your HUMPBUCK password.</p>
+  <p>We received a request to set or reset your HUMPBUCK password.</p>
   <p>
     <a href="${resetUrl}" style="display: inline-block; margin-top: 12px; padding: 12px 24px; background: #0f1114; color: #f4f2ed; text-decoration: none; border-radius: 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;">
       Reset password
@@ -73,7 +79,7 @@ export async function POST(req: Request) {
 </html>
 `.trim();
 
-  const text = `Reset your HUMPBUCK password:\n${resetUrl}\n\nThis link expires in 1 hour. If you did not request this, ignore this email.`;
+  const text = `Set or reset your HUMPBUCK password:\n${resetUrl}\n\nThis link expires in 1 hour. If you did not request this, ignore this email.`;
 
     const sent = await sendTransactionalEmail({
       to: email,
