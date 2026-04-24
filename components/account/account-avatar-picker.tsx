@@ -7,6 +7,7 @@ import { useState } from "react";
 import { getSession } from "next-auth/react";
 import { shouldUnoptimizeAvatarUrl } from "@/lib/avatar-cdn";
 import { BUYER_AVATAR_PRESET_URLS } from "@/lib/avatar-presets";
+import { PresetAvatarImage } from "@/components/account/preset-avatar-image";
 
 type Props = {
   initialImage: string | null;
@@ -201,15 +202,7 @@ export function AccountAvatarPicker({ initialImage }: Props) {
               } disabled:opacity-50`}
               aria-label="Choose Open Peeps style avatar"
             >
-              <Image
-                src={url}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="48px"
-                unoptimized
-                referrerPolicy="no-referrer"
-              />
+              <PresetAvatarImage src={url} sizes="48px" />
             </button>
           ))}
         </div>

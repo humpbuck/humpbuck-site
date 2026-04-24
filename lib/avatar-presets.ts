@@ -3,7 +3,11 @@
  * `NEXT_PUBLIC_AVATAR_PRESETS_FROM_R2=1`, the same 30 files on R2
  * `Avatar/presets/open-peep-01.png` … (see `scripts/upload-open-peep-presets-to-r2.ts`).
  *
- * **Default is DiceBear** so presets always load even if R2 is not populated.
+ * **Default is DiceBear** so presets work without R2; the API can still fail
+ * intermittently (rate limits, regional network, ad blockers). For maximum
+ * reliability use `NEXT_PUBLIC_AVATAR_PRESETS_FROM_R2=1` after uploading
+ * `npm run r2:upload-avatar-presets`, and ensure `NEXT_PUBLIC_R2_PUBLIC_BASE`
+ * hostname is listed in `next.config.ts` → `images.remotePatterns`.
  * [Open Peeps / Pablo Stanley](https://www.openpeeps.com/) (CC0). Grayscale
  * via `clothing`/`skin`/`hair` color arrays; override with
  * `NEXT_PUBLIC_AVATAR_PRESET_OPEN_PEEP_TONE=color`. Public R2 base:

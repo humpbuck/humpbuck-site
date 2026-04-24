@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { PasswordInputWithToggle } from "@/components/auth/password-input-with-toggle";
+import { PresetAvatarImage } from "@/components/account/preset-avatar-image";
 import { BUYER_AVATAR_PRESET_URLS } from "@/lib/avatar-presets";
 import { sanitizeCallbackUrl } from "@/lib/auth-callback-url";
 
@@ -160,15 +160,7 @@ function RegisterForm() {
                 }`}
                 aria-label={`Open Peeps style avatar ${idx + 1}`}
               >
-                <Image
-                  src={url}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="44px"
-                  unoptimized
-                  referrerPolicy="no-referrer"
-                />
+                <PresetAvatarImage src={url} sizes="44px" />
               </button>
             ))}
           </div>
