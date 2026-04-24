@@ -684,15 +684,41 @@ export function getProductBySlug(slug: string): Product | undefined {
   return products.find((p) => p.slug === slug);
 }
 
+/**
+ * Map stored line `variantId` to `product.variantOptions[].id`. Checkout / tests
+ * sometimes use `style01` while the catalog uses `style-01`.
+ */
+export function resolveCatalogVariantId(
+  product: Product,
+  variantId?: string,
+): string | undefined {
+  if (!variantId?.trim() || !product.variantOptions?.length) {
+    return undefined;
+  }
+  const t = variantId.trim();
+  if (product.variantOptions.some((v) => v.id === t)) return t;
+  const noHyphen = /^style(0[1-9]|[1-9]\d?)$/i.exec(t);
+  if (noHyphen) {
+    const n = parseInt(noHyphen[1], 10);
+    if (Number.isFinite(n) && n >= 1) {
+      const guess = `style-${String(n).padStart(2, "0")}`;
+      if (product.variantOptions.some((v) => v.id === guess)) return guess;
+    }
+  }
+  return t;
+}
+
 /** Cart / summaries: use variant swatch image when `variantId` matches catalog options. */
 export function getCartLineImage(
   product: Product,
   variantId?: string,
 ): string {
-  if (!variantId || !product.variantOptions?.length) {
+  if (!product.variantOptions?.length) {
     return product.image;
   }
-  const match = product.variantOptions.find((v) => v.id === variantId);
+  const id = resolveCatalogVariantId(product, variantId);
+  if (!id) return product.image;
+  const match = product.variantOptions.find((v) => v.id === id);
   return match?.image ?? product.image;
 }
 
@@ -704,7 +730,8 @@ export function isVariantAvailableForSale(
   if (!product.inStock) return false;
   if (!product.variantOptions?.length) return true;
   if (!variantId) return false;
-  const opt = product.variantOptions.find((v) => v.id === variantId);
+  const id = resolveCatalogVariantId(product, variantId) ?? variantId;
+  const opt = product.variantOptions.find((v) => v.id === id);
   if (!opt) return false;
   return opt.inStock !== false;
 }

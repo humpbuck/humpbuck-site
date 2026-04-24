@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { OrderLineProductImage } from "@/components/account/order-line-product-image";
 import {
   formatPrice,
   getCartLineImage,
@@ -63,14 +63,25 @@ export function BuyerOrderLineItems({
             <div className="flex min-w-0 flex-1 items-start gap-3">
               <div className={imgBox}>
                 {imgSrc ? (
-                  <Image
+                  <OrderLineProductImage
                     src={imgSrc}
                     alt={alt}
-                    fill
-                    className="object-cover"
+                    fallbackLabel={line.name}
                     sizes={sizes}
+                    className="object-cover"
                   />
-                ) : null}
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-zinc-200 text-center text-[8px] font-bold uppercase leading-tight text-zinc-500">
+                    {line.slug
+                      .replace(/[^a-z0-9]+/gi, " ")
+                      .trim()
+                      .split(/\s+/)
+                      .map((s) => s[0] ?? "")
+                      .join("")
+                      .toUpperCase()
+                      .slice(0, 3) || "—"}
+                  </div>
+                )}
               </div>
               <div className="min-w-0 pt-0.5">
                 {resolvedLink && product ? (
