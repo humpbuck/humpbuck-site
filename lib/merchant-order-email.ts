@@ -1,8 +1,10 @@
 import type { Order } from "@prisma/client";
 import {
   formatAddressLines,
+  formatPhoneInternational,
   orderDisplayCode,
   parseShippingRecord,
+  parseStructuredShipping,
   paymentProviderLabel,
   trafficSourceLabel,
 } from "@/lib/admin/order-ui";
@@ -34,17 +36,73 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-/** Stacked address lines — matches “Payment received” email cards. */
-function emailFormatAddressLines(lines: string[]): string {
-  if (!lines.length) {
-    return `<p style="color:#8a8680;margin:0;font-size:14px;">—</p>`;
+/**
+ * “Field name | Content” table (same data model as admin order page), email-safe.
+ */
+function emailAddressFieldsTable(
+  orderEmail: string,
+  raw: Record<string, string> | null,
+  sectionLabel: "BILLING" | "SHIPPING",
+  brand: string,
+  ink: string,
+): string {
+  const structured = parseStructuredShipping(raw);
+  if (!structured) {
+    const lines = formatAddressLines(raw);
+    if (!lines.length) {
+      return `<p style="color:#8a8680;margin:0;font-size:14px;">No ${sectionLabel === "BILLING" ? "billing" : "shipping"} address on file.</p>`;
+    }
+    return lines
+      .map(
+        (l) =>
+          `<p style="margin:0 0 5px 0;font-size:14px;line-height:1.45;color:${ink};">${escapeHtml(l)}</p>`,
+      )
+      .join("");
   }
-  return lines
-    .map(
-      (l) =>
-        `<p style="margin:0 0 5px 0;font-size:14px;line-height:1.45;color:#2d2a26;">${escapeHtml(l)}</p>`,
-    )
-    .join("");
+
+  const phoneHint = structured.country || raw?.country;
+  const phoneIntl = formatPhoneInternational(raw?.phone, phoneHint);
+  const em = orderEmail.trim();
+
+  const cell = (value: string) =>
+    escapeHtml(value).replace(/\n/g, "<br/>");
+
+  const valPhone =
+    phoneIntl != null
+      ? `<a href="${escapeHtml(phoneIntl.telHref)}" style="color:${brand};font-weight:600;text-decoration:none;">${escapeHtml(phoneIntl.display)}</a>`
+      : `<span style="color:#8a8680;">Not provided</span>`;
+
+  const valEmail = `<a href="mailto:${escapeHtml(em)}" style="color:${brand};font-weight:600;text-decoration:none;">${escapeHtml(em)}</a>`;
+
+  const row = (fieldLabel: string, inner: string) =>
+    `<tr>
+      <td style="padding:10px 12px;vertical-align:top;border-bottom:1px solid #ece9e4;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8a8680;width:40%;">${fieldLabel}</td>
+      <td style="padding:10px 12px;vertical-align:top;border-bottom:1px solid #ece9e4;font-size:14px;line-height:1.45;color:${ink};">${inner}</td>
+    </tr>`;
+
+  const thead = `<thead>
+    <tr style="background:#faf9f7;">
+      <th align="left" style="padding:10px 12px;font-size:11px;font-weight:600;color:#14120f;border-bottom:1px solid #ece9e4;">Field name</th>
+      <th align="left" style="padding:10px 12px;font-size:11px;font-weight:600;color:#14120f;border-bottom:1px solid #ece9e4;">Content</th>
+    </tr>
+  </thead>`;
+
+  const tbody = `<tbody>
+    ${row("Name", cell(structured.name))}
+    ${row("Company", cell(structured.company))}
+    ${row("Street address", cell(structured.streetAddress))}
+    ${row("City", cell(structured.city))}
+    ${row("State (full name)", cell(structured.stateFullName))}
+    ${row("ZIP code", cell(structured.zip))}
+    ${row("Country", cell(structured.country))}
+    ${row("Phone number", valPhone)}
+    ${row("Email", valEmail)}
+  </tbody>`;
+
+  return `<table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:14px;border:1px solid #ece9e4;border-radius:10px;overflow:hidden;">
+  ${thead}
+  ${tbody}
+</table>`;
 }
 
 function publicBaseUrl(): string {
@@ -109,9 +167,25 @@ function buildHtml(order: Order, lines: ReturnType<typeof parseOrderItemsJson>):
     order.billingJson ?? order.shippingJson,
   );
   const ship = parseShippingRecord(order.shippingJson);
-  const billAddrLines = formatAddressLines(bill);
-  const shipAddrLines = formatAddressLines(ship);
   const base = publicBaseUrl();
+  const brand = "#5b4dcb";
+  const ink = "#14120f";
+  const muted = "#5c5a57";
+
+  const billAddrHtml = emailAddressFieldsTable(
+    order.email,
+    bill,
+    "BILLING",
+    brand,
+    ink,
+  );
+  const shipAddrHtml = emailAddressFieldsTable(
+    order.email,
+    ship,
+    "SHIPPING",
+    brand,
+    ink,
+  );
 
   const lineRows = lines
     .map((l) => {
@@ -132,13 +206,6 @@ function buildHtml(order: Order, lines: ReturnType<typeof parseOrderItemsJson>):
     })
     .join("");
 
-  const billAddrHtml = billAddrLines.length
-    ? emailFormatAddressLines(billAddrLines)
-    : `<p style="color:#8a8680;margin:0;font-size:14px;">No billing address on file.</p>`;
-  const shipAddrHtml = shipAddrLines.length
-    ? emailFormatAddressLines(shipAddrLines)
-    : `<p style="color:#8a8680;margin:0;font-size:14px;">No shipping address on file.</p>`;
-
   const orderNotesHtml = order.orderNotes?.trim()
     ? `<tr><td style="padding:0 24px 20px 24px;">
         <table width="100%" cellspacing="0" cellpadding="0" style="border-radius:10px;background:#faf9ff;border:1px solid #e8e4ff;border-left:4px solid #5b4dcb;">
@@ -149,10 +216,6 @@ function buildHtml(order: Order, lines: ReturnType<typeof parseOrderItemsJson>):
         </table>
       </td></tr>`
     : "";
-
-  const brand = "#5b4dcb";
-  const ink = "#14120f";
-  const muted = "#5c5a57";
 
   return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/></head>
@@ -234,14 +297,6 @@ function buildHtml(order: Order, lines: ReturnType<typeof parseOrderItemsJson>):
               </table>
             </td>
           </tr>
-        </table>
-        <table width="100%" cellspacing="0" cellpadding="0" style="margin-top:14px;background:#faf9f7;border-radius:12px;border:1px solid #ece9e4;">
-          <tr><td style="padding:14px 16px;">
-            <p style="margin:0 0 10px 0;font-size:10px;font-weight:700;letter-spacing:0.14em;color:#8a8680;">CONTACT</p>
-            <p style="margin:0;"><a href="mailto:${escapeHtml(order.email)}" style="color:${brand};font-weight:600;text-decoration:none;">${escapeHtml(order.email)}</a></p>
-            ${bill?.phone ? `<p style="margin:10px 0 0 0;font-size:14px;color:${ink};">Phone: <a href="tel:${escapeHtml(bill.phone.replace(/\s/g, ""))}" style="color:${brand};font-weight:500;text-decoration:none;">${escapeHtml(bill.phone)}</a></p>` : ""}
-            ${ship?.phone && ship.phone !== bill?.phone ? `<p style="margin:8px 0 0 0;font-size:14px;color:${ink};">Alt. phone: <a href="tel:${escapeHtml(ship.phone.replace(/\s/g, ""))}" style="color:${brand};text-decoration:none;">${escapeHtml(ship.phone)}</a></p>` : !bill?.phone && ship?.phone ? `<p style="margin:10px 0 0 0;"><a href="tel:${escapeHtml(ship.phone.replace(/\s/g, ""))}" style="color:${brand};text-decoration:none;">${escapeHtml(ship.phone)}</a></p>` : ""}
-          </td></tr>
         </table>
         <table width="100%" cellspacing="0" cellpadding="0" style="margin-top:18px;">
           <tr><td align="center">
