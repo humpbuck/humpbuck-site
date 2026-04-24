@@ -91,25 +91,10 @@ export default async function ProductPage({
   const gallerySpec = R2_GALLERY_SPECS_BY_SLUG[slug];
   const pdpR2 = gallerySpec != null ? await getPdpR2Media(gallerySpec) : null;
 
-  /**
-   * When this SKU has an R2 PDP spec, never fall back to the full static
-   * `product.galleryImages` list: catalog defaults (e.g. ×6 for RM-TONNEAU) can
-   * exceed the real bucket (e.g. 5 webps) and the extra slots 404. If R2
-   * returns nothing, show a single hero from catalog instead of N phantom slides.
-   */
-  const gallerySlides = (() => {
-    if (gallerySpec == null) {
-      return product.galleryImages?.length
-        ? [...product.galleryImages]
-        : [...product.images];
-    }
-    if (pdpR2?.gallery && pdpR2.gallery.length > 0) {
-      return pdpR2.gallery;
-    }
-    const hero =
-      product.galleryImages?.[0] ?? product.images[0] ?? product.image;
-    return [hero];
-  })();
+  const gallerySlides =
+    pdpR2?.gallery && pdpR2.gallery.length > 0
+      ? pdpR2.gallery
+      : (product.galleryImages ?? product.images);
 
   const catalogVariants = product.variantOptions ?? [];
   const discoveredVariants =
@@ -129,15 +114,10 @@ export default async function ProductPage({
         })
       : product.variantOptions;
 
-  const detailImages = (() => {
-    if (gallerySpec == null) {
-      return product.detailImages ?? [];
-    }
-    if (pdpR2?.detail && pdpR2.detail.length > 0) {
-      return pdpR2.detail;
-    }
-    return [];
-  })();
+  const detailImages =
+    pdpR2?.detail && pdpR2.detail.length > 0
+      ? pdpR2.detail
+      : (product.detailImages ?? []);
 
   const firstSlide =
     gallerySlides[0] ??
