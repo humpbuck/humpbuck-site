@@ -32,7 +32,7 @@ export async function getOrCreateUnsubscribeToken(emailRaw: string): Promise<str
   try {
     await prisma.$executeRaw`
       INSERT INTO "EmailMarketingPreference" ("id", "email", "unsubscribeToken", "marketingOptOut", "createdAt", "updatedAt")
-      VALUES (${id}, ${email}, ${token}, 0, ${now}, ${now})
+      VALUES (${id}, ${email}, ${token}, false, ${now}, ${now})
     `;
   } catch {
     const again = await prisma.$queryRaw<Array<{ unsubscribeToken: string }>>`
@@ -73,7 +73,7 @@ export async function optOutByToken(
   const now = new Date();
   await prisma.$executeRaw`
     UPDATE "EmailMarketingPreference"
-    SET "marketingOptOut" = 1, "updatedAt" = ${now}
+    SET "marketingOptOut" = true, "updatedAt" = ${now}
     WHERE "id" = ${row.id}
   `;
   return { ok: true, email: row.email, already: false };
@@ -87,9 +87,9 @@ export async function recordMarketingOptInFromSubscribe(emailRaw: string): Promi
   const now = new Date();
   await prisma.$executeRaw`
     INSERT INTO "EmailMarketingPreference" ("id", "email", "unsubscribeToken", "marketingOptOut", "createdAt", "updatedAt")
-    VALUES (${id}, ${email}, ${token}, 0, ${now}, ${now})
+    VALUES (${id}, ${email}, ${token}, false, ${now}, ${now})
     ON CONFLICT("email") DO UPDATE SET
-      "marketingOptOut" = 0,
+      "marketingOptOut" = false,
       "updatedAt" = ${now}
   `;
 }
