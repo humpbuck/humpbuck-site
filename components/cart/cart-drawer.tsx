@@ -10,6 +10,7 @@ import {
   getCartLineImage,
   getProductBySlug,
 } from "@/lib/catalog";
+import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
 
 export function CartDrawer() {
   const {
@@ -118,6 +119,7 @@ export function CartDrawer() {
                         fill
                         className="object-cover"
                         sizes="80px"
+                        unoptimized={isR2PublicObjectUrl(lineImage)}
                       />
                     </div>
                     <div className="min-w-0 flex-1">

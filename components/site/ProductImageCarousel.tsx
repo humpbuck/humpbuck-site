@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
 
 export function ProductImageCarousel({
   alt,
@@ -15,53 +16,28 @@ export function ProductImageCarousel({
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
-  const [loadFailed, setLoadFailed] = useState<Set<string>>(() => new Set());
-  /** If every `next/image` failed (e.g. domain not in `remotePatterns`), last-resort plain `<img>`. */
-  const [rawFallbackFailed, setRawFallbackFailed] = useState(false);
-  const imagesKey = useMemo(() => images.join("\0"), [images]);
-
-  useEffect(() => {
-    setLoadFailed(new Set());
-    setActive(0);
-    setRawFallbackFailed(false);
-  }, [imagesKey]);
-
-  const visible = useMemo(
-    () => images.filter((src) => !loadFailed.has(src)),
-    [images, loadFailed],
-  );
-  const visibleKey = useMemo(() => visible.join("\0"), [visible]);
-
-  const markFailed = useCallback((src: string) => {
-    setLoadFailed((prev) => {
-      if (prev.has(src)) return prev;
-      const next = new Set(prev);
-      next.add(src);
-      return next;
-    });
-  }, []);
 
   const scrollTo = useCallback(
     (index: number) => {
       const el = scrollerRef.current;
       if (!el) return;
-      const n = visible.length;
+      const n = images.length;
       if (n === 0) return;
       const i = ((index % n) + n) % n;
       const w = el.clientWidth;
       el.scrollTo({ left: i * w, behavior: "smooth" });
       setActive(i);
     },
-    [visible.length],
+    [images.length],
   );
 
   const onScroll = useCallback(() => {
     const el = scrollerRef.current;
-    if (!el || !visible.length) return;
+    if (!el || !images.length) return;
     const w = Math.max(el.clientWidth, 1);
     const i = Math.round(el.scrollLeft / w);
-    setActive(Math.min(i, visible.length - 1));
-  }, [visible.length]);
+    setActive(Math.min(i, images.length - 1));
+  }, [images.length]);
 
   useEffect(() => {
     const el = scrollerRef.current;
@@ -71,57 +47,10 @@ export function ProductImageCarousel({
   }, [onScroll]);
 
   useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el || visible.length === 0) return;
-    setActive((a) => {
-      const i = Math.min(Math.max(a, 0), visible.length - 1);
-      const w = el.clientWidth;
-      requestAnimationFrame(() => {
-        el.scrollTo({ left: i * w, behavior: "auto" });
-      });
-      return i;
-    });
-  }, [visibleKey, visible.length]);
+    setActive(0);
+  }, [images.join("\0")]);
 
   if (images.length === 0) return null;
-  if (visible.length === 0) {
-    if (rawFallbackFailed) {
-      return (
-        <div
-          className="relative min-w-0 max-w-full rounded-[28px] border border-dashed border-[color:var(--color-line)] bg-paper/80 p-8 text-center text-sm leading-relaxed text-muted"
-          role="status"
-        >
-          无法加载商品图。若公网图使用自定义域名，请把该域名加入{" "}
-          <code className="rounded bg-paper px-1.5 py-0.5 font-mono text-[12px] text-ink/80">
-            next.config → images.remotePatterns
-          </code>{" "}
-          并确保{" "}
-          <code className="rounded bg-paper px-1.5 py-0.5 font-mono text-[12px] text-ink/80">
-            NEXT_PUBLIC_R2_PUBLIC_BASE
-          </code>{" "}
-          与线上 R2 一致后重新部署。
-        </div>
-      );
-    }
-    return (
-      <div className="relative min-w-0 max-w-full">
-        <div
-          className={`pointer-events-none absolute -inset-3 rounded-[32px] bg-gradient-to-br sm:-inset-6 ${themeGlowClass} blur-2xl opacity-70`}
-        />
-        <div className="relative overflow-hidden rounded-[28px] border border-[color:var(--color-line)] bg-paper shadow-[var(--shadow-card)]">
-          <div className="relative aspect-square w-full">
-            <img
-              src={images[0]}
-              alt={alt}
-              className="h-full w-full object-cover object-center"
-              loading="eager"
-              onError={() => setRawFallbackFailed(true)}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="relative min-w-0 max-w-full">
@@ -134,9 +63,9 @@ export function ProductImageCarousel({
             ref={scrollerRef}
             className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
-            {visible.map((src, i) => (
+            {images.map((src, i) => (
               <div
-                key={src}
+                key={`${i}-${src}`}
                 className="relative aspect-square w-full min-w-full shrink-0 snap-center"
               >
                 <Image
@@ -146,12 +75,12 @@ export function ProductImageCarousel({
                   className="object-cover object-center"
                   sizes="(max-width:1024px) 100vw, 50vw"
                   priority={i === 0}
-                  onError={() => markFailed(src)}
+                  unoptimized={isR2PublicObjectUrl(src)}
                 />
               </div>
             ))}
           </div>
-          {visible.length > 1 && (
+          {images.length > 1 && (
             <>
               <button
                 type="button"
@@ -174,12 +103,12 @@ export function ProductImageCarousel({
         </div>
       </div>
 
-      {visible.length > 1 && (
+      {images.length > 1 && (
         <>
           <div className="mt-4 flex w-full max-w-full justify-center gap-2 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {visible.map((src, i) => (
+            {images.map((src, i) => (
               <button
-                key={src}
+                key={`thumb-${i}-${src}`}
                 type="button"
                 onClick={() => scrollTo(i)}
                 className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition ${
@@ -195,7 +124,7 @@ export function ProductImageCarousel({
                   fill
                   className="object-cover object-center"
                   sizes="64px"
-                  onError={() => markFailed(src)}
+                  unoptimized={isR2PublicObjectUrl(src)}
                 />
               </button>
             ))}
@@ -204,7 +133,7 @@ export function ProductImageCarousel({
             className="mt-3 flex justify-center gap-1.5"
             aria-hidden
           >
-            {visible.map((_, i) => (
+            {images.map((_, i) => (
               <span
                 key={i}
                 className={`h-1.5 rounded-full transition-all ${

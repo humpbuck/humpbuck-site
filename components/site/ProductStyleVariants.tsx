@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import type { ProductVariantOption } from "@/lib/catalog";
+import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
 
 export function ProductStyleVariants({
   options,
@@ -20,10 +21,7 @@ export function ProductStyleVariants({
   const controlled =
     controlledIndex !== undefined && onSelectedIndexChange !== undefined;
   const selected = controlled ? controlledIndex! : internal;
-  /** `next` = next/image; if host not in remotePatterns, fall back to native `img`, then label. */
-  const [thumbStage, setThumbStage] = useState<
-    Record<string, "next" | "raw" | "text">
-  >({});
+  const [imageErrorId, setImageErrorId] = useState<Record<string, true>>({});
 
   function setSelected(i: number) {
     onSelectedIndexChange?.(i);
@@ -44,58 +42,41 @@ export function ProductStyleVariants({
         {options.map((opt, i) => {
           const unavailable = opt.inStock === false;
           return (
-          <button
-            key={opt.id}
-            type="button"
-            onClick={() => setSelected(i)}
-            className={`relative aspect-square min-w-0 overflow-hidden rounded-xl border-2 transition ${
-              selected === i
-                ? "border-ink ring-2 ring-inset ring-ink/10"
-                : "border-[color:var(--color-line)] hover:border-ink/30"
-            } ${unavailable ? "opacity-45" : ""}`}
-            aria-pressed={selected === i}
-            aria-label={
-              unavailable
-                ? `${opt.label} for ${productName} — out of stock`
-                : `${opt.label} for ${productName}`
-            }
-          >
-            {(() => {
-              const stage = thumbStage[opt.id] ?? "next";
-              if (stage === "text") {
-                return (
-                  <div className="absolute inset-0 flex items-center justify-center bg-paper px-1 text-center text-[9px] font-semibold uppercase leading-tight text-muted">
-                    {opt.label}
-                  </div>
-                );
+            <button
+              key={opt.id}
+              type="button"
+              onClick={() => setSelected(i)}
+              className={`relative aspect-square min-w-0 overflow-hidden rounded-xl border-2 transition ${
+                selected === i
+                  ? "border-ink ring-2 ring-inset ring-ink/10"
+                  : "border-[color:var(--color-line)] hover:border-ink/30"
+              } ${unavailable ? "opacity-45" : ""}`}
+              aria-pressed={selected === i}
+              aria-label={
+                unavailable
+                  ? `${opt.label} for ${productName} — out of stock`
+                  : `${opt.label} for ${productName}`
               }
-              if (stage === "raw") {
-                return (
-                  <img
-                    src={opt.image}
-                    alt=""
-                    className="absolute inset-0 h-full w-full object-cover object-center"
-                    onError={() =>
-                      setThumbStage((m) => ({ ...m, [opt.id]: "text" }))
-                    }
-                  />
-                );
-              }
-              return (
+            >
+              {imageErrorId[opt.id] ? (
+                <div className="absolute inset-0 flex items-center justify-center bg-paper px-1 text-center text-[9px] font-semibold uppercase leading-tight text-muted">
+                  {opt.label}
+                </div>
+              ) : (
                 <Image
                   src={opt.image}
                   alt=""
                   fill
                   className="object-cover object-center"
                   sizes="(max-width:640px) 22vw, 96px"
+                  unoptimized={isR2PublicObjectUrl(opt.image)}
                   onError={() =>
-                    setThumbStage((m) => ({ ...m, [opt.id]: "raw" }))
+                    setImageErrorId((m) => ({ ...m, [opt.id]: true }))
                   }
                 />
-              );
-            })()}
-          </button>
-        );
+              )}
+            </button>
+          );
         })}
       </div>
     </div>

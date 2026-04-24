@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/lib/catalog";
 import { formatPrice } from "@/lib/catalog";
+import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
 
 export function ProductCard({
   product,
@@ -15,6 +16,7 @@ export function ProductCard({
   cardImageUrl?: string;
 }) {
   const imgSrc = cardImageUrl?.trim() || product.image;
+  const r2Unopt = isR2PublicObjectUrl(imgSrc);
   return (
     <Link
       href={`/product/${product.slug}`}
@@ -31,6 +33,7 @@ export function ProductCard({
           priority={imagePriority}
           fetchPriority={imagePriority ? "high" : undefined}
           sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
+          unoptimized={r2Unopt}
           className="object-cover object-center transition duration-500 group-hover:scale-[1.03]"
         />
       </div>
