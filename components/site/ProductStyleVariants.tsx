@@ -20,6 +20,9 @@ export function ProductStyleVariants({
   const controlled =
     controlledIndex !== undefined && onSelectedIndexChange !== undefined;
   const selected = controlled ? controlledIndex! : internal;
+  const [imageErrorById, setImageErrorById] = useState<Record<string, true>>(
+    {},
+  );
 
   function setSelected(i: number) {
     onSelectedIndexChange?.(i);
@@ -56,13 +59,22 @@ export function ProductStyleVariants({
                 : `${opt.label} for ${productName}`
             }
           >
-            <Image
-              src={opt.image}
-              alt=""
-              fill
-              className="object-cover object-center"
-              sizes="(max-width:640px) 22vw, 96px"
-            />
+            {imageErrorById[opt.id] ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-paper px-1 text-center text-[9px] font-semibold uppercase leading-tight text-muted">
+                {opt.label}
+              </div>
+            ) : (
+              <Image
+                src={opt.image}
+                alt=""
+                fill
+                className="object-cover object-center"
+                sizes="(max-width:640px) 22vw, 96px"
+                onError={() =>
+                  setImageErrorById((m) => ({ ...m, [opt.id]: true }))
+                }
+              />
+            )}
           </button>
         );
         })}

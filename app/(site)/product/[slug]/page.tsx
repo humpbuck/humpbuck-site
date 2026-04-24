@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Check } from "lucide-react";
@@ -14,6 +13,7 @@ import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { styleNumFromR2VariantUrl } from "@/lib/r2-line-image";
 import { getPdpR2Media } from "@/lib/r2-pdp-media";
 import { ProductCard } from "@/components/site/ProductCard";
+import { ProductDetailImageStrip } from "@/components/site/ProductDetailImageStrip";
 import { ProductPdpMediaColumn } from "@/components/site/ProductPdpMediaColumn";
 import { ProductReviewsSection } from "@/components/site/ProductReviewsSection";
 import { ProductCartSection } from "@/components/site/ProductCartSection";
@@ -247,23 +247,10 @@ export default async function ProductPage({
             <p className="mt-2 max-w-2xl text-sm text-muted">
               Detail photography and specifications for {product.name}.
             </p>
-            <div className="mt-10 flex flex-col gap-6">
-              {detailImages.map((src, i) => (
-                <div
-                  key={src}
-                  className="relative overflow-hidden rounded-2xl border border-[color:var(--color-line)] bg-paper shadow-sm"
-                >
-                  <Image
-                    src={src}
-                    alt={`${product.name} — detail ${i + 1}`}
-                    width={1200}
-                    height={1600}
-                    className="h-auto w-full object-cover"
-                    sizes="(max-width:1024px) 100vw, 896px"
-                  />
-                </div>
-              ))}
-            </div>
+            <ProductDetailImageStrip
+              productName={product.name}
+              imageUrls={detailImages}
+            />
           </section>
         )}
 

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export function ProductImageCarousel({
   alt,
@@ -15,28 +15,50 @@ export function ProductImageCarousel({
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const [loadFailed, setLoadFailed] = useState<Set<string>>(() => new Set());
+  const imagesKey = useMemo(() => images.join("\0"), [images]);
+
+  useEffect(() => {
+    setLoadFailed(new Set());
+    setActive(0);
+  }, [imagesKey]);
+
+  const visible = useMemo(
+    () => images.filter((src) => !loadFailed.has(src)),
+    [images, loadFailed],
+  );
+  const visibleKey = useMemo(() => visible.join("\0"), [visible]);
+
+  const markFailed = useCallback((src: string) => {
+    setLoadFailed((prev) => {
+      if (prev.has(src)) return prev;
+      const next = new Set(prev);
+      next.add(src);
+      return next;
+    });
+  }, []);
 
   const scrollTo = useCallback(
     (index: number) => {
       const el = scrollerRef.current;
       if (!el) return;
-      const n = images.length;
+      const n = visible.length;
       if (n === 0) return;
       const i = ((index % n) + n) % n;
       const w = el.clientWidth;
       el.scrollTo({ left: i * w, behavior: "smooth" });
       setActive(i);
     },
-    [images.length],
+    [visible.length],
   );
 
   const onScroll = useCallback(() => {
     const el = scrollerRef.current;
-    if (!el || !images.length) return;
+    if (!el || !visible.length) return;
     const w = Math.max(el.clientWidth, 1);
     const i = Math.round(el.scrollLeft / w);
-    setActive(Math.min(i, images.length - 1));
-  }, [images.length]);
+    setActive(Math.min(i, visible.length - 1));
+  }, [visible.length]);
 
   useEffect(() => {
     const el = scrollerRef.current;
@@ -45,7 +67,21 @@ export function ProductImageCarousel({
     return () => el.removeEventListener("scroll", onScroll);
   }, [onScroll]);
 
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el || visible.length === 0) return;
+    setActive((a) => {
+      const i = Math.min(Math.max(a, 0), visible.length - 1);
+      const w = el.clientWidth;
+      requestAnimationFrame(() => {
+        el.scrollTo({ left: i * w, behavior: "auto" });
+      });
+      return i;
+    });
+  }, [visibleKey, visible.length]);
+
   if (images.length === 0) return null;
+  if (visible.length === 0) return null;
 
   return (
     <div className="relative min-w-0 max-w-full">
@@ -58,7 +94,7 @@ export function ProductImageCarousel({
             ref={scrollerRef}
             className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
-            {images.map((src, i) => (
+            {visible.map((src, i) => (
               <div
                 key={src}
                 className="relative aspect-square w-full min-w-full shrink-0 snap-center"
@@ -70,11 +106,12 @@ export function ProductImageCarousel({
                   className="object-cover object-center"
                   sizes="(max-width:1024px) 100vw, 50vw"
                   priority={i === 0}
+                  onError={() => markFailed(src)}
                 />
               </div>
             ))}
           </div>
-          {images.length > 1 && (
+          {visible.length > 1 && (
             <>
               <button
                 type="button"
@@ -97,10 +134,10 @@ export function ProductImageCarousel({
         </div>
       </div>
 
-      {images.length > 1 && (
+      {visible.length > 1 && (
         <>
           <div className="mt-4 flex w-full max-w-full justify-center gap-2 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {images.map((src, i) => (
+            {visible.map((src, i) => (
               <button
                 key={src}
                 type="button"
@@ -118,6 +155,7 @@ export function ProductImageCarousel({
                   fill
                   className="object-cover object-center"
                   sizes="64px"
+                  onError={() => markFailed(src)}
                 />
               </button>
             ))}
@@ -126,7 +164,7 @@ export function ProductImageCarousel({
             className="mt-3 flex justify-center gap-1.5"
             aria-hidden
           >
-            {images.map((_, i) => (
+            {visible.map((_, i) => (
               <span
                 key={i}
                 className={`h-1.5 rounded-full transition-all ${
