@@ -6,11 +6,15 @@ import { formatPrice } from "@/lib/catalog";
 export function ProductCard({
   product,
   imagePriority = false,
+  /** When set (e.g. R2-resolved), overrides `product.image` for cards. */
+  cardImageUrl,
 }: {
   product: Product;
   /** First viewport row(s) of grids — LCP + avoid lazy for above-the-fold. */
   imagePriority?: boolean;
+  cardImageUrl?: string;
 }) {
+  const imgSrc = cardImageUrl?.trim() || product.image;
   return (
     <Link
       href={`/product/${product.slug}`}
@@ -21,7 +25,7 @@ export function ProductCard({
           Sale
         </div>
         <Image
-          src={product.image}
+          src={imgSrc}
           alt={product.name}
           fill
           priority={imagePriority}

@@ -7,6 +7,7 @@ import {
   seriesList,
   type SeriesSlug,
 } from "@/lib/catalog";
+import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 
 const slugOk = (s: string | undefined): s is SeriesSlug =>
   s === "digitemp" || s === "tonneau" || s === "rd-astral";
@@ -31,6 +32,10 @@ export default async function ShopPage({
   const list = active
     ? all.filter((p) => p.seriesSlug === active)
     : all;
+
+  const cardImages = await Promise.all(
+    list.map((p) => getShopCardR2GalleryImage(p.slug)),
+  );
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
@@ -71,8 +76,12 @@ export default async function ShopPage({
       )}
 
       <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
-        {list.map((p) => (
-          <ProductCard key={p.slug} product={p} />
+        {list.map((p, i) => (
+          <ProductCard
+            key={p.slug}
+            product={p}
+            cardImageUrl={cardImages[i] ?? undefined}
+          />
         ))}
       </div>
 

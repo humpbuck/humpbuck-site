@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/site/ProductCard";
 import { getProductsBySeries, getSeriesBySlug, seriesList } from "@/lib/catalog";
+import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { getSiteUrl } from "@/lib/seo";
 
 export async function generateStaticParams() {
@@ -41,6 +42,10 @@ export default async function SeriesPage({
   if (!series) notFound();
 
   const items = getProductsBySeries(series.slug);
+
+  const cardImages = await Promise.all(
+    items.map((p) => getShopCardR2GalleryImage(p.slug)),
+  );
 
   const heroClass =
     series.theme === "digital"
@@ -98,8 +103,12 @@ export default async function SeriesPage({
           {items.length} {items.length === 1 ? "piece" : "pieces"} in this series.
         </p>
         <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
-          {items.map((p) => (
-            <ProductCard key={p.slug} product={p} />
+          {items.map((p, i) => (
+            <ProductCard
+              key={p.slug}
+              product={p}
+              cardImageUrl={cardImages[i] ?? undefined}
+            />
           ))}
         </div>
       </section>

@@ -10,6 +10,8 @@ import {
 } from "@/lib/catalog";
 import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { R2_GALLERY_SPECS_BY_SLUG } from "@/lib/r2";
+import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
+import { styleNumFromR2VariantUrl } from "@/lib/r2-line-image";
 import { getPdpR2Media } from "@/lib/r2-pdp-media";
 import { ProductCard } from "@/components/site/ProductCard";
 import { ProductPdpMediaColumn } from "@/components/site/ProductPdpMediaColumn";
@@ -31,8 +33,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const product = getProductBySlug(slug);
   if (!product) return { title: "Product" };
+  const spec = R2_GALLERY_SPECS_BY_SLUG[slug];
+  let ogSrc = product.image;
+  if (spec) {
+    const pdp = await getPdpR2Media(spec);
+    if (pdp.gallery?.[0]) ogSrc = pdp.gallery[0];
+  }
   const pageUrl = `${getSiteUrl()}/product/${encodeURIComponent(slug)}`;
-  const og = absoluteOgImageUrl(product.image);
+  const og = absoluteOgImageUrl(ogSrc);
   return {
     title: product.name,
     description: product.shortDescription,
@@ -69,6 +77,9 @@ export default async function ProductPage({
   const related = getAllProducts()
     .filter((p) => p.slug !== product.slug && p.seriesSlug === product.seriesSlug)
     .slice(0, 3);
+  const relatedCardImages = await Promise.all(
+    related.map((p) => getShopCardR2GalleryImage(p.slug)),
+  );
 
   const theme =
     series?.theme === "digital"
@@ -90,12 +101,17 @@ export default async function ProductPage({
     pdpR2?.variants && pdpR2.variants.length > 0 ? pdpR2.variants : null;
   const variantOptions =
     discoveredVariants != null
-      ? discoveredVariants.map((src, i) => ({
-          id: `style-${String(i + 1).padStart(2, "0")}`,
-          label: `Style ${String(i + 1).padStart(2, "0")}`,
-          image: src,
-          ...(catalogVariants[i]?.inStock === false ? { inStock: false as const } : {}),
-        }))
+      ? discoveredVariants.map((src) => {
+          const n = styleNumFromR2VariantUrl(src) ?? 1;
+          const id = `style-${String(n).padStart(2, "0")}`;
+          const cat = catalogVariants.find((v) => v.id === id);
+          return {
+            id,
+            label: `Style ${String(n).padStart(2, "0")}`,
+            image: src,
+            ...(cat?.inStock === false ? { inStock: false as const } : {}),
+          };
+        })
       : product.variantOptions;
 
   const detailImages =
@@ -262,8 +278,12 @@ export default async function ProductPage({
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <h2 className="font-serif text-2xl">You may also like</h2>
             <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
-              {related.map((p) => (
-                <ProductCard key={p.slug} product={p} />
+              {related.map((p, i) => (
+                <ProductCard
+                  key={p.slug}
+                  product={p}
+                  cardImageUrl={relatedCardImages[i] ?? undefined}
+                />
               ))}
             </div>
           </div>

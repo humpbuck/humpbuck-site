@@ -1,4 +1,5 @@
 import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
+import { unstable_cache } from "next/cache";
 import { R2_PUBLIC_BASE, type R2GallerySpec } from "@/lib/r2";
 import { isR2ReviewUploadConfigured } from "@/lib/r2-review-upload";
 import {
@@ -119,7 +120,7 @@ async function discoverVideosByHead(
   spec: R2GallerySpec,
 ): Promise<string[] | null> {
   if (process.env.R2_GALLERY_DISCOVER === "0") return null;
-  const u = `${R2_PUBLIC_BASE}/products/${spec.slugFolder}/video/${spec.filePrefix}-video.mp4`;
+  const u = `${r2PublicBase()}/products/${spec.slugFolder}/video/${spec.filePrefix}-video.mp4`;
   if (await headOk(u)) return [u];
   return null;
 }
@@ -127,9 +128,9 @@ async function discoverVideosByHead(
 /**
  * Resolves gallery / detail / variant stills and showcase video URLs from R2.
  * When R2 **API** credentials are set, uses `ListObjects` (true bucket sync, any count, gaps in numbering allowed).
- * Otherwise uses cached HEAD-based sequential discovery in `r2-discover-gallery.ts` (or catalog fallback in the page).
+ * Otherwise uses cached HEAD-based indexed discovery in `r2-discover-gallery.ts` (or catalog fallback in the page).
  */
-export async function getPdpR2Media(spec: R2GallerySpec): Promise<PdpR2Media> {
+async function getPdpR2MediaImpl(spec: R2GallerySpec): Promise<PdpR2Media> {
   const [listGallery, listDetail, listVariants, listVideos] = canListR2()
     ? await Promise.all([
         listWebpFolderUrls(spec, "gallery"),
@@ -149,4 +150,19 @@ export async function getPdpR2Media(spec: R2GallerySpec): Promise<PdpR2Media> {
     listVideos.length > 0 ? listVideos : await discoverVideosByHead(spec);
 
   return { gallery, detail, variants, videos };
+}
+
+export async function getPdpR2Media(spec: R2GallerySpec): Promise<PdpR2Media> {
+  const run = unstable_cache(
+    async () => getPdpR2MediaImpl(spec),
+    [
+      "pdp-r2",
+      spec.slugFolder,
+      spec.filePrefix,
+      spec.variantFilePrefix ?? "",
+      spec.variantSlug ?? "",
+    ],
+    { revalidate: 300 },
+  );
+  return run();
 }

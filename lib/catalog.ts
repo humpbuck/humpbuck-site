@@ -1,4 +1,5 @@
 import { R2 } from "@/lib/r2";
+import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
 import { SITE_LOCALE } from "@/lib/site-locale";
 
 export type SeriesSlug = "digitemp" | "tonneau" | "rd-astral";
@@ -717,6 +718,11 @@ export function getCartLineImage(
     return product.image;
   }
   const id = resolveCatalogVariantId(product, variantId);
+  const r2 = getR2VariantLineImageUrl(
+    product.slug,
+    id ?? variantId,
+  );
+  if (r2) return r2;
   if (!id) return product.image;
   const match = product.variantOptions.find((v) => v.id === id);
   return match?.image ?? product.image;

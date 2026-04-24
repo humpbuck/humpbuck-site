@@ -27,10 +27,11 @@ export async function headOk(url: string): Promise<boolean> {
 }
 
 /**
- * Public R2 URLs for `gallery-01.webp` … until the first missing index (max `maxSlots`).
- * Parallel HEAD batch — one round-trip wall time per PDP (cached).
+ * Public R2 URLs for `gallery-01.webp` … `gallery-NN` — **every** existing index up to
+ * `maxSlots` (gaps allowed; e.g. missing 01 but 02+ present still resolves).
+ * Parallel HEAD batch — one round-trip wall time per section (cached).
  */
-async function discoverSequentialGalleryUrls(
+async function discoverIndexedGalleryUrls(
   spec: R2GallerySpec,
   maxSlots: number,
 ): Promise<string[]> {
@@ -42,8 +43,7 @@ async function discoverSequentialGalleryUrls(
   const ok = await Promise.all(urls.map((u) => headOk(u)));
   const out: string[] = [];
   for (let i = 0; i < maxSlots; i++) {
-    if (!ok[i]) break;
-    out.push(urls[i]);
+    if (ok[i]) out.push(urls[i]);
   }
   return out;
 }
@@ -57,7 +57,7 @@ const CACHED_MAX_VARIANT_SLOTS = 40;
 const REVALIDATE_SEC = 300;
 
 /**
- * Cached gallery URL list from live R2 (object keys must be contiguous from 01).
+ * Cached gallery URL list from live R2 (numbered slots; gaps do not stop discovery).
  * Returns `null` if discovery fails or yields no files (caller should use catalog fallback).
  */
 export async function getDiscoveredGalleryUrls(
@@ -67,7 +67,7 @@ export async function getDiscoveredGalleryUrls(
     return null;
   }
   const cached = unstable_cache(
-    () => discoverSequentialGalleryUrls(spec, CACHED_MAX_GALLERY_SLOTS),
+    () => discoverIndexedGalleryUrls(spec, CACHED_MAX_GALLERY_SLOTS),
     [
       "r2-gallery",
       spec.slugFolder,
@@ -84,7 +84,7 @@ export async function getDiscoveredGalleryUrls(
   }
 }
 
-async function discoverSequentialDetailUrls(
+async function discoverIndexedDetailUrls(
   spec: R2GallerySpec,
   maxSlots: number,
 ): Promise<string[]> {
@@ -96,14 +96,13 @@ async function discoverSequentialDetailUrls(
   const ok = await Promise.all(urls.map((u) => headOk(u)));
   const out: string[] = [];
   for (let i = 0; i < maxSlots; i++) {
-    if (!ok[i]) break;
-    out.push(urls[i]);
+    if (ok[i]) out.push(urls[i]);
   }
   return out;
 }
 
 /**
- * Cached detail strip URLs from live R2 (`detail/{filePrefix}-detail-01.webp` … contiguous).
+ * Cached detail strip URLs from live R2 (`detail/{filePrefix}-detail-01.webp` … gaps allowed).
  * Same toggle as gallery/variants: `R2_GALLERY_DISCOVER=0` skips discovery.
  */
 export async function getDiscoveredDetailUrls(
@@ -113,7 +112,7 @@ export async function getDiscoveredDetailUrls(
     return null;
   }
   const cached = unstable_cache(
-    () => discoverSequentialDetailUrls(spec, CACHED_MAX_DETAIL_SLOTS),
+    () => discoverIndexedDetailUrls(spec, CACHED_MAX_DETAIL_SLOTS),
     [
       "r2-detail",
       spec.slugFolder,
@@ -130,7 +129,7 @@ export async function getDiscoveredDetailUrls(
   }
 }
 
-async function discoverSequentialVariantUrls(
+async function discoverIndexedVariantUrls(
   spec: R2GallerySpec,
   maxSlots: number,
 ): Promise<string[]> {
@@ -144,14 +143,13 @@ async function discoverSequentialVariantUrls(
   const ok = await Promise.all(urls.map((u) => headOk(u)));
   const out: string[] = [];
   for (let i = 0; i < maxSlots; i++) {
-    if (!ok[i]) break;
-    out.push(urls[i]);
+    if (ok[i]) out.push(urls[i]);
   }
   return out;
 }
 
 /**
- * Cached variant thumbnail URLs from live R2 (`{prefix}-{variantSlug}-01.webp` … contiguous).
+ * Cached variant thumbnail URLs from live R2 (`{prefix}-{variantSlug}-01.webp` … gaps allowed).
  * Same env as gallery: `R2_GALLERY_DISCOVER=0` skips discovery (use catalog URLs).
  */
 export async function getDiscoveredVariantUrls(
@@ -163,7 +161,7 @@ export async function getDiscoveredVariantUrls(
   const variantPrefix = spec.variantFilePrefix ?? spec.filePrefix;
   const variantMid = spec.variantSlug ?? "style";
   const cached = unstable_cache(
-    () => discoverSequentialVariantUrls(spec, CACHED_MAX_VARIANT_SLOTS),
+    () => discoverIndexedVariantUrls(spec, CACHED_MAX_VARIANT_SLOTS),
     [
       "r2-variants",
       spec.slugFolder,
