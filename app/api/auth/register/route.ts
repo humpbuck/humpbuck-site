@@ -3,6 +3,10 @@ import bcrypt from "bcryptjs";
 import { BUYER_AVATAR_PRESET_URLS } from "@/lib/avatar-presets";
 import { prisma } from "@/lib/prisma";
 
+/**
+ * Buyer sign-up (credentials). Every successful registration persists
+ * `passwordHash` (bcrypt cost 12). `auth.ts` credentials provider requires it for login.
+ */
 export async function POST(req: Request) {
   let body: { email?: string; password?: string; name?: string; avatarPreset?: number };
   try {
@@ -54,8 +58,14 @@ export async function POST(req: Request) {
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
+
   await prisma.user.create({
-    data: { email, name, passwordHash, image },
+    data: {
+      email,
+      name,
+      image,
+      passwordHash,
+    },
   });
 
   return NextResponse.json({ ok: true });
