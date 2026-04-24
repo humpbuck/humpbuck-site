@@ -16,11 +16,14 @@ export function ProductImageCarousel({
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [loadFailed, setLoadFailed] = useState<Set<string>>(() => new Set());
+  /** If every `next/image` failed (e.g. domain not in `remotePatterns`), last-resort plain `<img>`. */
+  const [rawFallbackFailed, setRawFallbackFailed] = useState(false);
   const imagesKey = useMemo(() => images.join("\0"), [images]);
 
   useEffect(() => {
     setLoadFailed(new Set());
     setActive(0);
+    setRawFallbackFailed(false);
   }, [imagesKey]);
 
   const visible = useMemo(
@@ -81,7 +84,44 @@ export function ProductImageCarousel({
   }, [visibleKey, visible.length]);
 
   if (images.length === 0) return null;
-  if (visible.length === 0) return null;
+  if (visible.length === 0) {
+    if (rawFallbackFailed) {
+      return (
+        <div
+          className="relative min-w-0 max-w-full rounded-[28px] border border-dashed border-[color:var(--color-line)] bg-paper/80 p-8 text-center text-sm leading-relaxed text-muted"
+          role="status"
+        >
+          无法加载商品图。若公网图使用自定义域名，请把该域名加入{" "}
+          <code className="rounded bg-paper px-1.5 py-0.5 font-mono text-[12px] text-ink/80">
+            next.config → images.remotePatterns
+          </code>{" "}
+          并确保{" "}
+          <code className="rounded bg-paper px-1.5 py-0.5 font-mono text-[12px] text-ink/80">
+            NEXT_PUBLIC_R2_PUBLIC_BASE
+          </code>{" "}
+          与线上 R2 一致后重新部署。
+        </div>
+      );
+    }
+    return (
+      <div className="relative min-w-0 max-w-full">
+        <div
+          className={`pointer-events-none absolute -inset-3 rounded-[32px] bg-gradient-to-br sm:-inset-6 ${themeGlowClass} blur-2xl opacity-70`}
+        />
+        <div className="relative overflow-hidden rounded-[28px] border border-[color:var(--color-line)] bg-paper shadow-[var(--shadow-card)]">
+          <div className="relative aspect-square w-full">
+            <img
+              src={images[0]}
+              alt={alt}
+              className="h-full w-full object-cover object-center"
+              loading="eager"
+              onError={() => setRawFallbackFailed(true)}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-w-0 max-w-full">

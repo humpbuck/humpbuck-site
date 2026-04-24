@@ -20,9 +20,10 @@ export function ProductStyleVariants({
   const controlled =
     controlledIndex !== undefined && onSelectedIndexChange !== undefined;
   const selected = controlled ? controlledIndex! : internal;
-  const [imageErrorById, setImageErrorById] = useState<Record<string, true>>(
-    {},
-  );
+  /** `next` = next/image; if host not in remotePatterns, fall back to native `img`, then label. */
+  const [thumbStage, setThumbStage] = useState<
+    Record<string, "next" | "raw" | "text">
+  >({});
 
   function setSelected(i: number) {
     onSelectedIndexChange?.(i);
@@ -59,22 +60,40 @@ export function ProductStyleVariants({
                 : `${opt.label} for ${productName}`
             }
           >
-            {imageErrorById[opt.id] ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-paper px-1 text-center text-[9px] font-semibold uppercase leading-tight text-muted">
-                {opt.label}
-              </div>
-            ) : (
-              <Image
-                src={opt.image}
-                alt=""
-                fill
-                className="object-cover object-center"
-                sizes="(max-width:640px) 22vw, 96px"
-                onError={() =>
-                  setImageErrorById((m) => ({ ...m, [opt.id]: true }))
-                }
-              />
-            )}
+            {(() => {
+              const stage = thumbStage[opt.id] ?? "next";
+              if (stage === "text") {
+                return (
+                  <div className="absolute inset-0 flex items-center justify-center bg-paper px-1 text-center text-[9px] font-semibold uppercase leading-tight text-muted">
+                    {opt.label}
+                  </div>
+                );
+              }
+              if (stage === "raw") {
+                return (
+                  <img
+                    src={opt.image}
+                    alt=""
+                    className="absolute inset-0 h-full w-full object-cover object-center"
+                    onError={() =>
+                      setThumbStage((m) => ({ ...m, [opt.id]: "text" }))
+                    }
+                  />
+                );
+              }
+              return (
+                <Image
+                  src={opt.image}
+                  alt=""
+                  fill
+                  className="object-cover object-center"
+                  sizes="(max-width:640px) 22vw, 96px"
+                  onError={() =>
+                    setThumbStage((m) => ({ ...m, [opt.id]: "raw" }))
+                  }
+                />
+              );
+            })()}
           </button>
         );
         })}
