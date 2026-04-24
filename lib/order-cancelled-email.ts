@@ -13,6 +13,7 @@ import { getProductBySlug } from "@/lib/catalog";
 import { parseOrderItemsJson } from "@/lib/parse-order-items";
 import { publicSupportEmail } from "@/lib/support-contact";
 import { SITE_LOCALE } from "@/lib/site-locale";
+import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
 import { adminPath } from "@/lib/admin-path";
 import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/whatsapp";
 
@@ -35,16 +36,8 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function publicBaseUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
-    "http://localhost:3000"
-  );
-}
-
 function absoluteImageUrl(href: string): string {
-  const base = publicBaseUrl();
+  const base = emailPublicBaseUrl();
   if (href.startsWith("http://") || href.startsWith("https://")) return href;
   const path = href.startsWith("/") ? href : `/${href}`;
   return `${base}${path}`;
@@ -116,7 +109,7 @@ export async function buildOrderCancelledEmailPayload(
     dateStyle: "medium",
     timeStyle: "short",
   });
-  const base = publicBaseUrl();
+  const base = emailPublicBaseUrl();
   const support = publicSupportEmail();
   const brand = "#5b4dcb";
   const ink = "#14120f";

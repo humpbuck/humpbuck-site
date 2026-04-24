@@ -8,6 +8,7 @@ import {
   parseStructuredShipping,
   paymentProviderLabel,
 } from "@/lib/admin/order-ui";
+import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import {
   getOrCreateUnsubscribeToken,
@@ -39,16 +40,8 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function publicBaseUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
-    "http://localhost:3000"
-  );
-}
-
 function absoluteImageUrl(href: string): string {
-  const base = publicBaseUrl();
+  const base = emailPublicBaseUrl();
   if (href.startsWith("http://") || href.startsWith("https://")) return href;
   const path = href.startsWith("/") ? href : `/${href}`;
   return `${base}${path}`;
@@ -264,7 +257,7 @@ export async function buildShippingAddressChangeEmailPayload(
     dateStyle: "medium",
     timeStyle: "short",
   });
-  const base = publicBaseUrl();
+  const base = emailPublicBaseUrl();
   const name = customerNameFromEmail(order.email);
   const brand = "#5b4dcb";
   const ink = "#14120f";
@@ -564,7 +557,7 @@ export async function buildCustomerShippedEmailPayload(order: Order): Promise<{
   const carrier = order.carrier?.trim() || "";
   const tracking = order.trackingNumber?.trim() || "";
   const track = trackingUrlForCarrier(carrier || "Courier", tracking);
-  const base = publicBaseUrl();
+  const base = emailPublicBaseUrl();
   const unsubToken = await getOrCreateUnsubscribeToken(order.email);
   const unsubUrl = `${base}/unsubscribe?t=${encodeURIComponent(unsubToken)}`;
   const marketingOut = await isMarketingOptOut(order.email);

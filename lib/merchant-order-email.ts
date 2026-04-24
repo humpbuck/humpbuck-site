@@ -12,6 +12,7 @@ import { buildShippingAddressChangeEmailPayload } from "@/lib/customer-shipped-e
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { getProductBySlug } from "@/lib/catalog";
 import { parseOrderItemsJson } from "@/lib/parse-order-items";
+import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
 import { prisma } from "@/lib/prisma";
 import { SITE_LOCALE } from "@/lib/site-locale";
 import { adminPath } from "@/lib/admin-path";
@@ -105,16 +106,8 @@ function emailAddressFieldsTable(
 </table>`;
 }
 
-function publicBaseUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
-    "http://localhost:3000"
-  );
-}
-
 function absoluteImageUrl(href: string): string {
-  const base = publicBaseUrl();
+  const base = emailPublicBaseUrl();
   if (href.startsWith("http://") || href.startsWith("https://")) return href;
   const path = href.startsWith("/") ? href : `/${href}`;
   return `${base}${path}`;
@@ -167,7 +160,7 @@ function buildHtml(order: Order, lines: ReturnType<typeof parseOrderItemsJson>):
     order.billingJson ?? order.shippingJson,
   );
   const ship = parseShippingRecord(order.shippingJson);
-  const base = publicBaseUrl();
+  const base = emailPublicBaseUrl();
   const brand = "#5b4dcb";
   const ink = "#14120f";
   const muted = "#5c5a57";
