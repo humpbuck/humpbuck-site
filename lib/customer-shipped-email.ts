@@ -84,18 +84,22 @@ function repeatCouponNote(): string | null {
   return n || null;
 }
 
-/** SHIP TO block: field table like admin order page (email-safe HTML). */
-export function buildShipToHtml(order: {
+/**
+ * Billing or shipping field table (same layout as admin order page), email-safe HTML.
+ * @param whenNoLines — shown when JSON is empty / unparseable (per address role).
+ */
+export function buildAddressFieldTableHtml(opts: {
   email: string;
-  shippingJson: string | null;
+  addressJson: string | null;
+  whenNoLines: "Same as billing / on file." | "Same as shipping / on file.";
 }): string {
-  const raw = parseShippingRecord(order.shippingJson);
+  const raw = parseShippingRecord(opts.addressJson);
   const structured = parseStructuredShipping(raw);
 
   if (!structured) {
     const lines = formatAddressLines(raw);
     if (lines.length === 0) {
-      return `<p style="color:#8a8680;margin:0;font-size:14px;">Same as billing / on file.</p>`;
+      return `<p style="color:#8a8680;margin:0;font-size:14px;">${escapeHtml(opts.whenNoLines)}</p>`;
     }
     return lines
       .map(
@@ -111,7 +115,7 @@ export function buildShipToHtml(order: {
   const row = (label: string, value: string, isEmail = false) => {
     const v = escapeHtml(value);
     const content = isEmail
-      ? `<a href="mailto:${escapeHtml(order.email)}" style="color:#5b4dcb;font-weight:500;text-decoration:none;">${v}</a>`
+      ? `<a href="mailto:${escapeHtml(opts.email)}" style="color:#5b4dcb;font-weight:500;text-decoration:none;">${v}</a>`
       : `<span style="color:#14120f;">${v}</span>`;
     return `<tr>
       <td style="padding:10px 12px 10px 0;vertical-align:top;border-bottom:1px solid #ece9e4;font-size:11px;font-weight:700;letter-spacing:0.08em;color:#8a8680;width:38%;">${escapeHtml(label)}</td>
@@ -128,19 +132,20 @@ export function buildShipToHtml(order: {
     ${row("ZIP code", structured.zip)}
     ${row("Country", structured.country)}
     ${row("Phone number", phoneDisplay)}
-    ${row("Email", order.email, true)}
+    ${row("Email", opts.email, true)}
   </table>`;
 }
 
-function buildShipToPlainText(order: {
+function buildAddressFieldTablePlainText(opts: {
   email: string;
-  shippingJson: string | null;
+  addressJson: string | null;
+  whenNoLines: string;
 }): string {
-  const raw = parseShippingRecord(order.shippingJson);
+  const raw = parseShippingRecord(opts.addressJson);
   const structured = parseStructuredShipping(raw);
   if (!structured) {
     const lines = formatAddressLines(raw);
-    return lines.length ? lines.join("\n") : "(on file)";
+    return lines.length ? lines.join("\n") : opts.whenNoLines;
   }
   const phoneIntl = formatPhoneInternational(raw?.phone, raw?.country);
   const phoneDisplay = phoneIntl?.display ?? "Not provided";
@@ -153,8 +158,56 @@ function buildShipToPlainText(order: {
     `ZIP code: ${structured.zip}`,
     `Country: ${structured.country}`,
     `Phone: ${phoneDisplay}`,
-    `Email: ${order.email}`,
+    `Email: ${opts.email}`,
   ].join("\n");
+}
+
+/** SHIP TO block: field table like admin order page (email-safe HTML). */
+export function buildShipToHtml(order: {
+  email: string;
+  shippingJson: string | null;
+}): string {
+  return buildAddressFieldTableHtml({
+    email: order.email,
+    addressJson: order.shippingJson,
+    whenNoLines: "Same as billing / on file.",
+  });
+}
+
+/** BILL TO — uses billing JSON, falls back to shipping when billing is absent. */
+export function buildBillToHtml(order: {
+  email: string;
+  billingJson: string | null;
+  shippingJson: string | null;
+}): string {
+  return buildAddressFieldTableHtml({
+    email: order.email,
+    addressJson: order.billingJson ?? order.shippingJson,
+    whenNoLines: "Same as shipping / on file.",
+  });
+}
+
+function buildShipToPlainText(order: {
+  email: string;
+  shippingJson: string | null;
+}): string {
+  return buildAddressFieldTablePlainText({
+    email: order.email,
+    addressJson: order.shippingJson,
+    whenNoLines: "(same as billing / on file)",
+  });
+}
+
+function buildBillToPlainText(order: {
+  email: string;
+  billingJson: string | null;
+  shippingJson: string | null;
+}): string {
+  return buildAddressFieldTablePlainText({
+    email: order.email,
+    addressJson: order.billingJson ?? order.shippingJson,
+    whenNoLines: "(same as shipping / on file)",
+  });
 }
 
 function buildOrderLineItemRowsHtml(
@@ -535,6 +588,7 @@ export async function buildCustomerShippedEmailPayload(order: Order): Promise<{
 
   const lineRows = buildOrderLineItemRowsHtml(lines);
 
+  const billAddrHtml = buildBillToHtml(order);
   const shipAddrHtml = buildShipToHtml(order);
 
   const marketingBlock = !marketingOut
@@ -629,6 +683,12 @@ export async function buildCustomerShippedEmailPayload(order: Order): Promise<{
           </td></tr>
         </table>
       </td></tr>
+      <tr><td style="padding:8px 24px 8px 24px;">
+        <p style="margin:0 0 10px 0;font-size:10px;font-weight:700;letter-spacing:0.14em;color:#8a8680;">BILL TO</p>
+        <table width="100%" cellspacing="0" cellpadding="0" style="background:#faf9f7;border-radius:12px;border:1px solid #ece9e4;">
+          <tr><td style="padding:14px 14px 12px 14px;">${billAddrHtml}</td></tr>
+        </table>
+      </td></tr>
       <tr><td style="padding:8px 24px 16px 24px;">
         <p style="margin:0 0 10px 0;font-size:10px;font-weight:700;letter-spacing:0.14em;color:#8a8680;">SHIP TO</p>
         <table width="100%" cellspacing="0" cellpadding="0" style="background:#faf9f7;border-radius:12px;border:1px solid #ece9e4;">
@@ -688,6 +748,8 @@ export async function buildCustomerShippedEmailPayload(order: Order): Promise<{
     "",
     "Items:",
     textLines,
+    "",
+    `Bill to:\n${buildBillToPlainText(order)}`,
     "",
     `Ship to:\n${buildShipToPlainText(order)}`,
     "",
