@@ -86,6 +86,20 @@ const P2412_FILE = "HUMPBUCK-2412M";
 /** R2 variant folder uses `HUMPBUCK-2401-style-*.webp`; keep filenames aligned with uploaded objects. */
 const P2412_VARIANT_FILE = "HUMPBUCK-2401";
 
+/**
+ * Variant swatch stills (cart, orders, PDP) — **full** R2 object basename, not just `style-01.webp`.
+ *
+ * Pattern:
+ *   `products/{SLUG_FOLDER}/variants/{FILE_PREFIX}-style-{NN}.webp`
+ *
+ * Example (RM-M01, style 1):
+ *   `products/RM-M01/variants/HUMPBUCK-RM-M01-style-01.webp`
+ *
+ * `SLUG_FOLDER` / `FILE_PREFIX` must match the bucket (case-sensitive). `NN` is always
+ * two digits (`01`–`99`). `variantOptions[].id` in `catalog.ts` is `style-01`, etc.; the
+ * **file** name always includes the `HUMPBUCK-{SKU}-` prefix before `-style-NN`.
+ */
+
 /** RM-M01 — R2 `products/RM-M01/{gallery|detail|variants|video}/` (folder casing matches bucket). */
 const PRMM01_SLUG = "RM-M01";
 const PRMM01_FILE = "HUMPBUCK-RM-M01";

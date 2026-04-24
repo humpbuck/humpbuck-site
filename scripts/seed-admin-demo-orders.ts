@@ -50,7 +50,7 @@ async function main() {
       slug: "rm-m01",
       name: "RM-M01 Tonneau Ultra-thin",
       unitAmountCents: 329_00,
-      variantId: "style01",
+      variantId: "style-01",
     },
     {
       status: "shipped",

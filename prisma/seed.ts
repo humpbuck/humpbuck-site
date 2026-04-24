@@ -28,8 +28,8 @@ async function main() {
       qty: 1,
       unitAmountCents: 329_00,
       lineTotalCents: 329_00,
-      variantId: "style01",
-      variantLabel: "RM-M01: style01",
+      variantId: "style-01",
+      variantLabel: "RM-M01: Style 01",
     },
   ];
 
