@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { PasswordInputWithToggle } from "@/components/auth/password-input-with-toggle";
 import { Suspense, useState } from "react";
 
 function ResetForm() {
@@ -78,15 +79,13 @@ function ResetForm() {
           >
             New password
           </label>
-          <input
+          <PasswordInputWithToggle
             id="new-password"
-            type="password"
             autoComplete="new-password"
             required
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-[color:var(--color-line)] bg-paper px-4 py-3 text-sm outline-none ring-ink/20 focus:ring-2"
           />
         </div>
         <div>
@@ -96,15 +95,13 @@ function ResetForm() {
           >
             Confirm new password
           </label>
-          <input
+          <PasswordInputWithToggle
             id="confirm-password"
-            type="password"
             autoComplete="new-password"
             required
             minLength={8}
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-[color:var(--color-line)] bg-paper px-4 py-3 text-sm outline-none ring-ink/20 focus:ring-2"
           />
         </div>
         {error && (

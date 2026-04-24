@@ -3,6 +3,11 @@
  *   1) Paid — use Account → Cancel to test “cancel after payment” (refund copy + admin refund).
  *   2) Pending payment — use Account → Cancel to test “cancel without payment” (no refund copy; admin has no refund button).
  *
+ * Default email: 843574506@qq.com (override with argv[2]).
+ * If no User row exists for that email, a minimal user is created so the script can attach orders.
+ * To see them under Account → Orders, sign in as that email (register first, or use Forgot password
+ * if the row was auto-created without a password).
+ *
  * Usage:
  *   npx tsx scripts/create-cancel-scenarios.ts
  *   npx tsx scripts/create-cancel-scenarios.ts 843574506@qq.com
@@ -26,15 +31,22 @@ function publicBaseUrl(): string {
 
 async function main() {
   const email = (process.argv[2] || DEFAULT_EMAIL).trim().toLowerCase();
-  const user = await prisma.user.findUnique({
+  let user = await prisma.user.findUnique({
     where: { email },
     select: { id: true, email: true },
   });
   if (!user) {
-    console.error(
-      `\nNo user with email "${email}". Sign up or log in once on the site first, then re-run.\n`,
+    user = await prisma.user.create({
+      data: {
+        email,
+        name: "Test orders (create-cancel-scenarios)",
+      },
+      select: { id: true, email: true },
+    });
+    console.log(
+      `\nNo user existed for ${email}; created a minimal row so orders can link. ` +
+        "Sign in: register with this email, or use Forgot password to set a password.\n",
     );
-    process.exit(1);
   }
 
   const slug = "rm-m01";

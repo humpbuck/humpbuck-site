@@ -4,6 +4,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import { PasswordInputWithToggle } from "@/components/auth/password-input-with-toggle";
 import { sanitizeCallbackUrl } from "@/lib/auth-callback-url";
 
 function LoginForm() {
@@ -80,14 +81,12 @@ function LoginForm() {
           >
             Password
           </label>
-          <input
+          <PasswordInputWithToggle
             id="password"
-            type="password"
             autoComplete="current-password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-[color:var(--color-line)] bg-paper px-4 py-3 text-sm outline-none ring-ink/20 focus:ring-2"
           />
           <p className="mt-2 text-right">
             <Link
