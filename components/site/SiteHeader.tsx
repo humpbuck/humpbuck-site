@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Menu, ShoppingBag, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useSyncExternalStore } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import { AccountMenu } from "@/components/site/AccountMenu";
 import { HeaderUserAvatar } from "@/components/site/HeaderUserAvatar";
@@ -44,8 +44,14 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [bagBump, setBagBump] = useState(false);
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   const { itemCount, openCartDrawer } = useCart();
   const { data: session, status } = useSession();
+  const displayItemCount = hydrated ? itemCount : 0;
 
   const accountAvatarLabel =
     session?.user?.name?.trim() ||
@@ -162,11 +168,11 @@ export function SiteHeader() {
                 if (e.animationName === "cart-bump") setBagBump(false);
               }}
               className={`inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90 ${bagBump ? "animate-cart-bump" : ""}`}
-              aria-label={`Open shopping bag, ${itemCount} items`}
+              aria-label={`Open shopping bag, ${displayItemCount} items`}
             >
               <ShoppingBag size={16} strokeWidth={1.75} />
               <span className="hidden sm:inline">Bag</span>
-              <span className="tabular-nums">{itemCount}</span>
+              <span className="tabular-nums">{displayItemCount}</span>
             </button>
           </div>
         </div>
@@ -239,7 +245,7 @@ export function SiteHeader() {
             }}
             className="w-full rounded-xl px-4 py-3 text-left text-sm font-semibold text-ink/85 hover:bg-ink/[0.04]"
           >
-            Bag ({itemCount})
+            Bag ({displayItemCount})
           </button>
           {status === "authenticated" ? (
             <>
