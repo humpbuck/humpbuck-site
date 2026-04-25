@@ -14,17 +14,19 @@ function sourceLabel(source: string | null): string {
   return source.replace(/[_-]/g, " ");
 }
 
-function pctChange(current: number, previous: number): number | null {
+function pctChange(current: number, previous: number): number {
   if (previous <= 0) return current > 0 ? 100 : 0;
   return Math.round(((current - previous) / previous) * 100);
 }
 
-function deltaBadge(current: number, previous: number) {
+function deltaBadge(current: number, previous: number): {
+  text: string;
+  tone: "up" | "down" | "flat";
+} {
   const change = pctChange(current, previous);
-  if (change == null) return "—";
-  if (change > 0) return `↑ ${change}%`;
-  if (change < 0) return `↓ ${Math.abs(change)}%`;
-  return "0%";
+  if (change > 0) return { text: `↑ ${change}%`, tone: "up" };
+  if (change < 0) return { text: `↓ ${Math.abs(change)}%`, tone: "down" };
+  return { text: "→ 0%", tone: "flat" };
 }
 
 function compactEventLabel(type: string): string {
@@ -46,17 +48,53 @@ function formatSeconds(seconds: number): string {
   return `${m}m ${s}s`;
 }
 
+function startOfHourMs(ts: number): number {
+  const d = new Date(ts);
+  d.setMinutes(0, 0, 0);
+  return d.getTime();
+}
+
+function safeToken(input?: string): string | null {
+  if (!input) return null;
+  const s = input.trim().toLowerCase();
+  if (!s) return null;
+  if (!/^[a-z0-9][a-z0-9._-]{0,63}$/.test(s)) return null;
+  return s;
+}
+
 export default async function AdminTrafficPage({
   searchParams,
 }: {
-  searchParams: Promise<{ days?: string }>;
+  searchParams: Promise<{
+    days?: string;
+    country?: string;
+    device?: string;
+    browser?: string;
+  }>;
 }) {
   const sp = await searchParams;
   const days = toInt(sp.days, 7);
+  const selectedCountry = safeToken(sp.country);
+  const selectedDevice = safeToken(sp.device);
+  const selectedBrowser = safeToken(sp.browser);
   const nowTs = Date.now();
   const since = new Date(nowTs - days * 86400000);
   const prevSince = new Date(nowTs - days * 2 * 86400000);
   const onlineSince = new Date(nowTs - 5 * 60 * 1000);
+  const topProductsWhere = {
+    type: "product_view" as const,
+    createdAt: { gte: since },
+    productSlug: { not: null as null },
+    ...(selectedCountry || selectedDevice || selectedBrowser
+      ? {
+          session: {
+            ...(selectedCountry ? { country: selectedCountry } : {}),
+            ...(selectedDevice ? { deviceType: selectedDevice } : {}),
+            ...(selectedBrowser ? { browser: selectedBrowser } : {}),
+          },
+        }
+      : {}),
+  };
 
   const [
     sessionCountCurrent,
@@ -80,6 +118,7 @@ export default async function AdminTrafficPage({
     topBrowsers,
     recentSessions,
     avgDurationRows,
+    chartRows,
   ] = await Promise.all([
     prisma.visitorSession.count({ where: { createdAt: { gte: since } } }),
     prisma.visitorSession.count({
@@ -125,11 +164,7 @@ export default async function AdminTrafficPage({
     }),
     prisma.visitorEvent.groupBy({
       by: ["productSlug"],
-      where: {
-        type: "product_view",
-        createdAt: { gte: since },
-        productSlug: { not: null },
-      },
+      where: topProductsWhere,
       _count: { _all: true },
       orderBy: { _count: { productSlug: "desc" } },
       take: 10,
@@ -163,7 +198,12 @@ export default async function AdminTrafficPage({
       take: 6,
     }),
     prisma.visitorSession.findMany({
-      where: { createdAt: { gte: since } },
+      where: {
+        createdAt: { gte: since },
+        ...(selectedCountry ? { country: selectedCountry } : {}),
+        ...(selectedDevice ? { deviceType: selectedDevice } : {}),
+        ...(selectedBrowser ? { browser: selectedBrowser } : {}),
+      },
       orderBy: { createdAt: "desc" },
       take: 20,
       select: {
@@ -196,6 +236,14 @@ export default async function AdminTrafficPage({
         GROUP BY "sessionId"
       ) spans
     `,
+    prisma.$queryRaw<Array<{ hour_bucket: Date; c: bigint | number }>>`
+      SELECT date_trunc('hour', "createdAt") AS hour_bucket, COUNT(*) AS c
+      FROM "VisitorEvent"
+      WHERE "createdAt" >= ${since}
+        AND "type" = 'page_view'
+      GROUP BY 1
+      ORDER BY 1 ASC
+    `,
   ]);
 
   const sessionCount = sessionCountCurrent;
@@ -214,6 +262,37 @@ export default async function AdminTrafficPage({
       ? Math.round((purchaseCount / checkoutStartCount) * 100)
       : 0;
   const avgSessionSeconds = Number(avgDurationRows[0]?.avg_seconds ?? 0);
+  const viewToCartDrop =
+    pctChange(funnelViewToCart, addToCartCountPrevious > 0 && productViewCountPrevious > 0
+      ? Math.round((addToCartCountPrevious / productViewCountPrevious) * 100)
+      : 0) < -50;
+  const cartToCheckoutDrop =
+    pctChange(
+      funnelCartToCheckout,
+      addToCartCountPrevious > 0 && checkoutStartCountPrevious > 0
+        ? Math.round((checkoutStartCountPrevious / addToCartCountPrevious) * 100)
+        : 0,
+    ) < -50;
+
+  const chartStart = startOfHourMs(nowTs - days * 86400000);
+  const chartEnd = startOfHourMs(nowTs);
+  const points: Array<{ t: number; c: number }> = [];
+  const rowMap = new Map<number, number>();
+  for (const r of chartRows) {
+    const t = new Date(r.hour_bucket).getTime();
+    rowMap.set(t, Number(r.c));
+  }
+  for (let t = chartStart; t <= chartEnd; t += 3600000) {
+    points.push({ t, c: rowMap.get(t) ?? 0 });
+  }
+  const maxC = Math.max(1, ...points.map((p) => p.c));
+  const polyline = points
+    .map((p, i) => {
+      const x = points.length <= 1 ? 0 : (i / (points.length - 1)) * 100;
+      const y = 100 - (p.c / maxC) * 100;
+      return `${x.toFixed(2)},${y.toFixed(2)}`;
+    })
+    .join(" ");
 
   return (
     <div>
@@ -226,10 +305,22 @@ export default async function AdminTrafficPage({
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Link
+            href={adminPath(`/traffic?days=${days}`)}
+            className={`rounded-xl border px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] ${
+              !selectedCountry && !selectedDevice && !selectedBrowser
+                ? "border-ink bg-ink text-paper"
+                : "border-line bg-white/70 text-ink/80 hover:border-ink/20"
+            }`}
+          >
+            All filters
+          </Link>
           {[7, 14, 30].map((d) => (
             <Link
               key={d}
-              href={adminPath(`/traffic?days=${d}`)}
+              href={adminPath(
+                `/traffic?days=${d}${selectedCountry ? `&country=${encodeURIComponent(selectedCountry)}` : ""}${selectedDevice ? `&device=${encodeURIComponent(selectedDevice)}` : ""}${selectedBrowser ? `&browser=${encodeURIComponent(selectedBrowser)}` : ""}`,
+              )}
               className={`rounded-xl border px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] ${
                 days === d
                   ? "border-ink bg-ink text-paper"
@@ -239,6 +330,26 @@ export default async function AdminTrafficPage({
               {d}d
             </Link>
           ))}
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-line bg-white/70 p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+            Traffic by hour ({days}d)
+          </p>
+          <p className="text-xs text-muted">Peak {maxC} page views / hour</p>
+        </div>
+        <div className="mt-3 h-28 w-full rounded-xl border border-line/60 bg-paper/70 p-2">
+          <svg viewBox="0 0 100 100" className="h-full w-full">
+            <polyline
+              fill="none"
+              stroke="currentColor"
+              className="text-cyan-600"
+              strokeWidth="1.5"
+              points={polyline}
+            />
+          </svg>
         </div>
       </div>
 
@@ -316,7 +427,8 @@ export default async function AdminTrafficPage({
           <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
             Real-time
           </p>
-          <p className="mt-3 text-sm text-ink/85">
+          <p className="mt-3 flex items-center gap-2 text-sm text-ink/85">
+            <span className="inline-flex h-2.5 w-2.5 animate-pulse rounded-full bg-green-500" />
             Online now (last 5 min):{" "}
             <span className="font-semibold tabular-nums">{onlineNowCount}</span>
           </p>
@@ -328,6 +440,17 @@ export default async function AdminTrafficPage({
           </p>
         </div>
       </div>
+
+      {(viewToCartDrop || cartToCheckoutDrop) && (
+        <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4">
+          <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-red-900">
+            Funnel warning
+          </p>
+          <p className="mt-1 text-sm text-red-900/90">
+            Conversion dropped sharply vs previous period. Check checkout flow, shipping methods, and payment gateway health.
+          </p>
+        </div>
+      )}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         <div className="rounded-2xl border border-line bg-white/70 p-5">
@@ -360,7 +483,14 @@ export default async function AdminTrafficPage({
             ) : (
               topCountries.map((r) => (
                 <li key={r.country ?? "unknown"} className="flex justify-between gap-3">
-                  <span className="uppercase text-ink/85">{r.country ?? "unknown"}</span>
+                  <Link
+                    href={adminPath(
+                      `/traffic?days=${days}&country=${encodeURIComponent(r.country ?? "unknown")}${selectedDevice ? `&device=${encodeURIComponent(selectedDevice)}` : ""}${selectedBrowser ? `&browser=${encodeURIComponent(selectedBrowser)}` : ""}`,
+                    )}
+                    className="uppercase text-ink/85 underline-offset-2 hover:underline"
+                  >
+                    {r.country ?? "unknown"}
+                  </Link>
                   <span className="tabular-nums text-muted">{r._count._all}</span>
                 </li>
               ))
@@ -392,9 +522,14 @@ export default async function AdminTrafficPage({
             ) : (
               topDevices.map((r) => (
                 <li key={r.deviceType ?? "unknown"} className="flex justify-between gap-3">
-                  <span className="capitalize text-ink/85">
+                  <Link
+                    href={adminPath(
+                      `/traffic?days=${days}&device=${encodeURIComponent(r.deviceType ?? "unknown")}${selectedCountry ? `&country=${encodeURIComponent(selectedCountry)}` : ""}${selectedBrowser ? `&browser=${encodeURIComponent(selectedBrowser)}` : ""}`,
+                    )}
+                    className="capitalize text-ink/85 underline-offset-2 hover:underline"
+                  >
                     {r.deviceType ?? "unknown"}
-                  </span>
+                  </Link>
                   <span className="tabular-nums text-muted">{r._count._all}</span>
                 </li>
               ))
@@ -409,7 +544,14 @@ export default async function AdminTrafficPage({
             ) : (
               topBrowsers.map((r) => (
                 <li key={r.browser ?? "unknown"} className="flex justify-between gap-3">
-                  <span className="capitalize text-ink/85">{r.browser ?? "unknown"}</span>
+                  <Link
+                    href={adminPath(
+                      `/traffic?days=${days}&browser=${encodeURIComponent(r.browser ?? "unknown")}${selectedCountry ? `&country=${encodeURIComponent(selectedCountry)}` : ""}${selectedDevice ? `&device=${encodeURIComponent(selectedDevice)}` : ""}`,
+                    )}
+                    className="capitalize text-ink/85 underline-offset-2 hover:underline"
+                  >
+                    {r.browser ?? "unknown"}
+                  </Link>
                   <span className="tabular-nums text-muted">{r._count._all}</span>
                 </li>
               ))
@@ -484,7 +626,7 @@ function MetricCard({
 }: {
   label: string;
   value: number;
-  delta?: string;
+  delta?: { text: string; tone: "up" | "down" | "flat" };
 }) {
   return (
     <div className="rounded-2xl border border-line bg-white/70 px-5 py-4">
@@ -493,8 +635,16 @@ function MetricCard({
       </p>
       <p className="mt-2 font-serif text-3xl tabular-nums text-ink">{value}</p>
       {delta ? (
-        <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
-          vs prev {delta}
+        <p
+          className={`mt-1 text-[11px] font-semibold uppercase tracking-[0.08em] ${
+            delta.tone === "up"
+              ? "text-green-700"
+              : delta.tone === "down"
+                ? "text-red-700"
+                : "text-muted"
+          }`}
+        >
+          vs prev {delta.text}
         </p>
       ) : null}
     </div>
