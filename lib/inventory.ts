@@ -1,12 +1,14 @@
 import { prisma } from "@/lib/prisma";
-import type { ValidatedLine } from "@/lib/order-lines";
+
+/** Minimal line info needed for inventory operations. */
+type InventoryLine = { slug: string; qty: number; variantId?: string };
 
 /**
  * Check stock availability for a set of validated cart lines.
  * Returns `{ ok: true }` or `{ ok: false, unavailable }` with details.
  */
 export async function checkInventory(
-  lines: ValidatedLine[],
+  lines: InventoryLine[],
 ): Promise<
   | { ok: true }
   | { ok: false; unavailable: { slug: string; variantId?: string; requested: number; available: number }[] }
@@ -55,7 +57,7 @@ export async function checkInventory(
  * Call this AFTER payment is confirmed (webhook / capture).
  */
 export async function decrementInventory(
-  lines: ValidatedLine[],
+  lines: InventoryLine[],
 ): Promise<void> {
   await prisma.$transaction(async (tx) => {
     for (const line of lines) {
