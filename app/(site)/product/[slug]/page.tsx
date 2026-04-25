@@ -20,6 +20,7 @@ import { ProductDetailImageStrip } from "@/components/site/ProductDetailImageStr
 import { ProductPdpMediaColumn } from "@/components/site/ProductPdpMediaColumn";
 import { ProductReviewsSection } from "@/components/site/ProductReviewsSection";
 import { ProductCartSection } from "@/components/site/ProductCartSection";
+import { TrackProductView } from "@/components/analytics/track-product-view";
 
 /** Fresh buyer reviews + R2 gallery discovery on each request (avoid stale static PDP). */
 export const dynamic = "force-dynamic";
@@ -143,6 +144,7 @@ export default async function ProductPage({
 
   return (
     <div>
+      <TrackProductView slug={product.slug} />
       <div className="mx-auto min-w-0 max-w-7xl py-10 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:pl-[max(1.5rem,env(safe-area-inset-left))] sm:pr-[max(1.5rem,env(safe-area-inset-right))] lg:py-14">
         <Link
           href="/shop"

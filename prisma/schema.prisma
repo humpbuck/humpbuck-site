@@ -24,6 +24,7 @@ model User {
   paymentMethods SavedPaymentMethod[]
   passwordResetTokens PasswordResetToken[]
   productReviews ProductReview[]
+  visitorSessions VisitorSession[]
 }
 
 model PasswordResetToken {
@@ -211,4 +212,38 @@ model ProductReviewAppend {
   createdAt     DateTime @default(now())
 
   @@index([reviewId, createdAt])
+}
+
+// Anonymous or logged-in visitor session for onsite analytics.
+model VisitorSession {
+  id            String   @id @default(cuid())
+  sessionKey    String   @unique
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  firstReferrer String?
+  utmSource     String?
+  utmMedium     String?
+  utmCampaign   String?
+  landingPath   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  events        VisitorEvent[]
+}
+
+// Event stream per visitor session: page/product/cart/checkout lifecycle.
+model VisitorEvent {
+  id          String         @id @default(cuid())
+  sessionId   String
+  session     VisitorSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  type        String
+  path        String?
+  productSlug String?
+  orderId     String?
+  source      String?
+  metaJson    String?
+  createdAt   DateTime       @default(now())
+
+  @@index([sessionId, createdAt])
+  @@index([type, createdAt])
+  @@index([productSlug, createdAt])
 }

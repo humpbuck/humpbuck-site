@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
 import { useCart } from "@/components/cart/cart-context";
+import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 
 function SuccessInner() {
   const searchParams = useSearchParams();
@@ -14,6 +15,13 @@ function SuccessInner() {
   useEffect(() => {
     if (sessionId || paypalId) {
       clear();
+      trackVisitorEvent(
+        {
+          type: "purchase",
+          orderId: sessionId || paypalId || undefined,
+        },
+        { dedupeKey: `purchase:${sessionId || paypalId}` },
+      );
     }
   }, [sessionId, paypalId, clear]);
 

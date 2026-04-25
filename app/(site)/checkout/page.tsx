@@ -28,6 +28,7 @@ import {
   captureTrafficAttribution,
   getTrafficSourceForCheckout,
 } from "@/lib/traffic-attribution";
+import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 
 export default function CheckoutPage() {
   const { items, itemCount } = useCart();
@@ -206,6 +207,18 @@ export default function CheckoutPage() {
     billingConsistency.ok &&
     (shipSameAsBilling || shippingConsistency.ok) &&
     shippingQuote.ok;
+
+  useEffect(() => {
+    if (!canCheckout || itemCount <= 0) return;
+    trackVisitorEvent(
+      {
+        type: "checkout_start",
+        source: getTrafficSourceForCheckout(),
+        meta: { itemCount },
+      },
+      { dedupeKey: "checkout_start" },
+    );
+  }, [canCheckout, itemCount]);
 
   const payloadAddresses = () => {
     const b = addressFormToRecord(billing);

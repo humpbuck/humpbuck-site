@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import type { CartLine } from "@/lib/cart-types";
+import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 
 const STORAGE_KEY = "humpbuck-cart";
 const CART_QTY_MAX = 9999;
@@ -86,6 +87,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const addItem = useCallback((line: CartLine) => {
+    trackVisitorEvent({
+      type: "add_to_cart",
+      productSlug: line.slug,
+      meta: {
+        qty: Math.max(1, Math.min(CART_QTY_MAX, line.qty)),
+        variantId: line.variantId ?? null,
+      },
+    });
     setItems((prev) => {
       const idx = prev.findIndex(
         (p) =>
