@@ -58,6 +58,17 @@ function digitempSpaceMp4Url(): string {
 }
 
 /**
+ * Homepage hero background image — `home/digitemp-background.webp` on R2.
+ * Bump `NEXT_PUBLIC_R2_DIGITEMP_BACKGROUND_REV` after same-name overwrites.
+ */
+function digitempBackgroundWebpUrl(): string {
+  const rev =
+    process.env.NEXT_PUBLIC_R2_DIGITEMP_BACKGROUND_REV?.trim() || "1";
+  const path = `${R2_PUBLIC_BASE}/home/digitemp-background.webp`;
+  return `${path}?v=${encodeURIComponent(rev)}`;
+}
+
+/**
  * About page — `About/HUMPBUCK Promotional Video.mp4` on R2.
  * Bump `NEXT_PUBLIC_R2_ABOUT_PROMO_REV` after same-name overwrites.
  */
@@ -298,6 +309,8 @@ export const R2 = {
     rdStarWebp: rdStarWebpUrl(),
     /** DIGI-TEMP — `home/Spaceship.webp` (URL includes `?v=` cache bust) */
     spaceshipWebp: spaceshipWebpUrl(),
+    /** Homepage hero background — `home/digitemp-background.webp` (`?v=` cache bust). */
+    digitempBackgroundWebp: digitempBackgroundWebpUrl(),
     digitempSpaceMp4: digitempSpaceMp4Url(),
   },
   products: {

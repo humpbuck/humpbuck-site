@@ -1,49 +1,8 @@
-"use client";
+import Image from "next/image";
+import { R2 } from "@/lib/r2";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { DIGI_HERO_VIDEO_SOURCES } from "@/lib/hero-space-video";
-
-/**
- * Full-bleed muted loop for the DIGI-TEMP hero. Decorative — `aria-hidden`.
- * If every source fails, only the CSS layers remain (still “deep space” tone).
- */
+/** Full-bleed DIGI-TEMP hero background image (decorative). */
 export function HeroSpaceVideo() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [sourceIndex, setSourceIndex] = useState(0);
-  const [videoDead, setVideoDead] = useState(false);
-
-  const srcList = useMemo(() => {
-    const seen = new Set<string>();
-    return DIGI_HERO_VIDEO_SOURCES.filter((u) => {
-      if (!u || seen.has(u)) return false;
-      seen.add(u);
-      return true;
-    });
-  }, []);
-
-  const currentSrc = srcList[sourceIndex] ?? "";
-
-  const tryNext = useCallback(() => {
-    setSourceIndex((i) => {
-      const next = i + 1;
-      if (next < srcList.length) return next;
-      setVideoDead(true);
-      return i;
-    });
-  }, [srcList.length]);
-
-  useEffect(() => {
-    if (videoDead) return;
-    const el = videoRef.current;
-    if (!el || !currentSrc) {
-      if (srcList.length === 0) setVideoDead(true);
-      return;
-    }
-    el.load();
-    const play = el.play();
-    if (play) play.catch(() => tryNext());
-  }, [currentSrc, srcList.length, tryNext, videoDead]);
-
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-[#070a10]">
       {/* Base: always on (accessibility / while video loads / if all sources fail) */}
@@ -59,21 +18,16 @@ export function HeroSpaceVideo() {
         }}
       />
 
-      {!videoDead && currentSrc ? (
-        <video
-          ref={videoRef}
-          className="absolute inset-0 z-[1] h-full w-full object-cover opacity-[0.78] motion-reduce:hidden"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="none"
-          aria-hidden
-          onError={tryNext}
-        >
-          <source src={currentSrc} type="video/mp4" />
-        </video>
-      ) : null}
+      <Image
+        src={R2.home.digitempBackgroundWebp}
+        alt=""
+        fill
+        priority
+        fetchPriority="high"
+        sizes="100vw"
+        className="absolute inset-0 z-[1] h-full w-full object-cover opacity-[0.78]"
+        aria-hidden
+      />
 
       {/* Mood: vignette + cyan/purple haze (readability) */}
       <div
