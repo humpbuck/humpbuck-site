@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ProductCard } from "@/components/site/ProductCard";
 import {
-  getAllProducts,
   getSeriesBySlug,
   seriesList,
   type SeriesSlug,
 } from "@/lib/catalog";
+import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 
 const slugOk = (s: string | undefined): s is SeriesSlug =>
@@ -28,7 +28,7 @@ export default async function ShopPage({
 }) {
   const { series: seriesParam } = await searchParams;
   const active = slugOk(seriesParam) ? seriesParam : null;
-  const all = getAllProducts();
+  const all = await getMergedCatalogProducts();
   const list = active
     ? all.filter((p) => p.seriesSlug === active)
     : all;

@@ -168,6 +168,7 @@ export function ProductManager({
     initialProducts[0]?.id ?? null,
   );
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState<"success" | "error" | "info">("info");
   const [busy, setBusy] = useState(false);
 
   const current = useMemo(() => {
@@ -204,20 +205,24 @@ export function ProductManager({
     if (section === "video") {
       if (file.type !== "video/mp4") {
         setMessage("Video must be MP4.");
+        setMessageType("error");
         return;
       }
       const ok = await validateVideoDimensions(file);
       if (!ok) {
         setMessage("Video must be exactly 720x1280.");
+        setMessageType("error");
         return;
       }
     } else if (file.type !== "image/webp") {
       setMessage("Images must be WEBP.");
+      setMessageType("error");
       return;
     }
 
     setBusy(true);
     setMessage("");
+    setMessageType("info");
     try {
       const presign = await fetch("/api/admin/products/presign", {
         method: "POST",
@@ -237,6 +242,7 @@ export function ProductManager({
       };
       if (!presign.ok || !payload.uploadUrl || !payload.publicUrl) {
         setMessage(payload.error || "Failed to get upload URL.");
+        setMessageType("error");
         return;
       }
       const put = await fetch(payload.uploadUrl, {
@@ -246,6 +252,7 @@ export function ProductManager({
       });
       if (!put.ok) {
         setMessage("Upload failed.");
+        setMessageType("error");
         return;
       }
 
@@ -270,8 +277,10 @@ export function ProductManager({
         };
       });
       setMessage("Uploaded to R2.");
+      setMessageType("success");
     } catch {
       setMessage("Upload error.");
+      setMessageType("error");
     } finally {
       setBusy(false);
     }
@@ -281,10 +290,12 @@ export function ProductManager({
     if (!current) return;
     if (!current.slug.trim() || !current.name.trim()) {
       setMessage("Slug and name are required.");
+      setMessageType("error");
       return;
     }
     setBusy(true);
     setMessage("");
+    setMessageType("info");
     const payload = {
       slug: current.slug.trim(),
       name: current.name.trim(),
@@ -332,12 +343,25 @@ export function ProductManager({
       const data = (await res.json()) as { ok?: boolean; id?: string; error?: string };
       if (!res.ok) {
         setMessage(data.error || "Save failed.");
+        setMessageType("error");
         return;
       }
-      setMessage("Saved.");
+      if (!current.id && data.id) {
+        setProducts((prev) =>
+          prev.map((p) => {
+            if ((p.id ?? "__new__") !== "__new__") return p;
+            if (p.slug !== current.slug) return p;
+            return { ...p, id: data.id! };
+          }),
+        );
+        setSelected(data.id);
+      }
+      setMessage("✅ Saved successfully.");
+      setMessageType("success");
       startTransition(() => router.refresh());
     } catch {
       setMessage("Save failed.");
+      setMessageType("error");
     } finally {
       setBusy(false);
     }
@@ -360,12 +384,15 @@ export function ProductManager({
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) {
         setMessage(data.error || "Delete failed.");
+        setMessageType("error");
         return;
       }
       setMessage("Deleted.");
+      setMessageType("success");
       startTransition(() => router.refresh());
     } catch {
       setMessage("Delete failed.");
+      setMessageType("error");
     } finally {
       setBusy(false);
     }
@@ -423,7 +450,19 @@ export function ProductManager({
           <p className="text-sm text-muted">Select or create a product.</p>
         ) : (
           <div className="space-y-6">
-            {message && <p className="text-sm text-ink/80">{message}</p>}
+            {message && (
+              <p
+                className={`rounded-lg border px-3 py-2 text-sm ${
+                  messageType === "success"
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                    : messageType === "error"
+                      ? "border-red-200 bg-red-50 text-red-800"
+                      : "border-line bg-white/70 text-ink/80"
+                }`}
+              >
+                {message}
+              </p>
+            )}
             <div className="grid gap-4 sm:grid-cols-2">
               <LabeledInput
                 label="Slug"

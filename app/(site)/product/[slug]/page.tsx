@@ -3,10 +3,13 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Check } from "lucide-react";
 import {
   formatPrice,
-  getProductBySlug,
   getAllProducts,
   getSeriesBySlug,
 } from "@/lib/catalog";
+import {
+  getMergedCatalogProductBySlug,
+  getMergedCatalogProducts,
+} from "@/lib/catalog-db";
 import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { R2_GALLERY_SPECS_BY_SLUG } from "@/lib/r2";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
@@ -31,7 +34,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getMergedCatalogProductBySlug(slug);
   if (!product) return { title: "Product" };
   const spec = R2_GALLERY_SPECS_BY_SLUG[slug];
   let ogSrc = product.image;
@@ -70,11 +73,12 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getMergedCatalogProductBySlug(slug);
   if (!product) notFound();
 
   const series = getSeriesBySlug(product.seriesSlug);
-  const related = getAllProducts()
+  const all = await getMergedCatalogProducts();
+  const related = all
     .filter((p) => p.slug !== product.slug && p.seriesSlug === product.seriesSlug)
     .slice(0, 3);
   const relatedCardImages = await Promise.all(

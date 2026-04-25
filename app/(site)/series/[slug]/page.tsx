@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/site/ProductCard";
-import { getProductsBySeries, getSeriesBySlug, seriesList } from "@/lib/catalog";
+import { getSeriesBySlug, seriesList } from "@/lib/catalog";
+import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { getSiteUrl } from "@/lib/seo";
 
@@ -41,7 +42,8 @@ export default async function SeriesPage({
   const series = getSeriesBySlug(slug);
   if (!series) notFound();
 
-  const items = getProductsBySeries(series.slug);
+  const all = await getMergedCatalogProducts();
+  const items = all.filter((p) => p.seriesSlug === series.slug);
 
   const cardImages = await Promise.all(
     items.map((p) => getShopCardR2GalleryImage(p.slug)),
