@@ -30,7 +30,7 @@ export default async function AccountOrderDetailPage({
   if (!session?.user?.id) notFound();
 
   const order = await prisma.order.findFirst({
-    where: { id, userId: session.user.id },
+    where: { id, userId: session.user.id, deletedAt: null },
   });
   if (!order) notFound();
 

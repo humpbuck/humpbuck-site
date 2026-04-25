@@ -12,6 +12,7 @@ export async function getPdpWriteReviewCta(
     where: {
       userId,
       status: { in: ["paid", "processing", "shipped"] },
+      deletedAt: null,
     },
     orderBy: { createdAt: "desc" },
     select: { id: true, itemsJson: true, status: true },

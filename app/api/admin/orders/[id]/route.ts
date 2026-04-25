@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import { notifyCustomerOrderShipped } from "@/lib/customer-shipped-email";
+import { restoreInventory } from "@/lib/inventory";
+import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
 import { prisma } from "@/lib/prisma";
 
 const ALLOWED_STATUS = new Set([
@@ -22,6 +24,13 @@ export async function PATCH(
   }
 
   const { id } = await ctx.params;
+
+  // Fetch current order to detect status transitions
+  const current = await prisma.order.findUnique({ where: { id } });
+  if (!current || current.deletedAt) {
+    return NextResponse.json({ error: "Order not found" }, { status: 404 });
+  }
+
   let body: {
     status?: string;
     carrier?: string | null;
@@ -73,23 +82,44 @@ export async function PATCH(
     return NextResponse.json({ error: "Order not found" }, { status: 404 });
   }
 
+  // Restore inventory when order is cancelled (only if transitioning from a paid state)
+  const paidStates = new Set(["paid", "processing", "shipped"]);
+  if (
+    data.status === "cancelled" &&
+    paidStates.has(current.status)
+  ) {
+    try {
+      const lines = parseOrderItemsForInventory(current.itemsJson);
+      await restoreInventory(lines);
+    } catch (e) {
+      console.error("[admin orders PATCH] inventory restore failed:", e);
+    }
+  }
+
+  // Only send shipment email when status TRANSITIONS to "shipped" (not on every PATCH)
   let shipmentEmail: Awaited<
     ReturnType<typeof notifyCustomerOrderShipped>
   > | null = null;
-  try {
-    shipmentEmail = await notifyCustomerOrderShipped(updated.id, updated);
-  } catch (e) {
-    console.error("[admin orders PATCH] notifyCustomerOrderShipped", e);
-    shipmentEmail = {
-      sent: false,
-      reason: "build_failed",
-      detail: e instanceof Error ? e.message : String(e),
-    };
+  const statusChangedToShipped =
+    data.status === "shipped" && current.status !== "shipped";
+
+  if (statusChangedToShipped) {
+    try {
+      shipmentEmail = await notifyCustomerOrderShipped(updated.id, updated);
+    } catch (e) {
+      console.error("[admin orders PATCH] notifyCustomerOrderShipped", e);
+      shipmentEmail = {
+        sent: false,
+        reason: "build_failed",
+        detail: e instanceof Error ? e.message : String(e),
+      };
+    }
   }
 
   return NextResponse.json({ ok: true, shipmentEmail });
 }
 
+/** Soft-delete: set deletedAt instead of permanent removal. */
 export async function DELETE(
   _req: Request,
   ctx: { params: Promise<{ id: string }> },
@@ -100,8 +130,12 @@ export async function DELETE(
   }
 
   const { id } = await ctx.params;
-  const deleted = await prisma.order.deleteMany({ where: { id } });
-  if (deleted.count === 0) {
+  try {
+    await prisma.order.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+  } catch {
     return NextResponse.json({ error: "Order not found" }, { status: 404 });
   }
 

@@ -7,6 +7,7 @@ import {
   ordersWhere,
   parseOrdersFilter,
 } from "@/lib/admin/order-filters";
+import { OrderSearchBar } from "@/components/admin/order-search-bar";
 import { prisma } from "@/lib/prisma";
 
 const PAGE_SIZE = 20;
@@ -14,11 +15,20 @@ const PAGE_SIZE = 20;
 export default async function AdminOrdersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; filter?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    filter?: string;
+    q?: string;
+    from?: string;
+    to?: string;
+  }>;
 }) {
   const sp = await searchParams;
   const filter = parseOrdersFilter(sp.filter);
-  const where = ordersWhere(filter);
+  const search = sp.q?.trim() || "";
+  const dateFrom = sp.from || "";
+  const dateTo = sp.to || "";
+  const where = ordersWhere(filter, { search, dateFrom, dateTo });
 
   const rawPage = Math.max(1, Math.floor(Number(sp.page) || 1));
 
@@ -29,7 +39,6 @@ export default async function AdminOrdersPage({
 
   const orders = await prisma.order.findMany({
     where,
-    // Primary: newest first. Secondary: stable id so edits (same createdAt) never reshuffle rows.
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     skip,
     take: PAGE_SIZE,
@@ -50,12 +59,16 @@ export default async function AdminOrdersPage({
     merchantOrderCode: o.merchantOrderCode,
   }));
 
-  const filterHint =
-    filter === "completed"
-      ? "Completed (status: Shipped)"
-      : filter === "unshipped"
-        ? "Unshipped (status: Paid or Processing)"
-        : null;
+  const FILTER_LABELS: Record<string, string> = {
+    completed: "Completed (Shipped)",
+    unshipped: "Unshipped (Paid / Processing)",
+    cancelled: "Cancelled",
+    refunded: "Refunded",
+    pending: "Pending payment",
+  };
+
+  const filterHint = FILTER_LABELS[filter] ?? null;
+  const hasActiveFilters = filter !== "all" || search || dateFrom || dateTo;
 
   return (
     <div>
@@ -64,46 +77,67 @@ export default async function AdminOrdersPage({
         <div>
           <h1 className="font-serif text-3xl tracking-tight">Orders</h1>
           <p className="mt-2 text-sm text-muted">
-            Manage fulfillment, tracking, and status. Click an order to open
-            details. Delete from the row or select multiple and use the bulk
-            bar.
+            Manage fulfillment, tracking, and status.
           </p>
-          {filterHint && (
-            <p className="mt-2 text-sm text-ink/80">
-              Showing: <span className="font-medium">{filterHint}</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link
+            href={`${adminPath("/orders")}/export?filter=${filter}&q=${encodeURIComponent(search)}&from=${dateFrom}&to=${dateTo}`}
+            className="rounded-xl border border-line bg-white/70 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-ink transition hover:border-ink/20"
+          >
+            Export CSV
+          </Link>
+          <p className="text-sm tabular-nums text-muted">
+            {total} {total === 1 ? "order" : "orders"}
+            {totalPages > 1 ? ` · Page ${page} of ${totalPages}` : ""}
+          </p>
+        </div>
+      </div>
+
+      {/* Search & filter bar */}
+      <div className="mt-6">
+        <OrderSearchBar
+          currentFilter={filter}
+          currentSearch={search}
+          currentDateFrom={dateFrom}
+          currentDateTo={dateTo}
+        />
+      </div>
+
+      {filterHint && (
+        <p className="mt-3 text-sm text-ink/80">
+          Showing: <span className="font-medium">{filterHint}</span>
+          {hasActiveFilters && (
+            <>
               {" · "}
               <Link
                 href={adminPath("/orders")}
                 className="font-semibold text-sky-800 underline-offset-2 hover:underline"
               >
-                Clear filter
+                Clear all filters
               </Link>
-            </p>
+            </>
           )}
-        </div>
-        <p className="text-sm tabular-nums text-muted">
-          {total} {total === 1 ? "order" : "orders"}
-          {totalPages > 1 ? ` · Page ${page} of ${totalPages}` : ""}
         </p>
-      </div>
+      )}
 
       {total === 0 ? (
         <p className="mt-10 text-sm text-muted">
-          {filter === "all"
+          {!hasActiveFilters
             ? "No orders yet."
-            : "No orders match this filter."}{" "}
-          {filter !== "all" && (
+            : "No orders match your filters."}{" "}
+          {hasActiveFilters && (
             <Link
               href={adminPath("/orders")}
               className="font-medium text-sky-800 underline-offset-2 hover:underline"
             >
-              View all orders
+              Clear filters
             </Link>
           )}
         </p>
       ) : (
         <>
-          <div className="mt-8">
+          <div className="mt-6">
             <AdminOrdersTable rows={rows} />
           </div>
 
@@ -114,7 +148,7 @@ export default async function AdminOrdersPage({
             >
               {prevPage ? (
                 <Link
-                  href={ordersListPath(prevPage, filter)}
+                  href={ordersListPath(prevPage, filter, { search, dateFrom, dateTo })}
                   className="rounded-xl border border-line px-4 py-2 font-semibold uppercase tracking-widest text-ink hover:bg-white/80"
                 >
                   Previous
@@ -129,7 +163,7 @@ export default async function AdminOrdersPage({
               </span>
               {nextPage ? (
                 <Link
-                  href={ordersListPath(nextPage, filter)}
+                  href={ordersListPath(nextPage, filter, { search, dateFrom, dateTo })}
                   className="rounded-xl border border-line px-4 py-2 font-semibold uppercase tracking-widest text-ink hover:bg-white/80"
                 >
                   Next

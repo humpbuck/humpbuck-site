@@ -93,8 +93,16 @@ model Order {
   merchantNotifySentAt DateTime?
   // Customer shipped notification email sent at (Brevo); idempotent.
   customerShippedEmailSentAt DateTime?
+  // Soft-delete: when set, order is hidden from default queries.
+  deletedAt      DateTime?
+  // Refund tracking
+  refundReason   String?
+  refundAmountCents Int?
+  refundedAt     DateTime?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  @@index([deletedAt])
 }
 
 // Promo/newsletter opt-out per email + one-click unsubscribe token.
@@ -134,6 +142,20 @@ model SavedPaymentMethod {
   expMonth  Int?
   expYear   Int?
   createdAt DateTime @default(now())
+}
+
+// Product inventory — quantity tracking per product+variant.
+// `variantId` is "" for products without variants (product-level stock).
+model ProductInventory {
+  id               String   @id @default(cuid())
+  productSlug      String
+  variantId        String   @default("")
+  quantity         Int      @default(0)
+  lowStockThreshold Int     @default(5)
+  updatedAt        DateTime @updatedAt
+
+  @@unique([productSlug, variantId])
+  @@index([productSlug])
 }
 
 // Buyer review; images on R2 under reviews/{productSlug}/

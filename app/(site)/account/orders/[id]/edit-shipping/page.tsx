@@ -16,7 +16,7 @@ export default async function EditOrderShippingPage({
   if (!session?.user?.id) notFound();
 
   const order = await prisma.order.findFirst({
-    where: { id, userId: session.user.id },
+    where: { id, userId: session.user.id, deletedAt: null },
     select: {
       id: true,
       status: true,

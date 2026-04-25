@@ -15,7 +15,9 @@
     "db:seed-demo-orders": "npx tsx scripts/seed-admin-demo-orders.ts",
     "audit:reviews": "npx tsx scripts/audit-product-reviews-by-slug.ts",
     "r2:upload-avatar-presets": "npx tsx scripts/upload-open-peep-presets-to-r2.ts",
-    "db:seed-test-review-order": "npx tsx scripts/seed-test-order-for-review.ts"
+    "db:seed-test-review-order": "npx tsx scripts/seed-test-order-for-review.ts",
+    "db:seed-inventory": "npx tsx scripts/seed-inventory.ts",
+    "db:cleanup-abandoned": "npx tsx scripts/cleanup-abandoned-orders.ts"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"

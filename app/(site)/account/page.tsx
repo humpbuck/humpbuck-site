@@ -8,7 +8,7 @@ export default async function AccountOverviewPage() {
 
   const [orderCount, user] = await Promise.all([
     prisma.order.count({
-      where: { userId },
+      where: { userId, deletedAt: null },
     }),
     prisma.user.findUnique({
       where: { id: userId },

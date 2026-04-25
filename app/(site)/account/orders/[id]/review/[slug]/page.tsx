@@ -25,7 +25,7 @@ export default async function AccountOrderProductReviewPage({
   if (!product) notFound();
 
   const order = await prisma.order.findFirst({
-    where: { id: orderId, userId: session.user.id },
+    where: { id: orderId, userId: session.user.id, deletedAt: null },
   });
   if (!order) notFound();
 

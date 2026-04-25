@@ -4,6 +4,8 @@ import {
   paypalRefundCapture,
 } from "@/lib/paypal";
 import { getStripe } from "@/lib/stripe";
+import { restoreInventory } from "@/lib/inventory";
+import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
 import { prisma } from "@/lib/prisma";
 
 function formatUsdTwoDecimals(totalCents: number): string {
@@ -11,12 +13,13 @@ function formatUsdTwoDecimals(totalCents: number): string {
 }
 
 /**
- * Refund the full captured amount via Stripe or PayPal and mark the order refunded.
+ * Refund an order via Stripe or PayPal and mark the order refunded.
+ * Supports full and partial refunds. Records reason and amount.
  */
-export async function refundOrderById(orderId: string): Promise<
-  | { ok: true }
-  | { ok: false; error: string }
-> {
+export async function refundOrderById(
+  orderId: string,
+  opts?: { amountCents?: number; reason?: string },
+): Promise<{ ok: true } | { ok: false; error: string }> {
   const order = await prisma.order.findUnique({ where: { id: orderId } });
   if (!order) {
     return { ok: false, error: "Order not found" };
@@ -36,21 +39,55 @@ export async function refundOrderById(orderId: string): Promise<
     };
   }
 
+  const refundAmountCents = opts?.amountCents ?? order.totalCents;
+  if (refundAmountCents <= 0 || refundAmountCents > order.totalCents) {
+    return { ok: false, error: "Invalid refund amount" };
+  }
+
+  const isFullRefund = refundAmountCents === order.totalCents;
   const provider = order.provider.toLowerCase();
+
+  let result: { ok: true } | { ok: false; error: string };
   if (provider === "stripe") {
-    return refundStripe(order);
+    result = await refundStripe(order, refundAmountCents);
+  } else if (provider === "paypal") {
+    result = await refundPayPal(order, refundAmountCents);
+  } else {
+    return {
+      ok: false,
+      error: `Automatic refunds are not configured for ${order.provider}.`,
+    };
   }
-  if (provider === "paypal") {
-    return refundPayPal(order);
+
+  if (result.ok) {
+    // Update order with refund details
+    await prisma.order.update({
+      where: { id: order.id },
+      data: {
+        status: isFullRefund ? "refunded" : order.status,
+        refundAmountCents,
+        refundReason: opts?.reason?.trim() || null,
+        refundedAt: new Date(),
+      },
+    });
+
+    // Restore inventory on full refund
+    if (isFullRefund) {
+      try {
+        const lines = parseOrderItemsForInventory(order.itemsJson);
+        await restoreInventory(lines);
+      } catch (e) {
+        console.error("[refund] inventory restore failed:", e);
+      }
+    }
   }
-  return {
-    ok: false,
-    error: `Automatic refunds are not configured for ${order.provider}.`,
-  };
+
+  return result;
 }
 
 async function refundStripe(
   order: Order,
+  amountCents: number,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   const stripe = getStripe();
   if (!stripe) {
@@ -70,7 +107,7 @@ async function refundStripe(
     }
     await stripe.refunds.create({
       payment_intent: paymentIntentId,
-      amount: order.totalCents,
+      amount: amountCents,
       reason: "requested_by_customer",
     });
   } catch (e) {
@@ -79,24 +116,17 @@ async function refundStripe(
       msg.includes("already been refunded") ||
       msg.includes("has already been refunded")
     ) {
-      await prisma.order.update({
-        where: { id: order.id },
-        data: { status: "refunded" },
-      });
       return { ok: true };
     }
     return { ok: false, error: msg };
   }
 
-  await prisma.order.update({
-    where: { id: order.id },
-    data: { status: "refunded" },
-  });
   return { ok: true };
 }
 
 async function refundPayPal(
   order: Order,
+  amountCents: number,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   const paypalOrderId = order.providerRef!.trim();
   try {
@@ -110,7 +140,7 @@ async function refundPayPal(
     }
     await paypalRefundCapture(
       captureId,
-      formatUsdTwoDecimals(order.totalCents),
+      formatUsdTwoDecimals(amountCents),
     );
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -118,18 +148,10 @@ async function refundPayPal(
       msg.toLowerCase().includes("already") &&
       msg.toLowerCase().includes("refund")
     ) {
-      await prisma.order.update({
-        where: { id: order.id },
-        data: { status: "refunded" },
-      });
       return { ok: true };
     }
     return { ok: false, error: msg };
   }
 
-  await prisma.order.update({
-    where: { id: order.id },
-    data: { status: "refunded" },
-  });
   return { ok: true };
 }

@@ -1,5 +1,13 @@
 const BREVO_SMTP_URL = "https://api.brevo.com/v3/smtp/email";
 
+/** Max retry attempts for transient errors (429, 5xx). */
+const MAX_RETRIES = 2;
+const RETRY_DELAY_MS = 1500;
+
+async function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
 export async function sendTransactionalEmail(params: {
   to: string;
   subject: string;
@@ -20,32 +28,56 @@ export async function sendTransactionalEmail(params: {
     };
   }
 
-  const res = await fetch(BREVO_SMTP_URL, {
-    method: "POST",
-    headers: {
-      accept: "application/json",
-      "content-type": "application/json",
-      "api-key": key,
-    },
-    body: JSON.stringify({
-      sender: { name: senderName, email: senderEmail },
-      to: [{ email: params.to }],
-      subject: params.subject,
-      htmlContent: params.htmlContent,
-      textContent: params.textContent,
-    }),
+  const payload = JSON.stringify({
+    sender: { name: senderName, email: senderEmail },
+    to: [{ email: params.to }],
+    subject: params.subject,
+    htmlContent: params.htmlContent,
+    textContent: params.textContent,
   });
 
-  if (res.ok) {
-    return { ok: true };
+  let lastError = "";
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    if (attempt > 0) {
+      await sleep(RETRY_DELAY_MS * attempt);
+    }
+
+    try {
+      const res = await fetch(BREVO_SMTP_URL, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          "api-key": key,
+        },
+        body: payload,
+      });
+
+      if (res.ok) {
+        return { ok: true };
+      }
+
+      // Retry on transient errors
+      const isTransient = res.status === 429 || res.status >= 500;
+      let detail = "";
+      try {
+        const errJson = (await res.json()) as { message?: string };
+        detail = errJson.message ?? JSON.stringify(errJson);
+      } catch {
+        detail = await res.text().catch(() => "");
+      }
+      lastError = detail || `HTTP ${res.status}`;
+
+      if (!isTransient) {
+        // Non-transient error, don't retry
+        return { ok: false, error: lastError };
+      }
+    } catch (e) {
+      lastError = e instanceof Error ? e.message : String(e);
+      // Network error — retry
+    }
   }
 
-  let detail = "";
-  try {
-    const errJson = (await res.json()) as { message?: string };
-    detail = errJson.message ?? JSON.stringify(errJson);
-  } catch {
-    detail = await res.text();
-  }
-  return { ok: false, error: detail || `HTTP ${res.status}` };
+  return { ok: false, error: `Failed after ${MAX_RETRIES + 1} attempts: ${lastError}` };
 }

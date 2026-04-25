@@ -3,6 +3,8 @@ import { notifyMerchantOrderPaid } from "@/lib/merchant-order-email";
 import { paypalCaptureOrder } from "@/lib/paypal";
 import { prisma } from "@/lib/prisma";
 import { syncOrderAddressesToUserAccount } from "@/lib/sync-order-addresses-to-user";
+import { decrementInventory } from "@/lib/inventory";
+import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
 
 /** PayPal redirects here with ?token=PAYPAL_ORDER_ID */
 export async function GET(req: Request) {
@@ -18,8 +20,9 @@ export async function GET(req: Request) {
     return NextResponse.redirect(new URL("/cart?error=paypal_capture", req.url));
   }
 
-  await prisma.order.updateMany({
-    where: { provider: "paypal", providerRef: orderId },
+  // Idempotency: only update if still pending_payment
+  const { count } = await prisma.order.updateMany({
+    where: { provider: "paypal", providerRef: orderId, status: "pending_payment" },
     data: { status: "paid" },
   });
 
@@ -30,9 +33,17 @@ export async function GET(req: Request) {
       userId: true,
       billingJson: true,
       shippingJson: true,
+      itemsJson: true,
     },
   });
-  if (paid) {
+  if (paid && count > 0) {
+    // Decrement inventory
+    try {
+      const lines = parseOrderItemsForInventory(paid.itemsJson);
+      await decrementInventory(lines);
+    } catch (e) {
+      console.error("[paypal return] inventory decrement failed:", e);
+    }
     if (paid.userId) {
       await syncOrderAddressesToUserAccount(
         paid.userId,

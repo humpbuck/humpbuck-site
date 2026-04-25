@@ -15,3 +15,14 @@ export function parseOrderItemsJson(json: string): ValidatedLine[] {
     return [];
   }
 }
+
+/** Lightweight version for inventory operations (only slug, qty, variantId). */
+export function parseOrderItemsForInventory(
+  json: string,
+): { slug: string; qty: number; variantId?: string }[] {
+  return parseOrderItemsJson(json).map((l) => ({
+    slug: l.slug,
+    qty: l.qty,
+    variantId: l.variantId,
+  }));
+}

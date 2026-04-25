@@ -65,7 +65,7 @@ export async function POST(req: Request) {
   }
 
   const order = await prisma.order.findFirst({
-    where: { id: orderId, userId: session.user.id },
+    where: { id: orderId, userId: session.user.id, deletedAt: null },
   });
   if (!order) {
     return NextResponse.json({ error: "Order not found" }, { status: 404 });

@@ -11,8 +11,12 @@ import {
 import { getDestinationCoverage } from "@/lib/logistics-estimate";
 import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 import { resolveOrderAddressJson } from "@/lib/resolve-order-addresses";
+import { checkInventory } from "@/lib/inventory";
 import { getStripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+
+/** Max total units per single checkout. */
+const MAX_CHECKOUT_UNITS = 50;
 
 export async function POST(req: Request) {
   const stripe = getStripe();
@@ -52,6 +56,27 @@ export async function POST(req: Request) {
   } catch (e) {
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Invalid cart" },
+      { status: 400 },
+    );
+  }
+
+  // Cart quantity limit
+  const totalUnits = lines.reduce((s, l) => s + l.qty, 0);
+  if (totalUnits > MAX_CHECKOUT_UNITS) {
+    return NextResponse.json(
+      { error: `Maximum ${MAX_CHECKOUT_UNITS} items per order.` },
+      { status: 400 },
+    );
+  }
+
+  // Inventory check (pre-payment)
+  const stock = await checkInventory(lines);
+  if (!stock.ok) {
+    const names = stock.unavailable
+      .map((u) => `${u.slug}${u.variantId ? ` (${u.variantId})` : ""}: only ${u.available} left`)
+      .join("; ");
+    return NextResponse.json(
+      { error: `Insufficient stock: ${names}` },
       { status: 400 },
     );
   }
@@ -112,7 +137,6 @@ export async function POST(req: Request) {
     }
   }
 
-  const totalUnits = lines.reduce((s, l) => s + l.qty, 0);
   const shipQ = quoteCheckoutShipping({
     countryLabel: shipCountry,
     totalUnits,

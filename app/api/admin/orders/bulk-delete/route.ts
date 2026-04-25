@@ -22,8 +22,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "No ids" }, { status: 400 });
   }
 
-  const result = await prisma.order.deleteMany({
-    where: { id: { in: ids } },
+  const result = await prisma.order.updateMany({
+    where: { id: { in: ids }, deletedAt: null },
+    data: { deletedAt: new Date() },
   });
 
   return NextResponse.json({ ok: true, deleted: result.count });

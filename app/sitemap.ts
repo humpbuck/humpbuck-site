@@ -2,6 +2,9 @@ import type { MetadataRoute } from "next";
 import { getAllProducts, seriesList } from "@/lib/catalog";
 import { getSiteUrl } from "@/lib/seo";
 
+/** Use build time as lastModified instead of current time. */
+const BUILD_TIME = new Date();
+
 const STATIC_PATHS: {
   path: string;
   changeFrequency: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
@@ -19,18 +22,17 @@ const STATIC_PATHS: {
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = getSiteUrl();
-  const now = new Date();
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.map((e) => ({
     url: `${base}${e.path}`,
-    lastModified: now,
+    lastModified: BUILD_TIME,
     changeFrequency: e.changeFrequency,
     priority: e.priority,
   }));
 
   const seriesEntries: MetadataRoute.Sitemap = seriesList.map((s) => ({
     url: `${base}/series/${encodeURIComponent(s.slug)}`,
-    lastModified: now,
+    lastModified: BUILD_TIME,
     changeFrequency: "weekly" as const,
     priority: 0.85,
   }));
@@ -38,7 +40,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const products = getAllProducts();
   const productEntries: MetadataRoute.Sitemap = products.map((p) => ({
     url: `${base}/product/${encodeURIComponent(p.slug)}`,
-    lastModified: now,
+    lastModified: BUILD_TIME,
     changeFrequency: "weekly" as const,
     priority: 0.8,
   }));
