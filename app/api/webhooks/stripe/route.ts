@@ -111,6 +111,66 @@ export async function POST(req: Request) {
                 refundAmountCents: charge.amount_refunded ?? order.totalCents,
               },
             });
+            const refundAmountCents = charge.amount_refunded ?? order.totalCents;
+            const refundUsd = `$${(refundAmountCents / 100).toFixed(2)}`;
+            const merchantEmail =
+              process.env.MERCHANT_NOTIFY_EMAIL?.trim() || "humpbuck@outlook.com";
+            const supportEmail =
+              process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "support@humpbuck.com";
+            const base = emailPublicBaseUrl();
+            const orderCode = order.merchantOrderCode || order.id.slice(-8).toUpperCase();
+
+            const buyerResult = await sendTransactionalEmail({
+              to: order.email,
+              subject: `Refund processed for order #${orderCode} · HUMPBUCK`,
+              htmlContent: `
+                <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+                  <h2 style="margin:0 0 16px">Your Refund Has Been Processed</h2>
+                  <p>We've received a refund confirmation from Stripe for your order.</p>
+                  <p style="margin:12px 0 0 0"><strong>Order:</strong> #${orderCode}</p>
+                  <p style="margin:8px 0 0 0"><strong>Refund amount:</strong> ${refundUsd}</p>
+                  <p style="margin:12px 0 0 0;font-size:14px;color:#666">
+                    The refund has been sent to your original payment method.
+                    Depending on your bank, it may take 3-10 business days to appear.
+                  </p>
+                  <p style="margin-top:20px">
+                    <a href="${base}/account/orders" style="display:inline-block;background:#111;color:#fff;padding:12px 24px;border-radius:12px;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.05em">
+                      VIEW YOUR ORDERS
+                    </a>
+                  </p>
+                  <p style="margin-top:24px;font-size:13px;color:#999">
+                    Questions? Contact us at
+                    <a href="mailto:${supportEmail}" style="color:#666">${supportEmail}</a>
+                  </p>
+                </div>
+              `,
+            });
+
+            const merchantResult = await sendTransactionalEmail({
+              to: merchantEmail,
+              subject: `Stripe refund processed #${orderCode} · HUMPBUCK`,
+              htmlContent: `
+                <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+                  <h2 style="margin:0 0 16px">Stripe Refund Confirmed</h2>
+                  <p>Stripe reported a refund for this order.</p>
+                  <table style="width:100%;border-collapse:collapse;margin:16px 0">
+                    <tr><td style="padding:8px 0;color:#666">Order</td><td style="padding:8px 0;font-weight:600">#${orderCode}</td></tr>
+                    <tr><td style="padding:8px 0;color:#666">Buyer email</td><td style="padding:8px 0">${order.email}</td></tr>
+                    <tr><td style="padding:8px 0;color:#666">Refund amount</td><td style="padding:8px 0;font-weight:600">${refundUsd}</td></tr>
+                  </table>
+                  <p>
+                    <a href="${base}/admin-ouhao/orders/${order.id}">View order in admin</a>
+                  </p>
+                </div>
+              `,
+            });
+
+            if (!buyerResult.ok) {
+              console.error("[stripe webhook] buyer refund email failed:", buyerResult.error);
+            }
+            if (!merchantResult.ok) {
+              console.error("[stripe webhook] merchant refund email failed:", merchantResult.error);
+            }
             console.log(
               `[stripe webhook] charge.refunded: order ${order.id} marked refunded (PI=${pi})`,
             );
