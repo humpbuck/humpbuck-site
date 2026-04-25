@@ -18,7 +18,9 @@ export default function SiteLayout({
       <Suspense fallback={null}>
         <GoogleAnalyticsPageviews />
       </Suspense>
-      <AttributionCapture />
+      <Suspense fallback={null}>
+        <AttributionCapture />
+      </Suspense>
       <SiteHeader />
       <main className="min-w-0 flex-1 overflow-x-clip pt-[72px] md:pt-[80px]">
         {children}
