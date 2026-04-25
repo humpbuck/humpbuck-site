@@ -9,6 +9,7 @@ type TrackEventInput = {
   type:
     | "session_start"
     | "page_view"
+    | "heartbeat"
     | "product_view"
     | "add_to_cart"
     | "checkout_start"

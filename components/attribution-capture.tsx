@@ -37,5 +37,19 @@ export function AttributionCapture() {
     );
   }, [pathname, searchParams]);
 
+  useEffect(() => {
+    const sendHeartbeat = () => {
+      if (document.visibilityState !== "visible") return;
+      trackVisitorEvent({ type: "heartbeat" });
+    };
+    sendHeartbeat();
+    const id = window.setInterval(sendHeartbeat, 30000);
+    document.addEventListener("visibilitychange", sendHeartbeat);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", sendHeartbeat);
+    };
+  }, []);
+
   return null;
 }

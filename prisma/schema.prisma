@@ -224,7 +224,12 @@ model VisitorSession {
   utmSource     String?
   utmMedium     String?
   utmCampaign   String?
+  country       String?
+  city          String?
+  deviceType    String?
+  browser       String?
   landingPath   String?
+  lastSeenAt    DateTime @default(now())
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   events        VisitorEvent[]

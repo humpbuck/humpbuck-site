@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 export const VISITOR_EVENT_TYPES = [
   "session_start",
   "page_view",
+  "heartbeat",
   "product_view",
   "add_to_cart",
   "checkout_start",
@@ -22,6 +23,10 @@ export type VisitorEventInput = {
   utmSource?: string | null;
   utmMedium?: string | null;
   utmCampaign?: string | null;
+  country?: string | null;
+  city?: string | null;
+  deviceType?: string | null;
+  browser?: string | null;
   userId?: string | null;
   meta?: Record<string, string | number | boolean | null> | null;
 };
@@ -68,6 +73,13 @@ function cleanReferrer(input?: string | null): string | null {
   }
 }
 
+function cleanCity(input?: string | null): string | null {
+  if (!input) return null;
+  const s = input.trim();
+  if (!s) return null;
+  return s.slice(0, 96);
+}
+
 function cleanMeta(
   input?: Record<string, string | number | boolean | null> | null,
 ): string | null {
@@ -103,12 +115,21 @@ export async function recordVisitorEvent(input: VisitorEventInput): Promise<void
   const utmSource = cleanShort(input.utmSource, 64);
   const utmMedium = cleanShort(input.utmMedium, 64);
   const utmCampaign = cleanShort(input.utmCampaign, 64);
+  const country = cleanShort(input.country, 16);
+  const city = cleanCity(input.city);
+  const deviceType = cleanShort(input.deviceType, 32);
+  const browser = cleanShort(input.browser, 32);
   const metaJson = cleanMeta(input.meta);
 
   const session = await prisma.visitorSession.upsert({
     where: { sessionKey },
     update: {
       userId: input.userId ?? undefined,
+      lastSeenAt: new Date(),
+      country: country ?? undefined,
+      city: city ?? undefined,
+      deviceType: deviceType ?? undefined,
+      browser: browser ?? undefined,
     },
     create: {
       sessionKey,
@@ -117,7 +138,12 @@ export async function recordVisitorEvent(input: VisitorEventInput): Promise<void
       utmSource,
       utmMedium,
       utmCampaign,
+      country,
+      city,
+      deviceType,
+      browser,
       landingPath: path,
+      lastSeenAt: new Date(),
     },
     select: { id: true },
   });
