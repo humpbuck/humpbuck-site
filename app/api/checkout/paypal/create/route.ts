@@ -15,8 +15,8 @@ import { WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 import { resolveOrderAddressJson } from "@/lib/resolve-order-addresses";
 import { checkInventory } from "@/lib/inventory";
 
-/** Max total units per single checkout. */
-const MAX_CHECKOUT_UNITS = 50;
+/** Max total units per single checkout (supports manual make-up orders). */
+const MAX_CHECKOUT_UNITS = 5000;
 
 export async function POST(req: Request) {
   let body: {

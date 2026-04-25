@@ -11,6 +11,7 @@ import {
 import type { CartLine } from "@/lib/cart-types";
 
 const STORAGE_KEY = "humpbuck-cart";
+const CART_QTY_MAX = 9999;
 
 /** Collapse duplicate lines from legacy carts (same slug + variant). */
 function mergeDuplicateLines(lines: CartLine[]): CartLine[] {
@@ -21,12 +22,12 @@ function mergeDuplicateLines(lines: CartLine[]): CartLine[] {
     if (!prev) {
       map.set(key, {
         ...line,
-        qty: Math.min(99, Math.max(1, line.qty)),
+        qty: Math.min(CART_QTY_MAX, Math.max(1, line.qty)),
       });
     } else {
       map.set(key, {
         ...prev,
-        qty: Math.min(99, prev.qty + line.qty),
+        qty: Math.min(CART_QTY_MAX, prev.qty + line.qty),
         variantLabel: prev.variantLabel ?? line.variantLabel,
       });
     }
@@ -69,22 +70,15 @@ function loadCart(): CartLine[] {
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartLine[]>([]);
-  const [ready, setReady] = useState(false);
+  const [items, setItems] = useState<CartLine[]>(() => loadCart());
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
 
   const openCartDrawer = useCallback(() => setCartDrawerOpen(true), []);
   const closeCartDrawer = useCallback(() => setCartDrawerOpen(false), []);
 
   useEffect(() => {
-    setItems(loadCart());
-    setReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (!ready) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  }, [items, ready]);
+  }, [items]);
 
   const itemCount = useMemo(
     () => items.reduce((s, i) => s + i.qty, 0),
@@ -99,12 +93,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           (p.variantId ?? "") === (line.variantId ?? ""),
       );
       if (idx === -1) {
-        return [...prev, { ...line, qty: Math.min(99, Math.max(1, line.qty)) }];
+        return [...prev, { ...line, qty: Math.min(CART_QTY_MAX, Math.max(1, line.qty)) }];
       }
       const next = [...prev];
       next[idx] = {
         ...next[idx],
-        qty: Math.min(99, next[idx].qty + line.qty),
+        qty: Math.min(CART_QTY_MAX, next[idx].qty + line.qty),
         variantLabel: line.variantLabel ?? next[idx].variantLabel,
       };
       return next;
@@ -121,7 +115,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return prev.map((p) =>
         p.slug === slug && (p.variantId ?? "") === (variantId ?? "")
-          ? { ...p, qty: Math.min(99, qty) }
+          ? { ...p, qty: Math.min(CART_QTY_MAX, qty) }
           : p,
       );
     });

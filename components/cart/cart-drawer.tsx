@@ -12,6 +12,8 @@ import {
 } from "@/lib/catalog";
 import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
 
+const CART_QTY_MAX = 9999;
+
 export function CartDrawer() {
   const {
     items,
@@ -162,17 +164,33 @@ export function CartDrawer() {
                           >
                             <Minus className="size-3.5" strokeWidth={2} />
                           </button>
-                          <span className="flex min-w-[2rem] items-center justify-center border-x border-[color:var(--color-line)] px-1.5 text-xs font-semibold tabular-nums">
-                            {line.qty}
-                          </span>
+                          <input
+                            type="number"
+                            min={1}
+                            max={CART_QTY_MAX}
+                            step={1}
+                            inputMode="numeric"
+                            value={line.qty}
+                            aria-label="Quantity"
+                            onChange={(e) => {
+                              const n = Number(e.target.value);
+                              if (!Number.isFinite(n)) return;
+                              const next = Math.max(
+                                1,
+                                Math.min(CART_QTY_MAX, Math.floor(n)),
+                              );
+                              setQty(line.slug, next, line.variantId);
+                            }}
+                            className="w-14 border-x border-[color:var(--color-line)] bg-transparent px-1 text-center text-xs font-semibold tabular-nums outline-none"
+                          />
                           <button
                             type="button"
                             aria-label="Increase quantity"
-                            disabled={line.qty >= 99}
+                            disabled={line.qty >= CART_QTY_MAX}
                             onClick={() =>
                               setQty(
                                 line.slug,
-                                Math.min(99, line.qty + 1),
+                                Math.min(CART_QTY_MAX, line.qty + 1),
                                 line.variantId,
                               )
                             }

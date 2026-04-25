@@ -11,6 +11,8 @@ import {
 } from "@/lib/catalog";
 import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
 
+const CART_QTY_MAX = 9999;
+
 export default function CartPage() {
   const { items, setQty, removeItem } = useCart();
 
@@ -107,17 +109,33 @@ export default function CartPage() {
                         >
                           <Minus className="size-4" strokeWidth={2} aria-hidden />
                         </button>
-                        <span className="flex min-w-[2.5rem] items-center justify-center border-x border-[color:var(--color-line)] px-2 text-sm font-semibold tabular-nums text-ink">
-                          {line.qty}
-                        </span>
+                        <input
+                          type="number"
+                          min={1}
+                          max={CART_QTY_MAX}
+                          step={1}
+                          inputMode="numeric"
+                          value={line.qty}
+                          aria-label="Quantity"
+                          onChange={(e) => {
+                            const n = Number(e.target.value);
+                            if (!Number.isFinite(n)) return;
+                            const next = Math.max(
+                              1,
+                              Math.min(CART_QTY_MAX, Math.floor(n)),
+                            );
+                            setQty(line.slug, next, line.variantId);
+                          }}
+                          className="w-16 border-x border-[color:var(--color-line)] bg-transparent px-2 text-center text-sm font-semibold tabular-nums text-ink outline-none"
+                        />
                         <button
                           type="button"
                           aria-label="Increase quantity"
-                          disabled={line.qty >= 99}
+                          disabled={line.qty >= CART_QTY_MAX}
                           onClick={() =>
                             setQty(
                               line.slug,
-                              Math.min(99, line.qty + 1),
+                              Math.min(CART_QTY_MAX, line.qty + 1),
                               line.variantId,
                             )
                           }

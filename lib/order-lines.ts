@@ -1,6 +1,8 @@
 import { getProductBySlug, isVariantAvailableForSale } from "@/lib/catalog";
 import type { CartLine } from "@/lib/cart-types";
 
+const CART_QTY_MAX = 9999;
+
 export type ValidatedLine = {
   slug: string;
   name: string;
@@ -19,7 +21,7 @@ export function validateCartLines(items: CartLine[]): {
   let totalCents = 0;
 
   for (const item of items) {
-    if (!item.slug || item.qty < 1 || item.qty > 99) {
+    if (!item.slug || item.qty < 1 || item.qty > CART_QTY_MAX) {
       throw new Error("Invalid cart line");
     }
     const product = getProductBySlug(item.slug);

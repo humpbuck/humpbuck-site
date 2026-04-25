@@ -15,8 +15,8 @@ import { checkInventory } from "@/lib/inventory";
 import { getStripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 
-/** Max total units per single checkout. */
-const MAX_CHECKOUT_UNITS = 50;
+/** Max total units per single checkout (supports manual make-up orders). */
+const MAX_CHECKOUT_UNITS = 5000;
 
 export async function POST(req: Request) {
   const stripe = getStripe();
