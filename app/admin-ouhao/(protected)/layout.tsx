@@ -58,7 +58,7 @@ export default async function AdminProtectedLayout({
             href={adminPath("/inventory")}
             className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
           >
-            Inventory
+            Products & Inventory
           </Link>
           <Link
             href={adminPath("/customers")}

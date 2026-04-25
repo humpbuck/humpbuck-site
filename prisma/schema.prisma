@@ -158,6 +158,29 @@ model ProductInventory {
   @@index([productSlug])
 }
 
+// Admin-managed product catalog (editable in admin panel).
+model CatalogProduct {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  name             String
+  seriesSlug       String
+  categoryLabel    String
+  shortDescription String
+  description      String
+  price            Float
+  compareAtPrice   Float?
+  image            String
+  inStock          Boolean  @default(true)
+  highlightsJson   String   @default("[]")
+  specsJson        String   @default("[]")
+  galleryJson      String   @default("[]")
+  detailJson       String   @default("[]")
+  variantsJson     String   @default("[]")
+  promoVideoJson   String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
 // Buyer review; images on R2 under reviews/{productSlug}/
 model ProductReview {
   id            String   @id @default(cuid())

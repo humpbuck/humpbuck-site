@@ -17,6 +17,7 @@
     "r2:upload-avatar-presets": "npx tsx scripts/upload-open-peep-presets-to-r2.ts",
     "db:seed-test-review-order": "npx tsx scripts/seed-test-order-for-review.ts",
     "db:seed-inventory": "npx tsx scripts/seed-inventory.ts",
+    "db:seed-catalog-products": "npx tsx scripts/seed-catalog-products.ts",
     "db:cleanup-abandoned": "npx tsx scripts/cleanup-abandoned-orders.ts"
   },
   "prisma": {
