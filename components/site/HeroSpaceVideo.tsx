@@ -1,9 +1,5 @@
-import Image from "next/image";
-import { R2 } from "@/lib/r2";
-
 /**
- * DIGI-TEMP hero background — R2 image with dark gradient overlays for contrast.
- * Keeps the original visual effect while being performant.
+ * DIGI-TEMP hero background — deep dark gradient layers only (no media fetch).
  */
 export function HeroSpaceVideo() {
   return (
@@ -18,25 +14,13 @@ export function HeroSpaceVideo() {
         }}
       />
 
-      {/* Hero background image */}
-      <Image
-        src={R2.home.digitempBackgroundWebp}
-        alt=""
-        fill
-        priority
-        fetchPriority="high"
-        sizes="100vw"
-        className="absolute inset-0 z-[1] h-full w-full object-cover opacity-[0.78]"
-        aria-hidden
-      />
-
       {/* Vignette + cyan/purple haze overlay */}
       <div
-        className="absolute inset-0 z-[2] bg-gradient-to-b from-[#070a10]/60 via-[#070a10]/25 to-[#070a10]/90"
+        className="absolute inset-0 z-[2] bg-gradient-to-b from-[#070a10]/72 via-[#070a10]/36 to-[#070a10]/94"
         aria-hidden
       />
       <div
-        className="absolute inset-0 z-[2] opacity-[0.55]"
+        className="absolute inset-0 z-[2] opacity-[0.38]"
         aria-hidden
         style={{
           backgroundImage:
