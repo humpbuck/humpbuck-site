@@ -6,6 +6,8 @@ import {
 import { getStripe } from "@/lib/stripe";
 import { restoreInventory } from "@/lib/inventory";
 import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
+import { sendTransactionalEmail } from "@/lib/brevo-mail";
+import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
 import { prisma } from "@/lib/prisma";
 
 function formatUsdTwoDecimals(totalCents: number): string {
@@ -79,6 +81,13 @@ export async function refundOrderById(
       } catch (e) {
         console.error("[refund] inventory restore failed:", e);
       }
+    }
+
+    // Send refund confirmation email to buyer
+    try {
+      await sendBuyerRefundEmail(order, refundAmountCents, isFullRefund);
+    } catch (e) {
+      console.error("[refund] buyer email failed:", e);
     }
   }
 
@@ -154,4 +163,68 @@ async function refundPayPal(
   }
 
   return { ok: true };
+}
+
+/* ── Buyer refund notification email ── */
+
+async function sendBuyerRefundEmail(
+  order: Order,
+  refundAmountCents: number,
+  isFullRefund: boolean,
+) {
+  const base = emailPublicBaseUrl();
+  const code =
+    order.merchantOrderCode || order.id.slice(-8).toUpperCase();
+  const refundUsd = `$${(refundAmountCents / 100).toFixed(2)}`;
+  const orderUsd = `$${(order.totalCents / 100).toFixed(2)}`;
+  const supportEmail =
+    process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "support@humpbuck.com";
+
+  const subject = isFullRefund
+    ? `Refund processed for order #${code} · HUMPBUCK`
+    : `Partial refund processed for order #${code} · HUMPBUCK`;
+
+  const htmlContent = `
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+      <h2 style="margin:0 0 16px">Your Refund Has Been Processed</h2>
+      <p>Hi there,</p>
+      <p>We've processed a ${isFullRefund ? "full" : "partial"} refund for your order.</p>
+      <table style="width:100%;border-collapse:collapse;margin:16px 0;border:1px solid #e5e7eb;border-radius:8px">
+        <tr style="background:#f9fafb">
+          <td style="padding:12px;color:#666;border-bottom:1px solid #e5e7eb">Order</td>
+          <td style="padding:12px;font-weight:600;border-bottom:1px solid #e5e7eb">#${code}</td>
+        </tr>
+        <tr>
+          <td style="padding:12px;color:#666;border-bottom:1px solid #e5e7eb">Order total</td>
+          <td style="padding:12px;border-bottom:1px solid #e5e7eb">${orderUsd}</td>
+        </tr>
+        <tr style="background:#f0fdf4">
+          <td style="padding:12px;color:#666">Refund amount</td>
+          <td style="padding:12px;font-weight:600;color:#16a34a">${refundUsd}</td>
+        </tr>
+      </table>
+      <p style="font-size:14px;color:#666">
+        The refund has been sent to your original payment method
+        (${order.provider === "stripe" ? "card" : "PayPal"}).
+        Depending on your bank, it may take <strong>3–10 business days</strong> to appear on your statement.
+      </p>
+      <p style="margin-top:20px">
+        <a href="${base}/account/orders" style="display:inline-block;background:#111;color:#fff;padding:12px 24px;border-radius:12px;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:0.05em">
+          VIEW YOUR ORDERS
+        </a>
+      </p>
+      <p style="margin-top:24px;font-size:13px;color:#999">
+        Questions? Contact us at
+        <a href="mailto:${supportEmail}" style="color:#666">${supportEmail}</a>
+      </p>
+      <hr style="margin:24px 0;border:none;border-top:1px solid #e5e7eb">
+      <p style="font-size:11px;color:#bbb;text-align:center">HUMPBUCK · humpbuck.com</p>
+    </div>
+  `;
+
+  await sendTransactionalEmail({
+    to: order.email,
+    subject,
+    htmlContent,
+  });
 }

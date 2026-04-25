@@ -4,6 +4,8 @@ import { notifyMerchantOrderPaid } from "@/lib/merchant-order-email";
 import { syncOrderAddressesToUserAccount } from "@/lib/sync-order-addresses-to-user";
 import { decrementInventory } from "@/lib/inventory";
 import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
+import { sendTransactionalEmail } from "@/lib/brevo-mail";
+import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
 import { getStripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 
@@ -37,7 +39,6 @@ export async function POST(req: Request) {
     const orderId =
       session.client_reference_id ?? session.metadata?.orderId ?? null;
     if (orderId) {
-      // Idempotency: only update if still pending_payment
       const { count } = await prisma.order.updateMany({
         where: { id: orderId, provider: "stripe", status: "pending_payment" },
         data: {
@@ -45,7 +46,6 @@ export async function POST(req: Request) {
           providerRef: session.id,
         },
       });
-      // Only run side-effects if we actually transitioned the status
       if (count > 0) {
         const paidOrder = await prisma.order.findFirst({
           where: { id: orderId, provider: "stripe" },
@@ -57,7 +57,6 @@ export async function POST(req: Request) {
           },
         });
         if (paidOrder) {
-          // Decrement inventory
           try {
             const lines = parseOrderItemsForInventory(paidOrder.itemsJson);
             await decrementInventory(lines);
@@ -80,41 +79,120 @@ export async function POST(req: Request) {
   /* ── charge.refunded ── */
   if (event.type === "charge.refunded") {
     const charge = event.data.object as {
+      id: string;
       payment_intent?: string | null;
-      refunds?: { data?: { amount?: number }[] };
+      amount_refunded?: number;
     };
     const pi = charge.payment_intent;
-    if (pi) {
-      // Find order by looking up the Stripe checkout session that used this payment_intent
-      const order = await prisma.order.findFirst({
-        where: { provider: "stripe", status: { not: "refunded" } },
-        // providerRef is the checkout session id; we need to match via Stripe API
-      });
-      // Mark as refunded if we can match
-      await prisma.order.updateMany({
-        where: {
-          provider: "stripe",
-          status: { notIn: ["refunded", "pending_payment"] },
-        },
-        data: { status: "refunded", refundedAt: new Date() },
-      });
-      // Note: for precise matching, the admin refund flow (payment-refund.ts) already
-      // updates the order. This webhook handler is a safety net for refunds initiated
-      // directly from the Stripe dashboard.
-      void order; // suppress unused
+    if (pi && typeof pi === "string") {
+      // Look up the checkout session that used this payment_intent
+      try {
+        const sessions = await stripe.checkout.sessions.list({
+          payment_intent: pi,
+          limit: 1,
+        });
+        const csId = sessions.data[0]?.id;
+        if (csId) {
+          // Match the specific order by providerRef (checkout session id)
+          const order = await prisma.order.findFirst({
+            where: {
+              provider: "stripe",
+              providerRef: csId,
+              status: { notIn: ["refunded", "pending_payment"] },
+              deletedAt: null,
+            },
+          });
+          if (order) {
+            await prisma.order.update({
+              where: { id: order.id },
+              data: {
+                status: "refunded",
+                refundedAt: new Date(),
+                refundAmountCents: charge.amount_refunded ?? order.totalCents,
+              },
+            });
+            console.log(
+              `[stripe webhook] charge.refunded: order ${order.id} marked refunded (PI=${pi})`,
+            );
+          }
+        }
+      } catch (e) {
+        console.error("[stripe webhook] charge.refunded lookup failed:", e);
+      }
     }
   }
 
   /* ── charge.dispute.created ── */
   if (event.type === "charge.dispute.created") {
     const dispute = event.data.object as {
+      id: string;
       payment_intent?: string | null;
       reason?: string;
+      amount?: number;
     };
+    const pi = dispute.payment_intent;
     console.warn(
-      `[stripe webhook] DISPUTE created: PI=${dispute.payment_intent}, reason=${dispute.reason}. Manual review required.`,
+      `[stripe webhook] DISPUTE created: id=${dispute.id}, PI=${pi}, reason=${dispute.reason}, amount=${dispute.amount}`,
     );
-    // Future: send merchant notification email about the dispute
+
+    // Find the order and notify merchant
+    let orderId: string | null = null;
+    let orderEmail = "";
+    if (pi && typeof pi === "string") {
+      try {
+        const sessions = await stripe.checkout.sessions.list({
+          payment_intent: pi,
+          limit: 1,
+        });
+        const csId = sessions.data[0]?.id;
+        if (csId) {
+          const order = await prisma.order.findFirst({
+            where: { provider: "stripe", providerRef: csId, deletedAt: null },
+            select: { id: true, email: true, merchantOrderCode: true },
+          });
+          if (order) {
+            orderId = order.id;
+            orderEmail = order.email;
+          }
+        }
+      } catch (e) {
+        console.error("[stripe webhook] dispute order lookup failed:", e);
+      }
+    }
+
+    // Send urgent email to merchant
+    const merchantEmail =
+      process.env.MERCHANT_NOTIFY_EMAIL?.trim() || "humpbuck@outlook.com";
+    const base = emailPublicBaseUrl();
+    const disputeAmount = dispute.amount
+      ? `$${(dispute.amount / 100).toFixed(2)}`
+      : "unknown";
+    const orderLink = orderId
+      ? `<a href="${base}/admin-ouhao/orders/${orderId}">View order in admin</a>`
+      : "Order could not be matched";
+
+    await sendTransactionalEmail({
+      to: merchantEmail,
+      subject: `⚠️ DISPUTE filed — ${disputeAmount} · HUMPBUCK`,
+      htmlContent: `
+        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px">
+          <h2 style="color:#dc2626;margin:0 0 16px">Payment Dispute Filed</h2>
+          <p>A customer has filed a dispute (chargeback) with their bank.</p>
+          <table style="width:100%;border-collapse:collapse;margin:16px 0">
+            <tr><td style="padding:8px 0;color:#666">Amount</td><td style="padding:8px 0;font-weight:600">${disputeAmount}</td></tr>
+            <tr><td style="padding:8px 0;color:#666">Reason</td><td style="padding:8px 0">${dispute.reason ?? "not specified"}</td></tr>
+            <tr><td style="padding:8px 0;color:#666">Dispute ID</td><td style="padding:8px 0;font-family:monospace;font-size:13px">${dispute.id}</td></tr>
+            <tr><td style="padding:8px 0;color:#666">Customer email</td><td style="padding:8px 0">${orderEmail || "unknown"}</td></tr>
+          </table>
+          <p>${orderLink}</p>
+          <p style="margin-top:20px;padding:12px;background:#fef3c7;border-radius:8px;font-size:14px">
+            <strong>Action required:</strong> Log in to your
+            <a href="https://dashboard.stripe.com/disputes">Stripe Dashboard → Disputes</a>
+            to respond within the deadline. Failing to respond will result in losing the dispute.
+          </p>
+        </div>
+      `,
+    });
   }
 
   return NextResponse.json({ received: true });

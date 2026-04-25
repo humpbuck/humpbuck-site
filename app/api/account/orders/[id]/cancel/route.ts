@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { buyerCancelBlockedReason } from "@/lib/account-buyer-order";
 import { sendOrderCancelledNotifications } from "@/lib/order-cancelled-email";
+import { restoreInventory } from "@/lib/inventory";
+import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
 import { prisma } from "@/lib/prisma";
+
+/** Statuses where payment was captured — inventory needs restoring on cancel. */
+const PAID_STATUSES = new Set(["paid", "processing"]);
 
 export async function POST(
   _req: Request,
@@ -39,14 +44,21 @@ export async function POST(
     );
   }
 
+  const wasPaid = PAID_STATUSES.has(order.status);
+
   await prisma.order.update({
     where: { id: orderId },
     data: { status: "cancelled" },
   });
 
-  const updated = await prisma.order.findUnique({ where: { id: orderId } });
-  if (!updated) {
-    return NextResponse.json({ error: "Update failed" }, { status: 500 });
+  // Restore inventory if payment was already captured
+  if (wasPaid) {
+    try {
+      const lines = parseOrderItemsForInventory(order.itemsJson);
+      await restoreInventory(lines);
+    } catch (e) {
+      console.error("[buyer-cancel-order] inventory restore failed:", e);
+    }
   }
 
   const notify = await sendOrderCancelledNotifications(orderId);
