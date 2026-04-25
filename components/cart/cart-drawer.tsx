@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus, X } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import {
   formatPrice,
@@ -22,9 +22,15 @@ export function CartDrawer() {
     cartDrawerOpen,
     closeCartDrawer,
   } = useCart();
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+  const displayItems = hydrated ? items : [];
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
-  const lines = items.map((line) => {
+  const lines = displayItems.map((line) => {
     const product = getProductBySlug(line.slug);
     return { line, product };
   });
@@ -95,7 +101,7 @@ export function CartDrawer() {
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
-          {items.length === 0 ? (
+          {displayItems.length === 0 ? (
             <p className="text-sm text-muted">
               Your bag is empty. Add items from a product page.
             </p>
@@ -221,13 +227,13 @@ export function CartDrawer() {
         </div>
 
         <div className="border-t border-[color:var(--color-line)] bg-paper px-4 py-4">
-          {items.length > 0 && (
+          {displayItems.length > 0 && (
             <p className="mb-4 text-base font-semibold tabular-nums">
               Subtotal {formatPrice(subtotal)}
             </p>
           )}
           <div className="flex flex-col gap-2">
-            {items.length > 0 && (
+            {displayItems.length > 0 && (
               <Link
                 href="/checkout"
                 onClick={closeCartDrawer}
