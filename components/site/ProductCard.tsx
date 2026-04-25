@@ -33,6 +33,7 @@ export function ProductCard({
           priority={imagePriority}
           fetchPriority={imagePriority ? "high" : undefined}
           sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
+          quality={60}
           unoptimized={r2Unopt}
           className="object-cover object-center transition duration-500 group-hover:scale-[1.03]"
         />

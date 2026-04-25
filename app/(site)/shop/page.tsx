@@ -81,6 +81,7 @@ export default async function ShopPage({
             key={p.slug}
             product={p}
             cardImageUrl={cardImages[i] ?? undefined}
+            imagePriority={i < 2}
           />
         ))}
       </div>
