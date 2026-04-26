@@ -65,6 +65,8 @@ async function submitAffiliateApplicationAction(formData: FormData) {
   const followerCount = parseAffiliateFollowerCount(
     String(formData.get("followerCount") ?? ""),
   );
+  const contactEmail = String(formData.get("contactEmail") ?? "").trim();
+  const contactWhatsapp = String(formData.get("contactWhatsapp") ?? "").trim();
   const about = String(formData.get("about") ?? "").trim();
 
   if (!about || about.length < 20) {
@@ -76,7 +78,14 @@ async function submitAffiliateApplicationAction(formData: FormData) {
 
   const existingProfile = await prisma.affiliateProfile.findUnique({
     where: { userId },
-    select: { id: true, blacklist: true, tierId: true, pid: true },
+    select: {
+      id: true,
+      blacklist: true,
+      tierId: true,
+      pid: true,
+      payoutEmail: true,
+      payoutWhatsapp: true,
+    },
   });
   const risk = evaluateAffiliateRisk({
     followerCount,
@@ -84,6 +93,9 @@ async function submitAffiliateApplicationAction(formData: FormData) {
     isBlacklisted: Boolean(existingProfile?.blacklist),
   });
   const defaultTierId = await ensureDefaultTierId();
+  const payoutEmail = contactEmail || existingProfile?.payoutEmail || null;
+  const payoutWhatsapp = contactWhatsapp || existingProfile?.payoutWhatsapp || null;
+  const paymentInfoPending = !(payoutEmail || payoutWhatsapp);
   const pid = await ensureUniqueAffiliatePid({
     userId,
     email: session?.user?.email,
@@ -103,23 +115,35 @@ async function submitAffiliateApplicationAction(formData: FormData) {
       blacklist: Boolean(existingProfile?.blacklist),
       tierId: risk.highRisk ? null : defaultTierId,
       pid,
+      payoutEmail,
+      payoutWhatsapp,
+      paymentInfoPending,
     },
     update: existingProfile?.blacklist
       ? {
           status: "blacklisted",
           riskFlag: true,
           blacklist: true,
+          payoutEmail,
+          payoutWhatsapp,
+          paymentInfoPending,
         }
       : risk.highRisk
         ? {
             status: "pending",
             riskFlag: true,
+            payoutEmail,
+            payoutWhatsapp,
+            paymentInfoPending,
           }
         : {
             status: "active",
             riskFlag: false,
             tierId: existingProfile?.tierId ?? defaultTierId,
             pid,
+            payoutEmail,
+            payoutWhatsapp,
+            paymentInfoPending,
           },
     select: { id: true },
   });
@@ -422,6 +446,19 @@ export default async function AccountAffiliatePage({
             minLength={20}
             rows={4}
             placeholder="How do you plan to promote Humpbuck? (minimum 20 characters)"
+            className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+          />
+          <input
+            name="contactEmail"
+            type="email"
+            defaultValue={profile?.payoutEmail ?? session?.user?.email?.trim() ?? ""}
+            placeholder="Settlement contact email (optional)"
+            className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+          />
+          <input
+            name="contactWhatsapp"
+            defaultValue={profile?.payoutWhatsapp ?? ""}
+            placeholder="Settlement WhatsApp (optional)"
             className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           />
           <button
