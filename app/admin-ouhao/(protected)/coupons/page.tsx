@@ -33,7 +33,7 @@ function ymd(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-function goCoupons(error?: string) {
+function goCoupons(error?: string): never {
   if (!error) {
     redirect(adminPath("/coupons"));
   }
