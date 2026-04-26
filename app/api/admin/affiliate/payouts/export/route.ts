@@ -17,6 +17,7 @@ export async function GET(req: Request) {
     : DEFAULT_HOLD_DAYS;
   const affiliateId = String(url.searchParams.get("affiliateId") ?? "").trim();
   const orderStatus = String(url.searchParams.get("orderStatus") ?? "").trim();
+  const onlyVerifiedPayout = String(url.searchParams.get("onlyVerifiedPayout") ?? "") === "1";
   const modeRaw = String(url.searchParams.get("mode") ?? "eligible")
     .trim()
     .toLowerCase();
@@ -46,6 +47,7 @@ export async function GET(req: Request) {
       ...where,
       ...(affiliateId ? { affiliateId } : {}),
       ...(orderStatus ? { order: { status: orderStatus } } : {}),
+      ...(onlyVerifiedPayout ? { affiliate: { payoutVerifiedAt: { not: null } } } : {}),
     },
     include: {
       affiliate: {
@@ -87,6 +89,10 @@ export async function GET(req: Request) {
       "commissionStatus",
       "eligibleAt",
       "paidAt",
+      "payoutBatchId",
+      "payoutTxnRef",
+      "paidNote",
+      "paidEmailSentAt",
       "attribution",
       "deliveredAt",
     ],
@@ -115,6 +121,10 @@ export async function GET(req: Request) {
       l.status,
       l.eligibleAt.toISOString(),
       l.paidAt ? l.paidAt.toISOString() : "",
+      l.payoutBatchId ?? "",
+      l.payoutTxnRef ?? "",
+      l.paidNote ?? "",
+      l.paidEmailSentAt ? l.paidEmailSentAt.toISOString() : "",
       l.order.affiliateAttribution ?? "",
       l.order.deliveredAt ? l.order.deliveredAt.toISOString() : "",
     ]);

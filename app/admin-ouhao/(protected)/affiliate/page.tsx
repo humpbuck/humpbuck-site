@@ -4,6 +4,7 @@ import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import { buildAffiliatePidSeed } from "@/lib/affiliate";
+import { sendAffiliatePaidSummaryEmail } from "@/lib/affiliate-paid-email";
 import { prisma } from "@/lib/prisma";
 
 function goAffiliate(error?: string): never {
@@ -275,6 +276,9 @@ async function markSelectedLedgersPaidAction(formData: FormData) {
     .map((v) => String(v).trim())
     .filter(Boolean);
   if (ids.length === 0) goAffiliate("Please select at least one order to mark paid.");
+  const payoutBatchId = String(formData.get("payoutBatchId") ?? "").trim();
+  const payoutTxnRef = String(formData.get("payoutTxnRef") ?? "").trim();
+  const paidNote = String(formData.get("paidNote") ?? "").trim();
   await prisma.affiliateCommissionLedger.updateMany({
     where: {
       id: { in: ids },
@@ -285,6 +289,9 @@ async function markSelectedLedgersPaidAction(formData: FormData) {
     data: {
       status: "paid",
       paidAt: new Date(),
+      payoutBatchId: payoutBatchId || null,
+      payoutTxnRef: payoutTxnRef || null,
+      paidNote: paidNote || null,
     },
   });
   revalidatePath(adminPath("/affiliate"));
@@ -296,6 +303,10 @@ async function markFilteredEligiblePaidAction(formData: FormData) {
   await assertAdmin();
   const affiliateId = String(formData.get("affiliateId") ?? "").trim();
   const orderStatus = String(formData.get("orderStatus") ?? "").trim();
+  const onlyVerifiedPayout = String(formData.get("onlyVerifiedPayout") ?? "") === "true";
+  const payoutBatchId = String(formData.get("payoutBatchId") ?? "").trim();
+  const payoutTxnRef = String(formData.get("payoutTxnRef") ?? "").trim();
+  const paidNote = String(formData.get("paidNote") ?? "").trim();
   await prisma.affiliateCommissionLedger.updateMany({
     where: {
       status: "eligible",
@@ -303,12 +314,90 @@ async function markFilteredEligiblePaidAction(formData: FormData) {
       reversedAt: null,
       ...(affiliateId ? { affiliateId } : {}),
       ...(orderStatus ? { order: { status: orderStatus } } : {}),
+      ...(onlyVerifiedPayout ? { affiliate: { payoutVerifiedAt: { not: null } } } : {}),
     },
     data: {
       status: "paid",
       paidAt: new Date(),
+      payoutBatchId: payoutBatchId || null,
+      payoutTxnRef: payoutTxnRef || null,
+      paidNote: paidNote || null,
     },
   });
+  revalidatePath(adminPath("/affiliate"));
+  redirect(adminPath("/affiliate"));
+}
+
+async function sendPaidNotificationAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const ids = formData
+    .getAll("ledgerIds")
+    .map((v) => String(v).trim())
+    .filter(Boolean);
+  if (ids.length === 0) goAffiliate("Please select paid orders to notify.");
+
+  const rows = await prisma.affiliateCommissionLedger.findMany({
+    where: {
+      id: { in: ids },
+      status: "paid",
+    },
+    include: {
+      affiliate: {
+        include: {
+          user: { select: { email: true, displayName: true } },
+        },
+      },
+      order: {
+        select: { id: true, itemsJson: true },
+      },
+    },
+    orderBy: { paidAt: "asc" },
+  });
+  if (rows.length === 0) goAffiliate("No paid rows selected.");
+
+  const byAffiliate = new Map<string, typeof rows>();
+  for (const r of rows) {
+    const list = byAffiliate.get(r.affiliateId) ?? [];
+    list.push(r);
+    byAffiliate.set(r.affiliateId, list);
+  }
+
+  let sentCount = 0;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://humpbuck.com";
+  const loginUrl = `${baseUrl}/auth/login?callbackUrl=${encodeURIComponent("/account/affiliate")}`;
+  for (const [affiliateId, group] of byAffiliate) {
+    const email = group[0]?.affiliate?.user.email?.trim();
+    if (!email) continue;
+    const name =
+      group[0]?.affiliate?.displayName ||
+      group[0]?.affiliate?.user.displayName ||
+      group[0]?.affiliate?.user.email ||
+      affiliateId;
+    const result = await sendAffiliatePaidSummaryEmail({
+      to: email,
+      affiliateName: name,
+      affiliateLoginUrl: loginUrl,
+      ledgers: group.map((l) => ({
+        orderId: l.orderId,
+        commissionCents: l.commissionCents,
+        paidAt: l.paidAt,
+        payoutBatchId: l.payoutBatchId,
+        payoutTxnRef: l.payoutTxnRef,
+        paidNote: l.paidNote,
+        itemsJson: l.order.itemsJson,
+      })),
+    });
+    if (result.ok) {
+      sentCount += 1;
+      await prisma.affiliateCommissionLedger.updateMany({
+        where: { id: { in: group.map((x) => x.id) } },
+        data: { paidEmailSentAt: new Date() },
+      });
+    }
+  }
+
+  if (sentCount === 0) goAffiliate("No email sent. Check affiliate email addresses.");
   revalidatePath(adminPath("/affiliate"));
   redirect(adminPath("/affiliate"));
 }
@@ -347,6 +436,7 @@ export default async function AdminAffiliatePage({
     affiliateId?: string;
     orderStatus?: string;
     settle?: string;
+    onlyVerifiedPayout?: string;
   }>;
 }) {
   await assertAdmin();
@@ -355,6 +445,7 @@ export default async function AdminAffiliatePage({
   const selectedAffiliateId = normalizeFilterValue(sp.affiliateId);
   const selectedOrderStatus = normalizeFilterValue(sp.orderStatus);
   const selectedSettlement = normalizeFilterValue(sp.settle) || "eligible";
+  const onlyVerifiedPayout = normalizeFilterValue(sp.onlyVerifiedPayout) === "1";
 
   const [tiers, pendingApps, profiles, blacklistedCount, autoApprovedCount, recentAttributedOrders, ledgerSummary, recentLedgers, settlementRows] =
     await Promise.all([
@@ -397,6 +488,7 @@ export default async function AdminAffiliatePage({
           ...(selectedAffiliateId ? { affiliateId: selectedAffiliateId } : {}),
           ...(selectedOrderStatus ? { order: { status: selectedOrderStatus } } : {}),
           ...(selectedSettlement === "all" ? {} : { status: selectedSettlement }),
+          ...(onlyVerifiedPayout ? { affiliate: { payoutVerifiedAt: { not: null } } } : {}),
         },
         include: {
           affiliate: { include: { user: { select: { email: true, displayName: true } } } },
@@ -415,6 +507,7 @@ export default async function AdminAffiliatePage({
   const filterQuery = new URLSearchParams();
   if (selectedAffiliateId) filterQuery.set("affiliateId", selectedAffiliateId);
   if (selectedOrderStatus) filterQuery.set("orderStatus", selectedOrderStatus);
+  if (onlyVerifiedPayout) filterQuery.set("onlyVerifiedPayout", "1");
 
   return (
     <div>
@@ -501,6 +594,16 @@ export default async function AdminAffiliatePage({
             <option value="reversed">Reversed</option>
             <option value="all">All settlement statuses</option>
           </select>
+          <label className="inline-flex items-center gap-2 rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink">
+            <input
+              type="checkbox"
+              name="onlyVerifiedPayout"
+              value="1"
+              defaultChecked={onlyVerifiedPayout}
+              className="h-4 w-4"
+            />
+            <span>Only payout-confirmed affiliates</span>
+          </label>
           <button
             type="submit"
             className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
@@ -509,6 +612,23 @@ export default async function AdminAffiliatePage({
           </button>
         </form>
         <form action={markSelectedLedgersPaidAction} className="mt-4 space-y-2 text-sm text-ink/90">
+          <div className="grid gap-2 md:grid-cols-3">
+            <input
+              name="payoutBatchId"
+              placeholder="Payout batch ID (optional)"
+              className="rounded-xl border border-line bg-paper px-3 py-2 text-xs text-ink outline-none ring-ink/20 focus:ring-2"
+            />
+            <input
+              name="payoutTxnRef"
+              placeholder="Payout transaction ref (optional)"
+              className="rounded-xl border border-line bg-paper px-3 py-2 text-xs text-ink outline-none ring-ink/20 focus:ring-2"
+            />
+            <input
+              name="paidNote"
+              placeholder="Paid note (optional)"
+              className="rounded-xl border border-line bg-paper px-3 py-2 text-xs text-ink outline-none ring-ink/20 focus:ring-2"
+            />
+          </div>
           <div className="flex flex-wrap gap-2">
             <button
               type="submit"
@@ -523,8 +643,16 @@ export default async function AdminAffiliatePage({
             >
               Mark all filtered eligible as paid
             </button>
+            <button
+              formAction={sendPaidNotificationAction}
+              type="submit"
+              className="inline-flex items-center justify-center rounded-xl border border-sky-300 bg-sky-50 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-sky-900 transition hover:bg-sky-100"
+            >
+              Send paid email for selected
+            </button>
             <input type="hidden" name="affiliateId" value={selectedAffiliateId} />
             <input type="hidden" name="orderStatus" value={selectedOrderStatus} />
+            <input type="hidden" name="onlyVerifiedPayout" value={onlyVerifiedPayout ? "true" : ""} />
           </div>
           {settlementRows.length === 0 ? (
             <p className="rounded-xl border border-line bg-paper/60 px-3 py-2 text-muted">
@@ -540,11 +668,12 @@ export default async function AdminAffiliatePage({
                   type="checkbox"
                   name="ledgerIds"
                   value={l.id}
-                  disabled={l.status !== "eligible" || Boolean(l.paidAt) || Boolean(l.reversedAt)}
+                  disabled={Boolean(l.reversedAt)}
                 />
                 <span>
                   #{l.order.id.slice(-8)} · {l.affiliate?.user.displayName || l.affiliate?.user.email || l.affiliateId} ·
                   Order {l.order.status} · ${(l.commissionCents / 100).toFixed(2)} · Settlement {l.status}
+                  {l.paidEmailSentAt ? ` · Paid mail ${l.paidEmailSentAt.toLocaleDateString()}` : ""}
                 </span>
               </label>
             ))

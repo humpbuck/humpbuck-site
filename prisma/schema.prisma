@@ -345,6 +345,10 @@ model AffiliateCommissionLedger {
   reversalReason          String?
   reversedAt              DateTime?
   paidAt                  DateTime?
+  payoutBatchId           String?
+  payoutTxnRef            String?
+  paidNote                String?
+  paidEmailSentAt         DateTime?
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 
