@@ -77,6 +77,10 @@ model Order {
   id             String   @id @default(cuid())
   userId         String?
   user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  affiliateId    String?
+  affiliate      AffiliateProfile? @relation(fields: [affiliateId], references: [id], onDelete: SetNull)
+  affiliatePid   String?
+  affiliateAttribution String?
   email          String
   status         String
   provider       String
@@ -108,6 +112,7 @@ model Order {
   updatedAt      DateTime @updatedAt
 
   @@index([deletedAt])
+  @@index([affiliateId, createdAt])
 }
 
 // Promo/newsletter opt-out per email + one-click unsubscribe token.
@@ -261,6 +266,8 @@ model VisitorEvent {
 model Coupon {
   id             String   @id @default(cuid())
   code           String   @unique
+  affiliateId    String?
+  affiliate      AffiliateProfile? @relation(fields: [affiliateId], references: [id], onDelete: SetNull)
   amountOffCents Int
   quantity       Int      @default(1)
   usedCount      Int      @default(0)
@@ -271,6 +278,7 @@ model Coupon {
   updatedAt      DateTime @updatedAt
 
   @@index([isActive, startsAt, endsAt])
+  @@index([affiliateId])
 }
 
 model AffiliateTier {
@@ -288,6 +296,7 @@ model AffiliateProfile {
   id                 String   @id @default(cuid())
   userId             String   @unique
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pid                String?  @unique
   displayName        String?
   status             String   @default("active")
   riskFlag           Boolean  @default(false)
@@ -300,6 +309,8 @@ model AffiliateProfile {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
   applications       AffiliateApplication[]
+  coupons            Coupon[]
+  orders             Order[]
 
   @@index([status])
   @@index([blacklist, whitelist])

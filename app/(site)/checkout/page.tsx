@@ -25,6 +25,8 @@ import {
 } from "@/lib/checkout-shipping-quote";
 import { getDestinationCoverage } from "@/lib/logistics-estimate";
 import {
+  captureAffiliatePidAttribution,
+  getAffiliatePidForCheckout,
   captureTrafficAttribution,
   getTrafficSourceForCheckout,
 } from "@/lib/traffic-attribution";
@@ -107,6 +109,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     captureTrafficAttribution();
+    captureAffiliatePidAttribution();
   }, []);
 
   useEffect(() => {
@@ -297,6 +300,7 @@ export default function CheckoutPage() {
           items,
           email: resolvedEmail,
           trafficSource: getTrafficSourceForCheckout(),
+          affiliatePid: getAffiliatePidForCheckout(),
           orderNotes: orderNotes.trim() || undefined,
           shippingMethod,
           couponCode: appliedCoupon?.code,
@@ -330,6 +334,7 @@ export default function CheckoutPage() {
           items,
           email: resolvedEmail,
           trafficSource: getTrafficSourceForCheckout(),
+          affiliatePid: getAffiliatePidForCheckout(),
           orderNotes: orderNotes.trim() || undefined,
           shippingMethod,
           couponCode: appliedCoupon?.code,

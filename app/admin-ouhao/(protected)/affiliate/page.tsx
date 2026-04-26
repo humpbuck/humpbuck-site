@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
+import { buildAffiliatePidSeed } from "@/lib/affiliate";
 import { prisma } from "@/lib/prisma";
 
 function goAffiliate(error?: string): never {
@@ -27,6 +28,24 @@ async function ensureDefaultTierId(): Promise<string> {
     select: { id: true },
   });
   return created.id;
+}
+
+async function ensureUniqueAffiliatePid(input: {
+  userId: string;
+  email?: string | null;
+  currentPid?: string | null;
+}): Promise<string> {
+  if (input.currentPid) return input.currentPid;
+  const base = buildAffiliatePidSeed({ userId: input.userId, email: input.email });
+  for (let i = 0; i < 20; i += 1) {
+    const candidate = i === 0 ? base : `${base}-${i + 1}`;
+    const exists = await prisma.affiliateProfile.findUnique({
+      where: { pid: candidate },
+      select: { id: true },
+    });
+    if (!exists) return candidate;
+  }
+  return `${base}-${Date.now().toString(36).slice(-4)}`;
 }
 
 function parseCommissionValue(raw: FormDataEntryValue | null): number | null {
@@ -77,6 +96,11 @@ async function approveApplicationAction(formData: FormData) {
   if (!app) goAffiliate("Application not found.");
 
   const defaultTierId = await ensureDefaultTierId();
+  const pid = await ensureUniqueAffiliatePid({
+    userId: app.userId,
+    email: app.user.email,
+    currentPid: app.affiliate?.pid ?? null,
+  });
   const profile = await prisma.affiliateProfile.upsert({
     where: { userId: app.userId },
     create: {
@@ -90,12 +114,14 @@ async function approveApplicationAction(formData: FormData) {
       riskFlag: false,
       blacklist: false,
       tierId: defaultTierId,
+      pid,
     },
     update: {
       status: "active",
       riskFlag: false,
       blacklist: false,
       tierId: app.affiliate?.tierId ?? defaultTierId,
+      pid,
     },
     select: { id: true },
   });
@@ -192,7 +218,7 @@ export default async function AdminAffiliatePage({
   await ensureDefaultTierId();
   const sp = await searchParams;
 
-  const [tiers, pendingApps, profiles, blacklistedCount, autoApprovedCount] =
+  const [tiers, pendingApps, profiles, blacklistedCount, autoApprovedCount, recentAttributedOrders] =
     await Promise.all([
       prisma.affiliateTier.findMany({ orderBy: [{ isDefault: "desc" }, { createdAt: "asc" }] }),
       prisma.affiliateApplication.findMany({
@@ -210,6 +236,12 @@ export default async function AdminAffiliatePage({
       }),
       prisma.affiliateProfile.count({ where: { blacklist: true } }),
       prisma.affiliateApplication.count({ where: { status: "auto_approved" } }),
+      prisma.order.findMany({
+        where: { affiliateId: { not: null }, deletedAt: null },
+        include: { affiliate: { include: { user: { select: { email: true, displayName: true } } } } },
+        orderBy: { createdAt: "desc" },
+        take: 12,
+      }),
     ]);
 
   const activeProfiles = profiles.filter((p) => !p.blacklist);
@@ -378,7 +410,8 @@ export default async function AdminAffiliatePage({
                     {p.user.displayName || p.user.name || p.user.email || p.user.id}
                   </p>
                   <p className="mt-1 text-xs text-muted">
-                    Status: {p.status} · Risk flag: {p.riskFlag ? "Yes" : "No"}
+                    Status: {p.status} · Risk flag: {p.riskFlag ? "Yes" : "No"} · PID:{" "}
+                    {p.pid ?? "-"}
                   </p>
                 </div>
                 <select
@@ -421,6 +454,27 @@ export default async function AdminAffiliatePage({
                   </button>
                 </div>
               </form>
+            ))
+          )}
+        </div>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+          Recent attributed orders
+        </h2>
+        <div className="mt-3 space-y-3">
+          {recentAttributedOrders.length === 0 ? (
+            <p className="rounded-2xl border border-line bg-white/60 px-5 py-4 text-sm text-muted">
+              No attributed orders yet.
+            </p>
+          ) : (
+            recentAttributedOrders.map((o) => (
+              <p key={o.id} className="rounded-2xl border border-line bg-white/60 px-4 py-3 text-sm text-ink/90">
+                #{o.id.slice(-8)} · ${(o.totalCents / 100).toFixed(2)} · {o.status} ·{" "}
+                {o.affiliate?.user.displayName || o.affiliate?.user.email || o.affiliatePid || "-"}
+                {o.affiliateAttribution ? ` · ${o.affiliateAttribution}` : ""}
+              </p>
             ))
           )}
         </div>

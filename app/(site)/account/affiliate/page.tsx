@@ -2,10 +2,12 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import {
+  buildAffiliatePidSeed,
   evaluateAffiliateRisk,
   parseAffiliateFollowerCount,
   parseAffiliateSocialLinks,
 } from "@/lib/affiliate";
+import { AffiliateLinkGenerator } from "@/components/account/affiliate-link-generator";
 import { prisma } from "@/lib/prisma";
 
 function goAffiliate(error?: string): never {
@@ -32,6 +34,24 @@ async function ensureDefaultTierId(): Promise<string> {
   return created.id;
 }
 
+async function ensureUniqueAffiliatePid(input: {
+  userId: string;
+  email?: string | null;
+  currentPid?: string | null;
+}): Promise<string> {
+  if (input.currentPid) return input.currentPid;
+  const base = buildAffiliatePidSeed({ userId: input.userId, email: input.email });
+  for (let i = 0; i < 20; i += 1) {
+    const candidate = i === 0 ? base : `${base}-${i + 1}`;
+    const exists = await prisma.affiliateProfile.findUnique({
+      where: { pid: candidate },
+      select: { id: true },
+    });
+    if (!exists) return candidate;
+  }
+  return `${base}-${Date.now().toString(36).slice(-4)}`;
+}
+
 async function submitAffiliateApplicationAction(formData: FormData) {
   "use server";
   const session = await auth();
@@ -55,7 +75,7 @@ async function submitAffiliateApplicationAction(formData: FormData) {
 
   const existingProfile = await prisma.affiliateProfile.findUnique({
     where: { userId },
-    select: { id: true, blacklist: true, tierId: true },
+    select: { id: true, blacklist: true, tierId: true, pid: true },
   });
   const risk = evaluateAffiliateRisk({
     followerCount,
@@ -63,6 +83,11 @@ async function submitAffiliateApplicationAction(formData: FormData) {
     isBlacklisted: Boolean(existingProfile?.blacklist),
   });
   const defaultTierId = await ensureDefaultTierId();
+  const pid = await ensureUniqueAffiliatePid({
+    userId,
+    email: session?.user?.email,
+    currentPid: existingProfile?.pid ?? null,
+  });
 
   const profile = await prisma.affiliateProfile.upsert({
     where: { userId },
@@ -76,6 +101,7 @@ async function submitAffiliateApplicationAction(formData: FormData) {
       riskFlag: risk.highRisk,
       blacklist: Boolean(existingProfile?.blacklist),
       tierId: risk.highRisk ? null : defaultTierId,
+      pid,
     },
     update: existingProfile?.blacklist
       ? {
@@ -92,6 +118,7 @@ async function submitAffiliateApplicationAction(formData: FormData) {
             status: "active",
             riskFlag: false,
             tierId: existingProfile?.tierId ?? defaultTierId,
+            pid,
           },
     select: { id: true },
   });
@@ -140,7 +167,7 @@ export default async function AccountAffiliatePage({
   if (!userId) redirect("/auth/login?callbackUrl=/account/affiliate");
 
   const sp = await searchParams;
-  const [profile, latestApplication] = await Promise.all([
+  const [profile, latestApplication, attributedOrders] = await Promise.all([
     prisma.affiliateProfile.findUnique({
       where: { userId },
       include: { tier: true },
@@ -148,6 +175,18 @@ export default async function AccountAffiliatePage({
     prisma.affiliateApplication.findFirst({
       where: { userId },
       orderBy: { createdAt: "desc" },
+    }),
+    prisma.order.findMany({
+      where: { affiliate: { userId }, deletedAt: null },
+      select: {
+        id: true,
+        totalCents: true,
+        status: true,
+        affiliateAttribution: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 8,
     }),
   ]);
 
@@ -198,6 +237,9 @@ export default async function AccountAffiliatePage({
               Tier: <span className="font-medium">{profile.tier?.name ?? "-"}</span>
             </p>
             <p>
+              PID: <span className="font-medium">{profile.pid ?? "-"}</span>
+            </p>
+            <p>
               Blacklist:{" "}
               <span className="font-medium">{profile.blacklist ? "Yes" : "No"}</span>
             </p>
@@ -206,6 +248,25 @@ export default async function AccountAffiliatePage({
           <p className="mt-3 text-sm text-muted">No affiliate profile yet.</p>
         )}
       </section>
+
+      {profile?.pid ? (
+        <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
+          <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+            Link generator (PID tracking)
+          </h2>
+          <p className="mt-2 text-sm text-muted">
+            Paste any product/page URL to generate your tracked link.
+          </p>
+          <div className="mt-3">
+            <AffiliateLinkGenerator
+              pid={profile.pid}
+              siteBaseUrl={
+                process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://humpbuck.com"
+              }
+            />
+          </div>
+        </section>
+      ) : null}
 
       <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
@@ -263,6 +324,23 @@ export default async function AccountAffiliatePage({
               Links: {links.join(" , ")}
             </p>
           ) : null}
+        </section>
+      ) : null}
+
+      {attributedOrders.length > 0 ? (
+        <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
+          <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+            Recent attributed orders
+          </h2>
+          <div className="mt-3 space-y-2 text-sm text-ink/90">
+            {attributedOrders.map((o) => (
+              <p key={o.id}>
+                #{o.id.slice(-8)} · ${(o.totalCents / 100).toFixed(2)} · {o.status}
+                {o.affiliateAttribution ? ` · ${o.affiliateAttribution}` : ""} ·{" "}
+                {o.createdAt.toLocaleDateString()}
+              </p>
+            ))}
+          </div>
         </section>
       ) : null}
     </div>

@@ -43,3 +43,18 @@ export function evaluateAffiliateRisk(input: {
   return { highRisk: false, reason: null };
 }
 
+export function buildAffiliatePidSeed(input: {
+  email?: string | null;
+  userId: string;
+}): string {
+  const fromEmail = String(input.email ?? "")
+    .trim()
+    .toLowerCase()
+    .split("@")[0]
+    .replace(/[^a-z0-9_-]/g, "")
+    .slice(0, 18);
+  const suffix = input.userId.replace(/[^a-z0-9]/gi, "").slice(-6).toLowerCase();
+  const head = fromEmail || "partner";
+  return `${head}-${suffix}`;
+}
+

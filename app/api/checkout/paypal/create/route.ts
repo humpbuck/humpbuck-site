@@ -4,6 +4,7 @@ import { validateCartLines } from "@/lib/order-lines";
 import type { CartLine } from "@/lib/cart-types";
 import { sanitizeTrafficSource } from "@/lib/attribution-server";
 import { resolveCouponDiscount } from "@/lib/coupon";
+import { resolveAffiliateAttribution } from "@/lib/affiliate-attribution";
 import { paypalCreateOrder } from "@/lib/paypal";
 import { prisma } from "@/lib/prisma";
 import {
@@ -29,6 +30,7 @@ export async function POST(req: Request) {
     trafficSource?: string;
     shippingMethod?: string;
     couponCode?: string;
+    affiliatePid?: string;
   };
   try {
     body = await req.json();
@@ -187,6 +189,10 @@ export async function POST(req: Request) {
   );
 
   const notes = String(body.orderNotes ?? "").trim();
+  const attribution = await resolveAffiliateAttribution({
+    couponId: couponResolved.couponId,
+    affiliatePid: body.affiliatePid,
+  });
   try {
     await prisma.$transaction(async (tx) => {
       if (couponResolved.couponId && couponResolved.discountCents > 0) {
@@ -217,6 +223,9 @@ export async function POST(req: Request) {
           shippingJson: shippingJsonOut,
           orderNotes: notes || null,
           trafficSource,
+          affiliateId: attribution.affiliateId,
+          affiliatePid: attribution.affiliatePid,
+          affiliateAttribution: attribution.source,
         },
       });
     });

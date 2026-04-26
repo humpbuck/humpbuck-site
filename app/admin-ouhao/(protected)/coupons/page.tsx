@@ -29,6 +29,11 @@ function parseDateAtStartOfDay(raw: FormDataEntryValue | null): Date | null {
   return d;
 }
 
+function parseAffiliateId(raw: FormDataEntryValue | null): string | null {
+  const text = String(raw ?? "").trim();
+  return text || null;
+}
+
 function ymd(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
@@ -52,6 +57,7 @@ async function createCouponAction(formData: FormData) {
   const startsAt = parseDateAtStartOfDay(formData.get("startsAt"));
   const endsAt = parseDateAtStartOfDay(formData.get("endsAt"));
   const isActive = String(formData.get("isActive") ?? "") === "on";
+  const affiliateId = parseAffiliateId(formData.get("affiliateId"));
 
   if (!code) goCoupons("Coupon code is required.");
   if (amountOffCents === null) goCoupons("Amount must be greater than 0.");
@@ -63,7 +69,15 @@ async function createCouponAction(formData: FormData) {
 
   try {
     await prisma.coupon.create({
-      data: { code, amountOffCents, quantity, startsAt, endsAt, isActive },
+      data: {
+        code,
+        amountOffCents,
+        quantity,
+        startsAt,
+        endsAt,
+        isActive,
+        affiliateId,
+      },
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Failed to create coupon.";
@@ -86,6 +100,7 @@ async function updateCouponAction(formData: FormData) {
   const startsAt = parseDateAtStartOfDay(formData.get("startsAt"));
   const endsAt = parseDateAtStartOfDay(formData.get("endsAt"));
   const isActive = String(formData.get("isActive") ?? "") === "on";
+  const affiliateId = parseAffiliateId(formData.get("affiliateId"));
 
   if (!id) goCoupons("Missing coupon id.");
   if (!code) goCoupons("Coupon code is required.");
@@ -106,6 +121,7 @@ async function updateCouponAction(formData: FormData) {
         startsAt,
         endsAt,
         isActive,
+        affiliateId,
       },
     });
   } catch (e) {
@@ -134,7 +150,17 @@ export default async function AdminCouponsPage({
   await assertAdmin();
   const sp = await searchParams;
   const coupons = await prisma.coupon.findMany({
+    include: {
+      affiliate: {
+        select: { id: true, pid: true, user: { select: { email: true, displayName: true } } },
+      },
+    },
     orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+  });
+  const affiliates = await prisma.affiliateProfile.findMany({
+    where: { blacklist: false },
+    include: { user: { select: { email: true, displayName: true } } },
+    orderBy: { createdAt: "desc" },
   });
 
   return (
@@ -197,6 +223,18 @@ export default async function AdminCouponsPage({
             <span>Active</span>
             <input name="isActive" type="checkbox" defaultChecked className="h-4 w-4" />
           </label>
+          <select
+            name="affiliateId"
+            defaultValue=""
+            className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2 md:col-span-3"
+          >
+            <option value="">No affiliate binding</option>
+            {affiliates.map((a) => (
+              <option key={a.id} value={a.id}>
+                {(a.user.displayName || a.user.email || a.id) + (a.pid ? ` · PID ${a.pid}` : "")}
+              </option>
+            ))}
+          </select>
           <button
             type="submit"
             className="md:col-span-6 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
@@ -265,8 +303,27 @@ export default async function AdminCouponsPage({
                   <span>Active</span>
                   <input name="isActive" type="checkbox" defaultChecked={c.isActive} className="h-4 w-4" />
                 </label>
+                <select
+                  name="affiliateId"
+                  defaultValue={c.affiliateId ?? ""}
+                  className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2 md:col-span-3"
+                >
+                  <option value="">No affiliate binding</option>
+                  {affiliates.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {(a.user.displayName || a.user.email || a.id) + (a.pid ? ` · PID ${a.pid}` : "")}
+                    </option>
+                  ))}
+                </select>
                 <p className="md:col-span-6 -mt-1 text-xs text-muted">
                   Used {c.usedCount} / {c.quantity}
+                  {c.affiliate
+                    ? ` · Affiliate: ${
+                        c.affiliate.user.displayName ||
+                        c.affiliate.user.email ||
+                        c.affiliate.id
+                      }${c.affiliate.pid ? ` (PID ${c.affiliate.pid})` : ""}`
+                    : ""}
                 </p>
                 <div className="flex items-center gap-2">
                   <button
