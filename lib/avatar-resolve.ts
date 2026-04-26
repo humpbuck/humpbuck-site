@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { BUYER_AVATAR_PRESET_URLS } from "./avatar-presets";
+import { R2_PUBLIC_BASE } from "./r2";
 
 /**
  * Gravatar — de facto standard: MD5 of lowercased trimmed email, same avatar everywhere
@@ -30,12 +30,21 @@ export function gravatarUrlForEmail(
   return `${GRAVATAR_AVATAR}/${hash}?s=${size}&d=${defaultImage}&r=pg`;
 }
 
+const REVIEW_AVATARPERSON_COUNT = 30;
+
+function reviewAvatarR2Base(): string {
+  const fromEnv = process.env.NEXT_PUBLIC_R2_PUBLIC_BASE?.trim();
+  if (fromEnv) return fromEnv.replace(/\/$/, "");
+  return R2_PUBLIC_BASE.replace(/\/$/, "");
+}
+
 function getDeterministicReviewPresetAvatar(email: string): string {
   const normalized = email.trim().toLowerCase();
   const hashHex = createHash("md5").update(normalized, "utf8").digest("hex");
   const hashInt = Number.parseInt(hashHex.slice(0, 8), 16);
-  const idx = hashInt % BUYER_AVATAR_PRESET_URLS.length;
-  return BUYER_AVATAR_PRESET_URLS[idx]!;
+  const idx = (hashInt % REVIEW_AVATARPERSON_COUNT) + 1;
+  const n = String(idx).padStart(2, "0");
+  return `${reviewAvatarR2Base()}/Avatar/Avatarperson/Avatarperson-${n}.webp`;
 }
 
 /**
