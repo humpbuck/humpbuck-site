@@ -8,8 +8,13 @@ import {
   parseAffiliateFollowerCount,
   parseAffiliateSocialLinks,
 } from "@/lib/affiliate";
+import {
+  countAffiliatePaidCommissionOrders,
+  ensureAffiliateGrowthTiers,
+} from "@/lib/affiliate-tier-growth";
 import { AffiliateQuickGuide } from "@/components/account/affiliate-quick-guide";
 import { AffiliateLinkGenerator } from "@/components/account/affiliate-link-generator";
+import { PaidCommissionSelector } from "@/components/account/paid-commission-selector";
 import { prisma } from "@/lib/prisma";
 
 function goAffiliate(error?: string): never {
@@ -18,22 +23,7 @@ function goAffiliate(error?: string): never {
 }
 
 async function ensureDefaultTierId(): Promise<string> {
-  const existing = await prisma.affiliateTier.findFirst({
-    where: { isDefault: true },
-    orderBy: { createdAt: "asc" },
-    select: { id: true },
-  });
-  if (existing) return existing.id;
-  const created = await prisma.affiliateTier.create({
-    data: {
-      name: "Starter",
-      commissionType: "percent",
-      commissionValue: 10,
-      isDefault: true,
-    },
-    select: { id: true },
-  });
-  return created.id;
+  return ensureAffiliateGrowthTiers();
 }
 
 async function ensureUniqueAffiliatePid(input: {
@@ -223,6 +213,15 @@ function usd(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
+const GROWTH_MILESTONES = [
+  { level: "Level 1", minOrders: 0, rate: 5 },
+  { level: "Level 2", minOrders: 100, rate: 7 },
+  { level: "Level 3", minOrders: 300, rate: 9 },
+  { level: "Level 4", minOrders: 600, rate: 11 },
+  { level: "Level 5", minOrders: 1000, rate: 13 },
+  { level: "Level 6", minOrders: 1500, rate: 15 },
+] as const;
+
 export default async function AccountAffiliatePage({
   searchParams,
 }: {
@@ -240,7 +239,7 @@ export default async function AccountAffiliatePage({
   const sp = await searchParams;
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const [profile, latestApplication, commissionLedgers, monthlyPaid, coupon] = await Promise.all([
+  const [profile, latestApplication, commissionLedgers, monthlyPaid, coupon, paidLedgers] = await Promise.all([
     prisma.affiliateProfile.findUnique({
       where: { userId },
       include: {
@@ -290,11 +289,50 @@ export default async function AccountAffiliatePage({
       orderBy: { createdAt: "desc" },
       select: { code: true },
     }),
+    prisma.affiliateCommissionLedger.findMany({
+      where: {
+        affiliate: { userId },
+        status: "paid",
+        paidAt: { not: null },
+      },
+      select: {
+        id: true,
+        orderId: true,
+        commissionCents: true,
+        paidAt: true,
+      },
+      orderBy: { paidAt: "desc" },
+      take: 100,
+    }),
   ]);
   const isActiveAffiliate = profile?.status === "active";
   const showApplicationForm = !isActiveAffiliate || sp.editProfile === "1";
   const showPayoutEditor = !profile || sp.editPayout === "1";
   const earnedThisMonthCents = monthlyPaid._sum.commissionCents ?? 0;
+  const paidCommissionOrderCount = profile
+    ? await countAffiliatePaidCommissionOrders(profile.id)
+    : 0;
+  const currentGrowthTier =
+    [...GROWTH_MILESTONES]
+      .reverse()
+      .find((x) => paidCommissionOrderCount >= x.minOrders) ?? GROWTH_MILESTONES[0];
+  const nextGrowthTier = GROWTH_MILESTONES.find(
+    (x) => x.minOrders > paidCommissionOrderCount,
+  );
+  const ordersToNextTier = nextGrowthTier
+    ? Math.max(0, nextGrowthTier.minOrders - paidCommissionOrderCount)
+    : 0;
+  const currentTierFloor = currentGrowthTier.minOrders;
+  const nextTierFloor = nextGrowthTier?.minOrders ?? currentTierFloor;
+  const progressInTier = nextGrowthTier
+    ? Math.max(0, paidCommissionOrderCount - currentTierFloor)
+    : 1;
+  const progressSpan = nextGrowthTier
+    ? Math.max(1, nextTierFloor - currentTierFloor)
+    : 1;
+  const growthProgressPercent = nextGrowthTier
+    ? Math.min(100, Math.round((progressInTier / progressSpan) * 100))
+    : 100;
   const recentReferrals = commissionLedgers.slice(0, 3);
   const fullName = [profile?.user.firstName?.trim(), profile?.user.lastName?.trim()]
     .filter(Boolean)
@@ -386,7 +424,32 @@ export default async function AccountAffiliatePage({
                 PID: <span className="font-medium">{profile.pid ?? "-"}</span>
               </p>
               <p className="mt-1">
-                Tier: <span className="font-medium">{profile.tier?.name ?? "-"}</span>
+                Tier:{" "}
+                <span className="font-medium">
+                  {profile.tier?.name ?? "-"}
+                  {profile.tier?.commissionType === "percent"
+                    ? ` (${profile.tier.commissionValue.toFixed(0)}%)`
+                    : ""}
+                </span>
+                <span className="group relative ml-1 inline-block">
+                  <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-line text-[10px] font-bold text-muted">
+                    ?
+                  </span>
+                  <span className="pointer-events-none absolute left-0 top-6 z-10 hidden w-64 rounded-lg border border-line bg-white px-3 py-2 text-[11px] leading-5 text-ink shadow-sm group-hover:block">
+                    Growth tiers by paid commission orders: 0-99 (5%), 100+ (7%), 300+ (9%),
+                    600+ (11%), 1000+ (13%), 1500+ (15%).
+                  </span>
+                </span>
+              </p>
+              <p className="mt-1">
+                Paid commission orders:{" "}
+                <span className="font-medium tabular-nums">{paidCommissionOrderCount}</span>
+              </p>
+              <p className="mt-1">
+                To next tier:{" "}
+                <span className="font-medium tabular-nums">
+                  {nextGrowthTier ? `${ordersToNextTier} orders` : "Max tier reached"}
+                </span>
               </p>
               <p className="mt-1">
                 Status: <span className="font-medium">{humanizeStatus(profile.status)}</span>
@@ -416,6 +479,61 @@ export default async function AccountAffiliatePage({
               Brand assets
             </a>
           </div>
+        </section>
+      ) : null}
+
+      {paidLedgers.length > 0 ? (
+        <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
+          <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+            Paid commission orders
+          </h2>
+          <p className="mt-2 text-xs text-muted">
+            You can tick paid commission orders to view selected total count and commission.
+          </p>
+          <div className="mt-3">
+            <PaidCommissionSelector
+              rows={paidLedgers.map((r) => ({
+                id: r.id,
+                orderId: r.orderId,
+                commissionCents: r.commissionCents,
+                paidAtLabel: r.paidAt ? r.paidAt.toLocaleDateString() : "-",
+              }))}
+            />
+          </div>
+        </section>
+      ) : null}
+
+      {profile ? (
+        <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
+          <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+            Growth progress
+          </h2>
+          <p className="mt-2 text-sm text-ink/90">
+            Current valid orders (paid commission):{" "}
+            <span className="font-medium tabular-nums">{paidCommissionOrderCount}</span>
+          </p>
+          <p className="mt-1 text-xs text-muted">
+            {nextGrowthTier
+              ? `${currentGrowthTier.level} (${currentGrowthTier.rate}%) -> ${nextGrowthTier.level} (${nextGrowthTier.rate}%): ${ordersToNextTier} orders to go`
+              : `You are at ${currentGrowthTier.level} (${currentGrowthTier.rate}%), the highest tier.`}
+          </p>
+          <div className="mt-2">
+            <span className="inline-flex items-center rounded-full border border-line bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-ink">
+              {nextGrowthTier
+                ? `Next unlock: ${nextGrowthTier.level} (${nextGrowthTier.rate}%)`
+                : "Highest tier unlocked"}
+            </span>
+          </div>
+          <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-line/60">
+            <div
+              className="h-full rounded-full bg-ink transition-all"
+              style={{ width: `${growthProgressPercent}%` }}
+            />
+          </div>
+          <p className="mt-2 text-[11px] text-muted">
+            Progress in current tier range:{" "}
+            <span className="font-medium tabular-nums">{growthProgressPercent}%</span>
+          </p>
         </section>
       ) : null}
 

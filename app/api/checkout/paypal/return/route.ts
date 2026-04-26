@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { syncOrderAddressesToUserAccount } from "@/lib/sync-order-addresses-to-user";
 import { decrementInventory } from "@/lib/inventory";
 import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
+import { syncAffiliateGrowthTierByOrderCount } from "@/lib/affiliate-tier-growth";
 
 /** PayPal redirects here with ?token=PAYPAL_ORDER_ID */
 export async function GET(req: Request) {
@@ -30,6 +31,7 @@ export async function GET(req: Request) {
     where: { provider: "paypal", providerRef: orderId },
     select: {
       id: true,
+      affiliateId: true,
       userId: true,
       billingJson: true,
       shippingJson: true,
@@ -50,6 +52,9 @@ export async function GET(req: Request) {
         paid.billingJson,
         paid.shippingJson,
       );
+    }
+    if (paid.affiliateId) {
+      await syncAffiliateGrowthTierByOrderCount(paid.affiliateId);
     }
     await notifyMerchantOrderPaid(paid.id);
   }

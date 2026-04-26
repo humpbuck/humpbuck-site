@@ -7,6 +7,7 @@ import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
 import { reverseAffiliateCommissionLedgerForOrder } from "@/lib/affiliate-commission-ledger";
+import { syncAffiliateGrowthTierByOrderCount } from "@/lib/affiliate-tier-growth";
 import { getStripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 
@@ -51,6 +52,7 @@ export async function POST(req: Request) {
         const paidOrder = await prisma.order.findFirst({
           where: { id: orderId, provider: "stripe" },
           select: {
+            affiliateId: true,
             userId: true,
             billingJson: true,
             shippingJson: true,
@@ -70,6 +72,9 @@ export async function POST(req: Request) {
               paidOrder.billingJson,
               paidOrder.shippingJson,
             );
+          }
+          if (paidOrder.affiliateId) {
+            await syncAffiliateGrowthTierByOrderCount(paidOrder.affiliateId);
           }
         }
         await notifyMerchantOrderPaid(orderId);

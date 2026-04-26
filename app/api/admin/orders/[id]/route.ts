@@ -4,6 +4,7 @@ import { upsertAffiliateCommissionLedgerForOrder } from "@/lib/affiliate-commiss
 import { notifyCustomerOrderShipped } from "@/lib/customer-shipped-email";
 import { restoreInventory } from "@/lib/inventory";
 import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
+import { syncAffiliateGrowthTierByOrderCount } from "@/lib/affiliate-tier-growth";
 import { prisma } from "@/lib/prisma";
 
 const ALLOWED_STATUS = new Set([
@@ -130,6 +131,13 @@ export async function PATCH(
 
   if (data.status === "delivered" && current.status !== "delivered") {
     await upsertAffiliateCommissionLedgerForOrder(updated.id);
+  }
+  if (
+    current.affiliateId &&
+    data.status !== undefined &&
+    data.status !== current.status
+  ) {
+    await syncAffiliateGrowthTierByOrderCount(current.affiliateId);
   }
 
   return NextResponse.json({ ok: true, shipmentEmail });

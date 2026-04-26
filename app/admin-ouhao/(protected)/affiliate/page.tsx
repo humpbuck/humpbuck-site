@@ -7,6 +7,7 @@ import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import { buildAffiliatePidSeed } from "@/lib/affiliate";
 import { sendAffiliatePaidSummaryEmail } from "@/lib/affiliate-paid-email";
+import { ensureAffiliateGrowthTiers } from "@/lib/affiliate-tier-growth";
 import { prisma } from "@/lib/prisma";
 
 function goAffiliate(error?: string): never {
@@ -15,22 +16,7 @@ function goAffiliate(error?: string): never {
 }
 
 async function ensureDefaultTierId(): Promise<string> {
-  const existing = await prisma.affiliateTier.findFirst({
-    where: { isDefault: true },
-    orderBy: { createdAt: "asc" },
-    select: { id: true },
-  });
-  if (existing) return existing.id;
-  const created = await prisma.affiliateTier.create({
-    data: {
-      name: "Starter",
-      commissionType: "percent",
-      commissionValue: 10,
-      isDefault: true,
-    },
-    select: { id: true },
-  });
-  return created.id;
+  return ensureAffiliateGrowthTiers();
 }
 
 async function ensureUniqueAffiliatePid(input: {
@@ -817,7 +803,7 @@ export default async function AdminAffiliatePage({
             type="number"
             min="0"
             step="0.01"
-            defaultValue="10"
+            defaultValue="5"
             required
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           />
