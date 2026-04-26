@@ -109,6 +109,28 @@ function invertCainiaoZhToIso(): Record<string, string> {
 
 const ISO_TO_CAINIAO_ZH = invertCainiaoZhToIso();
 
+function resolveMalaysiaCainiaoZhCountry(state: string | null | undefined): string {
+  const raw = String(state ?? "").trim();
+  const key = normalizeCountryKey(raw);
+  // East Malaysia (Borneo) states/federal territory.
+  if (
+    key.includes("sabah") ||
+    key.includes("sarawak") ||
+    key.includes("labuan") ||
+    key.includes("东马") ||
+    key === "my-12" ||
+    key === "my12" ||
+    key === "my-13" ||
+    key === "my13" ||
+    key === "my-15" ||
+    key === "my15"
+  ) {
+    return "马来西亚/东马";
+  }
+  // Default to West Malaysia for unknown/blank input.
+  return "马来西亚/西马";
+}
+
 /**
  * Cainiao S5059/OH row key. Australia uses `澳大利亚/N区` — same N as Yanwen lane (1–4),
  * from `effectiveZonedLaneDigit` (postcode first).
@@ -373,7 +395,10 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
   }
   chargeableKgYanwen = roundUpKgToGram(chargeableKgYanwen);
 
-  const zh = resolveCainiaoZhCountry(iso2, effectiveYanwenZone);
+  const zh =
+    iso2 === "MY"
+      ? resolveMalaysiaCainiaoZhCountry(input.state)
+      : resolveCainiaoZhCountry(iso2, effectiveYanwenZone);
   const hasMainS5059 = Boolean(zh && R.cainiao.S5059[zh]?.length);
   const hasMainOh = Boolean(zh && R.cainiao.OH[zh]?.length);
   const hasFbS5059 = Boolean(R.cainiaoIsoFallback?.[iso2]?.S5059?.length);
@@ -525,12 +550,16 @@ export function getDestinationCoverage(
       Boolean(R.cainiao.S5059[k]?.length) || Boolean(R.cainiao.OH[k]?.length)
     );
   });
+  const cainiaoMyZoned = ["马来西亚/东马", "马来西亚/西马"].some((k) => {
+    return Boolean(R.cainiao.S5059[k]?.length) || Boolean(R.cainiao.OH[k]?.length);
+  });
   const cainiao = Boolean(
     (zh &&
       (R.cainiao.S5059[zh]?.length || R.cainiao.OH[zh]?.length)) ||
       R.cainiaoIsoFallback?.[iso2]?.S5059?.length ||
       R.cainiaoIsoFallback?.[iso2]?.OH?.length ||
-      (iso2 === "AU" && cainiaoAuZoned),
+      (iso2 === "AU" && cainiaoAuZoned) ||
+      (iso2 === "MY" && cainiaoMyZoned),
   );
   const raw = R.yanwen484[iso2 as keyof typeof R.yanwen484] as
     | Yanwen484CountryEntry
