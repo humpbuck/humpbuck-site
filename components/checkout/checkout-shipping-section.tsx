@@ -13,6 +13,7 @@ import {
   isChinaDomesticMethod,
   isPremiumExpressMethod,
   quoteCheckoutShipping,
+  type CheckoutShippingQuote,
 } from "@/lib/checkout-shipping-quote";
 import { countryLabelToIso2, getDestinationCoverage } from "@/lib/logistics-estimate";
 import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/whatsapp";
@@ -139,6 +140,23 @@ export function CheckoutShippingSection({
   const destinationOk = Boolean(countryLabel.trim()) && iso2 !== null;
 
   const servedByEconomy = coverage.cainiao || coverage.yanwen;
+
+  const methodQuotes = useMemo(() => {
+    const map = new Map<ShippingMethodId, CheckoutShippingQuote>();
+    for (const m of visibleIntlMethods) {
+      map.set(
+        m.id,
+        quoteCheckoutShipping({
+          countryLabel,
+          totalUnits,
+          method: m.id,
+          state: shippingState?.trim() || null,
+          postalCode: shippingPostalCode,
+        }),
+      );
+    }
+    return map;
+  }, [visibleIntlMethods, countryLabel, totalUnits, shippingState, shippingPostalCode]);
 
   if (isCn && destinationOk) {
     return (
@@ -348,6 +366,15 @@ export function CheckoutShippingSection({
                       </span>
                       <span className="mt-0.5 block text-xs text-muted">
                         {m.subtitle}
+                      </span>
+                      <span className="mt-1 block text-[11px] text-muted">
+                        Shipping add-on:{" "}
+                        {(() => {
+                          const q = methodQuotes.get(m.id);
+                          if (!q || !q.ok) return "-";
+                          if (q.shippingUsdCents === 0) return "$0.00";
+                          return `$${(q.shippingUsdCents / 100).toFixed(2)} (≈¥${q.shippingCny.toFixed(0)})`;
+                        })()}
                       </span>
                       {isPremiumExpressMethod(m.id) ? (
                         <span className="mt-1 block text-[11px] text-muted">
