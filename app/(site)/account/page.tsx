@@ -35,7 +35,7 @@ export default async function AccountOverviewPage() {
       <h1 className="mt-2 font-serif text-3xl tracking-tight">My account</h1>
       <p className="mt-4 text-sm text-muted">
         Hello, <span className="font-medium text-ink/90">{greeting}</span>. Manage
-        your orders, addresses, payment methods, and profile from here.
+        your orders, addresses, affiliate tools, and profile from here.
       </p>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2">

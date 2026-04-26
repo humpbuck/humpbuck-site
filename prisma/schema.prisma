@@ -303,8 +303,12 @@ model AffiliateProfile {
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   pid                String?  @unique
   displayName        String?
+  payoutMethod       String?
+  payoutAccount      String?
   payoutEmail        String?
   payoutWhatsapp     String?
+  payoutVerifiedAt   DateTime?
+  payoutVerifiedBy   String?
   status             String   @default("active")
   riskFlag           Boolean  @default(false)
   tierId             String?

@@ -7,6 +7,7 @@ import {
   parseAffiliateFollowerCount,
   parseAffiliateSocialLinks,
 } from "@/lib/affiliate";
+import { AffiliateQuickGuide } from "@/components/account/affiliate-quick-guide";
 import { AffiliateLinkGenerator } from "@/components/account/affiliate-link-generator";
 import { prisma } from "@/lib/prisma";
 
@@ -149,6 +150,42 @@ async function submitAffiliateApplicationAction(formData: FormData) {
   );
 }
 
+async function updatePayoutDetailsAction(formData: FormData) {
+  "use server";
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) redirect("/auth/login?callbackUrl=/account/affiliate");
+
+  const payoutMethod = String(formData.get("payoutMethod") ?? "").trim();
+  const payoutAccount = String(formData.get("payoutAccount") ?? "").trim();
+  const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
+  const payoutWhatsapp = String(formData.get("payoutWhatsapp") ?? "").trim();
+
+  const profile = await prisma.affiliateProfile.findUnique({
+    where: { userId },
+    select: { id: true },
+  });
+  if (!profile) {
+    goAffiliate("Please submit affiliate application first.");
+  }
+
+  await prisma.affiliateProfile.update({
+    where: { userId },
+    data: {
+      payoutMethod: payoutMethod || null,
+      payoutAccount: payoutAccount || null,
+      payoutEmail: payoutEmail || null,
+      payoutWhatsapp: payoutWhatsapp || null,
+      paymentInfoPending: !(payoutMethod || payoutAccount || payoutEmail || payoutWhatsapp),
+      payoutVerifiedAt: null,
+      payoutVerifiedBy: null,
+    },
+  });
+
+  revalidatePath("/account/affiliate");
+  redirect("/account/affiliate?ok=payout_saved");
+}
+
 function humanizeStatus(status: string): string {
   if (status === "auto_approved") return "Auto approved";
   if (status === "approved") return "Approved";
@@ -226,9 +263,13 @@ export default async function AccountAffiliatePage({
         <p className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
           {sp.ok === "pending"
             ? "Application submitted. Your profile is pending manual review."
+            : sp.ok === "payout_saved"
+              ? "Payout details saved. Admin will use this for commission settlement."
             : "Application submitted and auto-approved. Please complete payout details in the next phase."}
         </p>
       ) : null}
+
+      {profile ? <AffiliateQuickGuide /> : null}
 
       <section className="mt-8 rounded-2xl border border-line bg-white/60 p-5">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
@@ -244,6 +285,26 @@ export default async function AccountAffiliatePage({
             </p>
             <p>
               PID: <span className="font-medium">{profile.pid ?? "-"}</span>
+            </p>
+            <p>
+              Payout method: <span className="font-medium">{profile.payoutMethod ?? "-"}</span>
+            </p>
+            <p>
+              Payout account: <span className="font-medium">{profile.payoutAccount ?? "-"}</span>
+            </p>
+            <p>
+              Payout email: <span className="font-medium">{profile.payoutEmail ?? "-"}</span>
+            </p>
+            <p>
+              WhatsApp: <span className="font-medium">{profile.payoutWhatsapp ?? "-"}</span>
+            </p>
+            <p>
+              Payout verification:{" "}
+              <span className="font-medium">
+                {profile.payoutVerifiedAt
+                  ? `Confirmed (${profile.payoutVerifiedAt.toLocaleDateString()})`
+                  : "Pending admin confirmation"}
+              </span>
             </p>
             <p>
               Blacklist:{" "}
@@ -271,6 +332,67 @@ export default async function AccountAffiliatePage({
               }
             />
           </div>
+        </section>
+      ) : null}
+
+      {profile ? (
+        <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
+          <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+            Payout details (required)
+          </h2>
+          {profile.paymentInfoPending ? (
+            <p className="mt-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+              Missing payout details. Please add your payout method and at least one contact method.
+              If no payout account is available now, keep your email or WhatsApp updated and admin will
+              contact you for manual settlement.
+            </p>
+          ) : !profile.payoutVerifiedAt ? (
+            <p className="mt-2 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-xs text-sky-900">
+              Payout details submitted. Waiting for admin confirmation before payout processing.
+            </p>
+          ) : (
+            <p className="mt-2 text-xs text-muted">
+              Payout details confirmed by admin. Keep them up to date for future settlements.
+            </p>
+          )}
+          <form action={updatePayoutDetailsAction} className="mt-3 grid gap-3 md:grid-cols-2">
+            <select
+              name="payoutMethod"
+              defaultValue={profile.payoutMethod ?? ""}
+              className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+            >
+              <option value="">Select payout method</option>
+              <option value="paypal">PayPal</option>
+              <option value="bank">Bank account</option>
+              <option value="wise">Wise</option>
+              <option value="payoneer">Payoneer</option>
+              <option value="other">Other</option>
+            </select>
+            <input
+              name="payoutAccount"
+              defaultValue={profile.payoutAccount ?? ""}
+              placeholder="Payout account (e.g. PayPal email / bank account)"
+              className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+            />
+            <input
+              name="payoutEmail"
+              defaultValue={profile.payoutEmail ?? ""}
+              placeholder="Contact email for settlement"
+              className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+            />
+            <input
+              name="payoutWhatsapp"
+              defaultValue={profile.payoutWhatsapp ?? ""}
+              placeholder="WhatsApp for settlement"
+              className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+            />
+            <button
+              type="submit"
+              className="md:col-span-2 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
+            >
+              Save payout details
+            </button>
+          </form>
         </section>
       ) : null}
 

@@ -169,9 +169,25 @@ async function updateProfileAction(formData: FormData) {
   const tierId = String(formData.get("tierId") ?? "").trim();
   const whitelist = String(formData.get("whitelist") ?? "") === "on";
   const notes = String(formData.get("notes") ?? "").trim();
+  const payoutMethod = String(formData.get("payoutMethod") ?? "").trim();
+  const payoutAccount = String(formData.get("payoutAccount") ?? "").trim();
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
   const payoutWhatsapp = String(formData.get("payoutWhatsapp") ?? "").trim();
   if (!profileId) goAffiliate("Missing affiliate profile id.");
+  const existing = await prisma.affiliateProfile.findUnique({
+    where: { id: profileId },
+    select: {
+      payoutMethod: true,
+      payoutAccount: true,
+      payoutEmail: true,
+      payoutWhatsapp: true,
+    },
+  });
+  const payoutChanged =
+    (existing?.payoutMethod ?? "") !== payoutMethod ||
+    (existing?.payoutAccount ?? "") !== payoutAccount ||
+    (existing?.payoutEmail ?? "") !== payoutEmail ||
+    (existing?.payoutWhatsapp ?? "") !== payoutWhatsapp;
 
   await prisma.affiliateProfile.update({
     where: { id: profileId },
@@ -179,9 +195,12 @@ async function updateProfileAction(formData: FormData) {
       tierId: tierId || null,
       whitelist,
       notes: notes || null,
+      payoutMethod: payoutMethod || null,
+      payoutAccount: payoutAccount || null,
       payoutEmail: payoutEmail || null,
       payoutWhatsapp: payoutWhatsapp || null,
-      paymentInfoPending: !(payoutEmail || payoutWhatsapp),
+      paymentInfoPending: !(payoutMethod || payoutAccount || payoutEmail || payoutWhatsapp),
+      ...(payoutChanged ? { payoutVerifiedAt: null, payoutVerifiedBy: null } : {}),
     },
   });
 
@@ -288,6 +307,22 @@ async function markFilteredEligiblePaidAction(formData: FormData) {
     data: {
       status: "paid",
       paidAt: new Date(),
+    },
+  });
+  revalidatePath(adminPath("/affiliate"));
+  redirect(adminPath("/affiliate"));
+}
+
+async function confirmPayoutDetailsAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const profileId = String(formData.get("profileId") ?? "").trim();
+  if (!profileId) goAffiliate("Missing affiliate profile id.");
+  await prisma.affiliateProfile.update({
+    where: { id: profileId },
+    data: {
+      payoutVerifiedAt: new Date(),
+      payoutVerifiedBy: "admin",
     },
   });
   revalidatePath(adminPath("/affiliate"));
@@ -739,6 +774,12 @@ export default async function AdminAffiliatePage({
                     Status: {p.status} · Risk flag: {p.riskFlag ? "Yes" : "No"} · PID:{" "}
                     {p.pid ?? "-"}
                   </p>
+                  <p className="mt-1 text-xs text-muted">
+                    Payout verification:{" "}
+                    {p.payoutVerifiedAt
+                      ? `Confirmed (${p.payoutVerifiedAt.toLocaleDateString()})`
+                      : "Pending admin confirmation"}
+                  </p>
                 </div>
                 <select
                   name="tierId"
@@ -760,6 +801,18 @@ export default async function AdminAffiliatePage({
                   name="notes"
                   defaultValue={p.notes ?? ""}
                   placeholder="Internal notes"
+                  className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
+                <input
+                  name="payoutMethod"
+                  defaultValue={p.payoutMethod ?? ""}
+                  placeholder="Payout method (paypal/bank/wise...)"
+                  className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
+                <input
+                  name="payoutAccount"
+                  defaultValue={p.payoutAccount ?? ""}
+                  placeholder="Payout account"
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
                 <input
@@ -789,6 +842,13 @@ export default async function AdminAffiliatePage({
                     className="inline-flex flex-1 items-center justify-center rounded-xl border border-rose-300 bg-rose-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-rose-800 transition hover:bg-rose-100"
                   >
                     Blacklist
+                  </button>
+                  <button
+                    formAction={confirmPayoutDetailsAction}
+                    type="submit"
+                    className="inline-flex flex-1 items-center justify-center rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-emerald-800 transition hover:bg-emerald-100"
+                  >
+                    Confirm payout details
                   </button>
                 </div>
               </form>
