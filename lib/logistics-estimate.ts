@@ -54,7 +54,18 @@ const ISO_BY_NORMALIZED_NAME: Map<string, string> = (() => {
   m.set("united kingdom", "GB");
   m.set("great britain", "GB");
   m.set("england", "GB");
+  // Common localized spellings / legacy labels.
+  m.set("brasil", "BR");
   return m;
+})();
+
+const KNOWN_ISO2_CODES: Set<string> = (() => {
+  const s = new Set<string>();
+  for (const r of isoRaw as IsoRow[]) {
+    const iso = String(r["alpha-2"] ?? "").toUpperCase();
+    if (/^[A-Z]{2}$/.test(iso)) s.add(iso);
+  }
+  return s;
 })();
 
 function normalizeCountryKey(s: string): string {
@@ -71,7 +82,17 @@ export function countryLabelToIso2(country: string | null | undefined): string |
   const raw = country.trim();
   if (/^[A-Za-z]{2}$/.test(raw)) return raw.toUpperCase();
   const key = normalizeCountryKey(raw);
-  return ISO_BY_NORMALIZED_NAME.get(key) ?? null;
+  const direct = ISO_BY_NORMALIZED_NAME.get(key);
+  if (direct) return direct;
+
+  // Robust fallback for composed labels like "Brazil (BR)" / "BR - Brazil".
+  const tokens = raw.match(/[A-Za-z]{2,}/g) ?? [];
+  for (const t of tokens) {
+    const up = t.toUpperCase();
+    if (/^[A-Z]{2}$/.test(up) && KNOWN_ISO2_CODES.has(up)) return up;
+  }
+
+  return null;
 }
 
 function invertCainiaoZhToIso(): Record<string, string> {
