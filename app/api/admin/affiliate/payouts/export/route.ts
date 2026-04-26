@@ -15,6 +15,8 @@ export async function GET(req: Request) {
   const holdDays = Number.isFinite(holdDaysRaw) && holdDaysRaw > 0
     ? Math.floor(holdDaysRaw)
     : DEFAULT_HOLD_DAYS;
+  const affiliateId = String(url.searchParams.get("affiliateId") ?? "").trim();
+  const orderStatus = String(url.searchParams.get("orderStatus") ?? "").trim();
   const modeRaw = String(url.searchParams.get("mode") ?? "eligible")
     .trim()
     .toLowerCase();
@@ -40,7 +42,11 @@ export async function GET(req: Request) {
           };
 
   const ledgers = await prisma.affiliateCommissionLedger.findMany({
-    where,
+    where: {
+      ...where,
+      ...(affiliateId ? { affiliateId } : {}),
+      ...(orderStatus ? { order: { status: orderStatus } } : {}),
+    },
     include: {
       affiliate: {
         include: {
@@ -52,6 +58,7 @@ export async function GET(req: Request) {
         select: {
           id: true,
           totalCents: true,
+          status: true,
           affiliateAttribution: true,
           deliveredAt: true,
         },
@@ -66,10 +73,13 @@ export async function GET(req: Request) {
       "affiliatePid",
       "affiliateName",
       "affiliateEmail",
+      "payoutEmail",
+      "payoutWhatsapp",
       "tierName",
       "commissionType",
       "commissionValue",
       "orderTotalUsd",
+      "orderStatus",
       "commissionUsd",
       "commissionStatus",
       "eligibleAt",
@@ -88,10 +98,13 @@ export async function GET(req: Request) {
       l.affiliate?.pid ?? "",
       l.affiliate?.user.displayName || "",
       l.affiliate?.user.email || "",
+      l.affiliate?.payoutEmail || "",
+      l.affiliate?.payoutWhatsapp || "",
       l.affiliate?.tier?.name ?? "",
       l.commissionType,
       l.commissionValue.toFixed(2),
       orderTotalUsd.toFixed(2),
+      l.order.status,
       commissionUsd.toFixed(2),
       l.status,
       l.eligibleAt.toISOString(),

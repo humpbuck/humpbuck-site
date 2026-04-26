@@ -167,7 +167,7 @@ export default async function AccountAffiliatePage({
   if (!userId) redirect("/auth/login?callbackUrl=/account/affiliate");
 
   const sp = await searchParams;
-  const [profile, latestApplication, attributedOrders] = await Promise.all([
+  const [profile, latestApplication, commissionLedgers] = await Promise.all([
     prisma.affiliateProfile.findUnique({
       where: { userId },
       include: { tier: true },
@@ -176,17 +176,23 @@ export default async function AccountAffiliatePage({
       where: { userId },
       orderBy: { createdAt: "desc" },
     }),
-    prisma.order.findMany({
-      where: { affiliate: { userId }, deletedAt: null },
-      select: {
-        id: true,
-        totalCents: true,
-        status: true,
-        affiliateAttribution: true,
-        createdAt: true,
+    prisma.affiliateCommissionLedger.findMany({
+      where: {
+        affiliate: { userId },
+      },
+      include: {
+        order: {
+          select: {
+            id: true,
+            totalCents: true,
+            status: true,
+            affiliateAttribution: true,
+            createdAt: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
-      take: 8,
+      take: 20,
     }),
   ]);
 
@@ -327,17 +333,23 @@ export default async function AccountAffiliatePage({
         </section>
       ) : null}
 
-      {attributedOrders.length > 0 ? (
+      {commissionLedgers.length > 0 ? (
         <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
           <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Recent attributed orders
+            Attributed orders (settlement ledger)
           </h2>
+          <p className="mt-2 text-xs text-muted">
+            Read-only view. Order status and settlement status can only be updated by admin.
+          </p>
           <div className="mt-3 space-y-2 text-sm text-ink/90">
-            {attributedOrders.map((o) => (
-              <p key={o.id}>
-                #{o.id.slice(-8)} · ${(o.totalCents / 100).toFixed(2)} · {o.status}
-                {o.affiliateAttribution ? ` · ${o.affiliateAttribution}` : ""} ·{" "}
-                {o.createdAt.toLocaleDateString()}
+            {commissionLedgers.map((l) => (
+              <p key={l.id}>
+                #{l.order.id.slice(-8)} · ${(l.order.totalCents / 100).toFixed(2)} · Order {l.order.status}
+                {" · "}Settlement {l.status}
+                {l.order.affiliateAttribution ? ` · ${l.order.affiliateAttribution}` : ""}
+                {l.paidAt ? ` · Paid ${l.paidAt.toLocaleDateString()}` : ""}
+                {" · "}
+                {l.order.createdAt.toLocaleDateString()}
               </p>
             ))}
           </div>

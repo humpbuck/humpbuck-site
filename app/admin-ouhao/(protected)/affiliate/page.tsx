@@ -54,6 +54,10 @@ function parseCommissionValue(raw: FormDataEntryValue | null): number | null {
   return n;
 }
 
+function normalizeFilterValue(raw: string | undefined): string {
+  return String(raw ?? "").trim();
+}
+
 async function createTierAction(formData: FormData) {
   "use server";
   await assertAdmin();
@@ -165,6 +169,8 @@ async function updateProfileAction(formData: FormData) {
   const tierId = String(formData.get("tierId") ?? "").trim();
   const whitelist = String(formData.get("whitelist") ?? "") === "on";
   const notes = String(formData.get("notes") ?? "").trim();
+  const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
+  const payoutWhatsapp = String(formData.get("payoutWhatsapp") ?? "").trim();
   if (!profileId) goAffiliate("Missing affiliate profile id.");
 
   await prisma.affiliateProfile.update({
@@ -173,6 +179,9 @@ async function updateProfileAction(formData: FormData) {
       tierId: tierId || null,
       whitelist,
       notes: notes || null,
+      payoutEmail: payoutEmail || null,
+      payoutWhatsapp: payoutWhatsapp || null,
+      paymentInfoPending: !(payoutEmail || payoutWhatsapp),
     },
   });
 
@@ -239,6 +248,52 @@ async function markAllEligiblePaidAction() {
   redirect(adminPath("/affiliate"));
 }
 
+async function markSelectedLedgersPaidAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const ids = formData
+    .getAll("ledgerIds")
+    .map((v) => String(v).trim())
+    .filter(Boolean);
+  if (ids.length === 0) goAffiliate("Please select at least one order to mark paid.");
+  await prisma.affiliateCommissionLedger.updateMany({
+    where: {
+      id: { in: ids },
+      status: "eligible",
+      paidAt: null,
+      reversedAt: null,
+    },
+    data: {
+      status: "paid",
+      paidAt: new Date(),
+    },
+  });
+  revalidatePath(adminPath("/affiliate"));
+  redirect(adminPath("/affiliate"));
+}
+
+async function markFilteredEligiblePaidAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const affiliateId = String(formData.get("affiliateId") ?? "").trim();
+  const orderStatus = String(formData.get("orderStatus") ?? "").trim();
+  await prisma.affiliateCommissionLedger.updateMany({
+    where: {
+      status: "eligible",
+      paidAt: null,
+      reversedAt: null,
+      ...(affiliateId ? { affiliateId } : {}),
+      ...(orderStatus ? { order: { status: orderStatus } } : {}),
+    },
+    data: {
+      status: "paid",
+      paidAt: new Date(),
+    },
+  });
+  revalidatePath(adminPath("/affiliate"));
+  redirect(adminPath("/affiliate"));
+}
+
 function asLinks(raw: string): string[] {
   try {
     const parsed = JSON.parse(raw);
@@ -252,13 +307,21 @@ function asLinks(raw: string): string[] {
 export default async function AdminAffiliatePage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    affiliateId?: string;
+    orderStatus?: string;
+    settle?: string;
+  }>;
 }) {
   await assertAdmin();
   await ensureDefaultTierId();
   const sp = await searchParams;
+  const selectedAffiliateId = normalizeFilterValue(sp.affiliateId);
+  const selectedOrderStatus = normalizeFilterValue(sp.orderStatus);
+  const selectedSettlement = normalizeFilterValue(sp.settle) || "eligible";
 
-  const [tiers, pendingApps, profiles, blacklistedCount, autoApprovedCount, recentAttributedOrders, ledgerSummary, recentLedgers] =
+  const [tiers, pendingApps, profiles, blacklistedCount, autoApprovedCount, recentAttributedOrders, ledgerSummary, recentLedgers, settlementRows] =
     await Promise.all([
       prisma.affiliateTier.findMany({ orderBy: [{ isDefault: "desc" }, { createdAt: "asc" }] }),
       prisma.affiliateApplication.findMany({
@@ -289,15 +352,34 @@ export default async function AdminAffiliatePage({
       prisma.affiliateCommissionLedger.findMany({
         include: {
           affiliate: { include: { user: { select: { email: true, displayName: true } } } },
-          order: { select: { id: true, totalCents: true } },
+          order: { select: { id: true, totalCents: true, status: true } },
         },
         orderBy: { createdAt: "desc" },
         take: 12,
+      }),
+      prisma.affiliateCommissionLedger.findMany({
+        where: {
+          ...(selectedAffiliateId ? { affiliateId: selectedAffiliateId } : {}),
+          ...(selectedOrderStatus ? { order: { status: selectedOrderStatus } } : {}),
+          ...(selectedSettlement === "all" ? {} : { status: selectedSettlement }),
+        },
+        include: {
+          affiliate: { include: { user: { select: { email: true, displayName: true } } } },
+          order: { select: { id: true, status: true, totalCents: true } },
+        },
+        orderBy: [{ eligibleAt: "asc" }, { createdAt: "desc" }],
+        take: 120,
       }),
     ]);
 
   const activeProfiles = profiles.filter((p) => !p.blacklist);
   const blacklistedProfiles = profiles.filter((p) => p.blacklist);
+  const settlementOrderStatuses = Array.from(
+    new Set(settlementRows.map((r) => r.order.status).filter(Boolean)),
+  ).sort((a, b) => a.localeCompare(b));
+  const filterQuery = new URLSearchParams();
+  if (selectedAffiliateId) filterQuery.set("affiliateId", selectedAffiliateId);
+  if (selectedOrderStatus) filterQuery.set("orderStatus", selectedOrderStatus);
 
   return (
     <div>
@@ -342,6 +424,101 @@ export default async function AdminAffiliatePage({
 
       <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+          Settlement queue
+        </h2>
+        <p className="mt-2 text-sm text-muted">
+          Filter by affiliate and order status, then mark selected eligible orders as paid.
+        </p>
+        <form method="get" className="mt-4 grid gap-2 md:grid-cols-4">
+          <input type="hidden" name="error" value="" />
+          <select
+            name="affiliateId"
+            defaultValue={selectedAffiliateId}
+            className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+          >
+            <option value="">All affiliates</option>
+            {profiles.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.user.displayName || p.user.email || p.id}
+              </option>
+            ))}
+          </select>
+          <select
+            name="orderStatus"
+            defaultValue={selectedOrderStatus}
+            className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+          >
+            <option value="">All order statuses</option>
+            {settlementOrderStatuses.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+          <select
+            name="settle"
+            defaultValue={selectedSettlement}
+            className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+          >
+            <option value="eligible">Eligible</option>
+            <option value="paid">Paid</option>
+            <option value="pending">Pending</option>
+            <option value="reversed">Reversed</option>
+            <option value="all">All settlement statuses</option>
+          </select>
+          <button
+            type="submit"
+            className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+          >
+            Apply filters
+          </button>
+        </form>
+        <form action={markSelectedLedgersPaidAction} className="mt-4 space-y-2 text-sm text-ink/90">
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
+            >
+              Mark selected eligible as paid
+            </button>
+            <button
+              formAction={markFilteredEligiblePaidAction}
+              type="submit"
+              className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+            >
+              Mark all filtered eligible as paid
+            </button>
+            <input type="hidden" name="affiliateId" value={selectedAffiliateId} />
+            <input type="hidden" name="orderStatus" value={selectedOrderStatus} />
+          </div>
+          {settlementRows.length === 0 ? (
+            <p className="rounded-xl border border-line bg-paper/60 px-3 py-2 text-muted">
+              No settlement rows for current filters.
+            </p>
+          ) : (
+            settlementRows.map((l) => (
+              <label
+                key={l.id}
+                className="flex items-center gap-3 rounded-xl border border-line bg-paper/60 px-3 py-2"
+              >
+                <input
+                  type="checkbox"
+                  name="ledgerIds"
+                  value={l.id}
+                  disabled={l.status !== "eligible" || Boolean(l.paidAt) || Boolean(l.reversedAt)}
+                />
+                <span>
+                  #{l.order.id.slice(-8)} · {l.affiliate?.user.displayName || l.affiliate?.user.email || l.affiliateId} ·
+                  Order {l.order.status} · ${(l.commissionCents / 100).toFixed(2)} · Settlement {l.status}
+                </span>
+              </label>
+            ))
+          )}
+        </form>
+      </section>
+
+      <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
+        <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Commission ledger
         </h2>
         <p className="mt-2 text-sm text-muted">
@@ -379,6 +556,7 @@ export default async function AdminAffiliatePage({
                 <p className="mt-0.5 text-xs text-muted">
                   Eligible at {l.eligibleAt.toLocaleDateString()} · Order $
                   {(l.order.totalCents / 100).toFixed(2)}
+                  {` · Order status ${l.order.status}`}
                   {l.reversedAt ? ` · Reversed ${l.reversalReason ?? ""}` : ""}
                   {l.paidAt ? ` · Paid ${l.paidAt.toLocaleDateString()}` : ""}
                 </p>
@@ -408,7 +586,9 @@ export default async function AdminAffiliatePage({
         </p>
         <p className="mt-3">
           <a
-            href="/api/admin/affiliate/payouts/export?mode=eligible&holdDays=30"
+            href={`/api/admin/affiliate/payouts/export?mode=eligible&holdDays=30${
+              filterQuery.size > 0 ? `&${filterQuery.toString()}` : ""
+            }`}
             className="inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
           >
             Export eligible CSV (30d)
@@ -416,13 +596,17 @@ export default async function AdminAffiliatePage({
         </p>
         <p className="mt-2 flex flex-wrap gap-2">
           <a
-            href="/api/admin/affiliate/payouts/export?mode=paid&holdDays=30"
+            href={`/api/admin/affiliate/payouts/export?mode=paid&holdDays=30${
+              filterQuery.size > 0 ? `&${filterQuery.toString()}` : ""
+            }`}
             className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
           >
             Export paid CSV
           </a>
           <a
-            href="/api/admin/affiliate/payouts/export?mode=all&holdDays=30"
+            href={`/api/admin/affiliate/payouts/export?mode=all&holdDays=30${
+              filterQuery.size > 0 ? `&${filterQuery.toString()}` : ""
+            }`}
             className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
           >
             Export all ledger CSV
@@ -576,6 +760,18 @@ export default async function AdminAffiliatePage({
                   name="notes"
                   defaultValue={p.notes ?? ""}
                   placeholder="Internal notes"
+                  className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
+                <input
+                  name="payoutEmail"
+                  defaultValue={p.payoutEmail ?? ""}
+                  placeholder="Payout email"
+                  className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
+                <input
+                  name="payoutWhatsapp"
+                  defaultValue={p.payoutWhatsapp ?? ""}
+                  placeholder="WhatsApp number"
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
                 <div className="flex gap-2">
