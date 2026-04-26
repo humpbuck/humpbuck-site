@@ -15,18 +15,32 @@ export async function GET(req: Request) {
   const holdDays = Number.isFinite(holdDaysRaw) && holdDaysRaw > 0
     ? Math.floor(holdDaysRaw)
     : DEFAULT_HOLD_DAYS;
+  const modeRaw = String(url.searchParams.get("mode") ?? "eligible")
+    .trim()
+    .toLowerCase();
+  const mode = modeRaw === "paid" || modeRaw === "all" ? modeRaw : "eligible";
 
   const eligibleBefore = new Date(
     Date.now() - holdDays * 24 * 60 * 60 * 1000,
   );
 
+  const where =
+    mode === "paid"
+      ? {
+          status: "paid" as const,
+          paidAt: { not: null as Date | null },
+        }
+      : mode === "all"
+        ? {}
+        : {
+            status: "eligible" as const,
+            eligibleAt: { lte: eligibleBefore },
+            paidAt: null,
+            reversedAt: null,
+          };
+
   const ledgers = await prisma.affiliateCommissionLedger.findMany({
-    where: {
-      status: "eligible",
-      eligibleAt: { lte: eligibleBefore },
-      paidAt: null,
-      reversedAt: null,
-    },
+    where,
     include: {
       affiliate: {
         include: {
@@ -59,6 +73,7 @@ export async function GET(req: Request) {
       "commissionUsd",
       "commissionStatus",
       "eligibleAt",
+      "paidAt",
       "attribution",
       "deliveredAt",
     ],
@@ -80,6 +95,7 @@ export async function GET(req: Request) {
       commissionUsd.toFixed(2),
       l.status,
       l.eligibleAt.toISOString(),
+      l.paidAt ? l.paidAt.toISOString() : "",
       l.order.affiliateAttribution ?? "",
       l.order.deliveredAt ? l.order.deliveredAt.toISOString() : "",
     ]);
@@ -95,7 +111,7 @@ export async function GET(req: Request) {
   return new NextResponse(csv, {
     headers: {
       "content-type": "text/csv; charset=utf-8",
-      "content-disposition": `attachment; filename="affiliate-payouts-${holdDays}d.csv"`,
+      "content-disposition": `attachment; filename="affiliate-payouts-${mode}-${holdDays}d.csv"`,
       "cache-control": "no-store",
     },
   });

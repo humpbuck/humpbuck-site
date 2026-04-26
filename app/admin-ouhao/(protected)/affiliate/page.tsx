@@ -199,6 +199,46 @@ async function toggleBlacklistAction(formData: FormData) {
   redirect(adminPath("/affiliate"));
 }
 
+async function markLedgerPaidAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const ledgerId = String(formData.get("ledgerId") ?? "").trim();
+  if (!ledgerId) goAffiliate("Missing ledger id.");
+
+  await prisma.affiliateCommissionLedger.updateMany({
+    where: {
+      id: ledgerId,
+      status: "eligible",
+      paidAt: null,
+      reversedAt: null,
+    },
+    data: {
+      status: "paid",
+      paidAt: new Date(),
+    },
+  });
+  revalidatePath(adminPath("/affiliate"));
+  redirect(adminPath("/affiliate"));
+}
+
+async function markAllEligiblePaidAction() {
+  "use server";
+  await assertAdmin();
+  await prisma.affiliateCommissionLedger.updateMany({
+    where: {
+      status: "eligible",
+      paidAt: null,
+      reversedAt: null,
+    },
+    data: {
+      status: "paid",
+      paidAt: new Date(),
+    },
+  });
+  revalidatePath(adminPath("/affiliate"));
+  redirect(adminPath("/affiliate"));
+}
+
 function asLinks(raw: string): string[] {
   try {
     const parsed = JSON.parse(raw);
@@ -249,7 +289,7 @@ export default async function AdminAffiliatePage({
       prisma.affiliateCommissionLedger.findMany({
         include: {
           affiliate: { include: { user: { select: { email: true, displayName: true } } } },
-          order: { select: { id: true } },
+          order: { select: { id: true, totalCents: true } },
         },
         orderBy: { createdAt: "desc" },
         take: 12,
@@ -318,15 +358,42 @@ export default async function AdminAffiliatePage({
             ))
           )}
         </div>
+        <form action={markAllEligiblePaidAction} className="mt-3">
+          <button
+            type="submit"
+            className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+          >
+            Mark all eligible as paid
+          </button>
+        </form>
         <div className="mt-4 space-y-2 text-sm text-ink/90">
           {recentLedgers.length === 0 ? (
             <p className="text-muted">No recent ledger records.</p>
           ) : (
             recentLedgers.map((l) => (
-              <p key={l.id}>
-                #{l.order.id.slice(-8)} · {l.affiliate?.user.displayName || l.affiliate?.user.email || l.affiliateId} ·{" "}
-                ${(l.commissionCents / 100).toFixed(2)} · {l.status}
-              </p>
+              <div key={l.id} className="rounded-xl border border-line bg-paper/60 px-3 py-2">
+                <p>
+                  #{l.order.id.slice(-8)} · {l.affiliate?.user.displayName || l.affiliate?.user.email || l.affiliateId} ·{" "}
+                  ${(l.commissionCents / 100).toFixed(2)} · {l.status}
+                </p>
+                <p className="mt-0.5 text-xs text-muted">
+                  Eligible at {l.eligibleAt.toLocaleDateString()} · Order $
+                  {(l.order.totalCents / 100).toFixed(2)}
+                  {l.reversedAt ? ` · Reversed ${l.reversalReason ?? ""}` : ""}
+                  {l.paidAt ? ` · Paid ${l.paidAt.toLocaleDateString()}` : ""}
+                </p>
+                {l.status === "eligible" && !l.paidAt && !l.reversedAt ? (
+                  <form action={markLedgerPaidAction} className="mt-2">
+                    <input type="hidden" name="ledgerId" value={l.id} />
+                    <button
+                      type="submit"
+                      className="inline-flex items-center justify-center rounded-lg bg-ink px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-paper transition hover:bg-ink/90"
+                    >
+                      Mark paid
+                    </button>
+                  </form>
+                ) : null}
+              </div>
             ))
           )}
         </div>
@@ -341,10 +408,24 @@ export default async function AdminAffiliatePage({
         </p>
         <p className="mt-3">
           <a
-            href="/api/admin/affiliate/payouts/export?holdDays=30"
+            href="/api/admin/affiliate/payouts/export?mode=eligible&holdDays=30"
             className="inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
           >
-            Export CSV (30d)
+            Export eligible CSV (30d)
+          </a>
+        </p>
+        <p className="mt-2 flex flex-wrap gap-2">
+          <a
+            href="/api/admin/affiliate/payouts/export?mode=paid&holdDays=30"
+            className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+          >
+            Export paid CSV
+          </a>
+          <a
+            href="/api/admin/affiliate/payouts/export?mode=all&holdDays=30"
+            className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+          >
+            Export all ledger CSV
           </a>
         </p>
       </section>
