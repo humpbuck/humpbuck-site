@@ -136,8 +136,7 @@ export function CheckoutShippingSection({
         // Yanwen remains quote-gated.
         return coverage.yanwen && q.ok;
       }
-      if (m.id !== "cainiao" && m.id !== "yanwen") return true;
-      return q.ok;
+      return true;
     });
   }, [coverage.cainiao, coverage.yanwen, countryLabel, totalUnits, shippingState, shippingPostalCode]);
 
