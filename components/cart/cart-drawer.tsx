@@ -101,6 +101,10 @@ export function CartDrawer() {
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+          <p className="mb-3 text-xs text-muted">
+            Guest checkout available — no account required. Fill shipping address
+            and phone at checkout.
+          </p>
           {displayItems.length === 0 ? (
             <p className="text-sm text-muted">
               Your bag is empty. Add items from a product page.
