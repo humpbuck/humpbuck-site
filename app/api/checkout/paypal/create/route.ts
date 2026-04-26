@@ -187,23 +187,43 @@ export async function POST(req: Request) {
   );
 
   const notes = String(body.orderNotes ?? "").trim();
-  await prisma.order.create({
-    data: {
-      userId: sessionUser?.user?.id,
-      email,
-      status: "pending_payment",
-      provider: "paypal",
-      providerRef: paypalOrderId,
-      totalCents: orderTotalCents,
-      couponCode: couponResolved.code,
-      discountCents: couponResolved.discountCents,
-      itemsJson,
-      billingJson: resolved.billingJson,
-      shippingJson: shippingJsonOut,
-      orderNotes: notes || null,
-      trafficSource,
-    },
-  });
+  try {
+    await prisma.$transaction(async (tx) => {
+      if (couponResolved.couponId && couponResolved.discountCents > 0) {
+        const latest = await tx.coupon.findUnique({
+          where: { id: couponResolved.couponId },
+        });
+        if (!latest || !latest.isActive || latest.usedCount >= latest.quantity) {
+          throw new Error("This coupon is no longer available.");
+        }
+        const claimed = await tx.coupon.updateMany({
+          where: { id: latest.id, usedCount: latest.usedCount },
+          data: { usedCount: { increment: 1 } },
+        });
+        if (claimed.count < 1) throw new Error("This coupon is no longer available.");
+      }
+      await tx.order.create({
+        data: {
+          userId: sessionUser?.user?.id,
+          email,
+          status: "pending_payment",
+          provider: "paypal",
+          providerRef: paypalOrderId,
+          totalCents: orderTotalCents,
+          couponCode: couponResolved.code,
+          discountCents: couponResolved.discountCents,
+          itemsJson,
+          billingJson: resolved.billingJson,
+          shippingJson: shippingJsonOut,
+          orderNotes: notes || null,
+          trafficSource,
+        },
+      });
+    });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "PayPal failed";
+    return NextResponse.json({ error: msg }, { status: 400 });
+  }
 
   return NextResponse.json({ url: approvalUrl });
 }

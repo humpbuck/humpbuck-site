@@ -260,6 +260,8 @@ model Coupon {
   id             String   @id @default(cuid())
   code           String   @unique
   amountOffCents Int
+  quantity       Int      @default(1)
+  usedCount      Int      @default(0)
   startsAt       DateTime
   endsAt         DateTime
   isActive       Boolean  @default(true)

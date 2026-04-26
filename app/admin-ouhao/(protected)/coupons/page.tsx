@@ -13,6 +13,14 @@ function parseAmountOffCents(raw: FormDataEntryValue | null): number | null {
   return Math.round(n * 100);
 }
 
+function parseQuantity(raw: FormDataEntryValue | null): number | null {
+  const text = String(raw ?? "").trim();
+  if (!text) return null;
+  const n = Math.floor(Number(text));
+  if (!Number.isFinite(n) || n < 1) return null;
+  return n;
+}
+
 function parseDateAtStartOfDay(raw: FormDataEntryValue | null): Date | null {
   const text = String(raw ?? "").trim();
   if (!text) return null;
@@ -40,12 +48,14 @@ async function createCouponAction(formData: FormData) {
     .trim()
     .toUpperCase();
   const amountOffCents = parseAmountOffCents(formData.get("amountOffUsd"));
+  const quantity = parseQuantity(formData.get("quantity"));
   const startsAt = parseDateAtStartOfDay(formData.get("startsAt"));
   const endsAt = parseDateAtStartOfDay(formData.get("endsAt"));
   const isActive = String(formData.get("isActive") ?? "") === "on";
 
   if (!code) goCoupons("Coupon code is required.");
   if (amountOffCents === null) goCoupons("Amount must be greater than 0.");
+  if (quantity === null) goCoupons("Quantity must be an integer >= 1.");
   if (!startsAt || !endsAt) goCoupons("Start date and end date are required.");
   if (startsAt.getTime() > endsAt.getTime()) {
     goCoupons("Start date cannot be after end date.");
@@ -53,7 +63,7 @@ async function createCouponAction(formData: FormData) {
 
   try {
     await prisma.coupon.create({
-      data: { code, amountOffCents, startsAt, endsAt, isActive },
+      data: { code, amountOffCents, quantity, startsAt, endsAt, isActive },
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Failed to create coupon.";
@@ -72,6 +82,7 @@ async function updateCouponAction(formData: FormData) {
     .trim()
     .toUpperCase();
   const amountOffCents = parseAmountOffCents(formData.get("amountOffUsd"));
+  const quantity = parseQuantity(formData.get("quantity"));
   const startsAt = parseDateAtStartOfDay(formData.get("startsAt"));
   const endsAt = parseDateAtStartOfDay(formData.get("endsAt"));
   const isActive = String(formData.get("isActive") ?? "") === "on";
@@ -79,6 +90,7 @@ async function updateCouponAction(formData: FormData) {
   if (!id) goCoupons("Missing coupon id.");
   if (!code) goCoupons("Coupon code is required.");
   if (amountOffCents === null) goCoupons("Amount must be greater than 0.");
+  if (quantity === null) goCoupons("Quantity must be an integer >= 1.");
   if (!startsAt || !endsAt) goCoupons("Start date and end date are required.");
   if (startsAt.getTime() > endsAt.getTime()) {
     goCoupons("Start date cannot be after end date.");
@@ -87,7 +99,14 @@ async function updateCouponAction(formData: FormData) {
   try {
     await prisma.coupon.update({
       where: { id },
-      data: { code, amountOffCents, startsAt, endsAt, isActive },
+      data: {
+        code,
+        amountOffCents,
+        quantity,
+        startsAt,
+        endsAt,
+        isActive,
+      },
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Failed to update coupon.";
@@ -123,7 +142,7 @@ export default async function AdminCouponsPage({
       <AdminBackLink href={adminPath()} label="Overview" />
       <h1 className="font-serif text-3xl tracking-tight">Coupons</h1>
       <p className="mt-2 text-sm text-muted">
-        Create and manage coupon codes, discount amount, and valid date range.
+        Create and manage coupon codes, amount, quantity, and valid date range.
       </p>
 
       {sp.error ? (
@@ -136,7 +155,7 @@ export default async function AdminCouponsPage({
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Add coupon
         </h2>
-        <form action={createCouponAction} className="mt-4 grid gap-3 md:grid-cols-5">
+        <form action={createCouponAction} className="mt-4 grid gap-3 md:grid-cols-6">
           <input
             name="code"
             required
@@ -164,13 +183,23 @@ export default async function AdminCouponsPage({
             required
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           />
+          <input
+            name="quantity"
+            type="number"
+            min="1"
+            step="1"
+            required
+            placeholder="Quantity"
+            defaultValue="1"
+            className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+          />
           <label className="inline-flex items-center justify-between gap-3 rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink">
             <span>Active</span>
             <input name="isActive" type="checkbox" defaultChecked className="h-4 w-4" />
           </label>
           <button
             type="submit"
-            className="md:col-span-5 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
+            className="md:col-span-6 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
           >
             Create coupon
           </button>
@@ -223,10 +252,22 @@ export default async function AdminCouponsPage({
                   defaultValue={ymd(c.endsAt)}
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
+                <input
+                  name="quantity"
+                  type="number"
+                  min="1"
+                  step="1"
+                  required
+                  defaultValue={c.quantity}
+                  className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
                 <label className="inline-flex items-center justify-between gap-3 rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink">
                   <span>Active</span>
                   <input name="isActive" type="checkbox" defaultChecked={c.isActive} className="h-4 w-4" />
                 </label>
+                <p className="md:col-span-6 -mt-1 text-xs text-muted">
+                  Used {c.usedCount} / {c.quantity}
+                </p>
                 <div className="flex items-center gap-2">
                   <button
                     type="submit"

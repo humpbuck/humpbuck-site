@@ -24,6 +24,7 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     ok: true,
+    couponId: resolved.couponId,
     code: resolved.code,
     discountCents: resolved.discountCents,
   });

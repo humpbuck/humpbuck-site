@@ -18,6 +18,7 @@ export async function resolveCouponDiscount(params: {
   now?: Date;
 }): Promise<{
   ok: true;
+  couponId: string | null;
   code: string | null;
   discountCents: number;
 } | {
@@ -26,7 +27,7 @@ export async function resolveCouponDiscount(params: {
 }> {
   const code = normalizeCouponCode(params.code);
   if (!code) {
-    return { ok: true, code: null, discountCents: 0 };
+    return { ok: true, couponId: null, code: null, discountCents: 0 };
   }
 
   const coupon = await prisma.coupon.findUnique({ where: { code } });
@@ -42,8 +43,16 @@ export async function resolveCouponDiscount(params: {
   if (now >= endExclusive) {
     return { ok: false, error: "This coupon has expired." };
   }
+  if (coupon.usedCount >= coupon.quantity) {
+    return { ok: false, error: "This coupon is no longer available." };
+  }
 
   const totalCents = Math.max(0, Math.floor(params.totalCents));
   const discountCents = Math.min(totalCents, Math.max(0, coupon.amountOffCents));
-  return { ok: true, code: coupon.code, discountCents };
+  return {
+    ok: true,
+    couponId: coupon.id,
+    code: coupon.code,
+    discountCents,
+  };
 }
