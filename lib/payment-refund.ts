@@ -6,6 +6,7 @@ import {
 import { getStripe } from "@/lib/stripe";
 import { restoreInventory } from "@/lib/inventory";
 import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
+import { reverseAffiliateCommissionLedgerForOrder } from "@/lib/affiliate-commission-ledger";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
 import { prisma } from "@/lib/prisma";
@@ -88,6 +89,16 @@ export async function refundOrderById(
       await sendBuyerRefundEmail(order, refundAmountCents, isFullRefund);
     } catch (e) {
       console.error("[refund] buyer email failed:", e);
+    }
+
+    try {
+      await reverseAffiliateCommissionLedgerForOrder({
+        orderId: order.id,
+        reason: isFullRefund ? "full_refund" : "partial_refund",
+        refundAmountCents,
+      });
+    } catch (e) {
+      console.error("[refund] affiliate ledger reversal failed:", e);
     }
   }
 

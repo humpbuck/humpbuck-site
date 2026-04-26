@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
+import { upsertAffiliateCommissionLedgerForOrder } from "@/lib/affiliate-commission-ledger";
 import { notifyCustomerOrderShipped } from "@/lib/customer-shipped-email";
 import { restoreInventory } from "@/lib/inventory";
 import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
@@ -125,6 +126,10 @@ export async function PATCH(
         detail: e instanceof Error ? e.message : String(e),
       };
     }
+  }
+
+  if (data.status === "delivered" && current.status !== "delivered") {
+    await upsertAffiliateCommissionLedgerForOrder(updated.id);
   }
 
   return NextResponse.json({ ok: true, shipmentEmail });

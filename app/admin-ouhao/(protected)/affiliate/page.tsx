@@ -218,7 +218,7 @@ export default async function AdminAffiliatePage({
   await ensureDefaultTierId();
   const sp = await searchParams;
 
-  const [tiers, pendingApps, profiles, blacklistedCount, autoApprovedCount, recentAttributedOrders] =
+  const [tiers, pendingApps, profiles, blacklistedCount, autoApprovedCount, recentAttributedOrders, ledgerSummary, recentLedgers] =
     await Promise.all([
       prisma.affiliateTier.findMany({ orderBy: [{ isDefault: "desc" }, { createdAt: "asc" }] }),
       prisma.affiliateApplication.findMany({
@@ -239,6 +239,18 @@ export default async function AdminAffiliatePage({
       prisma.order.findMany({
         where: { affiliateId: { not: null }, deletedAt: null },
         include: { affiliate: { include: { user: { select: { email: true, displayName: true } } } } },
+        orderBy: { createdAt: "desc" },
+        take: 12,
+      }),
+      prisma.affiliateCommissionLedger.groupBy({
+        by: ["status"],
+        _count: { _all: true },
+      }),
+      prisma.affiliateCommissionLedger.findMany({
+        include: {
+          affiliate: { include: { user: { select: { email: true, displayName: true } } } },
+          order: { select: { id: true } },
+        },
         orderBy: { createdAt: "desc" },
         take: 12,
       }),
@@ -285,6 +297,38 @@ export default async function AdminAffiliatePage({
             Blacklisted
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{blacklistedCount}</p>
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
+        <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+          Commission ledger
+        </h2>
+        <p className="mt-2 text-sm text-muted">
+          Ledger rows are created when orders reach Delivered and move to Eligible after hold period.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2 text-xs text-ink/85">
+          {ledgerSummary.length === 0 ? (
+            <span>No ledger rows yet.</span>
+          ) : (
+            ledgerSummary.map((s) => (
+              <span key={s.status} className="rounded-full border border-line bg-paper px-3 py-1">
+                {s.status}: {s._count._all}
+              </span>
+            ))
+          )}
+        </div>
+        <div className="mt-4 space-y-2 text-sm text-ink/90">
+          {recentLedgers.length === 0 ? (
+            <p className="text-muted">No recent ledger records.</p>
+          ) : (
+            recentLedgers.map((l) => (
+              <p key={l.id}>
+                #{l.order.id.slice(-8)} · {l.affiliate?.user.displayName || l.affiliate?.user.email || l.affiliateId} ·{" "}
+                ${(l.commissionCents / 100).toFixed(2)} · {l.status}
+              </p>
+            ))
+          )}
         </div>
       </section>
 

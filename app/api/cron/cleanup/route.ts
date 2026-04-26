@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { upsertAffiliateCommissionLedgerForOrder } from "@/lib/affiliate-commission-ledger";
 import { prisma } from "@/lib/prisma";
 
 const ABANDONED_THRESHOLD_HOURS = 24;
@@ -33,25 +34,52 @@ export async function GET(req: Request) {
   const shippedCutoff = new Date(
     Date.now() - AUTO_CONFIRM_DAYS * 24 * 60 * 60 * 1000,
   );
-  const autoDelivered = await prisma.order.updateMany({
+  const autoDeliverCandidates = await prisma.order.findMany({
     where: {
       status: "shipped",
       shippedAt: { lt: shippedCutoff },
       deliveredAt: null,
       deletedAt: null,
     },
-    data: {
-      status: "delivered",
-      deliveredAt: deliveredNow,
-      deliveryConfirmedBy: "auto",
+    select: { id: true },
+    take: 500,
+  });
+  let autoDeliveredCount = 0;
+  for (const row of autoDeliverCandidates) {
+    const changed = await prisma.order.updateMany({
+      where: {
+        id: row.id,
+        status: "shipped",
+        deliveredAt: null,
+      },
+      data: {
+        status: "delivered",
+        deliveredAt: deliveredNow,
+        deliveryConfirmedBy: "auto",
+      },
+    });
+    if (changed.count > 0) {
+      autoDeliveredCount += 1;
+      await upsertAffiliateCommissionLedgerForOrder(row.id);
+    }
+  }
+
+  const eligibleNow = await prisma.affiliateCommissionLedger.updateMany({
+    where: {
+      status: "pending",
+      eligibleAt: { lte: new Date() },
+      reversedAt: null,
+      paidAt: null,
     },
+    data: { status: "eligible" },
   });
 
   return NextResponse.json({
     ok: true,
     cleaned: result.count,
     threshold: `${ABANDONED_THRESHOLD_HOURS}h`,
-    autoDelivered: autoDelivered.count,
+    autoDelivered: autoDeliveredCount,
     autoConfirmWindow: `${AUTO_CONFIRM_DAYS}d`,
+    ledgerEligible: eligibleNow.count,
   });
 }

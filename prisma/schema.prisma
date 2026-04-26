@@ -79,6 +79,7 @@ model Order {
   user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   affiliateId    String?
   affiliate      AffiliateProfile? @relation(fields: [affiliateId], references: [id], onDelete: SetNull)
+  affiliateCommission AffiliateCommissionLedger?
   affiliatePid   String?
   affiliateAttribution String?
   email          String
@@ -315,9 +316,33 @@ model AffiliateProfile {
   applications       AffiliateApplication[]
   coupons            Coupon[]
   orders             Order[]
+  commissionLedgers  AffiliateCommissionLedger[]
 
   @@index([status])
   @@index([blacklist, whitelist])
+}
+
+model AffiliateCommissionLedger {
+  id                      String   @id @default(cuid())
+  affiliateId             String
+  affiliate               AffiliateProfile @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  orderId                 String   @unique
+  order                   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderTotalCents         Int
+  commissionType          String
+  commissionValue         Float
+  commissionCents         Int
+  holdDays                Int      @default(30)
+  eligibleAt              DateTime
+  status                  String   @default("pending")
+  reversedCommissionCents Int      @default(0)
+  reversalReason          String?
+  reversedAt              DateTime?
+  paidAt                  DateTime?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  @@index([affiliateId, status, eligibleAt])
 }
 
 model AffiliateApplication {

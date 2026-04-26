@@ -20,12 +20,12 @@ export async function GET(req: Request) {
     Date.now() - holdDays * 24 * 60 * 60 * 1000,
   );
 
-  const orders = await prisma.order.findMany({
+  const ledgers = await prisma.affiliateCommissionLedger.findMany({
     where: {
-      affiliateId: { not: null },
-      status: "delivered",
-      deliveredAt: { lte: eligibleBefore },
-      deletedAt: null,
+      status: "eligible",
+      eligibleAt: { lte: eligibleBefore },
+      paidAt: null,
+      reversedAt: null,
     },
     include: {
       affiliate: {
@@ -34,11 +34,18 @@ export async function GET(req: Request) {
           tier: true,
         },
       },
+      order: {
+        select: {
+          id: true,
+          totalCents: true,
+          affiliateAttribution: true,
+          deliveredAt: true,
+        },
+      },
     },
-    orderBy: { deliveredAt: "asc" },
+    orderBy: { eligibleAt: "asc" },
   });
-
-  const rows = [
+  const rows: string[][] = [
     [
       "orderId",
       "affiliateId",
@@ -50,32 +57,31 @@ export async function GET(req: Request) {
       "commissionValue",
       "orderTotalUsd",
       "commissionUsd",
+      "commissionStatus",
+      "eligibleAt",
       "attribution",
       "deliveredAt",
     ],
   ];
 
-  for (const o of orders) {
-    const tier = o.affiliate?.tier;
-    const type = tier?.commissionType ?? "percent";
-    const value = Number(tier?.commissionValue ?? 0);
-    const orderTotalUsd = o.totalCents / 100;
-    const commissionUsd = type === "fixed"
-      ? value
-      : Math.round(orderTotalUsd * (value / 100) * 100) / 100;
+  for (const l of ledgers) {
+    const orderTotalUsd = l.orderTotalCents / 100;
+    const commissionUsd = l.commissionCents / 100;
     rows.push([
-      o.id,
-      o.affiliateId ?? "",
-      o.affiliatePid ?? "",
-      o.affiliate?.user.displayName || "",
-      o.affiliate?.user.email || "",
-      tier?.name ?? "",
-      type,
-      value.toFixed(2),
+      l.orderId,
+      l.affiliateId,
+      l.affiliate?.pid ?? "",
+      l.affiliate?.user.displayName || "",
+      l.affiliate?.user.email || "",
+      l.affiliate?.tier?.name ?? "",
+      l.commissionType,
+      l.commissionValue.toFixed(2),
       orderTotalUsd.toFixed(2),
       commissionUsd.toFixed(2),
-      o.affiliateAttribution ?? "",
-      o.deliveredAt ? o.deliveredAt.toISOString() : "",
+      l.status,
+      l.eligibleAt.toISOString(),
+      l.order.affiliateAttribution ?? "",
+      l.order.deliveredAt ? l.order.deliveredAt.toISOString() : "",
     ]);
   }
 
