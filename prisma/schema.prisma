@@ -252,3 +252,17 @@ model VisitorEvent {
   @@index([type, createdAt])
   @@index([productSlug, createdAt])
 }
+
+// Admin coupon codes (fixed amount off in cents) with active date range.
+model Coupon {
+  id             String   @id @default(cuid())
+  code           String   @unique
+  amountOffCents Int
+  startsAt       DateTime
+  endsAt         DateTime
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([isActive, startsAt, endsAt])
+}
