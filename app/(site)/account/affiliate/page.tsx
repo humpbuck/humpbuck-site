@@ -448,19 +448,29 @@ export default async function AccountAffiliatePage({
             placeholder="How do you plan to promote Humpbuck? (minimum 20 characters)"
             className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           />
-          <input
-            name="contactEmail"
-            type="email"
-            defaultValue={profile?.payoutEmail ?? session?.user?.email?.trim() ?? ""}
-            placeholder="Settlement contact email (optional)"
-            className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-          />
-          <input
-            name="contactWhatsapp"
-            defaultValue={profile?.payoutWhatsapp ?? ""}
-            placeholder="Settlement WhatsApp (optional)"
-            className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-          />
+          <label className="block">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+              Email
+            </span>
+            <input
+              name="contactEmail"
+              type="email"
+              defaultValue={profile?.payoutEmail ?? session?.user?.email?.trim() ?? ""}
+              placeholder="Settlement contact email (optional)"
+              className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+            />
+          </label>
+          <label className="block">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+              WhatsApp
+            </span>
+            <input
+              name="contactWhatsapp"
+              defaultValue={profile?.payoutWhatsapp ?? ""}
+              placeholder="Settlement WhatsApp (optional)"
+              className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+            />
+          </label>
           <button
             type="submit"
             className="inline-flex items-center justify-center rounded-xl bg-ink px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
