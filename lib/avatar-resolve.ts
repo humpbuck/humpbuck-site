@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { BUYER_AVATAR_PRESET_URLS } from "./avatar-presets";
 
 /**
  * Gravatar — de facto standard: MD5 of lowercased trimmed email, same avatar everywhere
@@ -29,6 +30,14 @@ export function gravatarUrlForEmail(
   return `${GRAVATAR_AVATAR}/${hash}?s=${size}&d=${defaultImage}&r=pg`;
 }
 
+function getDeterministicReviewPresetAvatar(email: string): string {
+  const normalized = email.trim().toLowerCase();
+  const hashHex = createHash("md5").update(normalized, "utf8").digest("hex");
+  const hashInt = Number.parseInt(hashHex.slice(0, 8), 16);
+  const idx = hashInt % BUYER_AVATAR_PRESET_URLS.length;
+  return BUYER_AVATAR_PRESET_URLS[idx]!;
+}
+
 /**
  * Upload / preset in DB first; else Gravatar when enabled and `email` exists; else `null` (UI: letter).
  */
@@ -46,18 +55,18 @@ export function getBuyerAvatarDisplayUrl(input: {
 }
 
 /**
- * **PDP buyer reviews only:** custom `User.image` first, else a deterministic stock portrait
- * (same style as the old DB `https://i.pravatar.cc/...` URLs) via `?u=email` — no row migration needed.
+ * **PDP buyer reviews only:** always use deterministic R2 built-in avatar presets.
+ * This intentionally ignores `User.image` to keep review avatars consistent site-wide.
  */
 export function getReviewAvatarDisplayUrl(input: {
   image: string | null | undefined;
   email: string | null | undefined;
 }): string | null {
-  const raw = input.image?.trim();
-  if (raw) return raw;
   const em = input.email?.trim();
-  if (em) {
-    return `https://i.pravatar.cc/200?u=${encodeURIComponent(em)}`;
+  if (em) return getDeterministicReviewPresetAvatar(em);
+  const imageKey = input.image?.trim();
+  if (imageKey) {
+    return getDeterministicReviewPresetAvatar(imageKey);
   }
   return null;
 }
