@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
@@ -218,17 +219,28 @@ function humanizeStatus(status: string): string {
   return status;
 }
 
+function usd(cents: number): string {
+  return `$${(cents / 100).toFixed(2)}`;
+}
+
 export default async function AccountAffiliatePage({
   searchParams,
 }: {
-  searchParams: Promise<{ ok?: string; error?: string }>;
+  searchParams: Promise<{
+    ok?: string;
+    error?: string;
+    editProfile?: string;
+    editPayout?: string;
+  }>;
 }) {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) redirect("/auth/login?callbackUrl=/account/affiliate");
 
   const sp = await searchParams;
-  const [profile, latestApplication, commissionLedgers] = await Promise.all([
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const [profile, latestApplication, commissionLedgers, monthlyPaid, coupon] = await Promise.all([
     prisma.affiliateProfile.findUnique({
       where: { userId },
       include: { tier: true },
@@ -255,7 +267,25 @@ export default async function AccountAffiliatePage({
       orderBy: { createdAt: "desc" },
       take: 20,
     }),
+    prisma.affiliateCommissionLedger.aggregate({
+      where: {
+        affiliate: { userId },
+        status: "paid",
+        paidAt: { gte: monthStart },
+      },
+      _sum: { commissionCents: true },
+    }),
+    prisma.coupon.findFirst({
+      where: { affiliate: { userId }, isActive: true },
+      orderBy: { createdAt: "desc" },
+      select: { code: true },
+    }),
   ]);
+  const isActiveAffiliate = profile?.status === "active";
+  const showApplicationForm = !isActiveAffiliate || sp.editProfile === "1";
+  const showPayoutEditor = !profile || sp.editPayout === "1";
+  const earnedThisMonthCents = monthlyPaid._sum.commissionCents ?? 0;
+  const recentReferrals = commissionLedgers.slice(0, 3);
 
   const links = (() => {
     try {
@@ -272,11 +302,30 @@ export default async function AccountAffiliatePage({
       <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
         Affiliate
       </p>
-      <h1 className="mt-2 font-serif text-3xl tracking-tight">Affiliate application</h1>
+      <h1 className="mt-2 font-serif text-3xl tracking-tight">
+        Hi, {profile?.displayName || session?.user?.name || session?.user?.email?.split("@")[0] || "Partner"}!
+      </h1>
       <p className="mt-4 text-sm text-muted">
-        Apply to join our affiliate program. Most applications are auto-approved;
-        high-risk submissions are routed for manual review.
+        Keep your affiliate tools and payout settings up to date.
       </p>
+      <section className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-2xl border border-[#EEEEEE] bg-white/60 px-4 py-3">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+            Earned this month
+          </p>
+          <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">
+            {usd(earnedThisMonthCents)}
+          </p>
+        </div>
+        <div className="rounded-2xl border border-[#EEEEEE] bg-white/60 px-4 py-3">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+            Current status
+          </p>
+          <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">
+            {profile ? humanizeStatus(profile.status) : "Not applied"}
+          </p>
+        </div>
+      </section>
 
       {sp.error ? (
         <p className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
@@ -295,74 +344,64 @@ export default async function AccountAffiliatePage({
 
       {profile ? <AffiliateQuickGuide /> : null}
 
-      <section className="mt-8 rounded-2xl border border-line bg-white/60 p-5">
-        <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Current status
-        </h2>
-        {profile ? (
-          <div className="mt-3 space-y-1 text-sm text-ink/90">
-            <p>
-              Status: <span className="font-medium">{profile.status}</span>
-            </p>
-            <p>
-              Tier: <span className="font-medium">{profile.tier?.name ?? "-"}</span>
-            </p>
-            <p>
-              PID: <span className="font-medium">{profile.pid ?? "-"}</span>
-            </p>
-            <p>
-              Payout method: <span className="font-medium">{profile.payoutMethod ?? "-"}</span>
-            </p>
-            <p>
-              Payout account: <span className="font-medium">{profile.payoutAccount ?? "-"}</span>
-            </p>
-            <p>
-              Payout email: <span className="font-medium">{profile.payoutEmail ?? "-"}</span>
-            </p>
-            <p>
-              WhatsApp: <span className="font-medium">{profile.payoutWhatsapp ?? "-"}</span>
-            </p>
-            <p>
-              Payout verification:{" "}
-              <span className="font-medium">
-                {profile.payoutVerifiedAt
-                  ? `Confirmed (${profile.payoutVerifiedAt.toLocaleDateString()})`
-                  : "Pending admin confirmation"}
-              </span>
-            </p>
-            <p>
-              Blacklist:{" "}
-              <span className="font-medium">{profile.blacklist ? "Yes" : "No"}</span>
-            </p>
+      {profile ? (
+        <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+              Your tools
+            </h2>
+            {isActiveAffiliate ? (
+              <Link
+                href="/account/affiliate?editProfile=1"
+                className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+              >
+                Update partner info
+              </Link>
+            ) : null}
           </div>
-        ) : (
-          <p className="mt-3 text-sm text-muted">No affiliate profile yet.</p>
-        )}
-      </section>
-
-      {profile?.pid ? (
-        <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
-          <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Link generator (PID tracking)
-          </h2>
-          <p className="mt-2 text-sm text-muted">
-            Paste any product/page URL to generate your tracked link.
-          </p>
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            <div className="rounded-xl border border-line bg-paper/70 px-3 py-3 text-sm text-ink/90">
+              <p>
+                PID: <span className="font-medium">{profile.pid ?? "-"}</span>
+              </p>
+              <p className="mt-1">
+                Tier: <span className="font-medium">{profile.tier?.name ?? "-"}</span>
+              </p>
+              <p className="mt-1">
+                Status: <span className="font-medium">{humanizeStatus(profile.status)}</span>
+              </p>
+              <p className="mt-1">
+                Coupon code: <span className="font-medium">{coupon?.code ?? "Contact admin to bind"}</span>
+              </p>
+            </div>
+            <div className="rounded-xl border border-line bg-paper/70 px-3 py-3">
+              {profile.pid ? (
+                <AffiliateLinkGenerator
+                  pid={profile.pid}
+                  siteBaseUrl={
+                    process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://humpbuck.com"
+                  }
+                />
+              ) : (
+                <p className="text-sm text-muted">PID will be available after approval.</p>
+              )}
+            </div>
+          </div>
           <div className="mt-3">
-            <AffiliateLinkGenerator
-              pid={profile.pid}
-              siteBaseUrl={
-                process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://humpbuck.com"
-              }
-            />
+            <a
+              href={`${process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://humpbuck.com"}/wholesale`}
+              className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+            >
+              Brand assets
+            </a>
           </div>
         </section>
       ) : null}
 
       {profile ? (
-        <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
+        <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
           <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Payout details (required)
+            Account settings
           </h2>
           {profile.paymentInfoPending ? (
             <p className="mt-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
@@ -370,7 +409,7 @@ export default async function AccountAffiliatePage({
               If no payout account is available now, keep your email or WhatsApp updated and admin will
               contact you for manual settlement.
             </p>
-          ) : !profile.payoutVerifiedAt ? (
+          ) : sp.ok === "payout_saved" ? (
             <p className="mt-2 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-xs text-sky-900">
               Payout details submitted. Waiting for admin confirmation before payout processing.
             </p>
@@ -379,52 +418,84 @@ export default async function AccountAffiliatePage({
               Payout details confirmed by admin. Keep them up to date for future settlements.
             </p>
           )}
-          <form action={updatePayoutDetailsAction} className="mt-3 grid gap-3 md:grid-cols-2">
-            <select
-              name="payoutMethod"
-              defaultValue={profile.payoutMethod ?? ""}
-              className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-            >
-              <option value="">Select payout method</option>
-              <option value="paypal">PayPal</option>
-              <option value="bank">Bank account</option>
-              <option value="wise">Wise</option>
-              <option value="payoneer">Payoneer</option>
-              <option value="other">Other</option>
-            </select>
-            <input
-              name="payoutAccount"
-              defaultValue={profile.payoutAccount ?? ""}
-              placeholder="Payout account (e.g. PayPal email / bank account)"
-              className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-            />
-            <input
-              name="payoutEmail"
-              defaultValue={profile.payoutEmail ?? ""}
-              placeholder="Contact email for settlement"
-              className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-            />
-            <input
-              name="payoutWhatsapp"
-              defaultValue={profile.payoutWhatsapp ?? ""}
-              placeholder="WhatsApp for settlement"
-              className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-            />
-            <button
-              type="submit"
-              className="md:col-span-2 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
-            >
-              Save payout details
-            </button>
-          </form>
+          {showPayoutEditor ? (
+            <form action={updatePayoutDetailsAction} className="mt-3 grid gap-3 md:grid-cols-2">
+              <select
+                name="payoutMethod"
+                defaultValue={profile.payoutMethod ?? ""}
+                className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+              >
+                <option value="">Select payout method</option>
+                <option value="paypal">PayPal</option>
+                <option value="bank">Bank account</option>
+                <option value="wise">Wise</option>
+                <option value="payoneer">Payoneer</option>
+                <option value="other">Other</option>
+              </select>
+              <input
+                name="payoutAccount"
+                defaultValue={profile.payoutAccount ?? ""}
+                placeholder="Payout account (e.g. PayPal email / bank account)"
+                className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+              />
+              <input
+                name="payoutEmail"
+                defaultValue={profile.payoutEmail ?? ""}
+                placeholder="Contact email for settlement"
+                className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+              />
+              <input
+                name="payoutWhatsapp"
+                defaultValue={profile.payoutWhatsapp ?? ""}
+                placeholder="WhatsApp for settlement"
+                className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+              />
+              <div className="md:col-span-2 flex gap-2">
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center rounded-xl bg-ink px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
+                >
+                  Save payout details
+                </button>
+                <Link
+                  href="/account/affiliate"
+                  className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20"
+                >
+                  Cancel
+                </Link>
+              </div>
+            </form>
+          ) : (
+            <div className="mt-3 rounded-xl border border-line bg-paper/70 px-3 py-3 text-sm text-ink/90">
+              <p>Method: <span className="font-medium">{profile.payoutMethod || "-"}</span></p>
+              <p className="mt-1">Account: <span className="font-medium">{profile.payoutAccount || "-"}</span></p>
+              <p className="mt-1">Email: <span className="font-medium">{profile.payoutEmail || "-"}</span></p>
+              <p className="mt-1">WhatsApp: <span className="font-medium">{profile.payoutWhatsapp || "-"}</span></p>
+              <p className="mt-1">
+                Verification:{" "}
+                <span className="font-medium">
+                  {profile.payoutVerifiedAt ? `Confirmed (${profile.payoutVerifiedAt.toLocaleDateString()})` : "Pending admin confirmation"}
+                </span>
+              </p>
+              <div className="mt-3">
+                <Link
+                  href="/account/affiliate?editPayout=1"
+                  className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+                >
+                  Edit
+                </Link>
+              </div>
+            </div>
+          )}
         </section>
       ) : null}
 
-      <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
-        <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Apply / re-apply
-        </h2>
-        <form action={submitAffiliateApplicationAction} className="mt-4 space-y-3">
+      {showApplicationForm ? (
+        <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
+          <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+            Update partner info
+          </h2>
+          <form action={submitAffiliateApplicationAction} className="mt-4 space-y-3">
           <textarea
             name="socialLinks"
             required
@@ -471,17 +542,28 @@ export default async function AccountAffiliatePage({
               className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
             />
           </label>
-          <button
-            type="submit"
-            className="inline-flex items-center justify-center rounded-xl bg-ink px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
-          >
-            Submit application
-          </button>
-        </form>
-      </section>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center rounded-xl bg-ink px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
+              >
+                Submit
+              </button>
+              {isActiveAffiliate ? (
+                <Link
+                  href="/account/affiliate"
+                  className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20"
+                >
+                  Cancel
+                </Link>
+              ) : null}
+            </div>
+          </form>
+        </section>
+      ) : null}
 
-      {latestApplication ? (
-        <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
+      {latestApplication && showApplicationForm ? (
+        <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
           <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
             Latest application
           </h2>
@@ -502,25 +584,38 @@ export default async function AccountAffiliatePage({
         </section>
       ) : null}
 
-      {commissionLedgers.length > 0 ? (
-        <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
+      {recentReferrals.length > 0 ? (
+        <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
           <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Attributed orders (settlement ledger)
+            Recent referrals
           </h2>
           <p className="mt-2 text-xs text-muted">
             Read-only view. Order status and settlement status can only be updated by admin.
           </p>
-          <div className="mt-3 space-y-2 text-sm text-ink/90">
-            {commissionLedgers.map((l) => (
-              <p key={l.id}>
-                #{l.order.id.slice(-8)} · ${(l.order.totalCents / 100).toFixed(2)} · Order {l.order.status}
-                {" · "}Settlement {l.status}
-                {l.order.affiliateAttribution ? ` · ${l.order.affiliateAttribution}` : ""}
-                {l.paidAt ? ` · Paid ${l.paidAt.toLocaleDateString()}` : ""}
-                {" · "}
-                {l.order.createdAt.toLocaleDateString()}
-              </p>
-            ))}
+          <div className="mt-3 overflow-x-auto">
+            <table className="w-full min-w-[520px] text-left text-sm text-ink/90">
+              <thead>
+                <tr className="border-b border-line text-[10px] uppercase tracking-[0.12em] text-muted">
+                  <th className="px-2 py-2">Order</th>
+                  <th className="px-2 py-2">Order status</th>
+                  <th className="px-2 py-2">Settlement</th>
+                  <th className="px-2 py-2 text-right">Commission</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentReferrals.map((l) => (
+                  <tr key={l.id} className="border-b border-line/60">
+                    <td className="px-2 py-2">#{l.order.id.slice(-8)}</td>
+                    <td className="px-2 py-2">{l.order.status}</td>
+                    <td className="px-2 py-2">
+                      {l.status}
+                      {l.paidAt ? ` · ${l.paidAt.toLocaleDateString()}` : ""}
+                    </td>
+                    <td className="px-2 py-2 text-right tabular-nums">{usd(l.commissionCents)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </section>
       ) : null}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type GuideItem = {
   title: string;
@@ -37,16 +37,49 @@ const GUIDE_ITEMS: GuideItem[] = [
 
 export function AffiliateQuickGuide() {
   const [idx, setIdx] = useState(0);
+  const [open, setOpen] = useState(true);
   const item = GUIDE_ITEMS[idx];
   const canPrev = idx > 0;
   const canNext = idx < GUIDE_ITEMS.length - 1;
   const progress = useMemo(() => `${idx + 1}/${GUIDE_ITEMS.length}`, [idx]);
 
+  useEffect(() => {
+    const hidden = window.localStorage.getItem("affiliate_quick_guide_hidden_v1");
+    if (hidden === "1") setOpen(false);
+  }, []);
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => {
+          window.localStorage.removeItem("affiliate_quick_guide_hidden_v1");
+          setOpen(true);
+        }}
+        className="mt-4 inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+      >
+        Show affiliate guide
+      </button>
+    );
+  }
+
   return (
     <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
         Affiliate quick guide
-      </p>
+        </p>
+        <button
+          type="button"
+          onClick={() => {
+            window.localStorage.setItem("affiliate_quick_guide_hidden_v1", "1");
+            setOpen(false);
+          }}
+          className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted hover:text-ink"
+        >
+          Close
+        </button>
+      </div>
       <p className="mt-2 text-sm text-ink font-medium">{item.title}</p>
       <p className="mt-2 text-sm text-muted">{item.body}</p>
 
