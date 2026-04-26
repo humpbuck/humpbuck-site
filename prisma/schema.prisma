@@ -95,6 +95,9 @@ model Order {
   orderNotes     String? // optional message from checkout (delivery instructions, etc.)
   carrier        String?
   trackingNumber String?
+  shippedAt      DateTime?
+  deliveredAt    DateTime?
+  deliveryConfirmedBy String?
   // Optional merchant-facing label (emails / account). Falls back to id tail when null.
   merchantOrderCode String?
   // First-touch traffic: utm_source or inferred referrer (google, direct, …)
@@ -113,6 +116,7 @@ model Order {
 
   @@index([deletedAt])
   @@index([affiliateId, createdAt])
+  @@index([status, shippedAt])
 }
 
 // Promo/newsletter opt-out per email + one-click unsubscribe token.

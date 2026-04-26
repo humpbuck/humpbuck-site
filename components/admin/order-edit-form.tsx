@@ -12,6 +12,7 @@ const STATUSES = [
   { value: "paid", label: "Paid" },
   { value: "processing", label: "Processing" },
   { value: "shipped", label: "Completed (shipped)" },
+  { value: "delivered", label: "Delivered (received)" },
   { value: "cancelled", label: "Cancelled" },
   { value: "refunded", label: "Refunded" },
 ] as const;

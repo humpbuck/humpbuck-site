@@ -29,7 +29,8 @@ export function ordersWhere(
   const conditions: Prisma.OrderWhereInput[] = [{ deletedAt: null }];
 
   // Status filter
-  if (filter === "completed") conditions.push({ status: "shipped" });
+  if (filter === "completed")
+    conditions.push({ status: { in: ["shipped", "delivered"] } });
   else if (filter === "unshipped")
     conditions.push({ status: { in: ["paid", "processing"] } });
   else if (filter === "cancelled") conditions.push({ status: "cancelled" });

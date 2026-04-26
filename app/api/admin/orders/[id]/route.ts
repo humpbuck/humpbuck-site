@@ -10,6 +10,7 @@ const ALLOWED_STATUS = new Set([
   "paid",
   "processing",
   "shipped",
+  "delivered",
   "cancelled",
   "refunded",
 ]);
@@ -73,6 +74,16 @@ export async function PATCH(
   }
 
   let updated;
+  const now = new Date();
+  if (data.status === "shipped" && current.status !== "shipped") {
+    (data as typeof data & { shippedAt?: Date | null }).shippedAt = now;
+  }
+  if (data.status === "delivered" && current.status !== "delivered") {
+    (data as typeof data & { deliveredAt?: Date | null; deliveryConfirmedBy?: string | null })
+      .deliveredAt = now;
+    (data as typeof data & { deliveredAt?: Date | null; deliveryConfirmedBy?: string | null })
+      .deliveryConfirmedBy = "admin";
+  }
   try {
     updated = await prisma.order.update({
       where: { id },

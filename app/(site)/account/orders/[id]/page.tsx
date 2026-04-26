@@ -15,6 +15,7 @@ import {
   paymentProviderLabel,
 } from "@/lib/admin/order-ui";
 import { BuyerOrderLineItems } from "@/components/account/buyer-order-line-items";
+import { BuyerConfirmReceivedButton } from "@/components/account/buyer-confirm-received-button";
 import { formatPrice } from "@/lib/catalog";
 import { parseOrderItemsJson } from "@/lib/parse-order-items";
 import { prisma } from "@/lib/prisma";
@@ -140,6 +141,10 @@ export default async function AccountOrderDetailPage({
               </p>
             </div>
           ) : null}
+          <BuyerConfirmReceivedButton
+            orderId={order.id}
+            enabled={order.status === "shipped"}
+          />
 
           <BuyerCancelOrderActions
             enabled={showBuyerCancelOrderCta(order)}

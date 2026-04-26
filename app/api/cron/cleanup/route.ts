@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 const ABANDONED_THRESHOLD_HOURS = 24;
+const AUTO_CONFIRM_DAYS = 30;
 
 /**
  * Cron endpoint: soft-delete abandoned pending_payment orders.
@@ -28,9 +29,29 @@ export async function GET(req: Request) {
     data: { deletedAt: new Date() },
   });
 
+  const deliveredNow = new Date();
+  const shippedCutoff = new Date(
+    Date.now() - AUTO_CONFIRM_DAYS * 24 * 60 * 60 * 1000,
+  );
+  const autoDelivered = await prisma.order.updateMany({
+    where: {
+      status: "shipped",
+      shippedAt: { lt: shippedCutoff },
+      deliveredAt: null,
+      deletedAt: null,
+    },
+    data: {
+      status: "delivered",
+      deliveredAt: deliveredNow,
+      deliveryConfirmedBy: "auto",
+    },
+  });
+
   return NextResponse.json({
     ok: true,
     cleaned: result.count,
     threshold: `${ABANDONED_THRESHOLD_HOURS}h`,
+    autoDelivered: autoDelivered.count,
+    autoConfirmWindow: `${AUTO_CONFIRM_DAYS}d`,
   });
 }

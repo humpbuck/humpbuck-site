@@ -60,7 +60,7 @@ export default async function AdminOrdersPage({
   }));
 
   const FILTER_LABELS: Record<string, string> = {
-    completed: "Completed (Shipped)",
+    completed: "Completed (Shipped / Delivered)",
     unshipped: "Unshipped (Paid / Processing)",
     cancelled: "Cancelled",
     refunded: "Refunded",

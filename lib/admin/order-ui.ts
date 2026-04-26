@@ -37,6 +37,8 @@ export function adminStatusMeta(status: string): {
       return { label: "Processing", tone: "info" };
     case "shipped":
       return { label: "Completed", tone: "success" };
+    case "delivered":
+      return { label: "Delivered", tone: "success" };
     case "cancelled":
       return { label: "Cancelled", tone: "danger" };
     case "refunded":

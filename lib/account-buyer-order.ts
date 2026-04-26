@@ -78,6 +78,8 @@ export function buyerOrderStatusLabel(status: string): string {
       return "Pending payment";
     case "shipped":
       return "Shipped";
+    case "delivered":
+      return "Delivered";
     case "cancelled":
       return "Cancelled";
     case "refunded":
@@ -110,6 +112,9 @@ export function buyerCancelBlockedReason(order: {
   }
   if (status === "shipped") {
     return "shipped";
+  }
+  if (status === "delivered") {
+    return "not_eligible";
   }
   if (
     status === "pending_payment" ||
