@@ -61,10 +61,15 @@ export function PaymentBrandButtons({
               className="h-7 w-7 shrink-0"
               unoptimized
             />
-            <span className="min-[380px]:hidden font-semibold">Stripe · Card</span>
+            <span className="min-[380px]:hidden font-semibold">
+              Stripe · Card / Apple Pay / Google Pay
+            </span>
             <span className="hidden min-[380px]:inline">
               <span className="font-semibold">Stripe</span>
-              <span className="font-normal text-white/95"> — Pay with card</span>
+              <span className="font-normal text-white/95">
+                {" "}
+                — Card / Apple Pay / Google Pay
+              </span>
             </span>
           </>
         )}
