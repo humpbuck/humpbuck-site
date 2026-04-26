@@ -505,8 +505,10 @@ export function getDestinationCoverage(
     );
   });
   const cainiao = Boolean(
-    (zh && R.cainiao.S5059[zh]?.length) ||
+    (zh &&
+      (R.cainiao.S5059[zh]?.length || R.cainiao.OH[zh]?.length)) ||
       R.cainiaoIsoFallback?.[iso2]?.S5059?.length ||
+      R.cainiaoIsoFallback?.[iso2]?.OH?.length ||
       (iso2 === "AU" && cainiaoAuZoned),
   );
   const raw = R.yanwen484[iso2 as keyof typeof R.yanwen484] as
