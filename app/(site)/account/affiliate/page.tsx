@@ -243,7 +243,17 @@ export default async function AccountAffiliatePage({
   const [profile, latestApplication, commissionLedgers, monthlyPaid, coupon] = await Promise.all([
     prisma.affiliateProfile.findUnique({
       where: { userId },
-      include: { tier: true },
+      include: {
+        tier: true,
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            displayName: true,
+            email: true,
+          },
+        },
+      },
     }),
     prisma.affiliateApplication.findFirst({
       where: { userId },
@@ -286,6 +296,17 @@ export default async function AccountAffiliatePage({
   const showPayoutEditor = !profile || sp.editPayout === "1";
   const earnedThisMonthCents = monthlyPaid._sum.commissionCents ?? 0;
   const recentReferrals = commissionLedgers.slice(0, 3);
+  const fullName = [profile?.user.firstName?.trim(), profile?.user.lastName?.trim()]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+  const greetingName =
+    fullName ||
+    profile?.displayName?.trim() ||
+    profile?.user.displayName?.trim() ||
+    profile?.user.email?.trim() ||
+    session?.user?.email?.trim() ||
+    "Partner";
 
   const links = (() => {
     try {
@@ -303,7 +324,7 @@ export default async function AccountAffiliatePage({
         Affiliate
       </p>
       <h1 className="mt-2 font-serif text-3xl tracking-tight">
-        Hi, {profile?.displayName || session?.user?.name || session?.user?.email?.split("@")[0] || "Partner"}!
+        Hi, {greetingName}!
       </h1>
       <p className="mt-4 text-sm text-muted">
         Keep your affiliate tools and payout settings up to date.
