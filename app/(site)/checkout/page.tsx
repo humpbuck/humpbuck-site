@@ -413,9 +413,13 @@ export default function CheckoutPage() {
 
       <div className="mt-8 space-y-4">
         <div>
+          <p className="text-xs text-muted">
+            Guest checkout available — no account required. Please provide full
+            shipping address and phone for delivery.
+          </p>
           <label
             htmlFor="checkout-email"
-            className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted"
+            className="mt-3 block text-[10px] font-semibold uppercase tracking-[0.2em] text-muted"
           >
             Email for receipt
             <span className="text-rose-600" aria-hidden="true">

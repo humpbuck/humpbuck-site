@@ -262,9 +262,15 @@ export default function CartPage() {
 
       {items.length > 0 && (
         <div className="mt-10 flex flex-col gap-4 border-t border-[color:var(--color-line)] pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-lg font-semibold tabular-nums">
-            Subtotal {formatPrice(subtotal)}
-          </p>
+          <div>
+            <p className="text-lg font-semibold tabular-nums">
+              Subtotal {formatPrice(subtotal)}
+            </p>
+            <p className="mt-1 text-xs text-muted">
+              Guest checkout available — no account required. Fill shipping address
+              and phone at checkout.
+            </p>
+          </div>
           <Link
             href="/checkout"
             className="inline-flex items-center justify-center rounded-2xl bg-ink px-8 py-3.5 text-center text-[12px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
