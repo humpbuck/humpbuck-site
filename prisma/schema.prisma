@@ -25,6 +25,8 @@ model User {
   passwordResetTokens PasswordResetToken[]
   productReviews ProductReview[]
   visitorSessions VisitorSession[]
+  affiliateProfile AffiliateProfile?
+  affiliateApplications AffiliateApplication[]
 }
 
 model PasswordResetToken {
@@ -269,4 +271,56 @@ model Coupon {
   updatedAt      DateTime @updatedAt
 
   @@index([isActive, startsAt, endsAt])
+}
+
+model AffiliateTier {
+  id              String   @id @default(cuid())
+  name            String   @unique
+  commissionType  String   @default("percent")
+  commissionValue Float    @default(0)
+  isDefault       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  profiles        AffiliateProfile[]
+}
+
+model AffiliateProfile {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  displayName        String?
+  status             String   @default("active")
+  riskFlag           Boolean  @default(false)
+  tierId             String?
+  tier               AffiliateTier? @relation(fields: [tierId], references: [id], onDelete: SetNull)
+  whitelist          Boolean  @default(false)
+  blacklist          Boolean  @default(false)
+  paymentInfoPending Boolean  @default(true)
+  notes              String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  applications       AffiliateApplication[]
+
+  @@index([status])
+  @@index([blacklist, whitelist])
+}
+
+model AffiliateApplication {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  affiliateId     String?
+  affiliate       AffiliateProfile? @relation(fields: [affiliateId], references: [id], onDelete: SetNull)
+  socialLinksJson String   @default("[]")
+  followerCount   Int?
+  about           String?
+  status          String   @default("pending")
+  riskReason      String?
+  reviewedBy      String?
+  reviewedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
 }
