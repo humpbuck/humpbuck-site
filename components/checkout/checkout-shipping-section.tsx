@@ -116,12 +116,15 @@ export function CheckoutShippingSection({
   );
 
   const visibleIntlMethods = useMemo(() => {
-    // Buyer selection should only show routes that can actually be quoted.
-    // Premium express methods keep default behavior (always visible).
+    // Buyer selection rules:
+    // - Cainiao: show when destination has S5059 or OH coverage (ops may choose lane manually).
+    // - Yanwen: keep quote-based filtering.
+    // - Premium express: keep default behavior (always visible).
     return INTL_METHODS.filter((m) => {
       if (m.id === "cainiao" && !coverage.cainiao) return false;
       if (m.id === "yanwen" && !coverage.yanwen) return false;
-      if (m.id !== "cainiao" && m.id !== "yanwen") return true;
+      if (m.id === "cainiao") return true;
+      if (m.id !== "yanwen") return true;
       const q = quoteCheckoutShipping({
         countryLabel,
         totalUnits,
