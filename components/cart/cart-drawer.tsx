@@ -108,8 +108,88 @@ export function CartDrawer() {
           ) : (
             <ul className="space-y-4">
               {lines.map(({ line, product }) => {
-                if (!product) return null;
                 const key = `${line.slug}-${line.variantId ?? ""}`;
+                if (!product) {
+                  return (
+                    <li
+                      key={key}
+                      className="flex gap-3 rounded-xl border border-[color:var(--color-line)] bg-white/70 p-3"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-ink">
+                          {line.variantLabel || line.slug}
+                        </p>
+                        <p className="mt-0.5 text-xs text-muted">
+                          This item is not in the current catalog, but remains in your
+                          bag.
+                        </p>
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                          <div className="inline-flex items-stretch overflow-hidden rounded-lg border border-[color:var(--color-line)] bg-paper">
+                            <button
+                              type="button"
+                              aria-label={
+                                line.qty <= 1
+                                  ? "Remove from bag"
+                                  : "Decrease quantity"
+                              }
+                              onClick={() => {
+                                if (line.qty <= 1) {
+                                  removeItem(line.slug, line.variantId);
+                                } else {
+                                  setQty(line.slug, line.qty - 1, line.variantId);
+                                }
+                              }}
+                              className="flex items-center justify-center px-2.5 py-1.5 text-ink hover:bg-ink/[0.06]"
+                            >
+                              <Minus className="size-3.5" strokeWidth={2} />
+                            </button>
+                            <input
+                              type="number"
+                              min={1}
+                              max={CART_QTY_MAX}
+                              step={1}
+                              inputMode="numeric"
+                              value={line.qty}
+                              aria-label="Quantity"
+                              onChange={(e) => {
+                                const n = Number(e.target.value);
+                                if (!Number.isFinite(n)) return;
+                                const next = Math.max(
+                                  1,
+                                  Math.min(CART_QTY_MAX, Math.floor(n)),
+                                );
+                                setQty(line.slug, next, line.variantId);
+                              }}
+                              className="w-14 border-x border-[color:var(--color-line)] bg-transparent px-1 text-center text-xs font-semibold tabular-nums outline-none"
+                            />
+                            <button
+                              type="button"
+                              aria-label="Increase quantity"
+                              disabled={line.qty >= CART_QTY_MAX}
+                              onClick={() =>
+                                setQty(
+                                  line.slug,
+                                  Math.min(CART_QTY_MAX, line.qty + 1),
+                                  line.variantId,
+                                )
+                              }
+                              className="flex items-center justify-center px-2.5 py-1.5 text-ink hover:bg-ink/[0.06] disabled:opacity-40"
+                            >
+                              <Plus className="size-3.5" strokeWidth={2} />
+                            </button>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeItem(line.slug, line.variantId)}
+                            className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted hover:text-ink"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                }
                 const lineImage = getCartLineImage(product, line.variantId);
                 return (
                   <li

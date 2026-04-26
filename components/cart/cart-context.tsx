@@ -46,7 +46,8 @@ function normalizeCartLine(line: CartLine): CartLine | null {
   const lowered = rawSlug.toLowerCase();
   const byLower = getProductBySlug(lowered);
   if (byLower) return { ...line, slug: byLower.slug };
-  return null;
+  // Keep unknown slugs so custom/legacy products are still visible in bag.
+  return { ...line, slug: rawSlug };
 }
 
 type CartContextValue = {
