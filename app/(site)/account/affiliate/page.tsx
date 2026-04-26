@@ -456,16 +456,6 @@ export default async function AccountAffiliatePage({
                 </span>
               </p>
               <p className="mt-1">
-                Paid commission orders:{" "}
-                <span className="font-medium tabular-nums">{paidCommissionOrderCount}</span>
-              </p>
-              <p className="mt-1">
-                To next tier:{" "}
-                <span className="font-medium tabular-nums">
-                  {nextGrowthTier ? `${ordersToNextTier} orders` : "Max tier reached"}
-                </span>
-              </p>
-              <p className="mt-1">
                 Status: <span className="font-medium">{humanizeStatus(profile.status)}</span>
               </p>
               <p className="mt-1">
