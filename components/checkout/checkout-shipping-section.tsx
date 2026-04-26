@@ -115,15 +115,23 @@ export function CheckoutShippingSection({
     [countryLabel, shippingState],
   );
 
-  const visibleIntlMethods = useMemo(
-    () =>
-      INTL_METHODS.filter(
-        (m) =>
-          (m.id !== "cainiao" || coverage.cainiao) &&
-          (m.id !== "yanwen" || coverage.yanwen),
-      ),
-    [coverage.cainiao, coverage.yanwen],
-  );
+  const visibleIntlMethods = useMemo(() => {
+    // Buyer selection should only show routes that can actually be quoted.
+    // Premium express methods keep default behavior (always visible).
+    return INTL_METHODS.filter((m) => {
+      if (m.id === "cainiao" && !coverage.cainiao) return false;
+      if (m.id === "yanwen" && !coverage.yanwen) return false;
+      if (m.id !== "cainiao" && m.id !== "yanwen") return true;
+      const q = quoteCheckoutShipping({
+        countryLabel,
+        totalUnits,
+        method: m.id,
+        state: shippingState?.trim() || null,
+        postalCode: shippingPostalCode,
+      });
+      return q.ok;
+    });
+  }, [coverage.cainiao, coverage.yanwen, countryLabel, totalUnits, shippingState, shippingPostalCode]);
 
   const quote = useMemo(
     () =>
