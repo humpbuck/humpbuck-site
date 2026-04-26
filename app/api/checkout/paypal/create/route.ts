@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { validateCartLines } from "@/lib/order-lines";
 import type { CartLine } from "@/lib/cart-types";
 import { sanitizeTrafficSource } from "@/lib/attribution-server";
+import { resolveCouponDiscount } from "@/lib/coupon";
 import { paypalCreateOrder } from "@/lib/paypal";
 import { prisma } from "@/lib/prisma";
 import {
@@ -27,6 +28,7 @@ export async function POST(req: Request) {
     orderNotes?: string;
     trafficSource?: string;
     shippingMethod?: string;
+    couponCode?: string;
   };
   try {
     body = await req.json();
@@ -148,7 +150,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: shipQ.error }, { status: 400 });
   }
 
-  const orderTotalCents = totalCents + shipQ.shippingUsdCents;
+  const couponResolved = await resolveCouponDiscount({
+    code: body.couponCode,
+    totalCents: totalCents + shipQ.shippingUsdCents,
+  });
+  if (!couponResolved.ok) {
+    return NextResponse.json({ error: couponResolved.error }, { status: 400 });
+  }
+  const orderTotalCents =
+    totalCents + shipQ.shippingUsdCents - couponResolved.discountCents;
+  if (orderTotalCents < 1) {
+    return NextResponse.json(
+      { error: "Total after discount must be greater than $0.00." },
+      { status: 400 },
+    );
+  }
 
   let shippingJsonOut = resolved.shippingJson;
   if (shippingJsonOut) {
@@ -179,6 +195,8 @@ export async function POST(req: Request) {
       provider: "paypal",
       providerRef: paypalOrderId,
       totalCents: orderTotalCents,
+      couponCode: couponResolved.code,
+      discountCents: couponResolved.discountCents,
       itemsJson,
       billingJson: resolved.billingJson,
       shippingJson: shippingJsonOut,

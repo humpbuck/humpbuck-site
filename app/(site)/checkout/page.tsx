@@ -41,6 +41,13 @@ export default function CheckoutPage() {
   const [orderNotes, setOrderNotes] = useState("");
   const [shippingMethod, setShippingMethod] =
     useState<ShippingMethodId>("cainiao");
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discountCents: number;
+  } | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
   const [loading, setLoading] = useState<"stripe" | "paypal" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [savedAddressesAvailable, setSavedAddressesAvailable] = useState(false);
@@ -180,6 +187,9 @@ export default function CheckoutPage() {
       ? shippingQuote.shippingUsdCents / 100
       : 0;
   const totalDue = subtotal + shippingUsd;
+  const totalDueCents = Math.max(0, Math.round(totalDue * 100));
+  const appliedDiscountUsd = (appliedCoupon?.discountCents ?? 0) / 100;
+  const discountedTotalDue = Math.max(0, totalDue - appliedDiscountUsd);
 
   const resolvedEmail = useMemo(() => {
     return (email.trim() || session?.user?.email || "").trim();
@@ -220,6 +230,56 @@ export default function CheckoutPage() {
     );
   }, [canCheckout, itemCount]);
 
+  const validateCouponCode = useCallback(
+    async (rawCode: string) => {
+      const code = rawCode.trim().toUpperCase();
+      if (!code) {
+        setAppliedCoupon(null);
+        setCouponError("Enter a coupon code.");
+        return;
+      }
+      setCouponLoading(true);
+      setCouponError(null);
+      try {
+        const res = await fetch("/api/checkout/coupon", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code, totalCents: totalDueCents }),
+        });
+        const data = (await res.json()) as {
+          ok?: boolean;
+          code?: string;
+          discountCents?: number;
+          error?: string;
+        };
+        if (!res.ok || !data.ok || !data.code || typeof data.discountCents !== "number") {
+          throw new Error(data.error || "Coupon is invalid.");
+        }
+        setAppliedCoupon({ code: data.code, discountCents: data.discountCents });
+        setCouponInput(data.code);
+      } catch (e) {
+        setAppliedCoupon(null);
+        setCouponError(e instanceof Error ? e.message : "Coupon is invalid.");
+      } finally {
+        setCouponLoading(false);
+      }
+    },
+    [totalDueCents],
+  );
+
+  useEffect(() => {
+    const normalized = couponInput.trim().toUpperCase();
+    if (!normalized) {
+      setAppliedCoupon(null);
+      setCouponError(null);
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      void validateCouponCode(normalized);
+    }, 450);
+    return () => window.clearTimeout(timer);
+  }, [couponInput, totalDueCents, validateCouponCode]);
+
   const payloadAddresses = () => {
     const b = addressFormToRecord(billing);
     const s = shipSameAsBilling ? b : addressFormToRecord(shipping);
@@ -239,6 +299,7 @@ export default function CheckoutPage() {
           trafficSource: getTrafficSourceForCheckout(),
           orderNotes: orderNotes.trim() || undefined,
           shippingMethod,
+          couponCode: appliedCoupon?.code,
           ...payloadAddresses(),
         }),
       });
@@ -271,6 +332,7 @@ export default function CheckoutPage() {
           trafficSource: getTrafficSourceForCheckout(),
           orderNotes: orderNotes.trim() || undefined,
           shippingMethod,
+          couponCode: appliedCoupon?.code,
           ...payloadAddresses(),
         }),
       });
@@ -341,8 +403,13 @@ export default function CheckoutPage() {
         ) : null}
       </p>
       <p className="mt-1 text-base font-semibold tabular-nums text-ink">
-        Total due {formatPrice(totalDue)}
+        Total due {formatPrice(discountedTotalDue)}
       </p>
+      {appliedCoupon && appliedDiscountUsd > 0 ? (
+        <p className="mt-1 text-sm text-emerald-800">
+          Coupon {appliedCoupon.code} applied: -{formatPrice(appliedDiscountUsd)}
+        </p>
+      ) : null}
 
       <div className="mt-8 space-y-4">
         <div>
@@ -371,6 +438,38 @@ export default function CheckoutPage() {
               above.
             </p>
           )}
+        </div>
+        <div>
+          <label
+            htmlFor="checkout-coupon"
+            className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted"
+          >
+            Coupon code
+          </label>
+          <div className="mt-2 flex gap-2">
+            <input
+              id="checkout-coupon"
+              type="text"
+              value={couponInput}
+              onChange={(e) => {
+                setCouponInput(e.target.value);
+                setCouponError(null);
+              }}
+              placeholder="Enter coupon"
+              className="w-full rounded-xl border border-line bg-paper px-4 py-3 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+            />
+            <button
+              type="button"
+              onClick={() => void validateCouponCode(couponInput)}
+              disabled={couponLoading || totalDueCents <= 0}
+              className="rounded-xl border border-line bg-white/70 px-4 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {couponLoading ? "Applying…" : "Apply"}
+            </button>
+          </div>
+          {couponError ? (
+            <p className="mt-1 text-xs text-rose-700">{couponError}</p>
+          ) : null}
         </div>
       </div>
 

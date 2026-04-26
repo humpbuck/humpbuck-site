@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { validateCartLines } from "@/lib/order-lines";
 import type { CartLine } from "@/lib/cart-types";
 import { sanitizeTrafficSource } from "@/lib/attribution-server";
+import { resolveCouponDiscount } from "@/lib/coupon";
 import {
   isCheckoutCountryChina,
   isShippingMethodId,
@@ -35,6 +36,7 @@ export async function POST(req: Request) {
     orderNotes?: string;
     trafficSource?: string;
     shippingMethod?: string;
+    couponCode?: string;
   };
   try {
     body = await req.json();
@@ -150,7 +152,20 @@ export async function POST(req: Request) {
   }
 
   const shippingCents = shipQ.shippingUsdCents;
-  const orderTotalCents = totalCents + shippingCents;
+  const couponResolved = await resolveCouponDiscount({
+    code: body.couponCode,
+    totalCents: totalCents + shippingCents,
+  });
+  if (!couponResolved.ok) {
+    return NextResponse.json({ error: couponResolved.error }, { status: 400 });
+  }
+  const orderTotalCents = totalCents + shippingCents - couponResolved.discountCents;
+  if (orderTotalCents < 50) {
+    return NextResponse.json(
+      { error: "Total after discount must be at least $0.50 for Stripe checkout." },
+      { status: 400 },
+    );
+  }
 
   let shippingJsonOut = resolved.shippingJson;
   if (shippingJsonOut) {
@@ -173,6 +188,8 @@ export async function POST(req: Request) {
       provider: "stripe",
       providerRef: null,
       totalCents: orderTotalCents,
+      couponCode: couponResolved.code,
+      discountCents: couponResolved.discountCents,
       itemsJson,
       billingJson: resolved.billingJson,
       shippingJson: shippingJsonOut,
@@ -181,35 +198,20 @@ export async function POST(req: Request) {
     },
   });
 
-  const productLineItems = lines.map((line) => ({
-    quantity: line.qty,
-    price_data: {
-      currency: "usd",
-      unit_amount: line.unitAmountCents,
-      product_data: {
-        name: line.variantLabel
-          ? `${line.name} — ${line.variantLabel}`
-          : line.name,
+  const lineItems = [
+    {
+      quantity: 1,
+      price_data: {
+        currency: "usd" as const,
+        unit_amount: orderTotalCents,
+        product_data: {
+          name: couponResolved.discountCents > 0
+            ? `HUMPBUCK order (${couponResolved.code} applied)`
+            : "HUMPBUCK order",
+        },
       },
     },
-  }));
-
-  const lineItems =
-    shippingCents > 0
-      ? [
-          ...productLineItems,
-          {
-            quantity: 1,
-            price_data: {
-              currency: "usd" as const,
-              unit_amount: shippingCents,
-              product_data: {
-                name: shipQ.lineLabel,
-              },
-            },
-          },
-        ]
-      : productLineItems;
+  ];
 
   const checkoutSession = await stripe.checkout.sessions.create({
     mode: "payment",

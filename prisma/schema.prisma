@@ -80,6 +80,8 @@ model Order {
   provider       String
   providerRef    String?
   totalCents     Int
+  couponCode     String?
+  discountCents  Int      @default(0)
   currency       String   @default("usd")
   itemsJson      String
   billingJson    String? // card / invoice; may differ from shipping
