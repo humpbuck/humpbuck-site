@@ -131,6 +131,23 @@ function resolveMalaysiaCainiaoZhCountry(state: string | null | undefined): stri
   return "马来西亚/西马";
 }
 
+function resolvePhilippinesCainiaoZhCountry(state: string | null | undefined): string {
+  const raw = String(state ?? "").trim();
+  const key = normalizeCountryKey(raw);
+  // Metro Manila / NCR.
+  if (
+    key.includes("metro manila") ||
+    key.includes("manila") ||
+    key.includes("ncr") ||
+    key.includes("national capital region") ||
+    key.includes("菲律宾马尼拉大都")
+  ) {
+    return "菲律宾/菲律宾马尼拉大都";
+  }
+  // Default to "other regions" for unknown/blank input.
+  return "菲律宾/菲律宾其他地区";
+}
+
 /**
  * Cainiao S5059/OH row key. Australia uses `澳大利亚/N区` — same N as Yanwen lane (1–4),
  * from `effectiveZonedLaneDigit` (postcode first).
@@ -398,6 +415,8 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
   const zh =
     iso2 === "MY"
       ? resolveMalaysiaCainiaoZhCountry(input.state)
+      : iso2 === "PH"
+        ? resolvePhilippinesCainiaoZhCountry(input.state)
       : resolveCainiaoZhCountry(iso2, effectiveYanwenZone);
   const hasMainS5059 = Boolean(zh && R.cainiao.S5059[zh]?.length);
   const hasMainOh = Boolean(zh && R.cainiao.OH[zh]?.length);
@@ -553,13 +572,17 @@ export function getDestinationCoverage(
   const cainiaoMyZoned = ["马来西亚/东马", "马来西亚/西马"].some((k) => {
     return Boolean(R.cainiao.S5059[k]?.length) || Boolean(R.cainiao.OH[k]?.length);
   });
+  const cainiaoPhZoned = ["菲律宾/菲律宾马尼拉大都", "菲律宾/菲律宾其他地区"].some((k) => {
+    return Boolean(R.cainiao.S5059[k]?.length) || Boolean(R.cainiao.OH[k]?.length);
+  });
   const cainiao = Boolean(
     (zh &&
       (R.cainiao.S5059[zh]?.length || R.cainiao.OH[zh]?.length)) ||
       R.cainiaoIsoFallback?.[iso2]?.S5059?.length ||
       R.cainiaoIsoFallback?.[iso2]?.OH?.length ||
       (iso2 === "AU" && cainiaoAuZoned) ||
-      (iso2 === "MY" && cainiaoMyZoned),
+      (iso2 === "MY" && cainiaoMyZoned) ||
+      (iso2 === "PH" && cainiaoPhZoned),
   );
   const raw = R.yanwen484[iso2 as keyof typeof R.yanwen484] as
     | Yanwen484CountryEntry
