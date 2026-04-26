@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
+import { SendPaidEmailConfirmButton } from "@/components/admin/send-paid-email-confirm-button";
+import { SettlementSelectionSummary } from "@/components/admin/settlement-selection-summary";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import { buildAffiliatePidSeed } from "@/lib/affiliate";
@@ -611,7 +613,11 @@ export default async function AdminAffiliatePage({
             Apply filters
           </button>
         </form>
-        <form action={markSelectedLedgersPaidAction} className="mt-4 space-y-2 text-sm text-ink/90">
+        <form
+          id="affiliate-settlement-form"
+          action={markSelectedLedgersPaidAction}
+          className="mt-4 space-y-2 text-sm text-ink/90"
+        >
           <div className="grid gap-2 md:grid-cols-3">
             <input
               name="payoutBatchId"
@@ -643,17 +649,23 @@ export default async function AdminAffiliatePage({
             >
               Mark all filtered eligible as paid
             </button>
+            <SendPaidEmailConfirmButton
+              formId="affiliate-settlement-form"
+              submitButtonId="send-paid-email-submit"
+            />
             <button
+              id="send-paid-email-submit"
               formAction={sendPaidNotificationAction}
               type="submit"
-              className="inline-flex items-center justify-center rounded-xl border border-sky-300 bg-sky-50 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-sky-900 transition hover:bg-sky-100"
-            >
-              Send paid email for selected
-            </button>
+              className="hidden"
+              aria-hidden="true"
+              tabIndex={-1}
+            />
             <input type="hidden" name="affiliateId" value={selectedAffiliateId} />
             <input type="hidden" name="orderStatus" value={selectedOrderStatus} />
             <input type="hidden" name="onlyVerifiedPayout" value={onlyVerifiedPayout ? "true" : ""} />
           </div>
+          <SettlementSelectionSummary formId="affiliate-settlement-form" />
           {settlementRows.length === 0 ? (
             <p className="rounded-xl border border-line bg-paper/60 px-3 py-2 text-muted">
               No settlement rows for current filters.
@@ -668,6 +680,9 @@ export default async function AdminAffiliatePage({
                   type="checkbox"
                   name="ledgerIds"
                   value={l.id}
+                  data-commission-cents={l.commissionCents}
+                  data-order-total-cents={l.order.totalCents}
+                  data-order-code={l.order.id.slice(-8)}
                   disabled={Boolean(l.reversedAt)}
                 />
                 <span>
