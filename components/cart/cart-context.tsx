@@ -12,6 +12,7 @@ import type { CartLine } from "@/lib/cart-types";
 import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 
 const STORAGE_KEY = "humpbuck-cart";
+const STORAGE_COOKIE = "humpbuck-cart";
 const CART_QTY_MAX = 9999;
 
 /** Collapse duplicate lines from legacy carts (same slug + variant). */
@@ -53,7 +54,7 @@ const CartContext = createContext<CartContextValue | null>(null);
 function loadCart(): CartLine[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY) ?? readCartCookie();
     if (!raw) return [];
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
@@ -70,6 +71,29 @@ function loadCart(): CartLine[] {
   }
 }
 
+function readCartCookie(): string | null {
+  if (typeof document === "undefined") return null;
+  const rows = document.cookie.split("; ");
+  const row = rows.find((v) => v.startsWith(`${STORAGE_COOKIE}=`));
+  if (!row) return null;
+  const value = row.slice(STORAGE_COOKIE.length + 1);
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return null;
+  }
+}
+
+function writeCartCookie(lines: CartLine[]) {
+  if (typeof document === "undefined") return;
+  try {
+    const raw = encodeURIComponent(JSON.stringify(lines));
+    document.cookie = `${STORAGE_COOKIE}=${raw}; Path=/; Max-Age=2592000; SameSite=Lax`;
+  } catch {
+    // Ignore persistence errors and keep in-memory cart usable.
+  }
+}
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartLine[]>(() => loadCart());
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
@@ -78,7 +102,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const closeCartDrawer = useCallback(() => setCartDrawerOpen(false), []);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    } catch {
+      // Some browsers/private modes may reject localStorage writes.
+    }
+    writeCartCookie(items);
   }, [items]);
 
   const itemCount = useMemo(
