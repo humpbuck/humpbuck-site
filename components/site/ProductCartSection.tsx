@@ -57,6 +57,7 @@ export function ProductCartSection({
       qty: 1,
       variantId: current?.id,
       variantLabel: current?.label,
+      variantImage: current?.image,
     });
     setAddedTick((n) => n + 1);
     window.dispatchEvent(new CustomEvent(CART_ADDED_EVENT));

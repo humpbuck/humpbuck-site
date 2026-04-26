@@ -115,6 +115,18 @@ export function CartDrawer() {
                       key={key}
                       className="flex gap-3 rounded-xl border border-[color:var(--color-line)] bg-white/70 p-3"
                     >
+                      {line.variantImage ? (
+                        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-paper">
+                          <Image
+                            src={line.variantImage}
+                            alt={line.variantLabel || line.slug}
+                            fill
+                            className="object-cover"
+                            sizes="80px"
+                            unoptimized={isR2PublicObjectUrl(line.variantImage)}
+                          />
+                        </div>
+                      ) : null}
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-ink">
                           {line.variantLabel || line.slug}

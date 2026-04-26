@@ -53,6 +53,18 @@ export default function CartPage() {
                   key={key}
                   className="flex gap-4 rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-4"
                 >
+                  {line.variantImage ? (
+                    <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-paper">
+                      <Image
+                        src={line.variantImage}
+                        alt={line.variantLabel || line.slug}
+                        fill
+                        className="object-cover"
+                        sizes="96px"
+                        unoptimized={isR2PublicObjectUrl(line.variantImage)}
+                      />
+                    </div>
+                  ) : null}
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-ink">
                       {line.variantLabel || line.slug}

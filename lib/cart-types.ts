@@ -3,4 +3,6 @@ export type CartLine = {
   qty: number;
   variantId?: string;
   variantLabel?: string;
+  /** Optional line image for custom/non-catalog items. */
+  variantImage?: string;
 };

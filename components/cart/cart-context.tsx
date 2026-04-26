@@ -32,6 +32,7 @@ function mergeDuplicateLines(lines: CartLine[]): CartLine[] {
         ...prev,
         qty: Math.min(CART_QTY_MAX, prev.qty + line.qty),
         variantLabel: prev.variantLabel ?? line.variantLabel,
+        variantImage: prev.variantImage ?? line.variantImage,
       });
     }
   }
@@ -162,6 +163,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         ...next[idx],
         qty: Math.min(CART_QTY_MAX, next[idx].qty + normalizedLine.qty),
         variantLabel: normalizedLine.variantLabel ?? next[idx].variantLabel,
+        variantImage: normalizedLine.variantImage ?? next[idx].variantImage,
       };
       return next;
     });
