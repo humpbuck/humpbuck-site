@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import type { CartLine } from "@/lib/cart-types";
+import { getProductBySlug } from "@/lib/catalog";
 import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 
 const STORAGE_KEY = "humpbuck-cart";
@@ -35,6 +36,17 @@ function mergeDuplicateLines(lines: CartLine[]): CartLine[] {
     }
   }
   return Array.from(map.values());
+}
+
+function normalizeCartLine(line: CartLine): CartLine | null {
+  const rawSlug = line.slug.trim();
+  if (!rawSlug) return null;
+  const exact = getProductBySlug(rawSlug);
+  if (exact) return { ...line, slug: exact.slug };
+  const lowered = rawSlug.toLowerCase();
+  const byLower = getProductBySlug(lowered);
+  if (byLower) return { ...line, slug: byLower.slug };
+  return null;
 }
 
 type CartContextValue = {
@@ -65,7 +77,10 @@ function loadCart(): CartLine[] {
         typeof (x as CartLine).slug === "string" &&
         typeof (x as CartLine).qty === "number",
     );
-    return mergeDuplicateLines(filtered);
+    const normalized = filtered
+      .map((line) => normalizeCartLine(line))
+      .filter((line): line is CartLine => line !== null);
+    return mergeDuplicateLines(normalized);
   } catch {
     return [];
   }
@@ -116,28 +131,36 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const addItem = useCallback((line: CartLine) => {
+    const normalizedLine = normalizeCartLine(line);
+    if (!normalizedLine) return;
     trackVisitorEvent({
       type: "add_to_cart",
-      productSlug: line.slug,
+      productSlug: normalizedLine.slug,
       meta: {
-        qty: Math.max(1, Math.min(CART_QTY_MAX, line.qty)),
-        variantId: line.variantId ?? null,
+        qty: Math.max(1, Math.min(CART_QTY_MAX, normalizedLine.qty)),
+        variantId: normalizedLine.variantId ?? null,
       },
     });
     setItems((prev) => {
       const idx = prev.findIndex(
         (p) =>
-          p.slug === line.slug &&
-          (p.variantId ?? "") === (line.variantId ?? ""),
+          p.slug === normalizedLine.slug &&
+          (p.variantId ?? "") === (normalizedLine.variantId ?? ""),
       );
       if (idx === -1) {
-        return [...prev, { ...line, qty: Math.min(CART_QTY_MAX, Math.max(1, line.qty)) }];
+        return [
+          ...prev,
+          {
+            ...normalizedLine,
+            qty: Math.min(CART_QTY_MAX, Math.max(1, normalizedLine.qty)),
+          },
+        ];
       }
       const next = [...prev];
       next[idx] = {
         ...next[idx],
-        qty: Math.min(CART_QTY_MAX, next[idx].qty + line.qty),
-        variantLabel: line.variantLabel ?? next[idx].variantLabel,
+        qty: Math.min(CART_QTY_MAX, next[idx].qty + normalizedLine.qty),
+        variantLabel: normalizedLine.variantLabel ?? next[idx].variantLabel,
       };
       return next;
     });
