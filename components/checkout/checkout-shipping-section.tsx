@@ -121,10 +121,6 @@ export function CheckoutShippingSection({
     // - Yanwen: keep quote-based filtering.
     // - Premium express: keep default behavior (always visible).
     return INTL_METHODS.filter((m) => {
-      if (m.id === "cainiao" && !coverage.cainiao) return false;
-      if (m.id === "yanwen" && !coverage.yanwen) return false;
-      if (m.id === "cainiao") return true;
-      if (m.id !== "yanwen") return true;
       const q = quoteCheckoutShipping({
         countryLabel,
         totalUnits,
@@ -132,6 +128,15 @@ export function CheckoutShippingSection({
         state: shippingState?.trim() || null,
         postalCode: shippingPostalCode,
       });
+      if (m.id === "cainiao") {
+        // Prefer table coverage, but still allow when quote succeeds (label-format fallback).
+        return coverage.cainiao || q.ok;
+      }
+      if (m.id === "yanwen") {
+        // Yanwen remains quote-gated.
+        return coverage.yanwen && q.ok;
+      }
+      if (m.id !== "cainiao" && m.id !== "yanwen") return true;
       return q.ok;
     });
   }, [coverage.cainiao, coverage.yanwen, countryLabel, totalUnits, shippingState, shippingPostalCode]);
