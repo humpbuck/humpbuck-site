@@ -11,6 +11,7 @@ import {
 import {
   countAffiliatePaidCommissionOrders,
   ensureAffiliateGrowthTiers,
+  syncAffiliateGrowthTierByOrderCount,
 } from "@/lib/affiliate-tier-growth";
 import { AffiliateQuickGuide } from "@/components/account/affiliate-quick-guide";
 import { AffiliateLinkGenerator } from "@/components/account/affiliate-link-generator";
@@ -235,6 +236,7 @@ export default async function AccountAffiliatePage({
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) redirect("/auth/login?callbackUrl=/account/affiliate");
+  await ensureAffiliateGrowthTiers();
 
   const sp = await searchParams;
   const now = new Date();
@@ -306,6 +308,9 @@ export default async function AccountAffiliatePage({
     }),
   ]);
   const isActiveAffiliate = profile?.status === "active";
+  if (profile?.id) {
+    await syncAffiliateGrowthTierByOrderCount(profile.id);
+  }
   const showApplicationForm = !isActiveAffiliate || sp.editProfile === "1";
   const showPayoutEditor = !profile || sp.editPayout === "1";
   const earnedThisMonthCents = monthlyPaid._sum.commissionCents ?? 0;
@@ -426,18 +431,27 @@ export default async function AccountAffiliatePage({
               <p className="mt-1">
                 Tier:{" "}
                 <span className="font-medium">
-                  {profile.tier?.name ?? "-"}
-                  {profile.tier?.commissionType === "percent"
-                    ? ` (${profile.tier.commissionValue.toFixed(0)}%)`
-                    : ""}
+                  {currentGrowthTier.level} ({currentGrowthTier.rate}%)
                 </span>
                 <span className="group relative ml-1 inline-block">
                   <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-line text-[10px] font-bold text-muted">
                     ?
                   </span>
-                  <span className="pointer-events-none absolute left-0 top-6 z-10 hidden w-64 rounded-lg border border-line bg-white px-3 py-2 text-[11px] leading-5 text-ink shadow-sm group-hover:block">
-                    Growth tiers by paid commission orders: 0-99 (5%), 100+ (7%), 300+ (9%),
-                    600+ (11%), 1000+ (13%), 1500+ (15%).
+                  <span className="absolute left-0 top-6 z-10 hidden w-72 rounded-xl border border-line bg-white px-3 py-3 text-[11px] leading-5 text-ink shadow-md group-hover:block">
+                    <span className="block font-semibold text-ink">Growth tiers (paid commission orders)</span>
+                    <span className="mt-1 block text-muted">
+                      0-99: 5% · 100+: 7% · 300+: 9% · 600+: 11% · 1000+: 13% · 1500+: 15%
+                    </span>
+                    <span className="mt-2 block border-t border-line pt-2 text-ink/90">
+                      Paid commission orders:{" "}
+                      <span className="font-semibold tabular-nums">{paidCommissionOrderCount}</span>
+                    </span>
+                    <span className="block text-ink/90">
+                      To next tier:{" "}
+                      <span className="font-semibold tabular-nums">
+                        {nextGrowthTier ? `${ordersToNextTier} orders` : "Max tier reached"}
+                      </span>
+                    </span>
                   </span>
                 </span>
               </p>

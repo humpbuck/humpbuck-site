@@ -7,7 +7,10 @@ import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import { buildAffiliatePidSeed } from "@/lib/affiliate";
 import { sendAffiliatePaidSummaryEmail } from "@/lib/affiliate-paid-email";
-import { ensureAffiliateGrowthTiers } from "@/lib/affiliate-tier-growth";
+import {
+  ensureAffiliateGrowthTiers,
+  syncAffiliateGrowthTierByOrderCount,
+} from "@/lib/affiliate-tier-growth";
 import { prisma } from "@/lib/prisma";
 
 function goAffiliate(error?: string): never {
@@ -222,6 +225,10 @@ async function markLedgerPaidAction(formData: FormData) {
   const ledgerId = String(formData.get("ledgerId") ?? "").trim();
   if (!ledgerId) goAffiliate("Missing ledger id.");
 
+  const row = await prisma.affiliateCommissionLedger.findUnique({
+    where: { id: ledgerId },
+    select: { affiliateId: true },
+  });
   await prisma.affiliateCommissionLedger.updateMany({
     where: {
       id: ledgerId,
@@ -234,6 +241,9 @@ async function markLedgerPaidAction(formData: FormData) {
       paidAt: new Date(),
     },
   });
+  if (row?.affiliateId) {
+    await syncAffiliateGrowthTierByOrderCount(row.affiliateId);
+  }
   revalidatePath(adminPath("/affiliate"));
   redirect(adminPath("/affiliate"));
 }
@@ -241,6 +251,15 @@ async function markLedgerPaidAction(formData: FormData) {
 async function markAllEligiblePaidAction() {
   "use server";
   await assertAdmin();
+  const affected = await prisma.affiliateCommissionLedger.findMany({
+    where: {
+      status: "eligible",
+      paidAt: null,
+      reversedAt: null,
+    },
+    select: { affiliateId: true },
+    distinct: ["affiliateId"],
+  });
   await prisma.affiliateCommissionLedger.updateMany({
     where: {
       status: "eligible",
@@ -252,6 +271,9 @@ async function markAllEligiblePaidAction() {
       paidAt: new Date(),
     },
   });
+  await Promise.all(
+    affected.map((x) => syncAffiliateGrowthTierByOrderCount(x.affiliateId)),
+  );
   revalidatePath(adminPath("/affiliate"));
   redirect(adminPath("/affiliate"));
 }
@@ -267,6 +289,16 @@ async function markSelectedLedgersPaidAction(formData: FormData) {
   const payoutBatchId = String(formData.get("payoutBatchId") ?? "").trim();
   const payoutTxnRef = String(formData.get("payoutTxnRef") ?? "").trim();
   const paidNote = String(formData.get("paidNote") ?? "").trim();
+  const affected = await prisma.affiliateCommissionLedger.findMany({
+    where: {
+      id: { in: ids },
+      status: "eligible",
+      paidAt: null,
+      reversedAt: null,
+    },
+    select: { affiliateId: true },
+    distinct: ["affiliateId"],
+  });
   await prisma.affiliateCommissionLedger.updateMany({
     where: {
       id: { in: ids },
@@ -282,6 +314,9 @@ async function markSelectedLedgersPaidAction(formData: FormData) {
       paidNote: paidNote || null,
     },
   });
+  await Promise.all(
+    affected.map((x) => syncAffiliateGrowthTierByOrderCount(x.affiliateId)),
+  );
   revalidatePath(adminPath("/affiliate"));
   redirect(adminPath("/affiliate"));
 }
@@ -295,15 +330,21 @@ async function markFilteredEligiblePaidAction(formData: FormData) {
   const payoutBatchId = String(formData.get("payoutBatchId") ?? "").trim();
   const payoutTxnRef = String(formData.get("payoutTxnRef") ?? "").trim();
   const paidNote = String(formData.get("paidNote") ?? "").trim();
+  const where = {
+    status: "eligible" as const,
+    paidAt: null,
+    reversedAt: null,
+    ...(affiliateId ? { affiliateId } : {}),
+    ...(orderStatus ? { order: { status: orderStatus } } : {}),
+    ...(onlyVerifiedPayout ? { affiliate: { payoutVerifiedAt: { not: null } } } : {}),
+  };
+  const affected = await prisma.affiliateCommissionLedger.findMany({
+    where,
+    select: { affiliateId: true },
+    distinct: ["affiliateId"],
+  });
   await prisma.affiliateCommissionLedger.updateMany({
-    where: {
-      status: "eligible",
-      paidAt: null,
-      reversedAt: null,
-      ...(affiliateId ? { affiliateId } : {}),
-      ...(orderStatus ? { order: { status: orderStatus } } : {}),
-      ...(onlyVerifiedPayout ? { affiliate: { payoutVerifiedAt: { not: null } } } : {}),
-    },
+    where,
     data: {
       status: "paid",
       paidAt: new Date(),
@@ -312,6 +353,9 @@ async function markFilteredEligiblePaidAction(formData: FormData) {
       paidNote: paidNote || null,
     },
   });
+  await Promise.all(
+    affected.map((x) => syncAffiliateGrowthTierByOrderCount(x.affiliateId)),
+  );
   revalidatePath(adminPath("/affiliate"));
   redirect(adminPath("/affiliate"));
 }
