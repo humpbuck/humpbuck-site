@@ -19,10 +19,19 @@ function goMessages(error?: string): never {
   redirect(`${adminPath("/messages")}?error=${encodeURIComponent(error)}`);
 }
 
+function redirectToMessagesCategory(category?: string): never {
+  const c = String(category ?? "").trim();
+  if (c && c !== "all") {
+    redirect(adminPath(`/messages?category=${encodeURIComponent(c)}`));
+  }
+  redirect(adminPath("/messages"));
+}
+
 async function markCouponRequestHandledAction(formData: FormData) {
   "use server";
   await assertAdmin();
   const requestId = String(formData.get("requestId") ?? "").trim();
+  const category = String(formData.get("category") ?? "all").trim();
   if (!requestId) goMessages("Missing request id.");
   await prisma.affiliateCouponRequest.update({
     where: { id: requestId },
@@ -33,13 +42,14 @@ async function markCouponRequestHandledAction(formData: FormData) {
   });
   revalidatePath(adminPath("/messages"));
   revalidatePath(adminPath("/affiliate"));
-  redirect(adminPath("/messages"));
+  redirectToMessagesCategory(category);
 }
 
 async function markInboxMessageHandledAction(formData: FormData) {
   "use server";
   await assertAdmin();
   const messageId = String(formData.get("messageId") ?? "").trim();
+  const category = String(formData.get("category") ?? "all").trim();
   if (!messageId) goMessages("Missing message id.");
   await prisma.adminInboxMessage.update({
     where: { id: messageId },
@@ -49,7 +59,7 @@ async function markInboxMessageHandledAction(formData: FormData) {
     },
   });
   revalidatePath(adminPath("/messages"));
-  redirect(adminPath("/messages"));
+  redirectToMessagesCategory(category);
 }
 
 async function markCategoryReadAction(formData: FormData) {
@@ -95,10 +105,7 @@ async function markCategoryReadAction(formData: FormData) {
   revalidatePath(adminPath("/messages"));
   revalidatePath(adminPath("/orders"));
   revalidatePath(adminPath("/affiliate"));
-  if (category && category !== "all") {
-    redirect(adminPath(`/messages?category=${encodeURIComponent(category)}`));
-  }
-  redirect(adminPath("/messages"));
+  redirectToMessagesCategory(category);
 }
 
 async function deleteMessageAction(formData: FormData) {
@@ -111,14 +118,16 @@ async function deleteMessageAction(formData: FormData) {
 
   if (target === "affiliate") {
     await prisma.affiliateCouponRequest
-      .delete({
+      .update({
         where: { id },
+        data: { status: "deleted", handledAt: new Date() },
       })
       .catch(() => null);
   } else if (target === "inbox") {
     await prisma.adminInboxMessage
-      .delete({
+      .update({
         where: { id },
+        data: { status: "deleted", handledAt: new Date() },
       })
       .catch(() => null);
   }
@@ -126,10 +135,7 @@ async function deleteMessageAction(formData: FormData) {
   revalidatePath(adminPath("/messages"));
   revalidatePath(adminPath("/orders"));
   revalidatePath(adminPath("/affiliate"));
-  if (category && category !== "all") {
-    redirect(adminPath(`/messages?category=${encodeURIComponent(category)}`));
-  }
-  redirect(adminPath("/messages"));
+  redirectToMessagesCategory(category);
 }
 
 async function deleteSelectedMessagesAction(formData: FormData) {
@@ -153,15 +159,17 @@ async function deleteSelectedMessagesAction(formData: FormData) {
 
   if (inboxIds.length > 0) {
     await prisma.adminInboxMessage
-      .deleteMany({
+      .updateMany({
         where: { id: { in: inboxIds } },
+        data: { status: "deleted", handledAt: new Date() },
       })
       .catch(() => null);
   }
   if (affiliateIds.length > 0) {
     await prisma.affiliateCouponRequest
-      .deleteMany({
+      .updateMany({
         where: { id: { in: affiliateIds } },
+        data: { status: "deleted", handledAt: new Date() },
       })
       .catch(() => null);
   }
@@ -169,10 +177,7 @@ async function deleteSelectedMessagesAction(formData: FormData) {
   revalidatePath(adminPath("/messages"));
   revalidatePath(adminPath("/orders"));
   revalidatePath(adminPath("/affiliate"));
-  if (category && category !== "all") {
-    redirect(adminPath(`/messages?category=${encodeURIComponent(category)}`));
-  }
-  redirect(adminPath("/messages"));
+  redirectToMessagesCategory(category);
 }
 
 function parsePayload(payloadJson: string): Record<string, unknown> {
@@ -315,7 +320,7 @@ export default async function AdminMessagesPage({
       .findMany({
         where:
           selectedCategory === "all" || selectedCategory === ADMIN_INBOX_CATEGORY.affiliates
-            ? undefined
+            ? { status: { in: ["pending", "handled"] } }
             : { status: "__none__" },
         include: {
           user: {
@@ -345,7 +350,7 @@ export default async function AdminMessagesPage({
       .catch(() => []),
     prisma.adminInboxMessage.findMany({
       where: {
-        status: { not: "pending" },
+        status: "handled",
         category: { not: ADMIN_INBOX_CATEGORY.dispute },
         ...(selectedCategory === "all" ? {} : { category: selectedCategory }),
       },
@@ -523,6 +528,7 @@ export default async function AdminMessagesPage({
                     ) : (
                       <form action={markCouponRequestHandledAction}>
                         <input type="hidden" name="requestId" value={req.id} />
+                      <input type="hidden" name="category" value={selectedCategory} />
                         <button
                           type="submit"
                           className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
@@ -629,6 +635,7 @@ export default async function AdminMessagesPage({
                     ) : (
                       <form action={markInboxMessageHandledAction}>
                         <input type="hidden" name="messageId" value={msg.id} />
+                        <input type="hidden" name="category" value={selectedCategory} />
                         <button
                           type="submit"
                           className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
