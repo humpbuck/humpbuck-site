@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { createAdminInboxMessage, ADMIN_INBOX_CATEGORY } from "@/lib/admin-inbox";
 import { addEmailToBrevoNewsletter } from "@/lib/brevo-subscribe-contact";
+import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { recordMarketingOptInFromSubscribe } from "@/lib/email-marketing-preference";
 import { sendSubscribeSuccessEmail } from "@/lib/subscribe-success-email";
 import { parseSubscribeMagicRequest } from "@/lib/subscribe-magic-link";
@@ -39,6 +41,40 @@ export async function GET(req: Request) {
   } catch {
     /* local DB best-effort */
   }
+
+  const nowIso = new Date().toISOString();
+  const notifyTo = process.env.MERCHANT_NOTIFY_EMAIL?.trim() || "humpbuck@outlook.com";
+  await createAdminInboxMessage({
+    category: ADMIN_INBOX_CATEGORY.subscribe,
+    sourceEmail: parsed.email,
+    dedupeKey: `subscribe:magic:${parsed.email}`,
+    payload: {
+      email: parsed.email,
+      eventType: "magic_subscriber",
+      message: `Subscriber (Magic Link) | ${parsed.email} subscribed via one-tap email link. Synced to Brevo (Website newsletter).`,
+      createdAt: nowIso,
+    },
+  }).catch(() => null);
+
+  await sendTransactionalEmail({
+    to: notifyTo,
+    subject: "New subscribe request",
+    htmlContent: `
+      <p>Hello,</p>
+      <p>A new newsletter subscribe request was received via one-tap email link.</p>
+      <ul>
+        <li><strong>Email:</strong> ${parsed.email}</li>
+        <li><strong>Source:</strong> subscribe magic link</li>
+        <li><strong>Time:</strong> ${nowIso}</li>
+      </ul>
+    `,
+    textContent:
+      `New subscribe request\n` +
+      `Email: ${parsed.email}\n` +
+      `Source: subscribe magic link\n` +
+      `Time: ${nowIso}`,
+  }).catch(() => null);
+
   await sendSubscribeSuccessEmail(parsed.email).catch(() => null);
 
   const q = new URLSearchParams({ r: "ok" });

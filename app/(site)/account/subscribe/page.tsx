@@ -5,6 +5,7 @@ import { addEmailToBrevoNewsletter } from "@/lib/brevo-subscribe-contact";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { createAdminInboxMessage, ADMIN_INBOX_CATEGORY } from "@/lib/admin-inbox";
 import { sendSubscribeSuccessEmail } from "@/lib/subscribe-success-email";
+import { sendUnsubscribeSuccessEmail } from "@/lib/unsubscribe-success-email";
 import {
   isMarketingSubscribed,
   recordMarketingOptInFromSubscribe,
@@ -60,6 +61,24 @@ async function subscribeAction(formData: FormData) {
     },
   });
   await sendSubscribeSuccessEmail(email).catch(() => null);
+  const notifyTo = process.env.MERCHANT_NOTIFY_EMAIL?.trim() || "humpbuck@outlook.com";
+  await sendTransactionalEmail({
+    to: notifyTo,
+    subject: "New subscribe request",
+    htmlContent: `
+      <p>Hello,</p>
+      <p>A new newsletter subscribe request was received from account settings.</p>
+      <ul>
+        <li><strong>Email:</strong> ${email}</li>
+        <li><strong>Time:</strong> ${new Date().toISOString()}</li>
+      </ul>
+    `,
+    textContent:
+      `New subscribe request\n` +
+      `Email: ${email}\n` +
+      `Source: account settings\n` +
+      `Time: ${new Date().toISOString()}`,
+  }).catch(() => null);
   revalidatePath("/account/subscribe");
   goSubscribeWithEmail(email, result.already ? "already" : "subscribed");
 }
@@ -85,23 +104,8 @@ async function unsubscribeAction(formData: FormData) {
     },
   });
 
-  const supportFrom = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "support@humpbuck.com";
   const notifyTo = process.env.MERCHANT_NOTIFY_EMAIL?.trim() || "humpbuck@outlook.com";
-  await sendTransactionalEmail({
-    to: email,
-    subject: "Unsubscribe successful",
-    htmlContent: `
-      <p>Hello,</p>
-      <p>You have successfully unsubscribed from HUMPBUCK promotional and newsletter emails.</p>
-      <p>If you want to subscribe again later, you can do it from your account page.</p>
-      <p>Support: ${supportFrom}</p>
-    `,
-    textContent:
-      `Unsubscribe successful\n` +
-      `You have successfully unsubscribed from HUMPBUCK promotional and newsletter emails.\n` +
-      `You can subscribe again from your account page.\n` +
-      `Support: ${supportFrom}`,
-  });
+  await sendUnsubscribeSuccessEmail(email);
   await sendTransactionalEmail({
     to: notifyTo,
     subject: "Subscriber unsubscribed",
@@ -169,9 +173,6 @@ export default async function AccountSubscribePage({
           Current status:{" "}
           <span className="font-medium text-ink">{subscribed ? "Subscribed" : "Unsubscribed"}</span>
         </p>
-        {status === "subscribed" ? (
-          <p className="mt-3 text-sm text-emerald-700">Subscribed successfully.</p>
-        ) : null}
         {status === "already" ? (
           <p className="mt-3 text-sm text-ink/80">This email is already subscribed.</p>
         ) : null}

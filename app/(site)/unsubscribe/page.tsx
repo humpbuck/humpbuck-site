@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createAdminInboxMessage, ADMIN_INBOX_CATEGORY } from "@/lib/admin-inbox";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { optOutByToken } from "@/lib/email-marketing-preference";
+import { sendUnsubscribeSuccessEmail } from "@/lib/unsubscribe-success-email";
 
 export const metadata = {
   title: "Email preferences · HUMPBUCK",
@@ -35,21 +36,7 @@ async function confirmUnsubscribeAction(formData: FormData) {
         createdAt: new Date().toISOString(),
       },
     });
-    await sendTransactionalEmail({
-      to: result.email,
-      subject: "Unsubscribe successful",
-      htmlContent: `
-        <p>Hello,</p>
-        <p>You have successfully unsubscribed from HUMPBUCK promotional and newsletter emails.</p>
-        <p>If you want to subscribe again later, you can do it from our website.</p>
-        <p>Support: ${supportFrom}</p>
-      `,
-      textContent:
-        `Unsubscribe successful\n` +
-        `You have successfully unsubscribed from HUMPBUCK promotional and newsletter emails.\n` +
-        `If you want to subscribe again later, you can do it from our website.\n` +
-        `Support: ${supportFrom}`,
-    });
+    await sendUnsubscribeSuccessEmail(result.email);
     await sendTransactionalEmail({
       to: notifyTo,
       subject: "Subscriber unsubscribed",
