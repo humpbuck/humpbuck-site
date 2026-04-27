@@ -84,6 +84,12 @@ async function markCategoryReadAction(formData: FormData) {
         data: { status: "handled", handledAt: now },
       })
       .catch(() => null);
+    await prisma.adminInboxMessage
+      .updateMany({
+        where: { status: "pending", category: ADMIN_INBOX_CATEGORY.affiliates },
+        data: { status: "handled", handledAt: now },
+      })
+      .catch(() => null);
   }
   if (category === "all" || category === ADMIN_INBOX_CATEGORY.subscribe) {
     await prisma.adminInboxMessage

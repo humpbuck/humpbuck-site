@@ -16,8 +16,9 @@ export function ResilientImage({
     [sources],
   );
   const [idx, setIdx] = useState(0);
+  const [allFailed, setAllFailed] = useState(false);
 
-  if (!cleaned.length) {
+  if (!cleaned.length || allFailed) {
     return <div className={`${className ?? ""} bg-paper`} />;
   }
 
@@ -27,7 +28,12 @@ export function ResilientImage({
       alt={alt}
       className={className}
       onError={() => {
-        setIdx((current) => (current + 1 < cleaned.length ? current + 1 : current));
+        setIdx((current) => {
+          const next = current + 1;
+          if (next < cleaned.length) return next;
+          setAllFailed(true);
+          return current;
+        });
       }}
     />
   );
