@@ -15,6 +15,7 @@ import {
 } from "@/lib/affiliate-tier-growth";
 import { AffiliateQuickGuide } from "@/components/account/affiliate-quick-guide";
 import { AffiliateLinkGenerator } from "@/components/account/affiliate-link-generator";
+import { AffiliatePayoutDetailsForm } from "@/components/account/affiliate-payout-details-form";
 import { PaidCommissionSelector } from "@/components/account/paid-commission-selector";
 import { prisma } from "@/lib/prisma";
 
@@ -176,6 +177,28 @@ async function updatePayoutDetailsAction(formData: FormData) {
   const payoutAccount = String(formData.get("payoutAccount") ?? "").trim();
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
   const payoutWhatsapp = String(formData.get("payoutWhatsapp") ?? "").trim();
+  const payoutRealName = String(formData.get("payoutRealName") ?? "").trim();
+  const payoutBankTransferScope = String(formData.get("payoutBankTransferScope") ?? "").trim();
+  if (payoutMethod && payoutMethod !== "other" && !payoutAccount) {
+    goAffiliate("Please fill in payout account details for the selected method.");
+  }
+  if ((payoutMethod === "alipay" || payoutMethod === "bank") && !payoutRealName) {
+    goAffiliate("Real name is required for Alipay or bank transfer payout.");
+  }
+  if ((payoutMethod === "wise" || payoutMethod === "payoneer") && !payoutAccount.includes("Recipient name:")) {
+    goAffiliate("Recipient name is required for Wise or Payoneer payout verification.");
+  }
+  if (payoutMethod === "bank" && payoutBankTransferScope === "international") {
+    if (!payoutAccount.includes("SWIFT/BIC:")) {
+      goAffiliate("Please provide SWIFT/BIC for international bank transfer.");
+    }
+    if (!payoutAccount.includes("Bank address:")) {
+      goAffiliate("Please provide bank address for international bank transfer.");
+    }
+  }
+  if (payoutMethod === "other" && !(payoutEmail || payoutWhatsapp)) {
+    goAffiliate("Please provide email or WhatsApp so we can confirm your payout method.");
+  }
 
   const profile = await prisma.affiliateProfile.findUnique({
     where: { userId },
@@ -192,7 +215,7 @@ async function updatePayoutDetailsAction(formData: FormData) {
       payoutAccount: payoutAccount || null,
       payoutEmail: payoutEmail || null,
       payoutWhatsapp: payoutWhatsapp || null,
-      paymentInfoPending: !(payoutMethod || payoutAccount || payoutEmail || payoutWhatsapp),
+      paymentInfoPending: !(payoutAccount || payoutEmail || payoutWhatsapp),
       payoutVerifiedAt: null,
       payoutVerifiedBy: null,
     },
@@ -208,6 +231,54 @@ function humanizeStatus(status: string): string {
   if (status === "rejected") return "Rejected";
   if (status === "pending") return "Pending review";
   return status;
+}
+
+function humanizePayoutMethod(method: string | null | undefined): string {
+  if (!method) return "-";
+  if (method === "paypal") return "PayPal";
+  if (method === "alipay") return "Alipay";
+  if (method === "bank") return "Bank account";
+  if (method === "wise") return "Wise";
+  if (method === "payoneer") return "Payoneer";
+  if (method === "other") return "Other";
+  return method;
+}
+
+function maskSensitiveValue(value: string): string {
+  const raw = value.trim();
+  if (!raw) return raw;
+  const emailMatch = raw.match(/^([^@\s]+)@(.+)$/);
+  if (emailMatch) {
+    const local = emailMatch[1];
+    const domain = emailMatch[2];
+    if (local.length <= 2) return `${local[0] ?? "*"}***@${domain}`;
+    return `${local.slice(0, 2)}***${local.slice(-1)}@${domain}`;
+  }
+  const digits = raw.replace(/\D/g, "");
+  if (digits.length >= 8) {
+    const maskedDigits = `${digits.slice(0, 3)}****${digits.slice(-3)}`;
+    return raw.replace(digits, maskedDigits);
+  }
+  if (raw.length <= 4) return `${raw[0] ?? "*"}***`;
+  return `${raw.slice(0, 2)}***${raw.slice(-2)}`;
+}
+
+function maskPayoutAccountForDisplay(account: string): string {
+  if (!account.trim()) return "-";
+  const lines = account.split("\n").map((line) => line.trim()).filter(Boolean);
+  if (lines.length <= 1 && !account.includes(":")) {
+    return maskSensitiveValue(account);
+  }
+  return lines
+    .map((line) => {
+      const idx = line.indexOf(":");
+      if (idx < 0) return maskSensitiveValue(line);
+      const label = line.slice(0, idx + 1);
+      const value = line.slice(idx + 1).trim();
+      if (!value) return line;
+      return `${label} ${maskSensitiveValue(value)}`;
+    })
+    .join("\n");
 }
 
 function usd(cents: number): string {
@@ -543,8 +614,23 @@ export default async function AccountAffiliatePage({
 
       {profile ? (
         <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
-          <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Account settings
+          <h2 className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+            <span>Account settings</span>
+            <span className="group relative inline-block">
+              <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-line text-[10px] font-bold text-muted">
+                ?
+              </span>
+              <span className="absolute left-0 top-6 z-10 hidden w-80 rounded-xl border border-line bg-white px-3 py-3 text-[11px] normal-case leading-5 tracking-normal text-ink shadow-md group-hover:block">
+                <span className="block font-semibold text-ink">Recommended payout methods</span>
+                <span className="mt-1 block text-muted">
+                  PayPal and Alipay are recommended for faster processing.
+                </span>
+                <span className="mt-1 block text-muted">
+                  If none of the methods below fit your payout setup, please choose Other and contact us
+                  to confirm your payout method.
+                </span>
+              </span>
+            </span>
           </h2>
           {profile.paymentInfoPending ? (
             <p className="mt-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
@@ -562,56 +648,23 @@ export default async function AccountAffiliatePage({
             </p>
           )}
           {showPayoutEditor ? (
-            <form action={updatePayoutDetailsAction} className="mt-3 grid gap-3 md:grid-cols-2">
-              <select
-                name="payoutMethod"
-                defaultValue={profile.payoutMethod ?? ""}
-                className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-              >
-                <option value="">Select payout method</option>
-                <option value="paypal">PayPal</option>
-                <option value="bank">Bank account</option>
-                <option value="wise">Wise</option>
-                <option value="payoneer">Payoneer</option>
-                <option value="other">Other</option>
-              </select>
-              <input
-                name="payoutAccount"
-                defaultValue={profile.payoutAccount ?? ""}
-                placeholder="Payout account (e.g. PayPal email / bank account)"
-                className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-              />
-              <input
-                name="payoutEmail"
-                defaultValue={profile.payoutEmail ?? ""}
-                placeholder="Contact email for settlement"
-                className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-              />
-              <input
-                name="payoutWhatsapp"
-                defaultValue={profile.payoutWhatsapp ?? ""}
-                placeholder="WhatsApp for settlement"
-                className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-              />
-              <div className="md:col-span-2 flex gap-2">
-                <button
-                  type="submit"
-                  className="inline-flex items-center justify-center rounded-xl bg-ink px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
-                >
-                  Save payout details
-                </button>
-                <Link
-                  href="/account/affiliate"
-                  className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20"
-                >
-                  Cancel
-                </Link>
-              </div>
-            </form>
+            <AffiliatePayoutDetailsForm
+              action={updatePayoutDetailsAction}
+              defaultPayoutMethod={profile.payoutMethod ?? ""}
+              defaultPayoutAccount={profile.payoutAccount ?? ""}
+              defaultPayoutEmail={profile.payoutEmail ?? ""}
+              defaultPayoutWhatsapp={profile.payoutWhatsapp ?? ""}
+              cancelHref="/account/affiliate"
+            />
           ) : (
             <div className="mt-3 rounded-xl border border-line bg-paper/70 px-3 py-3 text-sm text-ink/90">
-              <p>Method: <span className="font-medium">{profile.payoutMethod || "-"}</span></p>
-              <p className="mt-1">Account: <span className="font-medium">{profile.payoutAccount || "-"}</span></p>
+              <p>Method: <span className="font-medium">{humanizePayoutMethod(profile.payoutMethod)}</span></p>
+              <p className="mt-1">
+                Account:{" "}
+                <span className="whitespace-pre-line font-medium">
+                  {maskPayoutAccountForDisplay(profile.payoutAccount ?? "")}
+                </span>
+              </p>
               <p className="mt-1">Email: <span className="font-medium">{profile.payoutEmail || "-"}</span></p>
               <p className="mt-1">WhatsApp: <span className="font-medium">{profile.payoutWhatsapp || "-"}</span></p>
               <p className="mt-1">
@@ -630,6 +683,15 @@ export default async function AccountAffiliatePage({
               </div>
             </div>
           )}
+          <div className="mt-3 rounded-xl border border-line bg-paper/70 px-3 py-3 text-xs text-ink/80">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Contact for payout support</p>
+            <p className="mt-2">
+              Email: <a className="font-medium text-ink underline underline-offset-2" href="mailto:support@humpbuck.com">support@humpbuck.com</a>
+            </p>
+            <p className="mt-1">
+              WhatsApp: <a className="font-medium text-ink underline underline-offset-2" href="https://wa.me/8618928160416">+86 189 2816 0416</a>
+            </p>
+          </div>
         </section>
       ) : null}
 
