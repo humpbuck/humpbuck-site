@@ -84,13 +84,12 @@ export default async function AdminProtectedLayout({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <header className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-6">
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-6">
         <div>
           <p className="font-serif text-xl tracking-tight">HUMPBUCK Admin</p>
           <p className="mt-1 text-xs text-muted">Orders, reviews & fulfillment</p>
         </div>
-        <div className="flex items-start gap-4">
-          <nav className="flex flex-wrap items-center gap-x-6 gap-y-2">
+        <nav className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <Link
             href={adminPath()}
             className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
@@ -146,8 +145,7 @@ export default async function AdminProtectedLayout({
             View site
           </Link>
           <LogoutButton />
-          </nav>
-          <div className="group relative pt-0.5">
+          <div className="group relative">
             <Link
               href={adminPath("/messages")}
               className="relative inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-white text-ink/80 transition hover:border-ink/20 hover:text-ink"
@@ -169,11 +167,11 @@ export default async function AdminProtectedLayout({
                 <li>After-sales disputes: {pendingDisputeCount}</li>
                 <li>Affiliates: {pendingCouponRequestCount}</li>
                 <li>Subscribe: {pendingSubscribeCount}</li>
-                <li>EMAIL MOCKUP REQUEST: {pendingMockupRequestCount}</li>
+                <li>Email mockup request: {pendingMockupRequestCount}</li>
               </ul>
             </div>
           </div>
-        </div>
+        </nav>
       </header>
       <div className="py-10">{children}</div>
     </div>

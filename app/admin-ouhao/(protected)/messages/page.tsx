@@ -55,7 +55,7 @@ function parsePayload(payloadJson: string): Record<string, string> {
 
 function categoryLabel(category: string): string {
   if (category === "subscribe") return "Subscribe";
-  if (category === "email_mockup_request") return "EMAIL MOCKUP REQUEST";
+  if (category === "email_mockup_request") return "Email mockup request";
   return category;
 }
 
@@ -200,7 +200,7 @@ export default async function AdminMessagesPage({
           </div>
           <div className="rounded-xl border border-line bg-paper/70 px-3 py-2 text-sm">
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-              EMAIL MOCKUP REQUEST
+              Email mockup request
             </p>
             <p className="mt-1 text-xl font-semibold text-ink">{pendingMockupRequestCount}</p>
           </div>

@@ -56,7 +56,7 @@ export async function POST(req: Request) {
 
   const mail = await sendTransactionalEmail({
     to: notifyTo,
-    subject: "New EMAIL MOCKUP REQUEST",
+    subject: "New Email mockup request",
     htmlContent: `
       <p>Hello,</p>
       <p>A new EMAIL MOCKUP REQUEST was submitted.</p>
