@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { CheckoutAddressForm } from "@/lib/checkout-address";
 import { CountryCombobox } from "@/components/checkout/country-combobox";
 import { CityField } from "@/components/checkout/city-field";
@@ -23,10 +23,10 @@ import {
 } from "@/lib/checkout-zipcodes-helpers";
 import { countryLabelToIso2 } from "@/lib/logistics-estimate";
 import {
-  PHONE_COUNTRY_CODE_DATALIST_ID,
   PHONE_COUNTRY_CODES,
   normalizeCountryCodeInput,
   normalizePhone,
+  resolveCountryCodeInput,
   splitPhoneForInput,
 } from "@/lib/phone-normalize";
 
@@ -283,6 +283,8 @@ function PhoneField({
   required?: boolean;
 }) {
   const phoneParts = splitPhoneForInput(value);
+  const [manualCode, setManualCode] = useState("");
+  const effectiveCode = resolveCountryCodeInput(phoneParts.countryCode, manualCode);
   return (
     <label className="block" htmlFor={id}>
       <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
@@ -295,24 +297,30 @@ function PhoneField({
         ) : null}
       </span>
       <div className="mt-1.5 grid grid-cols-[120px_1fr] gap-2">
-        <input
+        <select
           value={phoneParts.countryCode}
-          list={PHONE_COUNTRY_CODE_DATALIST_ID}
-          inputMode="tel"
-          placeholder="+86"
-          onChange={(e) =>
-            onChange(normalizePhone(normalizeCountryCodeInput(e.target.value), phoneParts.localNumber))
-          }
-          onBlur={(e) =>
-            onChange(
-              normalizePhone(
-                normalizeCountryCodeInput(e.target.value) || "+86",
-                phoneParts.localNumber,
-              ),
-            )
-          }
+          onChange={(e) => onChange(normalizePhone(resolveCountryCodeInput(e.target.value, manualCode), phoneParts.localNumber))}
           className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+        >
+          {PHONE_COUNTRY_CODES.map((code) => (
+            <option key={code} value={code}>
+              {code}
+            </option>
+          ))}
+        </select>
+        <input
+          value={manualCode}
+          inputMode="tel"
+          placeholder="Manual code (optional)"
+          onChange={(e) => {
+            const next = normalizeCountryCodeInput(e.target.value);
+            setManualCode(next);
+            onChange(normalizePhone(resolveCountryCodeInput(phoneParts.countryCode, next), phoneParts.localNumber));
+          }}
+          className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
+      </div>
+      <div className="mt-2">
         <input
           id={id}
           type="text"
@@ -321,15 +329,10 @@ function PhoneField({
           inputMode="numeric"
           aria-required={required}
           value={phoneParts.localNumber}
-          onChange={(e) => onChange(normalizePhone(phoneParts.countryCode, e.target.value))}
+          onChange={(e) => onChange(normalizePhone(effectiveCode, e.target.value))}
           className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
       </div>
-      <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>
-        {PHONE_COUNTRY_CODES.map((code) => (
-          <option key={code} value={code} />
-        ))}
-      </datalist>
     </label>
   );
 }
