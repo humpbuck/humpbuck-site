@@ -296,8 +296,7 @@ export default async function AdminMessagesPage({
     pendingSubscribeCount,
     pendingMockupRequestCount,
     allAffiliateRequests,
-    pendingInboxMessages,
-    handledInboxMessages,
+    allInboxMessages,
   ] = await Promise.all([
     prisma.adminInboxMessage
       .count({
@@ -346,21 +345,11 @@ export default async function AdminMessagesPage({
     prisma.adminInboxMessage
       .findMany({
         where: {
-          status: "pending",
+          status: { in: ["pending", "handled"] },
           category: { not: ADMIN_INBOX_CATEGORY.dispute },
           ...(selectedCategory === "all" ? {} : { category: selectedCategory }),
         },
         orderBy: { createdAt: "desc" },
-        take: 100,
-      })
-      .catch(() => []),
-    prisma.adminInboxMessage.findMany({
-      where: {
-        status: "handled",
-        category: { not: ADMIN_INBOX_CATEGORY.dispute },
-        ...(selectedCategory === "all" ? {} : { category: selectedCategory }),
-      },
-      orderBy: [{ handledAt: "desc" }, { createdAt: "desc" }],
       take: 200,
     }).catch(() => []),
   ]);
@@ -370,10 +359,7 @@ export default async function AdminMessagesPage({
     pendingSubscribeCount +
     pendingMockupRequestCount;
   const showAffiliateRows = selectedCategory === "all" || selectedCategory === ADMIN_INBOX_CATEGORY.affiliates;
-  const allMessages = [
-    ...pendingInboxMessages,
-    ...handledInboxMessages,
-  ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  const allMessages = allInboxMessages;
   const visibleRows = allMessages.length + (showAffiliateRows ? allAffiliateRequests.length : 0);
   const cardClass = (count: number, categoryKey: string) =>
     `rounded-xl border px-3 py-2 text-sm transition ${
