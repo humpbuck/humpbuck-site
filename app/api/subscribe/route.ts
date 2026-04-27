@@ -23,13 +23,12 @@ export async function POST(req: Request) {
 
   const result = await addEmailToBrevoNewsletter(email);
   if (!result.ok) {
-    const status =
-      result.error.includes("not configured") ||
-      result.error.includes("Invalid newsletter")
-        ? 503
-        : 502;
+    const status = 503;
     return NextResponse.json(
-      { error: result.error, detail: result.detail },
+      {
+        error: "Subscription service is temporarily unavailable. Please try again later.",
+        detail: result.detail,
+      },
       { status },
     );
   }

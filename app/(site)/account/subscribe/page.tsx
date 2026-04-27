@@ -44,7 +44,11 @@ async function subscribeAction(formData: FormData) {
 
   const result = await addEmailToBrevoNewsletter(email);
   if (!result.ok) {
-    goSubscribeWithEmail(email, "error", result.error || "Failed to subscribe.");
+    goSubscribeWithEmail(
+      email,
+      "error",
+      "Subscription service is temporarily unavailable. Please try again later.",
+    );
   }
 
   await recordMarketingOptInFromSubscribe(email);
