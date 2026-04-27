@@ -15,6 +15,7 @@ import {
 } from "@/lib/affiliate-tier-growth";
 import { AffiliateQuickGuide } from "@/components/account/affiliate-quick-guide";
 import { AffiliateLinkGenerator } from "@/components/account/affiliate-link-generator";
+import { AffiliateCouponRequestedModal } from "@/components/account/affiliate-coupon-requested-modal";
 import { AffiliatePayoutDetailsForm } from "@/components/account/affiliate-payout-details-form";
 import { AffiliateLiveRefresh } from "@/components/account/affiliate-live-refresh";
 import { PaidCommissionSelector } from "@/components/account/paid-commission-selector";
@@ -25,6 +26,7 @@ import {
   normalizePhone,
   splitPhoneForInput,
 } from "@/lib/phone-normalize";
+import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { prisma } from "@/lib/prisma";
 
 function goAffiliate(error?: string): never {
@@ -249,6 +251,80 @@ async function updatePayoutDetailsAction(formData: FormData) {
   redirect("/account/affiliate?ok=payout_saved");
 }
 
+async function requestAffiliateCouponCodeAction() {
+  "use server";
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) redirect("/auth/login?callbackUrl=/account/affiliate");
+
+  const profile = await prisma.affiliateProfile.findUnique({
+    where: { userId },
+    include: {
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+          displayName: true,
+          email: true,
+        },
+      },
+    },
+  });
+  if (!profile) {
+    goAffiliate("Please submit affiliate application first.");
+  }
+  if (profile.status !== "active") {
+    goAffiliate("Coupon code can be requested after your affiliate account is active.");
+  }
+
+  const fullName = [profile.user.firstName?.trim(), profile.user.lastName?.trim()]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+  const requestor =
+    fullName || profile.displayName?.trim() || profile.user.displayName?.trim() || profile.user.email?.trim() || "Affiliate partner";
+  const requestEmail = profile.user.email?.trim() || "-";
+  const supportFrom = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "support@humpbuck.com";
+  const notifyTo = process.env.MERCHANT_NOTIFY_EMAIL?.trim() || "humpbuck@outlook.com";
+  const existingPending = await prisma.affiliateCouponRequest.findFirst({
+    where: { userId, status: "pending" },
+    select: { id: true },
+  });
+  if (!existingPending) {
+    await prisma.affiliateCouponRequest.create({
+      data: {
+        userId,
+        affiliateId: profile.id,
+        status: "pending",
+      },
+    });
+  }
+
+  const mail = await sendTransactionalEmail({
+    to: notifyTo,
+    subject: "Affiliate apply for coupon code",
+    htmlContent: `
+      <p>Hello,</p>
+      <p>An affiliate partner requested a coupon code.</p>
+      <ul>
+        <li><strong>Name:</strong> ${requestor}</li>
+        <li><strong>PID:</strong> ${profile.pid ?? "-"}</li>
+        <li><strong>User email:</strong> ${requestEmail}</li>
+        <li><strong>Requested from:</strong> ${supportFrom}</li>
+      </ul>
+      <p>Please create and bind the coupon code in admin panel.</p>
+    `,
+    textContent: `Affiliate coupon request\nName: ${requestor}\nPID: ${profile.pid ?? "-"}\nUser email: ${requestEmail}\nRequested from: ${supportFrom}\nPlease create and bind coupon in admin panel.`,
+  });
+
+  if (!mail.ok) {
+    goAffiliate("Failed to submit coupon request email. Please try again.");
+  }
+
+  revalidatePath("/account/affiliate");
+  redirect("/account/affiliate?ok=coupon_requested");
+}
+
 function humanizeStatus(status: string): string {
   if (status === "auto_approved") return "Auto approved";
   if (status === "approved") return "Approved";
@@ -455,7 +531,6 @@ export default async function AccountAffiliatePage({
     session?.user?.email?.trim() ||
     "Partner";
   const dashboardTitle = isActiveAffiliate ? "Affiliate dashboard" : "Affiliate application";
-  const applyCouponHref = `mailto:support@humpbuck.com?subject=${encodeURIComponent("Affiliate coupon code request")}&body=${encodeURIComponent(`Hi team,\n\nPlease apply a coupon code for my affiliate account.\n\nPID: ${profile?.pid ?? "-"}\nName: ${greetingName}\n\nThank you.`)}`;
 
   const links = (() => {
     try {
@@ -470,6 +545,7 @@ export default async function AccountAffiliatePage({
   return (
     <div>
       {profile ? <AffiliateLiveRefresh /> : null}
+      <AffiliateCouponRequestedModal show={sp.ok === "coupon_requested"} />
       <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">{dashboardTitle}</p>
       <h1 className="mt-2 font-serif text-3xl tracking-tight">
         Hi, {greetingName}!
@@ -544,9 +620,11 @@ export default async function AccountAffiliatePage({
                 {coupon?.code ? (
                   <span className="font-medium">{coupon.code}</span>
                 ) : (
-                  <a href={applyCouponHref} className="font-medium underline underline-offset-2">
-                    Apply for code
-                  </a>
+                  <form action={requestAffiliateCouponCodeAction} className="inline">
+                    <button type="submit" className="font-medium underline underline-offset-2">
+                      Apply for code
+                    </button>
+                  </form>
                 )}
               </p>
             </div>

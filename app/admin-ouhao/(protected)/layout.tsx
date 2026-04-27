@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { Mail } from "lucide-react";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
+import { prisma } from "@/lib/prisma";
 
 async function LogoutButton() {
   const navItemClass =
@@ -27,6 +29,9 @@ export default async function AdminProtectedLayout({
   children: React.ReactNode;
 }) {
   await assertAdmin();
+  const pendingCouponRequestCount = await prisma.affiliateCouponRequest.count({
+    where: { status: "pending" },
+  });
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
@@ -83,6 +88,19 @@ export default async function AdminProtectedLayout({
             className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
           >
             Affiliate
+          </Link>
+          <Link
+            href={adminPath("/affiliate?couponRequests=1")}
+            className="relative inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
+            aria-label={`Coupon request inbox ${pendingCouponRequestCount} pending`}
+            title="Coupon request inbox"
+          >
+            <Mail className="h-4 w-4" />
+            {pendingCouponRequestCount > 0 ? (
+              <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-rose-600 px-1 text-center text-[9px] font-bold text-white">
+                {pendingCouponRequestCount}
+              </span>
+            ) : null}
           </Link>
           <Link
             href="/"

@@ -27,6 +27,7 @@ model User {
   visitorSessions VisitorSession[]
   affiliateProfile AffiliateProfile?
   affiliateApplications AffiliateApplication[]
+  affiliateCouponRequests AffiliateCouponRequest[]
 }
 
 model PasswordResetToken {
@@ -320,6 +321,7 @@ model AffiliateProfile {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
   applications       AffiliateApplication[]
+  couponRequests     AffiliateCouponRequest[]
   coupons            Coupon[]
   orders             Order[]
   commissionLedgers  AffiliateCommissionLedger[]
@@ -373,4 +375,20 @@ model AffiliateApplication {
 
   @@index([userId, createdAt])
   @@index([status, createdAt])
+}
+
+model AffiliateCouponRequest {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  affiliateId   String?
+  affiliate     AffiliateProfile? @relation(fields: [affiliateId], references: [id], onDelete: SetNull)
+  status        String   @default("pending")
+  requestedAt   DateTime @default(now())
+  handledAt     DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status, requestedAt])
+  @@index([userId, requestedAt])
 }

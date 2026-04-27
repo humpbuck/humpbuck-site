@@ -466,6 +466,19 @@ async function confirmPayoutDetailsAction(formData: FormData) {
   redirect(adminPath("/affiliate"));
 }
 
+async function markCouponRequestHandledAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const requestId = String(formData.get("requestId") ?? "").trim();
+  if (!requestId) goAffiliate("Missing coupon request id.");
+  await prisma.affiliateCouponRequest.updateMany({
+    where: { id: requestId, status: "pending" },
+    data: { status: "handled", handledAt: new Date() },
+  });
+  revalidatePath(adminPath("/affiliate"));
+  redirect(adminPath("/affiliate?couponRequests=1"));
+}
+
 function asLinks(raw: string): string[] {
   try {
     const parsed = JSON.parse(raw);
@@ -481,6 +494,7 @@ export default async function AdminAffiliatePage({
 }: {
   searchParams: Promise<{
     error?: string;
+    couponRequests?: string;
     affiliateId?: string;
     orderStatus?: string;
     settle?: string;
@@ -495,7 +509,7 @@ export default async function AdminAffiliatePage({
   const selectedSettlement = normalizeFilterValue(sp.settle) || "eligible";
   const onlyVerifiedPayout = normalizeFilterValue(sp.onlyVerifiedPayout) === "1";
 
-  const [tiers, pendingApps, profiles, blacklistedCount, autoApprovedCount, recentAttributedOrders, ledgerSummary, recentLedgers, settlementRows] =
+  const [tiers, pendingApps, profiles, blacklistedCount, autoApprovedCount, recentAttributedOrders, ledgerSummary, recentLedgers, settlementRows, couponRequests] =
     await Promise.all([
       prisma.affiliateTier.findMany({ orderBy: [{ isDefault: "desc" }, { createdAt: "asc" }] }),
       prisma.affiliateApplication.findMany({
@@ -544,6 +558,22 @@ export default async function AdminAffiliatePage({
         },
         orderBy: [{ eligibleAt: "asc" }, { createdAt: "desc" }],
         take: 120,
+      }),
+      prisma.affiliateCouponRequest.findMany({
+        where: { status: "pending" },
+        include: {
+          user: {
+            select: {
+              email: true,
+              displayName: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+          affiliate: { select: { pid: true } },
+        },
+        orderBy: { requestedAt: "desc" },
+        take: 30,
       }),
     ]);
 
@@ -596,6 +626,53 @@ export default async function AdminAffiliatePage({
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{blacklistedCount}</p>
         </div>
+      </section>
+
+      <section
+        id="coupon-requests"
+        className={`mt-6 rounded-2xl border border-line bg-white/60 p-5 ${sp.couponRequests === "1" ? "ring-2 ring-ink/20" : ""}`}
+      >
+        <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+          Coupon code requests
+        </h2>
+        <p className="mt-2 text-sm text-muted">
+          Pending affiliates asking for coupon code binding.
+        </p>
+        {couponRequests.length === 0 ? (
+          <p className="mt-3 text-sm text-muted">No pending requests.</p>
+        ) : (
+          <div className="mt-3 space-y-2">
+            {couponRequests.map((req) => {
+              const name =
+                [req.user.firstName?.trim(), req.user.lastName?.trim()].filter(Boolean).join(" ").trim() ||
+                req.user.displayName?.trim() ||
+                req.user.email?.trim() ||
+                "-";
+              return (
+                <div key={req.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-paper/70 px-3 py-2 text-sm text-ink/90">
+                  <div>
+                    <p>
+                      <span className="font-medium">{name}</span> · PID{" "}
+                      <span className="font-medium">{req.affiliate?.pid ?? "-"}</span>
+                    </p>
+                    <p className="text-xs text-muted">
+                      {req.user.email ?? "-"} · {req.requestedAt.toLocaleString()}
+                    </p>
+                  </div>
+                  <form action={markCouponRequestHandledAction}>
+                    <input type="hidden" name="requestId" value={req.id} />
+                    <button
+                      type="submit"
+                      className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+                    >
+                      Mark handled
+                    </button>
+                  </form>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
