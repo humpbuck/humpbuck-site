@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
+import { PendingActionButton } from "@/components/admin/pending-action-button";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import {
@@ -111,24 +112,6 @@ async function toggleBlacklistAction(formData: FormData) {
       blacklist: nextBlacklisted,
       status: nextBlacklisted ? "blacklisted" : "active",
       riskFlag: nextBlacklisted,
-    },
-  });
-  revalidatePath(adminPath("/affiliate"));
-  revalidatePath(adminPath("/affiliate/stats"));
-  redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
-}
-
-async function confirmPayoutDetailsAction(formData: FormData) {
-  "use server";
-  await assertAdmin();
-  const profileId = String(formData.get("profileId") ?? "").trim();
-  const focus = String(formData.get("focus") ?? "total").trim();
-  if (!profileId) redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
-  await prisma.affiliateProfile.update({
-    where: { id: profileId },
-    data: {
-      payoutVerifiedAt: new Date(),
-      payoutVerifiedBy: "admin",
     },
   });
   revalidatePath(adminPath("/affiliate"));
@@ -290,8 +273,17 @@ export default async function AffiliateStatsPage({
                 const ordersToNext = nextGrowthTier
                   ? Math.max(0, nextGrowthTier.minOrders - paidOrders)
                   : 0;
+                const currentTierFloor = currentGrowthTier.minOrders;
+                const nextTierFloor = nextGrowthTier?.minOrders ?? currentTierFloor;
+                const progressInTier = Math.max(0, paidOrders - currentTierFloor);
+                const progressSpan = nextGrowthTier
+                  ? Math.max(1, nextTierFloor - currentTierFloor)
+                  : 1;
+                const growthProgressPercent = nextGrowthTier
+                  ? Math.min(100, Math.round((progressInTier / progressSpan) * 100))
+                  : 100;
                 return (
-                  <div className="grid gap-3 md:grid-cols-[1.2fr_auto_220px] md:items-center">
+                  <div className="grid gap-3 md:grid-cols-[1.2fr_auto_220px] md:items-start">
                     <div>
                       <p className="font-medium text-ink">{p.user.displayName || p.user.name || p.user.email || p.user.id}</p>
                       <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted">
@@ -305,6 +297,18 @@ export default async function AffiliateStatsPage({
                         {nextGrowthTier
                           ? ` · Next ${nextGrowthTier.level} (${nextGrowthTier.rate}%) in ${ordersToNext} orders`
                           : " · Highest level reached"}
+                      </p>
+                      <div className="mt-2 h-2 rounded-full bg-paper">
+                        <div
+                          className="h-2 rounded-full bg-ink transition-all"
+                          style={{ width: `${growthProgressPercent}%` }}
+                        />
+                      </div>
+                      <p className="mt-1 text-xs text-muted">
+                        Progress in current tier range: {growthProgressPercent}%.
+                        {nextGrowthTier
+                          ? ` You need ${ordersToNext} more orders to unlock ${nextGrowthTier.rate}% commission.`
+                          : " Highest commission tier reached."}
                       </p>
                     </div>
                     <div className="flex flex-wrap items-center justify-center gap-2">
@@ -320,13 +324,13 @@ export default async function AffiliateStatsPage({
                           </option>
                         ))}
                       </select>
-                      <button
+                      <PendingActionButton
                         formAction={updateAffiliateTierAction}
-                        type="submit"
+                        idleLabel="Save level"
+                        pendingLabel="Saving..."
                         className="rounded-lg bg-ink px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:bg-ink/90"
-                      >
-                        Save level
-                      </button>
+                        pendingClassName="cursor-not-allowed bg-ink/70"
+                      />
                     </div>
                     <div className="rounded-lg border border-line bg-white px-3 py-2 text-xs text-ink">
                       <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
@@ -365,7 +369,7 @@ export default async function AffiliateStatsPage({
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
               </div>
-              <div className="mt-2 grid gap-2 md:grid-cols-[1fr_120px_1fr_auto_auto]">
+              <div className="mt-2 grid gap-2 md:grid-cols-[1fr_120px_1fr]">
                 <input
                   name="payoutEmail"
                   defaultValue={p.payoutEmail ?? ""}
@@ -387,22 +391,23 @@ export default async function AffiliateStatsPage({
                   placeholder="WhatsApp number"
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
-                <button
-                  formAction={confirmPayoutDetailsAction}
-                  type="submit"
-                  className="inline-flex items-center justify-center rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-emerald-800 transition hover:bg-emerald-100"
-                >
-                  Confirm payout details
-                </button>
-                <button
+              </div>
+              <div className="mt-2 flex flex-wrap justify-end gap-2">
+                <PendingActionButton
+                  idleLabel="Save affiliate info"
+                  pendingLabel="Saving..."
+                  className="inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
+                  pendingClassName="cursor-not-allowed bg-ink/70"
+                />
+                <PendingActionButton
                   formAction={toggleBlacklistAction}
-                  type="submit"
+                  idleLabel={p.blacklist ? "Remove blacklist" : "Blacklist"}
+                  pendingLabel={p.blacklist ? "Updating..." : "Blacklisting..."}
                   name="nextBlacklisted"
                   value={p.blacklist ? "false" : "true"}
-                  className="inline-flex items-center justify-center rounded-xl border border-rose-300 bg-rose-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-rose-800 transition hover:bg-rose-100"
-                >
-                  {p.blacklist ? "Remove blacklist" : "Blacklist"}
-                </button>
+                  className="inline-flex items-center justify-center rounded-xl border border-rose-300 bg-rose-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-rose-800 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-70"
+                  pendingClassName="cursor-not-allowed opacity-70"
+                />
               </div>
               <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>
                 {PHONE_COUNTRY_CODES.map((code) => (

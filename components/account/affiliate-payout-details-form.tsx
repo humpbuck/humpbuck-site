@@ -152,7 +152,16 @@ export function AffiliatePayoutDetailsForm({
             : "Describe your preferred payout method";
 
   return (
-    <form action={action} className="mt-3 grid gap-3 md:grid-cols-2">
+    <form
+      action={action}
+      onSubmit={(e) => {
+        const ok = window.confirm(
+          "Please confirm your payout details are correct. Incorrect details may delay or fail commission payout.",
+        );
+        if (!ok) e.preventDefault();
+      }}
+      className="mt-3 grid gap-3 md:grid-cols-2"
+    >
       <select
         name="payoutMethod"
         value={payoutMethod}
