@@ -335,7 +335,7 @@ export default async function AccountAffiliatePage({
   const sp = await searchParams;
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const [profile, latestApplication, commissionLedgers, monthlyPaid, coupon, paidLedgers] = await Promise.all([
+  const [profile, latestApplication, commissionLedgers, monthlyPaid, totalPaid, coupon, paidLedgers] = await Promise.all([
     prisma.affiliateProfile.findUnique({
       where: { userId },
       include: {
@@ -380,6 +380,13 @@ export default async function AccountAffiliatePage({
       },
       _sum: { commissionCents: true },
     }),
+    prisma.affiliateCommissionLedger.aggregate({
+      where: {
+        affiliate: { userId },
+        status: "paid",
+      },
+      _sum: { commissionCents: true },
+    }),
     prisma.coupon.findFirst({
       where: { affiliate: { userId }, isActive: true },
       orderBy: { createdAt: "desc" },
@@ -409,6 +416,7 @@ export default async function AccountAffiliatePage({
   const showPayoutEditor = !profile || sp.editPayout === "1";
   const contactWhatsappInput = splitPhoneForInput(profile?.payoutWhatsapp);
   const earnedThisMonthCents = monthlyPaid._sum.commissionCents ?? 0;
+  const totalEarnedCents = totalPaid._sum.commissionCents ?? 0;
   const paidCommissionOrderCount = profile
     ? await countAffiliatePaidCommissionOrders(profile.id)
     : 0;
@@ -445,6 +453,8 @@ export default async function AccountAffiliatePage({
     profile?.user.email?.trim() ||
     session?.user?.email?.trim() ||
     "Partner";
+  const dashboardTitle = isActiveAffiliate ? "Affiliate dashboard" : "Affiliate application";
+  const applyCouponHref = `mailto:support@humpbuck.com?subject=${encodeURIComponent("Affiliate coupon code request")}&body=${encodeURIComponent(`Hi team,\n\nPlease apply a coupon code for my affiliate account.\n\nPID: ${profile?.pid ?? "-"}\nName: ${greetingName}\n\nThank you.`)}`;
 
   const links = (() => {
     try {
@@ -458,9 +468,7 @@ export default async function AccountAffiliatePage({
 
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
-        Affiliate
-      </p>
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">{dashboardTitle}</p>
       <h1 className="mt-2 font-serif text-3xl tracking-tight">
         Hi, {greetingName}!
       </h1>
@@ -478,10 +486,10 @@ export default async function AccountAffiliatePage({
         </div>
         <div className="rounded-2xl border border-[#EEEEEE] bg-white/60 px-4 py-3">
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-            Current status
+            Total earned
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">
-            {profile ? humanizeStatus(profile.status) : "Not applied"}
+            {usd(totalEarnedCents)}
           </p>
         </div>
       </section>
@@ -530,10 +538,14 @@ export default async function AccountAffiliatePage({
                 </span>
               </p>
               <p className="mt-1">
-                Status: <span className="font-medium">{humanizeStatus(profile.status)}</span>
-              </p>
-              <p className="mt-1">
-                Coupon code: <span className="font-medium">{coupon?.code ?? "Contact admin to bind"}</span>
+                Coupon code:{" "}
+                {coupon?.code ? (
+                  <span className="font-medium">{coupon.code}</span>
+                ) : (
+                  <a href={applyCouponHref} className="font-medium underline underline-offset-2">
+                    Apply for code
+                  </a>
+                )}
               </p>
             </div>
             <div className="rounded-xl border border-line bg-paper/70 px-3 py-3">
@@ -552,9 +564,9 @@ export default async function AccountAffiliatePage({
           <div className="mt-3">
             <a
               href={`${process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://humpbuck.com"}/wholesale`}
-              className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+              className="inline-flex items-center justify-center rounded-xl bg-ink px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
             >
-              Brand assets
+              Download brand assets
             </a>
           </div>
         </section>
@@ -633,6 +645,12 @@ export default async function AccountAffiliatePage({
             Progress in current tier range:{" "}
             <span className="font-medium tabular-nums">{growthProgressPercent}%</span>
           </p>
+          {nextGrowthTier ? (
+            <p className="mt-1 text-xs text-ink/80">
+              Tip: You need <span className="font-semibold tabular-nums">{ordersToNextTier}</span> more
+              orders to unlock <span className="font-semibold">{nextGrowthTier.rate}%</span> commission.
+            </p>
+          ) : null}
         </section>
       ) : null}
 
