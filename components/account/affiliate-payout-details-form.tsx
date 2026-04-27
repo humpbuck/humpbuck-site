@@ -340,6 +340,7 @@ export function AffiliatePayoutDetailsForm({
         </button>
         <Link
           href={cancelHref}
+          scroll={false}
           className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20"
         >
           Cancel
