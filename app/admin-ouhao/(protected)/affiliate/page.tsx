@@ -576,7 +576,11 @@ export default async function AdminAffiliatePage({
         },
         orderBy: { updatedAt: "desc" },
       }),
-      prisma.affiliateProfile.count({ where: { blacklist: true } }),
+      prisma.affiliateProfile.count({
+        where: {
+          OR: [{ blacklist: true }, { status: "blacklisted" }],
+        },
+      }),
       prisma.affiliateApplication.count({ where: { status: "auto_approved" } }),
       prisma.order.findMany({
         where: { affiliateId: { not: null }, deletedAt: null },
@@ -628,7 +632,7 @@ export default async function AdminAffiliatePage({
       }).catch(() => []),
     ]);
 
-  const blacklistedProfiles = profiles.filter((p) => p.blacklist);
+  const blacklistedProfiles = profiles.filter((p) => p.blacklist || p.status === "blacklisted");
   const growthTierList = [...tiers]
     .filter((t) => t.commissionType === "percent")
     .sort((a, b) => {

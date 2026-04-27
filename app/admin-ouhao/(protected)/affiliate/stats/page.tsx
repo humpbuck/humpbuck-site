@@ -176,7 +176,7 @@ export default async function AffiliateStatsPage({
   ]);
   const paidCountMap = new Map(paidOrderCounts.map((row) => [row.affiliateId, row._count._all]));
 
-  const blacklistedProfiles = profiles.filter((p) => p.blacklist);
+  const blacklistedProfiles = profiles.filter((p) => p.blacklist || p.status === "blacklisted");
   const autoApprovedProfiles = profiles.filter((p) => p.applications[0]?.status === "auto_approved");
 
   const title =
@@ -426,10 +426,10 @@ export default async function AffiliateStatsPage({
                   formAction={toggleBlacklistAction}
                   type="submit"
                   name="nextBlacklisted"
-                  value={p.blacklist ? "false" : "true"}
+                  value={p.blacklist || p.status === "blacklisted" ? "false" : "true"}
                   className="inline-flex items-center justify-center rounded-xl border border-rose-300 bg-rose-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-rose-800 transition hover:bg-rose-100"
                 >
-                  {p.blacklist ? "Remove blacklist" : "Blacklist"}
+                  {p.blacklist || p.status === "blacklisted" ? "Remove blacklist" : "Blacklist"}
                 </button>
               </div>
               <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>
