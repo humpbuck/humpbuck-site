@@ -100,6 +100,80 @@ async function markCategoryReadAction(formData: FormData) {
   redirect(adminPath("/messages"));
 }
 
+async function deleteMessageAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const target = String(formData.get("target") ?? "").trim();
+  const id = String(formData.get("id") ?? "").trim();
+  const category = String(formData.get("category") ?? "all").trim();
+  if (!id || !target) goMessages("Missing delete target.");
+
+  if (target === "affiliate") {
+    await prisma.affiliateCouponRequest
+      .delete({
+        where: { id },
+      })
+      .catch(() => null);
+  } else if (target === "inbox") {
+    await prisma.adminInboxMessage
+      .delete({
+        where: { id },
+      })
+      .catch(() => null);
+  }
+
+  revalidatePath(adminPath("/messages"));
+  revalidatePath(adminPath("/orders"));
+  revalidatePath(adminPath("/affiliate"));
+  if (category && category !== "all") {
+    redirect(adminPath(`/messages?category=${encodeURIComponent(category)}`));
+  }
+  redirect(adminPath("/messages"));
+}
+
+async function deleteSelectedMessagesAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const selected = formData.getAll("selected").map((v) => String(v ?? "").trim()).filter(Boolean);
+  const category = String(formData.get("category") ?? "all").trim();
+  if (selected.length === 0) {
+    if (category && category !== "all") {
+      redirect(adminPath(`/messages?category=${encodeURIComponent(category)}`));
+    }
+    redirect(adminPath("/messages"));
+  }
+
+  const inboxIds: string[] = [];
+  const affiliateIds: string[] = [];
+  for (const key of selected) {
+    if (key.startsWith("inbox:")) inboxIds.push(key.slice("inbox:".length));
+    if (key.startsWith("affiliate:")) affiliateIds.push(key.slice("affiliate:".length));
+  }
+
+  if (inboxIds.length > 0) {
+    await prisma.adminInboxMessage
+      .deleteMany({
+        where: { id: { in: inboxIds } },
+      })
+      .catch(() => null);
+  }
+  if (affiliateIds.length > 0) {
+    await prisma.affiliateCouponRequest
+      .deleteMany({
+        where: { id: { in: affiliateIds } },
+      })
+      .catch(() => null);
+  }
+
+  revalidatePath(adminPath("/messages"));
+  revalidatePath(adminPath("/orders"));
+  revalidatePath(adminPath("/affiliate"));
+  if (category && category !== "all") {
+    redirect(adminPath(`/messages?category=${encodeURIComponent(category)}`));
+  }
+  redirect(adminPath("/messages"));
+}
+
 function parsePayload(payloadJson: string): Record<string, unknown> {
   try {
     const obj = JSON.parse(payloadJson) as Record<string, unknown>;
@@ -387,6 +461,17 @@ export default async function AdminMessagesPage({
             </p>
           </div>
         ) : null}
+        {visibleRows > 0 ? (
+          <form id="bulk-delete-form" action={deleteSelectedMessagesAction} className="mt-2">
+            <input type="hidden" name="category" value={selectedCategory} />
+            <button
+              type="submit"
+              className="rounded-lg border border-line bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-ink transition hover:border-ink/20"
+            >
+              Delete selected
+            </button>
+          </form>
+        ) : null}
         {totalPendingCount === 0 && visibleRows === 0 ? (
           <p className="mt-3 text-sm text-muted">No pending messages.</p>
         ) : visibleRows === 0 ? (
@@ -408,7 +493,15 @@ export default async function AdminMessagesPage({
                     isRead ? "border-line/70 bg-paper/40 text-ink/65" : "border-line bg-paper/70 text-ink/90"
                   }`}
                 >
-                  <div>
+                  <div className="flex items-start gap-2">
+                    <input
+                      type="checkbox"
+                      name="selected"
+                      value={`affiliate:${req.id}`}
+                      form="bulk-delete-form"
+                      className="mt-0.5 h-3.5 w-3.5 rounded border-line text-ink focus:ring-ink/30"
+                    />
+                    <div>
                     <p>
                       <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
                         Affiliates
@@ -422,22 +515,36 @@ export default async function AdminMessagesPage({
                     <p className="text-xs text-muted">
                       {req.user.email ?? "-"} · PID {req.affiliate?.pid ?? "-"} · {req.requestedAt.toLocaleString()}
                     </p>
+                    </div>
                   </div>
-                  {isRead ? (
-                    <span className="rounded-xl border border-line/80 bg-paper px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
-                      Read
-                    </span>
-                  ) : (
-                    <form action={markCouponRequestHandledAction}>
-                      <input type="hidden" name="requestId" value={req.id} />
+                  <div className="flex items-center gap-1.5">
+                    {isRead ? (
+                      <span className="rounded-xl border border-line/80 bg-paper px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
+                        Read
+                      </span>
+                    ) : (
+                      <form action={markCouponRequestHandledAction}>
+                        <input type="hidden" name="requestId" value={req.id} />
+                        <button
+                          type="submit"
+                          className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+                        >
+                          Mark as read
+                        </button>
+                      </form>
+                    )}
+                    <form action={deleteMessageAction}>
+                      <input type="hidden" name="target" value="affiliate" />
+                      <input type="hidden" name="id" value={req.id} />
+                      <input type="hidden" name="category" value={selectedCategory} />
                       <button
                         type="submit"
-                        className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+                        className="inline-flex items-center justify-center rounded-xl border border-rose-200 bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-rose-700 transition hover:border-rose-300"
                       >
-                        Mark as read
+                        Delete
                       </button>
                     </form>
-                  )}
+                  </div>
                 </div>
               );
             })
@@ -453,7 +560,15 @@ export default async function AdminMessagesPage({
                     isRead ? "border-line/70 bg-paper/40 text-ink/65" : "border-line bg-paper/70 text-ink/90"
                   }`}
                 >
-                  <div>
+                  <div className="flex items-start gap-2">
+                    <input
+                      type="checkbox"
+                      name="selected"
+                      value={`inbox:${msg.id}`}
+                      form="bulk-delete-form"
+                      className="mt-0.5 h-3.5 w-3.5 rounded border-line text-ink focus:ring-ink/30"
+                    />
+                    <div>
                     <p>
                       <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
                         {adminInboxCategoryLabel(msg.category)}
@@ -474,6 +589,7 @@ export default async function AdminMessagesPage({
                       {asText(payload.targetRegion) ? ` · Region: ${asText(payload.targetRegion)}` : ""}
                       {asText(payload.estimatedQty) ? ` · Qty: ${asText(payload.estimatedQty)}` : ""}
                     </p>
+                    </div>
                   </div>
                   {msg.category === ADMIN_INBOX_CATEGORY.order &&
                   (itemPreviews.length > 0 || asText(payload.itemName)) ? (
@@ -507,24 +623,48 @@ export default async function AdminMessagesPage({
                       ))}
                     </div>
                   ) : null}
-                  {isRead ? (
-                    <span className="rounded-xl border border-line/80 bg-paper px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
-                      Read
-                    </span>
-                  ) : (
-                    <form action={markInboxMessageHandledAction}>
-                      <input type="hidden" name="messageId" value={msg.id} />
+                  <div className="flex items-center gap-1.5">
+                    {isRead ? (
+                      <span className="rounded-xl border border-line/80 bg-paper px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
+                        Read
+                      </span>
+                    ) : (
+                      <form action={markInboxMessageHandledAction}>
+                        <input type="hidden" name="messageId" value={msg.id} />
+                        <button
+                          type="submit"
+                          className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+                        >
+                          Mark as read
+                        </button>
+                      </form>
+                    )}
+                    <form action={deleteMessageAction}>
+                      <input type="hidden" name="target" value="inbox" />
+                      <input type="hidden" name="id" value={msg.id} />
+                      <input type="hidden" name="category" value={selectedCategory} />
                       <button
                         type="submit"
-                        className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+                        className="inline-flex items-center justify-center rounded-xl border border-rose-200 bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-rose-700 transition hover:border-rose-300"
                       >
-                        Mark as read
+                        Delete
                       </button>
                     </form>
-                  )}
+                  </div>
                 </div>
               );
             })}
+            {visibleRows > 0 ? (
+              <div className="pt-1">
+                <button
+                  type="submit"
+                  form="bulk-delete-form"
+                  className="rounded-lg border border-rose-200 bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-rose-700 transition hover:border-rose-300"
+                >
+                  Delete selected
+                </button>
+              </div>
+            ) : null}
           </div>
         )}
       </section>
