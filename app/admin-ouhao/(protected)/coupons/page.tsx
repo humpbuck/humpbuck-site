@@ -98,10 +98,11 @@ async function createCouponAction(formData: FormData) {
         user: { select: { email: true, displayName: true, name: true } },
       },
     });
-    const to = affiliate?.user.email?.trim();
-    if (to) {
+    const user = affiliate?.user;
+    const to = user?.email?.trim();
+    if (to && user) {
       const affiliateName =
-        affiliate.user.displayName?.trim() || affiliate.user.name?.trim() || to;
+        user.displayName?.trim() || user.name?.trim() || to;
       const appUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://www.humpbuck.com";
       const accountUrl = `${appUrl}/account/affiliate`;
       const amountOffUsd = (amountOffCents / 100).toFixed(2);
