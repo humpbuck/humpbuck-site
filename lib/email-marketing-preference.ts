@@ -52,6 +52,17 @@ export async function isMarketingOptOut(emailRaw: string): Promise<boolean> {
   return rowOptOut(rows[0]?.marketingOptOut);
 }
 
+/** True only when user has explicitly subscribed and is not opted out. */
+export async function isMarketingSubscribed(emailRaw: string): Promise<boolean> {
+  const email = normalizeMarketingEmail(emailRaw);
+  const rows = await prisma.$queryRaw<Array<{ marketingOptOut: unknown }>>`
+    SELECT "marketingOptOut" FROM "EmailMarketingPreference" WHERE "email" = ${email}
+  `;
+  const first = rows[0];
+  if (!first) return false;
+  return !rowOptOut(first.marketingOptOut);
+}
+
 export async function optOutByToken(
   token: string,
 ): Promise<{ ok: true; email: string; already: boolean } | { ok: false }> {

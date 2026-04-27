@@ -5,29 +5,45 @@ import { addEmailToBrevoNewsletter } from "@/lib/brevo-subscribe-contact";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { createAdminInboxMessage, ADMIN_INBOX_CATEGORY } from "@/lib/admin-inbox";
 import {
-  isMarketingOptOut,
+  isMarketingSubscribed,
   recordMarketingOptInFromSubscribe,
   recordMarketingOptOutByEmail,
 } from "@/lib/email-marketing-preference";
 
 function goSubscribe(status: string, error?: string): never {
-  if (error) {
-    redirect(`/account/subscribe?status=${encodeURIComponent(status)}&error=${encodeURIComponent(error)}`);
-  }
-  redirect(`/account/subscribe?status=${encodeURIComponent(status)}`);
+  return goSubscribeWithEmail("", status, error);
 }
 
-async function subscribeAction() {
+function goSubscribeWithEmail(email: string, status: string, error?: string): never {
+  const params = new URLSearchParams();
+  if (email.trim()) params.set("email", email.trim().toLowerCase());
+  if (status.trim()) params.set("status", status.trim());
+  if (error) {
+    params.set("error", error);
+  }
+  const q = params.toString();
+  redirect(q ? `/account/subscribe?${q}` : "/account/subscribe");
+}
+
+function normalizeInputEmail(raw: FormDataEntryValue | null | undefined): string {
+  return String(raw ?? "").trim().toLowerCase();
+}
+
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+async function subscribeAction(formData: FormData) {
   "use server";
-  const session = await requireAccountSession();
-  const email = String(session.user?.email ?? "").trim().toLowerCase();
-  if (!email) {
-    goSubscribe("error", "No account email found.");
+  await requireAccountSession();
+  const email = normalizeInputEmail(formData.get("email"));
+  if (!email || !isValidEmail(email)) {
+    goSubscribeWithEmail(email, "error", "Please enter a valid email.");
   }
 
   const result = await addEmailToBrevoNewsletter(email);
   if (!result.ok) {
-    goSubscribe("error", result.error || "Failed to subscribe.");
+    goSubscribeWithEmail(email, "error", result.error || "Failed to subscribe.");
   }
 
   await recordMarketingOptInFromSubscribe(email);
@@ -43,15 +59,15 @@ async function subscribeAction() {
     },
   });
   revalidatePath("/account/subscribe");
-  goSubscribe(result.already ? "already" : "subscribed");
+  goSubscribeWithEmail(email, result.already ? "already" : "subscribed");
 }
 
-async function unsubscribeAction() {
+async function unsubscribeAction(formData: FormData) {
   "use server";
-  const session = await requireAccountSession();
-  const email = String(session.user?.email ?? "").trim().toLowerCase();
-  if (!email) {
-    goSubscribe("error", "No account email found.");
+  await requireAccountSession();
+  const email = normalizeInputEmail(formData.get("email"));
+  if (!email || !isValidEmail(email)) {
+    goSubscribeWithEmail(email, "error", "Please enter a valid email.");
   }
 
   await recordMarketingOptOutByEmail(email);
@@ -96,20 +112,22 @@ async function unsubscribeAction() {
   });
 
   revalidatePath("/account/subscribe");
-  goSubscribe("unsubscribed");
+  goSubscribeWithEmail(email, "unsubscribed");
 }
 
 export default async function AccountSubscribePage({
   searchParams,
 }: {
-  searchParams?: Promise<{ status?: string; error?: string }>;
+  searchParams?: Promise<{ status?: string; error?: string; email?: string }>;
 }) {
   const session = await requireAccountSession();
   const sp = (await searchParams) ?? {};
   const status = String(sp.status ?? "").trim();
   const error = String(sp.error ?? "").trim();
-  const email = String(session.user?.email ?? "").trim().toLowerCase();
-  const optedOut = email ? await isMarketingOptOut(email) : true;
+  const accountEmail = String(session.user?.email ?? "").trim().toLowerCase();
+  const editableEmail = String(sp.email ?? "").trim().toLowerCase();
+  const currentEmail = editableEmail || accountEmail;
+  const subscribed = currentEmail ? await isMarketingSubscribed(currentEmail) : false;
 
   return (
     <div>
@@ -120,11 +138,35 @@ export default async function AccountSubscribePage({
       </p>
 
       <div className="mt-6 rounded-2xl border border-line bg-white/70 p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Account email</p>
-        <p className="mt-2 text-sm text-ink">{email || "-"}</p>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Subscription email</p>
+        <form action={subscribeAction} className="mt-2">
+          <input
+            name="email"
+            type="email"
+            defaultValue={currentEmail}
+            placeholder={accountEmail || "email@example.com"}
+            className="w-full max-w-md rounded-xl border border-line bg-paper px-3 py-2 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+          />
+          <input type="hidden" name="actionSource" value="account-subscribe" />
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="submit"
+              className="rounded-xl bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
+            >
+              Subscribe
+            </button>
+            <button
+              type="submit"
+              formAction={unsubscribeAction}
+              className="rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+            >
+              Unsubscribe
+            </button>
+          </div>
+        </form>
         <p className="mt-3 text-sm text-muted">
           Current status:{" "}
-          <span className="font-medium text-ink">{optedOut ? "Unsubscribed" : "Subscribed"}</span>
+          <span className="font-medium text-ink">{subscribed ? "Subscribed" : "Unsubscribed"}</span>
         </p>
         {status === "subscribed" ? (
           <p className="mt-3 text-sm text-emerald-700">Subscribed successfully.</p>
@@ -138,24 +180,6 @@ export default async function AccountSubscribePage({
         {status === "error" && error ? (
           <p className="mt-3 text-sm text-rose-700">{error}</p>
         ) : null}
-        <div className="mt-4 flex flex-wrap gap-2">
-          <form action={subscribeAction}>
-            <button
-              type="submit"
-              className="rounded-xl bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
-            >
-              Subscribe
-            </button>
-          </form>
-          <form action={unsubscribeAction}>
-            <button
-              type="submit"
-              className="rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
-            >
-              Unsubscribe
-            </button>
-          </form>
-        </div>
       </div>
     </div>
   );
