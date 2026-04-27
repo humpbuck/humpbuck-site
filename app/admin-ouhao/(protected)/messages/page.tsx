@@ -173,10 +173,18 @@ export default async function AdminMessagesPage({
   const error = Array.isArray(errorRaw) ? errorRaw[0] : errorRaw;
   const categoryRaw = sp.category;
   const selectedCategoryInput = Array.isArray(categoryRaw) ? categoryRaw[0] : (categoryRaw ?? "all");
-  const selectedCategory =
+  const normalizedCategory =
     selectedCategoryInput === ADMIN_INBOX_CATEGORY.dispute
       ? ADMIN_INBOX_CATEGORY.order
       : selectedCategoryInput;
+  const allowedCategories = new Set<string>([
+    "all",
+    ADMIN_INBOX_CATEGORY.order,
+    ADMIN_INBOX_CATEGORY.affiliates,
+    ADMIN_INBOX_CATEGORY.subscribe,
+    ADMIN_INBOX_CATEGORY.emailMockupRequest,
+  ]);
+  const selectedCategory = allowedCategories.has(normalizedCategory) ? normalizedCategory : "all";
   const [
     pendingOrderCount,
     pendingAffiliateCount,
@@ -262,8 +270,10 @@ export default async function AdminMessagesPage({
     ...handledInboxMessages,
   ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   const visibleRows = allMessages.length + (showAffiliateRows ? allAffiliateRequests.length : 0);
-  const cardClass = (count: number) =>
+  const cardClass = (count: number, categoryKey: string) =>
     `rounded-xl border px-3 py-2 text-sm transition ${
+      selectedCategory === categoryKey ? "border-ink bg-white shadow-sm ring-1 ring-ink/20 " : ""
+    }${
       count > 0
         ? "border-line bg-paper/70 hover:border-ink/20"
         : "border-line/70 bg-paper/35 text-muted hover:border-line/80"
@@ -293,21 +303,30 @@ export default async function AdminMessagesPage({
           </p>
         ) : null}
         <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          <Link href={adminPath("/messages?category=order")} className={cardClass(pendingOrderCount)}>
+          <Link
+            href={adminPath("/messages?category=order")}
+            className={cardClass(pendingOrderCount, ADMIN_INBOX_CATEGORY.order)}
+          >
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">Orders</p>
             <p className="mt-1 text-xl font-semibold text-ink">{pendingOrderCount}</p>
           </Link>
-          <Link href={adminPath("/affiliate?couponRequests=1")} className={cardClass(pendingAffiliateCount)}>
+          <Link
+            href={adminPath("/messages?category=affiliates")}
+            className={cardClass(pendingAffiliateCount, ADMIN_INBOX_CATEGORY.affiliates)}
+          >
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">Affiliates</p>
             <p className="mt-1 text-xl font-semibold text-ink">{pendingAffiliateCount}</p>
           </Link>
-          <Link href={adminPath("/messages?category=subscribe")} className={cardClass(pendingSubscribeCount)}>
+          <Link
+            href={adminPath("/messages?category=subscribe")}
+            className={cardClass(pendingSubscribeCount, ADMIN_INBOX_CATEGORY.subscribe)}
+          >
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">Subscribe</p>
             <p className="mt-1 text-xl font-semibold text-ink">{pendingSubscribeCount}</p>
           </Link>
           <Link
             href={adminPath("/messages?category=email_mockup_request")}
-            className={cardClass(pendingMockupRequestCount)}
+            className={cardClass(pendingMockupRequestCount, ADMIN_INBOX_CATEGORY.emailMockupRequest)}
           >
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
               Email mockup request
@@ -321,11 +340,31 @@ export default async function AdminMessagesPage({
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Messages
         </h2>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {[
+            { key: "all", label: "All" },
+            { key: ADMIN_INBOX_CATEGORY.order, label: "Orders" },
+            { key: ADMIN_INBOX_CATEGORY.affiliates, label: "Affiliates" },
+            { key: ADMIN_INBOX_CATEGORY.subscribe, label: "Subscribe" },
+            { key: ADMIN_INBOX_CATEGORY.emailMockupRequest, label: "Email mockup request" },
+          ].map((item) => (
+            <Link
+              key={item.key}
+              href={item.key === "all" ? adminPath("/messages") : adminPath(`/messages?category=${item.key}`)}
+              className={`rounded-lg border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest transition ${
+                selectedCategory === item.key
+                  ? "border-ink bg-ink text-white"
+                  : "border-line bg-white text-ink hover:border-ink/20"
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
         {selectedCategory !== "all" ? (
           <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted">
             <p>
-              Showing filtered category:{" "}
-              <span className="font-semibold text-ink">{adminInboxCategoryLabel(selectedCategory)}</span>
+              Showing category: <span className="font-semibold text-ink">{adminInboxCategoryLabel(selectedCategory)}</span>
             </p>
             <form action={markCategoryReadAction}>
               <input type="hidden" name="category" value={selectedCategory} />
@@ -455,9 +494,6 @@ export default async function AdminMessagesPage({
                               src={item.image}
                               alt={item.name}
                               className="h-9 w-9 rounded object-cover"
-                              onError={(e) => {
-                                (e.currentTarget as HTMLImageElement).style.display = "none";
-                              }}
                             />
                           ) : (
                             <div className="h-9 w-9 rounded bg-paper" />
