@@ -91,23 +91,30 @@ export function AffiliatePayoutDetailsForm({
   );
   const [payoutWhatsappCountryCode, setPayoutWhatsappCountryCode] = useState("");
   const [payoutWhatsappLocal, setPayoutWhatsappLocal] = useState(defaultWhatsapp.localNumber);
+  const [payoutWhatsappContact, setPayoutWhatsappContact] = useState(
+    parseLabeledValue(defaultPayoutAccount, "WhatsApp"),
+  );
 
   const payoutAccount = useMemo(() => {
     if (payoutMethod === "wise" || payoutMethod === "payoneer") {
-      return buildEmailPayoutAccount({
+      const base = buildEmailPayoutAccount({
         accountEmail: directAccount,
         recipientName,
       });
+      return [base, payoutWhatsappContact.trim() ? `WhatsApp: ${payoutWhatsappContact.trim()}` : ""]
+        .filter(Boolean)
+        .join("\n");
     }
     if (payoutMethod === "alipay") {
       const rows = [
         `Alipay account: ${directAccount.trim()}`,
         `Real name: ${realName.trim()}`,
+        payoutWhatsappContact.trim() ? `WhatsApp: ${payoutWhatsappContact.trim()}` : "",
       ].filter((row) => !row.endsWith(":"));
       return rows.join("\n").trim();
     }
     if (payoutMethod === "bank") {
-      return buildBankPayoutAccount({
+      const base = buildBankPayoutAccount({
         transferScope: bankTransferScope,
         realName,
         accountNumber,
@@ -116,8 +123,13 @@ export function AffiliatePayoutDetailsForm({
         branch,
         bankAddress,
       });
+      return [base, payoutWhatsappContact.trim() ? `WhatsApp: ${payoutWhatsappContact.trim()}` : ""]
+        .filter(Boolean)
+        .join("\n");
     }
-    return directAccount.trim();
+    return [directAccount.trim(), payoutWhatsappContact.trim() ? `WhatsApp: ${payoutWhatsappContact.trim()}` : ""]
+      .filter(Boolean)
+      .join("\n");
   }, [
     accountNumber,
     bankAddress,
@@ -129,6 +141,7 @@ export function AffiliatePayoutDetailsForm({
     realName,
     recipientName,
     swiftCode,
+    payoutWhatsappContact,
   ]);
   const normalizedPayoutWhatsapp = useMemo(
     () => normalizePhone(payoutWhatsappCountryCode || defaultWhatsapp.countryCode || "+1", payoutWhatsappLocal),
@@ -323,10 +336,16 @@ export function AffiliatePayoutDetailsForm({
           value={payoutWhatsappLocal}
           onChange={(e) => setPayoutWhatsappLocal(e.target.value)}
           inputMode="numeric"
-          placeholder="WhatsApp number"
+          placeholder="Telephone number"
           className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
       </div>
+      <input
+        value={payoutWhatsappContact}
+        onChange={(e) => setPayoutWhatsappContact(e.target.value)}
+        placeholder="WhatsApp (optional)"
+        className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2 md:col-span-2"
+      />
       <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>
         {PHONE_COUNTRY_CODES.map((code) => (
           <option key={code} value={code} />

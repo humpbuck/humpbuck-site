@@ -387,6 +387,12 @@ function maskPayoutAccountForDisplay(account: string): string {
     .join("\n");
 }
 
+function extractLabeledValue(payload: string | null | undefined, label: string): string {
+  const raw = String(payload ?? "");
+  const match = raw.match(new RegExp(`${label}:\\s*(.+)`));
+  return match?.[1]?.trim() ?? "";
+}
+
 function usd(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
 }
@@ -806,7 +812,13 @@ export default async function AccountAffiliatePage({
                 </span>
               </p>
               <p className="mt-1">Email: <span className="font-medium">{profile.payoutEmail || "-"}</span></p>
-              <p className="mt-1">WhatsApp: <span className="font-medium">{profile.payoutWhatsapp || "-"}</span></p>
+              <p className="mt-1">Telephone: <span className="font-medium">{profile.payoutWhatsapp || "-"}</span></p>
+              <p className="mt-1">
+                WhatsApp:{" "}
+                <span className="font-medium">
+                  {extractLabeledValue(profile.payoutAccount, "WhatsApp") || "-"}
+                </span>
+              </p>
               <p className="mt-1">
                 Verification:{" "}
                 <span className="font-medium">

@@ -26,6 +26,21 @@ const GROWTH_MILESTONES = [
   { level: "Level 6", minOrders: 1500, rate: 15 },
 ] as const;
 
+function extractLabeledValue(payload: string | null | undefined, label: string): string {
+  const raw = String(payload ?? "");
+  const match = raw.match(new RegExp(`${label}:\\s*(.+)`));
+  return match?.[1]?.trim() ?? "";
+}
+
+function removeLabeledLine(payload: string, label: string): string {
+  return payload
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith(`${label}:`))
+    .join("\n")
+    .trim();
+}
+
 function goStats(focus: string, ok?: string): never {
   const qs = new URLSearchParams();
   qs.set("focus", focus || "total");
@@ -59,8 +74,9 @@ async function updateAffiliateDetailsAction(formData: FormData) {
   const whitelist = String(formData.get("whitelist") ?? "") === "on";
   const notes = String(formData.get("notes") ?? "").trim();
   const payoutMethod = String(formData.get("payoutMethod") ?? "").trim();
-  const payoutAccount = String(formData.get("payoutAccount") ?? "").trim();
+  const payoutAccountRaw = String(formData.get("payoutAccount") ?? "").trim();
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
+  const payoutWhatsappContact = String(formData.get("payoutWhatsappContact") ?? "").trim();
   const payoutWhatsappRaw = String(formData.get("payoutWhatsapp") ?? "").trim();
   const payoutWhatsappLocal = String(formData.get("payoutWhatsappLocal") ?? "");
   const payoutWhatsappCountryInput = normalizeCountryCodeInput(
@@ -84,9 +100,17 @@ async function updateAffiliateDetailsAction(formData: FormData) {
     payoutWhatsappRaw;
   const payoutChanged =
     (existing?.payoutMethod ?? "") !== payoutMethod ||
-    (existing?.payoutAccount ?? "") !== payoutAccount ||
+    (existing?.payoutAccount ?? "") !== payoutAccountRaw ||
     (existing?.payoutEmail ?? "") !== payoutEmail ||
     (existing?.payoutWhatsapp ?? "") !== payoutWhatsapp;
+  const payoutAccountBase = removeLabeledLine(payoutAccountRaw, "WhatsApp");
+  const payoutAccount = [
+    payoutAccountBase,
+    payoutWhatsappContact ? `WhatsApp: ${payoutWhatsappContact}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n")
+    .trim();
 
   await prisma.affiliateProfile.update({
     where: { id: profileId },
@@ -413,7 +437,15 @@ export default async function AffiliateStatsPage({
                   name="payoutWhatsappLocal"
                   defaultValue={splitPhoneForInput(p.payoutWhatsapp).localNumber}
                   inputMode="numeric"
-                  placeholder="WhatsApp number"
+                  placeholder="Telephone number"
+                  className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
+              </div>
+              <div className="mt-2 grid gap-2 md:grid-cols-1">
+                <input
+                  name="payoutWhatsappContact"
+                  defaultValue={extractLabeledValue(p.payoutAccount, "WhatsApp")}
+                  placeholder="WhatsApp (optional)"
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
               </div>
