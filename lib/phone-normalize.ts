@@ -10,7 +10,14 @@ const globalCallingCodeKeys = Object.keys(parsedMetadata.country_calling_codes ?
 /** Global unique country calling codes from libphonenumber metadata. */
 export const PHONE_COUNTRY_CODES = globalCallingCodeKeys
   .map((code) => `+${code}`)
-  .sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
+  .sort((a, b) => {
+    const aDigits = a.slice(1);
+    const bDigits = b.slice(1);
+    const aFirst = aDigits[0] ?? "";
+    const bFirst = bDigits[0] ?? "";
+    if (aFirst !== bFirst) return aFirst.localeCompare(bFirst);
+    return Number(aDigits) - Number(bDigits);
+  });
 
 export function normalizeCountryCodeInput(input: string): string {
   const digits = input.replace(/[^\d]/g, "").slice(0, 4);
