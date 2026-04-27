@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { ResilientImage } from "@/components/admin/resilient-image";
 import {
   ADMIN_INBOX_CATEGORY,
   adminInboxCategoryLabel,
@@ -8,6 +9,7 @@ import {
 } from "@/lib/admin-inbox";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
+import { getCartLineImage, getProductBySlug } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
 
 function goMessages(error?: string): never {
@@ -115,6 +117,8 @@ function asNumber(v: unknown, fallback = 0): number {
 function parseItemsPreview(payload: Record<string, unknown>): Array<{
   name: string;
   variant: string;
+  variantId: string;
+  slug: string;
   qty: number;
   image: string;
 }> {
@@ -126,12 +130,23 @@ function parseItemsPreview(payload: Record<string, unknown>): Array<{
     return arr.map((x) => ({
       name: asText(x.name, "Order item"),
       variant: asText(x.variant, "Default"),
+      variantId: asText(x.variantId, ""),
+      slug: asText(x.slug, ""),
       qty: asNumber(x.qty, 1),
       image: asText(x.image, ""),
     }));
   } catch {
     return [];
   }
+}
+
+function getOrderItemImageSources(
+  item: { image: string; slug: string; variantId: string },
+  payload: Record<string, unknown>,
+): string[] {
+  const product = getProductBySlug(item.slug || asText(payload.itemSlug, ""));
+  const r2Line = product ? getCartLineImage(product, item.variantId || asText(payload.itemVariantId, "")) : "";
+  return [r2Line, item.image, product?.image ?? "", asText(payload.itemImage, "")];
 }
 
 function messagePrimaryText(input: {
@@ -406,12 +421,14 @@ export default async function AdminMessagesPage({
                       <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
                         Affiliates
                       </span>{" "}
-                      <span
-                        className="inline-block max-w-[680px] truncate align-middle font-medium text-ink/90"
-                        title={`Coupon Request | ${name} requested a dedicated coupon code.`}
-                      >
-                        Coupon Request | {name} requested a dedicated coupon code.
-                      </span>
+                      <details className="inline-block max-w-[680px] align-middle">
+                        <summary className="max-w-[680px] cursor-pointer list-none truncate font-medium text-ink/90 [&::-webkit-details-marker]:hidden">
+                          Coupon Request | {name} requested a dedicated coupon code.
+                        </summary>
+                        <p className="mt-1 whitespace-normal text-sm text-ink/85">
+                          Coupon Request | {name} requested a dedicated coupon code.
+                        </p>
+                      </details>
                     </p>
                     <p className="text-xs text-muted">
                       {req.user.email ?? "-"} · PID {req.affiliate?.pid ?? "-"} · {req.requestedAt.toLocaleString()}
@@ -452,20 +469,22 @@ export default async function AdminMessagesPage({
                       <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
                         {adminInboxCategoryLabel(msg.category)}
                       </span>{" "}
-                      <span
-                        className="inline-block max-w-[680px] truncate align-middle font-medium text-ink/90"
-                        title={messagePrimaryText({
-                          category: msg.category,
-                          payload,
-                          sourceEmail: msg.sourceEmail,
-                        })}
-                      >
-                        {messagePrimaryText({
-                          category: msg.category,
-                          payload,
-                          sourceEmail: msg.sourceEmail,
-                        })}
-                      </span>
+                      <details className="inline-block max-w-[680px] align-middle">
+                        <summary className="max-w-[680px] cursor-pointer list-none truncate font-medium text-ink/90 [&::-webkit-details-marker]:hidden">
+                          {messagePrimaryText({
+                            category: msg.category,
+                            payload,
+                            sourceEmail: msg.sourceEmail,
+                          })}
+                        </summary>
+                        <p className="mt-1 whitespace-normal text-sm text-ink/85">
+                          {messagePrimaryText({
+                            category: msg.category,
+                            payload,
+                            sourceEmail: msg.sourceEmail,
+                          })}
+                        </p>
+                      </details>
                     </p>
                     <p className="text-xs text-muted">
                       {msg.createdAt.toLocaleString()}
@@ -483,21 +502,19 @@ export default async function AdminMessagesPage({
                             {
                               name: asText(payload.itemName, "Order item"),
                               variant: asText(payload.itemVariant, "Default"),
+                              variantId: asText(payload.itemVariantId, ""),
+                              slug: asText(payload.itemSlug, ""),
                               qty: asNumber(payload.itemQty, 1),
                               image: asText(payload.itemImage, ""),
                             },
                           ]
                       ).map((item, idx) => (
                         <div key={`${msg.id}-${idx}`} className="flex items-center gap-2">
-                          {item.image ? (
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="h-9 w-9 rounded object-cover"
-                            />
-                          ) : (
-                            <div className="h-9 w-9 rounded bg-paper" />
-                          )}
+                          <ResilientImage
+                            sources={getOrderItemImageSources(item, payload)}
+                            alt={item.name}
+                            className="h-9 w-9 rounded object-cover"
+                          />
                           <div className="min-w-0">
                             <p className="truncate text-[11px] font-medium text-ink">{item.name}</p>
                             <p className="truncate text-[11px] text-muted">

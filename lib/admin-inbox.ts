@@ -105,6 +105,8 @@ export async function syncSystemInboxMessages() {
       return {
         name: line.name || product?.name || "Order item",
         variant: line.variantLabel || "Default",
+        variantId: line.variantId || "",
+        slug: line.slug || "",
         qty: line.qty || 1,
         image: lineImage || product?.image || "",
       };
@@ -119,6 +121,7 @@ export async function syncSystemInboxMessages() {
       itemVariant: firstPreview?.variant ?? first?.variantLabel ?? "",
       itemQty: firstPreview?.qty ?? first?.qty ?? 1,
       itemImage: firstPreview?.image ?? "",
+      itemVariantId: firstPreview?.variantId ?? first?.variantId ?? "",
       itemCount: linePreviews.length || 1,
       itemsPreviewJson: JSON.stringify(linePreviews),
       itemSlug: first?.slug ?? "",
@@ -141,6 +144,19 @@ export async function syncSystemInboxMessages() {
   ];
 
   if (rows.length === 0) return;
+  await Promise.all(
+    rows.map((r) =>
+      prisma.adminInboxMessage
+        .updateMany({
+          where: { dedupeKey: r.dedupeKey },
+          data: {
+            sourceEmail: r.sourceEmail ?? null,
+            payloadJson: JSON.stringify(r.payload),
+          },
+        })
+        .catch(() => null),
+    ),
+  );
   await prisma.adminInboxMessage
     .updateMany({
       where: { category: ADMIN_INBOX_CATEGORY.dispute, status: "pending" },
