@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { MessageBulkActions } from "@/components/admin/message-bulk-actions";
 import { ReadActionButton } from "@/components/admin/read-action-button";
 import { ResilientImage } from "@/components/admin/resilient-image";
 import {
@@ -464,6 +465,11 @@ export default async function AdminMessagesPage({
         <form id="bulk-delete-form" action={deleteSelectedMessagesAction}>
           <input type="hidden" name="category" value={selectedCategory} />
         </form>
+        {visibleRows > 0 ? (
+          <div className="mt-2">
+            <MessageBulkActions formId="bulk-delete-form" />
+          </div>
+        ) : null}
         {totalPendingCount === 0 && visibleRows === 0 ? (
           <p className="mt-3 text-sm text-muted">No pending messages.</p>
         ) : visibleRows === 0 ? (
@@ -646,17 +652,6 @@ export default async function AdminMessagesPage({
                 </div>
               );
             })}
-            {visibleRows > 0 ? (
-              <div className="pt-1">
-                <button
-                  type="submit"
-                  form="bulk-delete-form"
-                  className="rounded-lg border border-rose-200 bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-rose-700 transition hover:border-rose-300"
-                >
-                  Delete selected
-                </button>
-              </div>
-            ) : null}
           </div>
         )}
       </section>
