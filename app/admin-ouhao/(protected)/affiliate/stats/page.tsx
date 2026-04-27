@@ -441,18 +441,13 @@ export default async function AffiliateStatsPage({
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
               </div>
-              <div className="mt-2 w-full md:max-w-[420px]">
-                <div className="grid grid-cols-[120px_1fr] gap-2">
-                  <div className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm font-medium text-ink">
-                    WhatsApp
-                  </div>
-                  <input
-                    name="payoutWhatsappContact"
-                    defaultValue={extractLabeledValue(p.payoutAccount, "WhatsApp")}
-                    placeholder="+86 180 2429 0526"
-                    className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-                  />
-                </div>
+              <div className="mt-2 w-full md:max-w-[560px]">
+                <input
+                  name="payoutWhatsappContact"
+                  defaultValue={extractLabeledValue(p.payoutAccount, "WhatsApp")}
+                  placeholder="WhatsApp: +86 180 2429 0526"
+                  className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
               </div>
               <div className="mt-2 flex flex-wrap justify-end gap-2">
                 <PendingActionButton
