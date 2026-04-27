@@ -300,7 +300,6 @@ export function AffiliatePayoutDetailsForm({
           inputMode="tel"
           placeholder="+1"
           onChange={(e) => setPayoutWhatsappCountryCode(normalizeCountryCodeInput(e.target.value))}
-          onBlur={(e) => setPayoutWhatsappCountryCode(normalizeCountryCodeInput(e.target.value) || "+1")}
           className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
         <input

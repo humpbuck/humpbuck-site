@@ -21,7 +21,7 @@ export const PHONE_COUNTRY_CODES = globalCallingCodeKeys
 export const PHONE_COUNTRY_CODE_DATALIST_ID = "phone-country-codes";
 
 export function normalizeCountryCodeInput(input: string): string {
-  const digits = input.replace(/[^\d]/g, "").slice(0, 4);
+  const digits = input.replace(/[^\d]/g, "").slice(0, 3);
   if (!digits) return "";
   return `+${digits}`;
 }
@@ -31,11 +31,11 @@ export function splitPhoneForInput(phone: string | null | undefined): {
   localNumber: string;
 } {
   const raw = (phone ?? "").trim();
-  if (!raw) return { countryCode: "+1", localNumber: "" };
+  if (!raw) return { countryCode: "", localNumber: "" };
   const compact = raw.replace(/\s+/g, "");
   const match = compact.match(/^(\+\d{1,4})(\d+)$/);
   if (match) return { countryCode: match[1], localNumber: match[2] };
-  return { countryCode: "+1", localNumber: compact.replace(/[^\d]/g, "") };
+  return { countryCode: "", localNumber: compact.replace(/[^\d]/g, "") };
 }
 
 export function normalizePhone(countryCode: string, localNumber: string): string {

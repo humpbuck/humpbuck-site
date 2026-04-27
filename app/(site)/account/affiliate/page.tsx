@@ -765,9 +765,6 @@ export default async function AccountAffiliatePage({
                 onChange={(e) => {
                   e.currentTarget.value = normalizeCountryCodeInput(e.currentTarget.value);
                 }}
-                onBlur={(e) => {
-                  e.currentTarget.value = normalizeCountryCodeInput(e.currentTarget.value) || "+1";
-                }}
                 className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
               />
               <input
