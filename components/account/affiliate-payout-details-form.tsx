@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
+  PHONE_COUNTRY_CODE_DATALIST_ID,
   PHONE_COUNTRY_CODES,
   normalizeCountryCodeInput,
   normalizePhone,
-  resolveCountryCodeInput,
   splitPhoneForInput,
 } from "@/lib/phone-normalize";
 
@@ -88,7 +88,6 @@ export function AffiliatePayoutDetailsForm({
       : "domestic",
   );
   const [payoutWhatsappCountryCode, setPayoutWhatsappCountryCode] = useState(defaultWhatsapp.countryCode);
-  const [payoutWhatsappCountryCodeManual, setPayoutWhatsappCountryCodeManual] = useState("");
   const [payoutWhatsappLocal, setPayoutWhatsappLocal] = useState(defaultWhatsapp.localNumber);
 
   const payoutAccount = useMemo(() => {
@@ -130,12 +129,8 @@ export function AffiliatePayoutDetailsForm({
     swiftCode,
   ]);
   const normalizedPayoutWhatsapp = useMemo(
-    () =>
-      normalizePhone(
-        resolveCountryCodeInput(payoutWhatsappCountryCode, payoutWhatsappCountryCodeManual),
-        payoutWhatsappLocal,
-      ),
-    [payoutWhatsappCountryCode, payoutWhatsappCountryCodeManual, payoutWhatsappLocal],
+    () => normalizePhone(payoutWhatsappCountryCode || "+1", payoutWhatsappLocal),
+    [payoutWhatsappCountryCode, payoutWhatsappLocal],
   );
 
   const isBank = payoutMethod === "bank";
@@ -298,28 +293,16 @@ export function AffiliatePayoutDetailsForm({
         className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
       />
       <div className="grid grid-cols-[120px_1fr] gap-2">
-        <select
+        <input
           name="payoutWhatsappCountryCode"
           value={payoutWhatsappCountryCode}
-          onChange={(e) => setPayoutWhatsappCountryCode(e.target.value)}
-          className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-        >
-          {PHONE_COUNTRY_CODES.map((code) => (
-            <option key={code} value={code}>
-              {code}
-            </option>
-          ))}
-        </select>
-        <input
-          name="payoutWhatsappCountryCodeManual"
-          value={payoutWhatsappCountryCodeManual}
+          list={PHONE_COUNTRY_CODE_DATALIST_ID}
           inputMode="tel"
-          placeholder="Manual code (optional)"
-          onChange={(e) => setPayoutWhatsappCountryCodeManual(normalizeCountryCodeInput(e.target.value))}
+          placeholder="+1"
+          onChange={(e) => setPayoutWhatsappCountryCode(normalizeCountryCodeInput(e.target.value))}
+          onBlur={(e) => setPayoutWhatsappCountryCode(normalizeCountryCodeInput(e.target.value) || "+1")}
           className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
-      </div>
-      <div>
         <input
           name="payoutWhatsappLocal"
           value={payoutWhatsappLocal}
@@ -329,6 +312,11 @@ export function AffiliatePayoutDetailsForm({
           className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
       </div>
+      <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>
+        {PHONE_COUNTRY_CODES.map((code) => (
+          <option key={code} value={code} />
+        ))}
+      </datalist>
 
       <input name="payoutAccount" value={payoutAccount} readOnly hidden />
       <input name="payoutRealName" value={realName} readOnly hidden />

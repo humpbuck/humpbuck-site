@@ -12,9 +12,10 @@ import {
   syncAffiliateGrowthTierByOrderCount,
 } from "@/lib/affiliate-tier-growth";
 import {
+  PHONE_COUNTRY_CODE_DATALIST_ID,
   PHONE_COUNTRY_CODES,
+  normalizeCountryCodeInput,
   normalizePhone,
-  resolveCountryCodeInput,
   splitPhoneForInput,
 } from "@/lib/phone-normalize";
 import { prisma } from "@/lib/prisma";
@@ -172,10 +173,7 @@ async function updateProfileAction(formData: FormData) {
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
   const payoutWhatsappRaw = String(formData.get("payoutWhatsapp") ?? "").trim();
   const payoutWhatsapp = normalizePhone(
-    resolveCountryCodeInput(
-      String(formData.get("payoutWhatsappCountryCode") ?? ""),
-      String(formData.get("payoutWhatsappCountryCodeManual") ?? ""),
-    ),
+    normalizeCountryCodeInput(String(formData.get("payoutWhatsappCountryCode") ?? "")) || "+1",
     String(formData.get("payoutWhatsappLocal") ?? ""),
   ) || payoutWhatsappRaw;
   if (!profileId) goAffiliate("Missing affiliate profile id.");
@@ -1009,25 +1007,20 @@ export default async function AdminAffiliatePage({
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
                 <div className="grid grid-cols-[120px_1fr] gap-2">
-                  <select
+                  <input
                     name="payoutWhatsappCountryCode"
                     defaultValue={splitPhoneForInput(p.payoutWhatsapp).countryCode}
-                    className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-                  >
-                    {PHONE_COUNTRY_CODES.map((code) => (
-                      <option key={code} value={code}>
-                        {code}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    name="payoutWhatsappCountryCodeManual"
-                    defaultValue=""
-                    placeholder="Manual code (optional)"
+                    list={PHONE_COUNTRY_CODE_DATALIST_ID}
+                    inputMode="tel"
+                    placeholder="+1"
+                    onChange={(e) => {
+                      e.currentTarget.value = normalizeCountryCodeInput(e.currentTarget.value);
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.value = normalizeCountryCodeInput(e.currentTarget.value) || "+1";
+                    }}
                     className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                   />
-                </div>
-                <div className="grid">
                   <input
                     name="payoutWhatsappLocal"
                     defaultValue={splitPhoneForInput(p.payoutWhatsapp).localNumber}
@@ -1036,6 +1029,11 @@ export default async function AdminAffiliatePage({
                     className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                   />
                 </div>
+                <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>
+                  {PHONE_COUNTRY_CODES.map((code) => (
+                    <option key={code} value={code} />
+                  ))}
+                </datalist>
                 <input name="payoutWhatsapp" defaultValue={p.payoutWhatsapp ?? ""} hidden readOnly />
                 <div className="flex gap-2">
                   <button

@@ -18,15 +18,12 @@ export const PHONE_COUNTRY_CODES = globalCallingCodeKeys
     if (aFirst !== bFirst) return aFirst.localeCompare(bFirst);
     return Number(aDigits) - Number(bDigits);
   });
+export const PHONE_COUNTRY_CODE_DATALIST_ID = "phone-country-codes";
 
 export function normalizeCountryCodeInput(input: string): string {
   const digits = input.replace(/[^\d]/g, "").slice(0, 4);
   if (!digits) return "";
   return `+${digits}`;
-}
-
-export function resolveCountryCodeInput(selected: string, manual: string): string {
-  return normalizeCountryCodeInput(manual) || selected;
 }
 
 export function splitPhoneForInput(phone: string | null | undefined): {
