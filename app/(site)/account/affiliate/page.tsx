@@ -812,6 +812,7 @@ export default async function AccountAffiliatePage({
               <div className="mt-3">
                 <Link
                   href="/account/affiliate?editPayout=1"
+                  scroll={false}
                   className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
                 >
                   Edit
