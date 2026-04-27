@@ -580,6 +580,13 @@ export default async function AdminAffiliatePage({
 
   const activeProfiles = profiles.filter((p) => !p.blacklist);
   const blacklistedProfiles = profiles.filter((p) => p.blacklist);
+  const growthTierList = [...tiers]
+    .filter((t) => t.commissionType === "percent")
+    .sort((a, b) => {
+      const byValue = a.commissionValue - b.commissionValue;
+      if (byValue !== 0) return byValue;
+      return a.name.localeCompare(b.name);
+    });
   const settlementOrderStatuses = Array.from(
     new Set(settlementRows.map((r) => r.order.status).filter(Boolean)),
   ).sort((a, b) => a.localeCompare(b));
@@ -933,10 +940,16 @@ export default async function AdminAffiliatePage({
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Create tier
         </h2>
-        <p className="mt-2 text-sm text-muted">
-          Current growth settings (paid commission orders): 0-99: 5% · 100+: 7% · 300+: 9% · 600+: 11% ·
-          1000+: 13% · 1500+: 15%
-        </p>
+        <div className="mt-2 rounded-xl border border-line bg-paper/50 px-3 py-2">
+          <p className="text-xs font-semibold text-ink/85">Current growth settings (sorted low to high)</p>
+          <div className="mt-1 space-y-0.5 text-xs text-muted">
+            {growthTierList.map((t, idx) => (
+              <p key={`growth-tier-${t.id}`}>
+                {idx + 1}. {t.name}: {t.commissionValue}%
+              </p>
+            ))}
+          </div>
+        </div>
         <form action={createTierAction} className="mt-4 grid gap-3 md:grid-cols-4">
           <input
             name="name"
