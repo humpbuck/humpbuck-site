@@ -4,6 +4,13 @@ import { revalidatePath } from "next/cache";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
+import {
+  PHONE_COUNTRY_CODE_DATALIST_ID,
+  PHONE_COUNTRY_CODES,
+  normalizeCountryCodeInput,
+  normalizePhone,
+  splitPhoneForInput,
+} from "@/lib/phone-normalize";
 import { prisma } from "@/lib/prisma";
 
 type Focus = "total" | "auto" | "pending" | "blacklisted";
@@ -30,6 +37,100 @@ async function updateAffiliateTierAction(formData: FormData) {
       data: { tierId: tierId || null },
     })
     .catch(() => null);
+  revalidatePath(adminPath("/affiliate"));
+  revalidatePath(adminPath("/affiliate/stats"));
+  redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
+}
+
+async function updateAffiliateDetailsAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const profileId = String(formData.get("profileId") ?? "").trim();
+  const tierId = String(formData.get("tierId") ?? "").trim();
+  const whitelist = String(formData.get("whitelist") ?? "") === "on";
+  const notes = String(formData.get("notes") ?? "").trim();
+  const payoutMethod = String(formData.get("payoutMethod") ?? "").trim();
+  const payoutAccount = String(formData.get("payoutAccount") ?? "").trim();
+  const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
+  const payoutWhatsappRaw = String(formData.get("payoutWhatsapp") ?? "").trim();
+  const payoutWhatsappLocal = String(formData.get("payoutWhatsappLocal") ?? "");
+  const payoutWhatsappCountryInput = normalizeCountryCodeInput(
+    String(formData.get("payoutWhatsappCountryCode") ?? ""),
+  );
+  const focus = String(formData.get("focus") ?? "total").trim();
+  if (!profileId) redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
+
+  const existing = await prisma.affiliateProfile.findUnique({
+    where: { id: profileId },
+    select: {
+      payoutMethod: true,
+      payoutAccount: true,
+      payoutEmail: true,
+      payoutWhatsapp: true,
+    },
+  });
+  const existingWhatsappCountryCode = splitPhoneForInput(existing?.payoutWhatsapp).countryCode;
+  const payoutWhatsapp =
+    normalizePhone(payoutWhatsappCountryInput || existingWhatsappCountryCode || "+1", payoutWhatsappLocal) ||
+    payoutWhatsappRaw;
+  const payoutChanged =
+    (existing?.payoutMethod ?? "") !== payoutMethod ||
+    (existing?.payoutAccount ?? "") !== payoutAccount ||
+    (existing?.payoutEmail ?? "") !== payoutEmail ||
+    (existing?.payoutWhatsapp ?? "") !== payoutWhatsapp;
+
+  await prisma.affiliateProfile.update({
+    where: { id: profileId },
+    data: {
+      tierId: tierId || null,
+      whitelist,
+      notes: notes || null,
+      payoutMethod: payoutMethod || null,
+      payoutAccount: payoutAccount || null,
+      payoutEmail: payoutEmail || null,
+      payoutWhatsapp: payoutWhatsapp || null,
+      paymentInfoPending: !(payoutMethod || payoutAccount || payoutEmail || payoutWhatsapp),
+      ...(payoutChanged ? { payoutVerifiedAt: null, payoutVerifiedBy: null } : {}),
+    },
+  });
+  revalidatePath(adminPath("/affiliate"));
+  revalidatePath(adminPath("/affiliate/stats"));
+  redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
+}
+
+async function toggleBlacklistAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const profileId = String(formData.get("profileId") ?? "").trim();
+  const nextBlacklisted = String(formData.get("nextBlacklisted") ?? "") === "true";
+  const focus = String(formData.get("focus") ?? "total").trim();
+  if (!profileId) redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
+  await prisma.affiliateProfile.update({
+    where: { id: profileId },
+    data: {
+      blacklist: nextBlacklisted,
+      status: nextBlacklisted ? "blacklisted" : "active",
+      riskFlag: nextBlacklisted,
+    },
+  });
+  revalidatePath(adminPath("/affiliate"));
+  revalidatePath(adminPath("/affiliate/stats"));
+  redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
+}
+
+async function confirmPayoutDetailsAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const profileId = String(formData.get("profileId") ?? "").trim();
+  const focus = String(formData.get("focus") ?? "total").trim();
+  if (!profileId) redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
+  await prisma.affiliateProfile.update({
+    where: { id: profileId },
+    data: {
+      payoutVerifiedAt: new Date(),
+      payoutVerifiedBy: "admin",
+    },
+  });
   revalidatePath(adminPath("/affiliate"));
   revalidatePath(adminPath("/affiliate/stats"));
   redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
@@ -168,7 +269,11 @@ export default async function AffiliateStatsPage({
           </p>
         ) : (
           list.map((p) => (
-            <div key={p.id} className="rounded-2xl border border-line bg-white/60 px-4 py-3 text-sm">
+            <form
+              key={p.id}
+              action={updateAffiliateDetailsAction}
+              className="rounded-2xl border border-line bg-white/60 px-4 py-3 text-sm"
+            >
               {(() => {
                 const paidOrders = paidCountMap.get(p.id) ?? 0;
                 const currentGrowthTier =
@@ -202,9 +307,7 @@ export default async function AffiliateStatsPage({
                           : " · Highest level reached"}
                       </p>
                     </div>
-                    <form action={updateAffiliateTierAction} className="flex flex-wrap items-center justify-center gap-2">
-                      <input type="hidden" name="profileId" value={p.id} />
-                      <input type="hidden" name="focus" value={focus} />
+                    <div className="flex flex-wrap items-center justify-center gap-2">
                       <select
                         name="tierId"
                         defaultValue={p.tierId ?? ""}
@@ -218,12 +321,13 @@ export default async function AffiliateStatsPage({
                         ))}
                       </select>
                       <button
+                        formAction={updateAffiliateTierAction}
                         type="submit"
                         className="rounded-lg bg-ink px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:bg-ink/90"
                       >
                         Save level
                       </button>
-                    </form>
+                    </div>
                     <div className="rounded-lg border border-line bg-white px-3 py-2 text-xs text-ink">
                       <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
                         Coupon code
@@ -235,7 +339,78 @@ export default async function AffiliateStatsPage({
                   </div>
                 );
               })()}
-            </div>
+              <input type="hidden" name="profileId" value={p.id} />
+              <input type="hidden" name="focus" value={focus} />
+              <div className="mt-2 grid gap-2 md:grid-cols-4">
+                <label className="inline-flex items-center justify-between gap-2 rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink">
+                  <span>Whitelist</span>
+                  <input name="whitelist" type="checkbox" defaultChecked={p.whitelist} className="h-4 w-4" />
+                </label>
+                <input
+                  name="notes"
+                  defaultValue={p.notes ?? ""}
+                  placeholder="Internal notes"
+                  className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
+                <input
+                  name="payoutMethod"
+                  defaultValue={p.payoutMethod ?? ""}
+                  placeholder="Payout method (paypal/bank/wise...)"
+                  className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
+                <input
+                  name="payoutAccount"
+                  defaultValue={p.payoutAccount ?? ""}
+                  placeholder="Payout account"
+                  className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
+              </div>
+              <div className="mt-2 grid gap-2 md:grid-cols-[1fr_120px_1fr_auto_auto]">
+                <input
+                  name="payoutEmail"
+                  defaultValue={p.payoutEmail ?? ""}
+                  placeholder="Payout email"
+                  className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
+                <input
+                  name="payoutWhatsappCountryCode"
+                  defaultValue=""
+                  list={PHONE_COUNTRY_CODE_DATALIST_ID}
+                  inputMode="tel"
+                  placeholder="+1"
+                  className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
+                <input
+                  name="payoutWhatsappLocal"
+                  defaultValue={splitPhoneForInput(p.payoutWhatsapp).localNumber}
+                  inputMode="numeric"
+                  placeholder="WhatsApp number"
+                  className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
+                <button
+                  formAction={confirmPayoutDetailsAction}
+                  type="submit"
+                  className="inline-flex items-center justify-center rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-emerald-800 transition hover:bg-emerald-100"
+                >
+                  Confirm payout details
+                </button>
+                <button
+                  formAction={toggleBlacklistAction}
+                  type="submit"
+                  name="nextBlacklisted"
+                  value={p.blacklist ? "false" : "true"}
+                  className="inline-flex items-center justify-center rounded-xl border border-rose-300 bg-rose-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-rose-800 transition hover:bg-rose-100"
+                >
+                  {p.blacklist ? "Remove blacklist" : "Blacklist"}
+                </button>
+              </div>
+              <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>
+                {PHONE_COUNTRY_CODES.map((code) => (
+                  <option key={code} value={code} />
+                ))}
+              </datalist>
+              <input name="payoutWhatsapp" defaultValue={p.payoutWhatsapp ?? ""} hidden readOnly />
+            </form>
           ))
         )}
       </section>
