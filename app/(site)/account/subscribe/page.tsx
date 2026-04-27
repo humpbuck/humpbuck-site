@@ -39,16 +39,12 @@ async function subscribeAction(formData: FormData) {
   await requireAccountSession();
   const email = normalizeInputEmail(formData.get("email"));
   if (!email || !isValidEmail(email)) {
-    goSubscribeWithEmail(email, "error", "Please enter a valid email.");
+    goSubscribeWithEmail(email, "");
   }
 
   const result = await addEmailToBrevoNewsletter(email);
   if (!result.ok) {
-    goSubscribeWithEmail(
-      email,
-      "error",
-      "Subscription service is temporarily unavailable. Please try again later.",
-    );
+    goSubscribeWithEmail(email, "");
   }
 
   await recordMarketingOptInFromSubscribe(email);
@@ -73,7 +69,7 @@ async function unsubscribeAction(formData: FormData) {
   await requireAccountSession();
   const email = normalizeInputEmail(formData.get("email"));
   if (!email || !isValidEmail(email)) {
-    goSubscribeWithEmail(email, "error", "Please enter a valid email.");
+    goSubscribeWithEmail(email, "");
   }
 
   await recordMarketingOptOutByEmail(email);
@@ -129,7 +125,6 @@ export default async function AccountSubscribePage({
   const session = await requireAccountSession();
   const sp = (await searchParams) ?? {};
   const status = String(sp.status ?? "").trim();
-  const error = String(sp.error ?? "").trim();
   const accountEmail = String(session.user?.email ?? "").trim().toLowerCase();
   const editableEmail = String(sp.email ?? "").trim().toLowerCase();
   const currentEmail = editableEmail || accountEmail;
@@ -179,9 +174,6 @@ export default async function AccountSubscribePage({
         ) : null}
         {status === "already" ? (
           <p className="mt-3 text-sm text-ink/80">This email is already subscribed.</p>
-        ) : null}
-        {status === "error" && error ? (
-          <p className="mt-3 text-sm text-rose-700">{error}</p>
         ) : null}
       </div>
     </div>
