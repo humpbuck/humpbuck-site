@@ -25,6 +25,13 @@ const GROWTH_MILESTONES = [
   { level: "Level 6", minOrders: 1500, rate: 15 },
 ] as const;
 
+function goStats(focus: string, ok?: string): never {
+  const qs = new URLSearchParams();
+  qs.set("focus", focus || "total");
+  if (ok) qs.set("ok", ok);
+  redirect(`${adminPath("/affiliate/stats")}?${qs.toString()}`);
+}
+
 async function updateAffiliateTierAction(formData: FormData) {
   "use server";
   await assertAdmin();
@@ -40,7 +47,7 @@ async function updateAffiliateTierAction(formData: FormData) {
     .catch(() => null);
   revalidatePath(adminPath("/affiliate"));
   revalidatePath(adminPath("/affiliate/stats"));
-  redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
+  goStats(focus, "level_saved");
 }
 
 async function updateAffiliateDetailsAction(formData: FormData) {
@@ -96,7 +103,7 @@ async function updateAffiliateDetailsAction(formData: FormData) {
   });
   revalidatePath(adminPath("/affiliate"));
   revalidatePath(adminPath("/affiliate/stats"));
-  redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
+  goStats(focus, "profile_saved");
 }
 
 async function toggleBlacklistAction(formData: FormData) {
@@ -116,13 +123,13 @@ async function toggleBlacklistAction(formData: FormData) {
   });
   revalidatePath(adminPath("/affiliate"));
   revalidatePath(adminPath("/affiliate/stats"));
-  redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
+  goStats(nextBlacklisted ? "blacklisted" : focus, "blacklist_updated");
 }
 
 export default async function AffiliateStatsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ focus?: string }>;
+  searchParams: Promise<{ focus?: string; ok?: string }>;
 }) {
   await assertAdmin();
   const sp = await searchParams;
@@ -194,6 +201,15 @@ export default async function AffiliateStatsPage({
       <AdminBackLink href={adminPath("/affiliate")} label="Affiliate" />
       <h1 className="font-serif text-3xl tracking-tight">{title}</h1>
       <p className="mt-2 text-sm text-muted">View details for this affiliate category.</p>
+      {sp.ok ? (
+        <p className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-900">
+          {sp.ok === "level_saved"
+            ? "Level saved successfully."
+            : sp.ok === "profile_saved"
+              ? "Affiliate info saved successfully."
+              : "Blacklist status updated successfully."}
+        </p>
+      ) : null}
 
       <div className="mt-4 flex flex-wrap gap-2">
         <Link
