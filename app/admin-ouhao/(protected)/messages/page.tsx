@@ -338,7 +338,7 @@ export default async function AdminMessagesPage({
           },
           affiliate: { select: { pid: true } },
         },
-        orderBy: { requestedAt: "desc" },
+        orderBy: [{ requestedAt: "desc" }, { id: "desc" }],
         take: 100,
       })
       .catch(() => []),
@@ -349,7 +349,7 @@ export default async function AdminMessagesPage({
           category: { not: ADMIN_INBOX_CATEGORY.dispute },
           ...(selectedCategory === "all" ? {} : { category: selectedCategory }),
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       take: 200,
     }).catch(() => []),
   ]);
