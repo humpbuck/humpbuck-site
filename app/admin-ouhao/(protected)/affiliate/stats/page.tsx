@@ -41,6 +41,10 @@ function extractLabeledValue(payload: string | null | undefined, label: string):
   return match?.[1]?.trim() ?? "";
 }
 
+function sanitizeWhatsappContact(value: string): string {
+  return value.replace(/^whatsapp:\s*/i, "").trim();
+}
+
 function goStats(focus: string, ok?: string): never {
   const qs = new URLSearchParams();
   qs.set("focus", focus || "total");
@@ -76,7 +80,7 @@ async function updateAffiliateDetailsAction(formData: FormData) {
   const payoutMethod = String(formData.get("payoutMethod") ?? "").trim();
   const payoutAccountRaw = String(formData.get("payoutAccount") ?? "").trim();
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
-  const payoutWhatsappContact = String(formData.get("payoutWhatsappContact") ?? "").trim();
+  const payoutWhatsappContact = sanitizeWhatsappContact(String(formData.get("payoutWhatsappContact") ?? "").trim());
   const payoutWhatsappRaw = String(formData.get("payoutWhatsapp") ?? "").trim();
   const payoutWhatsappLocal = String(formData.get("payoutWhatsappLocal") ?? "");
   const payoutWhatsappCountryInput = normalizeCountryCodeInput(
@@ -441,12 +445,13 @@ export default async function AffiliateStatsPage({
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
               </div>
-              <div className="mt-2 w-full md:max-w-[560px]">
+              <div className="mt-2 w-full md:max-w-[560px] rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus-within:ring-2">
+                <span className="font-medium text-ink/90">WhatsApp: </span>
                 <input
                   name="payoutWhatsappContact"
-                  defaultValue={extractLabeledValue(p.payoutAccount, "WhatsApp")}
-                  placeholder="WhatsApp: +86 180 2429 0526"
-                  className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                  defaultValue={sanitizeWhatsappContact(extractLabeledValue(p.payoutAccount, "WhatsApp"))}
+                  placeholder="+86 180 2429 0526"
+                  className="w-[calc(100%-88px)] border-0 bg-transparent p-0 text-sm text-ink outline-none"
                 />
               </div>
               <div className="mt-2 flex flex-wrap justify-end gap-2">

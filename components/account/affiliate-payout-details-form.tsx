@@ -55,6 +55,10 @@ function buildEmailPayoutAccount(input: { accountEmail: string; recipientName: s
   return rows.join("\n").trim();
 }
 
+function sanitizeWhatsappContact(value: string): string {
+  return value.replace(/^whatsapp:\s*/i, "").trim();
+}
+
 export function AffiliatePayoutDetailsForm({
   action,
   defaultPayoutMethod,
@@ -92,7 +96,7 @@ export function AffiliatePayoutDetailsForm({
   const [payoutWhatsappCountryCode, setPayoutWhatsappCountryCode] = useState("");
   const [payoutWhatsappLocal, setPayoutWhatsappLocal] = useState(defaultWhatsapp.localNumber);
   const [payoutWhatsappContact, setPayoutWhatsappContact] = useState(
-    parseLabeledValue(defaultPayoutAccount, "WhatsApp"),
+    sanitizeWhatsappContact(parseLabeledValue(defaultPayoutAccount, "WhatsApp")),
   );
 
   const payoutAccount = useMemo(() => {
@@ -101,7 +105,7 @@ export function AffiliatePayoutDetailsForm({
         accountEmail: directAccount,
         recipientName,
       });
-      return [base, payoutWhatsappContact.trim() ? `WhatsApp: ${payoutWhatsappContact.trim()}` : ""]
+      return [base, payoutWhatsappContact.trim() ? `WhatsApp: ${sanitizeWhatsappContact(payoutWhatsappContact)}` : ""]
         .filter(Boolean)
         .join("\n");
     }
@@ -109,7 +113,7 @@ export function AffiliatePayoutDetailsForm({
       const rows = [
         `Alipay account: ${directAccount.trim()}`,
         `Real name: ${realName.trim()}`,
-        payoutWhatsappContact.trim() ? `WhatsApp: ${payoutWhatsappContact.trim()}` : "",
+        payoutWhatsappContact.trim() ? `WhatsApp: ${sanitizeWhatsappContact(payoutWhatsappContact)}` : "",
       ].filter((row) => !row.endsWith(":"));
       return rows.join("\n").trim();
     }
@@ -123,11 +127,11 @@ export function AffiliatePayoutDetailsForm({
         branch,
         bankAddress,
       });
-      return [base, payoutWhatsappContact.trim() ? `WhatsApp: ${payoutWhatsappContact.trim()}` : ""]
+      return [base, payoutWhatsappContact.trim() ? `WhatsApp: ${sanitizeWhatsappContact(payoutWhatsappContact)}` : ""]
         .filter(Boolean)
         .join("\n");
     }
-    return [directAccount.trim(), payoutWhatsappContact.trim() ? `WhatsApp: ${payoutWhatsappContact.trim()}` : ""]
+    return [directAccount.trim(), payoutWhatsappContact.trim() ? `WhatsApp: ${sanitizeWhatsappContact(payoutWhatsappContact)}` : ""]
       .filter(Boolean)
       .join("\n");
   }, [
@@ -340,12 +344,15 @@ export function AffiliatePayoutDetailsForm({
           className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
       </div>
-      <input
-        value={payoutWhatsappContact}
-        onChange={(e) => setPayoutWhatsappContact(e.target.value)}
-        placeholder="WhatsApp (optional)"
-        className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2 md:col-span-2"
-      />
+      <div className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus-within:ring-2 md:col-span-2">
+        <span className="font-medium text-ink/90">WhatsApp: </span>
+        <input
+          value={payoutWhatsappContact}
+          onChange={(e) => setPayoutWhatsappContact(sanitizeWhatsappContact(e.target.value))}
+          placeholder="+86 180 2429 0526"
+          className="w-[calc(100%-88px)] border-0 bg-transparent p-0 text-sm text-ink outline-none"
+        />
+      </div>
       <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>
         {PHONE_COUNTRY_CODES.map((code) => (
           <option key={code} value={code} />
