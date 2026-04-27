@@ -1,10 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CenterModal } from "@/components/ui/center-modal";
 
 export function AffiliateCouponRequestedModal({ show }: { show: boolean }) {
   const [open, setOpen] = useState(show);
+
+  useEffect(() => {
+    if (!show) return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("ok") !== "coupon_requested") return;
+    url.searchParams.delete("ok");
+    const next = `${url.pathname}${url.searchParams.toString() ? `?${url.searchParams.toString()}` : ""}${url.hash}`;
+    window.history.replaceState(window.history.state, "", next);
+  }, [show]);
+
   if (!open) return null;
   return (
     <CenterModal title="Coupon request submitted" onClose={() => setOpen(false)}>

@@ -42,6 +42,12 @@ export default async function AffiliateStatsPage({
       include: {
         user: true,
         tier: true,
+        coupons: {
+          where: { isActive: true },
+          orderBy: [{ createdAt: "desc" }],
+          take: 1,
+          select: { code: true },
+        },
         applications: { orderBy: { createdAt: "desc" }, take: 1 },
       },
       orderBy: { updatedAt: "desc" },
@@ -145,34 +151,46 @@ export default async function AffiliateStatsPage({
         ) : (
           list.map((p) => (
             <div key={p.id} className="rounded-2xl border border-line bg-white/60 px-4 py-3 text-sm">
-              <p className="font-medium text-ink">{p.user.displayName || p.user.name || p.user.email || p.user.id}</p>
-              <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted">
-                <span>Status: {p.status}</span>
-                <span>PID: {p.pid ?? "-"}</span>
-                <span>Current level: {p.tier?.name ?? "-"}</span>
+              <div className="grid gap-3 md:grid-cols-[1.2fr_auto_220px] md:items-center">
+                <div>
+                  <p className="font-medium text-ink">{p.user.displayName || p.user.name || p.user.email || p.user.id}</p>
+                  <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted">
+                    <span>Status: {p.status}</span>
+                    <span>PID: {p.pid ?? "-"}</span>
+                    <span>Current level: {p.tier?.name ?? "-"}</span>
+                  </div>
+                </div>
+                <form action={updateAffiliateTierAction} className="flex flex-wrap items-center justify-center gap-2">
+                  <input type="hidden" name="profileId" value={p.id} />
+                  <input type="hidden" name="focus" value={focus} />
+                  <select
+                    name="tierId"
+                    defaultValue={p.tierId ?? ""}
+                    className="rounded-lg border border-line bg-white px-2.5 py-1 text-xs text-ink outline-none ring-ink/20 focus:ring-2"
+                  >
+                    <option value="">No tier</option>
+                    {tiers.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.name} · {t.commissionType} {t.commissionValue}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="submit"
+                    className="rounded-lg bg-ink px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:bg-ink/90"
+                  >
+                    Save level
+                  </button>
+                </form>
+                <div className="rounded-lg border border-line bg-white px-3 py-2 text-xs text-ink">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
+                    Coupon code
+                  </p>
+                  <p className="mt-1 font-medium">
+                    {p.coupons[0]?.code?.trim() || "No coupon code for now."}
+                  </p>
+                </div>
               </div>
-              <form action={updateAffiliateTierAction} className="mt-2 flex flex-wrap items-center gap-2">
-                <input type="hidden" name="profileId" value={p.id} />
-                <input type="hidden" name="focus" value={focus} />
-                <select
-                  name="tierId"
-                  defaultValue={p.tierId ?? ""}
-                  className="rounded-lg border border-line bg-white px-2.5 py-1 text-xs text-ink outline-none ring-ink/20 focus:ring-2"
-                >
-                  <option value="">No tier</option>
-                  {tiers.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.name} · {t.commissionType} {t.commissionValue}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  type="submit"
-                  className="rounded-lg bg-ink px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:bg-ink/90"
-                >
-                  Save level
-                </button>
-              </form>
             </div>
           ))
         )}

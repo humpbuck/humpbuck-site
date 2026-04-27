@@ -469,7 +469,12 @@ export default async function AccountAffiliatePage({
       _sum: { commissionCents: true },
     }),
     prisma.coupon.findFirst({
-      where: { affiliate: { userId }, isActive: true },
+      where: {
+        affiliate: { userId },
+        isActive: true,
+        startsAt: { lte: now },
+        endsAt: { gte: now },
+      },
       orderBy: { createdAt: "desc" },
       select: { code: true },
     }),
@@ -535,6 +540,7 @@ export default async function AccountAffiliatePage({
     session?.user?.email?.trim() ||
     "Partner";
   const dashboardTitle = isActiveAffiliate ? "Affiliate dashboard" : "Affiliate application";
+  const showGenericOkMessage = Boolean(sp.ok && sp.ok !== "coupon_requested");
 
   const links = (() => {
     try {
@@ -581,7 +587,7 @@ export default async function AccountAffiliatePage({
           {sp.error}
         </p>
       ) : null}
-      {sp.ok ? (
+      {showGenericOkMessage ? (
         <p className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
           {sp.ok === "pending"
             ? "Application submitted. Your profile is pending manual review."
