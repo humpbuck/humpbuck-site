@@ -1095,9 +1095,6 @@ export default async function AdminAffiliatePage({
                     list={PHONE_COUNTRY_CODE_DATALIST_ID}
                     inputMode="tel"
                     placeholder="+1"
-                    onChange={(e) => {
-                      e.currentTarget.value = normalizeCountryCodeInput(e.currentTarget.value);
-                    }}
                     className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                   />
                   <input
