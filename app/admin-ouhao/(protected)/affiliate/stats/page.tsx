@@ -111,9 +111,14 @@ async function toggleBlacklistAction(formData: FormData) {
   "use server";
   await assertAdmin();
   const profileId = String(formData.get("profileId") ?? "").trim();
-  const nextBlacklisted = String(formData.get("nextBlacklisted") ?? "") === "true";
   const focus = String(formData.get("focus") ?? "total").trim();
   if (!profileId) redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
+  const current = await prisma.affiliateProfile.findUnique({
+    where: { id: profileId },
+    select: { blacklist: true, status: true },
+  });
+  const currentlyBlacklisted = Boolean(current?.blacklist || current?.status === "blacklisted");
+  const nextBlacklisted = !currentlyBlacklisted;
   await prisma.affiliateProfile.update({
     where: { id: profileId },
     data: {
