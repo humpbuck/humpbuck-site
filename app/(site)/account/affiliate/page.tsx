@@ -326,7 +326,7 @@ async function requestAffiliateCouponCodeAction() {
   }
 
   revalidatePath("/account/affiliate");
-  redirect("/account/affiliate?ok=coupon_requested");
+  redirect(`/account/affiliate?ok=coupon_requested&rid=${Date.now()}`);
 }
 
 function humanizeStatus(status: string): string {
@@ -403,6 +403,7 @@ export default async function AccountAffiliatePage({
 }: {
   searchParams: Promise<{
     ok?: string;
+    rid?: string;
     error?: string;
     editProfile?: string;
     editPayout?: string;
@@ -555,7 +556,10 @@ export default async function AccountAffiliatePage({
   return (
     <div>
       {profile ? <AffiliateLiveRefresh /> : null}
-      <AffiliateCouponRequestedModal show={sp.ok === "coupon_requested"} />
+      <AffiliateCouponRequestedModal
+        show={sp.ok === "coupon_requested"}
+        requestId={String(sp.rid ?? "")}
+      />
       <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">{dashboardTitle}</p>
       <h1 className="mt-2 font-serif text-3xl tracking-tight">
         Hi, {greetingName}!

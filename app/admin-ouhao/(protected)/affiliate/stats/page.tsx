@@ -8,6 +8,15 @@ import { prisma } from "@/lib/prisma";
 
 type Focus = "total" | "auto" | "pending" | "blacklisted";
 
+const GROWTH_MILESTONES = [
+  { level: "Level 1", minOrders: 0, rate: 5 },
+  { level: "Level 2", minOrders: 100, rate: 7 },
+  { level: "Level 3", minOrders: 300, rate: 9 },
+  { level: "Level 4", minOrders: 600, rate: 11 },
+  { level: "Level 5", minOrders: 1000, rate: 13 },
+  { level: "Level 6", minOrders: 1500, rate: 15 },
+] as const;
+
 async function updateAffiliateTierAction(formData: FormData) {
   "use server";
   await assertAdmin();
@@ -37,7 +46,7 @@ export default async function AffiliateStatsPage({
   const focus: Focus =
     focusRaw === "auto" || focusRaw === "pending" || focusRaw === "blacklisted" ? focusRaw : "total";
 
-  const [profiles, pendingApps, tiers] = await Promise.all([
+  const [profiles, pendingApps, tiers, paidOrderCounts] = await Promise.all([
     prisma.affiliateProfile.findMany({
       include: {
         user: true,
@@ -61,7 +70,16 @@ export default async function AffiliateStatsPage({
       orderBy: [{ isDefault: "desc" }, { createdAt: "asc" }],
       select: { id: true, name: true, commissionType: true, commissionValue: true },
     }),
+    prisma.affiliateCommissionLedger.groupBy({
+      by: ["affiliateId"],
+      where: {
+        status: "paid",
+        paidAt: { not: null },
+      },
+      _count: { _all: true },
+    }),
   ]);
+  const paidCountMap = new Map(paidOrderCounts.map((row) => [row.affiliateId, row._count._all]));
 
   const blacklistedProfiles = profiles.filter((p) => p.blacklist);
   const autoApprovedProfiles = profiles.filter((p) => p.applications[0]?.status === "auto_approved");
@@ -151,46 +169,72 @@ export default async function AffiliateStatsPage({
         ) : (
           list.map((p) => (
             <div key={p.id} className="rounded-2xl border border-line bg-white/60 px-4 py-3 text-sm">
-              <div className="grid gap-3 md:grid-cols-[1.2fr_auto_220px] md:items-center">
-                <div>
-                  <p className="font-medium text-ink">{p.user.displayName || p.user.name || p.user.email || p.user.id}</p>
-                  <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted">
-                    <span>Status: {p.status}</span>
-                    <span>PID: {p.pid ?? "-"}</span>
-                    <span>Current level: {p.tier?.name ?? "-"}</span>
+              {(() => {
+                const paidOrders = paidCountMap.get(p.id) ?? 0;
+                const currentGrowthTier =
+                  [...GROWTH_MILESTONES]
+                    .reverse()
+                    .find((m) => paidOrders >= m.minOrders) ?? GROWTH_MILESTONES[0];
+                const currentTierIndex = GROWTH_MILESTONES.findIndex(
+                  (m) => m.level === currentGrowthTier.level,
+                );
+                const nextGrowthTier =
+                  currentTierIndex >= 0 && currentTierIndex < GROWTH_MILESTONES.length - 1
+                    ? GROWTH_MILESTONES[currentTierIndex + 1]
+                    : null;
+                const ordersToNext = nextGrowthTier
+                  ? Math.max(0, nextGrowthTier.minOrders - paidOrders)
+                  : 0;
+                return (
+                  <div className="grid gap-3 md:grid-cols-[1.2fr_auto_220px] md:items-center">
+                    <div>
+                      <p className="font-medium text-ink">{p.user.displayName || p.user.name || p.user.email || p.user.id}</p>
+                      <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted">
+                        <span>Status: {p.status}</span>
+                        <span>PID: {p.pid ?? "-"}</span>
+                        <span>Current level: {p.tier?.name ?? "-"}</span>
+                      </div>
+                      <p className="mt-1 text-xs text-ink/80">
+                        Growth: {currentGrowthTier.level} ({currentGrowthTier.rate}%) · Valid paid orders:{" "}
+                        {paidOrders}
+                        {nextGrowthTier
+                          ? ` · Next ${nextGrowthTier.level} (${nextGrowthTier.rate}%) in ${ordersToNext} orders`
+                          : " · Highest level reached"}
+                      </p>
+                    </div>
+                    <form action={updateAffiliateTierAction} className="flex flex-wrap items-center justify-center gap-2">
+                      <input type="hidden" name="profileId" value={p.id} />
+                      <input type="hidden" name="focus" value={focus} />
+                      <select
+                        name="tierId"
+                        defaultValue={p.tierId ?? ""}
+                        className="rounded-lg border border-line bg-white px-2.5 py-1 text-xs text-ink outline-none ring-ink/20 focus:ring-2"
+                      >
+                        <option value="">No tier</option>
+                        {tiers.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            {t.name} · {t.commissionType} {t.commissionValue}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="submit"
+                        className="rounded-lg bg-ink px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:bg-ink/90"
+                      >
+                        Save level
+                      </button>
+                    </form>
+                    <div className="rounded-lg border border-line bg-white px-3 py-2 text-xs text-ink">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
+                        Coupon code
+                      </p>
+                      <p className="mt-1 font-medium">
+                        {p.coupons[0]?.code?.trim() || "No coupon code for now."}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <form action={updateAffiliateTierAction} className="flex flex-wrap items-center justify-center gap-2">
-                  <input type="hidden" name="profileId" value={p.id} />
-                  <input type="hidden" name="focus" value={focus} />
-                  <select
-                    name="tierId"
-                    defaultValue={p.tierId ?? ""}
-                    className="rounded-lg border border-line bg-white px-2.5 py-1 text-xs text-ink outline-none ring-ink/20 focus:ring-2"
-                  >
-                    <option value="">No tier</option>
-                    {tiers.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.name} · {t.commissionType} {t.commissionValue}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    type="submit"
-                    className="rounded-lg bg-ink px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:bg-ink/90"
-                  >
-                    Save level
-                  </button>
-                </form>
-                <div className="rounded-lg border border-line bg-white px-3 py-2 text-xs text-ink">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
-                    Coupon code
-                  </p>
-                  <p className="mt-1 font-medium">
-                    {p.coupons[0]?.code?.trim() || "No coupon code for now."}
-                  </p>
-                </div>
-              </div>
+                );
+              })()}
             </div>
           ))
         )}

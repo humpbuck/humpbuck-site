@@ -3,17 +3,32 @@
 import { useEffect, useState } from "react";
 import { CenterModal } from "@/components/ui/center-modal";
 
-export function AffiliateCouponRequestedModal({ show }: { show: boolean }) {
-  const [open, setOpen] = useState(show);
+export function AffiliateCouponRequestedModal({
+  show,
+  requestId,
+}: {
+  show: boolean;
+  requestId?: string;
+}) {
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (!show) return;
+    const rid = String(requestId ?? "").trim();
+    if (!rid) return;
+    const seenKey = "affiliate_coupon_request_seen_rid";
+    const lastSeenRid = window.sessionStorage.getItem(seenKey);
+    if (lastSeenRid === rid) return;
+    window.sessionStorage.setItem(seenKey, rid);
+    setOpen(true);
+
     const url = new URL(window.location.href);
     if (url.searchParams.get("ok") !== "coupon_requested") return;
     url.searchParams.delete("ok");
+    url.searchParams.delete("rid");
     const next = `${url.pathname}${url.searchParams.toString() ? `?${url.searchParams.toString()}` : ""}${url.hash}`;
     window.history.replaceState(window.history.state, "", next);
-  }, [show]);
+  }, [show, requestId]);
 
   if (!open) return null;
   return (

@@ -13,8 +13,6 @@ import {
   syncAffiliateGrowthTierByOrderCount,
 } from "@/lib/affiliate-tier-growth";
 import {
-  PHONE_COUNTRY_CODE_DATALIST_ID,
-  PHONE_COUNTRY_CODES,
   normalizeCountryCodeInput,
   normalizePhone,
   splitPhoneForInput,
@@ -557,7 +555,6 @@ export default async function AdminAffiliatePage({
   await assertAdmin();
   await ensureDefaultTierId();
   const sp = await searchParams;
-  const now = new Date();
   const selectedAffiliateId = normalizeFilterValue(sp.affiliateId);
   const selectedOrderStatus = normalizeFilterValue(sp.orderStatus);
   const selectedSettlement = normalizeFilterValue(sp.settle) || "eligible";
@@ -575,16 +572,6 @@ export default async function AdminAffiliatePage({
         include: {
           user: true,
           tier: true,
-          coupons: {
-            where: {
-              isActive: true,
-              startsAt: { lte: now },
-              endsAt: { gte: now },
-            },
-            orderBy: [{ createdAt: "desc" }],
-            take: 1,
-            select: { code: true },
-          },
           applications: { orderBy: { createdAt: "desc" }, take: 1 },
         },
         orderBy: { updatedAt: "desc" },
@@ -641,7 +628,6 @@ export default async function AdminAffiliatePage({
       }).catch(() => []),
     ]);
 
-  const activeProfiles = profiles.filter((p) => !p.blacklist);
   const blacklistedProfiles = profiles.filter((p) => p.blacklist);
   const growthTierList = [...tiers]
     .filter((t) => t.commissionType === "percent")
@@ -1149,145 +1135,6 @@ export default async function AdminAffiliatePage({
                 </div>
               );
             })
-          )}
-        </div>
-      </section>
-
-      <section className="mt-8">
-        <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Active affiliates
-        </h2>
-        <div className="mt-3 space-y-3">
-          {activeProfiles.length === 0 ? (
-            <p className="rounded-2xl border border-line bg-white/60 px-5 py-4 text-sm text-muted">
-              No active affiliates yet.
-            </p>
-          ) : (
-            activeProfiles.map((p) => (
-              <form
-                key={p.id}
-                action={updateProfileAction}
-                className="space-y-3 rounded-2xl border border-line bg-white/60 p-4"
-              >
-                <input type="hidden" name="profileId" value={p.id} />
-                <div className="grid gap-3 lg:grid-cols-[1.2fr_auto_220px] lg:items-center">
-                  <div>
-                    <p className="text-sm font-medium text-ink">
-                      {p.user.displayName || p.user.name || p.user.email || p.user.id}
-                    </p>
-                    <p className="mt-1 text-xs text-muted">
-                      Status: {p.status} · Risk flag: {p.riskFlag ? "Yes" : "No"} · PID:{" "}
-                      {p.pid ?? "-"}
-                    </p>
-                    <p className="mt-1 text-xs text-muted">
-                      Payout verification:{" "}
-                      {p.payoutVerifiedAt
-                        ? `Confirmed (${p.payoutVerifiedAt.toLocaleDateString()})`
-                        : "Pending admin confirmation"}
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <select
-                      name="tierId"
-                      defaultValue={p.tierId ?? ""}
-                      className="rounded-xl border border-line bg-paper px-3 py-2 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-                    >
-                      <option value="">No tier</option>
-                      {tiers.map((t) => (
-                        <option key={t.id} value={t.id}>
-                          {t.name} · {t.commissionType} {t.commissionValue}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      type="submit"
-                      className="inline-flex items-center justify-center rounded-xl bg-ink px-3 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
-                    >
-                      Save
-                    </button>
-                  </div>
-                  <div className="rounded-lg border border-line bg-white px-3 py-2 text-xs text-ink">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
-                      Coupon code
-                    </p>
-                    <p className="mt-1 font-medium">
-                      {p.coupons[0]?.code?.trim() || "No coupon code for now."}
-                    </p>
-                  </div>
-                </div>
-                <div className="grid gap-2 md:grid-cols-4">
-                  <label className="inline-flex items-center justify-between gap-2 rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink">
-                    <span>Whitelist</span>
-                    <input name="whitelist" type="checkbox" defaultChecked={p.whitelist} className="h-4 w-4" />
-                  </label>
-                  <input
-                    name="notes"
-                    defaultValue={p.notes ?? ""}
-                    placeholder="Internal notes"
-                    className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-                  />
-                  <input
-                    name="payoutMethod"
-                    defaultValue={p.payoutMethod ?? ""}
-                    placeholder="Payout method (paypal/bank/wise...)"
-                    className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-                  />
-                  <input
-                    name="payoutAccount"
-                    defaultValue={p.payoutAccount ?? ""}
-                    placeholder="Payout account"
-                    className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-                  />
-                </div>
-                <div className="grid gap-2 md:grid-cols-[1fr_120px_1fr_auto]">
-                  <input
-                    name="payoutEmail"
-                    defaultValue={p.payoutEmail ?? ""}
-                    placeholder="Payout email"
-                    className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-                  />
-                  <input
-                    name="payoutWhatsappCountryCode"
-                    defaultValue=""
-                    list={PHONE_COUNTRY_CODE_DATALIST_ID}
-                    inputMode="tel"
-                    placeholder="+1"
-                    className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-                  />
-                  <input
-                    name="payoutWhatsappLocal"
-                    defaultValue={splitPhoneForInput(p.payoutWhatsapp).localNumber}
-                    inputMode="numeric"
-                    placeholder="WhatsApp number"
-                    className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-                  />
-                  <button
-                    formAction={confirmPayoutDetailsAction}
-                    type="submit"
-                    className="inline-flex items-center justify-center rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-emerald-800 transition hover:bg-emerald-100"
-                  >
-                    Confirm payout details
-                  </button>
-                </div>
-                <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>
-                  {PHONE_COUNTRY_CODES.map((code) => (
-                    <option key={code} value={code} />
-                  ))}
-                </datalist>
-                <input name="payoutWhatsapp" defaultValue={p.payoutWhatsapp ?? ""} hidden readOnly />
-                <div className="flex justify-end gap-2">
-                  <button
-                    formAction={toggleBlacklistAction}
-                    type="submit"
-                    name="nextBlacklisted"
-                    value="true"
-                    className="inline-flex items-center justify-center rounded-xl border border-rose-300 bg-rose-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-rose-800 transition hover:bg-rose-100"
-                  >
-                    Blacklist
-                  </button>
-                </div>
-              </form>
-            ))
           )}
         </div>
       </section>
