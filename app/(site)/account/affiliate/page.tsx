@@ -393,6 +393,15 @@ function extractLabeledValue(payload: string | null | undefined, label: string):
   return match?.[1]?.trim() ?? "";
 }
 
+function removeLabeledLine(payload: string | null | undefined, label: string): string {
+  const raw = String(payload ?? "");
+  return raw
+    .split(/\r?\n/)
+    .filter((line) => !new RegExp(`^${label}:`, "i").test(line.trim()))
+    .join("\n")
+    .trim();
+}
+
 function usd(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
 }
@@ -808,7 +817,7 @@ export default async function AccountAffiliatePage({
               <p className="mt-1">
                 Account:{" "}
                 <span className="whitespace-pre-line font-medium">
-                  {maskPayoutAccountForDisplay(profile.payoutAccount ?? "")}
+                  {maskPayoutAccountForDisplay(removeLabeledLine(profile.payoutAccount, "WhatsApp"))}
                 </span>
               </p>
               <p className="mt-1">Email: <span className="font-medium">{profile.payoutEmail || "-"}</span></p>
