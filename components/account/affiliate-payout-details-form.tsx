@@ -87,7 +87,7 @@ export function AffiliatePayoutDetailsForm({
       ? "international"
       : "domestic",
   );
-  const [payoutWhatsappCountryCode, setPayoutWhatsappCountryCode] = useState(defaultWhatsapp.countryCode);
+  const [payoutWhatsappCountryCode, setPayoutWhatsappCountryCode] = useState("");
   const [payoutWhatsappLocal, setPayoutWhatsappLocal] = useState(defaultWhatsapp.localNumber);
 
   const payoutAccount = useMemo(() => {
@@ -129,8 +129,8 @@ export function AffiliatePayoutDetailsForm({
     swiftCode,
   ]);
   const normalizedPayoutWhatsapp = useMemo(
-    () => normalizePhone(payoutWhatsappCountryCode || "+1", payoutWhatsappLocal),
-    [payoutWhatsappCountryCode, payoutWhatsappLocal],
+    () => normalizePhone(payoutWhatsappCountryCode || defaultWhatsapp.countryCode || "+1", payoutWhatsappLocal),
+    [defaultWhatsapp.countryCode, payoutWhatsappCountryCode, payoutWhatsappLocal],
   );
 
   const isBank = payoutMethod === "bank";

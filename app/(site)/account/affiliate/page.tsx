@@ -66,9 +66,9 @@ async function submitAffiliateApplicationAction(formData: FormData) {
     String(formData.get("followerCount") ?? ""),
   );
   const contactEmail = String(formData.get("contactEmail") ?? "").trim();
-  const contactWhatsapp = normalizePhone(
-    normalizeCountryCodeInput(String(formData.get("contactWhatsappCountryCode") ?? "")) || "+1",
-    String(formData.get("contactWhatsappLocal") ?? ""),
+  const contactWhatsappLocal = String(formData.get("contactWhatsappLocal") ?? "");
+  const contactWhatsappCountryInput = normalizeCountryCodeInput(
+    String(formData.get("contactWhatsappCountryCode") ?? ""),
   );
   const about = String(formData.get("about") ?? "").trim();
 
@@ -96,6 +96,11 @@ async function submitAffiliateApplicationAction(formData: FormData) {
     isBlacklisted: Boolean(existingProfile?.blacklist),
   });
   const defaultTierId = await ensureDefaultTierId();
+  const existingWhatsappCountryCode = splitPhoneForInput(existingProfile?.payoutWhatsapp).countryCode;
+  const contactWhatsapp = normalizePhone(
+    contactWhatsappCountryInput || existingWhatsappCountryCode || "+1",
+    contactWhatsappLocal,
+  );
   const payoutEmail = contactEmail || existingProfile?.payoutEmail || null;
   const payoutWhatsapp = contactWhatsapp || existingProfile?.payoutWhatsapp || null;
   const paymentInfoPending = !(payoutEmail || payoutWhatsapp);
@@ -187,10 +192,10 @@ async function updatePayoutDetailsAction(formData: FormData) {
   const payoutAccount = String(formData.get("payoutAccount") ?? "").trim();
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
   const payoutWhatsappRaw = String(formData.get("payoutWhatsapp") ?? "").trim();
-  const payoutWhatsapp = normalizePhone(
-    normalizeCountryCodeInput(String(formData.get("payoutWhatsappCountryCode") ?? "")) || "+1",
-    String(formData.get("payoutWhatsappLocal") ?? ""),
-  ) || payoutWhatsappRaw;
+  const payoutWhatsappLocal = String(formData.get("payoutWhatsappLocal") ?? "");
+  const payoutWhatsappCountryInput = normalizeCountryCodeInput(
+    String(formData.get("payoutWhatsappCountryCode") ?? ""),
+  );
   const payoutRealName = String(formData.get("payoutRealName") ?? "").trim();
   const payoutBankTransferScope = String(formData.get("payoutBankTransferScope") ?? "").trim();
   if (payoutMethod && payoutMethod !== "other" && !payoutAccount) {
@@ -210,16 +215,20 @@ async function updatePayoutDetailsAction(formData: FormData) {
       goAffiliate("Please provide bank address for international bank transfer.");
     }
   }
-  if (payoutMethod === "other" && !(payoutEmail || payoutWhatsapp)) {
-    goAffiliate("Please provide email or WhatsApp so we can confirm your payout method.");
-  }
-
   const profile = await prisma.affiliateProfile.findUnique({
     where: { userId },
-    select: { id: true },
+    select: { id: true, payoutWhatsapp: true },
   });
   if (!profile) {
     goAffiliate("Please submit affiliate application first.");
+  }
+  const existingWhatsappCountryCode = splitPhoneForInput(profile.payoutWhatsapp).countryCode;
+  const payoutWhatsapp = normalizePhone(
+    payoutWhatsappCountryInput || existingWhatsappCountryCode || "+1",
+    payoutWhatsappLocal,
+  ) || payoutWhatsappRaw;
+  if (payoutMethod === "other" && !(payoutEmail || payoutWhatsapp)) {
+    goAffiliate("Please provide email or WhatsApp so we can confirm your payout method.");
   }
 
   await prisma.affiliateProfile.update({
@@ -758,7 +767,7 @@ export default async function AccountAffiliatePage({
             <div className="mt-1 grid grid-cols-[120px_1fr] gap-2">
               <input
                 name="contactWhatsappCountryCode"
-                defaultValue={contactWhatsappInput.countryCode}
+                defaultValue=""
                 list={PHONE_COUNTRY_CODE_DATALIST_ID}
                 inputMode="tel"
                 placeholder="+1"

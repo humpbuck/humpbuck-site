@@ -172,10 +172,10 @@ async function updateProfileAction(formData: FormData) {
   const payoutAccount = String(formData.get("payoutAccount") ?? "").trim();
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
   const payoutWhatsappRaw = String(formData.get("payoutWhatsapp") ?? "").trim();
-  const payoutWhatsapp = normalizePhone(
-    normalizeCountryCodeInput(String(formData.get("payoutWhatsappCountryCode") ?? "")) || "+1",
-    String(formData.get("payoutWhatsappLocal") ?? ""),
-  ) || payoutWhatsappRaw;
+  const payoutWhatsappLocal = String(formData.get("payoutWhatsappLocal") ?? "");
+  const payoutWhatsappCountryInput = normalizeCountryCodeInput(
+    String(formData.get("payoutWhatsappCountryCode") ?? ""),
+  );
   if (!profileId) goAffiliate("Missing affiliate profile id.");
   const existing = await prisma.affiliateProfile.findUnique({
     where: { id: profileId },
@@ -186,6 +186,11 @@ async function updateProfileAction(formData: FormData) {
       payoutWhatsapp: true,
     },
   });
+  const existingWhatsappCountryCode = splitPhoneForInput(existing?.payoutWhatsapp).countryCode;
+  const payoutWhatsapp = normalizePhone(
+    payoutWhatsappCountryInput || existingWhatsappCountryCode || "+1",
+    payoutWhatsappLocal,
+  ) || payoutWhatsappRaw;
   const payoutChanged =
     (existing?.payoutMethod ?? "") !== payoutMethod ||
     (existing?.payoutAccount ?? "") !== payoutAccount ||
@@ -1009,7 +1014,7 @@ export default async function AdminAffiliatePage({
                 <div className="grid grid-cols-[120px_1fr] gap-2">
                   <input
                     name="payoutWhatsappCountryCode"
-                    defaultValue={splitPhoneForInput(p.payoutWhatsapp).countryCode}
+                    defaultValue=""
                     list={PHONE_COUNTRY_CODE_DATALIST_ID}
                     inputMode="tel"
                     placeholder="+1"
