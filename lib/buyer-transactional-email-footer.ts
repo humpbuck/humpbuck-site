@@ -122,8 +122,23 @@ export async function buildBuyerTransactionalEmailEngagementBlocks(opts: {
   const footerRow = `<tr><td style="padding:16px 24px 24px 24px;border-top:1px solid #ece9e4;">
         <p style="margin:0;font-size:11px;line-height:1.55;color:#a8a49e;text-align:center;">
           ${escapeHtml(opts.footerContextLine)}
-          ${!marketingOut ? `<br/><a href="${escapeHtml(unsubUrl)}" style="color:${opts.muted};">Unsubscribe from promotional &amp; newsletter emails</a>` : ""}
+          ${
+            !marketingOut
+              ? `<br/><span style="color:${opts.muted};">If this subscription is not relevant for you, you can unsubscribe anytime.</span>`
+              : ""
+          }
         </p>
+        ${
+          !marketingOut
+            ? `<table cellspacing="0" cellpadding="0" align="center" style="margin-top:10px;"><tr>
+          <td align="center" bgcolor="#f5f4f1" style="border-radius:999px;border:1px solid #d9d6d0;background-color:#f5f4f1;padding:8px 16px;mso-padding-alt:8px 16px;">
+            <a href="${escapeHtml(unsubUrl)}" style="display:inline-block;color:${opts.ink} !important;font-size:12px;font-weight:600;text-decoration:none;line-height:1.3;">
+              <span style="color:${opts.ink} !important;text-decoration:none;">Unsubscribe</span>
+            </a>
+          </td>
+        </tr></table>`
+            : ""
+        }
       </td></tr>`;
 
   const textParts: string[] = [
@@ -144,7 +159,11 @@ export async function buildBuyerTransactionalEmailEngagementBlocks(opts: {
           : `Next-order code: ${coupon}`,
       );
     }
-    textParts.push("", `Unsubscribe from promotional emails: ${unsubUrl}`);
+    textParts.push(
+      "",
+      "If this subscription is not relevant for you, you can unsubscribe anytime:",
+      `Unsubscribe: ${unsubUrl}`,
+    );
   } else {
     textParts.push(
       "",

@@ -1,0 +1,227 @@
+import { PrismaClient } from "@prisma/client";
+import { loadEnvConfig } from "@next/env";
+
+loadEnvConfig(process.cwd());
+
+const prisma = new PrismaClient();
+
+async function main() {
+  const now = Date.now();
+  const demoEmails = [
+    "james.chen.demo@humpbuck-check.local",
+    "sarah.miller.demo@humpbuck-check.local",
+    "refund.alert.demo@humpbuck-check.local",
+    "alex.rivera.demo@humpbuck-check.local",
+    "elena.design.demo@humpbuck-check.local",
+    "affiliate.extra.demo@humpbuck-check.local",
+    "lisa.v.demo@humpbuck-check.local",
+    "dwu88.demo@humpbuck-check.local",
+    "mark.s.demo@humpbuck-check.local",
+    "mockup.a.demo@humpbuck-check.local",
+    "mockup.b.demo@humpbuck-check.local",
+    "mockup.c.demo@humpbuck-check.local",
+  ];
+
+  // Clean up previous demo rows first.
+  await prisma.adminInboxMessage.deleteMany({
+    where: {
+      sourceEmail: { in: demoEmails },
+    },
+  });
+
+  const sampleImage = "https://www.humpbuck.com/icon.png";
+
+  await prisma.adminInboxMessage.createMany({
+    data: [
+      // ORDERS
+      {
+        category: "order",
+        status: "pending",
+        sourceEmail: "james.chen.demo@humpbuck-check.local",
+        payloadJson: JSON.stringify({
+          email: "james.chen.demo@humpbuck-check.local",
+          eventType: "paid",
+          orderId: "1024",
+          itemName: "DIGI-TEMP 2301",
+          itemVariant: "Black Dial / Steel Strap",
+          itemQty: "1",
+          itemImage: sampleImage,
+          note: "New Order #1024 | Received from James Chen, total $299.00.",
+        }),
+      },
+      {
+        category: "order",
+        status: "pending",
+        sourceEmail: "sarah.miller.demo@humpbuck-check.local",
+        payloadJson: JSON.stringify({
+          email: "sarah.miller.demo@humpbuck-check.local",
+          eventType: "cancelled",
+          orderId: "1021",
+          itemName: "RM-TONNEAU Classic",
+          itemVariant: "Silver Case / Brown Strap",
+          itemQty: "1",
+          itemImage: sampleImage,
+          note: "Order Cancelled #1021 | Customer cancelled before shipment.",
+        }),
+      },
+      {
+        category: "order",
+        status: "pending",
+        sourceEmail: "refund.alert.demo@humpbuck-check.local",
+        payloadJson: JSON.stringify({
+          email: "refund.alert.demo@humpbuck-check.local",
+          eventType: "refund_dispute",
+          orderId: "1099",
+          itemName: "DIGI-TEMP GMT",
+          itemVariant: "Blue Dial",
+          itemQty: "1",
+          itemImage: sampleImage,
+          note: "Refund/Dispute Alert | Customer filed payment dispute.",
+        }),
+      },
+      // AFFILIATES
+      {
+        category: "affiliates",
+        status: "pending",
+        sourceEmail: "alex.rivera.demo@humpbuck-check.local",
+        payloadJson: JSON.stringify({
+          email: "alex.rivera.demo@humpbuck-check.local",
+          name: "Alex Rivera",
+          eventType: "affiliate_approved",
+          message:
+            "Affiliate Approved | Alex Rivera joined successfully. Welcome email sent.",
+        }),
+      },
+      {
+        category: "affiliates",
+        status: "pending",
+        sourceEmail: "elena.design.demo@humpbuck-check.local",
+        payloadJson: JSON.stringify({
+          email: "elena.design.demo@humpbuck-check.local",
+          name: "Elena Design",
+          eventType: "coupon_request",
+          message: "Coupon Request | Elena Design requested an exclusive coupon code.",
+        }),
+      },
+      {
+        category: "affiliates",
+        status: "pending",
+        sourceEmail: "affiliate.extra.demo@humpbuck-check.local",
+        payloadJson: JSON.stringify({
+          email: "affiliate.extra.demo@humpbuck-check.local",
+          name: "Nova Partner",
+          eventType: "profile_update",
+          message: "Affiliate profile updated and pending admin review.",
+        }),
+      },
+      // SUBSCRIBE
+      {
+        category: "subscribe",
+        status: "pending",
+        sourceEmail: "lisa.v.demo@humpbuck-check.local",
+        payloadJson: JSON.stringify({
+          email: "lisa.v.demo@humpbuck-check.local",
+          eventType: "new_subscriber",
+          message:
+            "New Subscriber | lisa.v@gmail.com subscribed. Synced to Brevo (General List).",
+        }),
+      },
+      {
+        category: "subscribe",
+        status: "pending",
+        sourceEmail: "dwu88.demo@humpbuck-check.local",
+        payloadJson: JSON.stringify({
+          email: "dwu88.demo@humpbuck-check.local",
+          name: "David Wu",
+          eventType: "registered_subscriber",
+          message:
+            "Subscriber (Registered) | David Wu (dwu88@me.com) enabled subscription preference.",
+        }),
+      },
+      {
+        category: "subscribe",
+        status: "pending",
+        sourceEmail: "mark.s.demo@humpbuck-check.local",
+        payloadJson: JSON.stringify({
+          email: "mark.s.demo@humpbuck-check.local",
+          eventType: "unsubscribed",
+          message:
+            "Unsubscribed | mark.s@outlook.com left subscription list; sending is stopped.",
+        }),
+      },
+      // EMAIL MOCKUP REQUEST
+      {
+        category: "email_mockup_request",
+        status: "pending",
+        sourceEmail: "mockup.a.demo@humpbuck-check.local",
+        payloadJson: JSON.stringify({
+          email: "mockup.a.demo@humpbuck-check.local",
+          company: "Aster Retail",
+          targetRegion: "US",
+          estimatedQty: "800",
+          notes: "Need logo on dial and buckle. Deadline 3 weeks.",
+          message: "Email mockup request submitted by Aster Retail.",
+        }),
+      },
+      {
+        category: "email_mockup_request",
+        status: "pending",
+        sourceEmail: "mockup.b.demo@humpbuck-check.local",
+        payloadJson: JSON.stringify({
+          email: "mockup.b.demo@humpbuck-check.local",
+          company: "Northbay Studio",
+          targetRegion: "EU",
+          estimatedQty: "1200",
+          notes: "Prefer silver case, dark green strap, gift box branding.",
+          message: "Email mockup request submitted by Northbay Studio.",
+        }),
+      },
+      {
+        category: "email_mockup_request",
+        status: "pending",
+        sourceEmail: "mockup.c.demo@humpbuck-check.local",
+        payloadJson: JSON.stringify({
+          email: "mockup.c.demo@humpbuck-check.local",
+          company: "Delta Source",
+          targetRegion: "SEA",
+          estimatedQty: "500",
+          notes: "Need fast sampling and custom sleeve card.",
+          message: "Email mockup request submitted by Delta Source.",
+        }),
+      },
+    ],
+  });
+
+  // Also add coupon-request style affiliate rows for existing UI card/count.
+  const users = await prisma.user.findMany({
+    where: { email: { not: null } },
+    select: { id: true },
+    take: 3,
+  });
+  if (users.length > 0) {
+    await prisma.affiliateCouponRequest.createMany({
+      data: users.map((u, idx) => ({
+        userId: u.id,
+        status: "pending",
+        requestedAt: new Date(Date.now() - idx * 60_000),
+      })),
+      skipDuplicates: true,
+    });
+  }
+
+  const summary = await prisma.adminInboxMessage.groupBy({
+    by: ["category"],
+    where: { status: "pending" },
+    _count: { _all: true },
+  });
+  console.log("Seeded pending messages by category:", summary);
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exitCode = 1;
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
