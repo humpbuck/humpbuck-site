@@ -392,3 +392,17 @@ model AffiliateCouponRequest {
   @@index([status, requestedAt])
   @@index([userId, requestedAt])
 }
+
+model AdminInboxMessage {
+  id          String   @id @default(cuid())
+  category    String
+  status      String   @default("pending")
+  sourceEmail String?
+  payloadJson String   @default("{}")
+  createdAt   DateTime @default(now())
+  handledAt   DateTime?
+  updatedAt   DateTime @updatedAt
+
+  @@index([category, status, createdAt])
+  @@index([status, createdAt])
+}

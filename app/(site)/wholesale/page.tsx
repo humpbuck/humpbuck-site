@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Mail, MessageCircle, Package, PenTool, Truck } from "lucide-react";
+import { WholesaleBriefForm } from "@/components/site/WholesaleBriefForm";
 import { publicSupportEmail } from "@/lib/support-contact";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 
@@ -21,9 +22,6 @@ const steps = [
 
 export default function WholesalePage() {
   const supportMail = publicSupportEmail();
-  const mailtoMockupHref = `mailto:${supportMail}?subject=${encodeURIComponent(
-    "HUMPBUCK wholesale — mockup request",
-  )}`;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
@@ -105,38 +103,9 @@ export default function WholesalePage() {
               Email works—but WhatsApp is fastest for photos, references, and
               quick iterations.
             </p>
-            <form className="mt-6 grid gap-3 sm:grid-cols-2">
-              <label className="sm:col-span-2">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-                  Company / project name
-                </span>
-                <input className="mt-2 w-full rounded-2xl border border-stone-400/30 bg-paper px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-muted/90 focus:border-digital-dim/45 focus:ring-2 focus:ring-digital/15" />
-              </label>
-              <label>
-                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-                  Target region
-                </span>
-                <input className="mt-2 w-full rounded-2xl border border-stone-400/30 bg-paper px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-muted/90 focus:border-digital-dim/45 focus:ring-2 focus:ring-digital/15" />
-              </label>
-              <label>
-                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-                  Estimated qty
-                </span>
-                <input className="mt-2 w-full rounded-2xl border border-stone-400/30 bg-paper px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-muted/90 focus:border-digital-dim/45 focus:ring-2 focus:ring-digital/15" />
-              </label>
-              <label className="sm:col-span-2">
-                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-                  Notes
-                </span>
-                <textarea
-                  rows={4}
-                  className="mt-2 w-full rounded-2xl border border-stone-400/30 bg-paper px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-muted/90 focus:border-digital-dim/45 focus:ring-2 focus:ring-digital/15"
-                  placeholder="Materials, references, deadline…"
-                />
-              </label>
-            </form>
+            <WholesaleBriefForm />
             <p className="mt-4 text-xs text-muted">
-              Demo form—wire to your CRM or email endpoint before launch.
+              Mockup request submissions are sent to support for manual follow-up.
             </p>
           </div>
           <div className="flex flex-col gap-3">
@@ -149,14 +118,15 @@ export default function WholesalePage() {
               <MessageCircle size={18} />
               WhatsApp
             </a>
-            <a
-              href={mailtoMockupHref}
+            <button
+              type="submit"
+              form="wholesale-brief-form"
               className="inline-flex items-center justify-center gap-2 rounded-2xl border border-stone-400/35 bg-paper px-6 py-4 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink/90 shadow-sm transition hover:border-ink/20 hover:bg-stone-100/90"
-              aria-label={`Email ${supportMail} for a wholesale mockup request`}
+              aria-label={`Submit wholesale mockup request to ${supportMail}`}
             >
               <Mail size={18} />
               Email mockup request
-            </a>
+            </button>
             <Link
               href="/shop"
               className="text-center text-[12px] text-muted underline-offset-4 hover:text-ink hover:underline"

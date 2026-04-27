@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { createAdminInboxMessage, ADMIN_INBOX_CATEGORY } from "@/lib/admin-inbox";
 import { addEmailToBrevoNewsletter } from "@/lib/brevo-subscribe-contact";
+import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { recordMarketingOptInFromSubscribe } from "@/lib/email-marketing-preference";
 
 export async function POST(req: Request) {
@@ -36,6 +38,29 @@ export async function POST(req: Request) {
   } catch {
     // Local preference is best-effort; Brevo subscription already succeeded.
   }
+
+  const notifyTo = process.env.MERCHANT_NOTIFY_EMAIL?.trim() || "humpbuck@outlook.com";
+  await createAdminInboxMessage({
+    category: ADMIN_INBOX_CATEGORY.subscribe,
+    sourceEmail: email,
+    payload: {
+      email,
+      createdAt: new Date().toISOString(),
+    },
+  });
+  await sendTransactionalEmail({
+    to: notifyTo,
+    subject: "New subscribe request",
+    htmlContent: `
+      <p>Hello,</p>
+      <p>A new newsletter subscribe request was received.</p>
+      <ul>
+        <li><strong>Email:</strong> ${email}</li>
+        <li><strong>Time:</strong> ${new Date().toISOString()}</li>
+      </ul>
+    `,
+    textContent: `New subscribe request\nEmail: ${email}\nTime: ${new Date().toISOString()}`,
+  });
 
   return NextResponse.json({
     ok: true,
