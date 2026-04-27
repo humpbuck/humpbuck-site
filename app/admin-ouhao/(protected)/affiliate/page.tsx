@@ -933,6 +933,10 @@ export default async function AdminAffiliatePage({
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Create tier
         </h2>
+        <p className="mt-2 text-sm text-muted">
+          Current growth settings (paid commission orders): 0-99: 5% · 100+: 7% · 300+: 9% · 600+: 11% ·
+          1000+: 13% · 1500+: 15%
+        </p>
         <form action={createTierAction} className="mt-4 grid gap-3 md:grid-cols-4">
           <input
             name="name"
