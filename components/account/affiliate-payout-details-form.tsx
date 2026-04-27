@@ -59,6 +59,14 @@ function sanitizeWhatsappContact(value: string): string {
   return value.replace(/^whatsapp:\s*/i, "").trim();
 }
 
+function removeLabeledLine(payload: string, label: string): string {
+  return payload
+    .split(/\r?\n/)
+    .filter((line) => !new RegExp(`^${label}:`, "i").test(line.trim()))
+    .join("\n")
+    .trim();
+}
+
 export function AffiliatePayoutDetailsForm({
   action,
   defaultPayoutMethod,
@@ -70,7 +78,7 @@ export function AffiliatePayoutDetailsForm({
 }: Props) {
   const defaultWhatsapp = splitPhoneForInput(defaultPayoutWhatsapp);
   const [payoutMethod, setPayoutMethod] = useState(defaultPayoutMethod);
-  const [directAccount, setDirectAccount] = useState(defaultPayoutAccount);
+  const [directAccount, setDirectAccount] = useState(removeLabeledLine(defaultPayoutAccount, "WhatsApp"));
   const [realName, setRealName] = useState(parseLabeledValue(defaultPayoutAccount, "Real name"));
   const [recipientName, setRecipientName] = useState(
     parseLabeledValue(defaultPayoutAccount, "Recipient name"),
