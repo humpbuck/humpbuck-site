@@ -33,8 +33,21 @@ export function splitPhoneForInput(phone: string | null | undefined): {
   const raw = (phone ?? "").trim();
   if (!raw) return { countryCode: "", localNumber: "" };
   const compact = raw.replace(/\s+/g, "");
-  const match = compact.match(/^(\+\d{1,4})(\d+)$/);
-  if (match) return { countryCode: match[1], localNumber: match[2] };
+  if (compact.startsWith("+")) {
+    const digitsOnly = compact.slice(1).replace(/[^\d]/g, "");
+    const matchedCode = PHONE_COUNTRY_CODES
+      .map((c) => c.slice(1))
+      .sort((a, b) => b.length - a.length)
+      .find((codeDigits) => digitsOnly.startsWith(codeDigits) && digitsOnly.length > codeDigits.length);
+    if (matchedCode) {
+      return {
+        countryCode: `+${matchedCode}`,
+        localNumber: digitsOnly.slice(matchedCode.length),
+      };
+    }
+    const fallback = compact.match(/^(\+\d{1,3})(\d+)$/);
+    if (fallback) return { countryCode: fallback[1], localNumber: fallback[2] };
+  }
   return { countryCode: "", localNumber: compact.replace(/[^\d]/g, "") };
 }
 
