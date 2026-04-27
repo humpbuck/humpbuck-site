@@ -88,6 +88,44 @@ async function createTierAction(formData: FormData) {
   redirect(adminPath("/affiliate"));
 }
 
+async function updateTierAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const tierId = String(formData.get("tierId") ?? "").trim();
+  const name = String(formData.get("name") ?? "").trim();
+  const commissionType = String(formData.get("commissionType") ?? "percent").trim();
+  const commissionValue = parseCommissionValue(formData.get("commissionValue"));
+  const makeDefault = String(formData.get("isDefault") ?? "") === "on";
+
+  if (!tierId) goAffiliate("Missing tier id.");
+  if (!name) goAffiliate("Tier name is required.");
+  if (!["percent", "fixed"].includes(commissionType)) {
+    goAffiliate("Commission type must be percent or fixed.");
+  }
+  if (commissionValue === null) goAffiliate("Commission value must be >= 0.");
+
+  await prisma.$transaction(async (tx) => {
+    if (makeDefault) {
+      await tx.affiliateTier.updateMany({
+        where: { isDefault: true },
+        data: { isDefault: false },
+      });
+    }
+    await tx.affiliateTier.update({
+      where: { id: tierId },
+      data: {
+        name,
+        commissionType,
+        commissionValue,
+        isDefault: makeDefault,
+      },
+    });
+  });
+
+  revalidatePath(adminPath("/affiliate"));
+  redirect(adminPath("/affiliate"));
+}
+
 async function approveApplicationAction(formData: FormData) {
   "use server";
   await assertAdmin();
@@ -940,13 +978,50 @@ export default async function AdminAffiliatePage({
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Create tier
         </h2>
-        <div className="mt-2 rounded-xl border border-line bg-paper/50 px-3 py-2">
-          <p className="text-xs font-semibold text-ink/85">Current growth settings (sorted low to high)</p>
-          <div className="mt-1 space-y-0.5 text-xs text-muted">
+        <div className="mt-2 rounded-xl border border-line bg-paper/50 p-3">
+          <p className="text-xs font-semibold text-ink/85">
+            Current growth settings (always sorted low to high)
+          </p>
+          <div className="mt-2 space-y-2">
             {growthTierList.map((t, idx) => (
-              <p key={`growth-tier-${t.id}`}>
-                {idx + 1}. {t.name}: {t.commissionValue}%
-              </p>
+              <form
+                key={`growth-tier-${t.id}`}
+                action={updateTierAction}
+                className="grid gap-2 md:grid-cols-[1.1fr_1fr_1fr_1fr_auto] md:items-center"
+              >
+                <input type="hidden" name="tierId" value={t.id} />
+                <input
+                  name="name"
+                  defaultValue={t.name || `Level ${idx + 1}`}
+                  className="rounded-xl border border-line bg-white px-3 py-2 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
+                <select
+                  name="commissionType"
+                  defaultValue={t.commissionType}
+                  className="rounded-xl border border-line bg-white px-3 py-2 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                >
+                  <option value="percent">Percent</option>
+                  <option value="fixed">Fixed</option>
+                </select>
+                <input
+                  name="commissionValue"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  defaultValue={t.commissionValue}
+                  className="rounded-xl border border-line bg-white px-3 py-2 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                />
+                <label className="inline-flex items-center justify-between gap-2 rounded-xl border border-line bg-white px-3 py-2 text-sm text-ink">
+                  <span>Default</span>
+                  <input name="isDefault" type="checkbox" defaultChecked={t.isDefault} className="h-4 w-4" />
+                </label>
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-ink transition hover:border-ink/20"
+                >
+                  Save
+                </button>
+              </form>
             ))}
           </div>
         </div>
