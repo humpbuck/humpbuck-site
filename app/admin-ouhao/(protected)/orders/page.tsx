@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
-import { ADMIN_INBOX_CATEGORY, markAdminInboxCategoryRead } from "@/lib/admin-inbox";
+import { ADMIN_INBOX_CATEGORY } from "@/lib/admin-inbox";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import { AdminOrdersTable } from "@/components/admin/admin-orders-table";
@@ -19,7 +19,12 @@ const PAGE_SIZE = 20;
 async function markOrdersReadAction() {
   "use server";
   await assertAdmin();
-  await markAdminInboxCategoryRead(ADMIN_INBOX_CATEGORY.order);
+  await prisma.adminInboxMessage
+    .updateMany({
+      where: { category: ADMIN_INBOX_CATEGORY.order, status: "pending" },
+      data: { status: "handled", handledAt: new Date() },
+    })
+    .catch(() => null);
   revalidatePath(adminPath("/orders"));
   revalidatePath(adminPath("/messages"));
   redirect(adminPath("/orders"));

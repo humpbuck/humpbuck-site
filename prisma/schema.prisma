@@ -396,6 +396,7 @@ model AffiliateCouponRequest {
 model AdminInboxMessage {
   id          String   @id @default(cuid())
   category    String
+  dedupeKey   String?  @unique
   status      String   @default("pending")
   sourceEmail String?
   payloadJson String   @default("{}")

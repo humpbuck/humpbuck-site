@@ -1,10 +1,11 @@
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
   ADMIN_INBOX_CATEGORY,
   adminInboxCategoryLabel,
-  markAdminInboxCategoryRead,
+  syncSystemInboxMessages,
 } from "@/lib/admin-inbox";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
@@ -56,10 +57,12 @@ async function markCategoryReadAction(formData: FormData) {
   if (!category) goMessages("Missing message category.");
 
   if (category === "all" || category === ADMIN_INBOX_CATEGORY.order) {
-    await markAdminInboxCategoryRead(ADMIN_INBOX_CATEGORY.order, now);
-  }
-  if (category === "all" || category === ADMIN_INBOX_CATEGORY.dispute) {
-    await markAdminInboxCategoryRead(ADMIN_INBOX_CATEGORY.dispute, now);
+    await prisma.adminInboxMessage
+      .updateMany({
+        where: { category: ADMIN_INBOX_CATEGORY.order, status: "pending" },
+        data: { status: "handled", handledAt: now },
+      })
+      .catch(() => null);
   }
   if (category === "all" || category === ADMIN_INBOX_CATEGORY.affiliates) {
     await prisma.affiliateCouponRequest
@@ -109,15 +112,18 @@ export default async function AdminMessagesPage({
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }) {
   await assertAdmin();
+  await syncSystemInboxMessages();
   const sp = (await searchParams) ?? {};
   const errorRaw = sp.error;
   const error = Array.isArray(errorRaw) ? errorRaw[0] : errorRaw;
   const categoryRaw = sp.category;
-  const selectedCategory = Array.isArray(categoryRaw) ? categoryRaw[0] : (categoryRaw ?? "all");
+  const selectedCategoryInput = Array.isArray(categoryRaw) ? categoryRaw[0] : (categoryRaw ?? "all");
+  const selectedCategory =
+    selectedCategoryInput === ADMIN_INBOX_CATEGORY.dispute
+      ? ADMIN_INBOX_CATEGORY.order
+      : selectedCategoryInput;
   const [
-    readCursors,
     pendingOrderCount,
-    pendingDisputeCount,
     pendingAffiliateCount,
     pendingSubscribeCount,
     pendingMockupRequestCount,
@@ -126,30 +132,11 @@ export default async function AdminMessagesPage({
     pendingInboxMessages,
     handledInboxMessages,
   ] = await Promise.all([
-    prisma.adminInboxReadCursor
-      .findMany({
-        where: {
-          category: {
-            in: [ADMIN_INBOX_CATEGORY.order, ADMIN_INBOX_CATEGORY.dispute],
-          },
-        },
-        select: { category: true, readAt: true },
-      })
-      .catch(() => []),
-    prisma.order
+    prisma.adminInboxMessage
       .count({
         where: {
-          deletedAt: null,
-          status: { in: ["paid", "processing"] },
-        },
-      })
-      .catch(() => 0),
-    prisma.order
-      .count({
-        where: {
-          deletedAt: null,
-          refundReason: { not: null },
-          refundedAt: null,
+          status: "pending",
+          category: ADMIN_INBOX_CATEGORY.order,
         },
       })
       .catch(() => 0),
@@ -208,10 +195,8 @@ export default async function AdminMessagesPage({
       .findMany({
         where: {
           status: "pending",
-          ...(selectedCategory === "all" ||
-          [ADMIN_INBOX_CATEGORY.order, ADMIN_INBOX_CATEGORY.dispute].includes(selectedCategory as any)
-            ? {}
-            : { category: selectedCategory }),
+          category: { not: ADMIN_INBOX_CATEGORY.dispute },
+          ...(selectedCategory === "all" ? {} : { category: selectedCategory }),
         },
         orderBy: { createdAt: "desc" },
         take: 100,
@@ -225,38 +210,15 @@ export default async function AdminMessagesPage({
       })
       .catch(() => []),
   ]);
-  const readAtMap = new Map(readCursors.map((x) => [x.category, x.readAt]));
-  const [unreadOrderCount, unreadDisputeCount] = await Promise.all([
-    prisma.order
-      .count({
-        where: {
-          deletedAt: null,
-          status: { in: ["paid", "processing"] },
-          ...(readAtMap.get(ADMIN_INBOX_CATEGORY.order)
-            ? { createdAt: { gt: readAtMap.get(ADMIN_INBOX_CATEGORY.order)! } }
-            : {}),
-        },
-      })
-      .catch(() => pendingOrderCount),
-    prisma.order
-      .count({
-        where: {
-          deletedAt: null,
-          refundReason: { not: null },
-          refundedAt: null,
-          ...(readAtMap.get(ADMIN_INBOX_CATEGORY.dispute)
-            ? { createdAt: { gt: readAtMap.get(ADMIN_INBOX_CATEGORY.dispute)! } }
-            : {}),
-        },
-      })
-      .catch(() => pendingDisputeCount),
-  ]);
   const totalPendingCount =
-    unreadOrderCount +
-    unreadDisputeCount +
+    pendingOrderCount +
     pendingAffiliateCount +
     pendingSubscribeCount +
     pendingMockupRequestCount;
+  const showAffiliateRows =
+    selectedCategory === "all" || selectedCategory === ADMIN_INBOX_CATEGORY.affiliates;
+  const visiblePendingCount =
+    (showAffiliateRows ? pendingAffiliateRequests.length : 0) + pendingInboxMessages.length;
   const cardClass = (count: number) =>
     `rounded-xl border px-3 py-2 text-sm transition ${
       count > 0
@@ -287,16 +249,10 @@ export default async function AdminMessagesPage({
             {error}
           </p>
         ) : null}
-        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
-          <Link href={adminPath("/orders")} className={cardClass(unreadOrderCount)}>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          <Link href={adminPath("/messages?category=order")} className={cardClass(pendingOrderCount)}>
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">Orders</p>
-            <p className="mt-1 text-xl font-semibold text-ink">{unreadOrderCount}</p>
-          </Link>
-          <Link href={adminPath("/orders")} className={cardClass(unreadDisputeCount)}>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-              After-sales disputes
-            </p>
-            <p className="mt-1 text-xl font-semibold text-ink">{unreadDisputeCount}</p>
+            <p className="mt-1 text-xl font-semibold text-ink">{pendingOrderCount}</p>
           </Link>
           <Link href={adminPath("/affiliate?couponRequests=1")} className={cardClass(pendingAffiliateCount)}>
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">Affiliates</p>
@@ -344,9 +300,12 @@ export default async function AdminMessagesPage({
         ) : null}
         {totalPendingCount === 0 ? (
           <p className="mt-3 text-sm text-muted">No pending messages.</p>
+        ) : visiblePendingCount === 0 ? (
+          <p className="mt-3 text-sm text-muted">No pending messages in this category.</p>
         ) : (
           <div className="mt-3 space-y-2">
-            {pendingAffiliateRequests.map((req) => {
+            {showAffiliateRows
+              ? pendingAffiliateRequests.map((req) => {
               const name =
                 [req.user.firstName?.trim(), req.user.lastName?.trim()].filter(Boolean).join(" ").trim() ||
                 req.user.displayName?.trim() ||
@@ -380,7 +339,8 @@ export default async function AdminMessagesPage({
                   </form>
                 </div>
               );
-            })}
+            })
+              : null}
             {pendingInboxMessages.map((msg) => {
               const payload = parsePayload(msg.payloadJson);
               return (
@@ -396,10 +356,33 @@ export default async function AdminMessagesPage({
                       <span className="font-medium">{payload.email || msg.sourceEmail || "-"}</span>
                     </p>
                     <p className="text-xs text-muted">
-                      {payload.company ? `Company: ${payload.company} · ` : ""}
                       {msg.createdAt.toLocaleString()}
                     </p>
                   </div>
+                  {msg.category === ADMIN_INBOX_CATEGORY.order && payload.itemName ? (
+                    <div className="flex items-center gap-2 rounded-lg border border-line bg-white px-2 py-1">
+                      {payload.itemImage ? (
+                        <Image
+                          src={payload.itemImage}
+                          alt={payload.itemName}
+                          width={32}
+                          height={32}
+                          className="h-8 w-8 rounded object-cover"
+                        />
+                      ) : (
+                        <div className="h-8 w-8 rounded bg-paper" />
+                      )}
+                      <div className="min-w-0">
+                        <p className="truncate text-xs font-medium text-ink">
+                          {(payload.email || msg.sourceEmail || "Customer")}{" "}
+                          {payload.eventType === "cancelled" ? "cancelled" : "paid"} {payload.itemName}
+                        </p>
+                        <p className="truncate text-[11px] text-muted">
+                          {payload.itemVariant || "Default"} · Qty {payload.itemQty || "1"}
+                        </p>
+                      </div>
+                    </div>
+                  ) : null}
                   <form action={markInboxMessageHandledAction}>
                     <input type="hidden" name="messageId" value={msg.id} />
                     <button
@@ -464,6 +447,7 @@ export default async function AdminMessagesPage({
                   </p>
                   <p className="text-xs text-muted">
                     {payload.company ? `Company: ${payload.company} · ` : ""}
+                    {payload.itemName ? `Item: ${payload.itemName} · ` : ""}
                     Received {msg.createdAt.toLocaleString()} · Handled{" "}
                     {(msg.handledAt ?? msg.updatedAt).toLocaleString()}
                   </p>

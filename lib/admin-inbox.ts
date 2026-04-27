@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { parseOrderItemsJson } from "@/lib/parse-order-items";
+import { getProductBySlug } from "@/lib/catalog";
 
 export const ADMIN_INBOX_CATEGORY = {
   order: "order",
@@ -13,7 +15,7 @@ export type AdminInboxCategory =
 
 export function adminInboxCategoryLabel(category: string): string {
   if (category === ADMIN_INBOX_CATEGORY.order) return "Orders";
-  if (category === ADMIN_INBOX_CATEGORY.dispute) return "After-sales disputes";
+  if (category === ADMIN_INBOX_CATEGORY.dispute) return "Orders";
   if (category === ADMIN_INBOX_CATEGORY.affiliates) return "Affiliates";
   if (category === ADMIN_INBOX_CATEGORY.subscribe) return "Subscribe";
   if (category === ADMIN_INBOX_CATEGORY.emailMockupRequest) return "Email mockup request";
@@ -22,6 +24,7 @@ export function adminInboxCategoryLabel(category: string): string {
 
 export async function createAdminInboxMessage(input: {
   category: AdminInboxCategory;
+  dedupeKey?: string;
   sourceEmail?: string | null;
   payload: Record<string, unknown>;
 }) {
@@ -29,6 +32,7 @@ export async function createAdminInboxMessage(input: {
     .create({
       data: {
         category: input.category,
+        dedupeKey: input.dedupeKey?.trim() || null,
         status: "pending",
         sourceEmail: input.sourceEmail?.trim() || null,
         payloadJson: JSON.stringify(input.payload ?? {}),
@@ -44,6 +48,103 @@ export async function markAdminInboxCategoryRead(category: string, readAt = new 
       where: { category },
       create: { category, readAt },
       update: { readAt },
+    })
+    .catch(() => null);
+}
+
+export async function syncSystemInboxMessages() {
+  const [paidOrders, cancelledOrders] = await Promise.all([
+    prisma.order
+      .findMany({
+        where: {
+          deletedAt: null,
+          status: "paid",
+        },
+        orderBy: { createdAt: "desc" },
+        take: 300,
+        select: {
+          id: true,
+          email: true,
+          itemsJson: true,
+          merchantOrderCode: true,
+          createdAt: true,
+        },
+      })
+      .catch(() => []),
+    prisma.order
+      .findMany({
+        where: {
+          deletedAt: null,
+          status: "cancelled",
+        },
+        orderBy: { createdAt: "desc" },
+        take: 300,
+        select: {
+          id: true,
+          email: true,
+          itemsJson: true,
+          merchantOrderCode: true,
+          createdAt: true,
+        },
+      })
+      .catch(() => []),
+  ]);
+
+  const toPayload = (order: {
+    id: string;
+    email: string;
+    itemsJson: string;
+    merchantOrderCode: string | null;
+    createdAt: Date;
+  }) => {
+    const lines = parseOrderItemsJson(order.itemsJson);
+    const first = lines[0];
+    const product = first?.slug ? getProductBySlug(first.slug) : null;
+    return {
+      orderId: order.id,
+      merchantOrderCode: order.merchantOrderCode ?? "",
+      email: order.email,
+      createdAt: order.createdAt.toISOString(),
+      itemName: first?.name ?? "Order item",
+      itemVariant: first?.variantLabel ?? "",
+      itemQty: first?.qty ?? 1,
+      itemImage: product?.image ?? "",
+      itemSlug: first?.slug ?? "",
+    };
+  };
+
+  const rows = [
+    ...paidOrders.map((o) => ({
+      category: ADMIN_INBOX_CATEGORY.order as AdminInboxCategory,
+      dedupeKey: `order_paid:${o.id}`,
+      sourceEmail: o.email,
+      payload: { ...toPayload(o), eventType: "paid" },
+    })),
+    ...cancelledOrders.map((o) => ({
+      category: ADMIN_INBOX_CATEGORY.order as AdminInboxCategory,
+      dedupeKey: `order_cancelled:${o.id}`,
+      sourceEmail: o.email,
+      payload: { ...toPayload(o), eventType: "cancelled" },
+    })),
+  ];
+
+  if (rows.length === 0) return;
+  await prisma.adminInboxMessage
+    .updateMany({
+      where: { category: ADMIN_INBOX_CATEGORY.dispute, status: "pending" },
+      data: { status: "handled", handledAt: new Date() },
+    })
+    .catch(() => null);
+  await prisma.adminInboxMessage
+    .createMany({
+      data: rows.map((r) => ({
+        category: r.category,
+        dedupeKey: r.dedupeKey,
+        status: "pending",
+        sourceEmail: r.sourceEmail ?? null,
+        payloadJson: JSON.stringify(r.payload),
+      })),
+      skipDuplicates: true,
     })
     .catch(() => null);
 }
