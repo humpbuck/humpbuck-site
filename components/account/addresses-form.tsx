@@ -3,7 +3,9 @@
 import type { UserAddress } from "@prisma/client";
 import { useState } from "react";
 import {
+  PHONE_COUNTRY_CODE_DATALIST_ID,
   PHONE_COUNTRY_CODES,
+  normalizeCountryCodeInput,
   normalizePhone,
   splitPhoneForInput,
 } from "@/lib/phone-normalize";
@@ -204,17 +206,24 @@ function Field({
       </span>
       {isPhone ? (
         <div className="mt-1 grid grid-cols-[120px_1fr] gap-2">
-          <select
+          <input
             value={phoneParts.countryCode}
-            onChange={(e) => onChange(normalizePhone(e.target.value, phoneParts.localNumber))}
+            list={PHONE_COUNTRY_CODE_DATALIST_ID}
+            inputMode="tel"
+            placeholder="+86"
+            onChange={(e) =>
+              onChange(normalizePhone(normalizeCountryCodeInput(e.target.value), phoneParts.localNumber))
+            }
+            onBlur={(e) =>
+              onChange(
+                normalizePhone(
+                  normalizeCountryCodeInput(e.target.value) || "+86",
+                  phoneParts.localNumber,
+                ),
+              )
+            }
             className="rounded-xl border border-line bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
-          >
-            {PHONE_COUNTRY_CODES.map((code) => (
-              <option key={code} value={code}>
-                {code}
-              </option>
-            ))}
-          </select>
+          />
           <input
             value={phoneParts.localNumber}
             inputMode="numeric"
@@ -229,6 +238,13 @@ function Field({
           className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
         />
       )}
+      {isPhone ? (
+        <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>
+          {PHONE_COUNTRY_CODES.map((code) => (
+            <option key={code} value={code} />
+          ))}
+        </datalist>
+      ) : null}
     </label>
   );
 }

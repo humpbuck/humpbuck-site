@@ -18,7 +18,9 @@ import { AffiliateLinkGenerator } from "@/components/account/affiliate-link-gene
 import { AffiliatePayoutDetailsForm } from "@/components/account/affiliate-payout-details-form";
 import { PaidCommissionSelector } from "@/components/account/paid-commission-selector";
 import {
+  PHONE_COUNTRY_CODE_DATALIST_ID,
   PHONE_COUNTRY_CODES,
+  normalizeCountryCodeInput,
   normalizePhone,
   splitPhoneForInput,
 } from "@/lib/phone-normalize";
@@ -754,17 +756,20 @@ export default async function AccountAffiliatePage({
               WhatsApp
             </span>
             <div className="mt-1 grid grid-cols-[120px_1fr] gap-2">
-              <select
+              <input
                 name="contactWhatsappCountryCode"
                 defaultValue={contactWhatsappInput.countryCode}
+                list={PHONE_COUNTRY_CODE_DATALIST_ID}
+                inputMode="tel"
+                placeholder="+86"
+                onChange={(e) => {
+                  e.currentTarget.value = normalizeCountryCodeInput(e.currentTarget.value);
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.value = normalizeCountryCodeInput(e.currentTarget.value) || "+86";
+                }}
                 className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-              >
-                {PHONE_COUNTRY_CODES.map((code) => (
-                  <option key={code} value={code}>
-                    {code}
-                  </option>
-                ))}
-              </select>
+              />
               <input
                 name="contactWhatsappLocal"
                 defaultValue={contactWhatsappInput.localNumber}
@@ -773,6 +778,11 @@ export default async function AccountAffiliatePage({
                 className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
               />
             </div>
+            <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>
+              {PHONE_COUNTRY_CODES.map((code) => (
+                <option key={code} value={code} />
+              ))}
+            </datalist>
           </label>
             <div className="flex flex-wrap gap-2">
               <button

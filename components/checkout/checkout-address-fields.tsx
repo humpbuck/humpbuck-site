@@ -23,7 +23,9 @@ import {
 } from "@/lib/checkout-zipcodes-helpers";
 import { countryLabelToIso2 } from "@/lib/logistics-estimate";
 import {
+  PHONE_COUNTRY_CODE_DATALIST_ID,
   PHONE_COUNTRY_CODES,
+  normalizeCountryCodeInput,
   normalizePhone,
   splitPhoneForInput,
 } from "@/lib/phone-normalize";
@@ -293,17 +295,24 @@ function PhoneField({
         ) : null}
       </span>
       <div className="mt-1.5 grid grid-cols-[120px_1fr] gap-2">
-        <select
+        <input
           value={phoneParts.countryCode}
-          onChange={(e) => onChange(normalizePhone(e.target.value, phoneParts.localNumber))}
+          list={PHONE_COUNTRY_CODE_DATALIST_ID}
+          inputMode="tel"
+          placeholder="+86"
+          onChange={(e) =>
+            onChange(normalizePhone(normalizeCountryCodeInput(e.target.value), phoneParts.localNumber))
+          }
+          onBlur={(e) =>
+            onChange(
+              normalizePhone(
+                normalizeCountryCodeInput(e.target.value) || "+86",
+                phoneParts.localNumber,
+              ),
+            )
+          }
           className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-        >
-          {PHONE_COUNTRY_CODES.map((code) => (
-            <option key={code} value={code}>
-              {code}
-            </option>
-          ))}
-        </select>
+        />
         <input
           id={id}
           type="text"
@@ -316,6 +325,11 @@ function PhoneField({
           className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
       </div>
+      <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>
+        {PHONE_COUNTRY_CODES.map((code) => (
+          <option key={code} value={code} />
+        ))}
+      </datalist>
     </label>
   );
 }
