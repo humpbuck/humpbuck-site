@@ -17,6 +17,7 @@ type Props = {
   defaultPayoutEmail: string;
   defaultPayoutWhatsapp: string;
   cancelHref: string;
+  showSaveSuccess?: boolean;
 };
 
 function parseLabeledValue(payload: string, label: string): string {
@@ -61,6 +62,7 @@ export function AffiliatePayoutDetailsForm({
   defaultPayoutEmail,
   defaultPayoutWhatsapp,
   cancelHref,
+  showSaveSuccess = false,
 }: Props) {
   const defaultWhatsapp = splitPhoneForInput(defaultPayoutWhatsapp);
   const [payoutMethod, setPayoutMethod] = useState(defaultPayoutMethod);
@@ -345,6 +347,11 @@ export function AffiliatePayoutDetailsForm({
         >
           Cancel
         </Link>
+        {showSaveSuccess ? (
+          <span className="inline-flex items-center rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-[11px] font-medium text-sky-900">
+            Saved successfully.
+          </span>
+        ) : null}
       </div>
     </form>
   );

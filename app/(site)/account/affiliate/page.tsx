@@ -248,7 +248,7 @@ async function updatePayoutDetailsAction(formData: FormData) {
   });
 
   revalidatePath("/account/affiliate");
-  redirect("/account/affiliate?ok=payout_saved");
+  redirect("/account/affiliate?ok=payout_saved#account-settings");
 }
 
 async function requestAffiliateCouponCodeAction() {
@@ -604,7 +604,7 @@ export default async function AccountAffiliatePage({
       {profile ? <AffiliateQuickGuide /> : null}
 
       {profile ? (
-        <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
+        <section id="account-settings" className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
               Your tools
@@ -774,10 +774,6 @@ export default async function AccountAffiliatePage({
               If no payout account is available now, keep your email or WhatsApp updated and admin will
               contact you for manual settlement.
             </p>
-          ) : sp.ok === "payout_saved" ? (
-            <p className="mt-2 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-xs text-sky-900">
-              Payout details submitted. Waiting for admin confirmation before payout processing.
-            </p>
           ) : (
             <p className="mt-2 text-xs text-muted">
               Payout details confirmed by admin. Keep them up to date for future settlements.
@@ -790,7 +786,8 @@ export default async function AccountAffiliatePage({
               defaultPayoutAccount={profile.payoutAccount ?? ""}
               defaultPayoutEmail={profile.payoutEmail ?? ""}
               defaultPayoutWhatsapp={profile.payoutWhatsapp ?? ""}
-              cancelHref="/account/affiliate"
+              cancelHref="/account/affiliate#account-settings"
+              showSaveSuccess={sp.ok === "payout_saved"}
             />
           ) : (
             <div className="mt-3 rounded-xl border border-line bg-paper/70 px-3 py-3 text-sm text-ink/90">
@@ -811,7 +808,7 @@ export default async function AccountAffiliatePage({
               </p>
               <div className="mt-3">
                 <Link
-                  href="/account/affiliate?editPayout=1"
+                  href="/account/affiliate?editPayout=1#account-settings"
                   scroll={false}
                   className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
                 >
