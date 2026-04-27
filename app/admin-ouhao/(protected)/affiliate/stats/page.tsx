@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
+import { ClearQueryParam } from "@/components/admin/clear-query-param";
 import { PendingActionButton } from "@/components/admin/pending-action-button";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
@@ -123,7 +124,10 @@ async function toggleBlacklistAction(formData: FormData) {
   });
   revalidatePath(adminPath("/affiliate"));
   revalidatePath(adminPath("/affiliate/stats"));
-  goStats(nextBlacklisted ? "blacklisted" : focus, "blacklist_updated");
+  if (nextBlacklisted) {
+    redirect(adminPath("/affiliate/stats?focus=blacklisted&ok=blacklist_updated"));
+  }
+  goStats(focus, "blacklist_updated");
 }
 
 export default async function AffiliateStatsPage({
@@ -202,13 +206,16 @@ export default async function AffiliateStatsPage({
       <h1 className="font-serif text-3xl tracking-tight">{title}</h1>
       <p className="mt-2 text-sm text-muted">View details for this affiliate category.</p>
       {sp.ok ? (
-        <p className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-900">
-          {sp.ok === "level_saved"
-            ? "Level saved successfully."
-            : sp.ok === "profile_saved"
-              ? "Affiliate info saved successfully."
-              : "Blacklist status updated successfully."}
-        </p>
+        <>
+          <ClearQueryParam param="ok" />
+          <p className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-900">
+            {sp.ok === "level_saved"
+              ? "Level saved successfully."
+              : sp.ok === "profile_saved"
+                ? "Affiliate info saved successfully."
+                : "Blacklist status updated successfully."}
+          </p>
+        </>
       ) : null}
 
       <div className="mt-4 flex flex-wrap gap-2">
