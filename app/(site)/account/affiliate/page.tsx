@@ -433,27 +433,6 @@ export default async function AccountAffiliatePage({
                 <span className="font-medium">
                   {currentGrowthTier.level} ({currentGrowthTier.rate}%)
                 </span>
-                <span className="group relative ml-1 inline-block">
-                  <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-line text-[10px] font-bold text-muted">
-                    ?
-                  </span>
-                  <span className="absolute left-0 top-6 z-10 hidden w-72 rounded-xl border border-line bg-white px-3 py-3 text-[11px] leading-5 text-ink shadow-md group-hover:block">
-                    <span className="block font-semibold text-ink">Growth tiers (paid commission orders)</span>
-                    <span className="mt-1 block text-muted">
-                      0-99: 5% · 100+: 7% · 300+: 9% · 600+: 11% · 1000+: 13% · 1500+: 15%
-                    </span>
-                    <span className="mt-2 block border-t border-line pt-2 text-ink/90">
-                      Paid commission orders:{" "}
-                      <span className="font-semibold tabular-nums">{paidCommissionOrderCount}</span>
-                    </span>
-                    <span className="block text-ink/90">
-                      To next tier:{" "}
-                      <span className="font-semibold tabular-nums">
-                        {nextGrowthTier ? `${ordersToNextTier} orders` : "Max tier reached"}
-                      </span>
-                    </span>
-                  </span>
-                </span>
               </p>
               <p className="mt-1">
                 Status: <span className="font-medium">{humanizeStatus(profile.status)}</span>
@@ -509,8 +488,29 @@ export default async function AccountAffiliatePage({
 
       {profile ? (
         <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
-          <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Growth progress
+          <h2 className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+            <span>Growth progress</span>
+            <span className="group relative inline-block">
+              <span className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-line text-[10px] font-bold text-muted">
+                ?
+              </span>
+              <span className="absolute left-0 top-6 z-10 hidden w-72 rounded-xl border border-line bg-white px-3 py-3 text-[11px] normal-case leading-5 tracking-normal text-ink shadow-md group-hover:block">
+                <span className="block font-semibold text-ink">Growth tiers (paid commission orders)</span>
+                <span className="mt-1 block text-muted">
+                  0-99: 5% · 100+: 7% · 300+: 9% · 600+: 11% · 1000+: 13% · 1500+: 15%
+                </span>
+                <span className="mt-2 block border-t border-line pt-2 text-ink/90">
+                  Paid commission orders:{" "}
+                  <span className="font-semibold tabular-nums">{paidCommissionOrderCount}</span>
+                </span>
+                <span className="block text-ink/90">
+                  To next tier:{" "}
+                  <span className="font-semibold tabular-nums">
+                    {nextGrowthTier ? `${ordersToNextTier} orders` : "Max tier reached"}
+                  </span>
+                </span>
+              </span>
+            </span>
           </h2>
           <p className="mt-2 text-sm text-ink/90">
             Current valid orders (paid commission):{" "}
