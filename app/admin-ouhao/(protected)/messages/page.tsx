@@ -106,6 +106,31 @@ function parsePayload(payloadJson: string): Record<string, string> {
   }
 }
 
+function messagePrimaryText(input: {
+  category: string;
+  payload: Record<string, string>;
+  sourceEmail: string | null;
+}): string {
+  const { category, payload, sourceEmail } = input;
+  const email = payload.email || sourceEmail || "Unknown user";
+  if (category === ADMIN_INBOX_CATEGORY.order) {
+    const eventType = payload.eventType === "cancelled" ? "cancelled" : "paid";
+    const itemName = payload.itemName || "an order item";
+    return `${email} ${eventType} ${itemName}.`;
+  }
+  if (category === ADMIN_INBOX_CATEGORY.subscribe) {
+    return (
+      payload.message ||
+      `New Subscriber | ${email} subscribed to your mailing list. Synced to Brevo (Website newsletter).`
+    );
+  }
+  if (category === ADMIN_INBOX_CATEGORY.emailMockupRequest) {
+    const company = payload.company ? ` for ${payload.company}` : "";
+    return payload.message || `${email} submitted an email mockup request${company}.`;
+  }
+  return payload.message || `${email} sent a new message.`;
+}
+
 export default async function AdminMessagesPage({
   searchParams,
 }: {
@@ -127,8 +152,7 @@ export default async function AdminMessagesPage({
     pendingAffiliateCount,
     pendingSubscribeCount,
     pendingMockupRequestCount,
-    pendingAffiliateRequests,
-    handledAffiliateRequests,
+    allAffiliateRequests,
     pendingInboxMessages,
     handledInboxMessages,
   ] = await Promise.all([
@@ -157,7 +181,10 @@ export default async function AdminMessagesPage({
       .catch(() => 0),
     prisma.affiliateCouponRequest
       .findMany({
-        where: { status: "pending" },
+        where:
+          selectedCategory === "all" || selectedCategory === ADMIN_INBOX_CATEGORY.affiliates
+            ? undefined
+            : { status: "__none__" },
         include: {
           user: {
             select: {
@@ -170,24 +197,6 @@ export default async function AdminMessagesPage({
           affiliate: { select: { pid: true } },
         },
         orderBy: { requestedAt: "desc" },
-        take: 50,
-      })
-      .catch(() => []),
-    prisma.affiliateCouponRequest
-      .findMany({
-        where: { status: { not: "pending" } },
-        include: {
-          user: {
-            select: {
-              email: true,
-              displayName: true,
-              firstName: true,
-              lastName: true,
-            },
-          },
-          affiliate: { select: { pid: true } },
-        },
-        orderBy: [{ handledAt: "desc" }, { requestedAt: "desc" }],
         take: 100,
       })
       .catch(() => []),
@@ -202,23 +211,23 @@ export default async function AdminMessagesPage({
         take: 100,
       })
       .catch(() => []),
-    prisma.adminInboxMessage
-      .findMany({
-        where: { status: { not: "pending" } },
-        orderBy: [{ handledAt: "desc" }, { createdAt: "desc" }],
-        take: 200,
-      })
-      .catch(() => []),
+    prisma.adminInboxMessage.findMany({
+      where: { status: { not: "pending" } },
+      orderBy: [{ handledAt: "desc" }, { createdAt: "desc" }],
+      take: 200,
+    }).catch(() => []),
   ]);
   const totalPendingCount =
     pendingOrderCount +
     pendingAffiliateCount +
     pendingSubscribeCount +
     pendingMockupRequestCount;
-  const showAffiliateRows =
-    selectedCategory === "all" || selectedCategory === ADMIN_INBOX_CATEGORY.affiliates;
-  const visiblePendingCount =
-    (showAffiliateRows ? pendingAffiliateRequests.length : 0) + pendingInboxMessages.length;
+  const showAffiliateRows = selectedCategory === "all" || selectedCategory === ADMIN_INBOX_CATEGORY.affiliates;
+  const allMessages = [
+    ...pendingInboxMessages,
+    ...handledInboxMessages,
+  ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  const visibleRows = allMessages.length + (showAffiliateRows ? allAffiliateRequests.length : 0);
   const cardClass = (count: number) =>
     `rounded-xl border px-3 py-2 text-sm transition ${
       count > 0
@@ -276,7 +285,7 @@ export default async function AdminMessagesPage({
 
       <section className="rounded-2xl border border-line bg-white/70 p-5">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Pending messages
+          Messages
         </h2>
         {selectedCategory !== "all" ? (
           <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted">
@@ -298,65 +307,101 @@ export default async function AdminMessagesPage({
             </Link>
           </div>
         ) : null}
-        {totalPendingCount === 0 ? (
+        {totalPendingCount === 0 && visibleRows === 0 ? (
           <p className="mt-3 text-sm text-muted">No pending messages.</p>
-        ) : visiblePendingCount === 0 ? (
-          <p className="mt-3 text-sm text-muted">No pending messages in this category.</p>
+        ) : visibleRows === 0 ? (
+          <p className="mt-3 text-sm text-muted">No messages in this category.</p>
         ) : (
           <div className="mt-3 space-y-2">
             {showAffiliateRows
-              ? pendingAffiliateRequests.map((req) => {
+              ? allAffiliateRequests.map((req) => {
               const name =
                 [req.user.firstName?.trim(), req.user.lastName?.trim()].filter(Boolean).join(" ").trim() ||
                 req.user.displayName?.trim() ||
                 req.user.email?.trim() ||
                 "-";
+              const isRead = req.status !== "pending";
               return (
                 <div
                   key={req.id}
-                  className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-paper/70 px-3 py-2 text-sm text-ink/90"
+                  className={`flex flex-wrap items-center justify-between gap-2 rounded-xl border px-3 py-2 text-sm ${
+                    isRead ? "border-line/70 bg-paper/40 text-ink/65" : "border-line bg-paper/70 text-ink/90"
+                  }`}
                 >
                   <div>
                     <p>
                       <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
                         Affiliates
                       </span>{" "}
-                      <span className="font-medium">{name}</span> · PID{" "}
-                      <span className="font-medium">{req.affiliate?.pid ?? "-"}</span>
+                      <details className="inline-block max-w-[680px] align-middle">
+                        <summary className="max-w-[680px] cursor-pointer list-none truncate font-medium text-ink/90 [&::-webkit-details-marker]:hidden">
+                          Coupon Request | {name} requested a dedicated coupon code.
+                        </summary>
+                        <p className="mt-1 whitespace-normal text-sm text-ink/85">
+                          Coupon Request | {name} requested a dedicated coupon code.
+                        </p>
+                      </details>
                     </p>
                     <p className="text-xs text-muted">
-                      {req.user.email ?? "-"} · {req.requestedAt.toLocaleString()}
+                      {req.user.email ?? "-"} · PID {req.affiliate?.pid ?? "-"} · {req.requestedAt.toLocaleString()}
                     </p>
                   </div>
-                  <form action={markCouponRequestHandledAction}>
-                    <input type="hidden" name="requestId" value={req.id} />
-                    <button
-                      type="submit"
-                      className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
-                    >
-                      Mark handled
-                    </button>
-                  </form>
+                  {isRead ? (
+                    <span className="rounded-xl border border-line/80 bg-paper px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
+                      Read
+                    </span>
+                  ) : (
+                    <form action={markCouponRequestHandledAction}>
+                      <input type="hidden" name="requestId" value={req.id} />
+                      <button
+                        type="submit"
+                        className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+                      >
+                        Mark as read
+                      </button>
+                    </form>
+                  )}
                 </div>
               );
             })
               : null}
-            {pendingInboxMessages.map((msg) => {
+            {allMessages.map((msg) => {
               const payload = parsePayload(msg.payloadJson);
+              const isRead = msg.status !== "pending";
               return (
                 <div
                   key={msg.id}
-                  className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-paper/70 px-3 py-2 text-sm text-ink/90"
+                  className={`flex flex-wrap items-center justify-between gap-2 rounded-xl border px-3 py-2 text-sm ${
+                    isRead ? "border-line/70 bg-paper/40 text-ink/65" : "border-line bg-paper/70 text-ink/90"
+                  }`}
                 >
                   <div>
                     <p>
                       <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
                         {adminInboxCategoryLabel(msg.category)}
                       </span>{" "}
-                      <span className="font-medium">{payload.email || msg.sourceEmail || "-"}</span>
+                      <details className="inline-block max-w-[680px] align-middle">
+                        <summary className="max-w-[680px] cursor-pointer list-none truncate font-medium text-ink/90 [&::-webkit-details-marker]:hidden">
+                          {messagePrimaryText({
+                            category: msg.category,
+                            payload,
+                            sourceEmail: msg.sourceEmail,
+                          })}
+                        </summary>
+                        <p className="mt-1 whitespace-normal text-sm text-ink/85">
+                          {messagePrimaryText({
+                            category: msg.category,
+                            payload,
+                            sourceEmail: msg.sourceEmail,
+                          })}
+                        </p>
+                      </details>
                     </p>
                     <p className="text-xs text-muted">
                       {msg.createdAt.toLocaleString()}
+                      {payload.company ? ` · Company: ${payload.company}` : ""}
+                      {payload.targetRegion ? ` · Region: ${payload.targetRegion}` : ""}
+                      {payload.estimatedQty ? ` · Qty: ${payload.estimatedQty}` : ""}
                     </p>
                   </div>
                   {msg.category === ADMIN_INBOX_CATEGORY.order && payload.itemName ? (
@@ -383,74 +428,21 @@ export default async function AdminMessagesPage({
                       </div>
                     </div>
                   ) : null}
-                  <form action={markInboxMessageHandledAction}>
-                    <input type="hidden" name="messageId" value={msg.id} />
-                    <button
-                      type="submit"
-                      className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
-                    >
-                      Mark handled
-                    </button>
-                  </form>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
-
-      <section className="rounded-2xl border border-line bg-white/70 p-5">
-        <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Handled message history
-        </h2>
-        {handledAffiliateRequests.length === 0 && handledInboxMessages.length === 0 ? (
-          <p className="mt-3 text-sm text-muted">No handled messages yet.</p>
-        ) : (
-          <div className="mt-3 space-y-2">
-            {handledAffiliateRequests.map((req) => {
-              const name =
-                [req.user.firstName?.trim(), req.user.lastName?.trim()].filter(Boolean).join(" ").trim() ||
-                req.user.displayName?.trim() ||
-                req.user.email?.trim() ||
-                "-";
-              return (
-                <div
-                  key={req.id}
-                  className="rounded-xl border border-line bg-paper/60 px-3 py-2 text-sm text-ink/85"
-                >
-                  <p>
-                    <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
-                      Affiliates
-                    </span>{" "}
-                    <span className="font-medium">{name}</span> · PID{" "}
-                    <span className="font-medium">{req.affiliate?.pid ?? "-"}</span>
-                  </p>
-                  <p className="text-xs text-muted">
-                    {req.user.email ?? "-"} · Requested {req.requestedAt.toLocaleString()} · Handled{" "}
-                    {(req.handledAt ?? req.updatedAt).toLocaleString()}
-                  </p>
-                </div>
-              );
-            })}
-            {handledInboxMessages.map((msg) => {
-              const payload = parsePayload(msg.payloadJson);
-              return (
-                <div
-                  key={msg.id}
-                  className="rounded-xl border border-line bg-paper/60 px-3 py-2 text-sm text-ink/85"
-                >
-                  <p>
-                    <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
-                      {adminInboxCategoryLabel(msg.category)}
-                    </span>{" "}
-                    <span className="font-medium">{payload.email || msg.sourceEmail || "-"}</span>
-                  </p>
-                  <p className="text-xs text-muted">
-                    {payload.company ? `Company: ${payload.company} · ` : ""}
-                    {payload.itemName ? `Item: ${payload.itemName} · ` : ""}
-                    Received {msg.createdAt.toLocaleString()} · Handled{" "}
-                    {(msg.handledAt ?? msg.updatedAt).toLocaleString()}
-                  </p>
+                  {isRead ? (
+                    <span className="rounded-xl border border-line/80 bg-paper px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
+                      Read
+                    </span>
+                  ) : (
+                    <form action={markInboxMessageHandledAction}>
+                      <input type="hidden" name="messageId" value={msg.id} />
+                      <button
+                        type="submit"
+                        className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+                      >
+                        Mark as read
+                      </button>
+                    </form>
+                  )}
                 </div>
               );
             })}
