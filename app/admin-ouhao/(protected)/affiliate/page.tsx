@@ -604,7 +604,7 @@ export default async function AdminAffiliatePage({
 
       <section className="mt-6 grid gap-3 sm:grid-cols-4">
         <Link
-          href="#all-affiliates"
+          href={adminPath("/affiliate/stats?focus=total")}
           className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
@@ -613,7 +613,7 @@ export default async function AdminAffiliatePage({
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{profiles.length}</p>
         </Link>
         <Link
-          href="#all-affiliates"
+          href={adminPath("/affiliate/stats?focus=auto")}
           className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
@@ -622,7 +622,7 @@ export default async function AdminAffiliatePage({
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{autoApprovedCount}</p>
         </Link>
         <Link
-          href="#pending-review"
+          href={adminPath("/affiliate/stats?focus=pending")}
           className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
@@ -631,7 +631,7 @@ export default async function AdminAffiliatePage({
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{pendingApps.length}</p>
         </Link>
         <Link
-          href="#blacklisted"
+          href={adminPath("/affiliate/stats?focus=blacklisted")}
           className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
@@ -1025,30 +1025,6 @@ export default async function AdminAffiliatePage({
                 </div>
               );
             })
-          )}
-        </div>
-      </section>
-
-      <section id="all-affiliates" className="mt-8">
-        <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          All affiliates
-        </h2>
-        <div className="mt-3 space-y-2">
-          {profiles.length === 0 ? (
-            <p className="rounded-2xl border border-line bg-white/60 px-5 py-4 text-sm text-muted">
-              No affiliates found.
-            </p>
-          ) : (
-            profiles.map((p) => (
-              <div key={`all-${p.id}`} className="rounded-2xl border border-line bg-white/60 px-4 py-3 text-sm">
-                <p className="font-medium text-ink">
-                  {p.user.displayName || p.user.name || p.user.email || p.user.id}
-                </p>
-                <p className="mt-1 text-xs text-muted">
-                  Status: {p.status} · PID: {p.pid ?? "-"} · Tier: {p.tier?.name ?? "-"}
-                </p>
-              </div>
-            ))
           )}
         </div>
       </section>
