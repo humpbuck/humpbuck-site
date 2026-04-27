@@ -126,6 +126,20 @@ async function updateTierAction(formData: FormData) {
   redirect(adminPath("/affiliate"));
 }
 
+async function deleteTierAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const tierId = String(formData.get("tierId") ?? "").trim();
+  if (!tierId) goAffiliate("Missing tier id.");
+
+  await prisma.affiliateTier.delete({
+    where: { id: tierId },
+  });
+
+  revalidatePath(adminPath("/affiliate"));
+  redirect(adminPath("/affiliate"));
+}
+
 async function approveApplicationAction(formData: FormData) {
   "use server";
   await assertAdmin();
@@ -987,7 +1001,7 @@ export default async function AdminAffiliatePage({
               <form
                 key={`growth-tier-${t.id}`}
                 action={updateTierAction}
-                className="grid gap-2 md:grid-cols-[1.1fr_1fr_1fr_1fr_auto] md:items-center"
+                className="grid gap-2 md:grid-cols-[1.1fr_1fr_1fr_1fr_auto_auto] md:items-center"
               >
                 <input type="hidden" name="tierId" value={t.id} />
                 <input
@@ -1020,6 +1034,13 @@ export default async function AdminAffiliatePage({
                   className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-ink transition hover:border-ink/20"
                 >
                   Save
+                </button>
+                <button
+                  formAction={deleteTierAction}
+                  type="submit"
+                  className="inline-flex items-center justify-center rounded-xl border border-rose-300 bg-rose-50 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-rose-800 transition hover:bg-rose-100"
+                >
+                  Delete
                 </button>
               </form>
             ))}
