@@ -302,15 +302,6 @@ export default async function AdminMessagesPage({
             <h1 className="font-serif text-3xl tracking-tight">Message inbox</h1>
             <p className="mt-2 text-sm text-muted">Pending message summary for operations follow-up.</p>
           </div>
-          <form action={markCategoryReadAction}>
-            <input type="hidden" name="category" value="all" />
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
-            >
-              Mark all as read
-            </button>
-          </form>
         </div>
         {error ? (
           <p className="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
@@ -355,32 +346,29 @@ export default async function AdminMessagesPage({
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Messages
         </h2>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {[
-            { key: "all", label: "All" },
-            { key: ADMIN_INBOX_CATEGORY.order, label: "Orders" },
-            { key: ADMIN_INBOX_CATEGORY.affiliates, label: "Affiliates" },
-            { key: ADMIN_INBOX_CATEGORY.subscribe, label: "Subscribe" },
-            { key: ADMIN_INBOX_CATEGORY.emailMockupRequest, label: "Email mockup request" },
-          ].map((item) => (
-            <Link
-              key={item.key}
-              href={item.key === "all" ? adminPath("/messages") : adminPath(`/messages?category=${item.key}`)}
-              className={`rounded-lg border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest transition ${
-                selectedCategory === item.key
-                  ? "border-ink bg-ink text-white"
-                  : "border-line bg-white text-ink hover:border-ink/20"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </div>
-        {selectedCategory !== "all" ? (
-          <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted">
-            <p>
-              Showing category: <span className="font-semibold text-ink">{adminInboxCategoryLabel(selectedCategory)}</span>
-            </p>
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap gap-2">
+            {[
+              { key: "all", label: "All" },
+              { key: ADMIN_INBOX_CATEGORY.order, label: "Orders" },
+              { key: ADMIN_INBOX_CATEGORY.affiliates, label: "Affiliates" },
+              { key: ADMIN_INBOX_CATEGORY.subscribe, label: "Subscribe" },
+              { key: ADMIN_INBOX_CATEGORY.emailMockupRequest, label: "Email mockup request" },
+            ].map((item) => (
+              <Link
+                key={item.key}
+                href={item.key === "all" ? adminPath("/messages") : adminPath(`/messages?category=${item.key}`)}
+                className={`rounded-lg border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest transition ${
+                  selectedCategory === item.key
+                    ? "border-ink bg-ink text-white"
+                    : "border-line bg-white text-ink hover:border-ink/20"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+          {selectedCategory !== "all" ? (
             <form action={markCategoryReadAction}>
               <input type="hidden" name="category" value={selectedCategory} />
               <button
@@ -390,6 +378,13 @@ export default async function AdminMessagesPage({
                 Mark this category as read
               </button>
             </form>
+          ) : null}
+        </div>
+        {selectedCategory !== "all" ? (
+          <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted">
+            <p>
+              Showing category: <span className="font-semibold text-ink">{adminInboxCategoryLabel(selectedCategory)}</span>
+            </p>
             <Link className="underline underline-offset-2 hover:text-ink" href={adminPath("/messages")}>
               Clear filter
             </Link>
@@ -421,13 +416,10 @@ export default async function AdminMessagesPage({
                       <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
                         Affiliates
                       </span>{" "}
-                      <details className="inline-block max-w-[680px] align-middle">
+                      <details className="inline-block max-w-[680px] align-middle open:[&_summary]:overflow-visible open:[&_summary]:whitespace-normal open:[&_summary]:text-clip">
                         <summary className="max-w-[680px] cursor-pointer list-none truncate font-medium text-ink/90 [&::-webkit-details-marker]:hidden">
                           Coupon Request | {name} requested a dedicated coupon code.
                         </summary>
-                        <p className="mt-1 whitespace-normal text-sm text-ink/85">
-                          Coupon Request | {name} requested a dedicated coupon code.
-                        </p>
                       </details>
                     </p>
                     <p className="text-xs text-muted">
@@ -469,7 +461,7 @@ export default async function AdminMessagesPage({
                       <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
                         {adminInboxCategoryLabel(msg.category)}
                       </span>{" "}
-                      <details className="inline-block max-w-[680px] align-middle">
+                      <details className="inline-block max-w-[680px] align-middle open:[&_summary]:overflow-visible open:[&_summary]:whitespace-normal open:[&_summary]:text-clip">
                         <summary className="max-w-[680px] cursor-pointer list-none truncate font-medium text-ink/90 [&::-webkit-details-marker]:hidden">
                           {messagePrimaryText({
                             category: msg.category,
@@ -477,13 +469,6 @@ export default async function AdminMessagesPage({
                             sourceEmail: msg.sourceEmail,
                           })}
                         </summary>
-                        <p className="mt-1 whitespace-normal text-sm text-ink/85">
-                          {messagePrimaryText({
-                            category: msg.category,
-                            payload,
-                            sourceEmail: msg.sourceEmail,
-                          })}
-                        </p>
                       </details>
                     </p>
                     <p className="text-xs text-muted">
