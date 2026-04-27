@@ -176,9 +176,6 @@ export default async function AccountSubscribePage({
         {status === "already" ? (
           <p className="mt-3 text-sm text-ink/80">This email is already subscribed.</p>
         ) : null}
-        {status === "unsubscribed" ? (
-          <p className="mt-3 text-sm text-ink/80">Unsubscribed successfully.</p>
-        ) : null}
         {status === "error" && error ? (
           <p className="mt-3 text-sm text-rose-700">{error}</p>
         ) : null}
