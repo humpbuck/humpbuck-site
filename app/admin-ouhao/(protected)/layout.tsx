@@ -29,9 +29,11 @@ export default async function AdminProtectedLayout({
   children: React.ReactNode;
 }) {
   await assertAdmin();
-  const pendingCouponRequestCount = await prisma.affiliateCouponRequest.count({
-    where: { status: "pending" },
-  });
+  const pendingCouponRequestCount = await prisma.affiliateCouponRequest
+    .count({
+      where: { status: "pending" },
+    })
+    .catch(() => 0);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">

@@ -574,7 +574,7 @@ export default async function AdminAffiliatePage({
         },
         orderBy: { requestedAt: "desc" },
         take: 30,
-      }),
+      }).catch(() => []),
     ]);
 
   const activeProfiles = profiles.filter((p) => !p.blacklist);

@@ -286,18 +286,22 @@ async function requestAffiliateCouponCodeAction() {
   const requestEmail = profile.user.email?.trim() || "-";
   const supportFrom = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "support@humpbuck.com";
   const notifyTo = process.env.MERCHANT_NOTIFY_EMAIL?.trim() || "humpbuck@outlook.com";
-  const existingPending = await prisma.affiliateCouponRequest.findFirst({
-    where: { userId, status: "pending" },
-    select: { id: true },
-  });
+  const existingPending = await prisma.affiliateCouponRequest
+    .findFirst({
+      where: { userId, status: "pending" },
+      select: { id: true },
+    })
+    .catch(() => null);
   if (!existingPending) {
-    await prisma.affiliateCouponRequest.create({
-      data: {
-        userId,
-        affiliateId: profile.id,
-        status: "pending",
-      },
-    });
+    await prisma.affiliateCouponRequest
+      .create({
+        data: {
+          userId,
+          affiliateId: profile.id,
+          status: "pending",
+        },
+      })
+      .catch(() => null);
   }
 
   const mail = await sendTransactionalEmail({
