@@ -152,6 +152,7 @@ export function AffiliatePayoutDetailsForm({
           : payoutMethod === "wise" || payoutMethod === "payoneer"
             ? "Please enter registered email"
             : "Describe your preferred payout method";
+  const SCROLL_STORAGE_KEY = "affiliate_payout_submit_scroll_y";
 
   return (
     <form
@@ -160,7 +161,11 @@ export function AffiliatePayoutDetailsForm({
         const ok = window.confirm(
           "Please confirm your payout details are correct. Incorrect details may delay or fail commission payout.",
         );
-        if (!ok) e.preventDefault();
+        if (!ok) {
+          e.preventDefault();
+          return;
+        }
+        window.sessionStorage.setItem(SCROLL_STORAGE_KEY, String(window.scrollY));
       }}
       className="mt-3 grid gap-3 md:grid-cols-2"
     >

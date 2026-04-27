@@ -19,6 +19,8 @@ import { AffiliateCouponRequestedModal } from "@/components/account/affiliate-co
 import { AffiliatePayoutDetailsForm } from "@/components/account/affiliate-payout-details-form";
 import { AffiliateLiveRefresh } from "@/components/account/affiliate-live-refresh";
 import { PaidCommissionSelector } from "@/components/account/paid-commission-selector";
+import { RestoreScrollOnce } from "@/components/account/restore-scroll-once";
+import { ClearQueryParam } from "@/components/admin/clear-query-param";
 import {
   PHONE_COUNTRY_CODE_DATALIST_ID,
   PHONE_COUNTRY_CODES,
@@ -248,7 +250,7 @@ async function updatePayoutDetailsAction(formData: FormData) {
   });
 
   revalidatePath("/account/affiliate");
-  redirect("/account/affiliate?ok=payout_saved#account-settings");
+  redirect("/account/affiliate?editPayout=1&ok=payout_saved");
 }
 
 async function requestAffiliateCouponCodeAction() {
@@ -541,7 +543,9 @@ export default async function AccountAffiliatePage({
     session?.user?.email?.trim() ||
     "Partner";
   const dashboardTitle = isActiveAffiliate ? "Affiliate dashboard" : "Affiliate application";
-  const showGenericOkMessage = Boolean(sp.ok && sp.ok !== "coupon_requested");
+  const showGenericOkMessage = Boolean(
+    sp.ok && sp.ok !== "coupon_requested" && sp.ok !== "payout_saved",
+  );
 
   const links = (() => {
     try {
@@ -559,6 +563,11 @@ export default async function AccountAffiliatePage({
       <AffiliateCouponRequestedModal
         show={sp.ok === "coupon_requested"}
         requestId={String(sp.rid ?? "")}
+      />
+      {sp.ok ? <ClearQueryParam param="ok" /> : null}
+      <RestoreScrollOnce
+        enabled={sp.ok === "payout_saved"}
+        storageKey="affiliate_payout_submit_scroll_y"
       />
       <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">{dashboardTitle}</p>
       <h1 className="mt-2 font-serif text-3xl tracking-tight">
@@ -595,8 +604,6 @@ export default async function AccountAffiliatePage({
         <p className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
           {sp.ok === "pending"
             ? "Application submitted. Your profile is pending manual review."
-            : sp.ok === "payout_saved"
-              ? "Payout details saved. Admin will use this for commission settlement."
             : "Application submitted and auto-approved. Please complete payout details in the next phase."}
         </p>
       ) : null}
