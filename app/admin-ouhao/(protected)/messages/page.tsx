@@ -93,6 +93,9 @@ async function markCategoryReadAction(formData: FormData) {
   revalidatePath(adminPath("/messages"));
   revalidatePath(adminPath("/orders"));
   revalidatePath(adminPath("/affiliate"));
+  if (category && category !== "all") {
+    redirect(adminPath(`/messages?category=${encodeURIComponent(category)}`));
+  }
   redirect(adminPath("/messages"));
 }
 
@@ -385,9 +388,6 @@ export default async function AdminMessagesPage({
             <p>
               Showing category: <span className="font-semibold text-ink">{adminInboxCategoryLabel(selectedCategory)}</span>
             </p>
-            <Link className="underline underline-offset-2 hover:text-ink" href={adminPath("/messages")}>
-              Clear filter
-            </Link>
           </div>
         ) : null}
         {totalPendingCount === 0 && visibleRows === 0 ? (
