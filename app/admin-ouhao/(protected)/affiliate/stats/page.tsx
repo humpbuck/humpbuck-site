@@ -378,7 +378,7 @@ export default async function AffiliateStatsPage({
                 />
                 <input
                   name="payoutWhatsappCountryCode"
-                  defaultValue=""
+                  defaultValue={splitPhoneForInput(p.payoutWhatsapp).countryCode}
                   list={PHONE_COUNTRY_CODE_DATALIST_ID}
                   inputMode="tel"
                   placeholder="+1"
@@ -399,15 +399,15 @@ export default async function AffiliateStatsPage({
                   className="inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
                   pendingClassName="cursor-not-allowed bg-ink/70"
                 />
-                <PendingActionButton
+                <button
                   formAction={toggleBlacklistAction}
-                  idleLabel={p.blacklist ? "Remove blacklist" : "Blacklist"}
-                  pendingLabel={p.blacklist ? "Updating..." : "Blacklisting..."}
+                  type="submit"
                   name="nextBlacklisted"
                   value={p.blacklist ? "false" : "true"}
-                  className="inline-flex items-center justify-center rounded-xl border border-rose-300 bg-rose-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-rose-800 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-70"
-                  pendingClassName="cursor-not-allowed opacity-70"
-                />
+                  className="inline-flex items-center justify-center rounded-xl border border-rose-300 bg-rose-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-rose-800 transition hover:bg-rose-100"
+                >
+                  {p.blacklist ? "Remove blacklist" : "Blacklist"}
+                </button>
               </div>
               <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>
                 {PHONE_COUNTRY_CODES.map((code) => (
