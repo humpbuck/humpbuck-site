@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
@@ -602,30 +603,42 @@ export default async function AdminAffiliatePage({
       ) : null}
 
       <section className="mt-6 grid gap-3 sm:grid-cols-4">
-        <div className="rounded-2xl border border-line bg-white/60 px-4 py-3">
+        <Link
+          href="#all-affiliates"
+          className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
+        >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
             Total affiliates
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{profiles.length}</p>
-        </div>
-        <div className="rounded-2xl border border-line bg-white/60 px-4 py-3">
+        </Link>
+        <Link
+          href="#all-affiliates"
+          className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
+        >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
             Auto approved
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{autoApprovedCount}</p>
-        </div>
-        <div className="rounded-2xl border border-line bg-white/60 px-4 py-3">
+        </Link>
+        <Link
+          href="#pending-review"
+          className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
+        >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
             Pending review
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{pendingApps.length}</p>
-        </div>
-        <div className="rounded-2xl border border-line bg-white/60 px-4 py-3">
+        </Link>
+        <Link
+          href="#blacklisted"
+          className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
+        >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
             Blacklisted
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{blacklistedCount}</p>
-        </div>
+        </Link>
       </section>
 
       <section
@@ -957,7 +970,7 @@ export default async function AdminAffiliatePage({
         </form>
       </section>
 
-      <section className="mt-8">
+      <section id="pending-review" className="mt-8">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Pending review
         </h2>
@@ -1012,6 +1025,30 @@ export default async function AdminAffiliatePage({
                 </div>
               );
             })
+          )}
+        </div>
+      </section>
+
+      <section id="all-affiliates" className="mt-8">
+        <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+          All affiliates
+        </h2>
+        <div className="mt-3 space-y-2">
+          {profiles.length === 0 ? (
+            <p className="rounded-2xl border border-line bg-white/60 px-5 py-4 text-sm text-muted">
+              No affiliates found.
+            </p>
+          ) : (
+            profiles.map((p) => (
+              <div key={`all-${p.id}`} className="rounded-2xl border border-line bg-white/60 px-4 py-3 text-sm">
+                <p className="font-medium text-ink">
+                  {p.user.displayName || p.user.name || p.user.email || p.user.id}
+                </p>
+                <p className="mt-1 text-xs text-muted">
+                  Status: {p.status} · PID: {p.pid ?? "-"} · Tier: {p.tier?.name ?? "-"}
+                </p>
+              </div>
+            ))
           )}
         </div>
       </section>
@@ -1162,7 +1199,7 @@ export default async function AdminAffiliatePage({
         </div>
       </section>
 
-      <section className="mt-8">
+      <section id="blacklisted" className="mt-8">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Blacklisted
         </h2>
