@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
+import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { prisma } from "@/lib/prisma";
 
 function parseAmountOffCents(raw: FormDataEntryValue | null): number | null {
@@ -38,11 +39,16 @@ function ymd(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-function goCoupons(error?: string): never {
-  if (!error) {
+function goCoupons(params?: { error?: string; success?: string }): never {
+  const error = params?.error?.trim();
+  const success = params?.success?.trim();
+  if (!error && !success) {
     redirect(adminPath("/coupons"));
   }
-  redirect(`${adminPath("/coupons")}?error=${encodeURIComponent(error)}`);
+  const qs = new URLSearchParams();
+  if (error) qs.set("error", error);
+  if (success) qs.set("success", success);
+  redirect(`${adminPath("/coupons")}?${qs.toString()}`);
 }
 
 async function createCouponAction(formData: FormData) {
@@ -59,12 +65,12 @@ async function createCouponAction(formData: FormData) {
   const isActive = String(formData.get("isActive") ?? "") === "on";
   const affiliateId = parseAffiliateId(formData.get("affiliateId"));
 
-  if (!code) goCoupons("Coupon code is required.");
-  if (amountOffCents === null) goCoupons("Amount must be greater than 0.");
-  if (quantity === null) goCoupons("Quantity must be an integer >= 1.");
-  if (!startsAt || !endsAt) goCoupons("Start date and end date are required.");
+  if (!code) goCoupons({ error: "Coupon code is required." });
+  if (amountOffCents === null) goCoupons({ error: "Amount must be greater than 0." });
+  if (quantity === null) goCoupons({ error: "Quantity must be an integer >= 1." });
+  if (!startsAt || !endsAt) goCoupons({ error: "Start date and end date are required." });
   if (startsAt.getTime() > endsAt.getTime()) {
-    goCoupons("Start date cannot be after end date.");
+    goCoupons({ error: "Start date cannot be after end date." });
   }
 
   try {
@@ -81,10 +87,65 @@ async function createCouponAction(formData: FormData) {
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Failed to create coupon.";
-    goCoupons(msg.includes("Coupon_code_key") ? "Coupon code already exists." : msg);
+    goCoupons({ error: msg.includes("Coupon_code_key") ? "Coupon code already exists." : msg });
   }
+
+  if (affiliateId) {
+    const affiliate = await prisma.affiliateProfile.findUnique({
+      where: { id: affiliateId },
+      select: {
+        pid: true,
+        user: { select: { email: true, displayName: true, name: true } },
+      },
+    });
+    const to = affiliate?.user.email?.trim();
+    if (to) {
+      const affiliateName =
+        affiliate.user.displayName?.trim() || affiliate.user.name?.trim() || to;
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://www.humpbuck.com";
+      const accountUrl = `${appUrl}/account/affiliate`;
+      const amountOffUsd = (amountOffCents / 100).toFixed(2);
+      const textLines = [
+        `Hi ${affiliateName},`,
+        "",
+        "Your affiliate coupon has been created successfully.",
+        `Coupon code: ${code}`,
+        `Discount: $${amountOffUsd} off`,
+        `Usage limit: ${quantity}`,
+        `Valid period: ${ymd(startsAt)} to ${ymd(endsAt)}`,
+        affiliate?.pid ? `Affiliate PID: ${affiliate.pid}` : "",
+        "",
+        `You can manage your affiliate details here: ${accountUrl}`,
+        "",
+        "Best regards,",
+        "HUMPBUCK",
+      ].filter(Boolean);
+      const emailResult = await sendTransactionalEmail({
+        to,
+        subject: "Your affiliate coupon is ready",
+        htmlContent: `<p>Hi ${affiliateName},</p>
+<p>Your affiliate coupon has been created successfully.</p>
+<p><strong>Coupon code:</strong> ${code}<br/>
+<strong>Discount:</strong> $${amountOffUsd} off<br/>
+<strong>Usage limit:</strong> ${quantity}<br/>
+<strong>Valid period:</strong> ${ymd(startsAt)} to ${ymd(endsAt)}${
+          affiliate?.pid ? `<br/><strong>Affiliate PID:</strong> ${affiliate.pid}` : ""
+        }</p>
+<p>You can manage your affiliate details here:<br/><a href="${accountUrl}">${accountUrl}</a></p>
+<p>Best regards,<br/>HUMPBUCK</p>`,
+        textContent: textLines.join("\n"),
+      });
+      if (!emailResult.ok) {
+        revalidatePath(adminPath("/coupons"));
+        goCoupons({
+          success: "Coupon created, but affiliate notification email failed to send.",
+        });
+      }
+    }
+  }
+
   revalidatePath(adminPath("/coupons"));
-  redirect(adminPath("/coupons"));
+  goCoupons({ success: "Coupon created successfully." });
 }
 
 async function updateCouponAction(formData: FormData) {
@@ -102,13 +163,13 @@ async function updateCouponAction(formData: FormData) {
   const isActive = String(formData.get("isActive") ?? "") === "on";
   const affiliateId = parseAffiliateId(formData.get("affiliateId"));
 
-  if (!id) goCoupons("Missing coupon id.");
-  if (!code) goCoupons("Coupon code is required.");
-  if (amountOffCents === null) goCoupons("Amount must be greater than 0.");
-  if (quantity === null) goCoupons("Quantity must be an integer >= 1.");
-  if (!startsAt || !endsAt) goCoupons("Start date and end date are required.");
+  if (!id) goCoupons({ error: "Missing coupon id." });
+  if (!code) goCoupons({ error: "Coupon code is required." });
+  if (amountOffCents === null) goCoupons({ error: "Amount must be greater than 0." });
+  if (quantity === null) goCoupons({ error: "Quantity must be an integer >= 1." });
+  if (!startsAt || !endsAt) goCoupons({ error: "Start date and end date are required." });
   if (startsAt.getTime() > endsAt.getTime()) {
-    goCoupons("Start date cannot be after end date.");
+    goCoupons({ error: "Start date cannot be after end date." });
   }
 
   try {
@@ -126,7 +187,7 @@ async function updateCouponAction(formData: FormData) {
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Failed to update coupon.";
-    goCoupons(msg.includes("Coupon_code_key") ? "Coupon code already exists." : msg);
+    goCoupons({ error: msg.includes("Coupon_code_key") ? "Coupon code already exists." : msg });
   }
   revalidatePath(adminPath("/coupons"));
   redirect(adminPath("/coupons"));
@@ -136,7 +197,7 @@ async function deleteCouponAction(formData: FormData) {
   "use server";
   await assertAdmin();
   const id = String(formData.get("id") ?? "").trim();
-  if (!id) goCoupons("Missing coupon id.");
+  if (!id) goCoupons({ error: "Missing coupon id." });
   await prisma.coupon.delete({ where: { id } });
   revalidatePath(adminPath("/coupons"));
   redirect(adminPath("/coupons"));
@@ -145,7 +206,7 @@ async function deleteCouponAction(formData: FormData) {
 export default async function AdminCouponsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; success?: string }>;
 }) {
   await assertAdmin();
   const sp = await searchParams;
@@ -174,6 +235,11 @@ export default async function AdminCouponsPage({
       {sp.error ? (
         <p className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
           {sp.error}
+        </p>
+      ) : null}
+      {sp.success ? (
+        <p className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+          {sp.success}
         </p>
       ) : null}
 
