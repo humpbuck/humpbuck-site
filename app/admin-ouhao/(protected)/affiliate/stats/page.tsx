@@ -129,9 +129,6 @@ async function toggleBlacklistAction(formData: FormData) {
   });
   revalidatePath(adminPath("/affiliate"));
   revalidatePath(adminPath("/affiliate/stats"));
-  if (nextBlacklisted) {
-    redirect(adminPath("/affiliate/stats?focus=blacklisted&ok=blacklist_updated"));
-  }
   goStats(focus, "blacklist_updated");
 }
 
