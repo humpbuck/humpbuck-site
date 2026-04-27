@@ -2,6 +2,11 @@
 
 import type { UserAddress } from "@prisma/client";
 import { useState } from "react";
+import {
+  PHONE_COUNTRY_CODES,
+  normalizePhone,
+  splitPhoneForInput,
+} from "@/lib/phone-normalize";
 
 type Addr = {
   line1: string;
@@ -134,7 +139,7 @@ function AddressBlock({
   }
 
   return (
-    <div className="rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-5">
+    <div className="rounded-2xl border border-line bg-white/60 p-5">
       <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-ink/85">
         {title}
       </h2>
@@ -173,6 +178,7 @@ function AddressBlock({
           label="Phone"
           value={value.phone}
           onChange={(v) => patch("phone", v)}
+          isPhone
         />
       </div>
     </div>
@@ -187,17 +193,41 @@ function Field({
   label: string;
   value: string;
   onChange: (v: string) => void;
+  isPhone?: boolean;
 }) {
+  const phoneParts = splitPhoneForInput(value);
   return (
     <label className="block">
       <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
         {label}
       </span>
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full rounded-xl border border-[color:var(--color-line)] bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
-      />
+      {isPhone ? (
+        <div className="mt-1 grid grid-cols-[120px_1fr] gap-2">
+          <select
+            value={phoneParts.countryCode}
+            onChange={(e) => onChange(normalizePhone(e.target.value, phoneParts.localNumber))}
+            className="rounded-xl border border-line bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
+          >
+            {PHONE_COUNTRY_CODES.map((code) => (
+              <option key={code} value={code}>
+                {code}
+              </option>
+            ))}
+          </select>
+          <input
+            value={phoneParts.localNumber}
+            inputMode="numeric"
+            onChange={(e) => onChange(normalizePhone(phoneParts.countryCode, e.target.value))}
+            className="w-full rounded-xl border border-line bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
+          />
+        </div>
+      ) : (
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
+        />
+      )}
     </label>
   );
 }

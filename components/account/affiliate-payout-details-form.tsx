@@ -2,6 +2,11 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import {
+  PHONE_COUNTRY_CODES,
+  normalizePhone,
+  splitPhoneForInput,
+} from "@/lib/phone-normalize";
 
 type Props = {
   action: (formData: FormData) => void | Promise<void>;
@@ -55,6 +60,7 @@ export function AffiliatePayoutDetailsForm({
   defaultPayoutWhatsapp,
   cancelHref,
 }: Props) {
+  const defaultWhatsapp = splitPhoneForInput(defaultPayoutWhatsapp);
   const [payoutMethod, setPayoutMethod] = useState(defaultPayoutMethod);
   const [directAccount, setDirectAccount] = useState(defaultPayoutAccount);
   const [realName, setRealName] = useState(parseLabeledValue(defaultPayoutAccount, "Real name"));
@@ -79,6 +85,8 @@ export function AffiliatePayoutDetailsForm({
       ? "international"
       : "domestic",
   );
+  const [payoutWhatsappCountryCode, setPayoutWhatsappCountryCode] = useState(defaultWhatsapp.countryCode);
+  const [payoutWhatsappLocal, setPayoutWhatsappLocal] = useState(defaultWhatsapp.localNumber);
 
   const payoutAccount = useMemo(() => {
     if (payoutMethod === "wise" || payoutMethod === "payoneer") {
@@ -118,6 +126,10 @@ export function AffiliatePayoutDetailsForm({
     recipientName,
     swiftCode,
   ]);
+  const normalizedPayoutWhatsapp = useMemo(
+    () => normalizePhone(payoutWhatsappCountryCode, payoutWhatsappLocal),
+    [payoutWhatsappCountryCode, payoutWhatsappLocal],
+  );
 
   const isBank = payoutMethod === "bank";
   const isAlipay = payoutMethod === "alipay";
@@ -278,16 +290,33 @@ export function AffiliatePayoutDetailsForm({
         placeholder="Contact email for settlement"
         className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
       />
-      <input
-        name="payoutWhatsapp"
-        defaultValue={defaultPayoutWhatsapp}
-        placeholder="WhatsApp for settlement"
-        className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-      />
+      <div className="grid grid-cols-[120px_1fr] gap-2">
+        <select
+          name="payoutWhatsappCountryCode"
+          value={payoutWhatsappCountryCode}
+          onChange={(e) => setPayoutWhatsappCountryCode(e.target.value)}
+          className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+        >
+          {PHONE_COUNTRY_CODES.map((code) => (
+            <option key={code} value={code}>
+              {code}
+            </option>
+          ))}
+        </select>
+        <input
+          name="payoutWhatsappLocal"
+          value={payoutWhatsappLocal}
+          onChange={(e) => setPayoutWhatsappLocal(e.target.value)}
+          inputMode="numeric"
+          placeholder="WhatsApp number"
+          className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+        />
+      </div>
 
       <input name="payoutAccount" value={payoutAccount} readOnly hidden />
       <input name="payoutRealName" value={realName} readOnly hidden />
       <input name="payoutBankTransferScope" value={bankTransferScope} readOnly hidden />
+      <input name="payoutWhatsapp" value={normalizedPayoutWhatsapp} readOnly hidden />
 
       <div className="flex gap-2 md:col-span-2">
         <button

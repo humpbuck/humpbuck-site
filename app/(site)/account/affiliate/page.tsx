@@ -17,6 +17,11 @@ import { AffiliateQuickGuide } from "@/components/account/affiliate-quick-guide"
 import { AffiliateLinkGenerator } from "@/components/account/affiliate-link-generator";
 import { AffiliatePayoutDetailsForm } from "@/components/account/affiliate-payout-details-form";
 import { PaidCommissionSelector } from "@/components/account/paid-commission-selector";
+import {
+  PHONE_COUNTRY_CODES,
+  normalizePhone,
+  splitPhoneForInput,
+} from "@/lib/phone-normalize";
 import { prisma } from "@/lib/prisma";
 
 function goAffiliate(error?: string): never {
@@ -59,7 +64,10 @@ async function submitAffiliateApplicationAction(formData: FormData) {
     String(formData.get("followerCount") ?? ""),
   );
   const contactEmail = String(formData.get("contactEmail") ?? "").trim();
-  const contactWhatsapp = String(formData.get("contactWhatsapp") ?? "").trim();
+  const contactWhatsapp = normalizePhone(
+    String(formData.get("contactWhatsappCountryCode") ?? ""),
+    String(formData.get("contactWhatsappLocal") ?? ""),
+  );
   const about = String(formData.get("about") ?? "").trim();
 
   if (!about || about.length < 20) {
@@ -176,7 +184,11 @@ async function updatePayoutDetailsAction(formData: FormData) {
   const payoutMethod = String(formData.get("payoutMethod") ?? "").trim();
   const payoutAccount = String(formData.get("payoutAccount") ?? "").trim();
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
-  const payoutWhatsapp = String(formData.get("payoutWhatsapp") ?? "").trim();
+  const payoutWhatsappRaw = String(formData.get("payoutWhatsapp") ?? "").trim();
+  const payoutWhatsapp = normalizePhone(
+    String(formData.get("payoutWhatsappCountryCode") ?? ""),
+    String(formData.get("payoutWhatsappLocal") ?? ""),
+  ) || payoutWhatsappRaw;
   const payoutRealName = String(formData.get("payoutRealName") ?? "").trim();
   const payoutBankTransferScope = String(formData.get("payoutBankTransferScope") ?? "").trim();
   if (payoutMethod && payoutMethod !== "other" && !payoutAccount) {
@@ -384,6 +396,7 @@ export default async function AccountAffiliatePage({
   }
   const showApplicationForm = !isActiveAffiliate || sp.editProfile === "1";
   const showPayoutEditor = !profile || sp.editPayout === "1";
+  const contactWhatsappInput = splitPhoneForInput(profile?.payoutWhatsapp);
   const earnedThisMonthCents = monthlyPaid._sum.commissionCents ?? 0;
   const paidCommissionOrderCount = profile
     ? await countAffiliatePaidCommissionOrders(profile.id)
@@ -740,12 +753,26 @@ export default async function AccountAffiliatePage({
             <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
               WhatsApp
             </span>
-            <input
-              name="contactWhatsapp"
-              defaultValue={profile?.payoutWhatsapp ?? ""}
-              placeholder="Settlement WhatsApp (optional)"
-              className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-            />
+            <div className="mt-1 grid grid-cols-[120px_1fr] gap-2">
+              <select
+                name="contactWhatsappCountryCode"
+                defaultValue={contactWhatsappInput.countryCode}
+                className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+              >
+                {PHONE_COUNTRY_CODES.map((code) => (
+                  <option key={code} value={code}>
+                    {code}
+                  </option>
+                ))}
+              </select>
+              <input
+                name="contactWhatsappLocal"
+                defaultValue={contactWhatsappInput.localNumber}
+                inputMode="numeric"
+                placeholder="Settlement WhatsApp (optional)"
+                className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+              />
+            </div>
           </label>
             <div className="flex flex-wrap gap-2">
               <button

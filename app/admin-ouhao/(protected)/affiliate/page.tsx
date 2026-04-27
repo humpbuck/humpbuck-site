@@ -11,6 +11,11 @@ import {
   ensureAffiliateGrowthTiers,
   syncAffiliateGrowthTierByOrderCount,
 } from "@/lib/affiliate-tier-growth";
+import {
+  PHONE_COUNTRY_CODES,
+  normalizePhone,
+  splitPhoneForInput,
+} from "@/lib/phone-normalize";
 import { prisma } from "@/lib/prisma";
 
 function goAffiliate(error?: string): never {
@@ -164,7 +169,11 @@ async function updateProfileAction(formData: FormData) {
   const payoutMethod = String(formData.get("payoutMethod") ?? "").trim();
   const payoutAccount = String(formData.get("payoutAccount") ?? "").trim();
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
-  const payoutWhatsapp = String(formData.get("payoutWhatsapp") ?? "").trim();
+  const payoutWhatsappRaw = String(formData.get("payoutWhatsapp") ?? "").trim();
+  const payoutWhatsapp = normalizePhone(
+    String(formData.get("payoutWhatsappCountryCode") ?? ""),
+    String(formData.get("payoutWhatsappLocal") ?? ""),
+  ) || payoutWhatsappRaw;
   if (!profileId) goAffiliate("Missing affiliate profile id.");
   const existing = await prisma.affiliateProfile.findUnique({
     where: { id: profileId },
@@ -995,12 +1004,27 @@ export default async function AdminAffiliatePage({
                   placeholder="Payout email"
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
-                <input
-                  name="payoutWhatsapp"
-                  defaultValue={p.payoutWhatsapp ?? ""}
-                  placeholder="WhatsApp number"
-                  className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-                />
+                <div className="grid grid-cols-[120px_1fr] gap-2">
+                  <select
+                    name="payoutWhatsappCountryCode"
+                    defaultValue={splitPhoneForInput(p.payoutWhatsapp).countryCode}
+                    className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                  >
+                    {PHONE_COUNTRY_CODES.map((code) => (
+                      <option key={code} value={code}>
+                        {code}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    name="payoutWhatsappLocal"
+                    defaultValue={splitPhoneForInput(p.payoutWhatsapp).localNumber}
+                    inputMode="numeric"
+                    placeholder="WhatsApp number"
+                    className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+                  />
+                </div>
+                <input name="payoutWhatsapp" defaultValue={p.payoutWhatsapp ?? ""} hidden readOnly />
                 <div className="flex gap-2">
                   <button
                     type="submit"

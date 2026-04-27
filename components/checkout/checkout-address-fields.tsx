@@ -22,6 +22,11 @@ import {
   usZipPrimaryCity,
 } from "@/lib/checkout-zipcodes-helpers";
 import { countryLabelToIso2 } from "@/lib/logistics-estimate";
+import {
+  PHONE_COUNTRY_CODES,
+  normalizePhone,
+  splitPhoneForInput,
+} from "@/lib/phone-normalize";
 
 export function CheckoutAddressFields({
   title,
@@ -250,16 +255,68 @@ export function CheckoutAddressFields({
           }}
           disabled={postalDisabled}
         />
-        <Field
+        <PhoneField
           id={`${idPrefix}-phone`}
           label="Phone"
           required
-          autoComplete="tel"
           value={value.phone}
           onChange={(v) => patch("phone", v)}
         />
       </div>
     </div>
+  );
+}
+
+function PhoneField({
+  id,
+  label,
+  value,
+  onChange,
+  required = false,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  required?: boolean;
+}) {
+  const phoneParts = splitPhoneForInput(value);
+  return (
+    <label className="block" htmlFor={id}>
+      <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+        {label}
+        {required ? (
+          <span className="text-rose-600" aria-hidden="true">
+            {" "}
+            *
+          </span>
+        ) : null}
+      </span>
+      <div className="mt-1.5 grid grid-cols-[120px_1fr] gap-2">
+        <select
+          value={phoneParts.countryCode}
+          onChange={(e) => onChange(normalizePhone(e.target.value, phoneParts.localNumber))}
+          className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+        >
+          {PHONE_COUNTRY_CODES.map((code) => (
+            <option key={code} value={code}>
+              {code}
+            </option>
+          ))}
+        </select>
+        <input
+          id={id}
+          type="text"
+          name={id}
+          autoComplete="tel-national"
+          inputMode="numeric"
+          aria-required={required}
+          value={phoneParts.localNumber}
+          onChange={(e) => onChange(normalizePhone(phoneParts.countryCode, e.target.value))}
+          className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+        />
+      </div>
+    </label>
   );
 }
 
