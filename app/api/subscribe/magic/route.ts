@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { addEmailToBrevoNewsletter } from "@/lib/brevo-subscribe-contact";
 import { recordMarketingOptInFromSubscribe } from "@/lib/email-marketing-preference";
+import { sendSubscribeSuccessEmail } from "@/lib/subscribe-success-email";
 import { parseSubscribeMagicRequest } from "@/lib/subscribe-magic-link";
 
 function appOrigin(): string {
@@ -38,6 +39,7 @@ export async function GET(req: Request) {
   } catch {
     /* local DB best-effort */
   }
+  await sendSubscribeSuccessEmail(parsed.email).catch(() => null);
 
   const q = new URLSearchParams({ r: "ok" });
   if (result.already) q.set("r", "already");

@@ -3,6 +3,7 @@ import { createAdminInboxMessage, ADMIN_INBOX_CATEGORY } from "@/lib/admin-inbox
 import { addEmailToBrevoNewsletter } from "@/lib/brevo-subscribe-contact";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { recordMarketingOptInFromSubscribe } from "@/lib/email-marketing-preference";
+import { sendSubscribeSuccessEmail } from "@/lib/subscribe-success-email";
 
 export async function POST(req: Request) {
   let body: { email?: string };
@@ -38,6 +39,7 @@ export async function POST(req: Request) {
   } catch {
     // Local preference is best-effort; Brevo subscription already succeeded.
   }
+  await sendSubscribeSuccessEmail(email).catch(() => null);
 
   const notifyTo = process.env.MERCHANT_NOTIFY_EMAIL?.trim() || "humpbuck@outlook.com";
   await createAdminInboxMessage({

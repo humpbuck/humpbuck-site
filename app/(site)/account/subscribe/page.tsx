@@ -4,6 +4,7 @@ import { requireAccountSession } from "@/lib/account-server";
 import { addEmailToBrevoNewsletter } from "@/lib/brevo-subscribe-contact";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { createAdminInboxMessage, ADMIN_INBOX_CATEGORY } from "@/lib/admin-inbox";
+import { sendSubscribeSuccessEmail } from "@/lib/subscribe-success-email";
 import {
   isMarketingSubscribed,
   recordMarketingOptInFromSubscribe,
@@ -58,6 +59,7 @@ async function subscribeAction(formData: FormData) {
       createdAt: new Date().toISOString(),
     },
   });
+  await sendSubscribeSuccessEmail(email).catch(() => null);
   revalidatePath("/account/subscribe");
   goSubscribeWithEmail(email, result.already ? "already" : "subscribed");
 }
