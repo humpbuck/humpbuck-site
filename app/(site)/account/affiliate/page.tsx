@@ -250,7 +250,7 @@ async function updatePayoutDetailsAction(formData: FormData) {
   });
 
   revalidatePath("/account/affiliate");
-  redirect("/account/affiliate?editPayout=1&ok=payout_saved");
+  redirect("/account/affiliate?ok=payout_saved#account-settings");
 }
 
 async function requestAffiliateCouponCodeAction() {
@@ -821,6 +821,11 @@ export default async function AccountAffiliatePage({
                 >
                   Edit
                 </Link>
+                {sp.ok === "payout_saved" ? (
+                  <span className="ml-2 inline-flex items-center rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-[11px] font-medium text-sky-900">
+                    Saved successfully.
+                  </span>
+                ) : null}
               </div>
             </div>
           )}
