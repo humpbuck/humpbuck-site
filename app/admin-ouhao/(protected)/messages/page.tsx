@@ -115,8 +115,7 @@ function messagePrimaryText(input: {
   const email = payload.email || sourceEmail || "Unknown user";
   if (category === ADMIN_INBOX_CATEGORY.order) {
     const eventType = payload.eventType === "cancelled" ? "cancelled" : "paid";
-    const itemName = payload.itemName || "an order item";
-    return `${email} ${eventType} ${itemName}.`;
+    return `${email} ${eventType} an order.`;
   }
   if (category === ADMIN_INBOX_CATEGORY.subscribe) {
     return (
@@ -410,18 +409,15 @@ export default async function AdminMessagesPage({
                         <Image
                           src={payload.itemImage}
                           alt={payload.itemName}
-                          width={32}
-                          height={32}
-                          className="h-8 w-8 rounded object-cover"
+                          width={36}
+                          height={36}
+                          className="h-9 w-9 rounded object-cover"
                         />
                       ) : (
-                        <div className="h-8 w-8 rounded bg-paper" />
+                        <div className="h-9 w-9 rounded bg-paper" />
                       )}
                       <div className="min-w-0">
-                        <p className="truncate text-xs font-medium text-ink">
-                          {(payload.email || msg.sourceEmail || "Customer")}{" "}
-                          {payload.eventType === "cancelled" ? "cancelled" : "paid"} {payload.itemName}
-                        </p>
+                        <p className="truncate text-[11px] font-medium text-ink">{payload.itemName}</p>
                         <p className="truncate text-[11px] text-muted">
                           {payload.itemVariant || "Default"} · Qty {payload.itemQty || "1"}
                         </p>

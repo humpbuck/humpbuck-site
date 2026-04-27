@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { parseOrderItemsJson } from "@/lib/parse-order-items";
-import { getProductBySlug } from "@/lib/catalog";
+import { getCartLineImage, getProductBySlug } from "@/lib/catalog";
 
 export const ADMIN_INBOX_CATEGORY = {
   order: "order",
@@ -100,6 +100,7 @@ export async function syncSystemInboxMessages() {
     const lines = parseOrderItemsJson(order.itemsJson);
     const first = lines[0];
     const product = first?.slug ? getProductBySlug(first.slug) : null;
+    const lineImage = product && first ? getCartLineImage(product, first.variantId) : product?.image;
     return {
       orderId: order.id,
       merchantOrderCode: order.merchantOrderCode ?? "",
@@ -108,7 +109,7 @@ export async function syncSystemInboxMessages() {
       itemName: first?.name ?? "Order item",
       itemVariant: first?.variantLabel ?? "",
       itemQty: first?.qty ?? 1,
-      itemImage: product?.image ?? "",
+      itemImage: lineImage ?? "",
       itemSlug: first?.slug ?? "",
     };
   };
