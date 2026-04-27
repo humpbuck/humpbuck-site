@@ -1,5 +1,9 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
+import { ADMIN_INBOX_CATEGORY, markAdminInboxCategoryRead } from "@/lib/admin-inbox";
+import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import { AdminOrdersTable } from "@/components/admin/admin-orders-table";
 import {
@@ -11,6 +15,15 @@ import { OrderSearchBar } from "@/components/admin/order-search-bar";
 import { prisma } from "@/lib/prisma";
 
 const PAGE_SIZE = 20;
+
+async function markOrdersReadAction() {
+  "use server";
+  await assertAdmin();
+  await markAdminInboxCategoryRead(ADMIN_INBOX_CATEGORY.order);
+  revalidatePath(adminPath("/orders"));
+  revalidatePath(adminPath("/messages"));
+  redirect(adminPath("/orders"));
+}
 
 export default async function AdminOrdersPage({
   searchParams,
@@ -81,6 +94,14 @@ export default async function AdminOrdersPage({
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <form action={markOrdersReadAction}>
+            <button
+              type="submit"
+              className="rounded-xl border border-line bg-white/70 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-ink transition hover:border-ink/20"
+            >
+              Mark orders as read
+            </button>
+          </form>
           <Link
             href={`${adminPath("/orders")}/export?filter=${filter}&q=${encodeURIComponent(search)}&from=${dateFrom}&to=${dateTo}`}
             className="rounded-xl border border-line bg-white/70 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-ink transition hover:border-ink/20"

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
+import { ADMIN_INBOX_CATEGORY, adminInboxCategoryLabel } from "@/lib/admin-inbox";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import { prisma } from "@/lib/prisma";
@@ -35,6 +36,7 @@ export default async function AdminProtectedLayout({
     pendingDisputeCount,
     pendingSubscribeCount,
     pendingMockupRequestCount,
+    readCursors,
   ] = await Promise.all([
     prisma.affiliateCouponRequest
       .count({
@@ -61,7 +63,7 @@ export default async function AdminProtectedLayout({
     prisma.adminInboxMessage
       .count({
         where: {
-          category: "subscribe",
+          category: ADMIN_INBOX_CATEGORY.subscribe,
           status: "pending",
         },
       })
@@ -69,15 +71,49 @@ export default async function AdminProtectedLayout({
     prisma.adminInboxMessage
       .count({
         where: {
-          category: "email_mockup_request",
+          category: ADMIN_INBOX_CATEGORY.emailMockupRequest,
           status: "pending",
         },
       })
       .catch(() => 0),
+    prisma.adminInboxReadCursor
+      .findMany({
+        where: {
+          category: {
+            in: [ADMIN_INBOX_CATEGORY.order, ADMIN_INBOX_CATEGORY.dispute],
+          },
+        },
+        select: { category: true, readAt: true },
+      })
+      .catch(() => []),
+  ]);
+  const readAtMap = new Map(readCursors.map((x) => [x.category, x.readAt]));
+  const orderReadAt = readAtMap.get(ADMIN_INBOX_CATEGORY.order);
+  const disputeReadAt = readAtMap.get(ADMIN_INBOX_CATEGORY.dispute);
+  const [unreadOrderCount, unreadDisputeCount] = await Promise.all([
+    prisma.order
+      .count({
+        where: {
+          deletedAt: null,
+          status: { in: ["paid", "processing"] },
+          ...(orderReadAt ? { createdAt: { gt: orderReadAt } } : {}),
+        },
+      })
+      .catch(() => pendingOrderCount),
+    prisma.order
+      .count({
+        where: {
+          deletedAt: null,
+          refundReason: { not: null },
+          refundedAt: null,
+          ...(disputeReadAt ? { createdAt: { gt: disputeReadAt } } : {}),
+        },
+      })
+      .catch(() => pendingDisputeCount),
   ]);
   const totalPendingInboxCount =
-    pendingOrderCount +
-    pendingDisputeCount +
+    unreadOrderCount +
+    unreadDisputeCount +
     pendingCouponRequestCount +
     pendingSubscribeCount +
     pendingMockupRequestCount;
@@ -163,11 +199,14 @@ export default async function AdminProtectedLayout({
               <p className="font-semibold text-ink">Pending messages</p>
               <p className="mt-1 text-muted">Hover summary by category</p>
               <ul className="mt-2 space-y-1 text-ink/90">
-                <li>Orders: {pendingOrderCount}</li>
-                <li>After-sales disputes: {pendingDisputeCount}</li>
-                <li>Affiliates: {pendingCouponRequestCount}</li>
-                <li>Subscribe: {pendingSubscribeCount}</li>
-                <li>Email mockup request: {pendingMockupRequestCount}</li>
+                <li>{adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.order)}: {unreadOrderCount}</li>
+                <li>{adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.dispute)}: {unreadDisputeCount}</li>
+                <li>{adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.affiliates)}: {pendingCouponRequestCount}</li>
+                <li>{adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.subscribe)}: {pendingSubscribeCount}</li>
+                <li>
+                  {adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.emailMockupRequest)}:{" "}
+                  {pendingMockupRequestCount}
+                </li>
               </ul>
             </div>
           </div>

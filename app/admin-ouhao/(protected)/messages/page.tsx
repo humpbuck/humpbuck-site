@@ -1,5 +1,11 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import {
+  ADMIN_INBOX_CATEGORY,
+  adminInboxCategoryLabel,
+  markAdminInboxCategoryRead,
+} from "@/lib/admin-inbox";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import { prisma } from "@/lib/prisma";
@@ -42,6 +48,50 @@ async function markInboxMessageHandledAction(formData: FormData) {
   redirect(adminPath("/messages"));
 }
 
+async function markCategoryReadAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const category = String(formData.get("category") ?? "").trim();
+  const now = new Date();
+  if (!category) goMessages("Missing message category.");
+
+  if (category === "all" || category === ADMIN_INBOX_CATEGORY.order) {
+    await markAdminInboxCategoryRead(ADMIN_INBOX_CATEGORY.order, now);
+  }
+  if (category === "all" || category === ADMIN_INBOX_CATEGORY.dispute) {
+    await markAdminInboxCategoryRead(ADMIN_INBOX_CATEGORY.dispute, now);
+  }
+  if (category === "all" || category === ADMIN_INBOX_CATEGORY.affiliates) {
+    await prisma.affiliateCouponRequest
+      .updateMany({
+        where: { status: "pending" },
+        data: { status: "handled", handledAt: now },
+      })
+      .catch(() => null);
+  }
+  if (category === "all" || category === ADMIN_INBOX_CATEGORY.subscribe) {
+    await prisma.adminInboxMessage
+      .updateMany({
+        where: { status: "pending", category: ADMIN_INBOX_CATEGORY.subscribe },
+        data: { status: "handled", handledAt: now },
+      })
+      .catch(() => null);
+  }
+  if (category === "all" || category === ADMIN_INBOX_CATEGORY.emailMockupRequest) {
+    await prisma.adminInboxMessage
+      .updateMany({
+        where: { status: "pending", category: ADMIN_INBOX_CATEGORY.emailMockupRequest },
+        data: { status: "handled", handledAt: now },
+      })
+      .catch(() => null);
+  }
+
+  revalidatePath(adminPath("/messages"));
+  revalidatePath(adminPath("/orders"));
+  revalidatePath(adminPath("/affiliate"));
+  redirect(adminPath("/messages"));
+}
+
 function parsePayload(payloadJson: string): Record<string, string> {
   try {
     const obj = JSON.parse(payloadJson) as Record<string, unknown>;
@@ -53,12 +103,6 @@ function parsePayload(payloadJson: string): Record<string, string> {
   }
 }
 
-function categoryLabel(category: string): string {
-  if (category === "subscribe") return "Subscribe";
-  if (category === "email_mockup_request") return "Email mockup request";
-  return category;
-}
-
 export default async function AdminMessagesPage({
   searchParams,
 }: {
@@ -68,7 +112,10 @@ export default async function AdminMessagesPage({
   const sp = (await searchParams) ?? {};
   const errorRaw = sp.error;
   const error = Array.isArray(errorRaw) ? errorRaw[0] : errorRaw;
+  const categoryRaw = sp.category;
+  const selectedCategory = Array.isArray(categoryRaw) ? categoryRaw[0] : (categoryRaw ?? "all");
   const [
+    readCursors,
     pendingOrderCount,
     pendingDisputeCount,
     pendingAffiliateCount,
@@ -79,6 +126,16 @@ export default async function AdminMessagesPage({
     pendingInboxMessages,
     handledInboxMessages,
   ] = await Promise.all([
+    prisma.adminInboxReadCursor
+      .findMany({
+        where: {
+          category: {
+            in: [ADMIN_INBOX_CATEGORY.order, ADMIN_INBOX_CATEGORY.dispute],
+          },
+        },
+        select: { category: true, readAt: true },
+      })
+      .catch(() => []),
     prisma.order
       .count({
         where: {
@@ -103,12 +160,12 @@ export default async function AdminMessagesPage({
       .catch(() => 0),
     prisma.adminInboxMessage
       .count({
-        where: { category: "subscribe", status: "pending" },
+        where: { category: ADMIN_INBOX_CATEGORY.subscribe, status: "pending" },
       })
       .catch(() => 0),
     prisma.adminInboxMessage
       .count({
-        where: { category: "email_mockup_request", status: "pending" },
+        where: { category: ADMIN_INBOX_CATEGORY.emailMockupRequest, status: "pending" },
       })
       .catch(() => 0),
     prisma.affiliateCouponRequest
@@ -149,7 +206,13 @@ export default async function AdminMessagesPage({
       .catch(() => []),
     prisma.adminInboxMessage
       .findMany({
-        where: { status: "pending" },
+        where: {
+          status: "pending",
+          ...(selectedCategory === "all" ||
+          [ADMIN_INBOX_CATEGORY.order, ADMIN_INBOX_CATEGORY.dispute].includes(selectedCategory as any)
+            ? {}
+            : { category: selectedCategory }),
+        },
         orderBy: { createdAt: "desc" },
         take: 100,
       })
@@ -162,48 +225,96 @@ export default async function AdminMessagesPage({
       })
       .catch(() => []),
   ]);
+  const readAtMap = new Map(readCursors.map((x) => [x.category, x.readAt]));
+  const [unreadOrderCount, unreadDisputeCount] = await Promise.all([
+    prisma.order
+      .count({
+        where: {
+          deletedAt: null,
+          status: { in: ["paid", "processing"] },
+          ...(readAtMap.get(ADMIN_INBOX_CATEGORY.order)
+            ? { createdAt: { gt: readAtMap.get(ADMIN_INBOX_CATEGORY.order)! } }
+            : {}),
+        },
+      })
+      .catch(() => pendingOrderCount),
+    prisma.order
+      .count({
+        where: {
+          deletedAt: null,
+          refundReason: { not: null },
+          refundedAt: null,
+          ...(readAtMap.get(ADMIN_INBOX_CATEGORY.dispute)
+            ? { createdAt: { gt: readAtMap.get(ADMIN_INBOX_CATEGORY.dispute)! } }
+            : {}),
+        },
+      })
+      .catch(() => pendingDisputeCount),
+  ]);
   const totalPendingCount =
-    pendingOrderCount +
-    pendingDisputeCount +
+    unreadOrderCount +
+    unreadDisputeCount +
     pendingAffiliateCount +
     pendingSubscribeCount +
     pendingMockupRequestCount;
+  const cardClass = (count: number) =>
+    `rounded-xl border px-3 py-2 text-sm transition ${
+      count > 0
+        ? "border-line bg-paper/70 hover:border-ink/20"
+        : "border-line/70 bg-paper/35 text-muted hover:border-line/80"
+    }`;
 
   return (
     <div className="space-y-6">
       <section className="rounded-2xl border border-line bg-white/70 p-5">
-        <h1 className="font-serif text-3xl tracking-tight">Message inbox</h1>
-        <p className="mt-2 text-sm text-muted">Pending message summary for operations follow-up.</p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="font-serif text-3xl tracking-tight">Message inbox</h1>
+            <p className="mt-2 text-sm text-muted">Pending message summary for operations follow-up.</p>
+          </div>
+          <form action={markCategoryReadAction}>
+            <input type="hidden" name="category" value="all" />
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
+            >
+              Mark all as read
+            </button>
+          </form>
+        </div>
         {error ? (
           <p className="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
             {error}
           </p>
         ) : null}
         <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
-          <div className="rounded-xl border border-line bg-paper/70 px-3 py-2 text-sm">
+          <Link href={adminPath("/orders")} className={cardClass(unreadOrderCount)}>
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">Orders</p>
-            <p className="mt-1 text-xl font-semibold text-ink">{pendingOrderCount}</p>
-          </div>
-          <div className="rounded-xl border border-line bg-paper/70 px-3 py-2 text-sm">
+            <p className="mt-1 text-xl font-semibold text-ink">{unreadOrderCount}</p>
+          </Link>
+          <Link href={adminPath("/orders")} className={cardClass(unreadDisputeCount)}>
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
               After-sales disputes
             </p>
-            <p className="mt-1 text-xl font-semibold text-ink">{pendingDisputeCount}</p>
-          </div>
-          <div className="rounded-xl border border-line bg-paper/70 px-3 py-2 text-sm">
+            <p className="mt-1 text-xl font-semibold text-ink">{unreadDisputeCount}</p>
+          </Link>
+          <Link href={adminPath("/affiliate?couponRequests=1")} className={cardClass(pendingAffiliateCount)}>
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">Affiliates</p>
             <p className="mt-1 text-xl font-semibold text-ink">{pendingAffiliateCount}</p>
-          </div>
-          <div className="rounded-xl border border-line bg-paper/70 px-3 py-2 text-sm">
+          </Link>
+          <Link href={adminPath("/messages?category=subscribe")} className={cardClass(pendingSubscribeCount)}>
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">Subscribe</p>
             <p className="mt-1 text-xl font-semibold text-ink">{pendingSubscribeCount}</p>
-          </div>
-          <div className="rounded-xl border border-line bg-paper/70 px-3 py-2 text-sm">
+          </Link>
+          <Link
+            href={adminPath("/messages?category=email_mockup_request")}
+            className={cardClass(pendingMockupRequestCount)}
+          >
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
               Email mockup request
             </p>
             <p className="mt-1 text-xl font-semibold text-ink">{pendingMockupRequestCount}</p>
-          </div>
+          </Link>
         </div>
       </section>
 
@@ -211,8 +322,28 @@ export default async function AdminMessagesPage({
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Pending messages
         </h2>
+        {selectedCategory !== "all" ? (
+          <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted">
+            <p>
+              Showing filtered category:{" "}
+              <span className="font-semibold text-ink">{adminInboxCategoryLabel(selectedCategory)}</span>
+            </p>
+            <form action={markCategoryReadAction}>
+              <input type="hidden" name="category" value={selectedCategory} />
+              <button
+                type="submit"
+                className="rounded-lg border border-line bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-ink transition hover:border-ink/20"
+              >
+                Mark this category as read
+              </button>
+            </form>
+            <Link className="underline underline-offset-2 hover:text-ink" href={adminPath("/messages")}>
+              Clear filter
+            </Link>
+          </div>
+        ) : null}
         {totalPendingCount === 0 ? (
-          <p className="mt-3 text-sm text-muted">没有待处理的消息</p>
+          <p className="mt-3 text-sm text-muted">No pending messages.</p>
         ) : (
           <div className="mt-3 space-y-2">
             {pendingAffiliateRequests.map((req) => {
@@ -260,7 +391,7 @@ export default async function AdminMessagesPage({
                   <div>
                     <p>
                       <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
-                        {categoryLabel(msg.category)}
+                        {adminInboxCategoryLabel(msg.category)}
                       </span>{" "}
                       <span className="font-medium">{payload.email || msg.sourceEmail || "-"}</span>
                     </p>
@@ -327,7 +458,7 @@ export default async function AdminMessagesPage({
                 >
                   <p>
                     <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
-                      {categoryLabel(msg.category)}
+                      {adminInboxCategoryLabel(msg.category)}
                     </span>{" "}
                     <span className="font-medium">{payload.email || msg.sourceEmail || "-"}</span>
                   </p>
