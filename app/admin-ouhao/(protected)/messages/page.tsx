@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { ReadActionButton } from "@/components/admin/read-action-button";
 import { ResilientImage } from "@/components/admin/resilient-image";
 import {
   ADMIN_INBOX_CATEGORY,
@@ -371,17 +372,13 @@ export default async function AdminMessagesPage({
               </Link>
             ))}
           </div>
-          {selectedCategory !== "all" ? (
-            <form action={markCategoryReadAction}>
-              <input type="hidden" name="category" value={selectedCategory} />
-              <button
-                type="submit"
-                className="rounded-lg border border-line bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-ink transition hover:border-ink/20"
-              >
-                Mark this category as read
-              </button>
-            </form>
-          ) : null}
+          <form action={markCategoryReadAction}>
+            <input type="hidden" name="category" value={selectedCategory === "all" ? "all" : selectedCategory} />
+            <ReadActionButton
+              idleLabel={selectedCategory === "all" ? "Mark all as read" : "Mark this category as read"}
+              pendingLabel={selectedCategory === "all" ? "Marking all..." : "Marking category..."}
+            />
+          </form>
         </div>
         {selectedCategory !== "all" ? (
           <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted">
