@@ -93,3 +93,15 @@ export async function recordMarketingOptInFromSubscribe(emailRaw: string): Promi
       "updatedAt" = ${now}
   `;
 }
+
+/** Mark an email as opted out; creates row if missing. */
+export async function recordMarketingOptOutByEmail(emailRaw: string): Promise<void> {
+  const email = normalizeMarketingEmail(emailRaw);
+  const token = await getOrCreateUnsubscribeToken(email);
+  const now = new Date();
+  await prisma.$executeRaw`
+    UPDATE "EmailMarketingPreference"
+    SET "marketingOptOut" = true, "updatedAt" = ${now}
+    WHERE "email" = ${email} AND "unsubscribeToken" = ${token}
+  `;
+}
