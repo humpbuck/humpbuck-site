@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { loadEnvConfig } from "@next/env";
+import { getCartLineImage, getProductBySlug } from "@/lib/catalog";
 
 loadEnvConfig(process.cwd());
 
@@ -29,7 +30,43 @@ async function main() {
     },
   });
 
-  const sampleImage = "https://www.humpbuck.com/icon.png";
+  function buildOrderPayload(input: {
+    email: string;
+    eventType: string;
+    orderId: string;
+    slug: string;
+    variantId: string;
+    variantLabel: string;
+    qty?: number;
+    note: string;
+  }) {
+    const product = getProductBySlug(input.slug);
+    const itemImage = product ? getCartLineImage(product, input.variantId) : "";
+    const qty = input.qty ?? 1;
+    return {
+      email: input.email,
+      eventType: input.eventType,
+      orderId: input.orderId,
+      itemName: product?.name ?? input.slug,
+      itemSlug: input.slug,
+      itemVariantId: input.variantId,
+      itemVariant: input.variantLabel,
+      itemQty: qty,
+      itemImage,
+      itemCount: 1,
+      itemsPreviewJson: JSON.stringify([
+        {
+          name: product?.name ?? input.slug,
+          slug: input.slug,
+          variantId: input.variantId,
+          variant: input.variantLabel,
+          qty,
+          image: itemImage,
+        },
+      ]),
+      note: input.note,
+    };
+  }
 
   await prisma.adminInboxMessage.createMany({
     data: [
@@ -39,14 +76,15 @@ async function main() {
         status: "pending",
         sourceEmail: "james.chen.demo@humpbuck-check.local",
         payloadJson: JSON.stringify({
-          email: "james.chen.demo@humpbuck-check.local",
-          eventType: "paid",
-          orderId: "1024",
-          itemName: "DIGI-TEMP 2301",
-          itemVariant: "Black Dial / Steel Strap",
-          itemQty: "1",
-          itemImage: sampleImage,
-          note: "New Order #1024 | Received from James Chen, total $299.00.",
+          ...buildOrderPayload({
+            email: "james.chen.demo@humpbuck-check.local",
+            eventType: "paid",
+            orderId: "1024",
+            slug: "digitemp-2301",
+            variantId: "style-01",
+            variantLabel: "Black Dial / Steel Strap",
+            note: "New Order #1024 | Received from James Chen, total $299.00.",
+          }),
         }),
       },
       {
@@ -54,14 +92,15 @@ async function main() {
         status: "pending",
         sourceEmail: "sarah.miller.demo@humpbuck-check.local",
         payloadJson: JSON.stringify({
-          email: "sarah.miller.demo@humpbuck-check.local",
-          eventType: "cancelled",
-          orderId: "1021",
-          itemName: "RM-TONNEAU Classic",
-          itemVariant: "Silver Case / Brown Strap",
-          itemQty: "1",
-          itemImage: sampleImage,
-          note: "Order Cancelled #1021 | Customer cancelled before shipment.",
+          ...buildOrderPayload({
+            email: "sarah.miller.demo@humpbuck-check.local",
+            eventType: "cancelled",
+            orderId: "1021",
+            slug: "rm-m08",
+            variantId: "style-01",
+            variantLabel: "Silver Case / Brown Strap",
+            note: "Order Cancelled #1021 | Customer cancelled before shipment.",
+          }),
         }),
       },
       {
@@ -69,14 +108,15 @@ async function main() {
         status: "pending",
         sourceEmail: "refund.alert.demo@humpbuck-check.local",
         payloadJson: JSON.stringify({
-          email: "refund.alert.demo@humpbuck-check.local",
-          eventType: "refund_dispute",
-          orderId: "1099",
-          itemName: "DIGI-TEMP GMT",
-          itemVariant: "Blue Dial",
-          itemQty: "1",
-          itemImage: sampleImage,
-          note: "Refund/Dispute Alert | Customer filed payment dispute.",
+          ...buildOrderPayload({
+            email: "refund.alert.demo@humpbuck-check.local",
+            eventType: "refund_dispute",
+            orderId: "1099",
+            slug: "digitemp-2412m",
+            variantId: "style-02",
+            variantLabel: "Blue Dial",
+            note: "Refund/Dispute Alert | Customer filed payment dispute.",
+          }),
         }),
       },
       // AFFILIATES
