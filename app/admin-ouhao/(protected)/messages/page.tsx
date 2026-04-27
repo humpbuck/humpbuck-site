@@ -461,17 +461,9 @@ export default async function AdminMessagesPage({
             </p>
           </div>
         ) : null}
-        {visibleRows > 0 ? (
-          <form id="bulk-delete-form" action={deleteSelectedMessagesAction} className="mt-2">
-            <input type="hidden" name="category" value={selectedCategory} />
-            <button
-              type="submit"
-              className="rounded-lg border border-line bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-ink transition hover:border-ink/20"
-            >
-              Delete selected
-            </button>
-          </form>
-        ) : null}
+        <form id="bulk-delete-form" action={deleteSelectedMessagesAction}>
+          <input type="hidden" name="category" value={selectedCategory} />
+        </form>
         {totalPendingCount === 0 && visibleRows === 0 ? (
           <p className="mt-3 text-sm text-muted">No pending messages.</p>
         ) : visibleRows === 0 ? (
