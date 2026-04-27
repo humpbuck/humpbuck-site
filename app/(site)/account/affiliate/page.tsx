@@ -16,6 +16,7 @@ import {
 import { AffiliateQuickGuide } from "@/components/account/affiliate-quick-guide";
 import { AffiliateLinkGenerator } from "@/components/account/affiliate-link-generator";
 import { AffiliatePayoutDetailsForm } from "@/components/account/affiliate-payout-details-form";
+import { AffiliateLiveRefresh } from "@/components/account/affiliate-live-refresh";
 import { PaidCommissionSelector } from "@/components/account/paid-commission-selector";
 import {
   PHONE_COUNTRY_CODE_DATALIST_ID,
@@ -468,6 +469,7 @@ export default async function AccountAffiliatePage({
 
   return (
     <div>
+      {profile ? <AffiliateLiveRefresh /> : null}
       <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">{dashboardTitle}</p>
       <h1 className="mt-2 font-serif text-3xl tracking-tight">
         Hi, {greetingName}!
