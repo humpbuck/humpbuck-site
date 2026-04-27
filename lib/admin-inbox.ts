@@ -99,17 +99,28 @@ export async function syncSystemInboxMessages() {
   }) => {
     const lines = parseOrderItemsJson(order.itemsJson);
     const first = lines[0];
-    const product = first?.slug ? getProductBySlug(first.slug) : null;
-    const lineImage = product && first ? getCartLineImage(product, first.variantId) : product?.image;
+    const linePreviews = lines.map((line) => {
+      const product = line.slug ? getProductBySlug(line.slug) : null;
+      const lineImage = product ? getCartLineImage(product, line.variantId) : "";
+      return {
+        name: line.name || product?.name || "Order item",
+        variant: line.variantLabel || "Default",
+        qty: line.qty || 1,
+        image: lineImage || product?.image || "",
+      };
+    });
+    const firstPreview = linePreviews[0];
     return {
       orderId: order.id,
       merchantOrderCode: order.merchantOrderCode ?? "",
       email: order.email,
       createdAt: order.createdAt.toISOString(),
-      itemName: first?.name ?? "Order item",
-      itemVariant: first?.variantLabel ?? "",
-      itemQty: first?.qty ?? 1,
-      itemImage: lineImage ?? "",
+      itemName: firstPreview?.name ?? first?.name ?? "Order item",
+      itemVariant: firstPreview?.variant ?? first?.variantLabel ?? "",
+      itemQty: firstPreview?.qty ?? first?.qty ?? 1,
+      itemImage: firstPreview?.image ?? "",
+      itemCount: linePreviews.length || 1,
+      itemsPreviewJson: JSON.stringify(linePreviews),
       itemSlug: first?.slug ?? "",
     };
   };

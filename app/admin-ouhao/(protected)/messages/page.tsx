@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
@@ -95,39 +94,71 @@ async function markCategoryReadAction(formData: FormData) {
   redirect(adminPath("/messages"));
 }
 
-function parsePayload(payloadJson: string): Record<string, string> {
+function parsePayload(payloadJson: string): Record<string, unknown> {
   try {
     const obj = JSON.parse(payloadJson) as Record<string, unknown>;
-    return Object.fromEntries(
-      Object.entries(obj).map(([k, v]) => [k, typeof v === "string" ? v : JSON.stringify(v)]),
-    );
+    return obj ?? {};
   } catch {
     return {};
   }
 }
 
+function asText(v: unknown, fallback = ""): string {
+  return typeof v === "string" ? v : fallback;
+}
+
+function asNumber(v: unknown, fallback = 0): number {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function parseItemsPreview(payload: Record<string, unknown>): Array<{
+  name: string;
+  variant: string;
+  qty: number;
+  image: string;
+}> {
+  const raw = asText(payload.itemsPreviewJson, "");
+  if (!raw) return [];
+  try {
+    const arr = JSON.parse(raw) as Array<Record<string, unknown>>;
+    if (!Array.isArray(arr)) return [];
+    return arr.map((x) => ({
+      name: asText(x.name, "Order item"),
+      variant: asText(x.variant, "Default"),
+      qty: asNumber(x.qty, 1),
+      image: asText(x.image, ""),
+    }));
+  } catch {
+    return [];
+  }
+}
+
 function messagePrimaryText(input: {
   category: string;
-  payload: Record<string, string>;
+  payload: Record<string, unknown>;
   sourceEmail: string | null;
 }): string {
   const { category, payload, sourceEmail } = input;
-  const email = payload.email || sourceEmail || "Unknown user";
+  const email = asText(payload.email, sourceEmail ?? "Unknown user");
   if (category === ADMIN_INBOX_CATEGORY.order) {
-    const eventType = payload.eventType === "cancelled" ? "cancelled" : "paid";
-    return `${email} ${eventType} an order.`;
+    const eventType = asText(payload.eventType) === "cancelled" ? "cancelled" : "paid";
+    const itemCount = Math.max(1, asNumber(payload.itemCount, 1));
+    const itemWord = itemCount === 1 ? "item" : "items";
+    return `${email} ${eventType} an order (${itemCount} ${itemWord}).`;
   }
   if (category === ADMIN_INBOX_CATEGORY.subscribe) {
     return (
-      payload.message ||
+      asText(payload.message) ||
       `New Subscriber | ${email} subscribed to your mailing list. Synced to Brevo (Website newsletter).`
     );
   }
   if (category === ADMIN_INBOX_CATEGORY.emailMockupRequest) {
-    const company = payload.company ? ` for ${payload.company}` : "";
-    return payload.message || `${email} submitted an email mockup request${company}.`;
+    const companyName = asText(payload.company);
+    const company = companyName ? ` for ${companyName}` : "";
+    return asText(payload.message) || `${email} submitted an email mockup request${company}.`;
   }
-  return payload.message || `${email} sent a new message.`;
+  return asText(payload.message) || `${email} sent a new message.`;
 }
 
 export default async function AdminMessagesPage({
@@ -211,7 +242,11 @@ export default async function AdminMessagesPage({
       })
       .catch(() => []),
     prisma.adminInboxMessage.findMany({
-      where: { status: { not: "pending" } },
+      where: {
+        status: { not: "pending" },
+        category: { not: ADMIN_INBOX_CATEGORY.dispute },
+        ...(selectedCategory === "all" ? {} : { category: selectedCategory }),
+      },
       orderBy: [{ handledAt: "desc" }, { createdAt: "desc" }],
       take: 200,
     }).catch(() => []),
@@ -332,14 +367,12 @@ export default async function AdminMessagesPage({
                       <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
                         Affiliates
                       </span>{" "}
-                      <details className="inline-block max-w-[680px] align-middle">
-                        <summary className="max-w-[680px] cursor-pointer list-none truncate font-medium text-ink/90 [&::-webkit-details-marker]:hidden">
-                          Coupon Request | {name} requested a dedicated coupon code.
-                        </summary>
-                        <p className="mt-1 whitespace-normal text-sm text-ink/85">
-                          Coupon Request | {name} requested a dedicated coupon code.
-                        </p>
-                      </details>
+                      <span
+                        className="inline-block max-w-[680px] truncate align-middle font-medium text-ink/90"
+                        title={`Coupon Request | ${name} requested a dedicated coupon code.`}
+                      >
+                        Coupon Request | {name} requested a dedicated coupon code.
+                      </span>
                     </p>
                     <p className="text-xs text-muted">
                       {req.user.email ?? "-"} · PID {req.affiliate?.pid ?? "-"} · {req.requestedAt.toLocaleString()}
@@ -367,6 +400,7 @@ export default async function AdminMessagesPage({
             {allMessages.map((msg) => {
               const payload = parsePayload(msg.payloadJson);
               const isRead = msg.status !== "pending";
+              const itemPreviews = parseItemsPreview(payload);
               return (
                 <div
                   key={msg.id}
@@ -379,49 +413,63 @@ export default async function AdminMessagesPage({
                       <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
                         {adminInboxCategoryLabel(msg.category)}
                       </span>{" "}
-                      <details className="inline-block max-w-[680px] align-middle">
-                        <summary className="max-w-[680px] cursor-pointer list-none truncate font-medium text-ink/90 [&::-webkit-details-marker]:hidden">
-                          {messagePrimaryText({
-                            category: msg.category,
-                            payload,
-                            sourceEmail: msg.sourceEmail,
-                          })}
-                        </summary>
-                        <p className="mt-1 whitespace-normal text-sm text-ink/85">
-                          {messagePrimaryText({
-                            category: msg.category,
-                            payload,
-                            sourceEmail: msg.sourceEmail,
-                          })}
-                        </p>
-                      </details>
+                      <span
+                        className="inline-block max-w-[680px] truncate align-middle font-medium text-ink/90"
+                        title={messagePrimaryText({
+                          category: msg.category,
+                          payload,
+                          sourceEmail: msg.sourceEmail,
+                        })}
+                      >
+                        {messagePrimaryText({
+                          category: msg.category,
+                          payload,
+                          sourceEmail: msg.sourceEmail,
+                        })}
+                      </span>
                     </p>
                     <p className="text-xs text-muted">
                       {msg.createdAt.toLocaleString()}
-                      {payload.company ? ` · Company: ${payload.company}` : ""}
-                      {payload.targetRegion ? ` · Region: ${payload.targetRegion}` : ""}
-                      {payload.estimatedQty ? ` · Qty: ${payload.estimatedQty}` : ""}
+                      {asText(payload.company) ? ` · Company: ${asText(payload.company)}` : ""}
+                      {asText(payload.targetRegion) ? ` · Region: ${asText(payload.targetRegion)}` : ""}
+                      {asText(payload.estimatedQty) ? ` · Qty: ${asText(payload.estimatedQty)}` : ""}
                     </p>
                   </div>
-                  {msg.category === ADMIN_INBOX_CATEGORY.order && payload.itemName ? (
-                    <div className="flex items-center gap-2 rounded-lg border border-line bg-white px-2 py-1">
-                      {payload.itemImage ? (
-                        <Image
-                          src={payload.itemImage}
-                          alt={payload.itemName}
-                          width={36}
-                          height={36}
-                          className="h-9 w-9 rounded object-cover"
-                        />
-                      ) : (
-                        <div className="h-9 w-9 rounded bg-paper" />
-                      )}
-                      <div className="min-w-0">
-                        <p className="truncate text-[11px] font-medium text-ink">{payload.itemName}</p>
-                        <p className="truncate text-[11px] text-muted">
-                          {payload.itemVariant || "Default"} · Qty {payload.itemQty || "1"}
-                        </p>
-                      </div>
+                  {msg.category === ADMIN_INBOX_CATEGORY.order &&
+                  (itemPreviews.length > 0 || asText(payload.itemName)) ? (
+                    <div className="space-y-1 rounded-lg border border-line bg-white px-2 py-1">
+                      {(itemPreviews.length > 0
+                        ? itemPreviews
+                        : [
+                            {
+                              name: asText(payload.itemName, "Order item"),
+                              variant: asText(payload.itemVariant, "Default"),
+                              qty: asNumber(payload.itemQty, 1),
+                              image: asText(payload.itemImage, ""),
+                            },
+                          ]
+                      ).map((item, idx) => (
+                        <div key={`${msg.id}-${idx}`} className="flex items-center gap-2">
+                          {item.image ? (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="h-9 w-9 rounded object-cover"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).style.display = "none";
+                              }}
+                            />
+                          ) : (
+                            <div className="h-9 w-9 rounded bg-paper" />
+                          )}
+                          <div className="min-w-0">
+                            <p className="truncate text-[11px] font-medium text-ink">{item.name}</p>
+                            <p className="truncate text-[11px] text-muted">
+                              {item.variant || "Default"} · Qty {item.qty || 1}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ) : null}
                   {isRead ? (
