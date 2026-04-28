@@ -127,8 +127,9 @@ export default async function HomePage() {
                 fill
                 priority
                 fetchPriority="high"
+                quality={68}
                 className="object-cover opacity-95 transition group-hover:opacity-100"
-                sizes="(max-width:767px) 100vw, 50vw"
+                sizes="(max-width:767px) 92vw, (max-width:1279px) 50vw, 560px"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#070a10] via-transparent to-transparent opacity-70" />
               <div className="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/10 bg-black/35 p-4 backdrop-blur-md">
@@ -171,8 +172,9 @@ export default async function HomePage() {
                 src={tonneau.heroImage}
                 alt=""
                 fill
+                quality={66}
                 className="object-cover"
-                sizes="(max-width:1024px) 100vw, 50vw"
+                sizes="(max-width:1024px) 100vw, (max-width:1536px) 50vw, 720px"
               />
             </div>
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-black/70 via-black/45 to-[#141210]/20" />
@@ -213,8 +215,9 @@ export default async function HomePage() {
                 src={rdAstral.heroImage}
                 alt=""
                 fill
+                quality={62}
                 className="object-cover"
-                sizes="(max-width:1024px) 100vw, 50vw"
+                sizes="(max-width:1024px) 100vw, (max-width:1536px) 50vw, 720px"
               />
             </div>
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-violet-950/80 via-black/50 to-[#1a1224]/25" />

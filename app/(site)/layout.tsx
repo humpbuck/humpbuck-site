@@ -3,9 +3,8 @@ import { GoogleAnalyticsPageviews } from "@/components/analytics/google-analytic
 import { SiteAnalyticsConsent } from "@/components/analytics/site-analytics-consent";
 import { AttributionCapture } from "@/components/attribution-capture";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteFloatingActions } from "@/components/site/SiteFloatingActions";
 import { SiteHeader } from "@/components/site/SiteHeader";
-import { ScrollToTopButton } from "@/components/site/ScrollToTopButton";
-import { WhatsAppFloatingButton } from "@/components/site/WhatsAppFloatingButton";
 
 export default function SiteLayout({
   children,
@@ -26,8 +25,7 @@ export default function SiteLayout({
         {children}
       </main>
       <SiteFooter />
-      <WhatsAppFloatingButton />
-      <ScrollToTopButton />
+      <SiteFloatingActions />
     </>
   );
 }

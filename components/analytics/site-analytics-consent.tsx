@@ -23,12 +23,12 @@ function readStoredConsent(): StoredConsentChoice | null {
 }
 
 export function SiteAnalyticsConsent() {
-  const [showBanner, setShowBanner] = useState(false);
+  const [choice, setChoice] = useState<StoredConsentChoice | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     setReady(true);
-    setShowBanner(readStoredConsent() === null);
+    setChoice(readStoredConsent());
   }, []);
 
   const onGtagLoad = useCallback(() => {
@@ -47,7 +47,7 @@ export function SiteAnalyticsConsent() {
     } catch {
       /* ignore */
     }
-    setShowBanner(false);
+    setChoice("accepted");
     const w = window as Window & { gtag?: (...args: unknown[]) => void };
     if (w.gtag && GA_ID) {
       w.gtag("consent", "update", GOOGLE_CONSENT_UPDATE_ACCEPTED);
@@ -65,7 +65,7 @@ export function SiteAnalyticsConsent() {
     } catch {
       /* ignore */
     }
-    setShowBanner(false);
+    setChoice("rejected");
   }, []);
 
   if (!GA_ID) {
@@ -73,22 +73,28 @@ export function SiteAnalyticsConsent() {
   }
 
   const consentDefaultJs = JSON.stringify(GOOGLE_CONSENT_DEFAULT);
+  const shouldLoadGa = choice === "accepted";
+  const showBanner = ready && choice === null;
 
   return (
     <>
-      <Script id="google-consent-default" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          window.gtag = gtag;
-          gtag('consent', 'default', ${consentDefaultJs});
-        `}
-      </Script>
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_ID)}`}
-        strategy="afterInteractive"
-        onLoad={onGtagLoad}
-      />
+      {shouldLoadGa ? (
+        <>
+          <Script id="google-consent-default" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              window.gtag = gtag;
+              gtag('consent', 'default', ${consentDefaultJs});
+            `}
+          </Script>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_ID)}`}
+            strategy="afterInteractive"
+            onLoad={onGtagLoad}
+          />
+        </>
+      ) : null}
 
       {ready && showBanner ? (
         <div
