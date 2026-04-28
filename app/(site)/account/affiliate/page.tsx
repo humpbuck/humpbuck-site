@@ -438,7 +438,16 @@ export default async function AccountAffiliatePage({
   const sp = await searchParams;
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const [profile, latestApplication, commissionLedgers, monthlyPaid, totalPaid, coupon, paidLedgers] = await Promise.all([
+  const [accountUser, profile, latestApplication, commissionLedgers, monthlyPaid, totalPaid, coupon, paidLedgers] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        firstName: true,
+        lastName: true,
+        displayName: true,
+        email: true,
+      },
+    }),
     prisma.affiliateProfile.findUnique({
       where: { userId },
       include: {
@@ -554,12 +563,14 @@ export default async function AccountAffiliatePage({
     ? Math.min(100, Math.round((progressInTier / progressSpan) * 100))
     : 100;
   const recentReferrals = commissionLedgers.slice(0, 3);
-  const fullName = [profile?.user.firstName?.trim(), profile?.user.lastName?.trim()]
+  const fullName = [accountUser?.firstName?.trim(), accountUser?.lastName?.trim()]
     .filter(Boolean)
     .join(" ")
     .trim();
   const greetingName =
     fullName ||
+    accountUser?.displayName?.trim() ||
+    accountUser?.email?.trim() ||
     profile?.displayName?.trim() ||
     profile?.user.displayName?.trim() ||
     profile?.user.email?.trim() ||
@@ -599,24 +610,26 @@ export default async function AccountAffiliatePage({
       <p className="mt-4 text-sm text-muted">
         Keep your affiliate tools and payout settings up to date.
       </p>
-      <section className="mt-4 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-2xl border border-[#EEEEEE] bg-white/60 px-4 py-3">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-            Earned this month
-          </p>
-          <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">
-            {usd(earnedThisMonthCents)}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-[#EEEEEE] bg-white/60 px-4 py-3">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-            Total earned
-          </p>
-          <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">
-            {usd(totalEarnedCents)}
-          </p>
-        </div>
-      </section>
+      {profile ? (
+        <section className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-2xl border border-[#EEEEEE] bg-white/60 px-4 py-3">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+              Earned this month
+            </p>
+            <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">
+              {usd(earnedThisMonthCents)}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-[#EEEEEE] bg-white/60 px-4 py-3">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+              Total earned
+            </p>
+            <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">
+              {usd(totalEarnedCents)}
+            </p>
+          </div>
+        </section>
+      ) : null}
 
       {sp.error ? (
         <p className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
