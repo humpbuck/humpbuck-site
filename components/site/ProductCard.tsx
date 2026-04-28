@@ -7,16 +7,24 @@ import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
 export function ProductCard({
   product,
   imagePriority = false,
+  optimizeR2Image = false,
+  imageQuality = 60,
   /** When set (e.g. R2-resolved), overrides `product.image` for cards. */
   cardImageUrl,
 }: {
   product: Product;
   /** First viewport row(s) of grids — LCP + avoid lazy for above-the-fold. */
   imagePriority?: boolean;
+  /**
+   * Keep false by default because some R2 WebP objects can intermittently fail through
+   * `/_next/image` in certain flows; allow selective opt-in for performance testing pages.
+   */
+  optimizeR2Image?: boolean;
+  imageQuality?: number;
   cardImageUrl?: string;
 }) {
   const imgSrc = cardImageUrl?.trim() || product.image;
-  const r2Unopt = isR2PublicObjectUrl(imgSrc);
+  const r2Unopt = isR2PublicObjectUrl(imgSrc) && !optimizeR2Image;
   return (
     <Link
       href={`/product/${product.slug}`}
@@ -33,7 +41,7 @@ export function ProductCard({
           priority={imagePriority}
           fetchPriority={imagePriority ? "high" : undefined}
           sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
-          quality={60}
+          quality={imageQuality}
           unoptimized={r2Unopt}
           className="object-cover object-center transition duration-500 group-hover:scale-[1.03]"
         />

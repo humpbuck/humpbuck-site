@@ -12,7 +12,6 @@ import {
   getProductsBySeries,
   seriesList,
 } from "@/lib/catalog";
-import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { R2 } from "@/lib/r2";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
@@ -44,11 +43,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function HomePage() {
+export default function HomePage() {
   const featured = getHomeFeaturedProducts(12);
-  const featuredCardImages = await Promise.all(
-    featured.map((p) => getShopCardR2GalleryImage(p.slug)),
-  );
   const tonneau = seriesList.find((s) => s.slug === "tonneau")!;
   const rdAstral = seriesList.find((s) => s.slug === "rd-astral")!;
   const heroFeatured = getProductBySlug("digitemp-2301")!;
@@ -270,8 +266,9 @@ export default async function HomePage() {
               <ProductCard
                 key={p.slug}
                 product={p}
-                imagePriority={i < 4}
-                cardImageUrl={featuredCardImages[i] ?? undefined}
+                imagePriority={false}
+                optimizeR2Image
+                imageQuality={60}
               />
             ))}
           </div>
