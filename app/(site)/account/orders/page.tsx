@@ -10,12 +10,48 @@ import { parseOrderItemsJson } from "@/lib/parse-order-items";
 import { prisma } from "@/lib/prisma";
 import { SITE_LOCALE } from "@/lib/site-locale";
 
-export default async function AccountOrdersPage() {
+export default async function AccountOrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    q?: string;
+    from?: string;
+    to?: string;
+  }>;
+}) {
   const session = await auth();
   const userId = session!.user!.id;
+  const sp = await searchParams;
+  const q = String(sp.q ?? "").trim();
+  const from = String(sp.from ?? "").trim();
+  const to = String(sp.to ?? "").trim();
+  const createdAtFilter: { gte?: Date; lte?: Date } = {};
+  if (from) {
+    const fromDate = new Date(`${from}T00:00:00.000Z`);
+    if (!Number.isNaN(fromDate.getTime())) createdAtFilter.gte = fromDate;
+  }
+  if (to) {
+    const toDate = new Date(`${to}T23:59:59.999Z`);
+    if (!Number.isNaN(toDate.getTime())) createdAtFilter.lte = toDate;
+  }
+  const hasCreatedAtFilter = Boolean(createdAtFilter.gte || createdAtFilter.lte);
 
   const orders = await prisma.order.findMany({
-    where: { userId, deletedAt: null },
+    where: {
+      userId,
+      deletedAt: null,
+      ...(q
+        ? {
+            OR: [
+              { email: { contains: q } },
+              { id: { contains: q } },
+              { merchantOrderCode: { contains: q } },
+              { trackingNumber: { contains: q } },
+            ],
+          }
+        : {}),
+      ...(hasCreatedAtFilter ? { createdAt: createdAtFilter } : {}),
+    },
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: 50,
     select: {
@@ -39,9 +75,35 @@ export default async function AccountOrdersPage() {
       <p className="mt-2 text-sm text-muted">
         Orders placed while signed in are linked to your account.
       </p>
+      <form method="get" className="mt-6 grid gap-2 md:grid-cols-[1fr_180px_180px_auto]">
+        <input
+          name="q"
+          defaultValue={q}
+          placeholder="Email, order code, track #..."
+          className="rounded-xl border border-line bg-white px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+        />
+        <input
+          type="date"
+          name="from"
+          defaultValue={from}
+          className="rounded-xl border border-line bg-white px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+        />
+        <input
+          type="date"
+          name="to"
+          defaultValue={to}
+          className="rounded-xl border border-line bg-white px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+        />
+        <button
+          type="submit"
+          className="inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
+        >
+          Search
+        </button>
+      </form>
 
       {orders.length === 0 ? (
-        <div className="mt-10 rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-8 text-center text-sm text-muted">
+        <div className="mt-10 rounded-2xl border border-line bg-white/60 p-8 text-center text-sm text-muted">
           <p>You do not have any orders yet.</p>
           <Link
             href="/shop"
@@ -58,13 +120,13 @@ export default async function AccountOrdersPage() {
             return (
               <li
                 key={`${order.id}-${index}`}
-                className="rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-5"
+                className="rounded-2xl border border-line bg-white/60 p-5"
               >
                 <Link
                   href={`/account/orders/${order.id}`}
                   className="block rounded-xl outline-none ring-ink/20 focus-visible:ring-2"
                 >
-                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[color:var(--color-line)] pb-4">
+                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-4">
                     <div>
                       <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
                         {new Date(order.createdAt).toLocaleString(SITE_LOCALE, {
