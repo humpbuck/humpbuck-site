@@ -75,6 +75,11 @@ export function AffiliateLinkGenerator({
           {copyState === "done" ? "Copied" : copyState === "error" ? "Copy failed" : "Copy"}
         </button>
       </div>
+      {copyState === "done" ? (
+        <p className="text-xs text-emerald-700">Copy successful.</p>
+      ) : copyState === "error" ? (
+        <p className="text-xs text-rose-700">Copy failed. Please try again.</p>
+      ) : null}
     </div>
   );
 }
