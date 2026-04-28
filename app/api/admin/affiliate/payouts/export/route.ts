@@ -19,6 +19,8 @@ export async function GET(req: Request) {
   const affiliateId = String(url.searchParams.get("affiliateId") ?? "").trim();
   const orderStatus = String(url.searchParams.get("orderStatus") ?? "").trim();
   const onlyVerifiedPayout = String(url.searchParams.get("onlyVerifiedPayout") ?? "") === "1";
+  const startDateRaw = String(url.searchParams.get("startDate") ?? "").trim();
+  const endDateRaw = String(url.searchParams.get("endDate") ?? "").trim();
   const modeRaw = String(url.searchParams.get("mode") ?? "eligible")
     .trim()
     .toLowerCase();
@@ -27,6 +29,20 @@ export async function GET(req: Request) {
   const eligibleBefore = new Date(
     Date.now() - holdDays * 24 * 60 * 60 * 1000,
   );
+  const startDate = startDateRaw ? new Date(`${startDateRaw}T00:00:00.000Z`) : null;
+  const endDate = endDateRaw ? new Date(`${endDateRaw}T23:59:59.999Z`) : null;
+  const hasStart = Boolean(startDate && Number.isFinite(startDate.getTime()));
+  const hasEnd = Boolean(endDate && Number.isFinite(endDate.getTime()));
+  const dateField = mode === "paid" ? "paidAt" : "eligibleAt";
+  const dateRange =
+    hasStart || hasEnd
+      ? {
+          [dateField]: {
+            ...(hasStart ? { gte: startDate as Date } : {}),
+            ...(hasEnd ? { lte: endDate as Date } : {}),
+          },
+        }
+      : {};
 
   const where =
     mode === "paid"
@@ -46,6 +62,7 @@ export async function GET(req: Request) {
   const ledgers = await prisma.affiliateCommissionLedger.findMany({
     where: {
       ...where,
+      ...dateRange,
       ...(affiliateId ? { affiliateId } : {}),
       ...(orderStatus ? { order: { status: orderStatus } } : {}),
       ...(onlyVerifiedPayout ? { affiliate: { payoutVerifiedAt: { not: null } } } : {}),

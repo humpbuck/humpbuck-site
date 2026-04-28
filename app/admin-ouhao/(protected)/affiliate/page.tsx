@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
+import { PayoutExportLinks } from "@/components/admin/payout-export-links";
 import { RestoreScrollOnFormSubmit } from "@/components/admin/restore-scroll-on-form-submit";
 import { SettlementBulkActions } from "@/components/admin/settlement-bulk-actions";
 import { SettlementSelectionSummary } from "@/components/admin/settlement-selection-summary";
@@ -507,6 +508,8 @@ export default async function AdminAffiliatePage({
     settle?: string;
     onlyVerifiedPayout?: string;
     settlePage?: string;
+    startDate?: string;
+    endDate?: string;
   }>;
 }) {
   await assertAdmin();
@@ -626,8 +629,6 @@ export default async function AdminAffiliatePage({
       <h1 className="font-serif text-3xl tracking-tight">Affiliate</h1>
       <p className="mt-2 text-sm text-muted">
         Manage affiliate applications, tier levels, and blacklist/whitelist controls.
-        {" "}
-        管理推广员申请、等级和黑白名单设置。
       </p>
 
       {sp.error ? (
@@ -642,7 +643,7 @@ export default async function AdminAffiliatePage({
           className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-            Total affiliates / 总推广员
+            Total affiliates
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{profiles.length}</p>
         </Link>
@@ -651,7 +652,7 @@ export default async function AdminAffiliatePage({
           className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-            Auto approved / 自动通过
+            Auto approved
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{autoApprovedCount}</p>
         </Link>
@@ -660,7 +661,7 @@ export default async function AdminAffiliatePage({
           className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-            Pending review / 待审核
+            Pending review
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{pendingApps.length}</p>
         </Link>
@@ -669,7 +670,7 @@ export default async function AdminAffiliatePage({
           className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-            Blacklisted / 黑名单
+            Blacklisted
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{blacklistedCount}</p>
         </Link>
@@ -680,13 +681,13 @@ export default async function AdminAffiliatePage({
         className={`mt-6 rounded-2xl border border-line bg-white/60 p-5 ${sp.couponRequests === "1" ? "ring-2 ring-ink/20" : ""}`}
       >
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Coupon code requests / 优惠码申请
+          Coupon code requests
         </h2>
         <p className="mt-2 text-sm text-muted">
-          Pending affiliates asking for coupon code binding. 待处理的推广员优惠码绑定申请。
+          Pending affiliates asking for coupon code binding.
         </p>
         {couponRequests.length === 0 ? (
-          <p className="mt-3 text-sm text-muted">No pending requests. 暂无待处理申请。</p>
+          <p className="mt-3 text-sm text-muted">No pending requests.</p>
         ) : (
           <div className="mt-3 space-y-2">
             {couponRequests.map((req) => {
@@ -712,7 +713,7 @@ export default async function AdminAffiliatePage({
                       type="submit"
                       className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
                     >
-                      Mark handled / 标记已处理
+                      Mark handled
                     </button>
                   </form>
                 </div>
@@ -724,12 +725,10 @@ export default async function AdminAffiliatePage({
 
       <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Settlement queue / 结算队列
+          Settlement queue
         </h2>
         <p className="mt-2 text-sm text-muted">
           Filter by affiliate and order status, then mark selected eligible orders as paid.
-          {" "}
-          可按推广员和订单状态筛选，再批量标记可结算订单为已支付。
         </p>
         <form
           id="affiliate-settlement-filters-form"
@@ -742,7 +741,7 @@ export default async function AdminAffiliatePage({
             defaultValue={selectedAffiliateId}
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           >
-            <option value="">All affiliates / 全部推广员</option>
+            <option value="">All affiliates</option>
             {profiles.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.user.displayName || p.user.email || p.id}
@@ -754,7 +753,7 @@ export default async function AdminAffiliatePage({
             defaultValue={selectedOrderStatus}
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           >
-            <option value="">All order statuses / 全部订单状态</option>
+            <option value="">All order statuses</option>
             {settlementOrderStatuses.map((s) => (
               <option key={s} value={s}>
                 {s}
@@ -766,27 +765,17 @@ export default async function AdminAffiliatePage({
             defaultValue={selectedSettlement}
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           >
-            <option value="eligible">Eligible / 可结算</option>
-            <option value="paid">Paid / 已支付</option>
-            <option value="pending">Pending / 待处理</option>
-            <option value="reversed">Reversed / 已冲销</option>
-            <option value="all">All settlement statuses / 全部结算状态</option>
+            <option value="eligible">Eligible</option>
+            <option value="paid">Paid</option>
+            <option value="pending">Pending</option>
+            <option value="reversed">Reversed</option>
+            <option value="all">All settlement statuses</option>
           </select>
-          <label className="inline-flex items-center gap-2 rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink">
-            <input
-              type="checkbox"
-              name="onlyVerifiedPayout"
-              value="1"
-              defaultChecked={onlyVerifiedPayout}
-              className="h-4 w-4"
-            />
-            <span>Only payout-confirmed affiliates / 仅显示收款信息已确认</span>
-          </label>
           <button
             type="submit"
             className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
           >
-            Apply filters / 应用筛选
+            Apply filters
           </button>
         </form>
         <form
@@ -828,7 +817,7 @@ export default async function AdminAffiliatePage({
           </div>
           {settlementRows.length === 0 ? (
             <p className="rounded-xl border border-line bg-paper/60 px-3 py-2 text-muted">
-              No settlement rows for current filters. 当前筛选条件下无结算记录。
+              No settlement rows for current filters.
             </p>
           ) : (
             settlementRows.map((l) => (
@@ -898,41 +887,16 @@ export default async function AdminAffiliatePage({
 
       <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Payout export / 结算导出
+          Payout export
         </h2>
         <p className="mt-2 text-sm text-muted">
           Export payout-ready orders: delivered and older than 30 days.
-          {" "}
-          导出可打款订单：已签收且超过 30 天。
         </p>
-        <p className="mt-3">
-          <a
-            href={`/api/admin/affiliate/payouts/export?mode=eligible&holdDays=30${
-              filterQuery.size > 0 ? `&${filterQuery.toString()}` : ""
-            }`}
-            className="inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
-          >
-            Export eligible CSV (30d) / 导出可结算 CSV（30天）
-          </a>
-        </p>
-        <p className="mt-2 flex flex-wrap gap-2">
-          <a
-            href={`/api/admin/affiliate/payouts/export?mode=paid&holdDays=30${
-              filterQuery.size > 0 ? `&${filterQuery.toString()}` : ""
-            }`}
-            className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
-          >
-            Export paid CSV / 导出已支付 CSV
-          </a>
-          <a
-            href={`/api/admin/affiliate/payouts/export?mode=all&holdDays=30${
-              filterQuery.size > 0 ? `&${filterQuery.toString()}` : ""
-            }`}
-            className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
-          >
-            Export all ledger CSV / 导出台账全量 CSV
-          </a>
-        </p>
+        <PayoutExportLinks
+          baseQuery={filterQuery.toString()}
+          initialStartDate={String(sp.startDate ?? "")}
+          initialEndDate={String(sp.endDate ?? "")}
+        />
       </section>
 
       <section className="mt-8 rounded-2xl border border-line bg-white/60 p-5">
