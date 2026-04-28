@@ -553,6 +553,7 @@ export default async function AdminAffiliatePage({
     orderStatus?: string;
     settle?: string;
     onlyVerifiedPayout?: string;
+    settlePage?: string;
   }>;
 }) {
   await assertAdmin();
@@ -562,8 +563,17 @@ export default async function AdminAffiliatePage({
   const selectedOrderStatus = normalizeFilterValue(sp.orderStatus);
   const selectedSettlement = normalizeFilterValue(sp.settle) || "eligible";
   const onlyVerifiedPayout = normalizeFilterValue(sp.onlyVerifiedPayout) === "1";
+  const settlePageRaw = Number.parseInt(String(sp.settlePage ?? "1"), 10);
+  const settlePage = Number.isFinite(settlePageRaw) && settlePageRaw > 0 ? settlePageRaw : 1;
+  const SETTLEMENT_PAGE_SIZE = 10;
+  const settlementWhere = {
+    ...(selectedAffiliateId ? { affiliateId: selectedAffiliateId } : {}),
+    ...(selectedOrderStatus ? { order: { status: selectedOrderStatus } } : {}),
+    ...(selectedSettlement === "all" ? {} : { status: selectedSettlement }),
+    ...(onlyVerifiedPayout ? { affiliate: { payoutVerifiedAt: { not: null } } } : {}),
+  };
 
-  const [tiers, pendingApps, profiles, blacklistedCount, autoApprovedCount, recentAttributedOrders, ledgerSummary, recentLedgers, settlementRows, couponRequests] =
+  const [tiers, pendingApps, profiles, blacklistedCount, autoApprovedCount, recentAttributedOrders, ledgerSummary, recentLedgers, settlementRows, settlementTotalCount, couponRequests] =
     await Promise.all([
       prisma.affiliateTier.findMany({ orderBy: [{ isDefault: "desc" }, { createdAt: "asc" }] }),
       prisma.affiliateApplication.findMany({
@@ -604,18 +614,17 @@ export default async function AdminAffiliatePage({
         take: 12,
       }),
       prisma.affiliateCommissionLedger.findMany({
-        where: {
-          ...(selectedAffiliateId ? { affiliateId: selectedAffiliateId } : {}),
-          ...(selectedOrderStatus ? { order: { status: selectedOrderStatus } } : {}),
-          ...(selectedSettlement === "all" ? {} : { status: selectedSettlement }),
-          ...(onlyVerifiedPayout ? { affiliate: { payoutVerifiedAt: { not: null } } } : {}),
-        },
+        where: settlementWhere,
         include: {
           affiliate: { include: { user: { select: { email: true, displayName: true } } } },
           order: { select: { id: true, status: true, totalCents: true } },
         },
         orderBy: [{ eligibleAt: "asc" }, { createdAt: "desc" }],
-        take: 120,
+        skip: (settlePage - 1) * SETTLEMENT_PAGE_SIZE,
+        take: SETTLEMENT_PAGE_SIZE,
+      }),
+      prisma.affiliateCommissionLedger.count({
+        where: settlementWhere,
       }),
       prisma.affiliateCouponRequest.findMany({
         where: { status: "pending" },
@@ -634,6 +643,8 @@ export default async function AdminAffiliatePage({
         take: 30,
       }).catch(() => []),
     ]);
+  const settlementTotalPages = Math.max(1, Math.ceil(settlementTotalCount / SETTLEMENT_PAGE_SIZE));
+  const currentSettlementPage = Math.min(settlePage, settlementTotalPages);
 
   const blacklistedProfiles = profiles.filter((p) => p.blacklist || p.status === "blacklisted");
   const growthTierList = [...tiers]
@@ -649,6 +660,7 @@ export default async function AdminAffiliatePage({
   const filterQuery = new URLSearchParams();
   if (selectedAffiliateId) filterQuery.set("affiliateId", selectedAffiliateId);
   if (selectedOrderStatus) filterQuery.set("orderStatus", selectedOrderStatus);
+  if (selectedSettlement) filterQuery.set("settle", selectedSettlement);
   if (onlyVerifiedPayout) filterQuery.set("onlyVerifiedPayout", "1");
 
   return (
@@ -889,6 +901,45 @@ export default async function AdminAffiliatePage({
               </label>
             ))
           )}
+          {settlementTotalCount > SETTLEMENT_PAGE_SIZE ? (
+            <div className="mt-3 flex items-center justify-end gap-2 text-xs text-ink/90">
+              {currentSettlementPage > 1 ? (
+                <Link
+                  href={`${adminPath("/affiliate")}?${(() => {
+                    const q = new URLSearchParams(filterQuery);
+                    q.set("settlePage", String(currentSettlementPage - 1));
+                    return q.toString();
+                  })()}`}
+                  className="rounded-lg border border-line bg-white px-2.5 py-1 transition hover:border-ink/20"
+                >
+                  Prev
+                </Link>
+              ) : (
+                <span className="rounded-lg border border-line bg-white px-2.5 py-1 opacity-50">
+                  Prev
+                </span>
+              )}
+              <span className="tabular-nums">
+                Page {currentSettlementPage} / {settlementTotalPages}
+              </span>
+              {currentSettlementPage < settlementTotalPages ? (
+                <Link
+                  href={`${adminPath("/affiliate")}?${(() => {
+                    const q = new URLSearchParams(filterQuery);
+                    q.set("settlePage", String(currentSettlementPage + 1));
+                    return q.toString();
+                  })()}`}
+                  className="rounded-lg border border-line bg-white px-2.5 py-1 transition hover:border-ink/20"
+                >
+                  Next
+                </Link>
+              ) : (
+                <span className="rounded-lg border border-line bg-white px-2.5 py-1 opacity-50">
+                  Next
+                </span>
+              )}
+            </div>
+          ) : null}
         </form>
       </section>
 

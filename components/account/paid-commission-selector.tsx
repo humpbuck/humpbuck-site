@@ -25,12 +25,13 @@ export function PaidCommissionSelector({ rows }: { rows: Row[] }) {
   const selectedCount = selectedRows.length;
   const selectedCommission = selectedRows.reduce((sum, r) => sum + r.commissionCents, 0);
 
-  const allChecked = rows.length > 0 && selectedCount === rows.length;
   const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
   const pagedRows = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE;
     return rows.slice(start, start + PAGE_SIZE);
   }, [page, rows]);
+  const allCheckedOnPage =
+    pagedRows.length > 0 && pagedRows.every((row) => Boolean(selected[row.id]));
 
   useEffect(() => {
     if (page > totalPages) {
@@ -44,15 +45,15 @@ export function PaidCommissionSelector({ rows }: { rows: Row[] }) {
         <label className="inline-flex items-center gap-2">
           <input
             type="checkbox"
-            checked={allChecked}
+            checked={allCheckedOnPage}
             onChange={(e) => {
-              const next: Record<string, boolean> = {};
-              if (e.target.checked) {
-                rows.forEach((r) => {
-                  next[r.id] = true;
-                });
-              }
-              setSelected(next);
+              setSelected((prev) => {
+                const next = { ...prev };
+                for (const row of pagedRows) {
+                  next[row.id] = e.target.checked;
+                }
+                return next;
+              });
             }}
           />
           Select all paid orders
