@@ -355,9 +355,9 @@ async function updateSelectedLedgersStatusAction(formData: FormData) {
     .map((v) => String(v).trim())
     .filter(Boolean);
   if (ids.length === 0) goAffiliate("Please select at least one settlement row.");
-  const targetStatus = String(formData.get("targetSettlementStatus") ?? "paid").trim().toLowerCase();
+  const targetStatus = String(formData.get("targetSettlementStatus") ?? "").trim().toLowerCase();
   if (!["pending", "eligible", "paid", "reversed"].includes(targetStatus)) {
-    goAffiliate("Invalid settlement status.");
+    goAffiliate("Please select a valid target settlement status.");
   }
   const payoutBatchId = String(formData.get("payoutBatchId") ?? "").trim();
   const payoutTxnRef = String(formData.get("payoutTxnRef") ?? "").trim();

@@ -17,7 +17,7 @@ const STATUS_LABELS: Record<string, string> = {
 export function SettlementBulkActions({ formId, submitButtonId }: Props) {
   const [selectedCount, setSelectedCount] = useState(0);
   const [allChecked, setAllChecked] = useState(false);
-  const [targetStatus, setTargetStatus] = useState("paid");
+  const [targetStatus, setTargetStatus] = useState("");
 
   useEffect(() => {
     const form = document.getElementById(formId) as HTMLFormElement | null;
@@ -67,6 +67,7 @@ export function SettlementBulkActions({ formId, submitButtonId }: Props) {
           onChange={(e) => setTargetStatus(e.target.value)}
           className="rounded-lg border border-line bg-white px-2 py-1 text-xs text-ink outline-none ring-ink/20 focus:ring-2"
         >
+          <option value="">Select status / 选择状态</option>
           <option value="paid">Paid / 已支付</option>
           <option value="eligible">Eligible / 可结算</option>
           <option value="pending">Pending / 待处理</option>
@@ -82,6 +83,10 @@ export function SettlementBulkActions({ formId, submitButtonId }: Props) {
             );
             if (checked.length === 0) {
               window.alert("Please select at least one settlement order first. 请先选择至少一条结算记录。");
+              return;
+            }
+            if (!targetStatus) {
+              window.alert("Please select target status first. 请先选择目标状态。");
               return;
             }
             const hasPaid = checked.some(
