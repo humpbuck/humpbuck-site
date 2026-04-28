@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Row = {
   id: string;
@@ -16,12 +16,43 @@ function usd(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
-export function AffiliateSettlementSelector({ rows }: { rows: Row[] }) {
-  const [selected, setSelected] = useState<Record<string, boolean>>({});
-  const selectedRows = useMemo(() => rows.filter((r) => selected[r.id]), [rows, selected]);
-  const selectedCount = selectedRows.length;
-  const selectedCommission = selectedRows.reduce((sum, r) => sum + r.commissionCents, 0);
-  const allChecked = rows.length > 0 && rows.every((r) => Boolean(selected[r.id]));
+export function AffiliateSettlementSelector({
+  rows,
+  scopeKey,
+}: {
+  rows: Row[];
+  scopeKey: string;
+}) {
+  const [selected, setSelected] = useState<Record<string, number>>({});
+  const storageKey = `affiliate_settlement_selected_v1:${scopeKey}`;
+
+  useEffect(() => {
+    try {
+      const raw = window.sessionStorage.getItem(storageKey);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as Record<string, number>;
+      if (parsed && typeof parsed === "object") {
+        setSelected(parsed);
+      }
+    } catch {
+      // ignore malformed cache
+    }
+  }, [storageKey]);
+
+  useEffect(() => {
+    try {
+      window.sessionStorage.setItem(storageKey, JSON.stringify(selected));
+    } catch {
+      // ignore quota/private mode
+    }
+  }, [selected]);
+
+  const selectedCount = useMemo(() => Object.keys(selected).length, [selected]);
+  const selectedCommission = useMemo(
+    () => Object.values(selected).reduce((sum, cents) => sum + cents, 0),
+    [selected],
+  );
+  const allChecked = rows.length > 0 && rows.every((r) => selected[r.id] != null);
 
   return (
     <div>
@@ -32,10 +63,15 @@ export function AffiliateSettlementSelector({ rows }: { rows: Row[] }) {
             checked={allChecked}
             onChange={(e) => {
               const checked = e.target.checked;
-              setSelected(() => {
-                if (!checked) return {};
-                const next: Record<string, boolean> = {};
-                for (const row of rows) next[row.id] = true;
+              setSelected((prev) => {
+                const next = { ...prev };
+                if (!checked) {
+                  for (const row of rows) delete next[row.id];
+                  return next;
+                }
+                for (const row of rows) {
+                  next[row.id] = row.commissionCents;
+                }
                 return next;
               });
             }}
@@ -70,10 +106,15 @@ export function AffiliateSettlementSelector({ rows }: { rows: Row[] }) {
                 <td className="px-2 py-2">
                   <input
                     type="checkbox"
-                    checked={Boolean(selected[row.id])}
+                    checked={selected[row.id] != null}
                     onChange={(e) => {
                       const checked = e.target.checked;
-                      setSelected((prev) => ({ ...prev, [row.id]: checked }));
+                      setSelected((prev) => {
+                        const next = { ...prev };
+                        if (checked) next[row.id] = row.commissionCents;
+                        else delete next[row.id];
+                        return next;
+                      });
                     }}
                   />
                 </td>

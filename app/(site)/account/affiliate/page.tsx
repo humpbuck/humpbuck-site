@@ -620,12 +620,12 @@ export default async function AccountAffiliatePage({
     if (target !== "all") qs.set("settlement", target);
     if (dateFromInput) qs.set("from", dateFromInput);
     if (dateToInput) qs.set("to", dateToInput);
-    return `/account/affiliate${qs.toString() ? `?${qs.toString()}` : ""}`;
+    return `/account/affiliate${qs.toString() ? `?${qs.toString()}` : ""}#settlement-orders`;
   };
   const settlementOnlyHref = (target: SettlementFilter) => {
     const qs = new URLSearchParams();
     if (target !== "all") qs.set("settlement", target);
-    return `/account/affiliate${qs.toString() ? `?${qs.toString()}` : ""}`;
+    return `/account/affiliate${qs.toString() ? `?${qs.toString()}` : ""}#settlement-orders`;
   };
   const settlementTotalPages = Math.max(1, Math.ceil(settlementTotal / SETTLEMENT_PAGE_SIZE));
   const settlementPage = Math.min(settlementPageRaw, settlementTotalPages);
@@ -635,7 +635,7 @@ export default async function AccountAffiliatePage({
     if (dateFromInput) qs.set("from", dateFromInput);
     if (dateToInput) qs.set("to", dateToInput);
     if (nextPage > 1) qs.set("settlementPage", String(nextPage));
-    return `/account/affiliate${qs.toString() ? `?${qs.toString()}` : ""}`;
+    return `/account/affiliate${qs.toString() ? `?${qs.toString()}` : ""}#settlement-orders`;
   };
   const settlementExportHref = (() => {
     const qs = new URLSearchParams();
@@ -791,7 +791,7 @@ export default async function AccountAffiliatePage({
       ) : null}
 
       {profile ? (
-        <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
+        <section id="settlement-orders" className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
           <h2 className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
             <span>Growth progress</span>
             <span className="group relative inline-block">
@@ -1065,7 +1065,7 @@ export default async function AccountAffiliatePage({
           <p className="mt-2 text-xs text-muted">
             Read-only view. Order status and settlement status can only be updated by admin.
           </p>
-          <form className="mt-3 flex flex-wrap items-end gap-2" method="get" action="/account/affiliate">
+          <form className="mt-3 flex flex-wrap items-end gap-2" method="get" action="/account/affiliate#settlement-orders">
             <label className="block">
               <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
                 Settlement status
@@ -1134,12 +1134,14 @@ export default async function AccountAffiliatePage({
                 paidOrReversedAtLabel: (l.paidAt ?? l.reversedAt)?.toLocaleDateString() ?? "-",
                 commissionCents: l.commissionCents,
               }))}
+              scopeKey={`${settlementFilter}|${dateFromInput}|${dateToInput}`}
             />
           </div>
           {settlementTotalPages > 1 ? (
             <nav className="mt-3 flex items-center justify-end gap-2 text-xs text-ink/90" aria-label="Settlement pagination">
               <Link
                 href={settlementPageHref(Math.max(1, settlementPage - 1))}
+                scroll={false}
                 className={`rounded-lg border px-2.5 py-1 ${
                   settlementPage <= 1
                     ? "pointer-events-none border-line/60 text-muted opacity-60"
@@ -1153,6 +1155,7 @@ export default async function AccountAffiliatePage({
               </span>
               <Link
                 href={settlementPageHref(Math.min(settlementTotalPages, settlementPage + 1))}
+                scroll={false}
                 className={`rounded-lg border px-2.5 py-1 ${
                   settlementPage >= settlementTotalPages
                     ? "pointer-events-none border-line/60 text-muted opacity-60"
