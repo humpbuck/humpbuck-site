@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { CheckoutAddressForm } from "@/lib/checkout-address";
 import { CountryCombobox } from "@/components/checkout/country-combobox";
 import { CityField } from "@/components/checkout/city-field";
@@ -23,7 +23,6 @@ import {
 } from "@/lib/checkout-zipcodes-helpers";
 import { countryLabelToIso2 } from "@/lib/logistics-estimate";
 import {
-  PHONE_COUNTRY_CODE_DATALIST_ID,
   PHONE_COUNTRY_CODES,
   normalizeCountryCodeInput,
   normalizePhone,
@@ -283,6 +282,29 @@ function PhoneField({
   required?: boolean;
 }) {
   const phoneParts = splitPhoneForInput(value);
+  const [countryQuery, setCountryQuery] = useState(phoneParts.countryCode);
+  const [countryOpen, setCountryOpen] = useState(false);
+  const countryRootRef = useRef<HTMLDivElement>(null);
+  const filteredCountryCodes = useMemo(() => {
+    const q = countryQuery.trim();
+    if (!q) return PHONE_COUNTRY_CODES;
+    return PHONE_COUNTRY_CODES.filter((code) => code.startsWith(q) || code.includes(q));
+  }, [countryQuery]);
+
+  useEffect(() => {
+    setCountryQuery(phoneParts.countryCode);
+  }, [phoneParts.countryCode]);
+
+  useEffect(() => {
+    function handlePointer(e: MouseEvent) {
+      if (countryRootRef.current && !countryRootRef.current.contains(e.target as Node)) {
+        setCountryOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handlePointer);
+    return () => document.removeEventListener("mousedown", handlePointer);
+  }, []);
+
   return (
     <label className="block" htmlFor={id}>
       <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
@@ -295,21 +317,67 @@ function PhoneField({
         ) : null}
       </span>
       <div className="mt-1.5 grid grid-cols-[120px_1fr] gap-2">
-        <input
-          value={phoneParts.countryCode}
-          list={PHONE_COUNTRY_CODE_DATALIST_ID}
-          inputMode="tel"
-          placeholder="+1"
-          onChange={(e) => {
-            const code = normalizeCountryCodeInput(e.target.value);
-            if (!phoneParts.localNumber.trim()) {
-              onChange(code);
-              return;
-            }
-            onChange(normalizePhone(code, phoneParts.localNumber));
-          }}
-          className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-        />
+        <div ref={countryRootRef} className="relative">
+          <input
+            value={countryQuery}
+            inputMode="tel"
+            placeholder="+1"
+            onFocus={() => setCountryOpen(true)}
+            onChange={(e) => {
+              const code = normalizeCountryCodeInput(e.target.value);
+              setCountryQuery(code);
+              if (!phoneParts.localNumber.trim()) {
+                onChange(code);
+              } else {
+                onChange(normalizePhone(code, phoneParts.localNumber));
+              }
+              setCountryOpen(true);
+            }}
+            className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 pr-8 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+          />
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-label={countryOpen ? "Close country code list" : "Open country code list"}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted hover:text-ink"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => setCountryOpen((v) => !v)}
+          >
+            ▾
+          </button>
+          {countryOpen ? (
+            <div className="absolute left-0 right-0 z-50 mt-1 overflow-hidden rounded-xl border border-line bg-paper shadow-lg">
+              <ul className="max-h-52 overflow-y-auto py-1 text-sm">
+                {filteredCountryCodes.length === 0 ? (
+                  <li className="px-3 py-2 text-xs text-muted">No matches</li>
+                ) : (
+                  filteredCountryCodes.map((code) => (
+                    <li key={code}>
+                      <button
+                        type="button"
+                        className={`w-full px-3 py-2 text-left hover:bg-zinc-100 ${
+                          phoneParts.countryCode === code ? "bg-zinc-100 font-medium text-ink" : "text-ink"
+                        }`}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => {
+                          setCountryQuery(code);
+                          if (!phoneParts.localNumber.trim()) {
+                            onChange(code);
+                          } else {
+                            onChange(normalizePhone(code, phoneParts.localNumber));
+                          }
+                          setCountryOpen(false);
+                        }}
+                      >
+                        {code}
+                      </button>
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
+          ) : null}
+        </div>
         <input
           id={id}
           type="text"
@@ -329,11 +397,6 @@ function PhoneField({
           className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
       </div>
-      <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>
-        {PHONE_COUNTRY_CODES.map((code) => (
-          <option key={code} value={code} />
-        ))}
-      </datalist>
     </label>
   );
 }
