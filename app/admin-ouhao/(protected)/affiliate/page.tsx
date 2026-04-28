@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
+import { RestoreScrollOnFormSubmit } from "@/components/admin/restore-scroll-on-form-submit";
 import { SettlementBulkActions } from "@/components/admin/settlement-bulk-actions";
 import { SettlementSelectionSummary } from "@/components/admin/settlement-selection-summary";
 import { assertAdmin } from "@/lib/admin-auth";
@@ -617,6 +618,10 @@ export default async function AdminAffiliatePage({
 
   return (
     <div>
+      <RestoreScrollOnFormSubmit
+        formIds={["affiliate-settlement-filters-form", "affiliate-settlement-form"]}
+        storageKey="admin_affiliate_settlement_scroll_y"
+      />
       <AdminBackLink href={adminPath()} label="Overview" />
       <h1 className="font-serif text-3xl tracking-tight">Affiliate</h1>
       <p className="mt-2 text-sm text-muted">
@@ -726,7 +731,11 @@ export default async function AdminAffiliatePage({
           {" "}
           可按推广员和订单状态筛选，再批量标记可结算订单为已支付。
         </p>
-        <form method="get" className="mt-4 grid gap-2 md:grid-cols-4">
+        <form
+          id="affiliate-settlement-filters-form"
+          method="get"
+          className="mt-4 grid gap-2 md:grid-cols-4"
+        >
           <input type="hidden" name="error" value="" />
           <select
             name="affiliateId"
