@@ -375,6 +375,28 @@ export default async function AdminTrafficPage({
               strokeWidth="1.5"
               points={polyline}
             />
+            {points.map((p, i) => {
+              const x = points.length <= 1 ? 0 : (i / (points.length - 1)) * 100;
+              const y = 100 - (p.c / maxC) * 100;
+              const hourLabel = new Date(p.t).toLocaleString("en-US", {
+                month: "short",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+              return (
+                <circle
+                  key={`${p.t}-${i}`}
+                  cx={x}
+                  cy={y}
+                  r="2.8"
+                  fill="transparent"
+                  className="cursor-pointer"
+                >
+                  <title>{`${hourLabel} · ${p.c} page views`}</title>
+                </circle>
+              );
+            })}
           </svg>
         </div>
       </div>
