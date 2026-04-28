@@ -916,7 +916,11 @@ export default async function AccountAffiliatePage({
               <p className="mt-1">
                 Verification:{" "}
                 <span className="font-medium">
-                  {profile.payoutVerifiedAt ? `Confirmed (${profile.payoutVerifiedAt.toLocaleDateString()})` : "Pending admin confirmation"}
+                  {!profile.paymentInfoPending
+                    ? profile.payoutVerifiedAt
+                      ? `Approved (${profile.payoutVerifiedAt.toLocaleDateString()})`
+                      : "Approved"
+                    : "Pending admin confirmation"}
                 </span>
               </p>
               <div className="mt-3">
