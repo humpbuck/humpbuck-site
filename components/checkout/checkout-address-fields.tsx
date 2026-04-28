@@ -300,7 +300,14 @@ function PhoneField({
           list={PHONE_COUNTRY_CODE_DATALIST_ID}
           inputMode="tel"
           placeholder="+1"
-          onChange={(e) => onChange(normalizePhone(normalizeCountryCodeInput(e.target.value), phoneParts.localNumber))}
+          onChange={(e) => {
+            const code = normalizeCountryCodeInput(e.target.value);
+            if (!phoneParts.localNumber.trim()) {
+              onChange(code);
+              return;
+            }
+            onChange(normalizePhone(code, phoneParts.localNumber));
+          }}
           className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
         <input
@@ -311,7 +318,14 @@ function PhoneField({
           inputMode="numeric"
           aria-required={required}
           value={phoneParts.localNumber}
-          onChange={(e) => onChange(normalizePhone(phoneParts.countryCode || "+1", e.target.value))}
+          onChange={(e) => {
+            const local = e.target.value;
+            if (!local.trim()) {
+              onChange(phoneParts.countryCode);
+              return;
+            }
+            onChange(normalizePhone(phoneParts.countryCode || "+1", local));
+          }}
           className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
       </div>

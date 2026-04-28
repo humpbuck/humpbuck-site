@@ -35,6 +35,9 @@ export function splitPhoneForInput(phone: string | null | undefined): {
   const compact = raw.replace(/\s+/g, "");
   if (compact.startsWith("+")) {
     const digitsOnly = compact.slice(1).replace(/[^\d]/g, "");
+    if (/^\+\d{1,3}$/.test(compact)) {
+      return { countryCode: compact, localNumber: "" };
+    }
     const matchedCode = PHONE_COUNTRY_CODES
       .map((c) => c.slice(1))
       .sort((a, b) => b.length - a.length)
