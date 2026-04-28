@@ -146,6 +146,18 @@ async function toggleBlacklistAction(formData: FormData) {
   goStats(focus, "blacklist_updated");
 }
 
+async function deleteAffiliateProfileAction(formData: FormData) {
+  "use server";
+  await assertAdmin();
+  const profileId = String(formData.get("profileId") ?? "").trim();
+  const focus = String(formData.get("focus") ?? "total").trim();
+  if (!profileId) redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
+  await prisma.affiliateProfile.delete({ where: { id: profileId } }).catch(() => null);
+  revalidatePath(adminPath("/affiliate"));
+  revalidatePath(adminPath("/affiliate/stats"));
+  goStats(focus, "affiliate_deleted");
+}
+
 export default async function AffiliateStatsPage({
   searchParams,
 }: {
@@ -230,7 +242,9 @@ export default async function AffiliateStatsPage({
               ? "Level saved successfully."
               : sp.ok === "profile_saved"
                 ? "Affiliate info saved successfully."
-                : "Blacklist status updated successfully."}
+                : sp.ok === "affiliate_deleted"
+                  ? "Affiliate deleted successfully."
+                  : "Blacklist status updated successfully."}
           </p>
         </>
       ) : null}
@@ -447,6 +461,13 @@ export default async function AffiliateStatsPage({
                 />
               </div>
               <div className="mt-2 flex flex-wrap justify-end gap-2">
+                <button
+                  formAction={deleteAffiliateProfileAction}
+                  type="submit"
+                  className="inline-flex items-center justify-center rounded-xl border border-rose-300 bg-rose-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-rose-800 transition hover:bg-rose-100"
+                >
+                  Delete
+                </button>
                 <PendingActionButton
                   idleLabel="Save affiliate info"
                   pendingLabel="Saving..."
