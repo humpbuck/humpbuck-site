@@ -3,6 +3,7 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import {
+  captureAffiliatePidAttribution,
   captureTrafficAttribution,
   getTrafficSourceForCheckout,
 } from "@/lib/traffic-attribution";
@@ -15,6 +16,7 @@ export function AttributionCapture() {
 
   useEffect(() => {
     captureTrafficAttribution();
+    captureAffiliatePidAttribution();
     trackVisitorEvent(
       {
         type: "session_start",
@@ -25,6 +27,7 @@ export function AttributionCapture() {
   }, []);
 
   useEffect(() => {
+    captureAffiliatePidAttribution();
     const q = searchParams?.toString() ?? "";
     const path = `${pathname}${q ? `?${q}` : ""}`;
     trackVisitorEvent(

@@ -11,7 +11,7 @@ const GUIDE_ITEMS: GuideItem[] = [
   {
     title: "How to build your affiliate link",
     body:
-      "Use the Link generator section below. Paste any product or page URL and it will append your PID automatically. Share that URL to track visits and orders under your account.",
+      "Use the Link generator section below. Paste any product or page URL and it will append your PID automatically. Buyers can land on one product and purchase other products; those orders still count for commission if the affiliate attribution is active.",
   },
   {
     title: "Where to find your Coupon Code",
@@ -21,7 +21,7 @@ const GUIDE_ITEMS: GuideItem[] = [
   {
     title: "Where to find your Partner ID (PID)",
     body:
-      "Your Partner ID is shown in Current status as PID. This ID is used in your trackable links (?pid=...). Keep it consistent when sharing links across channels.",
+      "Your Partner ID is shown in Current status as PID. This ID is used in your trackable links (?pid=...). Attribution is valid for 7 days from link visit. Orders placed after 7 days are not attributed unless the buyer clicks your affiliate link again.",
   },
   {
     title: "Commission payout cycle",

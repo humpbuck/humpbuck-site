@@ -4,7 +4,7 @@
 
 const STORAGE_KEY = "humpbuck_attr_v1";
 const AFFILIATE_STORAGE_KEY = "humpbuck_affiliate_attr_v1";
-const AFFILIATE_ATTR_DAYS = 60;
+const AFFILIATE_ATTR_DAYS = 7;
 
 function classifyReferrer(ref: string, siteHost: string): string {
   if (!ref) return "direct";
