@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Row = {
   id: string;
@@ -15,6 +15,8 @@ function usd(cents: number): string {
 
 export function PaidCommissionSelector({ rows }: { rows: Row[] }) {
   const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   const selectedRows = useMemo(
     () => rows.filter((r) => selected[r.id]),
@@ -24,6 +26,17 @@ export function PaidCommissionSelector({ rows }: { rows: Row[] }) {
   const selectedCommission = selectedRows.reduce((sum, r) => sum + r.commissionCents, 0);
 
   const allChecked = rows.length > 0 && selectedCount === rows.length;
+  const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const pagedRows = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return rows.slice(start, start + PAGE_SIZE);
+  }, [page, rows]);
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
 
   return (
     <div>
@@ -63,7 +76,7 @@ export function PaidCommissionSelector({ rows }: { rows: Row[] }) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((r) => (
+            {pagedRows.map((r) => (
               <tr key={r.id} className="border-b border-line/60">
                 <td className="px-2 py-2">
                   <input
@@ -82,6 +95,29 @@ export function PaidCommissionSelector({ rows }: { rows: Row[] }) {
           </tbody>
         </table>
       </div>
+      {rows.length > PAGE_SIZE ? (
+        <div className="mt-3 flex items-center justify-end gap-2 text-xs text-ink/90">
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page <= 1}
+            className="rounded-lg border border-line bg-white px-2.5 py-1 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Prev
+          </button>
+          <span className="tabular-nums">
+            Page {page} / {totalPages}
+          </span>
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page >= totalPages}
+            className="rounded-lg border border-line bg-white px-2.5 py-1 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }
