@@ -657,6 +657,8 @@ export default async function AdminAffiliatePage({
       <h1 className="font-serif text-3xl tracking-tight">Affiliate</h1>
       <p className="mt-2 text-sm text-muted">
         Manage affiliate applications, tier levels, and blacklist/whitelist controls.
+        {" "}
+        管理推广员申请、等级和黑白名单设置。
       </p>
 
       {sp.error ? (
@@ -671,7 +673,7 @@ export default async function AdminAffiliatePage({
           className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-            Total affiliates
+            Total affiliates / 总推广员
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{profiles.length}</p>
         </Link>
@@ -680,7 +682,7 @@ export default async function AdminAffiliatePage({
           className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-            Auto approved
+            Auto approved / 自动通过
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{autoApprovedCount}</p>
         </Link>
@@ -689,7 +691,7 @@ export default async function AdminAffiliatePage({
           className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-            Pending review
+            Pending review / 待审核
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{pendingApps.length}</p>
         </Link>
@@ -698,7 +700,7 @@ export default async function AdminAffiliatePage({
           className="rounded-2xl border border-line bg-white/60 px-4 py-3 transition hover:border-ink/20"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-            Blacklisted
+            Blacklisted / 黑名单
           </p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">{blacklistedCount}</p>
         </Link>
@@ -709,13 +711,13 @@ export default async function AdminAffiliatePage({
         className={`mt-6 rounded-2xl border border-line bg-white/60 p-5 ${sp.couponRequests === "1" ? "ring-2 ring-ink/20" : ""}`}
       >
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Coupon code requests
+          Coupon code requests / 优惠码申请
         </h2>
         <p className="mt-2 text-sm text-muted">
-          Pending affiliates asking for coupon code binding.
+          Pending affiliates asking for coupon code binding. 待处理的推广员优惠码绑定申请。
         </p>
         {couponRequests.length === 0 ? (
-          <p className="mt-3 text-sm text-muted">No pending requests.</p>
+          <p className="mt-3 text-sm text-muted">No pending requests. 暂无待处理申请。</p>
         ) : (
           <div className="mt-3 space-y-2">
             {couponRequests.map((req) => {
@@ -741,7 +743,7 @@ export default async function AdminAffiliatePage({
                       type="submit"
                       className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
                     >
-                      Mark handled
+                      Mark handled / 标记已处理
                     </button>
                   </form>
                 </div>
@@ -753,10 +755,12 @@ export default async function AdminAffiliatePage({
 
       <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Settlement queue
+          Settlement queue / 结算队列
         </h2>
         <p className="mt-2 text-sm text-muted">
           Filter by affiliate and order status, then mark selected eligible orders as paid.
+          {" "}
+          可按推广员和订单状态筛选，再批量标记可结算订单为已支付。
         </p>
         <form method="get" className="mt-4 grid gap-2 md:grid-cols-4">
           <input type="hidden" name="error" value="" />
@@ -765,7 +769,7 @@ export default async function AdminAffiliatePage({
             defaultValue={selectedAffiliateId}
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           >
-            <option value="">All affiliates</option>
+            <option value="">All affiliates / 全部推广员</option>
             {profiles.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.user.displayName || p.user.email || p.id}
@@ -777,7 +781,7 @@ export default async function AdminAffiliatePage({
             defaultValue={selectedOrderStatus}
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           >
-            <option value="">All order statuses</option>
+            <option value="">All order statuses / 全部订单状态</option>
             {settlementOrderStatuses.map((s) => (
               <option key={s} value={s}>
                 {s}
@@ -789,11 +793,11 @@ export default async function AdminAffiliatePage({
             defaultValue={selectedSettlement}
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           >
-            <option value="eligible">Eligible</option>
-            <option value="paid">Paid</option>
-            <option value="pending">Pending</option>
-            <option value="reversed">Reversed</option>
-            <option value="all">All settlement statuses</option>
+            <option value="eligible">Eligible / 可结算</option>
+            <option value="paid">Paid / 已支付</option>
+            <option value="pending">Pending / 待处理</option>
+            <option value="reversed">Reversed / 已冲销</option>
+            <option value="all">All settlement statuses / 全部结算状态</option>
           </select>
           <label className="inline-flex items-center gap-2 rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink">
             <input
@@ -803,13 +807,13 @@ export default async function AdminAffiliatePage({
               defaultChecked={onlyVerifiedPayout}
               className="h-4 w-4"
             />
-            <span>Only payout-confirmed affiliates</span>
+            <span>Only payout-confirmed affiliates / 仅显示收款信息已确认</span>
           </label>
           <button
             type="submit"
             className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
           >
-            Apply filters
+            Apply filters / 应用筛选
           </button>
         </form>
         <form
@@ -839,14 +843,14 @@ export default async function AdminAffiliatePage({
               type="submit"
               className="inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
             >
-              Mark selected eligible as paid
+              Mark selected eligible as paid / 标记所选可结算为已支付
             </button>
             <button
               formAction={markFilteredEligiblePaidAction}
               type="submit"
               className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
             >
-              Mark all filtered eligible as paid
+              Mark all filtered eligible as paid / 标记筛选结果中全部可结算为已支付
             </button>
             <SendPaidEmailConfirmButton
               formId="affiliate-settlement-form"
@@ -867,7 +871,7 @@ export default async function AdminAffiliatePage({
           <SettlementSelectionSummary formId="affiliate-settlement-form" />
           {settlementRows.length === 0 ? (
             <p className="rounded-xl border border-line bg-paper/60 px-3 py-2 text-muted">
-              No settlement rows for current filters.
+              No settlement rows for current filters. 当前筛选条件下无结算记录。
             </p>
           ) : (
             settlementRows.map((l) => (
@@ -897,14 +901,16 @@ export default async function AdminAffiliatePage({
 
       <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Commission ledger
+          Commission ledger / 佣金台账
         </h2>
         <p className="mt-2 text-sm text-muted">
           Ledger rows are created when orders reach Delivered and move to Eligible after hold period.
+          {" "}
+          订单到达 Delivered 后生成台账，经过冻结期后进入可结算。
         </p>
         <div className="mt-3 flex flex-wrap gap-2 text-xs text-ink/85">
           {ledgerSummary.length === 0 ? (
-            <span>No ledger rows yet.</span>
+            <span>No ledger rows yet. 暂无台账记录。</span>
           ) : (
             ledgerSummary.map((s) => (
               <span key={s.status} className="rounded-full border border-line bg-paper px-3 py-1">
@@ -918,12 +924,12 @@ export default async function AdminAffiliatePage({
             type="submit"
             className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
           >
-            Mark all eligible as paid
+            Mark all eligible as paid / 标记全部可结算为已支付
           </button>
         </form>
         <div className="mt-4 space-y-2 text-sm text-ink/90">
           {recentLedgers.length === 0 ? (
-            <p className="text-muted">No recent ledger records.</p>
+            <p className="text-muted">No recent ledger records. 暂无最近台账记录。</p>
           ) : (
             recentLedgers.map((l) => (
               <div key={l.id} className="rounded-xl border border-line bg-paper/60 px-3 py-2">
@@ -957,10 +963,12 @@ export default async function AdminAffiliatePage({
 
       <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Payout export
+          Payout export / 结算导出
         </h2>
         <p className="mt-2 text-sm text-muted">
           Export payout-ready orders: delivered and older than 30 days.
+          {" "}
+          导出可打款订单：已签收且超过 30 天。
         </p>
         <p className="mt-3">
           <a
@@ -969,7 +977,7 @@ export default async function AdminAffiliatePage({
             }`}
             className="inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
           >
-            Export eligible CSV (30d)
+            Export eligible CSV (30d) / 导出可结算 CSV（30天）
           </a>
         </p>
         <p className="mt-2 flex flex-wrap gap-2">
@@ -979,7 +987,7 @@ export default async function AdminAffiliatePage({
             }`}
             className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
           >
-            Export paid CSV
+            Export paid CSV / 导出已支付 CSV
           </a>
           <a
             href={`/api/admin/affiliate/payouts/export?mode=all&holdDays=30${
@@ -987,7 +995,7 @@ export default async function AdminAffiliatePage({
             }`}
             className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
           >
-            Export all ledger CSV
+            Export all ledger CSV / 导出台账全量 CSV
           </a>
         </p>
       </section>
