@@ -71,13 +71,13 @@ async function updateAffiliateDetailsAction(formData: FormData) {
   const payoutMethod = String(formData.get("payoutMethod") ?? "").trim();
   const payoutAccountRaw = String(formData.get("payoutAccount") ?? "").trim();
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
-  const payoutWhatsappContact = sanitizeAffiliatePayoutWhatsappContact(
-    String(formData.get("payoutWhatsappContact") ?? "").trim(),
+  const whatsappContact = sanitizeAffiliatePayoutWhatsappContact(
+    String(formData.get("whatsappContact") ?? "").trim(),
   );
-  const payoutWhatsappRaw = String(formData.get("payoutWhatsapp") ?? "").trim();
-  const payoutWhatsappLocal = String(formData.get("payoutWhatsappLocal") ?? "");
-  const payoutWhatsappCountryInput = normalizeCountryCodeInput(
-    String(formData.get("payoutWhatsappCountryCode") ?? ""),
+  const whatsappRaw = String(formData.get("whatsapp") ?? "").trim();
+  const whatsappLocal = String(formData.get("whatsappLocal") ?? "");
+  const whatsappCountryInput = normalizeCountryCodeInput(
+    String(formData.get("whatsappCountryCode") ?? ""),
   );
   const focus = String(formData.get("focus") ?? "total").trim();
   if (!profileId) redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
@@ -88,18 +88,18 @@ async function updateAffiliateDetailsAction(formData: FormData) {
       payoutMethod: true,
       payoutAccount: true,
       payoutEmail: true,
-      payoutWhatsapp: true,
+      whatsapp: true,
     },
   });
-  const existingWhatsappCountryCode = splitPhoneForInput(existing?.payoutWhatsapp).countryCode;
-  const payoutWhatsapp =
-    normalizePhone(payoutWhatsappCountryInput || existingWhatsappCountryCode || "+1", payoutWhatsappLocal) ||
-    payoutWhatsappRaw;
+  const existingWhatsappCountryCode = splitPhoneForInput(existing?.whatsapp).countryCode;
+  const whatsapp =
+    normalizePhone(whatsappCountryInput || existingWhatsappCountryCode || "+1", whatsappLocal) ||
+    whatsappRaw;
   const payoutChanged =
     (existing?.payoutMethod ?? "") !== payoutMethod ||
     (existing?.payoutAccount ?? "") !== payoutAccountRaw ||
     (existing?.payoutEmail ?? "") !== payoutEmail ||
-    (existing?.payoutWhatsapp ?? "") !== payoutWhatsapp;
+    (existing?.whatsapp ?? "") !== whatsapp;
   const payoutAccount = stripEmbeddedWhatsAppFromPayoutAccount(payoutAccountRaw);
 
   await prisma.affiliateProfile.update({
@@ -111,8 +111,8 @@ async function updateAffiliateDetailsAction(formData: FormData) {
       payoutMethod: payoutMethod || null,
       payoutAccount: payoutAccount || null,
       payoutEmail: payoutEmail || null,
-      payoutWhatsapp: payoutWhatsapp || null,
-      paymentInfoPending: !(payoutMethod || payoutAccount || payoutEmail || payoutWhatsapp),
+      whatsapp: whatsapp || null,
+      paymentInfoPending: !(payoutMethod || payoutAccount || payoutEmail || whatsapp),
       ...(payoutChanged ? { payoutVerifiedAt: null, payoutVerifiedBy: null } : {}),
     },
   });
@@ -416,16 +416,16 @@ export default async function AffiliateStatsPage({
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
                 <input
-                  name="payoutWhatsappCountryCode"
-                  defaultValue={splitPhoneForInput(p.payoutWhatsapp).countryCode}
+                  name="whatsappCountryCode"
+                  defaultValue={splitPhoneForInput(p.whatsapp).countryCode}
                   list={PHONE_COUNTRY_CODE_DATALIST_ID}
                   inputMode="tel"
                   placeholder="+1"
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
                 <input
-                  name="payoutWhatsappLocal"
-                  defaultValue={splitPhoneForInput(p.payoutWhatsapp).localNumber}
+                  name="whatsappLocal"
+                  defaultValue={splitPhoneForInput(p.whatsapp).localNumber}
                   inputMode="numeric"
                   placeholder="Telephone number"
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
@@ -434,9 +434,9 @@ export default async function AffiliateStatsPage({
               <div className="mt-2 w-full md:max-w-[560px] rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus-within:ring-2">
                 <span className="font-medium text-ink/90">WhatsApp: </span>
                 <input
-                  name="payoutWhatsappContact"
+                  name="whatsappContact"
                   defaultValue={
-                    p.payoutWhatsapp ||
+                    p.whatsapp ||
                     sanitizeAffiliatePayoutWhatsappContact(
                       extractLabeledValue(p.payoutAccount, "WhatsApp"),
                     )
@@ -467,7 +467,7 @@ export default async function AffiliateStatsPage({
                   <option key={code} value={code} />
                 ))}
               </datalist>
-              <input name="payoutWhatsapp" defaultValue={p.payoutWhatsapp ?? ""} hidden readOnly />
+              <input name="whatsapp" defaultValue={p.whatsapp ?? ""} hidden readOnly />
             </form>
           ))
         )}

@@ -19,7 +19,7 @@ type Props = {
   defaultPayoutMethod: string;
   defaultPayoutAccount: string;
   defaultPayoutEmail: string;
-  defaultPayoutWhatsapp: string;
+  defaultWhatsapp: string;
   cancelHref: string;
   showSaveSuccess?: boolean;
 };
@@ -64,11 +64,11 @@ export function AffiliatePayoutDetailsForm({
   defaultPayoutMethod,
   defaultPayoutAccount,
   defaultPayoutEmail,
-  defaultPayoutWhatsapp,
+  defaultWhatsapp,
   cancelHref,
   showSaveSuccess = false,
 }: Props) {
-  const defaultWhatsapp = splitPhoneForInput(defaultPayoutWhatsapp);
+  const defaultWhatsappPhone = splitPhoneForInput(defaultWhatsapp);
   const defaultAccountClean = stripEmbeddedWhatsAppFromPayoutAccount(defaultPayoutAccount);
   const [payoutMethod, setPayoutMethod] = useState(defaultPayoutMethod);
   const [directAccount, setDirectAccount] = useState(defaultAccountClean);
@@ -94,9 +94,9 @@ export function AffiliatePayoutDetailsForm({
       ? "international"
       : "domestic",
   );
-  const [payoutWhatsappCountryCode, setPayoutWhatsappCountryCode] = useState("");
-  const [payoutWhatsappLocal, setPayoutWhatsappLocal] = useState(defaultWhatsapp.localNumber);
-  const [payoutWhatsappContact, setPayoutWhatsappContact] = useState(
+  const [whatsappCountryCode, setWhatsappCountryCode] = useState("");
+  const [whatsappLocal, setWhatsappLocal] = useState(defaultWhatsappPhone.localNumber);
+  const [whatsappContact, setWhatsappContact] = useState(
     sanitizeAffiliatePayoutWhatsappContact(parseLabeledValue(defaultPayoutAccount, "WhatsApp")),
   );
 
@@ -138,9 +138,9 @@ export function AffiliatePayoutDetailsForm({
     recipientName,
     swiftCode,
   ]);
-  const normalizedPayoutWhatsapp = useMemo(
-    () => normalizePhone(payoutWhatsappCountryCode || defaultWhatsapp.countryCode || "+1", payoutWhatsappLocal),
-    [defaultWhatsapp.countryCode, payoutWhatsappCountryCode, payoutWhatsappLocal],
+  const normalizedWhatsapp = useMemo(
+    () => normalizePhone(whatsappCountryCode || defaultWhatsappPhone.countryCode || "+1", whatsappLocal),
+    [defaultWhatsappPhone.countryCode, whatsappCountryCode, whatsappLocal],
   );
 
   const isBank = payoutMethod === "bank";
@@ -318,18 +318,18 @@ export function AffiliatePayoutDetailsForm({
       />
       <div className="grid grid-cols-[120px_1fr] gap-2">
         <input
-          name="payoutWhatsappCountryCode"
-          value={payoutWhatsappCountryCode}
+          name="whatsappCountryCode"
+          value={whatsappCountryCode}
           list={PHONE_COUNTRY_CODE_DATALIST_ID}
           inputMode="tel"
           placeholder="+1"
-          onChange={(e) => setPayoutWhatsappCountryCode(normalizeCountryCodeInput(e.target.value))}
+          onChange={(e) => setWhatsappCountryCode(normalizeCountryCodeInput(e.target.value))}
           className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
         <input
-          name="payoutWhatsappLocal"
-          value={payoutWhatsappLocal}
-          onChange={(e) => setPayoutWhatsappLocal(e.target.value)}
+          name="whatsappLocal"
+          value={whatsappLocal}
+          onChange={(e) => setWhatsappLocal(e.target.value)}
           inputMode="numeric"
           placeholder="Telephone number"
           className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
@@ -338,10 +338,10 @@ export function AffiliatePayoutDetailsForm({
       <div className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus-within:ring-2 md:col-span-2">
         <span className="font-medium text-ink/90">WhatsApp: </span>
         <input
-          name="payoutWhatsappContact"
-          value={payoutWhatsappContact}
+          name="whatsappContact"
+          value={whatsappContact}
           onChange={(e) =>
-            setPayoutWhatsappContact(sanitizeAffiliatePayoutWhatsappContact(e.target.value))
+            setWhatsappContact(sanitizeAffiliatePayoutWhatsappContact(e.target.value))
           }
           placeholder="+86 180 2429 0526"
           className="w-[calc(100%-88px)] border-0 bg-transparent p-0 text-sm text-ink outline-none"
@@ -356,7 +356,7 @@ export function AffiliatePayoutDetailsForm({
       <input name="payoutAccount" value={payoutAccount} readOnly hidden />
       <input name="payoutRealName" value={realName} readOnly hidden />
       <input name="payoutBankTransferScope" value={bankTransferScope} readOnly hidden />
-      <input name="payoutWhatsapp" value={normalizedPayoutWhatsapp} readOnly hidden />
+      <input name="whatsapp" value={normalizedWhatsapp} readOnly hidden />
 
       <div className="flex gap-2 md:col-span-2">
         <button

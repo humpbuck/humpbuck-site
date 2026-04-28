@@ -307,7 +307,7 @@ model AffiliateProfile {
   payoutMethod       String?
   payoutAccount      String?
   payoutEmail        String?
-  payoutWhatsapp     String?
+  whatsapp           String?  @map("payoutWhatsapp")
   payoutVerifiedAt   DateTime?
   payoutVerifiedBy   String?
   status             String   @default("active")

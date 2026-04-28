@@ -1,7 +1,7 @@
 /**
  * Affiliate payoutAccount historically duplicated WhatsApp as "WhatsApp: …"
  * (sometimes on its own line, sometimes glued to PayPal email without a newline).
- * WhatsApp belongs in AffiliateProfile.payoutWhatsapp only.
+ * WhatsApp belongs in AffiliateProfile.whatsapp only.
  */
 
 export function sanitizeAffiliatePayoutWhatsappContact(value: string): string {

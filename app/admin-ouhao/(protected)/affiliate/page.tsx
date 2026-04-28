@@ -225,10 +225,10 @@ async function updateProfileAction(formData: FormData) {
     String(formData.get("payoutAccount") ?? "").trim(),
   );
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
-  const payoutWhatsappRaw = String(formData.get("payoutWhatsapp") ?? "").trim();
-  const payoutWhatsappLocal = String(formData.get("payoutWhatsappLocal") ?? "");
-  const payoutWhatsappCountryInput = normalizeCountryCodeInput(
-    String(formData.get("payoutWhatsappCountryCode") ?? ""),
+  const whatsappRaw = String(formData.get("whatsapp") ?? "").trim();
+  const whatsappLocal = String(formData.get("whatsappLocal") ?? "");
+  const whatsappCountryInput = normalizeCountryCodeInput(
+    String(formData.get("whatsappCountryCode") ?? ""),
   );
   if (!profileId) goAffiliate("Missing affiliate profile id.");
   const existing = await prisma.affiliateProfile.findUnique({
@@ -237,19 +237,19 @@ async function updateProfileAction(formData: FormData) {
       payoutMethod: true,
       payoutAccount: true,
       payoutEmail: true,
-      payoutWhatsapp: true,
+      whatsapp: true,
     },
   });
-  const existingWhatsappCountryCode = splitPhoneForInput(existing?.payoutWhatsapp).countryCode;
-  const payoutWhatsapp = normalizePhone(
-    payoutWhatsappCountryInput || existingWhatsappCountryCode || "+1",
-    payoutWhatsappLocal,
-  ) || payoutWhatsappRaw;
+  const existingWhatsappCountryCode = splitPhoneForInput(existing?.whatsapp).countryCode;
+  const whatsapp = normalizePhone(
+    whatsappCountryInput || existingWhatsappCountryCode || "+1",
+    whatsappLocal,
+  ) || whatsappRaw;
   const payoutChanged =
     (existing?.payoutMethod ?? "") !== payoutMethod ||
     (existing?.payoutAccount ?? "") !== payoutAccount ||
     (existing?.payoutEmail ?? "") !== payoutEmail ||
-    (existing?.payoutWhatsapp ?? "") !== payoutWhatsapp;
+    (existing?.whatsapp ?? "") !== whatsapp;
 
   await prisma.affiliateProfile.update({
     where: { id: profileId },
@@ -260,8 +260,8 @@ async function updateProfileAction(formData: FormData) {
       payoutMethod: payoutMethod || null,
       payoutAccount: payoutAccount || null,
       payoutEmail: payoutEmail || null,
-      payoutWhatsapp: payoutWhatsapp || null,
-      paymentInfoPending: !(payoutMethod || payoutAccount || payoutEmail || payoutWhatsapp),
+      whatsapp: whatsapp || null,
+      paymentInfoPending: !(payoutMethod || payoutAccount || payoutEmail || whatsapp),
       ...(payoutChanged ? { payoutVerifiedAt: null, payoutVerifiedBy: null } : {}),
     },
   });
