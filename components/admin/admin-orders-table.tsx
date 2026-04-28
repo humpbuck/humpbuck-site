@@ -23,6 +23,8 @@ export type AdminOrderRow = {
   trackingNumber: string | null;
   provider: string;
   trafficSource: string;
+  affiliateAttribution?: string | null;
+  affiliatePid?: string | null;
   createdAt: string;
   merchantOrderCode: string | null;
 };
@@ -131,7 +133,7 @@ export function AdminOrdersTable({ rows }: { rows: AdminOrderRow[] }) {
             <button
               type="button"
               onClick={() => setSelected(new Set())}
-              className="rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted hover:text-ink"
+              className="rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-semibold uppercase tracking-widest text-muted hover:text-ink"
             >
               Clear
             </button>
@@ -221,7 +223,14 @@ export function AdminOrdersTable({ rows }: { rows: AdminOrderRow[] }) {
                     )}
                   </td>
                   <td className="px-3 py-3 align-middle text-muted">
-                    {trafficSourceLabel(o.trafficSource)}
+                    {o.affiliateAttribution ? (
+                      <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-1 text-[11px] font-medium text-emerald-900 ring-1 ring-emerald-200/80">
+                        Affiliate
+                        {o.affiliatePid ? ` (${o.affiliatePid})` : ""}
+                      </span>
+                    ) : (
+                      trafficSourceLabel(o.trafficSource)
+                    )}
                   </td>
                   <td className="px-3 py-3 align-middle text-muted">
                     {paymentProviderLabel(o.provider)}

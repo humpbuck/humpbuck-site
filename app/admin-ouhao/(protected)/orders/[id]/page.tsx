@@ -256,6 +256,16 @@ export default async function AdminOrderDetailPage({
       <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted">
         Traffic: {trafficSourceLabel(order.trafficSource)} · Payment:{" "}
         {paymentProviderLabel(order.provider)}
+        {order.affiliateAttribution ? (
+          <>
+            {" "}
+            · Affiliate{" "}
+            <span className="font-medium text-emerald-900">
+              {order.affiliateAttribution}
+              {order.affiliatePid ? ` (${order.affiliatePid})` : ""}
+            </span>
+          </>
+        ) : null}
         {order.providerRef ? (
           <>
             {" "}
