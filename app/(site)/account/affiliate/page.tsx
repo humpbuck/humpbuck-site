@@ -1087,9 +1087,11 @@ export default async function AccountAffiliatePage({
                 From
               </span>
               <input
-                type="date"
+                type="text"
                 name="from"
-                lang="en-US"
+                inputMode="numeric"
+                pattern="\d{4}-\d{2}-\d{2}"
+                placeholder="YYYY-MM-DD"
                 defaultValue={dateFromInput}
                 className="mt-1 rounded-xl border border-line bg-paper px-3 py-2 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
               />
@@ -1099,9 +1101,11 @@ export default async function AccountAffiliatePage({
                 To
               </span>
               <input
-                type="date"
+                type="text"
                 name="to"
-                lang="en-US"
+                inputMode="numeric"
+                pattern="\d{4}-\d{2}-\d{2}"
+                placeholder="YYYY-MM-DD"
                 defaultValue={dateToInput}
                 className="mt-1 rounded-xl border border-line bg-paper px-3 py-2 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
               />
@@ -1112,12 +1116,6 @@ export default async function AccountAffiliatePage({
             >
               Apply
             </button>
-            <Link
-              href={settlementOnlyHref(settlementFilter)}
-              className="rounded-xl border border-line bg-white px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink hover:border-ink/20"
-            >
-              Reset dates
-            </Link>
             <a
               href={settlementExportHref}
               className="rounded-xl bg-ink px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper hover:bg-ink/90"
