@@ -13,6 +13,10 @@ import {
   normalizePhone,
   splitPhoneForInput,
 } from "@/lib/phone-normalize";
+import {
+  sanitizeAffiliatePayoutWhatsappContact,
+  stripEmbeddedWhatsAppFromPayoutAccount,
+} from "@/lib/affiliate-payout-account";
 import { prisma } from "@/lib/prisma";
 
 type Focus = "total" | "auto" | "pending" | "blacklisted";
@@ -26,23 +30,10 @@ const GROWTH_MILESTONES = [
   { level: "Level 6", minOrders: 1500, rate: 15 },
 ] as const;
 
-function removeLabeledLine(payload: string, label: string): string {
-  return payload
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line && !line.startsWith(`${label}:`))
-    .join("\n")
-    .trim();
-}
-
 function extractLabeledValue(payload: string | null | undefined, label: string): string {
   const raw = String(payload ?? "");
   const match = raw.match(new RegExp(`${label}:\\s*(.+)`));
   return match?.[1]?.trim() ?? "";
-}
-
-function sanitizeWhatsappContact(value: string): string {
-  return value.replace(/^whatsapp:\s*/i, "").trim();
 }
 
 function goStats(focus: string, ok?: string): never {
@@ -80,7 +71,9 @@ async function updateAffiliateDetailsAction(formData: FormData) {
   const payoutMethod = String(formData.get("payoutMethod") ?? "").trim();
   const payoutAccountRaw = String(formData.get("payoutAccount") ?? "").trim();
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
-  const payoutWhatsappContact = sanitizeWhatsappContact(String(formData.get("payoutWhatsappContact") ?? "").trim());
+  const payoutWhatsappContact = sanitizeAffiliatePayoutWhatsappContact(
+    String(formData.get("payoutWhatsappContact") ?? "").trim(),
+  );
   const payoutWhatsappRaw = String(formData.get("payoutWhatsapp") ?? "").trim();
   const payoutWhatsappLocal = String(formData.get("payoutWhatsappLocal") ?? "");
   const payoutWhatsappCountryInput = normalizeCountryCodeInput(
@@ -107,14 +100,7 @@ async function updateAffiliateDetailsAction(formData: FormData) {
     (existing?.payoutAccount ?? "") !== payoutAccountRaw ||
     (existing?.payoutEmail ?? "") !== payoutEmail ||
     (existing?.payoutWhatsapp ?? "") !== payoutWhatsapp;
-  const payoutAccountBase = removeLabeledLine(payoutAccountRaw, "WhatsApp");
-  const payoutAccount = [
-    payoutAccountBase,
-    payoutWhatsappContact ? `WhatsApp: ${payoutWhatsappContact}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n")
-    .trim();
+  const payoutAccount = stripEmbeddedWhatsAppFromPayoutAccount(payoutAccountRaw);
 
   await prisma.affiliateProfile.update({
     where: { id: profileId },
@@ -417,7 +403,7 @@ export default async function AffiliateStatsPage({
                 />
                 <input
                   name="payoutAccount"
-                  defaultValue={removeLabeledLine(p.payoutAccount ?? "", "WhatsApp")}
+                  defaultValue={stripEmbeddedWhatsAppFromPayoutAccount(p.payoutAccount ?? "")}
                   placeholder="Payout account"
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
@@ -449,7 +435,9 @@ export default async function AffiliateStatsPage({
                 <span className="font-medium text-ink/90">WhatsApp: </span>
                 <input
                   name="payoutWhatsappContact"
-                  defaultValue={sanitizeWhatsappContact(extractLabeledValue(p.payoutAccount, "WhatsApp"))}
+                  defaultValue={sanitizeAffiliatePayoutWhatsappContact(
+                    extractLabeledValue(p.payoutAccount, "WhatsApp"),
+                  )}
                   placeholder="+86 180 2429 0526"
                   className="w-[calc(100%-88px)] border-0 bg-transparent p-0 text-sm text-ink outline-none"
                 />

@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
+  sanitizeAffiliatePayoutWhatsappContact,
+  stripEmbeddedWhatsAppFromPayoutAccount,
+} from "@/lib/affiliate-payout-account";
+import {
   PHONE_COUNTRY_CODE_DATALIST_ID,
   PHONE_COUNTRY_CODES,
   normalizeCountryCodeInput,
@@ -55,18 +59,6 @@ function buildEmailPayoutAccount(input: { accountEmail: string; recipientName: s
   return rows.join("\n").trim();
 }
 
-function sanitizeWhatsappContact(value: string): string {
-  return value.replace(/^whatsapp:\s*/i, "").trim();
-}
-
-function removeLabeledLine(payload: string, label: string): string {
-  return payload
-    .split(/\r?\n/)
-    .filter((line) => !new RegExp(`^${label}:`, "i").test(line.trim()))
-    .join("\n")
-    .trim();
-}
-
 export function AffiliatePayoutDetailsForm({
   action,
   defaultPayoutMethod,
@@ -77,56 +69,53 @@ export function AffiliatePayoutDetailsForm({
   showSaveSuccess = false,
 }: Props) {
   const defaultWhatsapp = splitPhoneForInput(defaultPayoutWhatsapp);
+  const defaultAccountClean = stripEmbeddedWhatsAppFromPayoutAccount(defaultPayoutAccount);
   const [payoutMethod, setPayoutMethod] = useState(defaultPayoutMethod);
-  const [directAccount, setDirectAccount] = useState(removeLabeledLine(defaultPayoutAccount, "WhatsApp"));
-  const [realName, setRealName] = useState(parseLabeledValue(defaultPayoutAccount, "Real name"));
+  const [directAccount, setDirectAccount] = useState(defaultAccountClean);
+  const [realName, setRealName] = useState(parseLabeledValue(defaultAccountClean, "Real name"));
   const [recipientName, setRecipientName] = useState(
-    parseLabeledValue(defaultPayoutAccount, "Recipient name"),
+    parseLabeledValue(defaultAccountClean, "Recipient name"),
   );
   const [accountNumber, setAccountNumber] = useState(
-    parseLabeledValue(defaultPayoutAccount, "Account number"),
+    parseLabeledValue(defaultAccountClean, "Account number"),
   );
   const [bankName, setBankName] = useState(
-    parseLabeledValue(defaultPayoutAccount, "Bank name"),
+    parseLabeledValue(defaultAccountClean, "Bank name"),
   );
   const [swiftCode, setSwiftCode] = useState(
-    parseLabeledValue(defaultPayoutAccount, "SWIFT/BIC"),
+    parseLabeledValue(defaultAccountClean, "SWIFT/BIC"),
   );
-  const [branch, setBranch] = useState(parseLabeledValue(defaultPayoutAccount, "Branch"));
+  const [branch, setBranch] = useState(parseLabeledValue(defaultAccountClean, "Branch"));
   const [bankAddress, setBankAddress] = useState(
-    parseLabeledValue(defaultPayoutAccount, "Bank address"),
+    parseLabeledValue(defaultAccountClean, "Bank address"),
   );
   const [bankTransferScope, setBankTransferScope] = useState<"domestic" | "international">(
-    parseLabeledValue(defaultPayoutAccount, "Transfer type").toLowerCase() === "international"
+    parseLabeledValue(defaultAccountClean, "Transfer type").toLowerCase() === "international"
       ? "international"
       : "domestic",
   );
   const [payoutWhatsappCountryCode, setPayoutWhatsappCountryCode] = useState("");
   const [payoutWhatsappLocal, setPayoutWhatsappLocal] = useState(defaultWhatsapp.localNumber);
   const [payoutWhatsappContact, setPayoutWhatsappContact] = useState(
-    sanitizeWhatsappContact(parseLabeledValue(defaultPayoutAccount, "WhatsApp")),
+    sanitizeAffiliatePayoutWhatsappContact(parseLabeledValue(defaultPayoutAccount, "WhatsApp")),
   );
 
   const payoutAccount = useMemo(() => {
     if (payoutMethod === "wise" || payoutMethod === "payoneer") {
-      const base = buildEmailPayoutAccount({
+      return buildEmailPayoutAccount({
         accountEmail: directAccount,
         recipientName,
       });
-      return [base, payoutWhatsappContact.trim() ? `WhatsApp: ${sanitizeWhatsappContact(payoutWhatsappContact)}` : ""]
-        .filter(Boolean)
-        .join("\n");
     }
     if (payoutMethod === "alipay") {
       const rows = [
         `Alipay account: ${directAccount.trim()}`,
         `Real name: ${realName.trim()}`,
-        payoutWhatsappContact.trim() ? `WhatsApp: ${sanitizeWhatsappContact(payoutWhatsappContact)}` : "",
       ].filter((row) => !row.endsWith(":"));
       return rows.join("\n").trim();
     }
     if (payoutMethod === "bank") {
-      const base = buildBankPayoutAccount({
+      return buildBankPayoutAccount({
         transferScope: bankTransferScope,
         realName,
         accountNumber,
@@ -135,13 +124,8 @@ export function AffiliatePayoutDetailsForm({
         branch,
         bankAddress,
       });
-      return [base, payoutWhatsappContact.trim() ? `WhatsApp: ${sanitizeWhatsappContact(payoutWhatsappContact)}` : ""]
-        .filter(Boolean)
-        .join("\n");
     }
-    return [directAccount.trim(), payoutWhatsappContact.trim() ? `WhatsApp: ${sanitizeWhatsappContact(payoutWhatsappContact)}` : ""]
-      .filter(Boolean)
-      .join("\n");
+    return directAccount.trim();
   }, [
     accountNumber,
     bankAddress,
@@ -153,7 +137,6 @@ export function AffiliatePayoutDetailsForm({
     realName,
     recipientName,
     swiftCode,
-    payoutWhatsappContact,
   ]);
   const normalizedPayoutWhatsapp = useMemo(
     () => normalizePhone(payoutWhatsappCountryCode || defaultWhatsapp.countryCode || "+1", payoutWhatsappLocal),
@@ -355,8 +338,11 @@ export function AffiliatePayoutDetailsForm({
       <div className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus-within:ring-2 md:col-span-2">
         <span className="font-medium text-ink/90">WhatsApp: </span>
         <input
+          name="payoutWhatsappContact"
           value={payoutWhatsappContact}
-          onChange={(e) => setPayoutWhatsappContact(sanitizeWhatsappContact(e.target.value))}
+          onChange={(e) =>
+            setPayoutWhatsappContact(sanitizeAffiliatePayoutWhatsappContact(e.target.value))
+          }
           placeholder="+86 180 2429 0526"
           className="w-[calc(100%-88px)] border-0 bg-transparent p-0 text-sm text-ink outline-none"
         />

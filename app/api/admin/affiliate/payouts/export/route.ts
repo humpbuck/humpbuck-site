@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
+import { stripEmbeddedWhatsAppFromPayoutAccount } from "@/lib/affiliate-payout-account";
 import { prisma } from "@/lib/prisma";
 
 const DEFAULT_HOLD_DAYS = 30;
@@ -110,7 +111,7 @@ export async function GET(req: Request) {
       l.affiliate?.payoutEmail || "",
       l.affiliate?.payoutWhatsapp || "",
       l.affiliate?.payoutMethod || "",
-      l.affiliate?.payoutAccount || "",
+      stripEmbeddedWhatsAppFromPayoutAccount(l.affiliate?.payoutAccount ?? "") || "",
       l.affiliate?.payoutVerifiedAt ? l.affiliate.payoutVerifiedAt.toISOString() : "",
       l.affiliate?.tier?.name ?? "",
       l.commissionType,

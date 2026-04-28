@@ -12,6 +12,7 @@ import {
   ensureAffiliateGrowthTiers,
   syncAffiliateGrowthTierByOrderCount,
 } from "@/lib/affiliate-tier-growth";
+import { stripEmbeddedWhatsAppFromPayoutAccount } from "@/lib/affiliate-payout-account";
 import {
   normalizeCountryCodeInput,
   normalizePhone,
@@ -220,7 +221,9 @@ async function updateProfileAction(formData: FormData) {
   const whitelist = String(formData.get("whitelist") ?? "") === "on";
   const notes = String(formData.get("notes") ?? "").trim();
   const payoutMethod = String(formData.get("payoutMethod") ?? "").trim();
-  const payoutAccount = String(formData.get("payoutAccount") ?? "").trim();
+  const payoutAccount = stripEmbeddedWhatsAppFromPayoutAccount(
+    String(formData.get("payoutAccount") ?? "").trim(),
+  );
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
   const payoutWhatsappRaw = String(formData.get("payoutWhatsapp") ?? "").trim();
   const payoutWhatsappLocal = String(formData.get("payoutWhatsappLocal") ?? "");

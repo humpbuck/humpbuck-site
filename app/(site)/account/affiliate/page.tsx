@@ -22,6 +22,10 @@ import { PaidCommissionSelector } from "@/components/account/paid-commission-sel
 import { RestoreScrollOnce } from "@/components/account/restore-scroll-once";
 import { ClearQueryParam } from "@/components/admin/clear-query-param";
 import {
+  sanitizeAffiliatePayoutWhatsappContact,
+  stripEmbeddedWhatsAppFromPayoutAccount,
+} from "@/lib/affiliate-payout-account";
+import {
   PHONE_COUNTRY_CODE_DATALIST_ID,
   PHONE_COUNTRY_CODES,
   normalizeCountryCodeInput,
@@ -194,10 +198,15 @@ async function updatePayoutDetailsAction(formData: FormData) {
   if (!userId) redirect("/auth/login?callbackUrl=/account/affiliate");
 
   const payoutMethod = String(formData.get("payoutMethod") ?? "").trim();
-  const payoutAccount = String(formData.get("payoutAccount") ?? "").trim();
+  const payoutAccount = stripEmbeddedWhatsAppFromPayoutAccount(
+    String(formData.get("payoutAccount") ?? "").trim(),
+  );
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
   const payoutWhatsappRaw = String(formData.get("payoutWhatsapp") ?? "").trim();
   const payoutWhatsappLocal = String(formData.get("payoutWhatsappLocal") ?? "");
+  const payoutWhatsappContact = sanitizeAffiliatePayoutWhatsappContact(
+    String(formData.get("payoutWhatsappContact") ?? "").trim(),
+  );
   const payoutWhatsappCountryInput = normalizeCountryCodeInput(
     String(formData.get("payoutWhatsappCountryCode") ?? ""),
   );
@@ -228,10 +237,14 @@ async function updatePayoutDetailsAction(formData: FormData) {
     goAffiliate("Please submit affiliate application first.");
   }
   const existingWhatsappCountryCode = splitPhoneForInput(profile.payoutWhatsapp).countryCode;
-  const payoutWhatsapp = normalizePhone(
-    payoutWhatsappCountryInput || existingWhatsappCountryCode || "+1",
-    payoutWhatsappLocal,
-  ) || payoutWhatsappRaw;
+  const countryForPhone = payoutWhatsappCountryInput || existingWhatsappCountryCode || "+1";
+  const fromPhone = normalizePhone(countryForPhone, payoutWhatsappLocal);
+  const splitContact = splitPhoneForInput(payoutWhatsappContact);
+  const fromContact =
+    payoutWhatsappContact && splitContact.localNumber
+      ? normalizePhone(splitContact.countryCode || countryForPhone, splitContact.localNumber)
+      : "";
+  const payoutWhatsapp = fromPhone || fromContact || payoutWhatsappRaw;
   if (payoutMethod === "other" && !(payoutEmail || payoutWhatsapp)) {
     goAffiliate("Please provide email or WhatsApp so we can confirm your payout method.");
   }
@@ -391,15 +404,6 @@ function extractLabeledValue(payload: string | null | undefined, label: string):
   const raw = String(payload ?? "");
   const match = raw.match(new RegExp(`${label}:\\s*(.+)`));
   return match?.[1]?.trim() ?? "";
-}
-
-function removeLabeledLine(payload: string | null | undefined, label: string): string {
-  const raw = String(payload ?? "");
-  return raw
-    .split(/\r?\n/)
-    .filter((line) => !new RegExp(`^${label}:`, "i").test(line.trim()))
-    .join("\n")
-    .trim();
 }
 
 function usd(cents: number): string {
@@ -817,7 +821,9 @@ export default async function AccountAffiliatePage({
               <p className="mt-1">
                 Account:{" "}
                 <span className="whitespace-pre-line font-medium">
-                  {maskPayoutAccountForDisplay(removeLabeledLine(profile.payoutAccount, "WhatsApp"))}
+                  {maskPayoutAccountForDisplay(
+                    stripEmbeddedWhatsAppFromPayoutAccount(profile.payoutAccount ?? ""),
+                  )}
                 </span>
               </p>
               <p className="mt-1">Email: <span className="font-medium">{profile.payoutEmail || "-"}</span></p>
@@ -825,7 +831,9 @@ export default async function AccountAffiliatePage({
               <p className="mt-1">
                 WhatsApp:{" "}
                 <span className="font-medium">
-                  {extractLabeledValue(profile.payoutAccount, "WhatsApp") || "-"}
+                  {profile.payoutWhatsapp ||
+                    extractLabeledValue(profile.payoutAccount, "WhatsApp") ||
+                    "-"}
                 </span>
               </p>
               <p className="mt-1">
