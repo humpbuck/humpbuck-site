@@ -901,68 +901,6 @@ export default async function AdminAffiliatePage({
 
       <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Commission ledger / 佣金台账
-        </h2>
-        <p className="mt-2 text-sm text-muted">
-          Ledger rows are created when orders reach Delivered and move to Eligible after hold period.
-          {" "}
-          订单到达 Delivered 后生成台账，经过冻结期后进入可结算。
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2 text-xs text-ink/85">
-          {ledgerSummary.length === 0 ? (
-            <span>No ledger rows yet. 暂无台账记录。</span>
-          ) : (
-            ledgerSummary.map((s) => (
-              <span key={s.status} className="rounded-full border border-line bg-paper px-3 py-1">
-                {s.status}: {s._count._all}
-              </span>
-            ))
-          )}
-        </div>
-        <form action={markAllEligiblePaidAction} className="mt-3">
-          <button
-            type="submit"
-            className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
-          >
-            Mark all eligible as paid / 标记全部可结算为已支付
-          </button>
-        </form>
-        <div className="mt-4 space-y-2 text-sm text-ink/90">
-          {recentLedgers.length === 0 ? (
-            <p className="text-muted">No recent ledger records. 暂无最近台账记录。</p>
-          ) : (
-            recentLedgers.map((l) => (
-              <div key={l.id} className="rounded-xl border border-line bg-paper/60 px-3 py-2">
-                <p>
-                  #{l.order.id.slice(-8)} · {l.affiliate?.user.displayName || l.affiliate?.user.email || l.affiliateId} ·{" "}
-                  ${(l.commissionCents / 100).toFixed(2)} · {l.status}
-                </p>
-                <p className="mt-0.5 text-xs text-muted">
-                  Eligible at {l.eligibleAt.toLocaleDateString()} · Order $
-                  {(l.order.totalCents / 100).toFixed(2)}
-                  {` · Order status ${l.order.status}`}
-                  {l.reversedAt ? ` · Reversed ${l.reversalReason ?? ""}` : ""}
-                  {l.paidAt ? ` · Paid ${l.paidAt.toLocaleDateString()}` : ""}
-                </p>
-                {l.status === "eligible" && !l.paidAt && !l.reversedAt ? (
-                  <form action={markLedgerPaidAction} className="mt-2">
-                    <input type="hidden" name="ledgerId" value={l.id} />
-                    <button
-                      type="submit"
-                      className="inline-flex items-center justify-center rounded-lg bg-ink px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-paper transition hover:bg-ink/90"
-                    >
-                      Mark paid
-                    </button>
-                  </form>
-                ) : null}
-              </div>
-            ))
-          )}
-        </div>
-      </section>
-
-      <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
-        <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Payout export / 结算导出
         </h2>
         <p className="mt-2 text-sm text-muted">
