@@ -283,8 +283,10 @@ function PhoneField({
 }) {
   const phoneParts = splitPhoneForInput(value);
   const [countryQuery, setCountryQuery] = useState(phoneParts.countryCode);
+  const [localQuery, setLocalQuery] = useState(phoneParts.localNumber);
   const [countryOpen, setCountryOpen] = useState(false);
   const countryRootRef = useRef<HTMLDivElement>(null);
+  const lastSubmittedRef = useRef(value);
   const filteredCountryCodes = useMemo(() => {
     const q = countryQuery.trim();
     if (!q) return PHONE_COUNTRY_CODES;
@@ -292,8 +294,10 @@ function PhoneField({
   }, [countryQuery]);
 
   useEffect(() => {
+    if (value === lastSubmittedRef.current) return;
     setCountryQuery(phoneParts.countryCode);
-  }, [phoneParts.countryCode]);
+    setLocalQuery(phoneParts.localNumber);
+  }, [phoneParts.countryCode, phoneParts.localNumber, value]);
 
   useEffect(() => {
     function handlePointer(e: MouseEvent) {
@@ -311,6 +315,12 @@ function PhoneField({
     if (!local) return code;
     if (!code) return local;
     return normalizePhone(code, local);
+  };
+
+  const emitPhone = (countryCode: string, localNumber: string) => {
+    const next = combinePhone(countryCode, localNumber);
+    lastSubmittedRef.current = next;
+    onChange(next);
   };
 
   return (
@@ -334,7 +344,7 @@ function PhoneField({
             onChange={(e) => {
               const code = normalizeCountryCodeInput(e.target.value);
               setCountryQuery(code);
-              onChange(combinePhone(code, phoneParts.localNumber));
+              emitPhone(code, localQuery);
               setCountryOpen(true);
             }}
             className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 pr-8 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
@@ -365,7 +375,7 @@ function PhoneField({
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => {
                           setCountryQuery(code);
-                          onChange(combinePhone(code, phoneParts.localNumber));
+                          emitPhone(code, localQuery);
                           setCountryOpen(false);
                         }}
                       >
@@ -385,14 +395,15 @@ function PhoneField({
           autoComplete="tel-national"
           inputMode="numeric"
           aria-required={required}
-          value={phoneParts.localNumber}
+          value={localQuery}
           onChange={(e) => {
             const local = e.target.value;
+            setLocalQuery(local);
             if (!local.trim()) {
-              onChange(phoneParts.countryCode);
+              emitPhone(countryQuery, "");
               return;
             }
-            onChange(normalizePhone(phoneParts.countryCode || "+1", local));
+            emitPhone(countryQuery || "+1", local);
           }}
           className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
