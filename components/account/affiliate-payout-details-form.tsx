@@ -97,10 +97,14 @@ export function AffiliatePayoutDetailsForm({
   const [whatsappCountryCode, setWhatsappCountryCode] = useState("");
   const [whatsappLocal, setWhatsappLocal] = useState(defaultWhatsappPhone.localNumber);
   const [whatsappContact, setWhatsappContact] = useState(
-    sanitizeAffiliatePayoutWhatsappContact(parseLabeledValue(defaultPayoutAccount, "WhatsApp")),
+    sanitizeAffiliatePayoutWhatsappContact(parseLabeledValue(defaultPayoutAccount, "WhatsApp")) ||
+      defaultWhatsapp,
   );
 
   const payoutAccount = useMemo(() => {
+    if (!payoutMethod) {
+      return "";
+    }
     if (payoutMethod === "wise" || payoutMethod === "payoneer") {
       return buildEmailPayoutAccount({
         accountEmail: directAccount,
@@ -180,7 +184,21 @@ export function AffiliatePayoutDetailsForm({
       <select
         name="payoutMethod"
         value={payoutMethod}
-        onChange={(e) => setPayoutMethod(e.target.value)}
+        onChange={(e) => {
+          const next = e.target.value;
+          setPayoutMethod(next);
+          if (!next) {
+            setDirectAccount("");
+            setRealName("");
+            setRecipientName("");
+            setAccountNumber("");
+            setBankName("");
+            setSwiftCode("");
+            setBranch("");
+            setBankAddress("");
+            setBankTransferScope("domestic");
+          }
+        }}
         className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
       >
         <option value="">Select payout method</option>
