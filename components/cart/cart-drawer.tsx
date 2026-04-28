@@ -36,8 +36,9 @@ export function CartDrawer() {
   });
 
   const subtotal = lines.reduce((sum, { line, product }) => {
-    if (!product) return sum;
-    return sum + product.price * line.qty;
+    const unitPrice =
+      product?.price ?? (typeof line.unitPrice === "number" ? line.unitPrice : 0);
+    return sum + unitPrice * line.qty;
   }, 0);
 
   useEffect(() => {
@@ -133,12 +134,17 @@ export function CartDrawer() {
                       ) : null}
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-ink">
-                          {line.variantLabel || line.slug}
+                          {line.productName || line.variantLabel || line.slug}
                         </p>
                         <p className="mt-0.5 text-xs text-muted">
                           This item is not in the current catalog, but remains in your
                           bag.
                         </p>
+                        {Number.isFinite(line.unitPrice) ? (
+                          <p className="mt-1 text-xs tabular-nums text-muted">
+                            {formatPrice(line.unitPrice ?? 0)} each
+                          </p>
+                        ) : null}
                         <div className="mt-2 flex flex-wrap items-center gap-2">
                           <div className="inline-flex items-stretch overflow-hidden rounded-lg border border-[color:var(--color-line)] bg-paper">
                             <button

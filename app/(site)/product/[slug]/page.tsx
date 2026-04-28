@@ -198,6 +198,7 @@ export default async function ProductPage({
             <ProductCartSection
               slug={product.slug}
               name={product.name}
+              price={product.price}
               inStock={product.inStock}
               variantOptions={variantOptions}
             />

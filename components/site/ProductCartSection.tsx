@@ -13,11 +13,13 @@ import { WhatsAppChatLink } from "@/components/site/WhatsAppChatLink";
 export function ProductCartSection({
   slug,
   name,
+  price,
   inStock,
   variantOptions,
 }: {
   slug: string;
   name: string;
+  price: number;
   inStock: boolean;
   variantOptions?: ProductVariantOption[] | null;
 }) {
@@ -55,6 +57,8 @@ export function ProductCartSection({
     addItem({
       slug,
       qty: 1,
+      productName: name,
+      unitPrice: price,
       variantId: current?.id,
       variantLabel: current?.label,
       variantImage: current?.image,

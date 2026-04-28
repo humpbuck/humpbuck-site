@@ -22,8 +22,9 @@ export default function CartPage() {
   });
 
   const subtotal = lines.reduce((sum, { line, product }) => {
-    if (!product) return sum;
-    return sum + product.price * line.qty;
+    const unitPrice =
+      product?.price ?? (typeof line.unitPrice === "number" ? line.unitPrice : 0);
+    return sum + unitPrice * line.qty;
   }, 0);
 
   return (
@@ -67,12 +68,17 @@ export default function CartPage() {
                   ) : null}
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-ink">
-                      {line.variantLabel || line.slug}
+                      {line.productName || line.variantLabel || line.slug}
                     </p>
                     <p className="mt-1 text-xs text-muted">
                       This item is not in the current catalog, but remains in your
                       bag.
                     </p>
+                    {Number.isFinite(line.unitPrice) ? (
+                      <p className="mt-2 text-sm tabular-nums">
+                        {formatPrice(line.unitPrice ?? 0)} each
+                      </p>
+                    ) : null}
                     <div className="mt-3 flex flex-wrap items-center gap-3">
                       <div className="flex items-center gap-2">
                         <span className="text-xs uppercase tracking-[0.14em] text-muted">
@@ -252,7 +258,7 @@ export default function CartPage() {
                   </div>
                 </div>
                 <div className="shrink-0 text-right text-sm font-semibold tabular-nums">
-                  {formatPrice(product.price * line.qty)}
+                  {formatPrice((product?.price ?? line.unitPrice ?? 0) * line.qty)}
                 </div>
               </li>
             );

@@ -53,7 +53,7 @@ export async function POST(req: Request) {
   let lines;
   let totalCents: number;
   try {
-    const v = validateCartLines(items);
+    const v = await validateCartLines(items);
     lines = v.lines;
     totalCents = v.totalCents;
   } catch (e) {

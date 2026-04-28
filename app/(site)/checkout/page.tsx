@@ -120,8 +120,8 @@ export default function CheckoutPage() {
 
   const subtotal = items.reduce((sum, line) => {
     const p = getProductBySlug(line.slug);
-    if (!p) return sum;
-    return sum + p.price * line.qty;
+    const unitPrice = p?.price ?? (typeof line.unitPrice === "number" ? line.unitPrice : 0);
+    return sum + unitPrice * line.qty;
   }, 0);
 
   const shipCountryLabel = useMemo(() => {
