@@ -198,12 +198,12 @@ export default async function AffiliateStatsPage({
 
   const title =
     focus === "total"
-      ? "All affiliates / 全部推广员"
+      ? "All affiliates"
       : focus === "auto"
-        ? "Auto approved affiliates / 自动通过推广员"
+        ? "Auto approved affiliates"
         : focus === "pending"
-          ? "Pending review / 待审核"
-          : "Blacklisted affiliates / 黑名单推广员";
+          ? "Pending review"
+          : "Blacklisted affiliates";
   const list =
     focus === "blacklisted"
       ? blacklistedProfiles
@@ -212,25 +212,25 @@ export default async function AffiliateStatsPage({
         : profiles;
   const emptyMessage =
     focus === "blacklisted"
-      ? "No blacklisted affiliates. 暂无黑名单推广员。"
+      ? "No blacklisted affiliates."
       : focus === "auto"
-        ? "No auto approved affiliates. 暂无自动通过推广员。"
-        : "No affiliates found. 暂无推广员。";
+        ? "No auto approved affiliates."
+        : "No affiliates found.";
 
   return (
     <div>
       <AdminBackLink href={adminPath("/affiliate")} label="Affiliate" />
       <h1 className="font-serif text-3xl tracking-tight">{title}</h1>
-      <p className="mt-2 text-sm text-muted">View details for this affiliate category. 查看该分类下的推广员详情。</p>
+      <p className="mt-2 text-sm text-muted">View details for this affiliate category.</p>
       {sp.ok ? (
         <>
           <ClearQueryParam param="ok" />
           <p className="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-900">
             {sp.ok === "level_saved"
-              ? "Level saved successfully. 等级保存成功。"
+              ? "Level saved successfully."
               : sp.ok === "profile_saved"
-                ? "Affiliate info saved successfully. 推广员信息保存成功。"
-                : "Blacklist status updated successfully. 黑名单状态更新成功。"}
+                ? "Affiliate info saved successfully."
+                : "Blacklist status updated successfully."}
           </p>
         </>
       ) : null}
@@ -242,7 +242,7 @@ export default async function AffiliateStatsPage({
           }`}
           href={adminPath("/affiliate/stats?focus=total")}
         >
-          Total / 全部
+          Total
         </Link>
         <Link
           className={`rounded-xl border px-3 py-1.5 text-xs transition hover:border-ink/20 ${
@@ -250,7 +250,7 @@ export default async function AffiliateStatsPage({
           }`}
           href={adminPath("/affiliate/stats?focus=auto")}
         >
-          Auto approved / 自动通过
+          Auto approved
         </Link>
         <Link
           className={`rounded-xl border px-3 py-1.5 text-xs transition hover:border-ink/20 ${
@@ -258,7 +258,7 @@ export default async function AffiliateStatsPage({
           }`}
           href={adminPath("/affiliate/stats?focus=pending")}
         >
-          Pending review / 待审核
+          Pending review
         </Link>
         <Link
           className={`rounded-xl border px-3 py-1.5 text-xs transition hover:border-ink/20 ${
@@ -266,7 +266,7 @@ export default async function AffiliateStatsPage({
           }`}
           href={adminPath("/affiliate/stats?focus=blacklisted")}
         >
-          Blacklisted / 黑名单
+          Blacklisted
         </Link>
       </div>
 
@@ -275,7 +275,6 @@ export default async function AffiliateStatsPage({
           pendingApps.length === 0 ? (
             <p className="rounded-2xl border border-line bg-white/60 px-5 py-4 text-sm text-muted">
               No pending applications.
-              {" "}暂无待审核申请。
             </p>
           ) : (
             pendingApps.map((a) => (
@@ -283,7 +282,6 @@ export default async function AffiliateStatsPage({
                 <p className="font-medium text-ink">{a.user.displayName || a.user.name || a.user.email || a.user.id}</p>
                 <p className="mt-1 text-xs text-muted">
                   Followers: {a.followerCount ?? "-"} · Submitted {a.createdAt.toLocaleString()}
-                  {" "}· 粉丝数与提交时间
                 </p>
               </div>
             ))
@@ -329,16 +327,16 @@ export default async function AffiliateStatsPage({
                     <div>
                       <p className="font-medium text-ink">{p.user.displayName || p.user.name || p.user.email || p.user.id}</p>
                       <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted">
-                        <span>Status / 状态: {p.status}</span>
+                        <span>Status: {p.status}</span>
                         <span>PID: {p.pid ?? "-"}</span>
-                        <span>Current level / 当前等级: {p.tier?.name ?? "-"}</span>
+                        <span>Current level: {p.tier?.name ?? "-"}</span>
                       </div>
                       <p className="mt-1 text-xs text-ink/80">
-                        Growth / 成长: {currentGrowthTier.level} ({currentGrowthTier.rate}%) · Valid paid orders / 有效付费单:{" "}
+                        Growth: {currentGrowthTier.level} ({currentGrowthTier.rate}%) · Valid paid orders:{" "}
                         {paidOrders}
                         {nextGrowthTier
-                          ? ` · Next / 下一档 ${nextGrowthTier.level} (${nextGrowthTier.rate}%) in ${ordersToNext} orders`
-                          : " · Highest level reached / 已达最高等级"}
+                          ? ` · Next ${nextGrowthTier.level} (${nextGrowthTier.rate}%) in ${ordersToNext} orders`
+                          : " · Highest level reached"}
                       </p>
                       <div className="mt-2 h-2 rounded-full bg-paper">
                         <div
@@ -347,10 +345,10 @@ export default async function AffiliateStatsPage({
                         />
                       </div>
                       <p className="mt-1 text-xs text-muted">
-                        Progress in current tier range / 当前等级进度: {growthProgressPercent}%.
+                        Progress in current tier range: {growthProgressPercent}%.
                         {nextGrowthTier
-                          ? ` You need ${ordersToNext} more orders to unlock ${nextGrowthTier.rate}% commission. 还需 ${ordersToNext} 单可解锁 ${nextGrowthTier.rate}% 佣金。`
-                          : " Highest commission tier reached. 已达到最高佣金等级。"}
+                          ? ` You need ${ordersToNext} more orders to unlock ${nextGrowthTier.rate}% commission.`
+                          : " Highest commission tier reached."}
                       </p>
                     </div>
                     <div className="flex flex-wrap items-center justify-center gap-2">
@@ -359,7 +357,7 @@ export default async function AffiliateStatsPage({
                         defaultValue={p.tierId ?? ""}
                         className="rounded-lg border border-line bg-white px-2.5 py-1 text-xs text-ink outline-none ring-ink/20 focus:ring-2"
                       >
-                        <option value="">No tier / 无等级</option>
+                        <option value="">No tier</option>
                         {tiers.map((t) => (
                           <option key={t.id} value={t.id}>
                             {t.name} · {t.commissionType} {t.commissionValue}
@@ -368,18 +366,18 @@ export default async function AffiliateStatsPage({
                       </select>
                       <PendingActionButton
                         formAction={updateAffiliateTierAction}
-                        idleLabel="Save level / 保存等级"
-                        pendingLabel="Saving... / 保存中..."
+                        idleLabel="Save level"
+                        pendingLabel="Saving..."
                         className="rounded-lg bg-ink px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-white transition hover:bg-ink/90"
                         pendingClassName="cursor-not-allowed bg-ink/70"
                       />
                     </div>
                     <div className="rounded-lg border border-line bg-white px-3 py-2 text-xs text-ink">
                       <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
-                        Coupon code / 优惠码
+                        Coupon code
                       </p>
                       <p className="mt-1 font-medium">
-                        {p.coupons[0]?.code?.trim() || "No coupon code for now. 暂无优惠码。"}
+                        {p.coupons[0]?.code?.trim() || "No coupon code for now."}
                       </p>
                     </div>
                   </div>
@@ -389,25 +387,25 @@ export default async function AffiliateStatsPage({
               <input type="hidden" name="focus" value={focus} />
               <div className="mt-2 grid gap-2 md:grid-cols-4">
                 <label className="inline-flex items-center justify-between gap-2 rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink">
-                  <span>Whitelist / 白名单</span>
+                  <span>Whitelist</span>
                   <input name="whitelist" type="checkbox" defaultChecked={p.whitelist} className="h-4 w-4" />
                 </label>
                 <input
                   name="notes"
                   defaultValue={p.notes ?? ""}
-                  placeholder="Internal notes / 内部备注"
+                  placeholder="Internal notes"
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
                 <input
                   name="payoutMethod"
                   defaultValue={p.payoutMethod ?? ""}
-                  placeholder="Payout method (paypal/bank/wise...) / 收款方式"
+                  placeholder="Payout method (paypal/bank/wise...)"
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
                 <input
                   name="payoutAccount"
                   defaultValue={stripEmbeddedWhatsAppFromPayoutAccount(p.payoutAccount ?? "")}
-                  placeholder="Payout account / 收款账号"
+                  placeholder="Payout account"
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
               </div>
@@ -415,7 +413,7 @@ export default async function AffiliateStatsPage({
                 <input
                   name="payoutEmail"
                   defaultValue={p.payoutEmail ?? ""}
-                  placeholder="Payout email / 收款邮箱"
+                  placeholder="Payout email"
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
                 <input
@@ -430,7 +428,7 @@ export default async function AffiliateStatsPage({
                   name="whatsappLocal"
                   defaultValue={splitPhoneForInput(p.whatsapp).localNumber}
                   inputMode="numeric"
-                  placeholder="Telephone number / 手机号"
+                  placeholder="Telephone number"
                   className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
                 />
               </div>
@@ -450,8 +448,8 @@ export default async function AffiliateStatsPage({
               </div>
               <div className="mt-2 flex flex-wrap justify-end gap-2">
                 <PendingActionButton
-                  idleLabel="Save affiliate info / 保存推广员信息"
-                  pendingLabel="Saving... / 保存中..."
+                  idleLabel="Save affiliate info"
+                  pendingLabel="Saving..."
                   className="inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
                   pendingClassName="cursor-not-allowed bg-ink/70"
                 />
@@ -462,7 +460,7 @@ export default async function AffiliateStatsPage({
                   value={p.blacklist || p.status === "blacklisted" ? "false" : "true"}
                   className="inline-flex items-center justify-center rounded-xl border border-rose-300 bg-rose-50 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-rose-800 transition hover:bg-rose-100"
                 >
-                  {p.blacklist || p.status === "blacklisted" ? "Remove blacklist / 移出黑名单" : "Blacklist / 加入黑名单"}
+                  {p.blacklist || p.status === "blacklisted" ? "Remove blacklist" : "Blacklist"}
                 </button>
               </div>
               <datalist id={PHONE_COUNTRY_CODE_DATALIST_ID}>

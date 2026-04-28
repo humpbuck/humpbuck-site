@@ -9,6 +9,12 @@ function toInt(v: string | undefined, fallback: number): number {
   return Math.max(1, Math.min(90, Math.floor(n)));
 }
 
+function toPage(v: string | undefined, fallback: number): number {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.max(1, Math.floor(n));
+}
+
 function sourceLabel(source: string | null): string {
   if (!source) return "Unknown";
   return source.replace(/[_-]/g, " ");
@@ -70,6 +76,7 @@ export default async function AdminTrafficPage({
     country?: string;
     device?: string;
     browser?: string;
+    journeysPage?: string;
   }>;
 }) {
   const sp = await searchParams;
@@ -77,6 +84,8 @@ export default async function AdminTrafficPage({
   const selectedCountry = safeToken(sp.country);
   const selectedDevice = safeToken(sp.device);
   const selectedBrowser = safeToken(sp.browser);
+  const journeysPage = toPage(sp.journeysPage, 1);
+  const JOURNEYS_PAGE_SIZE = 5;
   const nowTs = Date.now();
   const since = new Date(nowTs - days * 86400000);
   const prevSince = new Date(nowTs - days * 2 * 86400000);
@@ -94,6 +103,12 @@ export default async function AdminTrafficPage({
           },
         }
       : {}),
+  };
+  const recentSessionsWhere = {
+    createdAt: { gte: since },
+    ...(selectedCountry ? { country: selectedCountry } : {}),
+    ...(selectedDevice ? { deviceType: selectedDevice } : {}),
+    ...(selectedBrowser ? { browser: selectedBrowser } : {}),
   };
 
   const [
@@ -117,6 +132,7 @@ export default async function AdminTrafficPage({
     topDevices,
     topBrowsers,
     recentSessions,
+    recentSessionsTotal,
     avgDurationRows,
     chartRows,
   ] = await Promise.all([
@@ -198,14 +214,10 @@ export default async function AdminTrafficPage({
       take: 6,
     }),
     prisma.visitorSession.findMany({
-      where: {
-        createdAt: { gte: since },
-        ...(selectedCountry ? { country: selectedCountry } : {}),
-        ...(selectedDevice ? { deviceType: selectedDevice } : {}),
-        ...(selectedBrowser ? { browser: selectedBrowser } : {}),
-      },
+      where: recentSessionsWhere,
       orderBy: { createdAt: "desc" },
-      take: 20,
+      skip: (journeysPage - 1) * JOURNEYS_PAGE_SIZE,
+      take: JOURNEYS_PAGE_SIZE,
       select: {
         id: true,
         sessionKey: true,
@@ -226,6 +238,9 @@ export default async function AdminTrafficPage({
           },
         },
       },
+    }),
+    prisma.visitorSession.count({
+      where: recentSessionsWhere,
     }),
     prisma.$queryRaw<Array<{ avg_seconds: number | null }>>`
       SELECT AVG(session_span) AS avg_seconds
@@ -293,6 +308,17 @@ export default async function AdminTrafficPage({
       return `${x.toFixed(2)},${y.toFixed(2)}`;
     })
     .join(" ");
+  const journeysTotalPages = Math.max(1, Math.ceil(recentSessionsTotal / JOURNEYS_PAGE_SIZE));
+  const safeJourneysPage = Math.min(journeysPage, journeysTotalPages);
+  const buildTrafficPageHref = (nextJourneysPage: number): string => {
+    const qs = new URLSearchParams();
+    qs.set("days", String(days));
+    if (selectedCountry) qs.set("country", selectedCountry);
+    if (selectedDevice) qs.set("device", selectedDevice);
+    if (selectedBrowser) qs.set("browser", selectedBrowser);
+    if (nextJourneysPage > 1) qs.set("journeysPage", String(nextJourneysPage));
+    return adminPath(`/traffic?${qs.toString()}`);
+  };
 
   return (
     <div>
@@ -563,27 +589,34 @@ export default async function AdminTrafficPage({
       <div className="mt-8 grid gap-6 lg:grid-cols-1">
 
         <div className="rounded-2xl border border-line bg-white/70 p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Recent visitor journeys
-          </p>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+              Recent visitor journeys
+            </p>
+            {recentSessionsTotal > 0 ? (
+              <p className="text-xs text-muted">
+                Page {safeJourneysPage} / {journeysTotalPages}
+              </p>
+            ) : null}
+          </div>
           <div className="mt-3 space-y-4">
             {recentSessions.length === 0 ? (
               <p className="text-sm text-muted">No sessions captured yet.</p>
             ) : (
               recentSessions.map((s) => (
                 <div key={s.id} className="rounded-xl border border-line/60 bg-paper/60 p-3">
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
-                    <span className="font-mono">{s.sessionKey.slice(-12)}</span>
-                    <span>{s.createdAt.toLocaleString("en-US")}</span>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted break-all">
+                    <span className="font-mono break-all">{s.sessionKey.slice(-12)}</span>
+                    <span className="break-all">{s.createdAt.toLocaleString("en-US")}</span>
                     <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink/80">
                       [{sourceLabel(s.utmSource)}]
                     </span>
-                    {s.country ? <span>{s.country}</span> : null}
-                    {s.city ? <span>{s.city}</span> : null}
-                    {s.utmCampaign ? <span>cmp: {s.utmCampaign}</span> : null}
-                    {s.landingPath ? <span>landing: {s.landingPath}</span> : null}
+                    {s.country ? <span className="break-all">{s.country}</span> : null}
+                    {s.city ? <span className="break-all">{s.city}</span> : null}
+                    {s.utmCampaign ? <span className="break-all">cmp: {s.utmCampaign}</span> : null}
+                    {s.landingPath ? <span className="break-all">landing: {s.landingPath}</span> : null}
                   </div>
-                  <div className="mt-2 rounded-lg border border-line/50 bg-white/60 px-3 py-2 text-sm text-ink/85">
+                  <div className="mt-2 rounded-lg border border-line/50 bg-white/60 px-3 py-2 text-sm text-ink/85 break-all">
                     {s.events
                       .filter((e) => e.type !== "heartbeat")
                       .map((e) => {
@@ -594,7 +627,7 @@ export default async function AdminTrafficPage({
                       })
                       .join(" -> ") || "No journey events"}
                   </div>
-                  <ul className="mt-2 space-y-1 text-xs">
+                  <ul className="mt-2 space-y-1 text-xs break-all">
                     {s.events.length === 0 ? (
                       <li className="text-muted">No events.</li>
                     ) : (
@@ -613,6 +646,32 @@ export default async function AdminTrafficPage({
               ))
             )}
           </div>
+          {recentSessionsTotal > JOURNEYS_PAGE_SIZE ? (
+            <div className="mt-4 flex items-center justify-end gap-2">
+              <Link
+                href={buildTrafficPageHref(Math.max(1, safeJourneysPage - 1))}
+                aria-disabled={safeJourneysPage <= 1}
+                className={`rounded-lg border px-3 py-1.5 text-xs ${
+                  safeJourneysPage <= 1
+                    ? "pointer-events-none border-line/60 bg-white/50 text-muted"
+                    : "border-line bg-white text-ink hover:border-ink/20"
+                }`}
+              >
+                Prev
+              </Link>
+              <Link
+                href={buildTrafficPageHref(Math.min(journeysTotalPages, safeJourneysPage + 1))}
+                aria-disabled={safeJourneysPage >= journeysTotalPages}
+                className={`rounded-lg border px-3 py-1.5 text-xs ${
+                  safeJourneysPage >= journeysTotalPages
+                    ? "pointer-events-none border-line/60 bg-white/50 text-muted"
+                    : "border-line bg-white text-ink hover:border-ink/20"
+                }`}
+              >
+                Next
+              </Link>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
