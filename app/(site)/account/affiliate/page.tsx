@@ -18,7 +18,6 @@ import { AffiliateLinkGenerator } from "@/components/account/affiliate-link-gene
 import { AffiliateCouponRequestedModal } from "@/components/account/affiliate-coupon-requested-modal";
 import { AffiliatePayoutDetailsForm } from "@/components/account/affiliate-payout-details-form";
 import { AffiliateLiveRefresh } from "@/components/account/affiliate-live-refresh";
-import { PaidCommissionSelector } from "@/components/account/paid-commission-selector";
 import { RestoreScrollOnce } from "@/components/account/restore-scroll-once";
 import { ClearQueryParam } from "@/components/admin/clear-query-param";
 import {
@@ -363,6 +362,16 @@ function humanizeStatus(status: string): string {
   return status;
 }
 
+type SettlementFilter = "all" | "pending" | "eligible" | "paid" | "reversed";
+
+function normalizeSettlementFilter(raw: string | undefined): SettlementFilter {
+  const v = String(raw ?? "").trim().toLowerCase();
+  if (v === "pending" || v === "eligible" || v === "paid" || v === "reversed") {
+    return v;
+  }
+  return "all";
+}
+
 function humanizePayoutMethod(method: string | null | undefined): string {
   if (!method) return "-";
   if (method === "paypal") return "PayPal";
@@ -439,6 +448,7 @@ export default async function AccountAffiliatePage({
     error?: string;
     editProfile?: string;
     editPayout?: string;
+    settlement?: string;
   }>;
 }) {
   const session = await auth();
@@ -447,9 +457,10 @@ export default async function AccountAffiliatePage({
   await ensureAffiliateGrowthTiers();
 
   const sp = await searchParams;
+  const settlementFilter = normalizeSettlementFilter(sp.settlement);
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const [accountUser, profile, latestApplication, commissionLedgers, monthlyPaid, totalPaid, coupon, paidLedgers] = await Promise.all([
+  const [accountUser, profile, latestApplication, monthlyPaid, totalPaid, coupon, settlementRows, settlementCountRows] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -476,25 +487,6 @@ export default async function AccountAffiliatePage({
     prisma.affiliateApplication.findFirst({
       where: { userId },
       orderBy: { createdAt: "desc" },
-    }),
-    prisma.affiliateCommissionLedger.findMany({
-      where: {
-        affiliate: { userId },
-        order: { deletedAt: null },
-      },
-      include: {
-        order: {
-          select: {
-            id: true,
-            totalCents: true,
-            status: true,
-            affiliateAttribution: true,
-            createdAt: true,
-          },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 20,
     }),
     prisma.affiliateCommissionLedger.aggregate({
       where: {
@@ -527,17 +519,26 @@ export default async function AccountAffiliatePage({
       where: {
         affiliate: { userId },
         order: { deletedAt: null },
-        status: "paid",
-        paidAt: { not: null },
+        ...(settlementFilter === "all" ? {} : { status: settlementFilter }),
       },
-      select: {
-        id: true,
-        orderId: true,
-        commissionCents: true,
-        paidAt: true,
+      include: {
+        order: {
+          select: {
+            id: true,
+            status: true,
+          },
+        },
       },
-      orderBy: { paidAt: "desc" },
-      take: 100,
+      orderBy: { createdAt: "desc" },
+      take: 200,
+    }),
+    prisma.affiliateCommissionLedger.groupBy({
+      by: ["status"],
+      where: {
+        affiliate: { userId },
+        order: { deletedAt: null },
+      },
+      _count: { _all: true },
     }),
   ]);
   const isActiveAffiliate = profile?.status === "active";
@@ -573,7 +574,21 @@ export default async function AccountAffiliatePage({
   const growthProgressPercent = nextGrowthTier
     ? Math.min(100, Math.round((progressInTier / progressSpan) * 100))
     : 100;
-  const recentReferrals = commissionLedgers.slice(0, 3);
+  const settlementCountMap = new Map<string, number>(
+    settlementCountRows.map((row) => [row.status, row._count._all]),
+  );
+  const settlementCounts = {
+    all: settlementCountRows.reduce((sum, row) => sum + row._count._all, 0),
+    pending: settlementCountMap.get("pending") ?? 0,
+    eligible: settlementCountMap.get("eligible") ?? 0,
+    paid: settlementCountMap.get("paid") ?? 0,
+    reversed: settlementCountMap.get("reversed") ?? 0,
+  };
+  const settlementHref = (target: SettlementFilter) => {
+    const qs = new URLSearchParams();
+    if (target !== "all") qs.set("settlement", target);
+    return `/account/affiliate${qs.toString() ? `?${qs.toString()}` : ""}`;
+  };
   const fullName = [accountUser?.firstName?.trim(), accountUser?.lastName?.trim()]
     .filter(Boolean)
     .join(" ")
@@ -716,27 +731,6 @@ export default async function AccountAffiliatePage({
             >
               Download brand assets
             </a>
-          </div>
-        </section>
-      ) : null}
-
-      {paidLedgers.length > 0 ? (
-        <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
-          <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Paid commission orders
-          </h2>
-          <p className="mt-2 text-xs text-muted">
-            You can tick paid commission orders to view selected total count and commission.
-          </p>
-          <div className="mt-3">
-            <PaidCommissionSelector
-              rows={paidLedgers.map((r) => ({
-                id: r.id,
-                orderId: r.orderId,
-                commissionCents: r.commissionCents,
-                paidAtLabel: r.paidAt ? r.paidAt.toLocaleDateString() : "-",
-              }))}
-            />
           </div>
         </section>
       ) : null}
@@ -1008,36 +1002,88 @@ export default async function AccountAffiliatePage({
         </section>
       ) : null}
 
-      {recentReferrals.length > 0 ? (
+      {profile ? (
         <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
           <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Recent referrals
+            Settlement orders
           </h2>
           <p className="mt-2 text-xs text-muted">
             Read-only view. Order status and settlement status can only be updated by admin.
           </p>
+          <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
+            <Link
+              href={settlementHref("all")}
+              className={`rounded-xl border px-3 py-1.5 transition hover:border-ink/20 ${
+                settlementFilter === "all" ? "border-ink bg-ink text-white" : "border-line bg-white text-ink"
+              }`}
+            >
+              All settlement statuses ({settlementCounts.all})
+            </Link>
+            <Link
+              href={settlementHref("eligible")}
+              className={`rounded-xl border px-3 py-1.5 transition hover:border-ink/20 ${
+                settlementFilter === "eligible" ? "border-ink bg-ink text-white" : "border-line bg-white text-ink"
+              }`}
+            >
+              Eligible ({settlementCounts.eligible})
+            </Link>
+            <Link
+              href={settlementHref("paid")}
+              className={`rounded-xl border px-3 py-1.5 transition hover:border-ink/20 ${
+                settlementFilter === "paid" ? "border-ink bg-ink text-white" : "border-line bg-white text-ink"
+              }`}
+            >
+              Paid ({settlementCounts.paid})
+            </Link>
+            <Link
+              href={settlementHref("pending")}
+              className={`rounded-xl border px-3 py-1.5 transition hover:border-ink/20 ${
+                settlementFilter === "pending" ? "border-ink bg-ink text-white" : "border-line bg-white text-ink"
+              }`}
+            >
+              Pending ({settlementCounts.pending})
+            </Link>
+            <Link
+              href={settlementHref("reversed")}
+              className={`rounded-xl border px-3 py-1.5 transition hover:border-ink/20 ${
+                settlementFilter === "reversed" ? "border-ink bg-ink text-white" : "border-line bg-white text-ink"
+              }`}
+            >
+              Reversed ({settlementCounts.reversed})
+            </Link>
+          </div>
           <div className="mt-3 overflow-x-auto">
-            <table className="w-full min-w-[520px] text-left text-sm text-ink/90">
+            <table className="w-full min-w-[760px] text-left text-sm text-ink/90">
               <thead>
                 <tr className="border-b border-line text-[10px] uppercase tracking-[0.12em] text-muted">
                   <th className="px-2 py-2">Order</th>
                   <th className="px-2 py-2">Order status</th>
                   <th className="px-2 py-2">Settlement</th>
+                  <th className="px-2 py-2">Eligible at</th>
+                  <th className="px-2 py-2">Paid / reversed at</th>
                   <th className="px-2 py-2 text-right">Commission</th>
                 </tr>
               </thead>
               <tbody>
-                {recentReferrals.map((l) => (
+                {settlementRows.map((l) => (
                   <tr key={l.id} className="border-b border-line/60">
                     <td className="px-2 py-2">#{l.order.id.slice(-8)}</td>
                     <td className="px-2 py-2">{l.order.status}</td>
+                    <td className="px-2 py-2">{l.status}</td>
+                    <td className="px-2 py-2">{l.eligibleAt.toLocaleDateString()}</td>
                     <td className="px-2 py-2">
-                      {l.status}
-                      {l.paidAt ? ` · ${l.paidAt.toLocaleDateString()}` : ""}
+                      {(l.paidAt ?? l.reversedAt)?.toLocaleDateString() ?? "-"}
                     </td>
                     <td className="px-2 py-2 text-right tabular-nums">{usd(l.commissionCents)}</td>
                   </tr>
                 ))}
+                {settlementRows.length === 0 ? (
+                  <tr>
+                    <td className="px-2 py-3 text-muted" colSpan={6}>
+                      No orders in this settlement status yet. Keep sharing your affiliate link - your next conversion is coming soon.
+                    </td>
+                  </tr>
+                ) : null}
               </tbody>
             </table>
           </div>
