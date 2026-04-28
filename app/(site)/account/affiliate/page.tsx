@@ -791,7 +791,7 @@ export default async function AccountAffiliatePage({
       ) : null}
 
       {profile ? (
-        <section id="settlement-orders" className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
+        <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
           <h2 className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
             <span>Growth progress</span>
             <span className="group relative inline-block">
@@ -852,7 +852,7 @@ export default async function AccountAffiliatePage({
       ) : null}
 
       {profile ? (
-        <section className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
+        <section id="settlement-orders" className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white/60 p-5">
           <h2 className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
             <span>Account settings</span>
             <span className="group relative inline-block">
@@ -1089,6 +1089,7 @@ export default async function AccountAffiliatePage({
               <input
                 type="date"
                 name="from"
+                lang="en-US"
                 defaultValue={dateFromInput}
                 className="mt-1 rounded-xl border border-line bg-paper px-3 py-2 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
               />
@@ -1100,6 +1101,7 @@ export default async function AccountAffiliatePage({
               <input
                 type="date"
                 name="to"
+                lang="en-US"
                 defaultValue={dateToInput}
                 className="mt-1 rounded-xl border border-line bg-paper px-3 py-2 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
               />
