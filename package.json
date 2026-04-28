@@ -19,7 +19,9 @@
     "db:seed-inventory": "npx tsx scripts/seed-inventory.ts",
     "db:seed-catalog-products": "npx tsx scripts/seed-catalog-products.ts",
     "db:cleanup-abandoned": "npx tsx scripts/cleanup-abandoned-orders.ts",
-    "db:cleanup-affiliate-payout-whatsapp": "npx tsx scripts/cleanup-affiliate-payout-whatsapp.ts"
+    "db:cleanup-affiliate-payout-whatsapp": "npx tsx scripts/cleanup-affiliate-payout-whatsapp.ts",
+    "db:seed-affiliate-settlement-test-orders": "npx tsx scripts/seed-affiliate-settlement-test-orders.ts",
+    "db:fix-affiliate-growth-and-commission": "npx tsx scripts/fix-affiliate-growth-and-commission.ts"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
