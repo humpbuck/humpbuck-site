@@ -845,13 +845,6 @@ export default async function AdminAffiliatePage({
             >
               Mark selected eligible as paid / 标记所选可结算为已支付
             </button>
-            <button
-              formAction={markFilteredEligiblePaidAction}
-              type="submit"
-              className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
-            >
-              Mark all filtered eligible as paid / 标记筛选结果中全部可结算为已支付
-            </button>
             <SendPaidEmailConfirmButton
               formId="affiliate-settlement-form"
               submitButtonId="send-paid-email-submit"
