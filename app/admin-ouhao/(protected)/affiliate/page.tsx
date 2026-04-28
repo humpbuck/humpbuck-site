@@ -534,7 +534,7 @@ export default async function AdminAffiliatePage({
     ...(onlyVerifiedPayout ? { affiliate: { payoutVerifiedAt: { not: null } } } : {}),
   };
 
-  const [tiers, pendingApps, profiles, blacklistedCount, autoApprovedCount, recentAttributedOrders, ledgerSummary, recentLedgers, settlementRows, settlementTotalCount, couponRequests] =
+  const [tiers, pendingApps, profiles, blacklistedCount, recentAttributedOrders, ledgerSummary, recentLedgers, settlementRows, settlementTotalCount, couponRequests] =
     await Promise.all([
       prisma.affiliateTier.findMany({ orderBy: [{ isDefault: "desc" }, { createdAt: "asc" }] }),
       prisma.affiliateApplication.findMany({
@@ -555,7 +555,6 @@ export default async function AdminAffiliatePage({
           OR: [{ blacklist: true }, { status: "blacklisted" }],
         },
       }),
-      prisma.affiliateApplication.count({ where: { status: "auto_approved" } }),
       prisma.order.findMany({
         where: { affiliateId: { not: null }, deletedAt: null },
         include: { affiliate: { include: { user: { select: { email: true, displayName: true } } } } },
@@ -610,6 +609,7 @@ export default async function AdminAffiliatePage({
   const currentSettlementPage = Math.min(settlePage, settlementTotalPages);
 
   const blacklistedProfiles = profiles.filter((p) => p.blacklist || p.status === "blacklisted");
+  const autoApprovedCount = profiles.filter((p) => p.applications[0]?.status === "auto_approved").length;
   const growthTierList = [...tiers]
     .filter((t) => t.commissionType === "percent")
     .sort((a, b) => {

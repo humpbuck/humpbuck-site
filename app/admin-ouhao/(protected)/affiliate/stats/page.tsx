@@ -152,7 +152,16 @@ async function deleteAffiliateProfileAction(formData: FormData) {
   const profileId = String(formData.get("profileId") ?? "").trim();
   const focus = String(formData.get("focus") ?? "total").trim();
   if (!profileId) redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
-  await prisma.affiliateProfile.delete({ where: { id: profileId } }).catch(() => null);
+  const profile = await prisma.affiliateProfile.findUnique({
+    where: { id: profileId },
+    select: { id: true, userId: true },
+  });
+  if (!profile) redirect(adminPath(`/affiliate/stats?focus=${encodeURIComponent(focus || "total")}`));
+  await prisma.$transaction(async (tx) => {
+    // Reset user to first-time applicant state after affiliate removal.
+    await tx.affiliateApplication.deleteMany({ where: { userId: profile.userId } });
+    await tx.affiliateProfile.delete({ where: { id: profile.id } });
+  }).catch(() => null);
   revalidatePath(adminPath("/affiliate"));
   revalidatePath(adminPath("/affiliate/stats"));
   goStats(focus, "affiliate_deleted");
