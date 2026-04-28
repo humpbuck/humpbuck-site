@@ -57,17 +57,9 @@ export function SettlementSelectionSummary({ formId }: { formId: string }) {
         <span className="font-medium tabular-nums">{usd(totals.orderTotalCents)}</span> · Total
         commission: <span className="font-medium tabular-nums">{usd(totals.commissionCents)}</span>
       </p>
-      {rows.length > 0 ? (
-        <div className="mt-2 space-y-1 text-xs text-ink/85">
-          {rows.map((r, idx) => (
-            <p key={`${r.orderCode}-${idx}`}>
-              #{r.orderCode} · Order {usd(r.orderTotalCents)} · Commission {usd(r.commissionCents)}
-            </p>
-          ))}
-        </div>
-      ) : (
+      {rows.length === 0 ? (
         <p className="mt-2 text-xs text-muted">No orders selected yet.</p>
-      )}
+      ) : null}
     </div>
   );
 }

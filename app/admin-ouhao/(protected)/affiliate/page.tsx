@@ -807,6 +807,7 @@ export default async function AdminAffiliatePage({
               apply
             </button>
           </div>
+          <SettlementSelectionSummary formId="affiliate-settlement-form" />
           <SettlementBulkActions
             formId="affiliate-settlement-form"
             submitButtonId="settlement-apply-status-submit"
@@ -816,7 +817,6 @@ export default async function AdminAffiliatePage({
             <input type="hidden" name="orderStatus" value={selectedOrderStatus} />
             <input type="hidden" name="onlyVerifiedPayout" value={onlyVerifiedPayout ? "true" : ""} />
           </div>
-          <SettlementSelectionSummary formId="affiliate-settlement-form" />
           {settlementRows.length === 0 ? (
             <p className="rounded-xl border border-line bg-paper/60 px-3 py-2 text-muted">
               No settlement rows for current filters. 当前筛选条件下无结算记录。
