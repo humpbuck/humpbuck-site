@@ -31,6 +31,13 @@ export async function upsertAffiliateCommissionLedgerForOrder(
   });
   if (!order || !order.affiliateId) return;
   if (order.status !== "delivered") return;
+  if (
+    order.deliveryConfirmedBy &&
+    order.deliveryConfirmedBy !== "buyer" &&
+    order.deliveryConfirmedBy !== "auto"
+  ) {
+    return;
+  }
 
   const tier = order.affiliate?.tier;
   const commissionType = tier?.commissionType ?? "percent";

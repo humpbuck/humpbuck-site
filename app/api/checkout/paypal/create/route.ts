@@ -192,6 +192,8 @@ export async function POST(req: Request) {
   const attribution = await resolveAffiliateAttribution({
     couponId: couponResolved.couponId,
     affiliatePid: body.affiliatePid,
+    buyerUserId: sessionUser?.user?.id,
+    buyerEmail: email,
   });
   try {
     await prisma.$transaction(async (tx) => {

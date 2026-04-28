@@ -71,6 +71,9 @@ export async function refundOrderById(
         refundAmountCents,
         refundReason: opts?.reason?.trim() || null,
         refundedAt: new Date(),
+        affiliateId: null,
+        affiliatePid: null,
+        affiliateAttribution: null,
       },
     });
 

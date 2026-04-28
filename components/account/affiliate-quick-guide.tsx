@@ -21,17 +21,22 @@ const GUIDE_ITEMS: GuideItem[] = [
   {
     title: "Where to find your Partner ID (PID)",
     body:
-      "Your Partner ID is shown in Current status as PID. This ID is used in your trackable links (?pid=...). Attribution is valid for 7 days from link visit. Orders placed after 7 days are not attributed unless the buyer clicks your affiliate link again.",
+      "Your Partner ID is shown in Current status as PID. This ID is used in your trackable links (?pid=...). Attribution is valid for 7 days from link visit and follows last-touch within the window (the most recent valid affiliate click gets attribution). Orders placed after 7 days are not attributed unless the buyer clicks an affiliate link again.",
   },
   {
     title: "Commission payout cycle",
     body:
-      "Commissions move from pending to eligible after delivery and hold period. Admin then marks payouts as paid in settlement ledger. You can track these statuses in your Attributed orders section.",
+      "Commissions become pending after delivery is confirmed (buyer confirmation, or auto-confirm 30 days after shipped), then become eligible after a 30-day hold. Affiliate self-purchases are excluded from commission. Admin then marks payouts as paid in settlement ledger.",
   },
   {
     title: "Payout details are required",
     body:
       "Please fill payout details (PayPal, bank account, or other) plus contact methods. If you cannot provide a payout account yet, keep your email or WhatsApp updated so admin can contact you for manual settlement.",
+  },
+  {
+    title: "Refunded orders and attribution",
+    body:
+      "Refunded orders do not generate commission. When an order is refunded, affiliate attribution is automatically removed from that order and settlement is reversed.",
   },
 ];
 
