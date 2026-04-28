@@ -1065,7 +1065,7 @@ export default async function AccountAffiliatePage({
           <p className="mt-2 text-xs text-muted">
             Read-only view. Order status and settlement status can only be updated by admin.
           </p>
-          <form className="mt-3 flex flex-wrap items-end gap-2" method="get" action="/account/affiliate#settlement-orders">
+          <form className="mt-3 flex flex-wrap items-end gap-2 md:flex-nowrap" method="get" action="/account/affiliate#settlement-orders">
             <label className="block">
               <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
                 Settlement status
@@ -1087,11 +1087,8 @@ export default async function AccountAffiliatePage({
                 From
               </span>
               <input
-                type="text"
+                type="date"
                 name="from"
-                inputMode="numeric"
-                pattern="\d{4}-\d{2}-\d{2}"
-                placeholder="YYYY-MM-DD"
                 defaultValue={dateFromInput}
                 className="mt-1 rounded-xl border border-line bg-paper px-3 py-2 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
               />
@@ -1101,27 +1098,26 @@ export default async function AccountAffiliatePage({
                 To
               </span>
               <input
-                type="text"
+                type="date"
                 name="to"
-                inputMode="numeric"
-                pattern="\d{4}-\d{2}-\d{2}"
-                placeholder="YYYY-MM-DD"
                 defaultValue={dateToInput}
                 className="mt-1 rounded-xl border border-line bg-paper px-3 py-2 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
               />
             </label>
-            <button
-              type="submit"
-              className="rounded-xl border border-line bg-white px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink hover:border-ink/20"
-            >
-              Apply
-            </button>
-            <a
-              href={settlementExportHref}
-              className="rounded-xl bg-ink px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper hover:bg-ink/90"
-            >
-              Export CSV
-            </a>
+            <div className="flex items-center gap-2 md:mb-0 md:self-end">
+              <button
+                type="submit"
+                className="rounded-xl border border-line bg-white px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink hover:border-ink/20"
+              >
+                Apply
+              </button>
+              <a
+                href={settlementExportHref}
+                className="whitespace-nowrap rounded-xl bg-ink px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper hover:bg-ink/90"
+              >
+                Export CSV
+              </a>
+            </div>
           </form>
           <div className="mt-3">
             <AffiliateSettlementSelector
