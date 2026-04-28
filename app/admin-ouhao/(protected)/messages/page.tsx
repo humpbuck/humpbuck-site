@@ -11,8 +11,10 @@ import {
 } from "@/lib/admin-inbox";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
-import { getCartLineImage, getProductBySlug } from "@/lib/catalog";
+import { getProductBySlug, resolveCatalogVariantId } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
+import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
+import { R2_PUBLIC_BASE } from "@/lib/r2";
 
 function goMessages(error?: string): never {
   if (!error) redirect(adminPath("/messages"));
@@ -235,8 +237,19 @@ function getOrderItemImageSources(
   payload: Record<string, unknown>,
 ): string[] {
   const product = getProductBySlug(item.slug || asText(payload.itemSlug, ""));
-  const r2Line = product ? getCartLineImage(product, item.variantId || asText(payload.itemVariantId, "")) : "";
-  return [r2Line, item.image, product?.image ?? "", asText(payload.itemImage, "")];
+  const variantId = item.variantId || asText(payload.itemVariantId, "");
+  const normalizedVariantId = product
+    ? resolveCatalogVariantId(product, variantId) ?? variantId
+    : variantId;
+  const canonicalR2 = product ? getR2VariantLineImageUrl(product.slug, normalizedVariantId) : null;
+  const candidates = [canonicalR2 ?? "", item.image, asText(payload.itemImage, ""), product?.image ?? ""];
+  return Array.from(
+    new Set(
+      candidates
+        .map((x) => x.trim())
+        .filter((x) => x.startsWith(`${R2_PUBLIC_BASE}/`)),
+    ),
+  );
 }
 
 function messagePrimaryText(input: {

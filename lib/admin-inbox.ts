@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { parseOrderItemsJson } from "@/lib/parse-order-items";
-import { getCartLineImage, getProductBySlug } from "@/lib/catalog";
+import { getProductBySlug, resolveCatalogVariantId } from "@/lib/catalog";
+import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
 
 export const ADMIN_INBOX_CATEGORY = {
   order: "order",
@@ -101,14 +102,19 @@ export async function syncSystemInboxMessages() {
     const first = lines[0];
     const linePreviews = lines.map((line) => {
       const product = line.slug ? getProductBySlug(line.slug) : null;
-      const lineImage = product ? getCartLineImage(product, line.variantId) : "";
+      const normalizedVariantId = product
+        ? resolveCatalogVariantId(product, line.variantId) ?? line.variantId
+        : line.variantId;
+      const lineImage = product
+        ? (getR2VariantLineImageUrl(product.slug, normalizedVariantId) ?? "")
+        : "";
       return {
         name: line.name || product?.name || "Order item",
         variant: line.variantLabel || "Default",
         variantId: line.variantId || "",
         slug: line.slug || "",
         qty: line.qty || 1,
-        image: lineImage || product?.image || "",
+        image: lineImage,
       };
     });
     const firstPreview = linePreviews[0];
