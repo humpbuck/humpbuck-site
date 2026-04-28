@@ -2,12 +2,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
-import { SendPaidEmailConfirmButton } from "@/components/admin/send-paid-email-confirm-button";
+import { SettlementBulkActions } from "@/components/admin/settlement-bulk-actions";
 import { SettlementSelectionSummary } from "@/components/admin/settlement-selection-summary";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import { buildAffiliatePidSeed } from "@/lib/affiliate";
-import { sendAffiliatePaidSummaryEmail } from "@/lib/affiliate-paid-email";
 import {
   ensureAffiliateGrowthTiers,
   syncAffiliateGrowthTierByOrderCount,
@@ -348,45 +347,72 @@ async function markAllEligiblePaidAction() {
   redirect(adminPath("/affiliate"));
 }
 
-async function markSelectedLedgersPaidAction(formData: FormData) {
+async function updateSelectedLedgersStatusAction(formData: FormData) {
   "use server";
   await assertAdmin();
   const ids = formData
     .getAll("ledgerIds")
     .map((v) => String(v).trim())
     .filter(Boolean);
-  if (ids.length === 0) goAffiliate("Please select at least one order to mark paid.");
+  if (ids.length === 0) goAffiliate("Please select at least one settlement row.");
+  const targetStatus = String(formData.get("targetSettlementStatus") ?? "paid").trim().toLowerCase();
+  if (!["pending", "eligible", "paid", "reversed"].includes(targetStatus)) {
+    goAffiliate("Invalid settlement status.");
+  }
   const payoutBatchId = String(formData.get("payoutBatchId") ?? "").trim();
   const payoutTxnRef = String(formData.get("payoutTxnRef") ?? "").trim();
   const paidNote = String(formData.get("paidNote") ?? "").trim();
-  const affected = await prisma.affiliateCommissionLedger.findMany({
-    where: {
-      id: { in: ids },
-      status: "eligible",
-      paidAt: null,
-      reversedAt: null,
-    },
-    select: { affiliateId: true },
-    distinct: ["affiliateId"],
+
+  const selectedRows = await prisma.affiliateCommissionLedger.findMany({
+    where: { id: { in: ids } },
+    select: { id: true, affiliateId: true, commissionCents: true },
   });
-  await prisma.affiliateCommissionLedger.updateMany({
-    where: {
-      id: { in: ids },
-      status: "eligible",
-      paidAt: null,
-      reversedAt: null,
-    },
-    data: {
-      status: "paid",
-      paidAt: new Date(),
-      payoutBatchId: payoutBatchId || null,
-      payoutTxnRef: payoutTxnRef || null,
-      paidNote: paidNote || null,
-    },
-  });
-  await Promise.all(
-    affected.map((x) => syncAffiliateGrowthTierByOrderCount(x.affiliateId)),
-  );
+  if (selectedRows.length === 0) goAffiliate("No matching settlement rows found.");
+
+  const now = new Date();
+  for (const row of selectedRows) {
+    if (targetStatus === "paid") {
+      await prisma.affiliateCommissionLedger.update({
+        where: { id: row.id },
+        data: {
+          status: "paid",
+          paidAt: now,
+          reversedAt: null,
+          reversalReason: null,
+          payoutBatchId: payoutBatchId || null,
+          payoutTxnRef: payoutTxnRef || null,
+          paidNote: paidNote || null,
+        },
+      });
+      continue;
+    }
+
+    if (targetStatus === "reversed") {
+      await prisma.affiliateCommissionLedger.update({
+        where: { id: row.id },
+        data: {
+          status: "reversed",
+          reversedAt: now,
+          reversalReason: paidNote || "manual_status_update",
+          reversedCommissionCents: row.commissionCents,
+          paidAt: null,
+        },
+      });
+      continue;
+    }
+
+    await prisma.affiliateCommissionLedger.update({
+      where: { id: row.id },
+      data: {
+        status: targetStatus,
+        paidAt: null,
+        reversedAt: null,
+        reversalReason: null,
+      },
+    });
+  }
+  const affectedAffiliateIds = Array.from(new Set(selectedRows.map((row) => row.affiliateId)));
+  await Promise.all(affectedAffiliateIds.map((id) => syncAffiliateGrowthTierByOrderCount(id)));
   revalidatePath(adminPath("/affiliate"));
   redirect(adminPath("/affiliate"));
 }
@@ -426,80 +452,6 @@ async function markFilteredEligiblePaidAction(formData: FormData) {
   await Promise.all(
     affected.map((x) => syncAffiliateGrowthTierByOrderCount(x.affiliateId)),
   );
-  revalidatePath(adminPath("/affiliate"));
-  redirect(adminPath("/affiliate"));
-}
-
-async function sendPaidNotificationAction(formData: FormData) {
-  "use server";
-  await assertAdmin();
-  const ids = formData
-    .getAll("ledgerIds")
-    .map((v) => String(v).trim())
-    .filter(Boolean);
-  if (ids.length === 0) goAffiliate("Please select paid orders to notify.");
-
-  const rows = await prisma.affiliateCommissionLedger.findMany({
-    where: {
-      id: { in: ids },
-      status: "paid",
-    },
-    include: {
-      affiliate: {
-        include: {
-          user: { select: { email: true, displayName: true } },
-        },
-      },
-      order: {
-        select: { id: true, itemsJson: true },
-      },
-    },
-    orderBy: { paidAt: "asc" },
-  });
-  if (rows.length === 0) goAffiliate("No paid rows selected.");
-
-  const byAffiliate = new Map<string, typeof rows>();
-  for (const r of rows) {
-    const list = byAffiliate.get(r.affiliateId) ?? [];
-    list.push(r);
-    byAffiliate.set(r.affiliateId, list);
-  }
-
-  let sentCount = 0;
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://humpbuck.com";
-  const loginUrl = `${baseUrl}/auth/login?callbackUrl=${encodeURIComponent("/account/affiliate")}`;
-  for (const [affiliateId, group] of byAffiliate) {
-    const email = group[0]?.affiliate?.user.email?.trim();
-    if (!email) continue;
-    const name =
-      group[0]?.affiliate?.displayName ||
-      group[0]?.affiliate?.user.displayName ||
-      group[0]?.affiliate?.user.email ||
-      affiliateId;
-    const result = await sendAffiliatePaidSummaryEmail({
-      to: email,
-      affiliateName: name,
-      affiliateLoginUrl: loginUrl,
-      ledgers: group.map((l) => ({
-        orderId: l.orderId,
-        commissionCents: l.commissionCents,
-        paidAt: l.paidAt,
-        payoutBatchId: l.payoutBatchId,
-        payoutTxnRef: l.payoutTxnRef,
-        paidNote: l.paidNote,
-        itemsJson: l.order.itemsJson,
-      })),
-    });
-    if (result.ok) {
-      sentCount += 1;
-      await prisma.affiliateCommissionLedger.updateMany({
-        where: { id: { in: group.map((x) => x.id) } },
-        data: { paidEmailSentAt: new Date() },
-      });
-    }
-  }
-
-  if (sentCount === 0) goAffiliate("No email sent. Check affiliate email addresses.");
   revalidatePath(adminPath("/affiliate"));
   redirect(adminPath("/affiliate"));
 }
@@ -830,7 +782,7 @@ export default async function AdminAffiliatePage({
         </form>
         <form
           id="affiliate-settlement-form"
-          action={markSelectedLedgersPaidAction}
+          action={updateSelectedLedgersStatusAction}
           className="mt-4 space-y-2 text-sm text-ink/90"
         >
           <div className="grid gap-2 md:grid-cols-3">
@@ -850,25 +802,16 @@ export default async function AdminAffiliatePage({
               className="rounded-xl border border-line bg-paper px-3 py-2 text-xs text-ink outline-none ring-ink/20 focus:ring-2"
             />
           </div>
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
-            >
-              Mark selected eligible as paid / 标记所选可结算为已支付
+          <div className="hidden">
+            <button id="settlement-apply-status-submit" type="submit">
+              apply
             </button>
-            <SendPaidEmailConfirmButton
-              formId="affiliate-settlement-form"
-              submitButtonId="send-paid-email-submit"
-            />
-            <button
-              id="send-paid-email-submit"
-              formAction={sendPaidNotificationAction}
-              type="submit"
-              className="hidden"
-              aria-hidden="true"
-              tabIndex={-1}
-            />
+          </div>
+          <SettlementBulkActions
+            formId="affiliate-settlement-form"
+            submitButtonId="settlement-apply-status-submit"
+          />
+          <div className="flex flex-wrap gap-2">
             <input type="hidden" name="affiliateId" value={selectedAffiliateId} />
             <input type="hidden" name="orderStatus" value={selectedOrderStatus} />
             <input type="hidden" name="onlyVerifiedPayout" value={onlyVerifiedPayout ? "true" : ""} />
@@ -891,6 +834,7 @@ export default async function AdminAffiliatePage({
                   data-commission-cents={l.commissionCents}
                   data-order-total-cents={l.order.totalCents}
                   data-order-code={l.order.id.slice(-8)}
+                  data-settlement-status={l.status}
                   disabled={Boolean(l.reversedAt)}
                 />
                 <span>
