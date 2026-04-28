@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { validateInternationalPhone } from "@/lib/phone-normalize";
 import { prisma } from "@/lib/prisma";
 import { normalizeUserAddressInput } from "@/lib/user-address-normalize";
 
@@ -64,6 +65,13 @@ export async function PATCH(req: Request) {
         { error: `Invalid ${t} address (line1, city, postal code, country required)` },
         { status: 400 },
       );
+    }
+    const phoneCheck = validateInternationalPhone(addr.phone, {
+      required: false,
+      label: `${t[0]?.toUpperCase() ?? ""}${t.slice(1)} phone`,
+    });
+    if (!phoneCheck.ok) {
+      return NextResponse.json({ error: phoneCheck.error }, { status: 400 });
     }
     await prisma.userAddress.upsert({
       where: {

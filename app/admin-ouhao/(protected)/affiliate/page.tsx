@@ -18,6 +18,7 @@ import {
   normalizeCountryCodeInput,
   normalizePhone,
   splitPhoneForInput,
+  validateInternationalPhone,
 } from "@/lib/phone-normalize";
 import { prisma } from "@/lib/prisma";
 
@@ -246,6 +247,11 @@ async function updateProfileAction(formData: FormData) {
     whatsappCountryInput || existingWhatsappCountryCode || "+1",
     whatsappLocal,
   ) || whatsappRaw;
+  const whatsappCheck = validateInternationalPhone(whatsapp, {
+    required: false,
+    label: "WhatsApp number",
+  });
+  if (!whatsappCheck.ok) goAffiliate(whatsappCheck.error);
   const payoutChanged =
     (existing?.payoutMethod ?? "") !== payoutMethod ||
     (existing?.payoutAccount ?? "") !== payoutAccount ||

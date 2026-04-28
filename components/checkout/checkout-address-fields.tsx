@@ -305,6 +305,14 @@ function PhoneField({
     return () => document.removeEventListener("mousedown", handlePointer);
   }, []);
 
+  const combinePhone = (countryCode: string, localNumber: string) => {
+    const local = localNumber.trim();
+    const code = countryCode.trim();
+    if (!local) return code;
+    if (!code) return local;
+    return normalizePhone(code, local);
+  };
+
   return (
     <label className="block" htmlFor={id}>
       <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
@@ -326,11 +334,7 @@ function PhoneField({
             onChange={(e) => {
               const code = normalizeCountryCodeInput(e.target.value);
               setCountryQuery(code);
-              if (!phoneParts.localNumber.trim()) {
-                onChange(code);
-              } else {
-                onChange(normalizePhone(code, phoneParts.localNumber));
-              }
+              onChange(combinePhone(code, phoneParts.localNumber));
               setCountryOpen(true);
             }}
             className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 pr-8 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
@@ -361,11 +365,7 @@ function PhoneField({
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => {
                           setCountryQuery(code);
-                          if (!phoneParts.localNumber.trim()) {
-                            onChange(code);
-                          } else {
-                            onChange(normalizePhone(code, phoneParts.localNumber));
-                          }
+                          onChange(combinePhone(code, phoneParts.localNumber));
                           setCountryOpen(false);
                         }}
                       >

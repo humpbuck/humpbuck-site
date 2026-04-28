@@ -12,6 +12,7 @@ import {
   normalizeCountryCodeInput,
   normalizePhone,
   splitPhoneForInput,
+  validateInternationalPhone,
 } from "@/lib/phone-normalize";
 import {
   sanitizeAffiliatePayoutWhatsappContact,
@@ -36,10 +37,11 @@ function extractLabeledValue(payload: string | null | undefined, label: string):
   return match?.[1]?.trim() ?? "";
 }
 
-function goStats(focus: string, ok?: string): never {
+function goStats(focus: string, ok?: string, error?: string): never {
   const qs = new URLSearchParams();
   qs.set("focus", focus || "total");
   if (ok) qs.set("ok", ok);
+  if (error) qs.set("error", error);
   redirect(`${adminPath("/affiliate/stats")}?${qs.toString()}`);
 }
 
@@ -95,6 +97,11 @@ async function updateAffiliateDetailsAction(formData: FormData) {
   const whatsapp =
     normalizePhone(whatsappCountryInput || existingWhatsappCountryCode || "+1", whatsappLocal) ||
     whatsappRaw;
+  const whatsappCheck = validateInternationalPhone(whatsapp, {
+    required: false,
+    label: "WhatsApp number",
+  });
+  if (!whatsappCheck.ok) goStats(focus, undefined, whatsappCheck.error);
   const payoutChanged =
     (existing?.payoutMethod ?? "") !== payoutMethod ||
     (existing?.payoutAccount ?? "") !== payoutAccountRaw ||
@@ -170,7 +177,7 @@ async function deleteAffiliateProfileAction(formData: FormData) {
 export default async function AffiliateStatsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ focus?: string; ok?: string }>;
+  searchParams: Promise<{ focus?: string; ok?: string; error?: string }>;
 }) {
   await assertAdmin();
   const sp = await searchParams;
@@ -254,6 +261,14 @@ export default async function AffiliateStatsPage({
                 : sp.ok === "affiliate_deleted"
                   ? "Affiliate deleted successfully."
                   : "Blacklist status updated successfully."}
+          </p>
+        </>
+      ) : null}
+      {sp.error ? (
+        <>
+          <ClearQueryParam param="error" />
+          <p className="mt-3 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-800">
+            {sp.error}
           </p>
         </>
       ) : null}

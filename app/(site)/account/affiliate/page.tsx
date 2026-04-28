@@ -31,6 +31,7 @@ import {
   normalizeCountryCodeInput,
   normalizePhone,
   splitPhoneForInput,
+  validateInternationalPhone,
 } from "@/lib/phone-normalize";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { prisma } from "@/lib/prisma";
@@ -112,6 +113,11 @@ async function submitAffiliateApplicationAction(formData: FormData) {
   );
   const payoutEmail = contactEmail || existingProfile?.payoutEmail || null;
   const whatsapp = contactWhatsapp || existingProfile?.whatsapp || null;
+  const whatsappCheck = validateInternationalPhone(whatsapp, {
+    required: false,
+    label: "WhatsApp number",
+  });
+  if (!whatsappCheck.ok) goAffiliate(whatsappCheck.error);
   const paymentInfoPending = !(payoutEmail || whatsapp);
   const pid = await ensureUniqueAffiliatePid({
     userId,
@@ -245,6 +251,11 @@ async function updatePayoutDetailsAction(formData: FormData) {
       ? normalizePhone(splitContact.countryCode || countryForPhone, splitContact.localNumber)
       : "";
   const whatsapp = fromPhone || fromContact || whatsappRaw;
+  const whatsappCheck = validateInternationalPhone(whatsapp, {
+    required: false,
+    label: "WhatsApp number",
+  });
+  if (!whatsappCheck.ok) goAffiliate(whatsappCheck.error);
   if (payoutMethod === "other" && !(payoutEmail || whatsapp)) {
     goAffiliate("Please provide email or WhatsApp so we can confirm your payout method.");
   }

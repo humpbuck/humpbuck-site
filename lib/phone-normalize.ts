@@ -20,6 +20,10 @@ export const PHONE_COUNTRY_CODES = globalCallingCodeKeys
   });
 export const PHONE_COUNTRY_CODE_DATALIST_ID = "phone-country-codes";
 
+export type PhoneValidationResult =
+  | { ok: true; normalized: string }
+  | { ok: false; error: string };
+
 export function normalizeCountryCodeInput(input: string): string {
   const digits = input.replace(/[^\d]/g, "").slice(0, 3);
   if (!digits) return "";
@@ -60,4 +64,48 @@ export function normalizePhone(countryCode: string, localNumber: string): string
   if (!local) return "";
   const normalizedCode = cc.startsWith("+") ? cc : `+${cc.replace(/[+]/g, "")}`;
   return `${normalizedCode}${local}`;
+}
+
+export function validateInternationalPhone(
+  phone: string | null | undefined,
+  opts?: { required?: boolean; label?: string },
+): PhoneValidationResult {
+  const label = opts?.label?.trim() || "Phone number";
+  const required = opts?.required !== false;
+  const raw = String(phone ?? "").trim();
+  if (!raw) {
+    return required
+      ? { ok: false, error: `${label} is required.` }
+      : { ok: true, normalized: "" };
+  }
+  const compact = raw.replace(/\s+/g, "");
+  const parts = splitPhoneForInput(compact);
+  const ccDigits = parts.countryCode.replace(/[^\d]/g, "");
+  const localDigits = parts.localNumber.replace(/[^\d]/g, "");
+  if (!ccDigits || !localDigits) {
+    return {
+      ok: false,
+      error: `${label} must include country code and local number.`,
+    };
+  }
+  if (ccDigits.length < 1 || ccDigits.length > 3) {
+    return {
+      ok: false,
+      error: `${label} country code must be 1-3 digits.`,
+    };
+  }
+  if (localDigits.length < 4 || localDigits.length > 14) {
+    return {
+      ok: false,
+      error: `${label} local number must be 4-14 digits.`,
+    };
+  }
+  const total = ccDigits.length + localDigits.length;
+  if (total < 6 || total > 15) {
+    return {
+      ok: false,
+      error: `${label} total digits must be 6-15.`,
+    };
+  }
+  return { ok: true, normalized: `+${ccDigits}${localDigits}` };
 }

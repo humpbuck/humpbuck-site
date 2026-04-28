@@ -19,6 +19,7 @@ import {
   countryLabelToIso2,
   yanwenCountryUsesZones,
 } from "@/lib/logistics-estimate";
+import { validateInternationalPhone } from "@/lib/phone-normalize";
 import { parseAustraliaPostcodeNumeric } from "@/lib/yanwen-postcode-zones";
 import type { CheckoutAddressForm } from "@/lib/checkout-address";
 
@@ -148,6 +149,12 @@ export function isPostalRequiredForCheckout(
 export function validateAddressRecordConsistency(
   rec: Record<string, string>,
 ): AddressConsistencyResult {
+  const phoneCheck = validateInternationalPhone(rec.phone, {
+    required: true,
+    label: "Phone",
+  });
+  if (!phoneCheck.ok) return { ok: false, error: phoneCheck.error };
+
   const country = (rec.country ?? "").trim();
   const iso = countryLabelToIso2(country);
   if (!iso) {
@@ -290,5 +297,6 @@ export function validateCheckoutAddressForm(
     state: a.state,
     city: a.city,
     postalCode: a.postalCode,
+    phone: a.phone,
   });
 }
