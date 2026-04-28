@@ -460,6 +460,7 @@ export default async function AccountAffiliatePage({
     prisma.affiliateCommissionLedger.findMany({
       where: {
         affiliate: { userId },
+        order: { deletedAt: null },
       },
       include: {
         order: {
@@ -478,6 +479,7 @@ export default async function AccountAffiliatePage({
     prisma.affiliateCommissionLedger.aggregate({
       where: {
         affiliate: { userId },
+        order: { deletedAt: null },
         status: "paid",
         paidAt: { gte: monthStart },
       },
@@ -486,6 +488,7 @@ export default async function AccountAffiliatePage({
     prisma.affiliateCommissionLedger.aggregate({
       where: {
         affiliate: { userId },
+        order: { deletedAt: null },
         status: "paid",
       },
       _sum: { commissionCents: true },
@@ -503,6 +506,7 @@ export default async function AccountAffiliatePage({
     prisma.affiliateCommissionLedger.findMany({
       where: {
         affiliate: { userId },
+        order: { deletedAt: null },
         status: "paid",
         paidAt: { not: null },
       },

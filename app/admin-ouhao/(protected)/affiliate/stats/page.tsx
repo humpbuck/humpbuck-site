@@ -184,6 +184,7 @@ export default async function AffiliateStatsPage({
     prisma.affiliateCommissionLedger.groupBy({
       by: ["affiliateId"],
       where: {
+        order: { deletedAt: null },
         status: "paid",
         paidAt: { not: null },
       },

@@ -85,6 +85,7 @@ export async function countAffiliatePaidCommissionOrders(
   return prisma.affiliateCommissionLedger.count({
     where: {
       affiliateId,
+      order: { deletedAt: null },
       status: "paid",
       paidAt: { not: null },
       commissionCents: { gt: 0 },

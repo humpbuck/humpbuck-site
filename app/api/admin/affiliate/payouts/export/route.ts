@@ -64,7 +64,10 @@ export async function GET(req: Request) {
       ...where,
       ...dateRange,
       ...(affiliateId ? { affiliateId } : {}),
-      ...(orderStatus ? { order: { status: orderStatus } } : {}),
+      order: {
+        deletedAt: null,
+        ...(orderStatus ? { status: orderStatus } : {}),
+      },
       ...(onlyVerifiedPayout ? { affiliate: { payoutVerifiedAt: { not: null } } } : {}),
     },
     include: {

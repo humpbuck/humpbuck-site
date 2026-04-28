@@ -327,6 +327,7 @@ async function markAllEligiblePaidAction() {
       status: "eligible",
       paidAt: null,
       reversedAt: null,
+      order: { deletedAt: null },
     },
     select: { affiliateId: true },
     distinct: ["affiliateId"],
@@ -336,6 +337,7 @@ async function markAllEligiblePaidAction() {
       status: "eligible",
       paidAt: null,
       reversedAt: null,
+      order: { deletedAt: null },
     },
     data: {
       status: "paid",
@@ -366,7 +368,7 @@ async function updateSelectedLedgersStatusAction(formData: FormData) {
   const paidNote = String(formData.get("paidNote") ?? "").trim();
 
   const selectedRows = await prisma.affiliateCommissionLedger.findMany({
-    where: { id: { in: ids } },
+    where: { id: { in: ids }, order: { deletedAt: null } },
     select: { id: true, affiliateId: true, commissionCents: true },
   });
   if (selectedRows.length === 0) goAffiliate("No matching settlement rows found.");
@@ -432,8 +434,8 @@ async function markFilteredEligiblePaidAction(formData: FormData) {
     status: "eligible" as const,
     paidAt: null,
     reversedAt: null,
+    order: { deletedAt: null as Date | null, ...(orderStatus ? { status: orderStatus } : {}) },
     ...(affiliateId ? { affiliateId } : {}),
-    ...(orderStatus ? { order: { status: orderStatus } } : {}),
     ...(onlyVerifiedPayout ? { affiliate: { payoutVerifiedAt: { not: null } } } : {}),
   };
   const affected = await prisma.affiliateCommissionLedger.findMany({
@@ -524,7 +526,10 @@ export default async function AdminAffiliatePage({
   const SETTLEMENT_PAGE_SIZE = 10;
   const settlementWhere = {
     ...(selectedAffiliateId ? { affiliateId: selectedAffiliateId } : {}),
-    ...(selectedOrderStatus ? { order: { status: selectedOrderStatus } } : {}),
+    order: {
+      deletedAt: null as Date | null,
+      ...(selectedOrderStatus ? { status: selectedOrderStatus } : {}),
+    },
     ...(selectedSettlement === "all" ? {} : { status: selectedSettlement }),
     ...(onlyVerifiedPayout ? { affiliate: { payoutVerifiedAt: { not: null } } } : {}),
   };
@@ -559,9 +564,11 @@ export default async function AdminAffiliatePage({
       }),
       prisma.affiliateCommissionLedger.groupBy({
         by: ["status"],
+        where: { order: { deletedAt: null } },
         _count: { _all: true },
       }),
       prisma.affiliateCommissionLedger.findMany({
+        where: { order: { deletedAt: null } },
         include: {
           affiliate: { include: { user: { select: { email: true, displayName: true } } } },
           order: { select: { id: true, totalCents: true, status: true } },
