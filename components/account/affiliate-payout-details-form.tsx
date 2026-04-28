@@ -94,7 +94,7 @@ export function AffiliatePayoutDetailsForm({
       ? "international"
       : "domestic",
   );
-  const [whatsappCountryCode, setWhatsappCountryCode] = useState("");
+  const [whatsappCountryCode, setWhatsappCountryCode] = useState(defaultWhatsappPhone.countryCode);
   const [whatsappLocal, setWhatsappLocal] = useState(defaultWhatsappPhone.localNumber);
   const [whatsappContact, setWhatsappContact] = useState(
     sanitizeAffiliatePayoutWhatsappContact(parseLabeledValue(defaultPayoutAccount, "WhatsApp")) ||
