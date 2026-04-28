@@ -372,6 +372,11 @@ function normalizeSettlementFilter(raw: string | undefined): SettlementFilter {
   return "all";
 }
 
+function normalizeDateInput(raw: string | undefined): string {
+  const v = String(raw ?? "").trim();
+  return /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : "";
+}
+
 function humanizePayoutMethod(method: string | null | undefined): string {
   if (!method) return "-";
   if (method === "paypal") return "PayPal";
@@ -449,6 +454,9 @@ export default async function AccountAffiliatePage({
     editProfile?: string;
     editPayout?: string;
     settlement?: string;
+    settlementPage?: string;
+    from?: string;
+    to?: string;
   }>;
 }) {
   const session = await auth();
@@ -458,9 +466,31 @@ export default async function AccountAffiliatePage({
 
   const sp = await searchParams;
   const settlementFilter = normalizeSettlementFilter(sp.settlement);
+  const settlementPageRaw = Math.max(1, Math.floor(Number(sp.settlementPage) || 1));
+  const dateFromInput = normalizeDateInput(sp.from);
+  const dateToInput = normalizeDateInput(sp.to);
+  const dateFrom = dateFromInput ? new Date(`${dateFromInput}T00:00:00`) : null;
+  const dateTo = dateToInput ? new Date(`${dateToInput}T23:59:59.999`) : null;
+  const eligibleAtWhere =
+    dateFrom && dateTo
+      ? dateFrom <= dateTo
+        ? { gte: dateFrom, lte: dateTo }
+        : { gte: dateTo, lte: dateFrom }
+      : dateFrom
+        ? { gte: dateFrom }
+        : dateTo
+          ? { lte: dateTo }
+          : undefined;
+  const SETTLEMENT_PAGE_SIZE = 10;
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const [accountUser, profile, latestApplication, monthlyPaid, totalPaid, coupon, settlementRows, settlementCountRows] = await Promise.all([
+  const settlementWhere = {
+    affiliate: { userId },
+    order: { deletedAt: null as Date | null },
+    ...(settlementFilter === "all" ? {} : { status: settlementFilter }),
+    ...(eligibleAtWhere ? { eligibleAt: eligibleAtWhere } : {}),
+  };
+  const [accountUser, profile, latestApplication, monthlyPaid, totalPaid, coupon, settlementRows, settlementCountRows, settlementTotal] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -516,11 +546,7 @@ export default async function AccountAffiliatePage({
       select: { code: true },
     }),
     prisma.affiliateCommissionLedger.findMany({
-      where: {
-        affiliate: { userId },
-        order: { deletedAt: null },
-        ...(settlementFilter === "all" ? {} : { status: settlementFilter }),
-      },
+      where: settlementWhere,
       include: {
         order: {
           select: {
@@ -530,7 +556,8 @@ export default async function AccountAffiliatePage({
         },
       },
       orderBy: { createdAt: "desc" },
-      take: 200,
+      skip: (settlementPageRaw - 1) * SETTLEMENT_PAGE_SIZE,
+      take: SETTLEMENT_PAGE_SIZE,
     }),
     prisma.affiliateCommissionLedger.groupBy({
       by: ["status"],
@@ -539,6 +566,9 @@ export default async function AccountAffiliatePage({
         order: { deletedAt: null },
       },
       _count: { _all: true },
+    }),
+    prisma.affiliateCommissionLedger.count({
+      where: settlementWhere,
     }),
   ]);
   const isActiveAffiliate = profile?.status === "active";
@@ -587,8 +617,27 @@ export default async function AccountAffiliatePage({
   const settlementHref = (target: SettlementFilter) => {
     const qs = new URLSearchParams();
     if (target !== "all") qs.set("settlement", target);
+    if (dateFromInput) qs.set("from", dateFromInput);
+    if (dateToInput) qs.set("to", dateToInput);
     return `/account/affiliate${qs.toString() ? `?${qs.toString()}` : ""}`;
   };
+  const settlementTotalPages = Math.max(1, Math.ceil(settlementTotal / SETTLEMENT_PAGE_SIZE));
+  const settlementPage = Math.min(settlementPageRaw, settlementTotalPages);
+  const settlementPageHref = (nextPage: number) => {
+    const qs = new URLSearchParams();
+    if (settlementFilter !== "all") qs.set("settlement", settlementFilter);
+    if (dateFromInput) qs.set("from", dateFromInput);
+    if (dateToInput) qs.set("to", dateToInput);
+    if (nextPage > 1) qs.set("settlementPage", String(nextPage));
+    return `/account/affiliate${qs.toString() ? `?${qs.toString()}` : ""}`;
+  };
+  const settlementExportHref = (() => {
+    const qs = new URLSearchParams();
+    if (settlementFilter !== "all") qs.set("settlement", settlementFilter);
+    if (dateFromInput) qs.set("from", dateFromInput);
+    if (dateToInput) qs.set("to", dateToInput);
+    return `/api/account/affiliate/settlement/export${qs.toString() ? `?${qs.toString()}` : ""}`;
+  })();
   const fullName = [accountUser?.firstName?.trim(), accountUser?.lastName?.trim()]
     .filter(Boolean)
     .join(" ")
@@ -1052,6 +1101,51 @@ export default async function AccountAffiliatePage({
               Reversed ({settlementCounts.reversed})
             </Link>
           </div>
+          <form className="mt-3 flex flex-wrap items-end gap-2" method="get" action="/account/affiliate">
+            {settlementFilter !== "all" ? (
+              <input type="hidden" name="settlement" value={settlementFilter} />
+            ) : null}
+            <label className="block">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
+                From
+              </span>
+              <input
+                type="date"
+                name="from"
+                defaultValue={dateFromInput}
+                className="mt-1 rounded-xl border border-line bg-paper px-3 py-2 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+              />
+            </label>
+            <label className="block">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
+                To
+              </span>
+              <input
+                type="date"
+                name="to"
+                defaultValue={dateToInput}
+                className="mt-1 rounded-xl border border-line bg-paper px-3 py-2 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+              />
+            </label>
+            <button
+              type="submit"
+              className="rounded-xl border border-line bg-white px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink hover:border-ink/20"
+            >
+              Apply
+            </button>
+            <Link
+              href={settlementFilter === "all" ? "/account/affiliate" : settlementHref(settlementFilter)}
+              className="rounded-xl border border-line bg-white px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink hover:border-ink/20"
+            >
+              Reset dates
+            </Link>
+            <a
+              href={settlementExportHref}
+              className="rounded-xl bg-ink px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper hover:bg-ink/90"
+            >
+              Export CSV
+            </a>
+          </form>
           <div className="mt-3 overflow-x-auto">
             <table className="w-full min-w-[760px] text-left text-sm text-ink/90">
               <thead>
@@ -1087,6 +1181,33 @@ export default async function AccountAffiliatePage({
               </tbody>
             </table>
           </div>
+          {settlementTotalPages > 1 ? (
+            <nav className="mt-3 flex items-center justify-end gap-2 text-xs text-ink/90" aria-label="Settlement pagination">
+              <Link
+                href={settlementPageHref(Math.max(1, settlementPage - 1))}
+                className={`rounded-lg border px-2.5 py-1 ${
+                  settlementPage <= 1
+                    ? "pointer-events-none border-line/60 text-muted opacity-60"
+                    : "border-line bg-white hover:border-ink/20"
+                }`}
+              >
+                Prev
+              </Link>
+              <span className="tabular-nums">
+                Page {settlementPage} / {settlementTotalPages}
+              </span>
+              <Link
+                href={settlementPageHref(Math.min(settlementTotalPages, settlementPage + 1))}
+                className={`rounded-lg border px-2.5 py-1 ${
+                  settlementPage >= settlementTotalPages
+                    ? "pointer-events-none border-line/60 text-muted opacity-60"
+                    : "border-line bg-white hover:border-ink/20"
+                }`}
+              >
+                Next
+              </Link>
+            </nav>
+          ) : null}
         </section>
       ) : null}
     </div>
