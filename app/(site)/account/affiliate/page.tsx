@@ -18,6 +18,7 @@ import { AffiliateLinkGenerator } from "@/components/account/affiliate-link-gene
 import { AffiliateCouponRequestedModal } from "@/components/account/affiliate-coupon-requested-modal";
 import { AffiliatePayoutDetailsForm } from "@/components/account/affiliate-payout-details-form";
 import { AffiliateLiveRefresh } from "@/components/account/affiliate-live-refresh";
+import { AffiliateSettlementSelector } from "@/components/account/affiliate-settlement-selector";
 import { RestoreScrollOnce } from "@/components/account/restore-scroll-once";
 import { ClearQueryParam } from "@/components/admin/clear-query-param";
 import {
@@ -621,6 +622,11 @@ export default async function AccountAffiliatePage({
     if (dateToInput) qs.set("to", dateToInput);
     return `/account/affiliate${qs.toString() ? `?${qs.toString()}` : ""}`;
   };
+  const settlementOnlyHref = (target: SettlementFilter) => {
+    const qs = new URLSearchParams();
+    if (target !== "all") qs.set("settlement", target);
+    return `/account/affiliate${qs.toString() ? `?${qs.toString()}` : ""}`;
+  };
   const settlementTotalPages = Math.max(1, Math.ceil(settlementTotal / SETTLEMENT_PAGE_SIZE));
   const settlementPage = Math.min(settlementPageRaw, settlementTotalPages);
   const settlementPageHref = (nextPage: number) => {
@@ -1059,52 +1065,23 @@ export default async function AccountAffiliatePage({
           <p className="mt-2 text-xs text-muted">
             Read-only view. Order status and settlement status can only be updated by admin.
           </p>
-          <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
-            <Link
-              href={settlementHref("all")}
-              className={`rounded-xl border px-3 py-1.5 transition hover:border-ink/20 ${
-                settlementFilter === "all" ? "border-ink bg-ink text-white" : "border-line bg-white text-ink"
-              }`}
-            >
-              All settlement statuses ({settlementCounts.all})
-            </Link>
-            <Link
-              href={settlementHref("eligible")}
-              className={`rounded-xl border px-3 py-1.5 transition hover:border-ink/20 ${
-                settlementFilter === "eligible" ? "border-ink bg-ink text-white" : "border-line bg-white text-ink"
-              }`}
-            >
-              Eligible ({settlementCounts.eligible})
-            </Link>
-            <Link
-              href={settlementHref("paid")}
-              className={`rounded-xl border px-3 py-1.5 transition hover:border-ink/20 ${
-                settlementFilter === "paid" ? "border-ink bg-ink text-white" : "border-line bg-white text-ink"
-              }`}
-            >
-              Paid ({settlementCounts.paid})
-            </Link>
-            <Link
-              href={settlementHref("pending")}
-              className={`rounded-xl border px-3 py-1.5 transition hover:border-ink/20 ${
-                settlementFilter === "pending" ? "border-ink bg-ink text-white" : "border-line bg-white text-ink"
-              }`}
-            >
-              Pending ({settlementCounts.pending})
-            </Link>
-            <Link
-              href={settlementHref("reversed")}
-              className={`rounded-xl border px-3 py-1.5 transition hover:border-ink/20 ${
-                settlementFilter === "reversed" ? "border-ink bg-ink text-white" : "border-line bg-white text-ink"
-              }`}
-            >
-              Reversed ({settlementCounts.reversed})
-            </Link>
-          </div>
           <form className="mt-3 flex flex-wrap items-end gap-2" method="get" action="/account/affiliate">
-            {settlementFilter !== "all" ? (
-              <input type="hidden" name="settlement" value={settlementFilter} />
-            ) : null}
+            <label className="block">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
+                Settlement status
+              </span>
+              <select
+                name="settlement"
+                defaultValue={settlementFilter}
+                className="mt-1 rounded-xl border border-line bg-paper px-3 py-2 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+              >
+                <option value="all">All settlement statuses ({settlementCounts.all})</option>
+                <option value="eligible">Eligible ({settlementCounts.eligible})</option>
+                <option value="paid">Paid ({settlementCounts.paid})</option>
+                <option value="pending">Pending ({settlementCounts.pending})</option>
+                <option value="reversed">Reversed ({settlementCounts.reversed})</option>
+              </select>
+            </label>
             <label className="block">
               <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
                 From
@@ -1134,7 +1111,7 @@ export default async function AccountAffiliatePage({
               Apply
             </button>
             <Link
-              href={settlementFilter === "all" ? "/account/affiliate" : settlementHref(settlementFilter)}
+              href={settlementOnlyHref(settlementFilter)}
               className="rounded-xl border border-line bg-white px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink hover:border-ink/20"
             >
               Reset dates
@@ -1146,40 +1123,18 @@ export default async function AccountAffiliatePage({
               Export CSV
             </a>
           </form>
-          <div className="mt-3 overflow-x-auto">
-            <table className="w-full min-w-[760px] text-left text-sm text-ink/90">
-              <thead>
-                <tr className="border-b border-line text-[10px] uppercase tracking-[0.12em] text-muted">
-                  <th className="px-2 py-2">Order</th>
-                  <th className="px-2 py-2">Order status</th>
-                  <th className="px-2 py-2">Settlement</th>
-                  <th className="px-2 py-2">Eligible at</th>
-                  <th className="px-2 py-2">Paid / reversed at</th>
-                  <th className="px-2 py-2 text-right">Commission</th>
-                </tr>
-              </thead>
-              <tbody>
-                {settlementRows.map((l) => (
-                  <tr key={l.id} className="border-b border-line/60">
-                    <td className="px-2 py-2">#{l.order.id.slice(-8)}</td>
-                    <td className="px-2 py-2">{l.order.status}</td>
-                    <td className="px-2 py-2">{l.status}</td>
-                    <td className="px-2 py-2">{l.eligibleAt.toLocaleDateString()}</td>
-                    <td className="px-2 py-2">
-                      {(l.paidAt ?? l.reversedAt)?.toLocaleDateString() ?? "-"}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">{usd(l.commissionCents)}</td>
-                  </tr>
-                ))}
-                {settlementRows.length === 0 ? (
-                  <tr>
-                    <td className="px-2 py-3 text-muted" colSpan={6}>
-                      No orders in this settlement status yet. Keep sharing your affiliate link - your next conversion is coming soon.
-                    </td>
-                  </tr>
-                ) : null}
-              </tbody>
-            </table>
+          <div className="mt-3">
+            <AffiliateSettlementSelector
+              rows={settlementRows.map((l) => ({
+                id: l.id,
+                orderId: l.order.id,
+                orderStatus: l.order.status,
+                settlementStatus: l.status,
+                eligibleAtLabel: l.eligibleAt.toLocaleDateString(),
+                paidOrReversedAtLabel: (l.paidAt ?? l.reversedAt)?.toLocaleDateString() ?? "-",
+                commissionCents: l.commissionCents,
+              }))}
+            />
           </div>
           {settlementTotalPages > 1 ? (
             <nav className="mt-3 flex items-center justify-end gap-2 text-xs text-ink/90" aria-label="Settlement pagination">
