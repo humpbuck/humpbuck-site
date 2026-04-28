@@ -435,9 +435,12 @@ export default async function AffiliateStatsPage({
                 <span className="font-medium text-ink/90">WhatsApp: </span>
                 <input
                   name="payoutWhatsappContact"
-                  defaultValue={sanitizeAffiliatePayoutWhatsappContact(
-                    extractLabeledValue(p.payoutAccount, "WhatsApp"),
-                  )}
+                  defaultValue={
+                    p.payoutWhatsapp ||
+                    sanitizeAffiliatePayoutWhatsappContact(
+                      extractLabeledValue(p.payoutAccount, "WhatsApp"),
+                    )
+                  }
                   placeholder="+86 180 2429 0526"
                   className="w-[calc(100%-88px)] border-0 bg-transparent p-0 text-sm text-ink outline-none"
                 />
