@@ -317,7 +317,7 @@ export default async function AdminTrafficPage({
     if (selectedDevice) qs.set("device", selectedDevice);
     if (selectedBrowser) qs.set("browser", selectedBrowser);
     if (nextJourneysPage > 1) qs.set("journeysPage", String(nextJourneysPage));
-    return adminPath(`/traffic?${qs.toString()}`);
+    return `${adminPath(`/traffic?${qs.toString()}`)}#recent-visitor-journeys`;
   };
 
   return (
@@ -588,7 +588,7 @@ export default async function AdminTrafficPage({
 
       <div className="mt-8 grid gap-6 lg:grid-cols-1">
 
-        <div className="rounded-2xl border border-line bg-white/70 p-5">
+        <div id="recent-visitor-journeys" className="rounded-2xl border border-line bg-white/70 p-5">
           <div className="flex items-center justify-between gap-2">
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
               Recent visitor journeys
@@ -650,6 +650,7 @@ export default async function AdminTrafficPage({
             <div className="mt-4 flex items-center justify-end gap-2">
               <Link
                 href={buildTrafficPageHref(Math.max(1, safeJourneysPage - 1))}
+                scroll={false}
                 aria-disabled={safeJourneysPage <= 1}
                 className={`rounded-lg border px-3 py-1.5 text-xs ${
                   safeJourneysPage <= 1
@@ -661,6 +662,7 @@ export default async function AdminTrafficPage({
               </Link>
               <Link
                 href={buildTrafficPageHref(Math.min(journeysTotalPages, safeJourneysPage + 1))}
+                scroll={false}
                 aria-disabled={safeJourneysPage >= journeysTotalPages}
                 className={`rounded-lg border px-3 py-1.5 text-xs ${
                   safeJourneysPage >= journeysTotalPages
