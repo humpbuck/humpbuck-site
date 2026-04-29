@@ -10,6 +10,7 @@ type TutorialRow = {
   productSlug: string;
   title: string;
   url: string;
+  youtubeUrl: string;
   aspectRatio: VideoAspectRatio;
   sortOrder: number;
 };
@@ -28,6 +29,7 @@ export function VideoTutorialManager({
   const [busySlug, setBusySlug] = useState<string | null>(null);
 
   async function saveRow(row: TutorialRow) {
+    if (!window.confirm(`Save tutorial for ${row.productSlug}?`)) return;
     setBusySlug(row.productSlug);
     setMessage("");
     const res = await fetch("/api/admin/video-tutorials", {
@@ -45,6 +47,7 @@ export function VideoTutorialManager({
   }
 
   async function saveOrder(nextRows: TutorialRow[]) {
+    if (!window.confirm("Confirm updating tutorial order?")) return;
     const res = await fetch("/api/admin/video-tutorials", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -60,6 +63,7 @@ export function VideoTutorialManager({
   }
 
   async function deleteRow(productSlug: string) {
+    if (!window.confirm(`Delete tutorial for ${productSlug}?`)) return;
     setBusySlug(productSlug);
     setMessage("");
     const res = await fetch("/api/admin/video-tutorials", {
@@ -90,6 +94,7 @@ export function VideoTutorialManager({
         productSlug: candidate.slug,
         title: `${candidate.name} video tutorial`,
         url: "",
+        youtubeUrl: "",
         aspectRatio: "9:16",
         sortOrder: 1,
       },
@@ -150,7 +155,7 @@ export function VideoTutorialManager({
                     prev.map((x, i) => (i === idx ? { ...x, title: e.target.value } : x)),
                   )
                 }
-                className="sm:col-span-1 rounded-xl border border-line bg-white px-3 py-2 text-sm"
+                className="sm:col-span-2 rounded-xl border border-line bg-white px-3 py-2 text-sm"
                 placeholder="Tutorial title"
               />
               <input
@@ -160,8 +165,18 @@ export function VideoTutorialManager({
                     prev.map((x, i) => (i === idx ? { ...x, url: e.target.value } : x)),
                   )
                 }
-                className="sm:col-span-4 rounded-xl border border-line bg-white px-3 py-2 text-sm"
-                placeholder="https://..."
+                className="sm:col-span-3 rounded-xl border border-line bg-white px-3 py-2 text-sm"
+                placeholder="Video link A (R2/YouTube/other)"
+              />
+              <input
+                value={row.youtubeUrl}
+                onChange={(e) =>
+                  setRows((prev) =>
+                    prev.map((x, i) => (i === idx ? { ...x, youtubeUrl: e.target.value } : x)),
+                  )
+                }
+                className="sm:col-span-3 rounded-xl border border-line bg-white px-3 py-2 text-sm"
+                placeholder="Video link B (R2/YouTube/other)"
               />
               <select
                 value={row.aspectRatio}
@@ -172,7 +187,7 @@ export function VideoTutorialManager({
                     ),
                   )
                 }
-                className="sm:col-span-2 rounded-xl border border-line bg-white px-3 py-2 text-sm"
+                className="sm:col-span-1 rounded-xl border border-line bg-white px-3 py-2 text-sm"
               >
                 {RATIOS.map((ratio) => (
                   <option key={ratio} value={ratio}>
@@ -191,7 +206,7 @@ export function VideoTutorialManager({
                   </option>
                 ))}
               </select>
-              <div className="sm:col-span-2 flex gap-2">
+              <div className="sm:col-span-12 flex gap-2 sm:justify-end">
                 <button
                   type="button"
                   disabled={busySlug === row.productSlug}

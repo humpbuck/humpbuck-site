@@ -30,6 +30,18 @@ function ratioClass(ratio: VideoTutorial["aspectRatio"]): string {
   return "aspect-[9/16]";
 }
 
+function externalLink(raw: string): string | null {
+  try {
+    return new URL(raw).toString();
+  } catch {
+    return null;
+  }
+}
+
+function modelLabel(slug: string): string {
+  return slug.replace(/-/g, " ").toUpperCase();
+}
+
 function TutorialMedia({ item }: { item: VideoTutorial }) {
   const yt = youtubeEmbedUrl(item.url);
   const videoLike = /\.(mp4|webm|mov|m3u8)(\?.*)?$/i.test(item.url);
@@ -96,6 +108,16 @@ export default async function VideoTutorialPage() {
             <article key={item.productSlug} className="space-y-3">
               <p className="text-sm font-semibold text-ink">{item.title}</p>
               <TutorialMedia item={item} />
+              {externalLink(item.youtubeUrl) ? (
+                <a
+                  href={externalLink(item.youtubeUrl) ?? "#"}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="inline-flex rounded-lg border border-line bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink hover:bg-paper"
+                >
+                  {modelLabel(item.productSlug)} video tutorial link
+                </a>
+              ) : null}
             </article>
           ))}
         </div>

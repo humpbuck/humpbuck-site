@@ -30,20 +30,23 @@ export async function POST(req: Request) {
     productSlug?: string;
     title?: string;
     url?: string;
+    youtubeUrl?: string;
     aspectRatio?: string;
     sortOrder?: number;
   };
   const productSlug = (body.productSlug ?? "").trim();
   const title = (body.title ?? "").trim();
   const url = (body.url ?? "").trim();
+  const youtubeUrl = (body.youtubeUrl ?? "").trim();
   const ratio = (body.aspectRatio ?? "").trim();
-  if (!productSlug || !title || !url || !isAspectRatio(ratio)) {
+  if (!productSlug || !title || (!url && !youtubeUrl) || !isAspectRatio(ratio)) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
   await saveVideoTutorial({
     productSlug,
     title,
     url,
+    youtubeUrl,
     aspectRatio: ratio,
     sortOrder:
       typeof body.sortOrder === "number" && Number.isFinite(body.sortOrder)

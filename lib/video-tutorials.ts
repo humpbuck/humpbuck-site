@@ -8,6 +8,7 @@ export type VideoTutorial = {
   productSlug: string;
   title: string;
   url: string;
+  youtubeUrl: string;
   aspectRatio: VideoAspectRatio;
   sortOrder: number;
   updatedAt: string;
@@ -42,6 +43,14 @@ async function ensureVideoTutorialTable() {
   } catch {
     // Older engines may not support IF NOT EXISTS; ignore when already present.
   }
+  try {
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "VideoTutorial"
+      ADD COLUMN IF NOT EXISTS "youtubeUrl" TEXT NOT NULL DEFAULT ''
+    `);
+  } catch {
+    // Older engines may not support IF NOT EXISTS; ignore when already present.
+  }
 }
 
 function coerceAspectRatio(v: unknown): VideoAspectRatio {
@@ -67,13 +76,14 @@ export async function listVideoTutorials({
   }
 
   const rows = (await prisma.$queryRawUnsafe(`
-    SELECT "productSlug", "title", "url", "aspectRatio", "sortOrder", "updatedAt"
+    SELECT "productSlug", "title", "url", "youtubeUrl", "aspectRatio", "sortOrder", "updatedAt"
     FROM "VideoTutorial"
     ORDER BY "updatedAt" DESC
   `)) as Array<{
     productSlug: string;
     title: string;
     url: string;
+    youtubeUrl: string | null;
     aspectRatio: string;
     sortOrder: number | null;
     updatedAt: Date;
@@ -97,6 +107,7 @@ export async function listVideoTutorials({
       productSlug: product.slug,
       title: row?.title || defaultTitle(product.name),
       url: effectiveUrl,
+      youtubeUrl: (row?.youtubeUrl ?? "").trim(),
       aspectRatio: coerceAspectRatio(row?.aspectRatio),
       sortOrder: row?.sortOrder ?? fallbackSort++,
       updatedAt: (row?.updatedAt ?? new Date(0)).toISOString(),
@@ -129,6 +140,7 @@ export async function saveVideoTutorial(input: {
   productSlug: string;
   title: string;
   url: string;
+  youtubeUrl?: string;
   aspectRatio: VideoAspectRatio;
   sortOrder?: number;
 }) {
@@ -146,12 +158,13 @@ export async function saveVideoTutorial(input: {
     `;
   }
   await prisma.$executeRaw`
-    INSERT INTO "VideoTutorial" ("productSlug", "title", "url", "aspectRatio", "sortOrder", "updatedAt")
-    VALUES (${productSlug}, ${input.title}, ${input.url}, ${input.aspectRatio}, ${Math.max(1, input.sortOrder ?? 9999)}, NOW())
+    INSERT INTO "VideoTutorial" ("productSlug", "title", "url", "youtubeUrl", "aspectRatio", "sortOrder", "updatedAt")
+    VALUES (${productSlug}, ${input.title}, ${input.url}, ${(input.youtubeUrl ?? "").trim()}, ${input.aspectRatio}, ${Math.max(1, input.sortOrder ?? 9999)}, NOW())
     ON CONFLICT ("productSlug")
     DO UPDATE SET
       "title" = EXCLUDED."title",
       "url" = EXCLUDED."url",
+      "youtubeUrl" = EXCLUDED."youtubeUrl",
       "aspectRatio" = EXCLUDED."aspectRatio",
       "sortOrder" = EXCLUDED."sortOrder",
       "updatedAt" = NOW()
@@ -178,11 +191,12 @@ export async function deleteVideoTutorial(productSlug: string) {
   const normalizedSlug = normalizeProductSlug(productSlug);
   const deletedTitle = `${normalizedSlug} video tutorial`;
   await prisma.$executeRaw`
-    INSERT INTO "VideoTutorial" ("productSlug", "title", "url", "aspectRatio", "updatedAt")
-    VALUES (${normalizedSlug}, ${deletedTitle}, ${""}, ${DEFAULT_ASPECT_RATIO}, NOW())
+    INSERT INTO "VideoTutorial" ("productSlug", "title", "url", "youtubeUrl", "aspectRatio", "updatedAt")
+    VALUES (${normalizedSlug}, ${deletedTitle}, ${""}, ${""}, ${DEFAULT_ASPECT_RATIO}, NOW())
     ON CONFLICT ("productSlug")
     DO UPDATE SET
       "url" = ${""},
+      "youtubeUrl" = ${""},
       "updatedAt" = NOW()
   `;
 }
