@@ -16,7 +16,7 @@ export async function GET() {
   if (!token || !verifyAdminSession(token)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const tutorials = await listVideoTutorials({ includeFallback: false });
+  const tutorials = await listVideoTutorials();
   return NextResponse.json({ tutorials });
 }
 

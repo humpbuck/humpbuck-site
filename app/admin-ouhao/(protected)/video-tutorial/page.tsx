@@ -8,7 +8,7 @@ import {
 
 export default async function AdminVideoTutorialPage() {
   const [tutorials, products] = await Promise.all([
-    listVideoTutorials({ includeFallback: false }),
+    listVideoTutorials(),
     listVideoTutorialProductOptions(),
   ]);
   return (
