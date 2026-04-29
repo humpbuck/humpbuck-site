@@ -82,6 +82,17 @@ function pad2(n: number): string {
   return String(n).padStart(2, "0");
 }
 
+function productVideoUrl(slugFolder: string, filePrefix: string): string {
+  const perProductKey = `NEXT_PUBLIC_R2_VIDEO_REV_${slugFolder
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, "_")}`;
+  const rev =
+    process.env[perProductKey]?.trim() ||
+    process.env.NEXT_PUBLIC_R2_VIDEO_REV?.trim() ||
+    "1";
+  return `${R2_PUBLIC_BASE}/products/${slugFolder}/video/${filePrefix}-video.mp4?v=${encodeURIComponent(rev)}`;
+}
+
 /**
  * Product PDP showcase MP4s — each `products/{slug}/video/{prefix}-video.mp4` on R2 is **720×1280**
  * (portrait, 9:16). The storefront UI assumes this for `ProductPromoVideo` layout.
@@ -240,7 +251,7 @@ function rmM04ProductAssets() {
           `${R2_PUBLIC_BASE}/products/${PRMM04_SLUG}/variants/${PRMM04_FILE}-style-${pad2(i + 1)}.webp`,
         ),
     ),
-    video: `${R2_PUBLIC_BASE}/products/${PRMM04_SLUG}/video/${PRMM04_FILE}-video.mp4`,
+    video: productVideoUrl(PRMM04_SLUG, PRMM04_FILE),
   };
 }
 
@@ -291,7 +302,7 @@ function rmTonneauProductAssets(
       (_, i) =>
         `${R2_PUBLIC_BASE}/products/${slugFolder}/variants/${imagePrefix}-${variantMid}-${pad2(i + 1)}.webp`,
     ),
-    video: `${R2_PUBLIC_BASE}/products/${slugFolder}/video/${filePrefix}-video.mp4`,
+    video: productVideoUrl(slugFolder, filePrefix),
   };
 }
 
@@ -331,7 +342,7 @@ export const R2 = {
           `${R2_PUBLIC_BASE}/products/${P2301_SLUG}/variants/${P2301_FILE}-style-${pad2(i + 1)}.webp`,
       ),
       /** 720×1280 product showcase MP4 — see block comment after `pad2` in this file. */
-      video: `${R2_PUBLIC_BASE}/products/${P2301_SLUG}/video/${P2301_FILE}-video.mp4`,
+      video: productVideoUrl(P2301_SLUG, P2301_FILE),
     },
     digitemp2412m: {
       gallery: Array.from(
@@ -349,7 +360,7 @@ export const R2 = {
         (_, i) =>
           `${R2_PUBLIC_BASE}/products/${P2412_SLUG}/variants/${P2412_VARIANT_FILE}-style-${pad2(i + 1)}.webp`,
       ),
-      video: `${R2_PUBLIC_BASE}/products/${P2412_SLUG}/video/${P2412_FILE}-video.mp4`,
+      video: productVideoUrl(P2412_SLUG, P2412_FILE),
     },
     rmM01: {
       gallery: Array.from(
@@ -367,7 +378,7 @@ export const R2 = {
         (_, i) =>
           `${R2_PUBLIC_BASE}/products/${PRMM01_SLUG}/variants/${PRMM01_FILE}-style-${pad2(i + 1)}.webp`,
       ),
-      video: `${R2_PUBLIC_BASE}/products/${PRMM01_SLUG}/video/${PRMM01_FILE}-video.mp4`,
+      video: productVideoUrl(PRMM01_SLUG, PRMM01_FILE),
     },
     rmM02: {
       gallery: Array.from(
@@ -385,7 +396,7 @@ export const R2 = {
         (_, i) =>
           `${R2_PUBLIC_BASE}/products/${PRMM02_SLUG}/variants/${PRMM02_FILE}-style-${pad2(i + 1)}.webp`,
       ),
-      video: `${R2_PUBLIC_BASE}/products/${PRMM02_SLUG}/video/${PRMM02_FILE}-video.mp4`,
+      video: productVideoUrl(PRMM02_SLUG, PRMM02_FILE),
     },
     rmM03: {
       gallery: Array.from(
