@@ -8,25 +8,18 @@ import { Suspense, useEffect, useState, useSyncExternalStore } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import { AccountMenu } from "@/components/site/AccountMenu";
 import { HeaderUserAvatar } from "@/components/site/HeaderUserAvatar";
+import { useSiteLanguage } from "@/components/site/site-language";
 import { buildLoginHref } from "@/lib/auth-callback-url";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
-
-const nav = [
-  { label: "Shop", href: "/shop" },
-  { label: "DIGI-TEMP", href: "/series/digitemp" },
-  { label: "RM-TONNEAU", href: "/series/tonneau" },
-  { label: "RD-ASTRAL", href: "/series/rd-astral" },
-  { label: "Affiliates", href: "/affiliates" },
-  { label: "Video tutorial", href: "/video-tutorial" },
-  { label: "About", href: "/about" },
-] as const;
 
 function HeaderLoginLink({
   className,
   onNavigate,
+  label,
 }: {
   className: string;
   onNavigate?: () => void;
+  label: string;
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -36,12 +29,22 @@ function HeaderLoginLink({
       onClick={onNavigate}
       className={className}
     >
-      Login
+      {label}
     </Link>
   );
 }
 
 export function SiteHeader() {
+  const { lang, setLang, t } = useSiteLanguage();
+  const nav = [
+    { label: t.navShop, href: "/shop" },
+    { label: t.navDigitemp, href: "/series/digitemp" },
+    { label: t.navTonneau, href: "/series/tonneau" },
+    { label: t.navAstral, href: "/series/rd-astral" },
+    { label: t.navAffiliates, href: "/affiliates" },
+    { label: t.navVideoTutorial, href: "/video-tutorial" },
+    { label: t.navAbout, href: "/about" },
+  ] as const;
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [bagBump, setBagBump] = useState(false);
@@ -57,7 +60,7 @@ export function SiteHeader() {
   const accountAvatarLabel =
     session?.user?.name?.trim() ||
     session?.user?.email?.split("@")[0]?.trim() ||
-    "Account";
+    t.account;
 
   useEffect(() => {
     const onAdded = () => {
@@ -133,6 +136,18 @@ export function SiteHeader() {
           </nav>
 
           <div className="flex items-center gap-1 sm:gap-2">
+            <label className="hidden text-[10px] font-medium uppercase tracking-[0.12em] text-ink/60 sm:block">
+              {t.language}
+            </label>
+            <select
+              value={lang}
+              onChange={(e) => setLang(e.target.value === "es" ? "es" : "en")}
+              className="rounded-full border border-line bg-white px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-ink/80"
+              aria-label={t.language}
+            >
+              <option value="en">EN</option>
+              <option value="es">ES</option>
+            </select>
             {status === "authenticated" ? (
               <AccountMenu
                 userEmail={session?.user?.email}
@@ -148,11 +163,14 @@ export function SiteHeader() {
                     href="/auth/login"
                     className="hidden rounded-full px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/75 transition hover:text-ink md:inline-flex"
                   >
-                    Login
+                    {t.login}
                   </Link>
                 }
               >
-                <HeaderLoginLink className="hidden rounded-full px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/75 transition hover:text-ink md:inline-flex" />
+                <HeaderLoginLink
+                  className="hidden rounded-full px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/75 transition hover:text-ink md:inline-flex"
+                  label={t.login}
+                />
               </Suspense>
             )}
             <button
@@ -166,7 +184,7 @@ export function SiteHeader() {
               aria-label={`Open shopping bag, ${displayItemCount} items`}
             >
               <ShoppingBag size={16} strokeWidth={1.75} />
-              <span className="hidden sm:inline">Bag</span>
+              <span className="hidden sm:inline">{t.bag}</span>
               <span className="tabular-nums">{displayItemCount}</span>
             </button>
           </div>
@@ -218,19 +236,33 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
+          <div className="mt-2 px-4 py-2">
+            <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
+              {t.language}
+            </p>
+            <select
+              value={lang}
+              onChange={(e) => setLang(e.target.value === "es" ? "es" : "en")}
+              className="w-full rounded-xl border border-line bg-white px-3 py-2 text-sm font-semibold text-ink/85"
+              aria-label={t.language}
+            >
+              <option value="en">English</option>
+              <option value="es">Espanol</option>
+            </select>
+          </div>
           <Link
             href="/shipping"
             onClick={() => setOpen(false)}
             className="mt-4 rounded-xl px-4 py-3 text-sm text-muted hover:bg-ink/[0.04]"
           >
-            Shipping & tax
+            {t.shippingTax}
           </Link>
           <Link
             href="/refund"
             onClick={() => setOpen(false)}
             className="rounded-xl px-4 py-3 text-sm text-muted hover:bg-ink/[0.04]"
           >
-            Refunds
+            {t.refunds}
           </Link>
           <button
             type="button"
@@ -240,7 +272,7 @@ export function SiteHeader() {
             }}
             className="w-full rounded-xl px-4 py-3 text-left text-sm font-semibold text-ink/85 hover:bg-ink/[0.04]"
           >
-            Bag ({displayItemCount})
+            {t.bag} ({displayItemCount})
           </button>
           {status === "authenticated" ? (
             <>
@@ -256,7 +288,7 @@ export function SiteHeader() {
                   label={accountAvatarLabel}
                   size={36}
                 />
-                My account
+                {t.account}
               </Link>
               <button
                 type="button"
@@ -266,7 +298,7 @@ export function SiteHeader() {
                 }}
                 className="w-full rounded-xl px-4 py-3 text-left text-sm font-semibold text-muted hover:bg-ink/[0.04]"
               >
-                Sign out
+                {t.signOut}
               </button>
             </>
           ) : (
@@ -277,13 +309,14 @@ export function SiteHeader() {
                   onClick={() => setOpen(false)}
                   className="mt-2 block rounded-xl px-4 py-3 text-sm font-semibold text-ink/85 hover:bg-ink/[0.04]"
                 >
-                  Login
+                  {t.login}
                 </Link>
               }
             >
               <HeaderLoginLink
                 onNavigate={() => setOpen(false)}
                 className="mt-2 block rounded-xl px-4 py-3 text-sm font-semibold text-ink/85 hover:bg-ink/[0.04]"
+                label={t.login}
               />
             </Suspense>
           )}

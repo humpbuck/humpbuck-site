@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteClientEnhancements } from "@/components/site/site-client-enhancements";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { SiteLanguageProvider } from "@/components/site/site-language";
 
 export default function SiteLayout({
   children,
@@ -9,7 +10,7 @@ export default function SiteLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <SiteLanguageProvider>
       <Suspense fallback={null}>
         <SiteClientEnhancements />
       </Suspense>
@@ -18,6 +19,6 @@ export default function SiteLayout({
         {children}
       </main>
       <SiteFooter />
-    </>
+    </SiteLanguageProvider>
   );
 }
