@@ -38,8 +38,21 @@ function externalLink(raw: string): string | null {
   }
 }
 
-function modelLabel(slug: string): string {
-  return slug.replace(/-/g, " ").toUpperCase();
+function youtubeEmbedFromAny(raw: string): string | null {
+  try {
+    const u = new URL(raw);
+    if (u.hostname.includes("youtube.com")) {
+      const id = u.searchParams.get("v");
+      return id ? `https://www.youtube.com/embed/${encodeURIComponent(id)}` : null;
+    }
+    if (u.hostname.includes("youtu.be")) {
+      const id = u.pathname.replace(/^\/+/, "");
+      return id ? `https://www.youtube.com/embed/${encodeURIComponent(id)}` : null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 function TutorialMedia({ item }: { item: VideoTutorial }) {
@@ -108,15 +121,37 @@ export default async function VideoTutorialPage() {
             <article key={item.productSlug} className="space-y-3">
               <p className="text-sm font-semibold text-ink">{item.title}</p>
               <TutorialMedia item={item} />
-              {externalLink(item.youtubeUrl) ? (
-                <a
-                  href={externalLink(item.youtubeUrl) ?? "#"}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="inline-flex rounded-lg border border-line bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink hover:bg-paper"
-                >
-                  {modelLabel(item.productSlug)} video tutorial link
-                </a>
+              {youtubeEmbedFromAny(item.youtubeUrl) ? (
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-muted">
+                    If the video above cannot play, use this YouTube backup:
+                  </p>
+                  <div
+                    className={`w-full overflow-hidden rounded-2xl border border-line bg-black/80 ${ratioClass(item.aspectRatio)}`}
+                  >
+                    <iframe
+                      title={`${item.title} YouTube backup`}
+                      src={youtubeEmbedFromAny(item.youtubeUrl) ?? ""}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                      className="h-full w-full border-0"
+                    />
+                  </div>
+                </div>
+              ) : externalLink(item.youtubeUrl) ? (
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-muted">
+                    If the video above cannot play, open this backup video link:
+                  </p>
+                  <a
+                    href={externalLink(item.youtubeUrl) ?? "#"}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="inline-flex rounded-lg border border-line bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-ink hover:bg-paper"
+                  >
+                    Open backup video
+                  </a>
+                </div>
               ) : null}
             </article>
           ))}
