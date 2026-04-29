@@ -4,6 +4,7 @@ import { ArrowLeft, Check } from "lucide-react";
 import {
   formatPrice,
   getAllProducts,
+  getProductBySlug as getStaticProductBySlug,
   getSeriesBySlug,
 } from "@/lib/catalog";
 import {
@@ -95,13 +96,14 @@ export default async function ProductPage({
 
   const gallerySpec = R2_GALLERY_SPECS_BY_SLUG[slug];
   const pdpR2 = gallerySpec != null ? await getPdpR2Media(gallerySpec) : null;
+  const staticProduct = getStaticProductBySlug(slug);
 
   const gallerySlides =
     pdpR2?.gallery && pdpR2.gallery.length > 0
       ? pdpR2.gallery
-      : (product.galleryImages ?? product.images);
+      : (staticProduct?.galleryImages ?? staticProduct?.images ?? []);
 
-  const catalogVariants = product.variantOptions ?? [];
+  const staticVariants = staticProduct?.variantOptions ?? [];
   const discoveredVariants =
     pdpR2?.variants && pdpR2.variants.length > 0 ? pdpR2.variants : null;
   const variantOptions =
@@ -109,7 +111,7 @@ export default async function ProductPage({
       ? discoveredVariants.map((src) => {
           const n = styleNumFromR2VariantUrl(src) ?? 1;
           const id = `style-${String(n).padStart(2, "0")}`;
-          const cat = catalogVariants.find((v) => v.id === id);
+          const cat = staticVariants.find((v) => v.id === id);
           return {
             id,
             label: `Style ${String(n).padStart(2, "0")}`,
@@ -117,27 +119,29 @@ export default async function ProductPage({
             ...(cat?.inStock === false ? { inStock: false as const } : {}),
           };
         })
-      : product.variantOptions;
+      : staticVariants;
 
   const detailImages =
     pdpR2?.detail && pdpR2.detail.length > 0
       ? pdpR2.detail
-      : (product.detailImages ?? []);
+      : (staticProduct?.detailImages ?? []);
 
   const firstSlide =
     gallerySlides[0] ??
-    (product.galleryImages?.[0] ?? product.images[0] ?? product.promoVideo?.poster);
+    (staticProduct?.galleryImages?.[0] ??
+      staticProduct?.images[0] ??
+      staticProduct?.promoVideo?.poster);
   const promoVideosForMedia: { src: string; poster?: string }[] | null =
     pdpR2?.videos && pdpR2.videos.length > 0
       ? pdpR2.videos.map((src) => ({
           src,
           poster: firstSlide,
         }))
-      : product.promoVideo
+      : staticProduct?.promoVideo
         ? [
             {
-              src: product.promoVideo.src,
-              poster: firstSlide ?? product.promoVideo.poster,
+              src: staticProduct.promoVideo.src,
+              poster: firstSlide ?? staticProduct.promoVideo.poster,
             },
           ]
         : null;
