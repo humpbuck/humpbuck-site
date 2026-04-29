@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Video tutorial",
   alternates: { canonical: "/video-tutorial" },
 };
+export const dynamic = "force-dynamic";
 
 function youtubeEmbedUrl(raw: string): string | null {
   try {
