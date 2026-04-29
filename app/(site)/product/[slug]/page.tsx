@@ -131,19 +131,20 @@ export default async function ProductPage({
     (staticProduct?.galleryImages?.[0] ??
       staticProduct?.images[0] ??
       staticProduct?.promoVideo?.poster);
+  const preferredPromoVideo = product.promoVideo ?? staticProduct?.promoVideo;
   const promoVideosForMedia: { src: string; poster?: string }[] | null =
-    pdpR2?.videos && pdpR2.videos.length > 0
-      ? pdpR2.videos.map((src) => ({
-          src,
-          poster: firstSlide,
-        }))
-      : staticProduct?.promoVideo
-        ? [
-            {
-              src: staticProduct.promoVideo.src,
-              poster: firstSlide ?? staticProduct.promoVideo.poster,
-            },
-          ]
+    preferredPromoVideo
+      ? [
+          {
+            src: preferredPromoVideo.src,
+            poster: firstSlide ?? preferredPromoVideo.poster,
+          },
+        ]
+      : pdpR2?.videos && pdpR2.videos.length > 0
+        ? pdpR2.videos.map((src) => ({
+            src,
+            poster: firstSlide,
+          }))
         : null;
 
   return (

@@ -110,6 +110,11 @@ async function listVideoFolderUrls(spec: R2GallerySpec): Promise<string[]> {
     const prefix = `products/${spec.slugFolder}/video/`;
     const raw = await listObjectKeys(client, bucket, prefix);
     const mp4 = filterMp4(raw);
+    const canonicalBase = `${spec.filePrefix}-video.mp4`.toLowerCase();
+    const canonical = mp4.find(
+      (k) => (k.split("/").pop() ?? "").toLowerCase() === canonicalBase,
+    );
+    if (canonical) return [keyToPublicUrl(canonical)];
     return sortKeysByFileName(mp4).map(keyToPublicUrl);
   } catch {
     return [];
