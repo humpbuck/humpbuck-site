@@ -407,15 +407,29 @@ export const R2 = {
       video: rmM03VideoUrl(),
     },
     rmM04: rmM04ProductAssets(),
-    rmM05: rmTonneauProductAssets("RM-M05", "HUMPBUCK-RM-M05"),
-    rmM06: rmTonneauProductAssets("RM-M06", "HUMPBUCK-RM-M06", { variants: 8 }),
-    rmM07: rmTonneauProductAssets("RM-M07", "HUMPBUCK-RM-M07"),
+    rmM05: rmTonneauProductAssets("RM-M05", "HUMPBUCK-RM-M05", { detail: 20 }),
+    rmM06: rmTonneauProductAssets("RM-M06", "HUMPBUCK-RM-M06", {
+      gallery: 5,
+      detail: 19,
+      variants: 8,
+    }),
+    rmM07: rmTonneauProductAssets("RM-M07", "HUMPBUCK-RM-M07", { detail: 22 }),
     /**
      * `HUMPBUCK-RM-M08-{gallery|detail}-*.webp`, variants `…-sty-a-NN.webp`, video `…-video.mp4`.
      */
     rmM08: rmM08ProductAssets(),
-    rmM09: rmTonneauProductAssets("RM-M09", "HUMPBUCK-RM-M09", { variants: 14 }),
-    rmM10: rmTonneauProductAssets("RM-M10", "HUMPBUCK-RM-M10"),
-    rdExcalibur01: rdExcaliburProductAssets("01"),
+    rmM09: rmTonneauProductAssets("RM-M09", "HUMPBUCK-RM-M09", {
+      detail: 29,
+      variants: 14,
+    }),
+    rmM10: rmTonneauProductAssets("RM-M10", "HUMPBUCK-RM-M10", {
+      gallery: 7,
+      detail: 24,
+    }),
+    rdExcalibur01: rmTonneauProductAssets(
+      "RD-Excalibur01",
+      "HUMPBUCK-RD-Excalibur01",
+      { detail: 25, variants: 10 },
+    ),
   },
 } as const;
