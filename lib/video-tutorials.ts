@@ -19,6 +19,10 @@ export type VideoTutorialProductOption = {
 
 const DEFAULT_ASPECT_RATIO: VideoAspectRatio = "9:16";
 
+function normalizeProductSlug(v: string): string {
+  return v.trim().toLowerCase();
+}
+
 async function ensureVideoTutorialTable() {
   await prisma.$executeRawUnsafe(`
     CREATE TABLE IF NOT EXISTS "VideoTutorial" (
@@ -63,11 +67,13 @@ export async function listVideoTutorials({
     aspectRatio: string;
     updatedAt: Date;
   }>;
-  const rowBySlug = new Map(rows.map((r) => [r.productSlug, r]));
+  const rowBySlug = new Map(
+    rows.map((r) => [normalizeProductSlug(r.productSlug), r]),
+  );
 
   const out: VideoTutorial[] = [];
   for (const product of bySlug.values()) {
-    const row = rowBySlug.get(product.slug);
+    const row = rowBySlug.get(normalizeProductSlug(product.slug));
     const fallbackUrl = includeFallback ? product.promoVideo?.src?.trim() || "" : "";
     if (!row && !fallbackUrl) continue;
     out.push({
@@ -104,9 +110,10 @@ export async function saveVideoTutorial(input: {
   aspectRatio: VideoAspectRatio;
 }) {
   await ensureVideoTutorialTable();
+  const productSlug = normalizeProductSlug(input.productSlug);
   await prisma.$executeRaw`
     INSERT INTO "VideoTutorial" ("productSlug", "title", "url", "aspectRatio", "updatedAt")
-    VALUES (${input.productSlug}, ${input.title}, ${input.url}, ${input.aspectRatio}, NOW())
+    VALUES (${productSlug}, ${input.title}, ${input.url}, ${input.aspectRatio}, NOW())
     ON CONFLICT ("productSlug")
     DO UPDATE SET
       "title" = EXCLUDED."title",
@@ -118,8 +125,9 @@ export async function saveVideoTutorial(input: {
 
 export async function deleteVideoTutorial(productSlug: string) {
   await ensureVideoTutorialTable();
+  const normalizedSlug = normalizeProductSlug(productSlug);
   await prisma.$executeRaw`
     DELETE FROM "VideoTutorial"
-    WHERE "productSlug" = ${productSlug}
+    WHERE "productSlug" = ${normalizedSlug}
   `;
 }
