@@ -117,10 +117,17 @@ export async function saveVideoTutorial(input: {
 }) {
   await ensureVideoTutorialTable();
   const productSlug = normalizeProductSlug(input.productSlug);
-  await prisma.$executeRawUnsafe(
-    `DELETE FROM "VideoTutorial" WHERE LOWER("productSlug") = LOWER(?)`,
-    productSlug,
-  );
+  const existingRows = (await prisma.$queryRaw`
+    SELECT "productSlug"
+    FROM "VideoTutorial"
+    WHERE LOWER("productSlug") = LOWER(${productSlug})
+  `) as Array<{ productSlug: string }>;
+  for (const row of existingRows) {
+    await prisma.$executeRaw`
+      DELETE FROM "VideoTutorial"
+      WHERE "productSlug" = ${row.productSlug}
+    `;
+  }
   await prisma.$executeRaw`
     INSERT INTO "VideoTutorial" ("productSlug", "title", "url", "aspectRatio", "updatedAt")
     VALUES (${productSlug}, ${input.title}, ${input.url}, ${input.aspectRatio}, NOW())
