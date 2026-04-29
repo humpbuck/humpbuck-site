@@ -60,6 +60,7 @@ export async function listVideoTutorials({
   const rows = (await prisma.$queryRawUnsafe(`
     SELECT "productSlug", "title", "url", "aspectRatio", "updatedAt"
     FROM "VideoTutorial"
+    ORDER BY "updatedAt" DESC
   `)) as Array<{
     productSlug: string;
     title: string;
@@ -67,9 +68,11 @@ export async function listVideoTutorials({
     aspectRatio: string;
     updatedAt: Date;
   }>;
-  const rowBySlug = new Map(
-    rows.map((r) => [normalizeProductSlug(r.productSlug), r]),
-  );
+  const rowBySlug = new Map<string, (typeof rows)[number]>();
+  for (const row of rows) {
+    const key = normalizeProductSlug(row.productSlug);
+    if (!rowBySlug.has(key)) rowBySlug.set(key, row);
+  }
 
   const out: VideoTutorial[] = [];
   for (const product of bySlug.values()) {
@@ -114,6 +117,10 @@ export async function saveVideoTutorial(input: {
 }) {
   await ensureVideoTutorialTable();
   const productSlug = normalizeProductSlug(input.productSlug);
+  await prisma.$executeRawUnsafe(
+    `DELETE FROM "VideoTutorial" WHERE LOWER("productSlug") = LOWER(?)`,
+    productSlug,
+  );
   await prisma.$executeRaw`
     INSERT INTO "VideoTutorial" ("productSlug", "title", "url", "aspectRatio", "updatedAt")
     VALUES (${productSlug}, ${input.title}, ${input.url}, ${input.aspectRatio}, NOW())
