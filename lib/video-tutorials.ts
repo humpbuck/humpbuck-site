@@ -75,11 +75,14 @@ export async function listVideoTutorials({
   for (const product of bySlug.values()) {
     const row = rowBySlug.get(normalizeProductSlug(product.slug));
     const fallbackUrl = includeFallback ? product.promoVideo?.src?.trim() || "" : "";
-    if (!row && !fallbackUrl) continue;
+    const hasRow = Boolean(row);
+    const rowUrl = (row?.url ?? "").trim();
+    const effectiveUrl = hasRow ? rowUrl : fallbackUrl;
+    if (!effectiveUrl) continue;
     out.push({
       productSlug: product.slug,
       title: row?.title || defaultTitle(product.name),
-      url: (row?.url || fallbackUrl).trim(),
+      url: effectiveUrl,
       aspectRatio: coerceAspectRatio(row?.aspectRatio),
       updatedAt: (row?.updatedAt ?? new Date(0)).toISOString(),
     });
@@ -126,8 +129,13 @@ export async function saveVideoTutorial(input: {
 export async function deleteVideoTutorial(productSlug: string) {
   await ensureVideoTutorialTable();
   const normalizedSlug = normalizeProductSlug(productSlug);
+  const deletedTitle = `${normalizedSlug} video tutorial`;
   await prisma.$executeRaw`
-    DELETE FROM "VideoTutorial"
-    WHERE "productSlug" = ${normalizedSlug}
+    INSERT INTO "VideoTutorial" ("productSlug", "title", "url", "aspectRatio", "updatedAt")
+    VALUES (${normalizedSlug}, ${deletedTitle}, ${""}, ${DEFAULT_ASPECT_RATIO}, NOW())
+    ON CONFLICT ("productSlug")
+    DO UPDATE SET
+      "url" = ${""},
+      "updatedAt" = NOW()
   `;
 }
