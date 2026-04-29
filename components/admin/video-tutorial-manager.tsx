@@ -99,11 +99,23 @@ export function VideoTutorialManager({
       </div>
       <div className="space-y-4">
         {rows.map((row, idx) => (
-          <div key={row.productSlug} className="rounded-2xl border border-line bg-white/60 p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-              {row.productSlug}
-            </p>
+          <div key={`${row.productSlug}-${idx}`} className="rounded-2xl border border-line bg-white/60 p-4">
             <div className="mt-3 grid gap-3 sm:grid-cols-12">
+              <select
+                value={row.productSlug}
+                onChange={(e) =>
+                  setRows((prev) =>
+                    prev.map((x, i) => (i === idx ? { ...x, productSlug: e.target.value } : x)),
+                  )
+                }
+                className="sm:col-span-2 rounded-xl border border-line bg-white px-3 py-2 text-sm"
+              >
+                {products.map((p) => (
+                  <option key={p.slug} value={p.slug}>
+                    {p.slug}
+                  </option>
+                ))}
+              </select>
               <input
                 value={row.title}
                 onChange={(e) =>
@@ -111,7 +123,7 @@ export function VideoTutorialManager({
                     prev.map((x, i) => (i === idx ? { ...x, title: e.target.value } : x)),
                   )
                 }
-                className="sm:col-span-3 rounded-xl border border-line bg-white px-3 py-2 text-sm"
+                className="sm:col-span-2 rounded-xl border border-line bg-white px-3 py-2 text-sm"
                 placeholder="Tutorial title"
               />
               <input
@@ -121,7 +133,7 @@ export function VideoTutorialManager({
                     prev.map((x, i) => (i === idx ? { ...x, url: e.target.value } : x)),
                   )
                 }
-                className="sm:col-span-6 rounded-xl border border-line bg-white px-3 py-2 text-sm"
+                className="sm:col-span-5 rounded-xl border border-line bg-white px-3 py-2 text-sm"
                 placeholder="https://..."
               />
               <select
@@ -141,12 +153,12 @@ export function VideoTutorialManager({
                   </option>
                 ))}
               </select>
-              <div className="sm:col-span-1 flex gap-2">
+              <div className="sm:col-span-3 flex gap-2">
                 <button
                   type="button"
                   disabled={busySlug === row.productSlug}
                   onClick={() => void saveRow(row)}
-                  className="w-full rounded-xl bg-ink px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper disabled:opacity-50"
+                  className="flex-1 rounded-xl bg-ink px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper disabled:opacity-50"
                 >
                   Save
                 </button>
@@ -154,7 +166,7 @@ export function VideoTutorialManager({
                   type="button"
                   disabled={busySlug === row.productSlug}
                   onClick={() => void deleteRow(row.productSlug)}
-                  className="w-full rounded-xl border border-red-200 bg-white px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-red-700 hover:bg-red-50 disabled:opacity-50"
+                  className="flex-1 rounded-xl border border-red-200 bg-white px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-red-700 hover:bg-red-50 disabled:opacity-50"
                 >
                   Delete
                 </button>
