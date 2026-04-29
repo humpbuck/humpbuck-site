@@ -1,38 +1,70 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 
 import { CookieSettingsLink } from "@/components/analytics/cookie-settings-link";
+import { normalizeSiteLanguage } from "@/lib/site-i18n";
 import { publicSupportEmail } from "@/lib/support-contact";
 
-const cols = [
-  {
-    title: "Shop",
-    links: [
-      { label: "All products", href: "/shop" },
-      { label: "DIGI-TEMP", href: "/series/digitemp" },
-      { label: "RM-TONNEAU", href: "/series/tonneau" },
-      { label: "RD-ASTRAL", href: "/series/rd-astral" },
-    ],
-  },
-  {
-    title: "Company",
-    links: [
-      { label: "Wholesale", href: "/wholesale" },
-      { label: "Affiliates", href: "/affiliates" },
-      { label: "About", href: "/about" },
-    ],
-  },
-  {
-    title: "Support",
-    links: [
-      { label: "Shipping & tax", href: "/shipping" },
-      { label: "Refund policy", href: "/refund" },
-      { label: "Privacy policy", href: "/privacy" },
-      { label: "Terms of service", href: "/terms" },
-    ],
-  },
-] as const;
-
 export function SiteFooter() {
+  const lang = normalizeSiteLanguage(cookies().get("site_lang")?.value);
+  const copy =
+    lang === "es"
+      ? {
+          shop: "Tienda",
+          allProducts: "Todos los productos",
+          company: "Compania",
+          wholesale: "Mayorista",
+          affiliates: "Afiliados",
+          about: "Acerca de",
+          support: "Soporte",
+          shippingTax: "Envio e impuestos",
+          refundPolicy: "Politica de reembolso",
+          privacyPolicy: "Politica de privacidad",
+          terms: "Terminos del servicio",
+          rights: "Todos los derechos reservados.",
+        }
+      : {
+          shop: "Shop",
+          allProducts: "All products",
+          company: "Company",
+          wholesale: "Wholesale",
+          affiliates: "Affiliates",
+          about: "About",
+          support: "Support",
+          shippingTax: "Shipping & tax",
+          refundPolicy: "Refund policy",
+          privacyPolicy: "Privacy policy",
+          terms: "Terms of service",
+          rights: "All rights reserved.",
+        };
+  const cols = [
+    {
+      title: copy.shop,
+      links: [
+        { label: copy.allProducts, href: "/shop" },
+        { label: "DIGI-TEMP", href: "/series/digitemp" },
+        { label: "RM-TONNEAU", href: "/series/tonneau" },
+        { label: "RD-ASTRAL", href: "/series/rd-astral" },
+      ],
+    },
+    {
+      title: copy.company,
+      links: [
+        { label: copy.wholesale, href: "/wholesale" },
+        { label: copy.affiliates, href: "/affiliates" },
+        { label: copy.about, href: "/about" },
+      ],
+    },
+    {
+      title: copy.support,
+      links: [
+        { label: copy.shippingTax, href: "/shipping" },
+        { label: copy.refundPolicy, href: "/refund" },
+        { label: copy.privacyPolicy, href: "/privacy" },
+        { label: copy.terms, href: "/terms" },
+      ],
+    },
+  ] as const;
   const supportMail = publicSupportEmail();
 
   return (
@@ -82,7 +114,7 @@ export function SiteFooter() {
           <div className="grid gap-4 sm:grid-cols-[1fr_1.1fr] sm:items-start sm:gap-10">
             <div className="min-w-0 space-y-2.5 text-left">
               <p className="text-[12px] leading-relaxed text-muted">
-                © {new Date().getFullYear()} HUMPBUCK. All rights reserved.
+                © {new Date().getFullYear()} HUMPBUCK. {copy.rights}
               </p>
               <div>
                 <CookieSettingsLink />

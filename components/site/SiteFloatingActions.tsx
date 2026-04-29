@@ -18,9 +18,18 @@ const ScrollToTopButton = dynamic(
   { ssr: false },
 );
 
+const LanguageFloatingSelector = dynamic(
+  () =>
+    import("@/components/site/LanguageFloatingSelector").then(
+      (m) => m.LanguageFloatingSelector,
+    ),
+  { ssr: false },
+);
+
 export function SiteFloatingActions() {
   return (
     <>
+      <LanguageFloatingSelector />
       <WhatsAppFloatingButton />
       <ScrollToTopButton />
     </>

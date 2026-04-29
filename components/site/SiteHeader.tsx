@@ -35,7 +35,7 @@ function HeaderLoginLink({
 }
 
 export function SiteHeader() {
-  const { lang, setLang, t } = useSiteLanguage();
+  const { t } = useSiteLanguage();
   const nav = [
     { label: t.navShop, href: "/shop" },
     { label: t.navDigitemp, href: "/series/digitemp" },
@@ -136,18 +136,6 @@ export function SiteHeader() {
           </nav>
 
           <div className="flex items-center gap-1 sm:gap-2">
-            <label className="hidden text-[10px] font-medium uppercase tracking-[0.12em] text-ink/60 sm:block">
-              {t.language}
-            </label>
-            <select
-              value={lang}
-              onChange={(e) => setLang(e.target.value === "es" ? "es" : "en")}
-              className="rounded-full border border-line bg-white px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-ink/80"
-              aria-label={t.language}
-            >
-              <option value="en">EN</option>
-              <option value="es">ES</option>
-            </select>
             {status === "authenticated" ? (
               <AccountMenu
                 userEmail={session?.user?.email}
@@ -236,20 +224,6 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
-          <div className="mt-2 px-4 py-2">
-            <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
-              {t.language}
-            </p>
-            <select
-              value={lang}
-              onChange={(e) => setLang(e.target.value === "es" ? "es" : "en")}
-              className="w-full rounded-xl border border-line bg-white px-3 py-2 text-sm font-semibold text-ink/85"
-              aria-label={t.language}
-            >
-              <option value="en">English</option>
-              <option value="es">Espanol</option>
-            </select>
-          </div>
           <Link
             href="/shipping"
             onClick={() => setOpen(false)}
