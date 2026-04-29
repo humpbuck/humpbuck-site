@@ -152,6 +152,41 @@ async function validateVideoDimensions(file: File): Promise<boolean> {
   });
 }
 
+function styleNumberFromVariantId(variantId?: string): number | null {
+  if (!variantId?.trim()) return null;
+  const m = /^style-(\d+)$/i.exec(variantId.trim());
+  if (!m) return null;
+  const n = Number.parseInt(m[1], 10);
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+function upsertByIndex(list: string[], oneBasedIndex: number, value: string): string[] {
+  const idx = Math.max(0, oneBasedIndex - 1);
+  const next = [...list];
+  while (next.length < idx) next.push("");
+  next[idx] = value;
+  return next;
+}
+
+function nextIndexedSlot(
+  list: string[],
+  section: "gallery" | "detail",
+): number {
+  const re =
+    section === "gallery"
+      ? /-gallery-(\d+)\.webp(?:\?.*)?$/i
+      : /-detail-(\d+)\.webp(?:\?.*)?$/i;
+  let max = 0;
+  for (const u of list) {
+    const m = re.exec(u);
+    if (!m) continue;
+    const n = Number.parseInt(m[1], 10);
+    if (Number.isFinite(n) && n > max) max = n;
+  }
+  if (max > 0) return max + 1;
+  return list.length + 1;
+}
+
 export function ProductManager({
   initialProducts,
   initialInventory,
@@ -223,6 +258,14 @@ export function ProductManager({
     setBusy(true);
     setMessage("");
     setMessageType("info");
+    const sortIndex =
+      section === "gallery"
+        ? nextIndexedSlot(current.gallery, "gallery")
+        : section === "detail"
+          ? nextIndexedSlot(current.detail, "detail")
+          : section === "variants"
+            ? styleNumberFromVariantId(variantId) ?? undefined
+            : undefined;
     try {
       const presign = await fetch("/api/admin/products/presign", {
         method: "POST",
@@ -231,6 +274,7 @@ export function ProductManager({
           productSlug: current.slug || "draft-product",
           section,
           variantId,
+          sortIndex,
           contentType: file.type,
           byteSize: file.size,
         }),
@@ -258,10 +302,24 @@ export function ProductManager({
 
       updateCurrent((p) => {
         if (section === "gallery") {
-          return { ...p, gallery: [...p.gallery, payload.publicUrl!] };
+          return {
+            ...p,
+            gallery: upsertByIndex(
+              p.gallery,
+              sortIndex ?? p.gallery.length + 1,
+              payload.publicUrl!,
+            ),
+          };
         }
         if (section === "detail") {
-          return { ...p, detail: [...p.detail, payload.publicUrl!] };
+          return {
+            ...p,
+            detail: upsertByIndex(
+              p.detail,
+              sortIndex ?? p.detail.length + 1,
+              payload.publicUrl!,
+            ),
+          };
         }
         if (section === "video") {
           return {

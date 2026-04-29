@@ -29,6 +29,7 @@ export async function POST(req: Request) {
     contentType?: string;
     byteSize?: number;
     variantId?: string;
+    sortIndex?: number;
   };
   try {
     body = await req.json();
@@ -41,6 +42,10 @@ export async function POST(req: Request) {
   const contentType = String(body.contentType ?? "").trim();
   const byteSize = Number(body.byteSize);
   const variantId = String(body.variantId ?? "").trim();
+  const sortIndex =
+    Number.isFinite(Number(body.sortIndex)) && Number(body.sortIndex) > 0
+      ? Math.floor(Number(body.sortIndex))
+      : undefined;
 
   if (!productSlug || !section || !contentType) {
     return NextResponse.json(
@@ -80,6 +85,7 @@ export async function POST(req: Request) {
     section,
     contentType,
     variantId,
+    sortIndex,
   });
   const uploadUrl = await presignProductMediaPut(key, contentType);
   const publicUrl = publicUrlForProductMediaKey(key);

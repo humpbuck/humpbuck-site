@@ -1,7 +1,6 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { randomBytes } from "crypto";
-import { R2_PUBLIC_BASE } from "@/lib/r2";
+import { R2_GALLERY_SPECS_BY_SLUG, R2_PUBLIC_BASE } from "@/lib/r2";
 
 export function isR2ProductUploadConfigured(): boolean {
   return Boolean(
@@ -37,22 +36,50 @@ function normalizeSlug(s: string): string {
 
 export type ProductMediaSection = "gallery" | "detail" | "variants" | "video";
 
+function pad2(n: number): string {
+  return String(n).padStart(2, "0");
+}
+
+function styleNumberFromVariantId(variantId?: string): number | null {
+  if (!variantId?.trim()) return null;
+  const m = /^style-(\d+)$/i.exec(variantId.trim());
+  if (!m) return null;
+  const n = Number.parseInt(m[1], 10);
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
 export function buildProductMediaObjectKey(params: {
   productSlug: string;
   section: ProductMediaSection;
   contentType: string;
   variantId?: string;
+  sortIndex?: number;
 }): string {
   const slug = normalizeSlug(params.productSlug);
   const section = params.section;
   const ext = params.contentType === "video/mp4" ? "mp4" : "webp";
-  const rid = randomBytes(8).toString("hex");
-  const ts = Date.now();
-  if (section === "variants") {
-    const variant = normalizeSlug(params.variantId || "style-01");
-    return `products/${slug}/variants/${variant}/${ts}-${rid}.${ext}`;
+  const spec = R2_GALLERY_SPECS_BY_SLUG[slug];
+
+  if (!spec) {
+    if (section === "video") return `products/${slug}/video/${slug}-video.${ext}`;
+    const n = Math.max(1, Math.floor(params.sortIndex ?? 1));
+    const mid = section === "variants" ? "style" : section;
+    return `products/${slug}/${section}/${slug}-${mid}-${pad2(n)}.${ext}`;
   }
-  return `products/${slug}/${section}/${ts}-${rid}.${ext}`;
+
+  if (section === "video") {
+    return `products/${spec.slugFolder}/video/${spec.filePrefix}-video.${ext}`;
+  }
+  if (section === "variants") {
+    const n =
+      styleNumberFromVariantId(params.variantId) ??
+      Math.max(1, Math.floor(params.sortIndex ?? 1));
+    const variantPrefix = spec.variantFilePrefix ?? spec.filePrefix;
+    const variantMid = spec.variantSlug ?? "style";
+    return `products/${spec.slugFolder}/variants/${variantPrefix}-${variantMid}-${pad2(n)}.${ext}`;
+  }
+  const n = Math.max(1, Math.floor(params.sortIndex ?? 1));
+  return `products/${spec.slugFolder}/${section}/${spec.filePrefix}-${section}-${pad2(n)}.${ext}`;
 }
 
 export async function presignProductMediaPut(
