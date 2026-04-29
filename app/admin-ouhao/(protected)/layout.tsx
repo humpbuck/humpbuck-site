@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail } from "lucide-react";
+import { ChevronDown, Mail } from "lucide-react";
 import {
   ADMIN_INBOX_CATEGORY,
   adminInboxCategoryLabel,
@@ -9,14 +9,15 @@ import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import { prisma } from "@/lib/prisma";
 
-async function LogoutButton() {
-  const navItemClass =
-    "text-[11px] font-semibold uppercase tracking-[0.12em] text-muted hover:text-ink";
+async function LogoutButton({ inMenu = false }: { inMenu?: boolean }) {
+  const navItemClass = inMenu
+    ? "block w-full rounded-lg px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-paper hover:text-ink"
+    : "text-[11px] font-semibold uppercase tracking-[0.12em] text-muted hover:text-ink";
   return (
     <form
       action="/api/admin/logout"
       method="post"
-      className="m-0 inline-flex shrink-0 items-center p-0 align-middle"
+      className={inMenu ? "m-0 block p-0" : "m-0 inline-flex shrink-0 items-center p-0 align-middle"}
     >
       <button
         type="submit"
@@ -124,19 +125,38 @@ export default async function AdminProtectedLayout({
           >
             Coupons
           </Link>
-          <Link
-            href={adminPath("/affiliate")}
-            className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
-          >
-            Affiliate
-          </Link>
-          <Link
-            href="/"
-            className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-muted hover:text-ink"
-          >
-            View site
-          </Link>
-          <LogoutButton />
+          <div className="group relative">
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-muted hover:text-ink"
+            >
+              More
+              <ChevronDown className="h-3 w-3" />
+            </button>
+            <div className="pointer-events-none absolute right-0 top-6 z-20 hidden min-w-44 rounded-xl border border-line bg-white p-2 text-xs text-ink shadow-md group-hover:pointer-events-auto group-hover:block">
+              <Link
+                href={adminPath("/affiliate")}
+                className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-paper hover:text-ink"
+              >
+                Affiliate
+              </Link>
+              <Link
+                href={adminPath("/video-tutorial")}
+                className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-paper hover:text-ink"
+              >
+                Video tutorial
+              </Link>
+              <Link
+                href="/"
+                className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-paper hover:text-ink"
+              >
+                View site
+              </Link>
+              <div className="mt-1 border-t border-line pt-1">
+                <LogoutButton inMenu />
+              </div>
+            </div>
+          </div>
           <div className="group relative">
             <Link
               href={adminPath("/messages")}

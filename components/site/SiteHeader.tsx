@@ -19,6 +19,7 @@ const nav = [
   { label: "Wholesale", href: "/wholesale" },
   { label: "Affiliates", href: "/affiliates" },
   { label: "About", href: "/about" },
+  { label: "Video tutorial", href: "/video-tutorial" },
 ] as const;
 
 function HeaderLoginLink({
@@ -134,10 +135,10 @@ export function SiteHeader() {
 
           <div className="flex items-center gap-1 sm:gap-2">
             <Link
-              href="/shop"
+              href="/video-tutorial"
               className="hidden rounded-full border border-[color:var(--color-line)] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/80 transition hover:border-ink/20 hover:text-ink sm:inline-flex"
             >
-              Catalog
+              Video tutorial
             </Link>
             {status === "authenticated" ? (
               <AccountMenu
