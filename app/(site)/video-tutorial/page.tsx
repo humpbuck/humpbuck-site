@@ -118,13 +118,22 @@ export default async function VideoTutorialPage() {
       ) : (
         <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {tutorials.map((item) => (
-            <article key={item.productSlug} className="space-y-3">
+            <article
+              key={item.productSlug}
+              className="space-y-3 rounded-2xl border border-line bg-white/70 p-4"
+            >
               <p className="text-sm font-semibold text-ink">{item.title}</p>
+              <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">
+                Primary video
+              </p>
               <TutorialMedia item={item} />
               {youtubeEmbedFromAny(item.youtubeUrl) ? (
-                <div className="space-y-2">
+                <div className="space-y-2 border-t border-line pt-3">
                   <p className="text-xs font-medium text-muted">
                     If the video above cannot play, use this YouTube backup:
+                  </p>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted">
+                    Backup video
                   </p>
                   <div
                     className={`w-full overflow-hidden rounded-2xl border border-line bg-black/80 ${ratioClass(item.aspectRatio)}`}
@@ -139,7 +148,7 @@ export default async function VideoTutorialPage() {
                   </div>
                 </div>
               ) : externalLink(item.youtubeUrl) ? (
-                <div className="space-y-2">
+                <div className="space-y-2 border-t border-line pt-3">
                   <p className="text-xs font-medium text-muted">
                     If the video above cannot play, open this backup video link:
                   </p>
