@@ -5,8 +5,8 @@ import { CookieSettingsLink } from "@/components/analytics/cookie-settings-link"
 import { normalizeSiteLanguage } from "@/lib/site-i18n";
 import { publicSupportEmail } from "@/lib/support-contact";
 
-export function SiteFooter() {
-  const lang = normalizeSiteLanguage(cookies().get("site_lang")?.value);
+export async function SiteFooter() {
+  const lang = normalizeSiteLanguage((await cookies()).get("site_lang")?.value);
   const copy =
     lang === "es"
       ? {

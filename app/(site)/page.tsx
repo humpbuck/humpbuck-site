@@ -45,9 +45,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
   // NOTE: this page remains server-rendered; read preferred UI language from cookie.
-  const lang = normalizeSiteLanguage(cookies().get("site_lang")?.value);
+  const lang = normalizeSiteLanguage((await cookies()).get("site_lang")?.value);
   const copy =
     lang === "es"
       ? {
