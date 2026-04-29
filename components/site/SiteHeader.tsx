@@ -16,10 +16,9 @@ const nav = [
   { label: "DIGI-TEMP", href: "/series/digitemp" },
   { label: "RM-TONNEAU", href: "/series/tonneau" },
   { label: "RD-ASTRAL", href: "/series/rd-astral" },
-  { label: "Wholesale", href: "/wholesale" },
   { label: "Affiliates", href: "/affiliates" },
-  { label: "About", href: "/about" },
   { label: "Video tutorial", href: "/video-tutorial" },
+  { label: "About", href: "/about" },
 ] as const;
 
 function HeaderLoginLink({
