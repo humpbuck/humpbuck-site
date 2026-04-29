@@ -12,6 +12,11 @@ export type VideoTutorial = {
   updatedAt: string;
 };
 
+export type VideoTutorialProductOption = {
+  slug: string;
+  name: string;
+};
+
 const DEFAULT_ASPECT_RATIO: VideoAspectRatio = "9:16";
 
 async function ensureVideoTutorialTable() {
@@ -36,7 +41,11 @@ function defaultTitle(name: string): string {
   return `${name} video tutorial`;
 }
 
-export async function listVideoTutorials(): Promise<VideoTutorial[]> {
+export async function listVideoTutorials({
+  includeFallback = true,
+}: {
+  includeFallback?: boolean;
+} = {}): Promise<VideoTutorial[]> {
   await ensureVideoTutorialTable();
   const merged = await getMergedCatalogProducts();
   const bySlug = new Map(merged.map((p) => [p.slug, p]));
@@ -59,7 +68,7 @@ export async function listVideoTutorials(): Promise<VideoTutorial[]> {
   const out: VideoTutorial[] = [];
   for (const product of bySlug.values()) {
     const row = rowBySlug.get(product.slug);
-    const fallbackUrl = product.promoVideo?.src?.trim() || "";
+    const fallbackUrl = includeFallback ? product.promoVideo?.src?.trim() || "" : "";
     if (!row && !fallbackUrl) continue;
     out.push({
       productSlug: product.slug,
@@ -73,6 +82,19 @@ export async function listVideoTutorials(): Promise<VideoTutorial[]> {
   return out
     .filter((x) => x.url.length > 0)
     .sort((a, b) => a.title.localeCompare(b.title));
+}
+
+export async function listVideoTutorialProductOptions(): Promise<
+  VideoTutorialProductOption[]
+> {
+  const merged = await getMergedCatalogProducts();
+  const bySlug = new Map(merged.map((p) => [p.slug, p]));
+  for (const p of getAllProducts()) {
+    if (!bySlug.has(p.slug)) bySlug.set(p.slug, p);
+  }
+  return [...bySlug.values()]
+    .map((p) => ({ slug: p.slug, name: p.name }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function saveVideoTutorial(input: {
@@ -91,5 +113,13 @@ export async function saveVideoTutorial(input: {
       "url" = EXCLUDED."url",
       "aspectRatio" = EXCLUDED."aspectRatio",
       "updatedAt" = NOW()
+  `;
+}
+
+export async function deleteVideoTutorial(productSlug: string) {
+  await ensureVideoTutorialTable();
+  await prisma.$executeRaw`
+    DELETE FROM "VideoTutorial"
+    WHERE "productSlug" = ${productSlug}
   `;
 }

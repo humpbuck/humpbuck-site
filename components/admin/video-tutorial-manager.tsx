@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import type { VideoAspectRatio } from "@/lib/video-tutorials";
+import type {
+  VideoAspectRatio,
+  VideoTutorialProductOption,
+} from "@/lib/video-tutorials";
 
 type TutorialRow = {
   productSlug: string;
@@ -12,7 +15,13 @@ type TutorialRow = {
 
 const RATIOS: VideoAspectRatio[] = ["16:9", "1:1", "9:16"];
 
-export function VideoTutorialManager({ initialRows }: { initialRows: TutorialRow[] }) {
+export function VideoTutorialManager({
+  initialRows,
+  products,
+}: {
+  initialRows: TutorialRow[];
+  products: VideoTutorialProductOption[];
+}) {
   const [rows, setRows] = useState<TutorialRow[]>(initialRows);
   const [message, setMessage] = useState("");
   const [busySlug, setBusySlug] = useState<string | null>(null);
@@ -34,6 +43,44 @@ export function VideoTutorialManager({ initialRows }: { initialRows: TutorialRow
     setBusySlug(null);
   }
 
+  async function deleteRow(productSlug: string) {
+    setBusySlug(productSlug);
+    setMessage("");
+    const res = await fetch("/api/admin/video-tutorials", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productSlug }),
+    });
+    if (!res.ok) {
+      setMessage("Delete failed");
+      setBusySlug(null);
+      return;
+    }
+    setRows((prev) => prev.filter((x) => x.productSlug !== productSlug));
+    setMessage(`Deleted ${productSlug}`);
+    setBusySlug(null);
+  }
+
+  function addRow() {
+    const candidate = products.find(
+      (p) => !rows.some((row) => row.productSlug === p.slug),
+    );
+    if (!candidate) {
+      setMessage("No remaining products to add.");
+      return;
+    }
+    setRows((prev) => [
+      {
+        productSlug: candidate.slug,
+        title: `${candidate.name} video tutorial`,
+        url: "",
+        aspectRatio: "9:16",
+      },
+      ...prev,
+    ]);
+    setMessage("");
+  }
+
   return (
     <div>
       {message ? (
@@ -41,6 +88,15 @@ export function VideoTutorialManager({ initialRows }: { initialRows: TutorialRow
           {message}
         </p>
       ) : null}
+      <div className="mb-4">
+        <button
+          type="button"
+          onClick={addRow}
+          className="rounded-xl border border-line bg-white px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/85 hover:bg-paper"
+        >
+          Add tutorial
+        </button>
+      </div>
       <div className="space-y-4">
         {rows.map((row, idx) => (
           <div key={row.productSlug} className="rounded-2xl border border-line bg-white/60 p-4">
@@ -85,14 +141,24 @@ export function VideoTutorialManager({ initialRows }: { initialRows: TutorialRow
                   </option>
                 ))}
               </select>
-              <button
-                type="button"
-                disabled={busySlug === row.productSlug}
-                onClick={() => void saveRow(row)}
-                className="sm:col-span-1 rounded-xl bg-ink px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper disabled:opacity-50"
-              >
-                Save
-              </button>
+              <div className="sm:col-span-1 flex gap-2">
+                <button
+                  type="button"
+                  disabled={busySlug === row.productSlug}
+                  onClick={() => void saveRow(row)}
+                  className="w-full rounded-xl bg-ink px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper disabled:opacity-50"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  disabled={busySlug === row.productSlug}
+                  onClick={() => void deleteRow(row.productSlug)}
+                  className="w-full rounded-xl border border-red-200 bg-white px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-red-700 hover:bg-red-50 disabled:opacity-50"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         ))}

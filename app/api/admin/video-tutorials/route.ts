@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import {
+  deleteVideoTutorial,
   listVideoTutorials,
   saveVideoTutorial,
   type VideoAspectRatio,
@@ -15,7 +16,7 @@ export async function GET() {
   if (!token || !verifyAdminSession(token)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const tutorials = await listVideoTutorials();
+  const tutorials = await listVideoTutorials({ includeFallback: false });
   return NextResponse.json({ tutorials });
 }
 
@@ -43,5 +44,19 @@ export async function POST(req: Request) {
     url,
     aspectRatio: ratio,
   });
+  return NextResponse.json({ ok: true });
+}
+
+export async function DELETE(req: Request) {
+  const token = await getAdminToken();
+  if (!token || !verifyAdminSession(token)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const body = (await req.json()) as { productSlug?: string };
+  const productSlug = (body.productSlug ?? "").trim();
+  if (!productSlug) {
+    return NextResponse.json({ error: "productSlug is required" }, { status: 400 });
+  }
+  await deleteVideoTutorial(productSlug);
   return NextResponse.json({ ok: true });
 }
