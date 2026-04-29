@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Check } from "lucide-react";
 import {
@@ -13,7 +12,6 @@ import {
   getMergedCatalogProducts,
 } from "@/lib/catalog-db";
 import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
-import { normalizeSiteLanguage } from "@/lib/site-i18n";
 import { R2_GALLERY_SPECS_BY_SLUG } from "@/lib/r2";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { styleNumFromR2VariantUrl } from "@/lib/r2-line-image";
@@ -77,29 +75,6 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const lang = normalizeSiteLanguage((await cookies()).get("site_lang")?.value);
-  const copy =
-    lang === "es"
-      ? {
-          backToShop: "Volver a tienda",
-          inStock: "En stock",
-          outOfStock: "Agotado",
-          details: "Detalles",
-          shippingTax: "Envio e impuestos",
-          refunds: "Reembolsos",
-          closerLook: "Vista detallada",
-          youMayAlsoLike: "Tambien te puede gustar",
-        }
-      : {
-          backToShop: "Back to shop",
-          inStock: "In stock",
-          outOfStock: "Out of stock",
-          details: "Details",
-          shippingTax: "Shipping & tax",
-          refunds: "Refunds",
-          closerLook: "Closer look",
-          youMayAlsoLike: "You may also like",
-        };
   const product = await getMergedCatalogProductBySlug(slug);
   if (!product) notFound();
 
@@ -181,7 +156,7 @@ export default async function ProductPage({
           className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted hover:text-ink"
         >
           <ArrowLeft size={16} />
-          {copy.backToShop}
+          Back to shop
         </Link>
 
         <div className="mt-8 grid min-w-0 grid-cols-1 gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-x-14 lg:gap-y-10">
@@ -221,7 +196,7 @@ export default async function ProductPage({
                 </div>
               )}
               <div className="text-sm text-muted">
-                {product.inStock ? copy.inStock : copy.outOfStock}
+                {product.inStock ? "In stock" : "Out of stock"}
               </div>
             </div>
 
@@ -247,7 +222,7 @@ export default async function ProductPage({
             </div>
 
             <div className="mt-10 rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-6">
-              <h2 className="font-serif text-xl">{copy.details}</h2>
+              <h2 className="font-serif text-xl">Details</h2>
               <p className="mt-3 text-sm leading-relaxed text-muted">
                 {product.description}
               </p>
@@ -268,11 +243,11 @@ export default async function ProductPage({
 
             <div className="mt-auto flex flex-wrap gap-4 pt-8 text-[12px] text-muted">
               <Link href="/shipping" className="underline-offset-4 hover:underline">
-                {copy.shippingTax}
+                Shipping & tax
               </Link>
               <span className="text-[color:var(--color-line)]">·</span>
               <Link href="/refund" className="underline-offset-4 hover:underline">
-                {copy.refunds}
+                Refunds
               </Link>
             </div>
           </div>
@@ -280,7 +255,7 @@ export default async function ProductPage({
 
         {detailImages.length > 0 && (
           <section className="mt-16 border-t border-[color:var(--color-line)] pt-14">
-            <h2 className="font-serif text-2xl tracking-tight">{copy.closerLook}</h2>
+            <h2 className="font-serif text-2xl tracking-tight">Closer look</h2>
             <p className="mt-2 max-w-2xl text-sm text-muted">
               Detail photography and specifications for {product.name}.
             </p>
@@ -300,7 +275,7 @@ export default async function ProductPage({
       {related.length > 0 && (
         <section className="border-t border-[color:var(--color-line)] bg-paper py-14">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <h2 className="font-serif text-2xl">{copy.youMayAlsoLike}</h2>
+            <h2 className="font-serif text-2xl">You may also like</h2>
             <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
               {related.map((p, i) => (
                 <ProductCard

@@ -1,12 +1,10 @@
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { Mail, MapPin, MessageCircle, Play } from "lucide-react";
 import {
   GUANGZHOU_GOOGLE_MAPS_URL,
   aboutPageMapEmbed,
 } from "@/lib/about-location";
 import { R2 } from "@/lib/r2";
-import { normalizeSiteLanguage } from "@/lib/site-i18n";
 import { publicSupportEmail } from "@/lib/support-contact";
 import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/whatsapp";
 
@@ -19,34 +17,7 @@ export const metadata = {
   },
 };
 
-export default async function AboutPage() {
-  const lang = normalizeSiteLanguage((await cookies()).get("site_lang")?.value);
-  const copy =
-    lang === "es"
-      ? {
-          badgeBrand: "Marca",
-          heroTitle: "HUMPBUCK — utilidad primero, espectaculo despues.",
-          badgeFactory: "Fabrica y ubicacion",
-          mapButton: "Abrir en Google Maps",
-          contact: "Contacto",
-          reachTeam: "Contacta al equipo",
-          email: "Correo",
-          b2b: "B2B",
-          programs: "Programas y mayorista",
-          exploreWholesale: "Explorar mayorista",
-        }
-      : {
-          badgeBrand: "Brand",
-          heroTitle: "HUMPBUCK — utility first, then spectacle.",
-          badgeFactory: "Factory & location",
-          mapButton: "Open in Google Maps",
-          contact: "Contact",
-          reachTeam: "Reach the team",
-          email: "Email",
-          b2b: "B2B",
-          programs: "Programs & wholesale",
-          exploreWholesale: "Explore wholesale",
-        };
+export default function AboutPage() {
   const supportMail = publicSupportEmail();
   const mailtoHref = `mailto:${supportMail}?subject=${encodeURIComponent(
     "Question about HUMPBUCK",
@@ -58,10 +29,10 @@ export default async function AboutPage() {
       {/* Hero — full width intro, not buried below media */}
       <header className="border-b border-line pb-10 lg:pb-12">
         <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
-          {copy.badgeBrand}
+          Brand
         </p>
         <h1 className="mt-3 max-w-4xl font-serif text-4xl tracking-tight sm:text-5xl">
-          {copy.heroTitle}
+          HUMPBUCK — utility first, then spectacle.
         </h1>
         <p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted">
           We run a direct storefront plus factory programs so a single launch can
@@ -117,7 +88,7 @@ export default async function AboutPage() {
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between lg:gap-8">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
-              {copy.badgeFactory}
+              Factory & location
             </p>
             <h2
               id="about-factory-location-heading"
@@ -160,7 +131,7 @@ export default async function AboutPage() {
               className="inline-flex w-fit items-center gap-2 rounded-xl border border-line bg-white/80 px-4 py-2.5 text-sm font-medium text-ink/90 shadow-sm transition hover:border-ink/15 hover:bg-white"
             >
               <MapPin size={16} strokeWidth={1.75} aria-hidden />
-              {copy.mapButton}
+              Open in Google Maps
             </a>
           </div>
 
@@ -196,13 +167,13 @@ export default async function AboutPage() {
           aria-labelledby="about-contact-heading"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
-            {copy.contact}
+            Contact
           </p>
           <h2
             id="about-contact-heading"
             className="mt-3 font-serif text-2xl text-ink"
           >
-            {copy.reachTeam}
+            Reach the team
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted">
             Product questions, order help, or wholesale — email us or message on
@@ -215,7 +186,7 @@ export default async function AboutPage() {
               aria-label={`Email ${supportMail}`}
             >
               <Mail size={18} strokeWidth={1.75} aria-hidden />
-              {copy.email}
+              Email
             </a>
             <a
               href={WHATSAPP_URL}
@@ -245,10 +216,10 @@ export default async function AboutPage() {
         <div className="flex flex-col justify-between rounded-3xl border border-line bg-paper p-7 sm:p-8">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
-              {copy.b2b}
+              B2B
             </p>
             <h2 className="mt-3 font-serif text-2xl text-ink">
-              {copy.programs}
+              Programs & wholesale
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted">
               Add your founding story, manufacturing geography, warranty policy,
@@ -259,7 +230,7 @@ export default async function AboutPage() {
             href="/wholesale"
             className="mt-8 inline-flex w-fit text-[12px] font-semibold uppercase tracking-[0.14em] text-ink underline-offset-8 hover:underline"
           >
-            {copy.exploreWholesale}
+            Explore wholesale
           </Link>
         </div>
       </div>

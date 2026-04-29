@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/site/ProductCard";
@@ -7,7 +6,6 @@ import { getSeriesBySlug, seriesList } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { getSiteUrl } from "@/lib/seo";
-import { normalizeSiteLanguage } from "@/lib/site-i18n";
 
 export async function generateStaticParams() {
   return seriesList.map((s) => ({ slug: s.slug }));
@@ -41,25 +39,6 @@ export default async function SeriesPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const lang = normalizeSiteLanguage((await cookies()).get("site_lang")?.value);
-  const copy =
-    lang === "es"
-      ? {
-          badge: "Serie",
-          shopSeries: "Comprar esta serie",
-          wholesale: "Mayorista",
-          models: "Modelos",
-          piece: "pieza",
-          pieces: "piezas",
-        }
-      : {
-          badge: "Series",
-          shopSeries: "Shop this series",
-          wholesale: "Wholesale",
-          models: "Models",
-          piece: "piece",
-          pieces: "pieces",
-        };
   const series = getSeriesBySlug(slug);
   if (!series) notFound();
 
@@ -94,7 +73,7 @@ export default async function SeriesPage({
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60">
-            {copy.badge}
+            Series
           </p>
           <h1 className="mt-4 max-w-3xl font-serif text-4xl tracking-tight sm:text-6xl">
             {series.name}
@@ -108,22 +87,22 @@ export default async function SeriesPage({
               href={`/shop?series=${series.slug}`}
               className="inline-flex rounded-full bg-white px-7 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-[#0f1114] transition hover:bg-white/90"
             >
-              {copy.shopSeries}
+              Shop this series
             </Link>
             <Link
               href="/wholesale"
               className="inline-flex rounded-full border border-white/20 bg-white/5 px-7 py-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/90 transition hover:bg-white/10"
             >
-              {copy.wholesale}
+              Wholesale
             </Link>
           </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:py-16">
-        <h2 className="font-serif text-2xl">{copy.models}</h2>
+        <h2 className="font-serif text-2xl">Models</h2>
         <p className="mt-2 text-sm text-muted">
-          {items.length} {items.length === 1 ? copy.piece : copy.pieces} in this series.
+          {items.length} {items.length === 1 ? "piece" : "pieces"} in this series.
         </p>
         <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
           {items.map((p, i) => (

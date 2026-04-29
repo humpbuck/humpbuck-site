@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import Link from "next/link";
 import { ProductCard } from "@/components/site/ProductCard";
 import {
@@ -9,7 +8,6 @@ import {
 } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
-import { normalizeSiteLanguage } from "@/lib/site-i18n";
 
 const slugOk = (s: string | undefined): s is SeriesSlug =>
   s === "digitemp" || s === "tonneau" || s === "rd-astral";
@@ -29,33 +27,6 @@ export default async function ShopPage({
   searchParams: Promise<{ series?: string }>;
 }) {
   const { series: seriesParam } = await searchParams;
-  const lang = normalizeSiteLanguage((await cookies()).get("site_lang")?.value);
-  const copy =
-    lang === "es"
-      ? {
-          badge: "Catalogo",
-          title: "Tienda — DIGI-TEMP y catalogo completo",
-          byCollection: "Explora por coleccion:",
-          all: "Todo",
-          showing: "Mostrando",
-          item: "articulo",
-          items: "articulos",
-          empty: "Aun no hay resultados aqui.",
-          clearFilter: "Quitar filtro",
-          viewAll: "Ver todos los productos",
-        }
-      : {
-          badge: "Catalog",
-          title: "Shop — DIGI-TEMP & full catalog",
-          byCollection: "Browse by collection:",
-          all: "All",
-          showing: "Showing",
-          item: "item",
-          items: "items",
-          empty: "Nothing here yet.",
-          clearFilter: "Clear filter",
-          viewAll: "View all products",
-        };
   const active = slugOk(seriesParam) ? seriesParam : null;
   const all = await getMergedCatalogProducts();
   const list = active
@@ -70,20 +41,20 @@ export default async function ShopPage({
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
       <div className="max-w-2xl">
         <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
-          {copy.badge}
+          Catalog
         </p>
         <h1 className="mt-3 font-serif text-4xl tracking-tight">
-          {copy.title}
+          Shop — DIGI-TEMP &amp; full catalog
         </h1>
         <p className="mt-3 text-muted">
-          {copy.byCollection} <strong className="font-medium text-ink/90">DIGI-TEMP</strong>{" "}
+          Browse by collection: <strong className="font-medium text-ink/90">DIGI-TEMP</strong>{" "}
           (ana-digi flagship), <strong className="font-medium text-ink/90">RM-TONNEAU</strong>{" "}
           (tonneau quartz), and RD-ASTRAL. Filters sync to the URL for sharing.
         </p>
       </div>
 
       <div className="mt-10 flex flex-wrap gap-2">
-        <FilterPill href="/shop" active={active === null} label={copy.all} />
+        <FilterPill href="/shop" active={active === null} label="All" />
         {seriesList.map((s) => (
           <FilterPill
             key={s.slug}
@@ -96,11 +67,11 @@ export default async function ShopPage({
 
       {active != null && (
         <p className="mt-6 text-sm text-muted">
-          {copy.showing}{" "}
+          Showing{" "}
           <span className="font-semibold text-ink">
             {getSeriesBySlug(active)?.name}
           </span>{" "}
-          ({list.length} {list.length === 1 ? copy.item : copy.items})
+          ({list.length} {list.length === 1 ? "item" : "items"})
         </p>
       )}
 
@@ -117,9 +88,9 @@ export default async function ShopPage({
 
       {list.length === 0 && (
         <p className="mt-10 text-sm text-muted">
-          {copy.empty}{" "}
+          Nothing here yet.{" "}
           <Link href="/shop" className="underline underline-offset-4">
-            {copy.clearFilter}
+            Clear filter
           </Link>
         </p>
       )}

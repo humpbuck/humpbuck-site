@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Factory, Globe2, ShieldCheck, Sparkles } from "lucide-react";
@@ -15,7 +14,6 @@ import {
 } from "@/lib/catalog";
 import { R2 } from "@/lib/r2";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
-import { normalizeSiteLanguage } from "@/lib/site-i18n";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -45,47 +43,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function HomePage() {
-  // NOTE: this page remains server-rendered; read preferred UI language from cookie.
-  const lang = normalizeSiteLanguage((await cookies()).get("site_lang")?.value);
-  const copy =
-    lang === "es"
-      ? {
-          heroDesc: "Reloj multifuncion ana-digi — doble pantalla, funciones completas.",
-          heroP2:
-            "Hora, fecha, alarma, temperatura exterior y cronometro en una caja compacta de acero inoxidable.",
-          dualTime: "Hora dual",
-          backlight: "Luz",
-          shopDigitemp: "Comprar DIGI-TEMP",
-          seriesStory: "Historia de la serie",
-          featured: "Destacados",
-          viewAll: "Ver todos los productos",
-          exploreSeries: "Explorar serie",
-          viewWatches: "Ver relojes",
-          activeCustomers: "Clientes activos",
-          ordersFulfilled: "Pedidos completados",
-          countriesShipped: "Paises con envios",
-          supportCoverage: "Soporte 24/7",
-          updates: "Novedades",
-        }
-      : {
-          heroDesc: "Ana-digi multifunction watch — dual displays, full feature set.",
-          heroP2:
-            "Time, date, alarm, outdoor temperature, and stopwatch modes in a compact stainless steel case — cockpit-clear readability for daily wear.",
-          dualTime: "Dual time",
-          backlight: "Backlight",
-          shopDigitemp: "Shop DIGI-TEMP",
-          seriesStory: "Series story",
-          featured: "Featured",
-          viewAll: "View all products",
-          exploreSeries: "Explore series",
-          viewWatches: "View watches",
-          activeCustomers: "Active customers",
-          ordersFulfilled: "Orders fulfilled",
-          countriesShipped: "Countries shipped",
-          supportCoverage: "Support coverage",
-          updates: "Updates",
-        };
+export default function HomePage() {
   const featured = getHomeFeaturedProducts(12);
   const tonneau = seriesList.find((s) => s.slug === "tonneau")!;
   const rdAstral = seriesList.find((s) => s.slug === "rd-astral")!;
@@ -120,10 +78,12 @@ export default async function HomePage() {
               </span>
             </h1>
             <p className="mt-6 max-w-prose font-sans text-base font-normal leading-snug tracking-normal text-white/88 md:mt-5 md:text-lg">
-              {copy.heroDesc}
+              Ana-digi multifunction watch — dual displays, full feature set.
             </p>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-white/72 md:mt-6 md:text-lg">
-              {copy.heroP2}
+              Time, date, alarm, outdoor temperature, and stopwatch modes in a
+              compact stainless steel case — cockpit-clear readability for daily
+              wear.
             </p>
             {/* Mobile: long tag full-width, 2-up below. md+: one flex row, wraps on iPad/Surface */}
             <div className="relative mt-7 flex max-w-full flex-col gap-2 md:flex-row md:flex-wrap md:items-center md:gap-2">
@@ -132,10 +92,10 @@ export default async function HomePage() {
               </span>
               <div className="grid grid-cols-2 gap-2 md:contents">
                 <span className="inline-flex items-center justify-center rounded-full border border-cyan-400/25 bg-cyan-400/10 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-cyan-100 md:text-[11px]">
-                  {copy.dualTime}
+                  Dual time
                 </span>
                 <span className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/85 md:text-[11px]">
-                  {copy.backlight}
+                  Backlight
                 </span>
               </div>
             </div>
@@ -144,13 +104,13 @@ export default async function HomePage() {
                 href="/shop?series=digitemp"
                 className="inline-flex items-center justify-center rounded-full bg-white px-7 py-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#070a10] transition hover:bg-white/90"
               >
-                {copy.shopDigitemp}
+                Shop DIGI-TEMP
               </Link>
               <Link
                 href="/series/digitemp"
                 className="inline-flex items-center justify-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/90 underline-offset-8 transition hover:text-white hover:underline"
               >
-                {copy.seriesStory}
+                Series story
                 <ArrowRight size={16} />
               </Link>
             </div>
@@ -176,7 +136,7 @@ export default async function HomePage() {
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <div className="text-[10px] uppercase tracking-[0.2em] text-white/55">
-                {copy.featured}
+                      Featured
                     </div>
                     <div className="mt-1 font-serif text-lg">{heroFeatured.name}</div>
                   </div>
@@ -192,7 +152,7 @@ export default async function HomePage() {
                   </div>
                 </div>
                 <span className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-cyan-400/90 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[#06252d] transition group-hover:bg-cyan-300">
-                  {copy.viewWatches}
+                  View product
                 </span>
               </div>
             </Link>
@@ -239,11 +199,11 @@ export default async function HomePage() {
                 {tonneau.description}
               </p>
               <span className="mt-8 inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/90 underline-offset-8 group-hover:underline">
-                {copy.exploreSeries}
+                Explore series
                 <span className="font-normal text-white/45" aria-hidden>
                   ·
                 </span>
-                <span>{copy.viewWatches}</span>
+                <span>View watches</span>
                 <ArrowRight size={16} className="shrink-0" />
               </span>
             </div>
@@ -282,11 +242,11 @@ export default async function HomePage() {
                 {rdAstral.description}
               </p>
               <span className="mt-8 inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/90 underline-offset-8 group-hover:underline">
-                {copy.exploreSeries}
+                Explore series
                 <span className="font-normal text-white/45" aria-hidden>
                   ·
                 </span>
-                <span>{copy.viewWatches}</span>
+                <span>View watches</span>
                 <ArrowRight size={16} className="shrink-0" />
               </span>
             </div>
@@ -302,13 +262,13 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted">
-              {copy.featured}
+              Featured
             </div>
             <Link
               href="/shop"
               className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ink/75 underline-offset-8 hover:text-ink hover:underline"
             >
-              {copy.viewAll}
+              View all products
             </Link>
           </div>
           <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
@@ -375,10 +335,10 @@ export default async function HomePage() {
       >
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
           {[
-            { k: "10k+", label: copy.activeCustomers },
-            { k: "25k+", label: copy.ordersFulfilled },
-            { k: "50+", label: copy.countriesShipped },
-            { k: "24/7", label: copy.supportCoverage },
+            { k: "10k+", label: "Active customers" },
+            { k: "25k+", label: "Orders fulfilled" },
+            { k: "50+", label: "Countries shipped" },
+            { k: "24/7", label: "Support coverage" },
           ].map((s) => (
             <div key={s.label} className="text-center lg:text-left">
               <div className="font-serif text-4xl tabular-nums">{s.k}</div>
@@ -441,7 +401,7 @@ export default async function HomePage() {
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div>
               <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
-                {copy.updates}
+                Updates
               </div>
               <h2 className="mt-3 font-serif text-2xl sm:text-3xl">
                 DIGI-TEMP restocks &amp; RM-TONNEAU drops
