@@ -50,6 +50,10 @@ export default function HomePage() {
   const heroFeatured = getProductBySlug("digitemp-2301")!;
   const tonneauCount = getProductsBySeries("tonneau").length;
   const rdAstralCount = getProductsBySeries("rd-astral").length;
+  const deferredSectionStyle = {
+    contentVisibility: "auto",
+    containIntrinsicSize: "1000px",
+  } as const;
 
   return (
     <div>
@@ -157,7 +161,10 @@ export default function HomePage() {
       </section>
 
       {/* Series split */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20">
+      <section
+        className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20"
+        style={deferredSectionStyle}
+      >
         <div className="grid gap-5 lg:grid-cols-2 lg:gap-7">
           <Link
             href="/series/tonneau"
@@ -248,7 +255,10 @@ export default function HomePage() {
       </section>
 
       {/* Featured */}
-      <section className="border-t border-[color:var(--color-line)] bg-paper py-16 sm:py-20">
+      <section
+        className="border-t border-[color:var(--color-line)] bg-paper py-16 sm:py-20"
+        style={deferredSectionStyle}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted">
@@ -276,7 +286,10 @@ export default function HomePage() {
       </section>
 
       {/* Wholesale */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20">
+      <section
+        className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20"
+        style={deferredSectionStyle}
+      >
         <div className="relative overflow-hidden rounded-[28px] border border-[color:var(--color-line)] bg-gradient-to-br from-ink via-[#161821] to-[#0f1114] p-8 text-paper shadow-[var(--shadow-card)] sm:p-12">
           <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[color:var(--color-luxe)]/15 blur-3xl" />
           <div className="relative grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
@@ -316,7 +329,10 @@ export default function HomePage() {
       </section>
 
       {/* Stats + trust */}
-      <section className="border-t border-[color:var(--color-line)] bg-white/55 py-14">
+      <section
+        className="border-t border-[color:var(--color-line)] bg-white/55 py-14"
+        style={deferredSectionStyle}
+      >
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
           {[
             { k: "10k+", label: "Active customers" },
@@ -379,6 +395,7 @@ export default function HomePage() {
       <section
         id="newsletter"
         className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20"
+        style={deferredSectionStyle}
       >
         <div className="rounded-3xl border border-[color:var(--color-line)] bg-white/70 p-8 sm:p-10">
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
