@@ -3,6 +3,7 @@ import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import {
   deleteVideoTutorial,
   listVideoTutorials,
+  saveVideoTutorialOrder,
   saveVideoTutorial,
   type VideoAspectRatio,
 } from "@/lib/video-tutorials";
@@ -30,6 +31,7 @@ export async function POST(req: Request) {
     title?: string;
     url?: string;
     aspectRatio?: string;
+    sortOrder?: number;
   };
   const productSlug = (body.productSlug ?? "").trim();
   const title = (body.title ?? "").trim();
@@ -43,7 +45,27 @@ export async function POST(req: Request) {
     title,
     url,
     aspectRatio: ratio,
+    sortOrder:
+      typeof body.sortOrder === "number" && Number.isFinite(body.sortOrder)
+        ? body.sortOrder
+        : undefined,
   });
+  return NextResponse.json({ ok: true });
+}
+
+export async function PATCH(req: Request) {
+  const token = await getAdminToken();
+  if (!token || !verifyAdminSession(token)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const body = (await req.json()) as { orderedProductSlugs?: string[] };
+  const ordered = Array.isArray(body.orderedProductSlugs)
+    ? body.orderedProductSlugs.map((x) => (typeof x === "string" ? x.trim() : "")).filter(Boolean)
+    : [];
+  if (ordered.length === 0) {
+    return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+  }
+  await saveVideoTutorialOrder(ordered);
   return NextResponse.json({ ok: true });
 }
 

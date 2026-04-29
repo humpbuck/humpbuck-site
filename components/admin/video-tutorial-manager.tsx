@@ -11,6 +11,7 @@ type TutorialRow = {
   title: string;
   url: string;
   aspectRatio: VideoAspectRatio;
+  sortOrder: number;
 };
 
 const RATIOS: VideoAspectRatio[] = ["16:9", "1:1", "9:16"];
@@ -41,6 +42,21 @@ export function VideoTutorialManager({
     }
     setMessage(`Saved ${row.productSlug}`);
     setBusySlug(null);
+  }
+
+  async function saveOrder(nextRows: TutorialRow[]) {
+    const res = await fetch("/api/admin/video-tutorials", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        orderedProductSlugs: nextRows.map((x) => x.productSlug),
+      }),
+    });
+    if (!res.ok) {
+      setMessage("Order save failed");
+      return;
+    }
+    setMessage("Order updated");
   }
 
   async function deleteRow(productSlug: string) {
@@ -75,10 +91,21 @@ export function VideoTutorialManager({
         title: `${candidate.name} video tutorial`,
         url: "",
         aspectRatio: "9:16",
+        sortOrder: 1,
       },
-      ...prev,
+      ...prev.map((x) => ({ ...x, sortOrder: x.sortOrder + 1 })),
     ]);
     setMessage("");
+  }
+
+  function moveToPosition(idx: number, position1Based: number) {
+    const clamped = Math.max(1, Math.min(rows.length, position1Based));
+    const next = [...rows];
+    const [picked] = next.splice(idx, 1);
+    next.splice(clamped - 1, 0, picked);
+    const normalized = next.map((row, i) => ({ ...row, sortOrder: i + 1 }));
+    setRows(normalized);
+    void saveOrder(normalized);
   }
 
   return (
@@ -123,7 +150,7 @@ export function VideoTutorialManager({
                     prev.map((x, i) => (i === idx ? { ...x, title: e.target.value } : x)),
                   )
                 }
-                className="sm:col-span-2 rounded-xl border border-line bg-white px-3 py-2 text-sm"
+                className="sm:col-span-1 rounded-xl border border-line bg-white px-3 py-2 text-sm"
                 placeholder="Tutorial title"
               />
               <input
@@ -133,7 +160,7 @@ export function VideoTutorialManager({
                     prev.map((x, i) => (i === idx ? { ...x, url: e.target.value } : x)),
                   )
                 }
-                className="sm:col-span-5 rounded-xl border border-line bg-white px-3 py-2 text-sm"
+                className="sm:col-span-4 rounded-xl border border-line bg-white px-3 py-2 text-sm"
                 placeholder="https://..."
               />
               <select
@@ -153,7 +180,18 @@ export function VideoTutorialManager({
                   </option>
                 ))}
               </select>
-              <div className="sm:col-span-3 flex gap-2">
+              <select
+                value={row.sortOrder}
+                onChange={(e) => moveToPosition(idx, Number(e.target.value))}
+                className="sm:col-span-1 rounded-xl border border-line bg-white px-3 py-2 text-sm"
+              >
+                {rows.map((_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    #{i + 1}
+                  </option>
+                ))}
+              </select>
+              <div className="sm:col-span-2 flex gap-2">
                 <button
                   type="button"
                   disabled={busySlug === row.productSlug}

@@ -9,6 +9,7 @@ export type VideoTutorial = {
   title: string;
   url: string;
   aspectRatio: VideoAspectRatio;
+  sortOrder: number;
   updatedAt: string;
 };
 
@@ -33,6 +34,14 @@ async function ensureVideoTutorialTable() {
       "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
   `);
+  try {
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "VideoTutorial"
+      ADD COLUMN IF NOT EXISTS "sortOrder" INTEGER NOT NULL DEFAULT 9999
+    `);
+  } catch {
+    // Older engines may not support IF NOT EXISTS; ignore when already present.
+  }
 }
 
 function coerceAspectRatio(v: unknown): VideoAspectRatio {
@@ -58,7 +67,7 @@ export async function listVideoTutorials({
   }
 
   const rows = (await prisma.$queryRawUnsafe(`
-    SELECT "productSlug", "title", "url", "aspectRatio", "updatedAt"
+    SELECT "productSlug", "title", "url", "aspectRatio", "sortOrder", "updatedAt"
     FROM "VideoTutorial"
     ORDER BY "updatedAt" DESC
   `)) as Array<{
@@ -66,6 +75,7 @@ export async function listVideoTutorials({
     title: string;
     url: string;
     aspectRatio: string;
+    sortOrder: number | null;
     updatedAt: Date;
   }>;
   const rowBySlug = new Map<string, (typeof rows)[number]>();
@@ -75,6 +85,7 @@ export async function listVideoTutorials({
   }
 
   const out: VideoTutorial[] = [];
+  let fallbackSort = 10000;
   for (const product of bySlug.values()) {
     const row = rowBySlug.get(normalizeProductSlug(product.slug));
     const fallbackUrl = includeFallback ? product.promoVideo?.src?.trim() || "" : "";
@@ -87,13 +98,18 @@ export async function listVideoTutorials({
       title: row?.title || defaultTitle(product.name),
       url: effectiveUrl,
       aspectRatio: coerceAspectRatio(row?.aspectRatio),
+      sortOrder: row?.sortOrder ?? fallbackSort++,
       updatedAt: (row?.updatedAt ?? new Date(0)).toISOString(),
     });
   }
 
   return out
     .filter((x) => x.url.length > 0)
-    .sort((a, b) => a.title.localeCompare(b.title));
+    .sort((a, b) => {
+      if (a.sortOrder !== b.sortOrder) return a.sortOrder - b.sortOrder;
+      return a.title.localeCompare(b.title);
+    })
+    .map((x, idx) => ({ ...x, sortOrder: idx + 1 }));
 }
 
 export async function listVideoTutorialProductOptions(): Promise<
@@ -114,6 +130,7 @@ export async function saveVideoTutorial(input: {
   title: string;
   url: string;
   aspectRatio: VideoAspectRatio;
+  sortOrder?: number;
 }) {
   await ensureVideoTutorialTable();
   const productSlug = normalizeProductSlug(input.productSlug);
@@ -129,15 +146,31 @@ export async function saveVideoTutorial(input: {
     `;
   }
   await prisma.$executeRaw`
-    INSERT INTO "VideoTutorial" ("productSlug", "title", "url", "aspectRatio", "updatedAt")
-    VALUES (${productSlug}, ${input.title}, ${input.url}, ${input.aspectRatio}, NOW())
+    INSERT INTO "VideoTutorial" ("productSlug", "title", "url", "aspectRatio", "sortOrder", "updatedAt")
+    VALUES (${productSlug}, ${input.title}, ${input.url}, ${input.aspectRatio}, ${Math.max(1, input.sortOrder ?? 9999)}, NOW())
     ON CONFLICT ("productSlug")
     DO UPDATE SET
       "title" = EXCLUDED."title",
       "url" = EXCLUDED."url",
       "aspectRatio" = EXCLUDED."aspectRatio",
+      "sortOrder" = EXCLUDED."sortOrder",
       "updatedAt" = NOW()
   `;
+}
+
+export async function saveVideoTutorialOrder(
+  orderedProductSlugs: string[],
+): Promise<void> {
+  await ensureVideoTutorialTable();
+  for (let i = 0; i < orderedProductSlugs.length; i += 1) {
+    const slug = normalizeProductSlug(orderedProductSlugs[i] ?? "");
+    if (!slug) continue;
+    await prisma.$executeRaw`
+      UPDATE "VideoTutorial"
+      SET "sortOrder" = ${i + 1}, "updatedAt" = NOW()
+      WHERE LOWER("productSlug") = LOWER(${slug})
+    `;
+  }
 }
 
 export async function deleteVideoTutorial(productSlug: string) {
