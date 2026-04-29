@@ -131,7 +131,8 @@ export default async function ProductPage({
     (staticProduct?.galleryImages?.[0] ??
       staticProduct?.images[0] ??
       staticProduct?.promoVideo?.poster);
-  const preferredPromoVideo = product.promoVideo ?? staticProduct?.promoVideo;
+  // Roll back to the previously stable source for mobile playback.
+  const preferredPromoVideo = staticProduct?.promoVideo;
   const promoVideosForMedia: { src: string; poster?: string }[] | null =
     preferredPromoVideo
       ? [
@@ -140,12 +141,7 @@ export default async function ProductPage({
             poster: firstSlide ?? preferredPromoVideo.poster,
           },
         ]
-      : pdpR2?.videos && pdpR2.videos.length > 0
-        ? pdpR2.videos.map((src) => ({
-            src,
-            poster: firstSlide,
-          }))
-        : null;
+      : null;
 
   return (
     <div>
