@@ -141,15 +141,7 @@ const COUNTRY_RULES: Record<string, CountryFieldRule> = {
     taxIdHint: "Required for Korea. Format: P + 12 digits.",
     taxIdPlaceholder: "P123456789012",
   },
-  MX: {
-    stateLabel: "State",
-    postalLabel: "Postal code",
-    stateSelectPrompt: "Select state",
-    stateSearchPlaceholder: "Search state...",
-    taxIdLabel: "RFC / CURP",
-    taxIdHint: "Enter RFC or CURP (one field, either format is accepted).",
-    taxIdPlaceholder: "RFC or CURP",
-  },
+
   NO: {
     stateLabel: "Region",
     postalLabel: "Postcode",
