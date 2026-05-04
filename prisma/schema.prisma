@@ -8,35 +8,35 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  firstName     String?
-  lastName      String?
-  displayName   String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  passwordHash  String?
-  accounts      Account[]
-  sessions      Session[]
-  orders        Order[]
-  addresses     UserAddress[]
-  paymentMethods SavedPaymentMethod[]
-  passwordResetTokens PasswordResetToken[]
-  productReviews ProductReview[]
-  visitorSessions VisitorSession[]
-  affiliateProfile AffiliateProfile?
-  affiliateApplications AffiliateApplication[]
+  id                      String                   @id @default(cuid())
+  name                    String?
+  firstName               String?
+  lastName                String?
+  displayName             String?
+  email                   String?                  @unique
+  emailVerified           DateTime?
+  image                   String?
+  passwordHash            String?
+  accounts                Account[]
+  affiliateApplications   AffiliateApplication[]
   affiliateCouponRequests AffiliateCouponRequest[]
+  affiliateProfile        AffiliateProfile?
+  orders                  Order[]
+  passwordResetTokens     PasswordResetToken[]
+  productReviews          ProductReview[]
+  paymentMethods          SavedPaymentMethod[]
+  sessions                Session[]
+  addresses               UserAddress[]
+  visitorSessions         VisitorSession[]
 }
 
 model PasswordResetToken {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {
@@ -52,8 +52,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -75,66 +74,59 @@ model VerificationToken {
 }
 
 model Order {
-  id             String   @id @default(cuid())
-  userId         String?
-  user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  affiliateId    String?
-  affiliate      AffiliateProfile? @relation(fields: [affiliateId], references: [id], onDelete: SetNull)
-  affiliateCommission AffiliateCommissionLedger?
-  affiliatePid   String?
-  affiliateAttribution String?
-  email          String
-  status         String
-  provider       String
-  providerRef    String?
-  totalCents     Int
-  couponCode     String?
-  discountCents  Int      @default(0)
-  currency       String   @default("usd")
-  itemsJson      String
-  billingJson    String? // card / invoice; may differ from shipping
-  shippingJson   String?
-  orderNotes     String? // optional message from checkout (delivery instructions, etc.)
-  carrier        String?
-  trackingNumber String?
-  shippedAt      DateTime?
-  deliveredAt    DateTime?
-  deliveryConfirmedBy String?
-  // Optional merchant-facing label (emails / account). Falls back to id tail when null.
-  merchantOrderCode String?
-  // First-touch traffic: utm_source or inferred referrer (google, direct, …)
-  trafficSource  String   @default("unknown")
-  merchantNotifySentAt DateTime?
-  // Customer shipped notification email sent at (Brevo); idempotent.
+  id                         String                     @id @default(cuid())
+  userId                     String?
+  email                      String
+  status                     String
+  provider                   String
+  providerRef                String?
+  totalCents                 Int
+  currency                   String                     @default("usd")
+  itemsJson                  String
+  billingJson                String?
+  shippingJson               String?
+  orderNotes                 String?
+  carrier                    String?
+  trackingNumber             String?
+  merchantOrderCode          String?
+  trafficSource              String                     @default("unknown")
+  merchantNotifySentAt       DateTime?
   customerShippedEmailSentAt DateTime?
-  // Soft-delete: when set, order is hidden from default queries.
-  deletedAt      DateTime?
-  // Refund tracking
-  refundReason   String?
-  refundAmountCents Int?
-  refundedAt     DateTime?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt                  DateTime                   @default(now())
+  updatedAt                  DateTime                   @updatedAt
+  deletedAt                  DateTime?
+  refundReason               String?
+  refundAmountCents          Int?
+  refundedAt                 DateTime?
+  couponCode                 String?
+  discountCents              Int                        @default(0)
+  affiliateAttribution       String?
+  affiliateId                String?
+  affiliatePid               String?
+  shippedAt                  DateTime?
+  deliveredAt                DateTime?
+  deliveryConfirmedBy        String?
+  affiliateCommission        AffiliateCommissionLedger?
+  affiliate                  AffiliateProfile?          @relation(fields: [affiliateId], references: [id])
+  user                       User?                      @relation(fields: [userId], references: [id])
 
   @@index([deletedAt])
   @@index([affiliateId, createdAt])
   @@index([status, shippedAt])
 }
 
-// Promo/newsletter opt-out per email + one-click unsubscribe token.
 model EmailMarketingPreference {
-  id                 String   @id @default(cuid())
-  email              String   @unique
+  id               String   @id @default(cuid())
+  email            String   @unique
   unsubscribeToken String   @unique
-  marketingOptOut    Boolean  @default(false)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  marketingOptOut  Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model UserAddress {
   id         String   @id @default(cuid())
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   type       String
   line1      String
   line2      String?
@@ -144,6 +136,7 @@ model UserAddress {
   country    String
   phone      String?
   updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, type])
 }
@@ -151,30 +144,27 @@ model UserAddress {
 model SavedPaymentMethod {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   label     String?
   brand     String
   last4     String
   expMonth  Int?
   expYear   Int?
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// Product inventory — quantity tracking per product+variant.
-// `variantId` is "" for products without variants (product-level stock).
 model ProductInventory {
-  id               String   @id @default(cuid())
-  productSlug      String
-  variantId        String   @default("")
-  quantity         Int      @default(0)
-  lowStockThreshold Int     @default(5)
-  updatedAt        DateTime @updatedAt
+  id                String   @id @default(cuid())
+  productSlug       String
+  variantId         String   @default("")
+  quantity          Int      @default(0)
+  lowStockThreshold Int      @default(5)
+  updatedAt         DateTime @updatedAt
 
   @@unique([productSlug, variantId])
   @@index([productSlug])
 }
 
-// Admin-managed product catalog (editable in admin panel).
 model CatalogProduct {
   id               String   @id @default(cuid())
   slug             String   @unique
@@ -197,64 +187,59 @@ model CatalogProduct {
   updatedAt        DateTime @updatedAt
 }
 
-// Buyer review; images on R2 under reviews/{productSlug}/
 model ProductReview {
-  id            String   @id @default(cuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  orderId       String
-  productSlug   String
-  rating        Int
-  body          String
-  imageUrlsJson String   @default("[]")
-  merchantReply   String?
+  id                String                @id @default(cuid())
+  userId            String
+  orderId           String
+  productSlug       String
+  rating            Int
+  body              String
+  imageUrlsJson     String                @default("[]")
+  merchantReply     String?
   merchantRepliedAt DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  appends       ProductReviewAppend[]
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  user              User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appends           ProductReviewAppend[]
 
   @@unique([userId, orderId, productSlug])
   @@index([productSlug])
 }
 
-// Buyer follow-up (追加) on an existing review, same product, optional photos.
 model ProductReviewAppend {
-  id            String   @id @default(cuid())
+  id            String        @id @default(cuid())
   reviewId      String
-  review        ProductReview @relation(fields: [reviewId], references: [id], onDelete: Cascade)
   body          String
-  imageUrlsJson String   @default("[]")
-  createdAt     DateTime @default(now())
+  imageUrlsJson String        @default("[]")
+  createdAt     DateTime      @default(now())
+  review        ProductReview @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
   @@index([reviewId, createdAt])
 }
 
-// Anonymous or logged-in visitor session for onsite analytics.
 model VisitorSession {
-  id            String   @id @default(cuid())
-  sessionKey    String   @unique
+  id            String         @id @default(cuid())
+  sessionKey    String         @unique
   userId        String?
-  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   firstReferrer String?
   utmSource     String?
   utmMedium     String?
   utmCampaign   String?
+  landingPath   String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   country       String?
   city          String?
   deviceType    String?
   browser       String?
-  landingPath   String?
-  lastSeenAt    DateTime @default(now())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  lastSeenAt    DateTime       @default(now())
   events        VisitorEvent[]
+  user          User?          @relation(fields: [userId], references: [id])
 }
 
-// Event stream per visitor session: page/product/cart/checkout lifecycle.
 model VisitorEvent {
   id          String         @id @default(cuid())
   sessionId   String
-  session     VisitorSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   type        String
   path        String?
   productSlug String?
@@ -262,156 +247,166 @@ model VisitorEvent {
   source      String?
   metaJson    String?
   createdAt   DateTime       @default(now())
+  session     VisitorSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   @@index([sessionId, createdAt])
   @@index([type, createdAt])
   @@index([productSlug, createdAt])
 }
 
-// Admin coupon codes (fixed amount off in cents) with active date range.
 model Coupon {
-  id             String   @id @default(cuid())
-  code           String   @unique
-  affiliateId    String?
-  affiliate      AffiliateProfile? @relation(fields: [affiliateId], references: [id], onDelete: SetNull)
+  id             String            @id @default(cuid())
+  code           String            @unique
   amountOffCents Int
-  quantity       Int      @default(1)
-  usedCount      Int      @default(0)
   startsAt       DateTime
   endsAt         DateTime
-  isActive       Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  isActive       Boolean           @default(true)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  quantity       Int               @default(1)
+  usedCount      Int               @default(0)
+  affiliateId    String?
+  affiliate      AffiliateProfile? @relation(fields: [affiliateId], references: [id])
 
   @@index([isActive, startsAt, endsAt])
   @@index([affiliateId])
 }
 
 model AffiliateTier {
-  id              String   @id @default(cuid())
-  name            String   @unique
-  commissionType  String   @default("percent")
-  commissionValue Float    @default(0)
-  isDefault       Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id              String             @id @default(cuid())
+  name            String             @unique
+  commissionType  String             @default("percent")
+  commissionValue Float              @default(0)
+  isDefault       Boolean            @default(false)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
   profiles        AffiliateProfile[]
 }
 
 model AffiliateProfile {
-  id                 String   @id @default(cuid())
-  userId             String   @unique
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  pid                String?  @unique
+  id                 String                      @id @default(cuid())
+  userId             String                      @unique
   displayName        String?
+  status             String                      @default("active")
+  riskFlag           Boolean                     @default(false)
+  tierId             String?
+  whitelist          Boolean                     @default(false)
+  blacklist          Boolean                     @default(false)
+  paymentInfoPending Boolean                     @default(true)
+  notes              String?
+  createdAt          DateTime                    @default(now())
+  updatedAt          DateTime                    @updatedAt
+  pid                String?                     @unique
+  payoutEmail        String?
+  whatsapp           String?                     @map("payoutWhatsapp")
   payoutMethod       String?
   payoutAccount      String?
-  payoutEmail        String?
-  whatsapp           String?  @map("payoutWhatsapp")
   payoutVerifiedAt   DateTime?
   payoutVerifiedBy   String?
-  status             String   @default("active")
-  riskFlag           Boolean  @default(false)
-  tierId             String?
-  tier               AffiliateTier? @relation(fields: [tierId], references: [id], onDelete: SetNull)
-  whitelist          Boolean  @default(false)
-  blacklist          Boolean  @default(false)
-  paymentInfoPending Boolean  @default(true)
-  notes              String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
   applications       AffiliateApplication[]
+  commissionLedgers  AffiliateCommissionLedger[]
   couponRequests     AffiliateCouponRequest[]
+  tier               AffiliateTier?              @relation(fields: [tierId], references: [id])
+  user               User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
   coupons            Coupon[]
   orders             Order[]
-  commissionLedgers  AffiliateCommissionLedger[]
 
   @@index([status])
   @@index([blacklist, whitelist])
 }
 
 model AffiliateCommissionLedger {
-  id                      String   @id @default(cuid())
+  id                      String           @id @default(cuid())
   affiliateId             String
-  affiliate               AffiliateProfile @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
-  orderId                 String   @unique
-  order                   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId                 String           @unique
   orderTotalCents         Int
   commissionType          String
   commissionValue         Float
   commissionCents         Int
-  holdDays                Int      @default(30)
+  holdDays                Int              @default(30)
   eligibleAt              DateTime
-  status                  String   @default("pending")
-  reversedCommissionCents Int      @default(0)
+  status                  String           @default("pending")
+  reversedCommissionCents Int              @default(0)
   reversalReason          String?
   reversedAt              DateTime?
   paidAt                  DateTime?
+  createdAt               DateTime         @default(now())
+  updatedAt               DateTime         @updatedAt
   payoutBatchId           String?
   payoutTxnRef            String?
   paidNote                String?
   paidEmailSentAt         DateTime?
-  createdAt               DateTime @default(now())
-  updatedAt               DateTime @updatedAt
+  affiliate               AffiliateProfile @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  order                   Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@index([affiliateId, status, eligibleAt])
 }
 
 model AffiliateApplication {
-  id              String   @id @default(cuid())
+  id              String            @id @default(cuid())
   userId          String
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   affiliateId     String?
-  affiliate       AffiliateProfile? @relation(fields: [affiliateId], references: [id], onDelete: SetNull)
-  socialLinksJson String   @default("[]")
+  socialLinksJson String            @default("[]")
   followerCount   Int?
   about           String?
-  status          String   @default("pending")
+  status          String            @default("pending")
   riskReason      String?
   reviewedBy      String?
   reviewedAt      DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  affiliate       AffiliateProfile? @relation(fields: [affiliateId], references: [id])
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
   @@index([status, createdAt])
 }
 
 model AffiliateCouponRequest {
-  id            String   @id @default(cuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  affiliateId   String?
-  affiliate     AffiliateProfile? @relation(fields: [affiliateId], references: [id], onDelete: SetNull)
-  status        String   @default("pending")
-  requestedAt   DateTime @default(now())
-  handledAt     DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id          String            @id @default(cuid())
+  userId      String
+  affiliateId String?
+  status      String            @default("pending")
+  requestedAt DateTime          @default(now())
+  handledAt   DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  affiliate   AffiliateProfile? @relation(fields: [affiliateId], references: [id])
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([status, requestedAt])
   @@index([userId, requestedAt])
 }
 
 model AdminInboxMessage {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   category    String
-  dedupeKey   String?  @unique
-  status      String   @default("pending")
+  status      String    @default("pending")
   sourceEmail String?
-  payloadJson String   @default("{}")
-  createdAt   DateTime @default(now())
+  payloadJson String    @default("{}")
+  createdAt   DateTime  @default(now())
   handledAt   DateTime?
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime  @updatedAt
+  dedupeKey   String?   @unique
 
   @@index([category, status, createdAt])
   @@index([status, createdAt])
 }
 
 model AdminInboxReadCursor {
-  id         String   @id @default(cuid())
-  category   String   @unique
-  readAt     DateTime @default(now())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(cuid())
+  category  String   @unique
+  readAt    DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VideoTutorial {
+  productSlug String   @id
+  title       String
+  url         String
+  aspectRatio String   @default("9:16")
+  updatedAt   DateTime @default(now())
+  sortOrder   Int      @default(9999)
+  youtubeUrl  String   @default("")
 }

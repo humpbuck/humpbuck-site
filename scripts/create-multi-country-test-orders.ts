@@ -309,8 +309,8 @@ async function main() {
       postalCode: billing.postalCode || null,
     });
     if (!shipQ.ok) {
-      console.error(`${c.key}: shipping quote failed:`, shipQ.error);
-      process.exit(1);
+      console.warn(`${c.key}: shipping quote failed, skipped:`, shipQ.error);
+      continue;
     }
 
     const itemsJson = JSON.stringify([
