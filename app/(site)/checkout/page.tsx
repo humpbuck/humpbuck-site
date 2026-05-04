@@ -166,7 +166,7 @@ export default function CheckoutPage() {
       }
       if (prev === "yanwen" && !cov.yanwen) {
         if (cov.cainiao) return "cainiao";
-        return "cainiao";
+        return "yanwen";
       }
       return prev;
     });

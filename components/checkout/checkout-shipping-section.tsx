@@ -125,7 +125,7 @@ export function CheckoutShippingSection({
         postalCode: shippingPostalCode,
       });
       if (m.id === "cainiao") return coverage.cainiao && q.ok;
-      if (m.id === "yanwen") return coverage.yanwen && q.ok;
+      if (m.id === "yanwen") return q.ok;
       return q.ok;
     });
   }, [coverage.cainiao, coverage.yanwen, countryLabel, totalUnits, shippingState, shippingPostalCode]);
