@@ -22,7 +22,6 @@ import {
 import { validateInternationalPhone } from "@/lib/phone-normalize";
 import { parseAustraliaPostcodeNumeric } from "@/lib/yanwen-postcode-zones";
 import type { CheckoutAddressForm } from "@/lib/checkout-address";
-import { countryLabelToIso2 } from "@/lib/logistics-estimate";
 
 type ZipRow = { zip: string; city: string; state: string; country?: string };
 
