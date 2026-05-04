@@ -89,6 +89,7 @@ export function CheckoutShippingSection({
   countryLabel,
   shippingState,
   totalUnits,
+  declaredGoodsCny,
   method,
   onMethodChange,
   shippingPostalCode,
@@ -97,6 +98,8 @@ export function CheckoutShippingSection({
   /** State/province from shipping address (US: ISO 3166-2 e.g. CA, UM-81). */
   shippingState?: string;
   totalUnits: number;
+  /** Cart goods subtotal in CNY (actual USD × FX) — payment-aligned quotes. */
+  declaredGoodsCny: number;
   method: ShippingMethodId;
   onMethodChange: (id: ShippingMethodId) => void;
   shippingPostalCode?: string | null;
@@ -127,6 +130,7 @@ export function CheckoutShippingSection({
         method: m.id,
         state: shippingState?.trim() || null,
         postalCode: shippingPostalCode,
+        declaredGoodsCny,
       });
       if (m.id === "cainiao") {
         // Prefer table coverage, but still allow when quote succeeds (label-format fallback).
@@ -138,7 +142,7 @@ export function CheckoutShippingSection({
       }
       return true;
     });
-  }, [coverage.cainiao, coverage.yanwen, countryLabel, totalUnits, shippingState, shippingPostalCode]);
+  }, [coverage.cainiao, coverage.yanwen, countryLabel, totalUnits, shippingState, shippingPostalCode, declaredGoodsCny]);
 
   const quote = useMemo(
     () =>
@@ -148,8 +152,9 @@ export function CheckoutShippingSection({
         method,
         state: shippingState?.trim() || null,
         postalCode: shippingPostalCode,
+        declaredGoodsCny,
       }),
-    [countryLabel, totalUnits, method, shippingPostalCode, shippingState],
+    [countryLabel, totalUnits, method, shippingPostalCode, shippingState, declaredGoodsCny],
   );
 
   const destinationOk = Boolean(countryLabel.trim()) && iso2 !== null;
@@ -167,11 +172,12 @@ export function CheckoutShippingSection({
           method: m.id,
           state: shippingState?.trim() || null,
           postalCode: shippingPostalCode,
+          declaredGoodsCny,
         }),
       );
     }
     return map;
-  }, [visibleIntlMethods, countryLabel, totalUnits, shippingState, shippingPostalCode]);
+  }, [visibleIntlMethods, countryLabel, totalUnits, shippingState, shippingPostalCode, declaredGoodsCny]);
 
   if (isCn && destinationOk) {
     return (
@@ -383,7 +389,7 @@ export function CheckoutShippingSection({
                         {m.subtitle}
                       </span>
                       <span className="mt-1 block text-[11px] text-muted">
-                        Shipping add-on:{" "}
+                        Est. shipping:{" "}
                         {(() => {
                           const q = methodQuotes.get(m.id);
                           if (!q || !q.ok) return "-";
@@ -409,7 +415,7 @@ export function CheckoutShippingSection({
           <div className="rounded-xl border border-line bg-white/60 px-4 py-3 text-sm">
             {quote.ok ? (
               <p className="text-ink/90">
-                <span className="font-semibold text-ink">Shipping add-on: </span>
+                <span className="font-semibold text-ink">Shipping: </span>
                 {quote.shippingUsdCents === 0 ? (
                   <span className="text-emerald-800">$0.00 (no top-up)</span>
                 ) : (

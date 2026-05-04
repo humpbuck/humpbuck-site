@@ -19,6 +19,7 @@ import {
 } from "@/lib/checkout-address";
 import { validateCheckoutAddressForm } from "@/lib/checkout-address-consistency";
 import {
+  CNY_PER_USD,
   isCheckoutCountryChina,
   quoteCheckoutShipping,
   type ShippingMethodId,
@@ -123,7 +124,6 @@ export default function CheckoutPage() {
     const unitPrice = p?.price ?? (typeof line.unitPrice === "number" ? line.unitPrice : 0);
     return sum + unitPrice * line.qty;
   }, 0);
-
   const shipCountryLabel = useMemo(() => {
     const src = shipSameAsBilling ? billing.country : shipping.country;
     return (src || "").trim();
@@ -142,6 +142,11 @@ export default function CheckoutPage() {
   const totalUnits = useMemo(
     () => items.reduce((s, line) => s + line.qty, 0),
     [items],
+  );
+
+  const declaredGoodsCny = useMemo(
+    () => Math.round(subtotal * CNY_PER_USD * 100) / 100,
+    [subtotal],
   );
 
   useEffect(() => {
@@ -181,8 +186,9 @@ export default function CheckoutPage() {
         method: shippingMethod,
         state: shipState,
         postalCode: shipPostalCode,
+        declaredGoodsCny,
       }),
-    [shipCountryLabel, totalUnits, shippingMethod, shipPostalCode, shipState],
+    [shipCountryLabel, totalUnits, shippingMethod, shipPostalCode, shipState, declaredGoodsCny],
   );
 
   const shippingUsd =
@@ -548,6 +554,7 @@ export default function CheckoutPage() {
           countryLabel={shipCountryLabel}
           shippingState={shipState}
           totalUnits={totalUnits}
+          declaredGoodsCny={declaredGoodsCny}
           method={shippingMethod}
           onMethodChange={setShippingMethod}
           shippingPostalCode={shipPostalCode}

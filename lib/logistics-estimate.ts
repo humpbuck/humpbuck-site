@@ -20,12 +20,27 @@ type YanwenBand = {
   minChargeKg: number | null;
 };
 
+/** Per ISO: fees from carrier rate-sheet 备注 (customs/VAT/etc.), added on top of lane quotes. */
+export type CountryDestinationFeeDef = {
+  /** One-shot destination charges (e.g. clearance per shipment), CNY. */
+  flatCnyPerShipment?: number;
+  /**
+   * VAT-style charge: rate × declared goods value in CNY (order subtotal × FX as CIF proxy).
+   * Omit duty when unknown (matches “关税如有” — none → 0).
+   */
+  vatRateOnDeclaredCifCny?: number;
+  /** Shown in admin / summaries (optional). */
+  label?: string;
+};
+
 type RatesFile = {
   cainiaoVolumetricDivisor: number;
   yanwenVolumetricDivisor: number;
   yanwenDomesticToWarehouseCny: number;
   freeInternationalLegCny: number;
   cainiaoPreferenceMarginCny: number;
+  /** ISO2 → fees from destination-country remarks (see logistics-rates.json). */
+  countryDestinationFees?: Record<string, CountryDestinationFeeDef>;
   cainiao: { S5059: Record<string, Band[]>; OH: Record<string, Band[]> };
   /** When main S5059/OH sheets omit a destination (e.g. HK), per-ISO bands — edit manually. */
   cainiaoIsoFallback?: Record<
@@ -193,12 +208,24 @@ function pickCainiaoBand(weightKg: number, bands: Band[] | undefined): Band | nu
   return null;
 }
 
+/**
+ * Cainiao lightweight S5059: carrier rule — billable weight must not exceed this (kg).
+ * Above it, only OH (or other products) apply; e.g. 2×200g units → 0.4 kg → no S5059.
+ */
+export const CAINIAO_S5059_MAX_CHARGEABLE_KG = 0.2;
+
 function cainiaoInternationalCny(
   weightKg: number,
   iso2: string,
   zhCountry: string | null,
   product: "S5059" | "OH",
 ): number | null {
+  if (
+    product === "S5059" &&
+    weightKg > CAINIAO_S5059_MAX_CHARGEABLE_KG + 1e-9
+  ) {
+    return null;
+  }
   const bands = getCainiaoBands(iso2, zhCountry, product);
   const b = pickCainiaoBand(weightKg, bands);
   if (!b) return null;
@@ -289,6 +316,47 @@ export function roundUpKgToGram(kg: number): number {
   return Math.ceil(kg * 1000) / 1000;
 }
 
+/**
+ * Country-level fees from rate-sheet 备注 (customs, VAT, etc.) — not in the weight band.
+ * `declaredGoodsCny` = order goods in CNY (cart/line subtotal × FX for payment quotes).
+ */
+export function computeDestinationFeesCny(
+  iso2: string | null,
+  declaredGoodsCny: number | null | undefined,
+): { totalCny: number; lines: string[] } {
+  if (!iso2) return { totalCny: 0, lines: [] };
+  const cfg = R.countryDestinationFees?.[iso2];
+  if (!cfg) return { totalCny: 0, lines: [] };
+
+  const lines: string[] = [];
+  let total = 0;
+
+  const flat = cfg.flatCnyPerShipment ?? 0;
+  if (flat > 0) {
+    total += flat;
+    const tag = cfg.label ? ` — ${cfg.label}` : "";
+    lines.push(`Destination (remarks): flat ¥${flat.toFixed(2)}${tag}`);
+  }
+
+  const vatRate = cfg.vatRateOnDeclaredCifCny ?? 0;
+  if (vatRate > 0) {
+    const base = Math.max(0, Number(declaredGoodsCny) || 0);
+    const vat = Math.round(base * vatRate * 100) / 100;
+    total += vat;
+    if (base > 0) {
+      lines.push(
+        `Destination (remarks): VAT ${(vatRate * 100).toFixed(0)}% on declared goods ¥${base.toFixed(2)} (CIF proxy) → ¥${vat.toFixed(2)}`,
+      );
+    } else {
+      lines.push(
+        `Destination (remarks): VAT ${(vatRate * 100).toFixed(0)}% — add order goods (CNY) to compute (currently ¥0)`,
+      );
+    }
+  }
+
+  return { totalCny: Math.round(total * 100) / 100, lines };
+}
+
 export type LogisticsEstimateResult = {
   iso2: string | null;
   cainiaoZhCountry: string | null;
@@ -298,6 +366,10 @@ export type LogisticsEstimateResult = {
   chargeableKgCainiao: number | null;
   /** Billing kg for Yanwen (divisor 18000, US 30g minimum). */
   chargeableKgYanwen: number | null;
+  /** Yanwen: max(actual, volumetric) kg before applying band min-charge floor (then gram round-up). */
+  yanwenPreMinChargeKg: number | null;
+  /** Yanwen: embedded band min billable kg floor when present (`minChargeKg`). */
+  yanwenMinChargeFloorKg: number | null;
   s5059InternationalCny: number | null;
   ohInternationalCny: number | null;
   yanwen484InternationalCny: number | null;
@@ -307,6 +379,10 @@ export type LogisticsEstimateResult = {
   preferCainiao: boolean;
   /** Intl leg used for ¥50 free-ship policy (merchant cost basis). */
   policyInternationalCny: number | null;
+  /** 备注 / destination-country surcharges (customs, VAT, …), CNY. */
+  destinationFeesCny: number;
+  /** Human-readable lines for admin (empty when no config). */
+  destinationFeesLines: string[];
   freeInternational: boolean;
   buyerSupplementCny: number;
   summaryLines: string[];
@@ -333,6 +409,11 @@ export type LogisticsEstimateInput = {
   gramsPerUnit?: number;
   /** Single-carton dimensions (cm). Volumetric uses max(actual, L×W×H divisor). */
   boxCm?: { l: number; w: number; h: number };
+  /**
+   * Goods value in CNY (actual subtotal × FX) for VAT-style `countryDestinationFees` when present.
+   * When omitted, VAT lines in 备注 may show as ¥0 until a value is provided.
+   */
+  declaredGoodsCny?: number | null;
 };
 
 const DEFAULT_GRAMS = 200;
@@ -341,7 +422,7 @@ const DEFAULT_BOX = { l: 11, w: 10, h: 9 };
 /**
  * Compares Cainiao S5059 + OH vs Yanwen 484 (special goods tracked).
  * Rule: prefer Cainiao if cainiaoBest ≤ yanwenIntl + 5 (domestic) + 5 (tie margin).
- * Free ship: international leg ≤ ¥50; buyer pays the excess (CNY).
+ * Free ship: international lane + destination 备注 fees ≤ ¥50 (combined); buyer pays the excess (CNY).
  */
 export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstimateResult {
   const gramsPerUnit = input.gramsPerUnit ?? DEFAULT_GRAMS;
@@ -354,6 +435,8 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     cainiaoUsedIsoFallback: false,
     chargeableKgCainiao: null,
     chargeableKgYanwen: null,
+    yanwenPreMinChargeKg: null,
+    yanwenMinChargeFloorKg: null,
     s5059InternationalCny: null,
     ohInternationalCny: null,
     yanwen484InternationalCny: null,
@@ -361,6 +444,8 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     bestCainiaoInternationalCny: null,
     preferCainiao: true,
     policyInternationalCny: null,
+    destinationFeesCny: 0,
+    destinationFeesLines: [],
     freeInternational: true,
     buyerSupplementCny: 0,
     summaryLines: ["Add items to estimate shipping."],
@@ -407,6 +492,7 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
   let chargeableKgYanwen = rawYanwen;
   const yBandsMin = getYanwenBandsForMinChargeKg(iso2, effectiveYanwenZone);
   const yFirst = yBandsMin?.[0];
+  const yanwenMinChargeFloorKg = yFirst?.minChargeKg ?? null;
   if (yFirst?.minChargeKg != null) {
     chargeableKgYanwen = Math.max(chargeableKgYanwen, yFirst.minChargeKg);
   }
@@ -456,12 +542,19 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     ? bestCainiao
     : (yIntl ?? bestCainiao);
 
+  const destPack = computeDestinationFeesCny(iso2, input.declaredGoodsCny);
+  const destinationFeesCny = destPack.totalCny;
+  const destinationFeesLines = destPack.lines;
+
   let freeInternational = true;
   let buyerSupplementCny = 0;
-  if (policyInternationalCny != null) {
+  const intlOnly = policyInternationalCny;
+  const combinedForCap =
+    (intlOnly ?? 0) + destinationFeesCny;
+  if (intlOnly != null || destinationFeesCny > 0) {
     buyerSupplementCny = Math.max(
       0,
-      Math.round((policyInternationalCny - R.freeInternationalLegCny) * 100) / 100,
+      Math.round((combinedForCap - R.freeInternationalLegCny) * 100) / 100,
     );
     freeInternational = buyerSupplementCny <= 0;
   }
@@ -495,14 +588,30 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
         ? "Prefer Cainiao (≤¥5 vs Yanwen+¥5 domestic)"
         : "Yanwen cheaper beyond tie margin — compare manually",
     );
-    if (policyInternationalCny != null) {
+    if (policyInternationalCny != null || destinationFeesCny > 0) {
+      const lane =
+        policyInternationalCny != null
+          ? `Lane ¥${policyInternationalCny.toFixed(1)}`
+          : "Lane —";
+      const destBit =
+        destinationFeesCny > 0
+          ? ` + destination ¥${destinationFeesCny.toFixed(2)}`
+          : "";
       parts.push(
         freeInternational
-          ? `Intl est. ¥${policyInternationalCny.toFixed(1)} (≤¥${R.freeInternationalLegCny} covered)`
-          : `Intl est. ¥${policyInternationalCny.toFixed(1)} → top-up ¥${buyerSupplementCny.toFixed(1)}`,
+          ? `${lane}${destBit} (≤¥${R.freeInternationalLegCny} combined)`
+          : `${lane}${destBit} → top-up ¥${buyerSupplementCny.toFixed(2)}`,
       );
     }
     summaryLines.push(parts.join(" · "));
+  }
+  if (destinationFeesLines.length > 0) {
+    summaryLines.push(...destinationFeesLines);
+  }
+  if (chargeableKgCainiao > CAINIAO_S5059_MAX_CHARGEABLE_KG + 1e-9) {
+    summaryLines.push(
+      `Cainiao S5059: not offered above ${CAINIAO_S5059_MAX_CHARGEABLE_KG} kg billable — use OH (or split shipments).`,
+    );
   }
 
   return {
@@ -511,6 +620,8 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     cainiaoUsedIsoFallback,
     chargeableKgCainiao,
     chargeableKgYanwen,
+    yanwenPreMinChargeKg: rawYanwen,
+    yanwenMinChargeFloorKg,
     s5059InternationalCny: s5059,
     ohInternationalCny: oh,
     yanwen484InternationalCny: yIntl,
@@ -518,6 +629,8 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     bestCainiaoInternationalCny: bestCainiao,
     preferCainiao,
     policyInternationalCny,
+    destinationFeesCny,
+    destinationFeesLines,
     freeInternational,
     buyerSupplementCny,
     summaryLines,
@@ -530,9 +643,10 @@ export function buyerSupplementCnyCainiao(
 ): number | null {
   const intl = est.bestCainiaoInternationalCny;
   if (intl == null) return null;
+  const dest = est.destinationFeesCny ?? 0;
   return Math.max(
     0,
-    Math.round((intl - R.freeInternationalLegCny) * 100) / 100,
+    Math.round((intl + dest - R.freeInternationalLegCny) * 100) / 100,
   );
 }
 
@@ -542,9 +656,10 @@ export function buyerSupplementCnyYanwen(
 ): number | null {
   const intl = est.yanwen484InternationalCny;
   if (intl == null) return null;
+  const dest = est.destinationFeesCny ?? 0;
   return Math.max(
     0,
-    Math.round((intl - R.freeInternationalLegCny) * 100) / 100,
+    Math.round((intl + dest - R.freeInternationalLegCny) * 100) / 100,
   );
 }
 

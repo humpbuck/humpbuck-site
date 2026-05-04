@@ -6,6 +6,7 @@ import { sanitizeTrafficSource } from "@/lib/attribution-server";
 import { resolveCouponDiscount } from "@/lib/coupon";
 import { resolveAffiliateAttribution } from "@/lib/affiliate-attribution";
 import {
+  CNY_PER_USD,
   isCheckoutCountryChina,
   isShippingMethodId,
   quoteCheckoutShipping,
@@ -141,6 +142,8 @@ export async function POST(req: Request) {
     }
   }
 
+  const declaredGoodsCny =
+    Math.round((totalCents / 100) * CNY_PER_USD * 100) / 100;
   const shipQ = quoteCheckoutShipping({
     countryLabel: shipCountry,
     totalUnits,
@@ -148,6 +151,7 @@ export async function POST(req: Request) {
     state: shipState,
     postalCode: shipPostal,
     yanwenLogisticsZone: String(shipRec?.logisticsZone ?? "").trim() || null,
+    declaredGoodsCny,
   });
   if (!shipQ.ok) {
     return NextResponse.json({ error: shipQ.error }, { status: 400 });

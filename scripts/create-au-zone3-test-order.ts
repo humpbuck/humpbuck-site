@@ -11,7 +11,10 @@ import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
 import { adminPath } from "@/lib/admin-path";
 import { mergeDerivedLogisticsZone } from "@/lib/checkout-address";
-import { quoteCheckoutShipping } from "@/lib/checkout-shipping-quote";
+import {
+  CNY_PER_USD,
+  quoteCheckoutShipping,
+} from "@/lib/checkout-shipping-quote";
 import { effectiveZonedLaneDigit, estimateLogistics } from "@/lib/logistics-estimate";
 import { deriveYanwenLaneZoneDigit } from "@/lib/yanwen-postcode-zones";
 
@@ -74,20 +77,23 @@ async function main() {
   const QTY = 1;
   const METHOD = "cainiao" as const;
 
+  const slug = "digitemp-2412m";
+  const unitAmountCents = 999;
+  const lineTotalCents = unitAmountCents * QTY;
+  const declaredGoodsCny =
+    Math.round((lineTotalCents / 100) * CNY_PER_USD * 100) / 100;
+
   const shipQ = quoteCheckoutShipping({
     countryLabel: COUNTRY,
     totalUnits: QTY,
     method: METHOD,
     postalCode: POSTAL,
+    declaredGoodsCny,
   });
   if (!shipQ.ok) {
     console.error("quoteCheckoutShipping failed:", shipQ.error);
     process.exit(1);
   }
-
-  const slug = "digitemp-2412m";
-  const unitAmountCents = 999;
-  const lineTotalCents = unitAmountCents * QTY;
 
   function address(): Record<string, string> {
     return {

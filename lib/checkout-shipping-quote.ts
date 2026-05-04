@@ -14,6 +14,24 @@ export const CNY_PER_USD = Number(
   process.env.NEXT_PUBLIC_CNY_PER_USD ?? "7.2",
 );
 
+/**
+ * Optional offline-only helpers for customs-declaration scenarios (e.g. spreadsheets).
+ * Checkout, APIs, and admin payment recalculation use **actual** cart/order subtotal × FX
+ * as `declaredGoodsCny` — not these defaults.
+ */
+export function declaredCifUsdForDestinationFees(): number {
+  const raw = process.env.NEXT_PUBLIC_DECLARED_CIF_USD?.trim();
+  const n = raw != null && raw !== "" ? Number(raw) : NaN;
+  if (Number.isFinite(n) && n >= 0) return n;
+  return 5;
+}
+
+export function declaredGoodsCnyForDestinationFees(): number {
+  return (
+    Math.round(declaredCifUsdForDestinationFees() * CNY_PER_USD * 100) / 100
+  );
+}
+
 export function cnyToUsdCents(cny: number): number {
   if (cny <= 0) return 0;
   return Math.max(0, Math.round((cny / CNY_PER_USD) * 100));
@@ -105,6 +123,8 @@ export function quoteCheckoutShipping(input: {
   postalCode?: string | null;
   /** Legacy: only used if postcode does not map to a zone. */
   yanwenLogisticsZone?: string | null;
+  /** Actual order/cart goods in CNY (USD subtotal × this module’s FX) for destination 备注 (e.g. SA VAT). */
+  declaredGoodsCny?: number | null;
 }): CheckoutShippingQuote {
   if (isCheckoutCountryChina(input.countryLabel)) {
     if (!isChinaDomesticMethod(input.method)) {
@@ -152,6 +172,7 @@ export function quoteCheckoutShipping(input: {
     state: input.state,
     postalCode: input.postalCode,
     yanwenZone: input.yanwenLogisticsZone,
+    declaredGoodsCny: input.declaredGoodsCny,
   });
   if (!est.iso2) {
     return { ok: false, error: "Choose a valid shipping country." };
@@ -209,7 +230,8 @@ export function quoteCheckoutShipping(input: {
   if (isPremiumExpressMethod(input.method)) {
     const kg =
       est.chargeableKgYanwen ?? est.chargeableKgCainiao ?? PREMIUM_EXPRESS_INCLUDED_KG;
-    const full = premiumExpressTotalCny(kg);
+    const dest = est.destinationFeesCny ?? 0;
+    const full = Math.round((premiumExpressTotalCny(kg) + dest) * 100) / 100;
     return {
       ok: true,
       shippingCny: full,

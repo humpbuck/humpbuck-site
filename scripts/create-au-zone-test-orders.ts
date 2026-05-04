@@ -10,7 +10,10 @@ import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
 import { adminPath } from "@/lib/admin-path";
 import { mergeDerivedLogisticsZone } from "@/lib/checkout-address";
-import { quoteCheckoutShipping } from "@/lib/checkout-shipping-quote";
+import {
+  CNY_PER_USD,
+  quoteCheckoutShipping,
+} from "@/lib/checkout-shipping-quote";
 
 loadEnvConfig(process.cwd());
 
@@ -53,12 +56,15 @@ async function createOne(
   const slug = "digitemp-2412m";
   const unitAmountCents = 999;
   const lineTotalCents = unitAmountCents * QTY;
+  const declaredGoodsCny =
+    Math.round((lineTotalCents / 100) * CNY_PER_USD * 100) / 100;
 
   const shipQ = quoteCheckoutShipping({
     countryLabel: COUNTRY,
     totalUnits: QTY,
     method: SHIPPING_METHOD,
     postalCode,
+    declaredGoodsCny,
   });
   if (!shipQ.ok) {
     console.error(`Postcode ${postalCode} quote failed:`, shipQ.error);
