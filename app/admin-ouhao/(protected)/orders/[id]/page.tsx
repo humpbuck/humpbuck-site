@@ -553,7 +553,7 @@ export default async function AdminOrderDetailPage({
           details. Use <strong className="text-ink">Refund payment</strong>{" "}
           to issue a full refund via Stripe or PayPal.
         </p>
-        <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,560px)_minmax(280px,380px)] lg:items-start">
+        <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] lg:items-start">
           <div className="space-y-8">
             <OrderEditForm
               orderId={order.id}
@@ -574,7 +574,7 @@ export default async function AdminOrderDetailPage({
             shippingCountryLabel={logisticsCountry}
             shippingState={logisticsState}
             totalUnits={orderTotalUnits}
-            declaredGoodsCny={declaredGoodsCnyFromOrder}
+            declaredGoodsCnyActual={declaredGoodsCnyFromOrder}
             postalCode={logisticsPostal}
             yanwenZone={logisticsYanwenZone}
             effectiveLaneZone={shippingZoneDisplay}

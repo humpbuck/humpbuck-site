@@ -1,5 +1,6 @@
 import {
   CNY_PER_USD,
+  declaredGoodsCnyForAdminLogisticsEstimate,
   isShippingMethodId,
   premiumExpressLabel,
   quoteCheckoutShipping,
@@ -64,31 +65,43 @@ function s5059AdminLine(
   );
 }
 
-/** Admin: 国际段 + 国内 + 计费重(含最小计费). */
-function yanwenAdminLine(est: {
+/** 国际 + ¥5 国内 + 备注(票费/VAT 等) = 全包；第二行给计费重与最小计费说明。 */
+function yanwenAdminPrimaryLine(est: {
   yanwen484InternationalCny: number | null;
   yanwenWithDomesticCny: number | null;
-  chargeableKgYanwen: number | null;
-  yanwenPreMinChargeKg: number | null;
-  yanwenMinChargeFloorKg: number | null;
+  destinationFeesCny: number;
 }): string {
   const intl = est.yanwen484InternationalCny;
   const withDom = est.yanwenWithDomesticCny;
+  const dest = est.destinationFeesCny;
+  if (intl == null || withDom == null) return "—";
+  const grand = Math.round((withDom + dest) * 100) / 100;
+  if (dest <= 0) {
+    return `¥${intl.toFixed(2)} + ¥5 (国内) = ¥${withDom.toFixed(2)}`;
+  }
+  return `¥${intl.toFixed(2)} + ¥5 (国内) + ¥${dest.toFixed(2)} (备注) = ¥${grand.toFixed(2)}`;
+}
+
+function yanwenAdminWeightNote(est: {
+  chargeableKgYanwen: number | null;
+  yanwenPreMinChargeKg: number | null;
+  yanwenMinChargeFloorKg: number | null;
+}): string | null {
   const kg = est.chargeableKgYanwen;
+  if (kg == null) return null;
   const pre = est.yanwenPreMinChargeKg;
   const floor = est.yanwenMinChargeFloorKg;
-  if (intl == null || withDom == null || kg == null) return "—";
   const preSeg = pre != null ? ` · 实重/泡重 ${pre.toFixed(3)} kg` : "";
   const floorSeg =
     floor != null ? ` · 最小计费 ≥ ${floor.toFixed(3)} kg` : "";
-  return `¥${intl.toFixed(2)} + ¥5 (国内) · 计费重 ${kg.toFixed(3)} kg${preSeg}${floorSeg} → ¥${withDom.toFixed(2)}`;
+  return `计费重 ${kg.toFixed(3)} kg${preSeg}${floorSeg}`;
 }
 
 export function LogisticsReferencePanel({
   shippingCountryLabel,
   shippingState,
   totalUnits,
-  declaredGoodsCny,
+  declaredGoodsCnyActual,
   postalCode,
   yanwenZone,
   effectiveLaneZone,
@@ -98,8 +111,8 @@ export function LogisticsReferencePanel({
   /** State/province from order address (US: ISO 3166-2). */
   shippingState?: string | null;
   totalUnits: number;
-  /** Order goods value in CNY (matches checkout / payment — actual line subtotal × FX). */
-  declaredGoodsCny: number;
+  /** Order goods in CNY (line subtotal × FX); used for checkout shipping recalculation only. */
+  declaredGoodsCnyActual: number;
   postalCode?: string | null;
   /** Stored lane zone when present; postcode mapping fills gaps for AU/CA. */
   yanwenZone?: string | null;
@@ -114,7 +127,7 @@ export function LogisticsReferencePanel({
     state: shippingState ?? undefined,
     postalCode,
     yanwenZone: yanwenZone ?? undefined,
-    declaredGoodsCny,
+    declaredGoodsCny: declaredGoodsCnyForAdminLogisticsEstimate(),
   });
 
   const methodRaw = String(checkoutShippingMethod ?? "").trim();
@@ -128,7 +141,7 @@ export function LogisticsReferencePanel({
           state: shippingState ?? null,
           postalCode,
           yanwenLogisticsZone: yanwenZone ?? null,
-          declaredGoodsCny,
+          declaredGoodsCny: declaredGoodsCnyActual,
         })
       : null;
 
@@ -137,26 +150,28 @@ export function LogisticsReferencePanel({
       ? ` · Lane zone ${effectiveLaneZone}`
       : null;
 
+  const yanwenWeightNote =
+    est.yanwen484InternationalCny != null && est.yanwenWithDomesticCny != null
+      ? yanwenAdminWeightNote(est)
+      : null;
+
   return (
-    <aside className="rounded-2xl border border-line bg-zinc-50/90 p-5 text-sm ring-1 ring-zinc-200/80">
+    <aside className="min-w-0 w-full rounded-2xl border border-line bg-zinc-50/90 p-6 text-sm ring-1 ring-zinc-200/80">
       <h3 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-600">
         Logistics reference
       </h3>
       <p className="mt-2 text-[11px] leading-relaxed text-muted">
         Estimates from embedded Cainiao (S5059 / OH) and Yanwen (484) tables —
-        200g/unit, 11×10×9cm volumetric.{" "}
+        200g/unit, 11×10×9cm volumetric. Destination surcharges (备注/VAT) follow the embedded
+        country fee rules (see lines below). Yanwen 484 is priced by{" "}
+        <span className="text-zinc-800">weight bands + min billable kg</span> (see billable kg
+        row). Cainiao S5059 only applies when billable weight ≤{" "}
+        {CAINIAO_S5059_MAX_CHARGEABLE_KG} kg (one carton model); above that use OH. Cainiao
+        rows: <span className="text-zinc-800">international + 备注</span>. Yanwen row:{" "}
         <span className="text-zinc-800">
-          Destination surcharges (备注/VAT) use this order&apos;s goods value in CNY (same
-          basis as checkout payment).
-        </span>{" "}
-        If you declare lower at ship-out for customs, that is manual — figures here stay
-        payment-aligned. Yanwen 484 is priced by{" "}
-        <span className="text-zinc-800">weight bands + min billable kg</span> (see billable
-        kg row); the Yanwen line below is int&apos;l + ¥5 domestic only.         Cainiao S5059 only applies when billable weight ≤ {CAINIAO_S5059_MAX_CHARGEABLE_KG}{" "}
-        kg (one carton model); above that use OH. Rows show{" "}
-        <span className="text-zinc-800">lane + 备注</span>. Yanwen row shows{" "}
-        <span className="text-zinc-800">国际段 + ¥5 国内 + 计费重</span> (min billing weight in
-        rate table). Compare with your live quote before shipping.
+          international + ¥5 (国内) + 备注 (flat/VAT 等合计)
+        </span>
+        . Compare with your live quote before shipping.
         {est.iso2 === "AU" ? (
           <>
             {" "}
@@ -203,9 +218,9 @@ export function LogisticsReferencePanel({
         </p>
       ) : null}
       <dl className="mt-4 space-y-2.5 text-[13px]">
-        <div className="flex justify-between gap-3">
-          <dt className="text-muted">Destination</dt>
-          <dd className="text-right font-medium text-ink">
+        <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
+          <dt className="shrink-0 text-muted">Destination</dt>
+          <dd className="min-w-0 max-w-full text-right font-medium text-ink">
             {est.iso2 ?? "—"}
             {est.cainiaoZhCountry ? (
               <span className="text-muted"> · {est.cainiaoZhCountry}</span>
@@ -215,8 +230,8 @@ export function LogisticsReferencePanel({
             ) : null}
           </dd>
         </div>
-        <div className="flex justify-between gap-3">
-          <dt className="text-muted">Billable kg (Cn / Yw)</dt>
+        <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
+          <dt className="shrink-0 text-muted">Billable kg (Cn / Yw)</dt>
           <dd className="tabular-nums text-right text-ink">
             {est.chargeableKgCainiao != null
               ? est.chargeableKgCainiao.toFixed(3)
@@ -231,33 +246,43 @@ export function LogisticsReferencePanel({
           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
             International (CNY)
           </p>
-          <ul className="mt-2 space-y-1.5 tabular-nums">
-            <li className="flex justify-between gap-2">
-              <span>Cainiao lightweight S5059</span>
-              <span className="max-w-[min(100%,18rem)] text-right leading-snug">
+          <ul className="mt-2 space-y-3 tabular-nums">
+            <li className="grid gap-2 border-b border-line/60 pb-3 last:border-0 sm:grid-cols-[minmax(9rem,13rem)_minmax(0,1fr)] sm:items-start">
+              <span className="font-medium text-ink">Cainiao lightweight S5059</span>
+              <div className="min-w-0 text-right leading-snug sm:text-left">
                 {s5059AdminLine(est)}
-              </span>
+              </div>
             </li>
-            <li className="flex justify-between gap-2">
-              <span>Cainiao registered OH</span>
-              <span className="max-w-[min(100%,18rem)] text-right leading-snug">
+            <li className="grid gap-2 border-b border-line/60 pb-3 last:border-0 sm:grid-cols-[minmax(9rem,13rem)_minmax(0,1fr)] sm:items-start">
+              <span className="font-medium text-ink">Cainiao registered OH</span>
+              <div className="min-w-0 text-right leading-snug sm:text-left">
                 {cainiaoLineWithRemark(
                   est.ohInternationalCny,
                   est.destinationFeesCny,
                 )}
-              </span>
+              </div>
             </li>
-            <li className="flex justify-between gap-2">
-              <span>Yanwen 484 + ¥5 domestic leg</span>
-              <span className="max-w-[min(100%,18rem)] text-right leading-snug">
-                {yanwenAdminLine(est)}
-              </span>
+            <li className="grid gap-2 pb-1 sm:grid-cols-[minmax(9rem,13rem)_minmax(0,1fr)] sm:items-start">
+              <span className="font-medium text-ink">Yanwen 484 + ¥5 domestic</span>
+              <div className="min-w-0 space-y-1 text-right leading-snug sm:text-left">
+                <p className="wrap-break-word">
+                  {yanwenAdminPrimaryLine(est)}
+                </p>
+                {yanwenWeightNote ? (
+                  <p className="text-[11px] text-muted">{yanwenWeightNote}</p>
+                ) : null}
+              </div>
             </li>
           </ul>
           {est.destinationFeesLines.length > 0 ? (
-            <ul className="mt-2 space-y-1 text-[11px] leading-relaxed text-muted">
+            <ul className="mt-3 space-y-1.5 text-[11px] leading-relaxed text-muted">
+              <li className="text-[10px] font-medium uppercase tracking-[0.12em] text-zinc-500">
+                备注明细
+              </li>
               {est.destinationFeesLines.map((line) => (
-                <li key={line}>{line}</li>
+                <li key={line} className="wrap-break-word pl-0">
+                  {line}
+                </li>
               ))}
             </ul>
           ) : null}

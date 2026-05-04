@@ -32,6 +32,24 @@ export function declaredGoodsCnyForDestinationFees(): number {
   );
 }
 
+/**
+ * USD declared value for **admin Fulfillment “Logistics reference”** only (备注/VAT bands).
+ * Default **1.2** — not sent to PayPal/Stripe. Checkout & APIs use actual order subtotal × FX.
+ * Server env: `LOGISTICS_ADMIN_DECLARED_CIF_USD`
+ */
+export function adminLogisticsDeclaredCifUsd(): number {
+  const raw = process.env.LOGISTICS_ADMIN_DECLARED_CIF_USD?.trim();
+  const n = raw != null && raw !== "" ? Number(raw) : NaN;
+  if (Number.isFinite(n) && n >= 0) return n;
+  return 1.2;
+}
+
+export function declaredGoodsCnyForAdminLogisticsEstimate(): number {
+  return (
+    Math.round(adminLogisticsDeclaredCifUsd() * CNY_PER_USD * 100) / 100
+  );
+}
+
 export function cnyToUsdCents(cny: number): number {
   if (cny <= 0) return 0;
   return Math.max(0, Math.round((cny / CNY_PER_USD) * 100));

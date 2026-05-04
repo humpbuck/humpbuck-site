@@ -6,9 +6,9 @@
   "cainiaoPreferenceMarginCny": 5,
   "countryDestinationFees": {
     "SA": {
-      "flatCnyPerShipment": 33.35,
+      "flatCnyPerShipment": 34,
       "vatRateOnDeclaredCifCny": 0.15,
-      "label": "Saudi: 通关手续费(含税) 33.35元/票; VAT=(CIF+关税)×15% (关税无则按订单货值CNY)"
+      "label": "Saudi: 处理费 34元/票; VAT=(CIF+关税)×15%"
     }
   },
   "cainiao": {

@@ -318,7 +318,8 @@ export function roundUpKgToGram(kg: number): number {
 
 /**
  * Country-level fees from rate-sheet 备注 (customs, VAT, etc.) — not in the weight band.
- * `declaredGoodsCny` = order goods in CNY (cart/line subtotal × FX for payment quotes).
+ * Pass cart/order goods in CNY for checkout; admin Fulfillment may pass
+ * `declaredGoodsCnyForAdminLogisticsEstimate()` for internal low-declaration planning.
  */
 export function computeDestinationFeesCny(
   iso2: string | null,
