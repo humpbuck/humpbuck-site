@@ -272,13 +272,11 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
-            {featured.map((p, i) => (
+            {featured.map((p) => (
               <ProductCard
                 key={p.slug}
                 product={p}
                 imagePriority={false}
-                optimizeR2Image
-                imageQuality={60}
               />
             ))}
           </div>
