@@ -29,17 +29,18 @@ export type CountryDestinationFeeDef = {
    * 关税如有可写在 `label` 或后续扩展字段；未知则按 0。
    */
   vatRateOnDeclaredCifCny?: number;
+  /** Duty / customs tax rate against declared CIF CNY. */
+  dutyRateOnDeclaredCifCny?: number;
+  /** Cainiao OH-only VAT rate override. */
+  cainiaoVatRateOnDeclaredCifCny?: number;
+  /** Cainiao OH-only duty rate override. */
+  cainiaoDutyRateOnDeclaredCifCny?: number;
   /** Shown in admin / summaries (optional). */
   label?: string;
-  /**
-   * Cainiao S5059/OH — per-shipment 通关/处理费等（表 K 列来源），CNY。
-   * 与 `flatCnyPerShipment`/VAT 并列展示，避免重复计入同一费用。
-   */
+  /** Cainiao S5059/OH — per-shipment 通关/处理费等（表 K 列来源），CNY. */
   cainiaoRemarksFlatCny?: number;
   cainiaoRemarksLabel?: string;
-  /**
-   * Yanwen 484 — per-shipment 通关/处理费等（表 G 列来源），CNY。
-   */
+  /** Yanwen 484 — per-shipment 通关/处理费等（表 G 列来源），CNY. */
   yanwenRemarksFlatCny?: number;
   yanwenRemarksLabel?: string;
 };
@@ -371,9 +372,9 @@ export function computeDestinationFeesBreakdown(
     lines.push(`处理费/票面 ¥${flat.toFixed(2)}${detail}`);
   }
 
+  const base = Math.max(0, Number(declaredGoodsCny) || 0);
   const vatRate = cfg.vatRateOnDeclaredCifCny ?? 0;
   if (vatRate > 0) {
-    const base = Math.max(0, Number(declaredGoodsCny) || 0);
     const vat = Math.round(base * vatRate * 100) / 100;
     shared += vat;
     if (base > 0) {
@@ -385,6 +386,39 @@ export function computeDestinationFeesBreakdown(
         `增值税(VAT) ${(vatRate * 100).toFixed(0)}% · 测算货值为 ¥0，未计入`,
       );
     }
+  }
+
+  const dutyRate = cfg.dutyRateOnDeclaredCifCny ?? 0;
+  if (dutyRate > 0) {
+    const duty = Math.round(base * dutyRate * 100) / 100;
+    shared += duty;
+    if (base > 0) {
+      lines.push(
+        `关税(Duty) ${(dutyRate * 100).toFixed(0)}% · 运费测算货值 ¥${base.toFixed(2)}（CIF 近似）→ ¥${duty.toFixed(2)}`,
+      );
+    } else {
+      lines.push(
+        `关税(Duty) ${(dutyRate * 100).toFixed(0)}% · 测算货值为 ¥0，未计入`,
+      );
+    }
+  }
+
+  const cainiaoVatRate = cfg.cainiaoVatRateOnDeclaredCifCny ?? 0;
+  if (cainiaoVatRate > 0) {
+    const vat = Math.round(base * cainiaoVatRate * 100) / 100;
+    shared += vat;
+    lines.push(
+      `【菜鸟】VAT ${(cainiaoVatRate * 100).toFixed(0)}% · 运费测算货值 ¥${base.toFixed(2)} → ¥${vat.toFixed(2)}`,
+    );
+  }
+
+  const cainiaoDutyRate = cfg.cainiaoDutyRateOnDeclaredCifCny ?? 0;
+  if (cainiaoDutyRate > 0) {
+    const duty = Math.round(base * cainiaoDutyRate * 100) / 100;
+    shared += duty;
+    lines.push(
+      `【菜鸟】Duty ${(cainiaoDutyRate * 100).toFixed(0)}% · 运费测算货值 ¥${base.toFixed(2)} → ¥${duty.toFixed(2)}`,
+    );
   }
 
   const cainiaoCarrier = cfg.cainiaoRemarksFlatCny ?? 0;

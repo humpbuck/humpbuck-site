@@ -5,42 +5,47 @@
   "freeInternationalLegCny": 50,
   "cainiaoPreferenceMarginCny": 5,
   "countryDestinationFees": {
-    "SA": {
-      "flatCnyPerShipment": 34,
-      "vatRateOnDeclaredCifCny": 0.15,
-      "label": "Saudi: 处理费 34元/票; VAT=(CIF+关税)×15%"
-    },
-    "QA": {
-      "cainiaoRemarksFlatCny": 40,
-      "cainiaoRemarksLabel": "卡塔尔 菜鸟通关手续费",
-      "yanwenRemarksFlatCny": 50,
-      "yanwenRemarksLabel": "卡塔尔 燕文通关手续费"
-    },
-    "AE": {
-      "yanwenRemarksFlatCny": 13,
-      "yanwenRemarksLabel": "阿联酋 燕文通关手续费"
-    },
-    "BH": {
-      "yanwenRemarksFlatCny": 20,
-      "yanwenRemarksLabel": "巴林 燕文通关手续费"
-    },
-    "JO": {
-      "yanwenRemarksFlatCny": 20,
-      "yanwenRemarksLabel": "约旦 燕文通关手续费"
-    },
-    "KW": {
-      "yanwenRemarksFlatCny": 26,
-      "yanwenRemarksLabel": "科威特 燕文通关手续费"
-    },
-    "OM": {
-      "yanwenRemarksFlatCny": 20,
-      "yanwenRemarksLabel": "阿曼 燕文通关手续费"
+    "RO": {
+      "cainiaoRemarksFlatCny": 41,
+      "cainiaoRemarksLabel": "罗马尼亚 菜鸟OH固定费用 41元/票"
     },
     "NZ": {
       "cainiaoRemarksFlatCny": 10,
-      "cainiaoRemarksLabel": "新西兰 菜鸟通关手续费（低货值档 10元/票）",
-      "yanwenRemarksFlatCny": 26,
-      "yanwenRemarksLabel": "新西兰 燕文通关/操作费（请与报价表核对）"
+      "cainiaoRemarksLabel": "新西兰 菜鸟通关手续费 10元/票"
+    },
+    "SA": {
+      "cainiaoVatRateOnDeclaredCifCny": 0.15,
+      "cainiaoDutyRateOnDeclaredCifCny": 0,
+      "cainiaoRemarksFlatCny": 33.35,
+      "cainiaoRemarksLabel": "沙特 菜鸟OH通关费 33.35元/票",
+      "label": "沙特 VAT 15%"
+    },
+    "AE": {
+      "cainiaoVatRateOnDeclaredCifCny": 0.05,
+      "label": "阿联酋 VAT 5%"
+    },
+    "QA": {
+      "cainiaoRemarksFlatCny": 40,
+      "cainiaoRemarksLabel": "卡塔尔 通关手续费 40元/票"
+    },
+    "KW": {
+      "cainiaoVatRateOnDeclaredCifCny": 0.05,
+      "cainiaoRemarksFlatCny": 35,
+      "cainiaoRemarksLabel": "科威特 通关手续费 35元/票"
+    },
+    "BH": {
+      "cainiaoVatRateOnDeclaredCifCny": 0.10,
+      "label": "巴林 VAT 10%"
+    },
+    "OM": {
+      "cainiaoVatRateOnDeclaredCifCny": 0.05,
+      "cainiaoRemarksFlatCny": 20,
+      "cainiaoRemarksLabel": "阿曼 通过手续费 20元/票",
+      "label": "阿曼 VAT 5%"
+    },
+    "MA": {
+      "dutyRateOnDeclaredCifCny": 0.56,
+      "label": "摩洛哥 Duty 56%"
     }
   },
   "cainiao": {
@@ -2043,6 +2048,301 @@
         "minChargeKg": 0.05
       }
     ],
+    "AR": [
+      {
+        "wMin": 0.001,
+        "wMax": 1.0,
+        "rmbPerKg": 140.0,
+        "pieceRmb": 0.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "CL": [
+      {
+        "wMin": 0.001,
+        "wMax": 30.0,
+        "rmbPerKg": 110.0,
+        "pieceRmb": 0.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "AE": [
+      {
+        "wMin": 0.001,
+        "wMax": 1.0,
+        "rmbPerKg": 75.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 1.001,
+        "wMax": 5.0,
+        "rmbPerKg": 75.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 5.001,
+        "wMax": 30.0,
+        "rmbPerKg": 75.0,
+        "pieceRmb": 24.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "JO": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.5,
+        "rmbPerKg": 120.0,
+        "pieceRmb": 37.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.501,
+        "wMax": 2.0,
+        "rmbPerKg": 120.0,
+        "pieceRmb": 30.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 5.0,
+        "rmbPerKg": 118.0,
+        "pieceRmb": 25.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 5.001,
+        "wMax": 15.0,
+        "rmbPerKg": 118.0,
+        "pieceRmb": 25.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "OM": [
+      {
+        "wMin": 0.001,
+        "wMax": 20.0,
+        "rmbPerKg": 103.0,
+        "pieceRmb": 37.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "QA": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.5,
+        "rmbPerKg": 75.0,
+        "pieceRmb": 45.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.501,
+        "wMax": 2.0,
+        "rmbPerKg": 80.0,
+        "pieceRmb": 45.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 5.0,
+        "rmbPerKg": 95.0,
+        "pieceRmb": 55.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 5.001,
+        "wMax": 30.0,
+        "rmbPerKg": 95.0,
+        "pieceRmb": 55.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "SA": [
+      {
+        "wMin": 0.001,
+        "wMax": 0.5,
+        "rmbPerKg": 83.0,
+        "pieceRmb": 40.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 0.501,
+        "wMax": 1.0,
+        "rmbPerKg": 84.0,
+        "pieceRmb": 35.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 1.001,
+        "wMax": 2.0,
+        "rmbPerKg": 84.0,
+        "pieceRmb": 35.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 5.0,
+        "rmbPerKg": 84.0,
+        "pieceRmb": 35.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 5.001,
+        "wMax": 30.0,
+        "rmbPerKg": 84.0,
+        "pieceRmb": 25.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "VN": [
+      {
+        "wMin": 0.001,
+        "wMax": 30.0,
+        "rmbPerKg": 31.0,
+        "pieceRmb": 11.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "AO": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 180.0,
+        "pieceRmb": 24.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "GH": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 170.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 10.0,
+        "rmbPerKg": 260.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 10.001,
+        "wMax": 30.0,
+        "rmbPerKg": 230.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "KE": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 135.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 10.0,
+        "rmbPerKg": 190.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 10.001,
+        "wMax": 30.0,
+        "rmbPerKg": 170.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "MA": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 130.0,
+        "pieceRmb": 48.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "NG": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 140.0,
+        "pieceRmb": 27.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 10.0,
+        "rmbPerKg": 195.0,
+        "pieceRmb": 27.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 10.001,
+        "wMax": 30.0,
+        "rmbPerKg": 175.0,
+        "pieceRmb": 27.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "RW": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 155.0,
+        "pieceRmb": 18.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "TZ": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 125.0,
+        "pieceRmb": 21.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "UG": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 160.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 10.0,
+        "rmbPerKg": 250.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      },
+      {
+        "wMin": 10.001,
+        "wMax": 30.0,
+        "rmbPerKg": 220.0,
+        "pieceRmb": 22.0,
+        "minChargeKg": 0.05
+      }
+    ],
+    "ZA": [
+      {
+        "wMin": 0.001,
+        "wMax": 8.0,
+        "rmbPerKg": 171.0,
+        "pieceRmb": 28.0,
+        "minChargeKg": 0.05
+      }
+    ]
+  },
+  "cainiaoIsoFallback": {
     "PR": [
       {
         "wMin": 0.001,

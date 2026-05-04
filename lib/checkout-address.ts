@@ -27,6 +27,7 @@ export type CheckoutAddressForm = {
   /** Derived for AU/CA from postal code (Yanwen + Cainiao AU pricing); not user-edited. */
   logisticsZone: string;
   phone: string;
+  taxId: string;
 };
 
 export function emptyCheckoutAddress(): CheckoutAddressForm {
@@ -42,6 +43,7 @@ export function emptyCheckoutAddress(): CheckoutAddressForm {
     country: DEFAULT_CHECKOUT_COUNTRY,
     logisticsZone: "",
     phone: "",
+    taxId: "",
   };
 }
 
@@ -63,6 +65,7 @@ export function checkoutFormFromOrderRecord(
     country: (r.country ?? "").trim() || e.country,
     logisticsZone: (r.logisticsZone ?? "").trim(),
     phone: (r.phone ?? "").trim(),
+    taxId: (r.taxId ?? r.vatNumber ?? "").trim(),
   };
 }
 
@@ -84,6 +87,7 @@ export function addressFormToRecord(
     postalCode: a.postalCode.trim(),
     country: a.country.trim(),
     phone: a.phone.trim(),
+    taxId: a.taxId.trim(),
   };
   if (a.company.trim()) o.company = a.company.trim();
   mergeDerivedLogisticsZone(o);
@@ -146,6 +150,7 @@ export function checkoutFormFromSavedAddress(
     postalCode: rec.postalCode,
     country: rec.country,
     phone: rec.phone,
+    taxId: rec.taxId ?? "",
     logisticsZone: rec.logisticsZone ?? "",
   };
 }
