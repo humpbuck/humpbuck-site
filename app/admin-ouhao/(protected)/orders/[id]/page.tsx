@@ -174,8 +174,6 @@ export default async function AdminOrderDetailPage({
   );
 
   const linesSubtotalCents = lines.reduce((s, l) => s + l.lineTotalCents, 0);
-  const declaredGoodsCnyFromOrder =
-    Math.round((linesSubtotalCents / 100) * CNY_PER_USD * 100) / 100;
   const orderTotalUnits = lines.reduce((s, l) => s + l.qty, 0);
   const logisticsCountry =
     (shipping?.country ?? billingRaw?.country ?? "").trim() ||
@@ -210,7 +208,6 @@ export default async function AdminOrderDetailPage({
           state: logisticsState,
           postalCode: logisticsPostal,
           yanwenLogisticsZone: logisticsYanwenZone,
-          declaredGoodsCny: declaredGoodsCnyFromOrder,
         })
       : null;
   const storedShippingEstimateCny = (() => {
@@ -574,7 +571,6 @@ export default async function AdminOrderDetailPage({
             shippingCountryLabel={logisticsCountry}
             shippingState={logisticsState}
             totalUnits={orderTotalUnits}
-            declaredGoodsCnyActual={declaredGoodsCnyFromOrder}
             postalCode={logisticsPostal}
             yanwenZone={logisticsYanwenZone}
             effectiveLaneZone={shippingZoneDisplay}

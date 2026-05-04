@@ -9,6 +9,38 @@
       "flatCnyPerShipment": 34,
       "vatRateOnDeclaredCifCny": 0.15,
       "label": "Saudi: 处理费 34元/票; VAT=(CIF+关税)×15%"
+    },
+    "QA": {
+      "cainiaoRemarksFlatCny": 40,
+      "cainiaoRemarksLabel": "卡塔尔 菜鸟通关手续费",
+      "yanwenRemarksFlatCny": 50,
+      "yanwenRemarksLabel": "卡塔尔 燕文通关手续费"
+    },
+    "AE": {
+      "yanwenRemarksFlatCny": 13,
+      "yanwenRemarksLabel": "阿联酋 燕文通关手续费"
+    },
+    "BH": {
+      "yanwenRemarksFlatCny": 20,
+      "yanwenRemarksLabel": "巴林 燕文通关手续费"
+    },
+    "JO": {
+      "yanwenRemarksFlatCny": 20,
+      "yanwenRemarksLabel": "约旦 燕文通关手续费"
+    },
+    "KW": {
+      "yanwenRemarksFlatCny": 26,
+      "yanwenRemarksLabel": "科威特 燕文通关手续费"
+    },
+    "OM": {
+      "yanwenRemarksFlatCny": 20,
+      "yanwenRemarksLabel": "阿曼 燕文通关手续费"
+    },
+    "NZ": {
+      "cainiaoRemarksFlatCny": 10,
+      "cainiaoRemarksLabel": "新西兰 菜鸟通关手续费（低货值档 10元/票）",
+      "yanwenRemarksFlatCny": 26,
+      "yanwenRemarksLabel": "新西兰 燕文通关/操作费（请与报价表核对）"
     }
   },
   "cainiao": {

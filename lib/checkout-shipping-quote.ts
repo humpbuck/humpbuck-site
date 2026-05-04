@@ -16,8 +16,8 @@ export const CNY_PER_USD = Number(
 
 /**
  * Optional offline-only helpers for customs-declaration scenarios (e.g. spreadsheets).
- * Checkout, APIs, and admin payment recalculation use **actual** cart/order subtotal × FX
- * as `declaredGoodsCny` — not these defaults.
+ * Live checkout and APIs use {@link declaredGoodsCnyForShippingFees} for VAT-style
+ * destination math — not these defaults.
  */
 export function declaredCifUsdForDestinationFees(): number {
   const raw = process.env.NEXT_PUBLIC_DECLARED_CIF_USD?.trim();
@@ -33,22 +33,31 @@ export function declaredGoodsCnyForDestinationFees(): number {
 }
 
 /**
- * USD declared value for **admin Fulfillment “Logistics reference”** only (备注/VAT bands).
- * Default **1.2** — not sent to PayPal/Stripe. Checkout & APIs use actual order subtotal × FX.
- * Server env: `LOGISTICS_ADMIN_DECLARED_CIF_USD`
+ * USD “declared goods” proxy for **shipping quotes only** (VAT / destination fee bands).
+ * Default **1.2**. PayPal/Stripe line items still use the buyer’s **actual** cart prices.
+ * Server env: `LOGISTICS_SHIPPING_DECLARED_CIF_USD`, or legacy `LOGISTICS_ADMIN_DECLARED_CIF_USD`.
  */
-export function adminLogisticsDeclaredCifUsd(): number {
-  const raw = process.env.LOGISTICS_ADMIN_DECLARED_CIF_USD?.trim();
+export function shippingDeclaredCifUsd(): number {
+  const raw =
+    process.env.LOGISTICS_SHIPPING_DECLARED_CIF_USD?.trim() ||
+    process.env.LOGISTICS_ADMIN_DECLARED_CIF_USD?.trim();
   const n = raw != null && raw !== "" ? Number(raw) : NaN;
   if (Number.isFinite(n) && n >= 0) return n;
   return 1.2;
 }
 
-export function declaredGoodsCnyForAdminLogisticsEstimate(): number {
+/** @deprecated Use {@link shippingDeclaredCifUsd} */
+export const adminLogisticsDeclaredCifUsd = shippingDeclaredCifUsd;
+
+export function declaredGoodsCnyForShippingFees(): number {
   return (
-    Math.round(adminLogisticsDeclaredCifUsd() * CNY_PER_USD * 100) / 100
+    Math.round(shippingDeclaredCifUsd() * CNY_PER_USD * 100) / 100
   );
 }
+
+/** @deprecated Use {@link declaredGoodsCnyForShippingFees} */
+export const declaredGoodsCnyForAdminLogisticsEstimate =
+  declaredGoodsCnyForShippingFees;
 
 export function cnyToUsdCents(cny: number): number {
   if (cny <= 0) return 0;
@@ -141,8 +150,6 @@ export function quoteCheckoutShipping(input: {
   postalCode?: string | null;
   /** Legacy: only used if postcode does not map to a zone. */
   yanwenLogisticsZone?: string | null;
-  /** Actual order/cart goods in CNY (USD subtotal × this module’s FX) for destination 备注 (e.g. SA VAT). */
-  declaredGoodsCny?: number | null;
 }): CheckoutShippingQuote {
   if (isCheckoutCountryChina(input.countryLabel)) {
     if (!isChinaDomesticMethod(input.method)) {
@@ -190,7 +197,7 @@ export function quoteCheckoutShipping(input: {
     state: input.state,
     postalCode: input.postalCode,
     yanwenZone: input.yanwenLogisticsZone,
-    declaredGoodsCny: input.declaredGoodsCny,
+    declaredGoodsCny: declaredGoodsCnyForShippingFees(),
   });
   if (!est.iso2) {
     return { ok: false, error: "Choose a valid shipping country." };
@@ -248,7 +255,10 @@ export function quoteCheckoutShipping(input: {
   if (isPremiumExpressMethod(input.method)) {
     const kg =
       est.chargeableKgYanwen ?? est.chargeableKgCainiao ?? PREMIUM_EXPRESS_INCLUDED_KG;
-    const dest = est.destinationFeesCny ?? 0;
+    const dest = Math.max(
+      est.destinationFeesCnyCainiao ?? 0,
+      est.destinationFeesCnyYanwen ?? 0,
+    );
     const full = Math.round((premiumExpressTotalCny(kg) + dest) * 100) / 100;
     return {
       ok: true,

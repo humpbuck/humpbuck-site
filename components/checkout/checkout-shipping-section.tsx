@@ -89,7 +89,6 @@ export function CheckoutShippingSection({
   countryLabel,
   shippingState,
   totalUnits,
-  declaredGoodsCny,
   method,
   onMethodChange,
   shippingPostalCode,
@@ -98,8 +97,6 @@ export function CheckoutShippingSection({
   /** State/province from shipping address (US: ISO 3166-2 e.g. CA, UM-81). */
   shippingState?: string;
   totalUnits: number;
-  /** Cart goods subtotal in CNY (actual USD × FX) — payment-aligned quotes. */
-  declaredGoodsCny: number;
   method: ShippingMethodId;
   onMethodChange: (id: ShippingMethodId) => void;
   shippingPostalCode?: string | null;
@@ -130,7 +127,6 @@ export function CheckoutShippingSection({
         method: m.id,
         state: shippingState?.trim() || null,
         postalCode: shippingPostalCode,
-        declaredGoodsCny,
       });
       if (m.id === "cainiao") {
         // Prefer table coverage, but still allow when quote succeeds (label-format fallback).
@@ -142,7 +138,7 @@ export function CheckoutShippingSection({
       }
       return true;
     });
-  }, [coverage.cainiao, coverage.yanwen, countryLabel, totalUnits, shippingState, shippingPostalCode, declaredGoodsCny]);
+  }, [coverage.cainiao, coverage.yanwen, countryLabel, totalUnits, shippingState, shippingPostalCode]);
 
   const quote = useMemo(
     () =>
@@ -152,9 +148,8 @@ export function CheckoutShippingSection({
         method,
         state: shippingState?.trim() || null,
         postalCode: shippingPostalCode,
-        declaredGoodsCny,
       }),
-    [countryLabel, totalUnits, method, shippingPostalCode, shippingState, declaredGoodsCny],
+    [countryLabel, totalUnits, method, shippingPostalCode, shippingState],
   );
 
   const destinationOk = Boolean(countryLabel.trim()) && iso2 !== null;
@@ -172,12 +167,11 @@ export function CheckoutShippingSection({
           method: m.id,
           state: shippingState?.trim() || null,
           postalCode: shippingPostalCode,
-          declaredGoodsCny,
         }),
       );
     }
     return map;
-  }, [visibleIntlMethods, countryLabel, totalUnits, shippingState, shippingPostalCode, declaredGoodsCny]);
+  }, [visibleIntlMethods, countryLabel, totalUnits, shippingState, shippingPostalCode]);
 
   if (isCn && destinationOk) {
     return (

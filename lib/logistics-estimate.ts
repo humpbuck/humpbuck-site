@@ -20,17 +20,28 @@ type YanwenBand = {
   minChargeKg: number | null;
 };
 
-/** Per ISO: fees from carrier rate-sheet 备注 (customs/VAT/etc.), added on top of lane quotes. */
+/** Per ISO: 目的地费用（处理费/通关、VAT、渠道分项），叠加在重量段运费之上。 */
 export type CountryDestinationFeeDef = {
-  /** One-shot destination charges (e.g. clearance per shipment), CNY. */
+  /** 每票固定费（处理费等），CNY — 菜鸟与燕文共用。 */
   flatCnyPerShipment?: number;
   /**
-   * VAT-style charge: rate × declared goods value in CNY (order subtotal × FX as CIF proxy).
-   * Omit duty when unknown (matches “关税如有” — none → 0).
+   * VAT：税率 × 运费测算用货值 CNY（与 PayPal/Stripe 商品实价脱钩，默认 $1.2×汇率）。
+   * 关税如有可写在 `label` 或后续扩展字段；未知则按 0。
    */
   vatRateOnDeclaredCifCny?: number;
   /** Shown in admin / summaries (optional). */
   label?: string;
+  /**
+   * Cainiao S5059/OH — per-shipment 通关/处理费等（表 K 列来源），CNY。
+   * 与 `flatCnyPerShipment`/VAT 并列展示，避免重复计入同一费用。
+   */
+  cainiaoRemarksFlatCny?: number;
+  cainiaoRemarksLabel?: string;
+  /**
+   * Yanwen 484 — per-shipment 通关/处理费等（表 G 列来源），CNY。
+   */
+  yanwenRemarksFlatCny?: number;
+  yanwenRemarksLabel?: string;
 };
 
 type RatesFile = {
@@ -39,7 +50,7 @@ type RatesFile = {
   yanwenDomesticToWarehouseCny: number;
   freeInternationalLegCny: number;
   cainiaoPreferenceMarginCny: number;
-  /** ISO2 → fees from destination-country remarks (see logistics-rates.json). */
+  /** ISO2 → 目的地费用配置（logistics-rates.json）。 */
   countryDestinationFees?: Record<string, CountryDestinationFeeDef>;
   cainiao: { S5059: Record<string, Band[]>; OH: Record<string, Band[]> };
   /** When main S5059/OH sheets omit a destination (e.g. HK), per-ISO bands — edit manually. */
@@ -316,46 +327,92 @@ export function roundUpKgToGram(kg: number): number {
   return Math.ceil(kg * 1000) / 1000;
 }
 
+export type DestinationFeesBreakdown = {
+  /** Shared flat + VAT (both carriers). */
+  sharedCny: number;
+  /** Cainiao-only 通关/处理费等（表 K） */
+  cainiaoCarrierCny: number;
+  /** Yanwen-only 通关/处理费等（表 G） */
+  yanwenCarrierCny: number;
+  /** shared + cainiaoCarrier */
+  cainiaoTotalCny: number;
+  /** shared + yanwenCarrier */
+  yanwenTotalCny: number;
+  lines: string[];
+};
+
 /**
- * Country-level fees from rate-sheet 备注 (customs, VAT, etc.) — not in the weight band.
- * Pass cart/order goods in CNY for checkout; admin Fulfillment may pass
- * `declaredGoodsCnyForAdminLogisticsEstimate()` for internal low-declaration planning.
+ * Country-level fees: 处理费/通关、VAT、关税 proxy、菜鸟/燕文分项附加 — 不在重量段内。
+ * Shared `flat` + `vat` 对两渠道相同；菜鸟/燕文分项按渠道叠加。
  */
-export function computeDestinationFeesCny(
+export function computeDestinationFeesBreakdown(
   iso2: string | null,
   declaredGoodsCny: number | null | undefined,
-): { totalCny: number; lines: string[] } {
-  if (!iso2) return { totalCny: 0, lines: [] };
+): DestinationFeesBreakdown {
+  const empty = (): DestinationFeesBreakdown => ({
+    sharedCny: 0,
+    cainiaoCarrierCny: 0,
+    yanwenCarrierCny: 0,
+    cainiaoTotalCny: 0,
+    yanwenTotalCny: 0,
+    lines: [],
+  });
+  if (!iso2) return empty();
   const cfg = R.countryDestinationFees?.[iso2];
-  if (!cfg) return { totalCny: 0, lines: [] };
+  if (!cfg) return empty();
 
   const lines: string[] = [];
-  let total = 0;
+  let shared = 0;
 
   const flat = cfg.flatCnyPerShipment ?? 0;
   if (flat > 0) {
-    total += flat;
-    const tag = cfg.label ? ` — ${cfg.label}` : "";
-    lines.push(`Destination (remarks): flat ¥${flat.toFixed(2)}${tag}`);
+    shared += flat;
+    const detail = cfg.label ? ` ${cfg.label}` : "";
+    lines.push(`处理费/票面 ¥${flat.toFixed(2)}${detail}`);
   }
 
   const vatRate = cfg.vatRateOnDeclaredCifCny ?? 0;
   if (vatRate > 0) {
     const base = Math.max(0, Number(declaredGoodsCny) || 0);
     const vat = Math.round(base * vatRate * 100) / 100;
-    total += vat;
+    shared += vat;
     if (base > 0) {
       lines.push(
-        `Destination (remarks): VAT ${(vatRate * 100).toFixed(0)}% on declared goods ¥${base.toFixed(2)} (CIF proxy) → ¥${vat.toFixed(2)}`,
+        `增值税(VAT) ${(vatRate * 100).toFixed(0)}% · 运费测算货值 ¥${base.toFixed(2)}（CIF 近似）→ ¥${vat.toFixed(2)}`,
       );
     } else {
       lines.push(
-        `Destination (remarks): VAT ${(vatRate * 100).toFixed(0)}% — add order goods (CNY) to compute (currently ¥0)`,
+        `增值税(VAT) ${(vatRate * 100).toFixed(0)}% · 测算货值为 ¥0，未计入`,
       );
     }
   }
 
-  return { totalCny: Math.round(total * 100) / 100, lines };
+  const cainiaoCarrier = cfg.cainiaoRemarksFlatCny ?? 0;
+  if (cainiaoCarrier > 0) {
+    const tag = cfg.cainiaoRemarksLabel
+      ? ` ${cfg.cainiaoRemarksLabel}`
+      : " 菜鸟线路附加";
+    lines.push(`【菜鸟】¥${cainiaoCarrier.toFixed(2)} ·${tag}`);
+  }
+
+  const yanwenCarrier = cfg.yanwenRemarksFlatCny ?? 0;
+  if (yanwenCarrier > 0) {
+    const tag = cfg.yanwenRemarksLabel ? ` ${cfg.yanwenRemarksLabel}` : " 燕文线路附加";
+    lines.push(`【燕文】¥${yanwenCarrier.toFixed(2)} ·${tag}`);
+  }
+
+  shared = Math.round(shared * 100) / 100;
+  const cainiaoTotalCny = Math.round((shared + cainiaoCarrier) * 100) / 100;
+  const yanwenTotalCny = Math.round((shared + yanwenCarrier) * 100) / 100;
+
+  return {
+    sharedCny: shared,
+    cainiaoCarrierCny: cainiaoCarrier,
+    yanwenCarrierCny: yanwenCarrier,
+    cainiaoTotalCny,
+    yanwenTotalCny,
+    lines,
+  };
 }
 
 export type LogisticsEstimateResult = {
@@ -380,9 +437,16 @@ export type LogisticsEstimateResult = {
   preferCainiao: boolean;
   /** Intl leg used for ¥50 free-ship policy (merchant cost basis). */
   policyInternationalCny: number | null;
-  /** 备注 / destination-country surcharges (customs, VAT, …), CNY. */
+  /**
+   * 政策所选渠道的**目的地费用合计**（与 `preferCainiao` 一致）：
+   * 菜鸟 → `destinationFeesCnyCainiao`，否则燕文 → `destinationFeesCnyYanwen`。
+   */
   destinationFeesCny: number;
-  /** Human-readable lines for admin (empty when no config). */
+  /** 菜鸟 S5059/OH：共用项 + 菜鸟分项。 */
+  destinationFeesCnyCainiao: number;
+  /** 燕文 484：共用项 + 燕文分项。 */
+  destinationFeesCnyYanwen: number;
+  /** 商家后台分项（处理费、VAT、【菜鸟】/【燕文】等）。 */
   destinationFeesLines: string[];
   freeInternational: boolean;
   buyerSupplementCny: number;
@@ -411,8 +475,8 @@ export type LogisticsEstimateInput = {
   /** Single-carton dimensions (cm). Volumetric uses max(actual, L×W×H divisor). */
   boxCm?: { l: number; w: number; h: number };
   /**
-   * Goods value in CNY (actual subtotal × FX) for VAT-style `countryDestinationFees` when present.
-   * When omitted, VAT lines in 备注 may show as ¥0 until a value is provided.
+   * CNY proxy for VAT-style fees in `countryDestinationFees`.
+   * Callers should pass the same basis as checkout shipping (default $1.2×FX via `declaredGoodsCnyForShippingFees` in checkout-shipping-quote), not the PayPal/Stripe line subtotal.
    */
   declaredGoodsCny?: number | null;
 };
@@ -423,7 +487,7 @@ const DEFAULT_BOX = { l: 11, w: 10, h: 9 };
 /**
  * Compares Cainiao S5059 + OH vs Yanwen 484 (special goods tracked).
  * Rule: prefer Cainiao if cainiaoBest ≤ yanwenIntl + 5 (domestic) + 5 (tie margin).
- * Free ship: international lane + destination 备注 fees ≤ ¥50 (combined); buyer pays the excess (CNY).
+ * Free ship: international lane + destination fees ≤ ¥50 (combined); buyer pays the excess (CNY).
  */
 export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstimateResult {
   const gramsPerUnit = input.gramsPerUnit ?? DEFAULT_GRAMS;
@@ -446,6 +510,8 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     preferCainiao: true,
     policyInternationalCny: null,
     destinationFeesCny: 0,
+    destinationFeesCnyCainiao: 0,
+    destinationFeesCnyYanwen: 0,
     destinationFeesLines: [],
     freeInternational: true,
     buyerSupplementCny: 0,
@@ -529,10 +595,20 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
   const bestCainiao =
     candidates.length === 0 ? null : Math.min(...candidates);
 
+  const destBreakdown = computeDestinationFeesBreakdown(
+    iso2,
+    input.declaredGoodsCny,
+  );
+  const destinationFeesCnyCainiao = destBreakdown.cainiaoTotalCny;
+  const destinationFeesCnyYanwen = destBreakdown.yanwenTotalCny;
+  const destinationFeesLines = destBreakdown.lines;
+
   let preferCainiao = true;
   if (bestCainiao != null && yIntl != null && yWithDom != null) {
-    const threshold = yWithDom + R.cainiaoPreferenceMarginCny;
-    preferCainiao = bestCainiao <= threshold;
+    const cainiaoLanded = bestCainiao + destinationFeesCnyCainiao;
+    const yanwenLanded = yWithDom + destinationFeesCnyYanwen;
+    const threshold = yanwenLanded + R.cainiaoPreferenceMarginCny;
+    preferCainiao = cainiaoLanded <= threshold;
   } else if (bestCainiao == null && yIntl != null) {
     preferCainiao = false;
   } else if (bestCainiao != null && yIntl == null) {
@@ -543,9 +619,9 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     ? bestCainiao
     : (yIntl ?? bestCainiao);
 
-  const destPack = computeDestinationFeesCny(iso2, input.declaredGoodsCny);
-  const destinationFeesCny = destPack.totalCny;
-  const destinationFeesLines = destPack.lines;
+  const destinationFeesCny = preferCainiao
+    ? destinationFeesCnyCainiao
+    : destinationFeesCnyYanwen;
 
   let freeInternational = true;
   let buyerSupplementCny = 0;
@@ -631,6 +707,8 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     preferCainiao,
     policyInternationalCny,
     destinationFeesCny,
+    destinationFeesCnyCainiao,
+    destinationFeesCnyYanwen,
     destinationFeesLines,
     freeInternational,
     buyerSupplementCny,
@@ -644,7 +722,7 @@ export function buyerSupplementCnyCainiao(
 ): number | null {
   const intl = est.bestCainiaoInternationalCny;
   if (intl == null) return null;
-  const dest = est.destinationFeesCny ?? 0;
+  const dest = est.destinationFeesCnyCainiao ?? 0;
   return Math.max(
     0,
     Math.round((intl + dest - R.freeInternationalLegCny) * 100) / 100,
@@ -657,7 +735,7 @@ export function buyerSupplementCnyYanwen(
 ): number | null {
   const intl = est.yanwen484InternationalCny;
   if (intl == null) return null;
-  const dest = est.destinationFeesCny ?? 0;
+  const dest = est.destinationFeesCnyYanwen ?? 0;
   return Math.max(
     0,
     Math.round((intl + dest - R.freeInternationalLegCny) * 100) / 100,

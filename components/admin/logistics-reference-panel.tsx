@@ -1,6 +1,6 @@
 import {
   CNY_PER_USD,
-  declaredGoodsCnyForAdminLogisticsEstimate,
+  declaredGoodsCnyForShippingFees,
   isShippingMethodId,
   premiumExpressLabel,
   quoteCheckoutShipping,
@@ -42,13 +42,13 @@ function cainiaoLineWithRemark(
   if (base == null) return "—";
   if (dest <= 0) return `¥${base.toFixed(2)}`;
   const sum = Math.round((base + dest) * 100) / 100;
-  return `¥${base.toFixed(2)} + ¥${dest.toFixed(2)} (备注) = ¥${sum.toFixed(2)}`;
+  return `¥${base.toFixed(2)} + ¥${dest.toFixed(2)} (目的地费用) = ¥${sum.toFixed(2)}`;
 }
 
 function s5059AdminLine(
   est: {
     s5059InternationalCny: number | null;
-    destinationFeesCny: number;
+    destinationFeesCnyCainiao: number;
     chargeableKgCainiao: number | null;
   },
 ): string {
@@ -61,25 +61,25 @@ function s5059AdminLine(
   }
   return cainiaoLineWithRemark(
     est.s5059InternationalCny,
-    est.destinationFeesCny,
+    est.destinationFeesCnyCainiao,
   );
 }
 
-/** 国际 + ¥5 国内 + 备注(票费/VAT 等) = 全包；第二行给计费重与最小计费说明。 */
+/** 国际 + ¥5 国内 + 目的地费用(处理费/VAT/通关等合计) = 全包；第二行给计费重说明。 */
 function yanwenAdminPrimaryLine(est: {
   yanwen484InternationalCny: number | null;
   yanwenWithDomesticCny: number | null;
-  destinationFeesCny: number;
+  destinationFeesCnyYanwen: number;
 }): string {
   const intl = est.yanwen484InternationalCny;
   const withDom = est.yanwenWithDomesticCny;
-  const dest = est.destinationFeesCny;
+  const dest = est.destinationFeesCnyYanwen;
   if (intl == null || withDom == null) return "—";
   const grand = Math.round((withDom + dest) * 100) / 100;
   if (dest <= 0) {
     return `¥${intl.toFixed(2)} + ¥5 (国内) = ¥${withDom.toFixed(2)}`;
   }
-  return `¥${intl.toFixed(2)} + ¥5 (国内) + ¥${dest.toFixed(2)} (备注) = ¥${grand.toFixed(2)}`;
+  return `¥${intl.toFixed(2)} + ¥5 (国内) + ¥${dest.toFixed(2)} (目的地费用) = ¥${grand.toFixed(2)}`;
 }
 
 function yanwenAdminWeightNote(est: {
@@ -101,7 +101,6 @@ export function LogisticsReferencePanel({
   shippingCountryLabel,
   shippingState,
   totalUnits,
-  declaredGoodsCnyActual,
   postalCode,
   yanwenZone,
   effectiveLaneZone,
@@ -111,8 +110,6 @@ export function LogisticsReferencePanel({
   /** State/province from order address (US: ISO 3166-2). */
   shippingState?: string | null;
   totalUnits: number;
-  /** Order goods in CNY (line subtotal × FX); used for checkout shipping recalculation only. */
-  declaredGoodsCnyActual: number;
   postalCode?: string | null;
   /** Stored lane zone when present; postcode mapping fills gaps for AU/CA. */
   yanwenZone?: string | null;
@@ -127,7 +124,7 @@ export function LogisticsReferencePanel({
     state: shippingState ?? undefined,
     postalCode,
     yanwenZone: yanwenZone ?? undefined,
-    declaredGoodsCny: declaredGoodsCnyForAdminLogisticsEstimate(),
+    declaredGoodsCny: declaredGoodsCnyForShippingFees(),
   });
 
   const methodRaw = String(checkoutShippingMethod ?? "").trim();
@@ -141,7 +138,6 @@ export function LogisticsReferencePanel({
           state: shippingState ?? null,
           postalCode,
           yanwenLogisticsZone: yanwenZone ?? null,
-          declaredGoodsCny: declaredGoodsCnyActual,
         })
       : null;
 
@@ -162,16 +158,16 @@ export function LogisticsReferencePanel({
       </h3>
       <p className="mt-2 text-[11px] leading-relaxed text-muted">
         Estimates from embedded Cainiao (S5059 / OH) and Yanwen (484) tables —
-        200g/unit, 11×10×9cm volumetric. Destination surcharges (备注/VAT) follow the embedded
-        country fee rules (see lines below). Yanwen 484 is priced by{" "}
+        200g/unit, 11×10×9cm volumetric. Destination-side fees (处理费、VAT、通关等) are listed
+        itemized below — not merged into a single &quot;备注&quot; bucket. Yanwen 484 is priced by{" "}
         <span className="text-zinc-800">weight bands + min billable kg</span> (see billable kg
         row). Cainiao S5059 only applies when billable weight ≤{" "}
         {CAINIAO_S5059_MAX_CHARGEABLE_KG} kg (one carton model); above that use OH. Cainiao
-        rows: <span className="text-zinc-800">international + 备注</span>. Yanwen row:{" "}
+        rows: <span className="text-zinc-800">international + 目的地费用合计</span>. Yanwen row:{" "}
         <span className="text-zinc-800">
-          international + ¥5 (国内) + 备注 (flat/VAT 等合计)
+          international + ¥5 (国内) + 目的地费用合计
         </span>
-        . Compare with your live quote before shipping.
+        . Checkout uses the same shipping math as here. Compare with your live carrier quote before shipping.
         {est.iso2 === "AU" ? (
           <>
             {" "}
@@ -258,7 +254,7 @@ export function LogisticsReferencePanel({
               <div className="min-w-0 text-right leading-snug sm:text-left">
                 {cainiaoLineWithRemark(
                   est.ohInternationalCny,
-                  est.destinationFeesCny,
+                  est.destinationFeesCnyCainiao,
                 )}
               </div>
             </li>
@@ -277,7 +273,7 @@ export function LogisticsReferencePanel({
           {est.destinationFeesLines.length > 0 ? (
             <ul className="mt-3 space-y-1.5 text-[11px] leading-relaxed text-muted">
               <li className="text-[10px] font-medium uppercase tracking-[0.12em] text-zinc-500">
-                备注明细
+                目的地费用（分项）
               </li>
               {est.destinationFeesLines.map((line) => (
                 <li key={line} className="wrap-break-word pl-0">

@@ -11,7 +11,6 @@ import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
 import { adminPath } from "@/lib/admin-path";
 import {
-  CNY_PER_USD,
   isShippingMethodId,
   quoteCheckoutShipping,
   type ShippingMethodId,
@@ -81,8 +80,6 @@ async function main() {
   const slug = "digitemp-2412m";
   const unitAmountCents = 999;
   const lineTotalCents = unitAmountCents * QTY;
-  const declaredGoodsCny =
-    Math.round((lineTotalCents / 100) * CNY_PER_USD * 100) / 100;
 
   const base = publicBaseUrl();
   const created: { id: string; country: string }[] = [];
@@ -97,7 +94,6 @@ async function main() {
       method: shippingMethod,
       state: billing.state || null,
       postalCode: billing.postalCode || null,
-      declaredGoodsCny,
     });
     if (!shipQ.ok) {
       console.error(`${c.key}: shipping quote failed:`, shipQ.error);
