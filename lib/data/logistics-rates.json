@@ -13,6 +13,27 @@
       "cainiaoFlatCnyPerShipment": 10,
       "cainiaoRemarksLabel": "新西兰 菜鸟通关手续费 10元/票"
     },
+    "DE": {
+      "cainiaoRemarksLabel": "德国 菜鸟不规则件处理费 130元/票"
+    },
+    "FR": {
+      "cainiaoRemarksLabel": "法国 菜鸟不规则件处理费 130元/票"
+    },
+    "US": {
+      "cainiaoRemarksLabel": "美国 无服务邮编/偏远地区请参考规则"
+    },
+    "CA": {
+      "cainiaoRemarksLabel": "加拿大 派送地址更改费 7CAD/票"
+    },
+    "GB": {
+      "cainiaoRemarksLabel": "英国 偏远地区收费 9元/票"
+    },
+    "DK": {
+      "cainiaoRemarksLabel": "丹麦 自提点/偏远规则参考报价表"
+    },
+    "KR": {
+      "cainiaoRemarksLabel": "韩国 海关编码必填参考"
+    },
     "SA": {
       "cainiaoVatRateOnDeclaredCifCny": 0.15,
       "cainiaoFlatCnyPerShipment": 33.35,

@@ -100,15 +100,6 @@ const COUNTRY_RULES: Record<string, CountryFieldRule> = {
     taxIdHint: "11 digits after removing punctuation.",
     taxIdPlaceholder: "CPF",
   },
-  MX: {
-    stateLabel: "State",
-    postalLabel: "Postal code",
-    stateSelectPrompt: "Select state",
-    stateSearchPlaceholder: "Search state...",
-    taxIdLabel: "RFC / CURP",
-    taxIdHint: "RFC is 13 chars; CURP is 18 chars. Enter one valid ID.",
-    taxIdPlaceholder: "RFC or CURP",
-  },
   JP: {
     stateLabel: "Prefecture",
     postalLabel: "Postal code",
