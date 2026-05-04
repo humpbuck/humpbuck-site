@@ -325,3 +325,5 @@ export function validateCheckoutAddressForm(
   if (!base.ok) return base;
   return validateTaxIdByCountry(a.country, a.taxId);
 }
+
+export { validateTaxIdByCountry };

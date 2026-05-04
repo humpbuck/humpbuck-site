@@ -289,6 +289,22 @@ export default function CheckoutPage() {
   };
 
   async function payStripe() {
+    const billValidation = validateCheckoutAddressForm(billing);
+    const shipValidation = shipSameAsBilling
+      ? billValidation
+      : validateCheckoutAddressForm(shipping);
+    if (!billValidation.ok) {
+      setError(`Billing address: ${billValidation.error}`);
+      return;
+    }
+    if (!shipValidation.ok) {
+      setError(`Shipping address: ${shipValidation.error}`);
+      return;
+    }
+    if (!shippingQuote.ok) {
+      setError(shippingQuote.error);
+      return;
+    }
     setError(null);
     setLoading("stripe");
     try {
@@ -323,6 +339,22 @@ export default function CheckoutPage() {
   }
 
   async function payPaypal() {
+    const billValidation = validateCheckoutAddressForm(billing);
+    const shipValidation = shipSameAsBilling
+      ? billValidation
+      : validateCheckoutAddressForm(shipping);
+    if (!billValidation.ok) {
+      setError(`Billing address: ${billValidation.error}`);
+      return;
+    }
+    if (!shipValidation.ok) {
+      setError(`Shipping address: ${shipValidation.error}`);
+      return;
+    }
+    if (!shippingQuote.ok) {
+      setError(shippingQuote.error);
+      return;
+    }
     setError(null);
     setLoading("paypal");
     try {
@@ -551,6 +583,27 @@ export default function CheckoutPage() {
           onMethodChange={setShippingMethod}
           shippingPostalCode={shipPostalCode}
         />
+
+        {(() => {
+          const shipIso = shipCountryLabel ? shipCountryLabel.trim().toUpperCase() : "";
+          const taxRequired = ["BR", "KR", "MX", "NO", "AR", "CL"].includes(shipIso);
+          if (!taxRequired) return null;
+          return (
+            <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+              {shipIso === "NO"
+                ? "Norway checkout requires a 7-digit VOEC number in the sender tax ID field."
+                : shipIso === "MX"
+                  ? "Mexico checkout requires RFC or CURP in the tax ID field."
+                  : shipIso === "CL"
+                    ? "Chile checkout requires a valid tax ID in the recipient tax ID field."
+                    : shipIso === "KR"
+                      ? "Korea checkout requires recipient tax ID in the format P + 12 digits."
+                      : shipIso === "BR"
+                        ? "Brazil checkout requires CPF with 11 digits."
+                        : "Argentina checkout requires recipient tax ID with 11 digits."}
+            </p>
+          );
+        })()}
 
         <div className="rounded-2xl border border-line bg-white/60 p-5">
           <label htmlFor="checkout-order-notes" className="block">
