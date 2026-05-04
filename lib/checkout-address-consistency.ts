@@ -22,6 +22,7 @@ import {
 import { validateInternationalPhone } from "@/lib/phone-normalize";
 import { parseAustraliaPostcodeNumeric } from "@/lib/yanwen-postcode-zones";
 import type { CheckoutAddressForm } from "@/lib/checkout-address";
+import { countryLabelToIso2 } from "@/lib/logistics-estimate";
 
 type ZipRow = { zip: string; city: string; state: string; country?: string };
 
@@ -289,14 +290,39 @@ export function validateAddressRecordConsistency(
 }
 
 /** Same rules as {@link validateAddressRecordConsistency} using the checkout form shape. */
+function validateTaxIdByCountry(
+  country: string,
+  taxId: string,
+): AddressConsistencyResult {
+  const iso = countryLabelToIso2(country);
+  const v = taxId.trim().toUpperCase();
+  if (!iso) return { ok: true };
+  if (!v) {
+    if (["BR", "KR", "MX", "NO", "AR", "CL"].includes(iso)) {
+      return { ok: false, error: "Tax ID is required for this destination." };
+    }
+    return { ok: true };
+  }
+  const digits = v.replace(/\D/g, "");
+  if (iso === "BR") return digits.length === 11 ? { ok: true } : { ok: false, error: "Enter a valid CPF (11 digits)." };
+  if (iso === "KR") return /^P\d{12}$/.test(v) ? { ok: true } : { ok: false, error: "Enter a valid Korea tax ID (P + 12 digits)." };
+  if (iso === "MX") return /^(?:[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3}|[A-Z]{4}\d{6}[A-Z0-9]{8})$/.test(v) ? { ok: true } : { ok: false, error: "Enter a valid RFC or CURP." };
+  if (iso === "NO") return /^\d{7}$/.test(v) ? { ok: true } : { ok: false, error: "Enter a valid VOEC number (7 digits)." };
+  if (iso === "AR") return /^\d{11}$/.test(digits) ? { ok: true } : { ok: false, error: "Enter a valid Argentina tax ID (11 digits)." };
+  if (iso === "CL") return /^\d{7,8}-[\dK]$/.test(v) ? { ok: true } : { ok: false, error: "Enter a valid Chile tax ID (e.g. 18121446-5)." };
+  return { ok: true };
+}
+
 export function validateCheckoutAddressForm(
   a: CheckoutAddressForm,
 ): AddressConsistencyResult {
-  return validateAddressRecordConsistency({
+  const base = validateAddressRecordConsistency({
     country: a.country,
     state: a.state,
     city: a.city,
     postalCode: a.postalCode,
     phone: a.phone,
   });
+  if (!base.ok) return base;
+  return validateTaxIdByCountry(a.country, a.taxId);
 }

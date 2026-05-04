@@ -32,34 +32,34 @@ const INTL_METHODS: {
   {
     id: "cainiao",
     title: "Cainiao International",
-    subtitle: "Economy — pickup; best value for most countries we serve.",
+    subtitle: "Economy — combined Cainiao lane.",
     recommend: "primary",
   },
   {
     id: "yanwen",
     title: "Yanwen Logistics",
-    subtitle: "Economy — send to Dongguan hub (+¥5 domestic leg in our model).",
+    subtitle: "Economy — Yanwen 484 lane.",
     recommend: "secondary",
   },
   {
     id: "dhl",
     title: "DHL Express",
-    subtitle: "Premium — faster; higher cost.",
+    subtitle: "Premium — fixed ¥500/票.",
   },
   {
     id: "fedex",
     title: "FedEx",
-    subtitle: "Premium — faster; higher cost.",
+    subtitle: "Premium — fixed ¥500/票.",
   },
   {
     id: "ups",
     title: "UPS",
-    subtitle: "Premium — faster; higher cost.",
+    subtitle: "Premium — fixed ¥500/票.",
   },
   {
     id: "usps",
     title: "USPS",
-    subtitle: "Premium — partner routing; higher cost.",
+    subtitle: "Premium — fixed ¥500/票.",
   },
 ];
 
@@ -116,10 +116,6 @@ export function CheckoutShippingSection({
   );
 
   const visibleIntlMethods = useMemo(() => {
-    // Buyer selection rules:
-    // - Cainiao: show when destination has S5059 or OH coverage (ops may choose lane manually).
-    // - Yanwen: keep quote-based filtering.
-    // - Premium express: keep default behavior (always visible).
     return INTL_METHODS.filter((m) => {
       const q = quoteCheckoutShipping({
         countryLabel,
@@ -128,15 +124,9 @@ export function CheckoutShippingSection({
         state: shippingState?.trim() || null,
         postalCode: shippingPostalCode,
       });
-      if (m.id === "cainiao") {
-        // Prefer table coverage, but still allow when quote succeeds (label-format fallback).
-        return coverage.cainiao || q.ok;
-      }
-      if (m.id === "yanwen") {
-        // Yanwen remains quote-gated.
-        return coverage.yanwen && q.ok;
-      }
-      return true;
+      if (m.id === "cainiao") return coverage.cainiao && q.ok;
+      if (m.id === "yanwen") return coverage.yanwen && q.ok;
+      return q.ok;
     });
   }, [coverage.cainiao, coverage.yanwen, countryLabel, totalUnits, shippingState, shippingPostalCode]);
 
@@ -383,8 +373,7 @@ export function CheckoutShippingSection({
                         {m.subtitle}
                       </span>
                       <span className="mt-1 block text-[11px] text-muted">
-                        Est. shipping:{" "}
-                        {(() => {
+                        Est. shipping: {(() => {
                           const q = methodQuotes.get(m.id);
                           if (!q || !q.ok) return "-";
                           if (q.shippingUsdCents === 0) return "$0.00";

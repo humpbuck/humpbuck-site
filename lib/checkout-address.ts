@@ -150,7 +150,6 @@ export function checkoutFormFromSavedAddress(
     postalCode: rec.postalCode,
     country: rec.country,
     phone: rec.phone,
-    taxId: rec.taxId ?? "",
     logisticsZone: rec.logisticsZone ?? "",
   };
 }

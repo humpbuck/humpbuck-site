@@ -13,6 +13,9 @@ type CountryFieldRule = {
   postalSearchPlaceholder?: string;
   postalEmptyMessage?: string;
   postalNoCodeHint?: string;
+  taxIdLabel?: string;
+  taxIdHint?: string;
+  taxIdPlaceholder?: string;
 };
 
 const DEFAULT_RULE: Required<CountryFieldRule> = {
@@ -31,6 +34,9 @@ const DEFAULT_RULE: Required<CountryFieldRule> = {
   postalEmptyMessage: "Type to search or enter your postal code",
   postalNoCodeHint:
     "only if your area does not use one. If your country uses postal codes, type the official code above.",
+  taxIdLabel: "Tax ID",
+  taxIdHint: "Enter the tax / customs ID required for your destination.",
+  taxIdPlaceholder: "Tax ID",
 };
 
 const COUNTRY_RULES: Record<string, CountryFieldRule> = {
@@ -120,6 +126,61 @@ const COUNTRY_RULES: Record<string, CountryFieldRule> = {
     stateSearchPlaceholder: "Search region...",
     postalSearchPlaceholder: "Search or type postcode...",
     postalEmptyMessage: "Type to search or enter your postcode",
+  },
+  BR: {
+    stateLabel: "State",
+    postalLabel: "CEP",
+    stateSelectPrompt: "Select state",
+    stateSearchPlaceholder: "Search state...",
+    postalSearchPlaceholder: "Search or type CEP...",
+    postalEmptyMessage: "Type to search or enter your CEP",
+    taxIdLabel: "CPF",
+    taxIdHint: "11 digits after removing punctuation.",
+    taxIdPlaceholder: "CPF",
+  },
+  KR: {
+    stateLabel: "State / province",
+    stateSelectPrompt: "Select state / province",
+    stateSearchPlaceholder: "Search state / province...",
+    taxIdLabel: "Recipient tax ID",
+    taxIdHint: "Required for Korea. Format: P + 12 digits.",
+    taxIdPlaceholder: "P123456789012",
+  },
+  MX: {
+    stateLabel: "State",
+    postalLabel: "Postal code",
+    stateSelectPrompt: "Select state",
+    stateSearchPlaceholder: "Search state...",
+    taxIdLabel: "RFC / CURP",
+    taxIdHint: "Enter RFC or CURP (one field, either format is accepted).",
+    taxIdPlaceholder: "RFC or CURP",
+  },
+  NO: {
+    stateLabel: "Region",
+    postalLabel: "Postcode",
+    stateSelectPrompt: "Select region",
+    stateSearchPlaceholder: "Search region...",
+    taxIdLabel: "Sender tax ID",
+    taxIdHint: "VOEC number for Norway — 7 digits.",
+    taxIdPlaceholder: "1234567",
+  },
+  AR: {
+    stateLabel: "State / province",
+    postalLabel: "Postal code",
+    stateSelectPrompt: "Select state / province",
+    stateSearchPlaceholder: "Search state / province...",
+    taxIdLabel: "Recipient tax ID",
+    taxIdHint: "Required for Argentina. 11 digits.",
+    taxIdPlaceholder: "12345678901",
+  },
+  CL: {
+    stateLabel: "Region",
+    postalLabel: "Postal code",
+    stateSelectPrompt: "Select region",
+    stateSearchPlaceholder: "Search region...",
+    taxIdLabel: "Recipient tax ID",
+    taxIdHint: "Required for Chile. Format like 18121446-5 or 22272244-K.",
+    taxIdPlaceholder: "18121446-5",
   },
 };
 

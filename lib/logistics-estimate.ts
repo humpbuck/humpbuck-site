@@ -12,6 +12,8 @@ type Band = {
   regRmb: number;
 };
 
+type CarrierKind = "cainiao" | "yanwen";
+
 type YanwenBand = {
   wMin: number | null;
   wMax: number | null;
@@ -35,6 +37,14 @@ export type CountryDestinationFeeDef = {
   cainiaoVatRateOnDeclaredCifCny?: number;
   /** Cainiao OH-only duty rate override. */
   cainiaoDutyRateOnDeclaredCifCny?: number;
+  /** Cainiao OH-only fixed RMB fee per shipment. */
+  cainiaoFlatCnyPerShipment?: number;
+  /** Yanwen 484 VAT / tax rate override. */
+  yanwenVatRateOnDeclaredCifCny?: number;
+  /** Yanwen 484 duty rate override. */
+  yanwenDutyRateOnDeclaredCifCny?: number;
+  /** Yanwen 484 fixed RMB fee per shipment. */
+  yanwenFlatCnyPerShipment?: number;
   /** Shown in admin / summaries (optional). */
   label?: string;
   /** Cainiao S5059/OH — per-shipment 通关/处理费等（表 K 列来源），CNY. */
@@ -349,6 +359,7 @@ export type DestinationFeesBreakdown = {
 export function computeDestinationFeesBreakdown(
   iso2: string | null,
   declaredGoodsCny: number | null | undefined,
+  carrier: CarrierKind,
 ): DestinationFeesBreakdown {
   const empty = (): DestinationFeesBreakdown => ({
     sharedCny: 0,
@@ -364,89 +375,39 @@ export function computeDestinationFeesBreakdown(
 
   const lines: string[] = [];
   let shared = 0;
-
-  const flat = cfg.flatCnyPerShipment ?? 0;
-  if (flat > 0) {
-    shared += flat;
-    const detail = cfg.label ? ` ${cfg.label}` : "";
-    lines.push(`处理费/票面 ¥${flat.toFixed(2)}${detail}`);
-  }
-
   const base = Math.max(0, Number(declaredGoodsCny) || 0);
-  const vatRate = cfg.vatRateOnDeclaredCifCny ?? 0;
-  if (vatRate > 0) {
-    const vat = Math.round(base * vatRate * 100) / 100;
-    shared += vat;
-    if (base > 0) {
-      lines.push(
-        `增值税(VAT) ${(vatRate * 100).toFixed(0)}% · 运费测算货值 ¥${base.toFixed(2)}（CIF 近似）→ ¥${vat.toFixed(2)}`,
-      );
-    } else {
-      lines.push(
-        `增值税(VAT) ${(vatRate * 100).toFixed(0)}% · 测算货值为 ¥0，未计入`,
-      );
-    }
-  }
 
-  const dutyRate = cfg.dutyRateOnDeclaredCifCny ?? 0;
-  if (dutyRate > 0) {
-    const duty = Math.round(base * dutyRate * 100) / 100;
-    shared += duty;
-    if (base > 0) {
-      lines.push(
-        `关税(Duty) ${(dutyRate * 100).toFixed(0)}% · 运费测算货值 ¥${base.toFixed(2)}（CIF 近似）→ ¥${duty.toFixed(2)}`,
-      );
-    } else {
-      lines.push(
-        `关税(Duty) ${(dutyRate * 100).toFixed(0)}% · 测算货值为 ¥0，未计入`,
-      );
-    }
-  }
+  const addFlat = (label: string, amount: number) => {
+    if (amount <= 0) return 0;
+    shared += amount;
+    lines.push(`${label} ¥${amount.toFixed(2)}`);
+    return amount;
+  };
+  const addRate = (label: string, rate: number) => {
+    if (rate <= 0) return 0;
+    const fee = Math.round(base * rate * 100) / 100;
+    shared += fee;
+    lines.push(`${label} ${(rate * 100).toFixed(0)}% · ¥${base.toFixed(2)} → ¥${fee.toFixed(2)}`);
+    return fee;
+  };
 
-  const cainiaoVatRate = cfg.cainiaoVatRateOnDeclaredCifCny ?? 0;
-  if (cainiaoVatRate > 0) {
-    const vat = Math.round(base * cainiaoVatRate * 100) / 100;
-    shared += vat;
-    lines.push(
-      `【菜鸟】VAT ${(cainiaoVatRate * 100).toFixed(0)}% · 运费测算货值 ¥${base.toFixed(2)} → ¥${vat.toFixed(2)}`,
-    );
-  }
-
-  const cainiaoDutyRate = cfg.cainiaoDutyRateOnDeclaredCifCny ?? 0;
-  if (cainiaoDutyRate > 0) {
-    const duty = Math.round(base * cainiaoDutyRate * 100) / 100;
-    shared += duty;
-    lines.push(
-      `【菜鸟】Duty ${(cainiaoDutyRate * 100).toFixed(0)}% · 运费测算货值 ¥${base.toFixed(2)} → ¥${duty.toFixed(2)}`,
-    );
-  }
-
-  const cainiaoCarrier = cfg.cainiaoRemarksFlatCny ?? 0;
-  if (cainiaoCarrier > 0) {
-    const tag = cfg.cainiaoRemarksLabel
-      ? ` ${cfg.cainiaoRemarksLabel}`
-      : " 菜鸟线路附加";
-    lines.push(`【菜鸟】¥${cainiaoCarrier.toFixed(2)} ·${tag}`);
-  }
-
-  const yanwenCarrier = cfg.yanwenRemarksFlatCny ?? 0;
-  if (yanwenCarrier > 0) {
-    const tag = cfg.yanwenRemarksLabel ? ` ${cfg.yanwenRemarksLabel}` : " 燕文线路附加";
-    lines.push(`【燕文】¥${yanwenCarrier.toFixed(2)} ·${tag}`);
+  if (carrier === "cainiao") {
+    addFlat("【菜鸟】固定费用", cfg.cainiaoFlatCnyPerShipment ?? cfg.flatCnyPerShipment ?? 0);
+    addRate("【菜鸟】VAT", cfg.cainiaoVatRateOnDeclaredCifCny ?? cfg.vatRateOnDeclaredCifCny ?? 0);
+    addRate("【菜鸟】Duty", cfg.cainiaoDutyRateOnDeclaredCifCny ?? cfg.dutyRateOnDeclaredCifCny ?? 0);
+    addFlat("【菜鸟】附加", cfg.cainiaoRemarksFlatCny ?? 0);
+  } else {
+    addFlat("【燕文】处理费", cfg.yanwenFlatCnyPerShipment ?? cfg.flatCnyPerShipment ?? 0);
+    addRate("【燕文】VAT", cfg.yanwenVatRateOnDeclaredCifCny ?? cfg.vatRateOnDeclaredCifCny ?? 0);
+    addRate("【燕文】Duty", cfg.yanwenDutyRateOnDeclaredCifCny ?? cfg.dutyRateOnDeclaredCifCny ?? 0);
+    addFlat("【燕文】附加", cfg.yanwenRemarksFlatCny ?? 0);
   }
 
   shared = Math.round(shared * 100) / 100;
-  const cainiaoTotalCny = Math.round((shared + cainiaoCarrier) * 100) / 100;
-  const yanwenTotalCny = Math.round((shared + yanwenCarrier) * 100) / 100;
+  const cainiaoTotalCny = Math.round((shared + (cfg.cainiaoRemarksFlatCny ?? 0)) * 100) / 100;
+  const yanwenTotalCny = Math.round((shared + (cfg.yanwenRemarksFlatCny ?? 0)) * 100) / 100;
 
-  return {
-    sharedCny: shared,
-    cainiaoCarrierCny: cainiaoCarrier,
-    yanwenCarrierCny: yanwenCarrier,
-    cainiaoTotalCny,
-    yanwenTotalCny,
-    lines,
-  };
+  return { sharedCny: shared, cainiaoCarrierCny: cfg.cainiaoRemarksFlatCny ?? 0, yanwenCarrierCny: cfg.yanwenRemarksFlatCny ?? 0, cainiaoTotalCny, yanwenTotalCny, lines };
 }
 
 export type LogisticsEstimateResult = {
@@ -629,13 +590,22 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
   const bestCainiao =
     candidates.length === 0 ? null : Math.min(...candidates);
 
-  const destBreakdown = computeDestinationFeesBreakdown(
+  const destBreakdownCainiao = computeDestinationFeesBreakdown(
     iso2,
     input.declaredGoodsCny,
+    "cainiao",
   );
-  const destinationFeesCnyCainiao = destBreakdown.cainiaoTotalCny;
-  const destinationFeesCnyYanwen = destBreakdown.yanwenTotalCny;
-  const destinationFeesLines = destBreakdown.lines;
+  const destBreakdownYanwen = computeDestinationFeesBreakdown(
+    iso2,
+    input.declaredGoodsCny,
+    "yanwen",
+  );
+  const destinationFeesCnyCainiao = destBreakdownCainiao.cainiaoTotalCny;
+  const destinationFeesCnyYanwen = destBreakdownYanwen.yanwenTotalCny;
+  const destinationFeesLines = [
+    ...destBreakdownCainiao.lines,
+    ...destBreakdownYanwen.lines.filter((line) => !destBreakdownCainiao.lines.includes(line)),
+  ];
 
   let preferCainiao = true;
   if (bestCainiao != null && yIntl != null && yWithDom != null) {

@@ -256,15 +256,18 @@ export function CheckoutAddressFields({
           }}
           disabled={postalDisabled}
         />
-        <Field
-          id={`${idPrefix}-taxId`}
-          className="sm:col-span-2"
-          label="Recipient tax ID (Chile only)"
-          autoComplete="off"
-          value={value.taxId}
-          onChange={(v) => patch("taxId", v)}
-          hint="7–8 digits followed by 1 digit/letter K"
-        />
+        {fieldRules.taxIdLabel ? (
+          <Field
+            id={`${idPrefix}-taxId`}
+            className="sm:col-span-2"
+            label={fieldRules.taxIdLabel}
+            autoComplete="off"
+            value={value.taxId}
+            onChange={(v) => patch("taxId", v)}
+            placeholder={fieldRules.taxIdPlaceholder}
+            hint={fieldRules.taxIdHint}
+          />
+        ) : null}
         <PhoneField
           id={`${idPrefix}-phone`}
           label="Phone"

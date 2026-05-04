@@ -35,37 +35,39 @@ function checkoutMethodLabel(id: ShippingMethodId): string {
   }
 }
 
-function cainiaoLineWithRemark(
-  base: number | null,
-  dest: number,
-): string {
-  if (base == null) return "—";
+function cainiaoLineWithRemark(base: number | null, dest: number): string {
+  if (base == null) return "-";
   if (dest <= 0) return `¥${base.toFixed(2)}`;
   const sum = Math.round((base + dest) * 100) / 100;
-  return `¥${base.toFixed(2)} + ¥${dest.toFixed(2)} (目的地费用) = ¥${sum.toFixed(2)}`;
+  return `¥${base.toFixed(2)} + ¥${dest.toFixed(2)} = ¥${sum.toFixed(2)}`;
 }
 
-function s5059AdminLine(
-  est: {
-    s5059InternationalCny: number | null;
-    destinationFeesCnyCainiao: number;
-    chargeableKgCainiao: number | null;
-  },
-): string {
+function unavailableLine(note: string): string {
+  return `- (${note})`;
+}
+
+function s5059AdminLine(est: {
+  s5059InternationalCny: number | null;
+  destinationFeesCnyCainiao: number;
+  chargeableKgCainiao: number | null;
+}): string {
   const kg = est.chargeableKgCainiao;
-  if (
-    kg != null &&
-    kg > CAINIAO_S5059_MAX_CHARGEABLE_KG + 1e-9
-  ) {
-    return `— (S5059 ≤${CAINIAO_S5059_MAX_CHARGEABLE_KG} kg · billable ${kg.toFixed(3)} kg → use OH)`;
+  if (kg != null && kg > CAINIAO_S5059_MAX_CHARGEABLE_KG + 1e-9) {
+    return unavailableLine(`S5059 > ${CAINIAO_S5059_MAX_CHARGEABLE_KG} kg`);
   }
-  return cainiaoLineWithRemark(
-    est.s5059InternationalCny,
-    est.destinationFeesCnyCainiao,
-  );
+  return cainiaoLineWithRemark(est.s5059InternationalCny, est.destinationFeesCnyCainiao);
 }
 
-/** 国际 + ¥5 国内 + 目的地费用(处理费/VAT/通关等合计) = 全包；第二行给计费重说明。 */
+function ohAdminLine(est: {
+  ohInternationalCny: number | null;
+  destinationFeesCnyCainiao: number;
+}): string {
+  const base = est.ohInternationalCny;
+  if (base == null) return "-";
+  return cainiaoLineWithRemark(base, est.destinationFeesCnyCainiao);
+}
+
+/** Yanwen lines show merchant reference costs; domestic leg is internal. */
 function yanwenAdminPrimaryLine(est: {
   yanwen484InternationalCny: number | null;
   yanwenWithDomesticCny: number | null;
@@ -74,12 +76,10 @@ function yanwenAdminPrimaryLine(est: {
   const intl = est.yanwen484InternationalCny;
   const withDom = est.yanwenWithDomesticCny;
   const dest = est.destinationFeesCnyYanwen;
-  if (intl == null || withDom == null) return "—";
+  if (intl == null || withDom == null) return "-";
   const grand = Math.round((withDom + dest) * 100) / 100;
-  if (dest <= 0) {
-    return `¥${intl.toFixed(2)} + ¥5 (国内) = ¥${withDom.toFixed(2)}`;
-  }
-  return `¥${intl.toFixed(2)} + ¥5 (国内) + ¥${dest.toFixed(2)} (目的地费用) = ¥${grand.toFixed(2)}`;
+  if (dest <= 0) return `¥${intl.toFixed(2)} + ¥5 = ¥${withDom.toFixed(2)}`;
+  return `¥${intl.toFixed(2)} + ¥5 + ¥${dest.toFixed(2)} = ¥${grand.toFixed(2)}`;
 }
 
 function yanwenAdminWeightNote(est: {
@@ -157,15 +157,15 @@ export function LogisticsReferencePanel({
         Logistics reference
       </h3>
       <p className="mt-2 text-[11px] leading-relaxed text-muted">
-        Estimates from embedded Cainiao (S5059 / OH) and Yanwen (484) tables —
-        200g/unit, 11×10×9cm volumetric. Destination-side fees (处理费、VAT、通关等) are listed
-        itemized below — not merged into a single &quot;备注&quot; bucket. Yanwen 484 is priced by{" "}
+        Cainiao International (S5059 / OH) and Yanwen Logistics (484) reference tables —
+        200g/unit, 11×10×9cm volumetric. Destination-side fees (处理费、VAT、通关、税费) are shown
+        itemized below for the merchant, while checkout shows only the final shipping total. Yanwen Logistics 484 is priced by{" "}
         <span className="text-zinc-800">weight bands + min billable kg</span> (see billable kg
         row). Cainiao S5059 only applies when billable weight ≤{" "}
-        {CAINIAO_S5059_MAX_CHARGEABLE_KG} kg (one carton model); above that use OH. Cainiao
-        rows: <span className="text-zinc-800">international + 目的地费用合计</span>. Yanwen row:{" "}
+        {CAINIAO_S5059_MAX_CHARGEABLE_KG} kg; above that the panel shows - for S5059. Cainiao
+        rows: <span className="text-zinc-800">international + destination fees</span>. Yanwen row:{" "}
         <span className="text-zinc-800">
-          international + ¥5 (国内) + 目的地费用合计
+          international + ¥5 (domestic internal) + destination fees
         </span>
         . Checkout uses the same shipping math as here. Compare with your live carrier quote before shipping.
         {est.iso2 === "AU" ? (
@@ -244,26 +244,21 @@ export function LogisticsReferencePanel({
           </p>
           <ul className="mt-2 space-y-3 tabular-nums">
             <li className="grid gap-2 border-b border-line/60 pb-3 last:border-0 sm:grid-cols-[minmax(9rem,13rem)_minmax(0,1fr)] sm:items-start">
-              <span className="font-medium text-ink">Cainiao lightweight S5059</span>
+              <span className="font-medium text-ink">Cainiao International S5059</span>
               <div className="min-w-0 text-right leading-snug sm:text-left">
                 {s5059AdminLine(est)}
               </div>
             </li>
             <li className="grid gap-2 border-b border-line/60 pb-3 last:border-0 sm:grid-cols-[minmax(9rem,13rem)_minmax(0,1fr)] sm:items-start">
-              <span className="font-medium text-ink">Cainiao registered OH</span>
+              <span className="font-medium text-ink">Cainiao International OH</span>
               <div className="min-w-0 text-right leading-snug sm:text-left">
-                {cainiaoLineWithRemark(
-                  est.ohInternationalCny,
-                  est.destinationFeesCnyCainiao,
-                )}
+                {ohAdminLine(est)}
               </div>
             </li>
             <li className="grid gap-2 pb-1 sm:grid-cols-[minmax(9rem,13rem)_minmax(0,1fr)] sm:items-start">
-              <span className="font-medium text-ink">Yanwen 484 + ¥5 domestic</span>
+              <span className="font-medium text-ink">Yanwen Logistics 484</span>
               <div className="min-w-0 space-y-1 text-right leading-snug sm:text-left">
-                <p className="wrap-break-word">
-                  {yanwenAdminPrimaryLine(est)}
-                </p>
+                <p className="wrap-break-word">{yanwenAdminPrimaryLine(est)}</p>
                 {yanwenWeightNote ? (
                   <p className="text-[11px] text-muted">{yanwenWeightNote}</p>
                 ) : null}
