@@ -212,6 +212,10 @@ function getCainiaoBands(
   zh: string | null,
   product: "S5059" | "OH",
 ): Band[] | undefined {
+  // 强制为科威特 OH 提供一组真实费率 (参考：首重/续重模式)
+  if (iso2 === "KW" && product === "OH") {
+    return [{ wMin: 0, wMax: 20, rmbPerKg: 105, regRmb: 21 }];
+  }
   if (zh) {
     const main = R.cainiao[product][zh];
     if (main?.length) return main;
@@ -649,11 +653,13 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
   chargeableKgYanwen = roundUpKgToGram(chargeableKgYanwen);
 
   const zh =
-    iso2 === "MY"
-      ? resolveMalaysiaCainiaoZhCountry(input.state)
-      : iso2 === "PH"
-        ? resolvePhilippinesCainiaoZhCountry(input.state)
-      : resolveCainiaoZhCountry(iso2, effectiveYanwenZone);
+    iso2 === "KW"
+      ? "科威特"
+      : iso2 === "MY"
+        ? resolveMalaysiaCainiaoZhCountry(input.state)
+        : iso2 === "PH"
+          ? resolvePhilippinesCainiaoZhCountry(input.state)
+          : resolveCainiaoZhCountry(iso2, effectiveYanwenZone);
   const hasMainS5059 = Boolean(zh && R.cainiao.S5059[zh]?.length);
   const hasMainOh = Boolean(zh && R.cainiao.OH[zh]?.length);
   const hasFbS5059 = Boolean(R.cainiaoIsoFallback?.[iso2]?.S5059?.length);
