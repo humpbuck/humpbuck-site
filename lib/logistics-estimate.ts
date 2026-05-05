@@ -339,7 +339,7 @@ function getDestinationExtraFee(
   if (carrier === "cainiao") {
     if (iso2 === "MX") return baseVatVal * 0.335;
     if (product === "OH") {
-      if (iso2 === "KW") return 35.43;
+      if (iso2 === "KW") return 35 + baseVatVal * 0.05;
       if (iso2 === "RO") return 41;
       if (iso2 === "AE") return baseVatVal * 0.05;
       if (iso2 === "OM") return baseVatVal * 0.05 + 20;
