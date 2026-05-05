@@ -233,7 +233,7 @@ export function quoteCheckoutShipping(input: {
       };
     }
     const sup = est.buyerSupplementCny;
-    const result = {
+    const result: CheckoutShippingQuote = {
       ok: true,
       shippingCny: sup,
       shippingUsdCents: cnyToUsdCents(sup),
@@ -253,7 +253,7 @@ export function quoteCheckoutShipping(input: {
       };
     }
     const sup = est.buyerSupplementCny;
-    const result = {
+    const result: CheckoutShippingQuote = {
       ok: true,
       shippingCny: sup,
       shippingUsdCents: cnyToUsdCents(sup),
@@ -264,18 +264,12 @@ export function quoteCheckoutShipping(input: {
 
   if (isPremiumExpressMethod(input.method)) {
     const full = PREMIUM_EXPRESS_BASE_CNY;
-    const result = {
+    const result: CheckoutShippingQuote = {
       ok: true,
       shippingCny: full,
       shippingUsdCents: cnyToUsdCents(full),
       lineLabel: `International shipping (${premiumExpressLabel(input.method)})`,
     };
-    console.log('--- GLOBAL SHIPPING CALC ---', {
-      phase: 'exit',
-      country: input.countryLabel,
-      method: input.method,
-      resultCny: result.shippingCny,
-    });
     return result;
   }
 
