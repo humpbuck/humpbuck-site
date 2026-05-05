@@ -833,7 +833,7 @@ export function getDestinationCoverage(
       (iso2 === "AU" && cainiaoAuZoned) ||
       (iso2 === "MY" && cainiaoMyZoned) ||
       (iso2 === "PH" && cainiaoPhZoned) ||
-      (iso2 === "KW" && Boolean(R.countryDestinationFees?.["KW"]?.cainiaoFlatCnyPerShipment)),
+      (iso2 === "KW"),
   );
   const raw = R.yanwen484[iso2 as keyof typeof R.yanwen484] as
     | Yanwen484CountryEntry
