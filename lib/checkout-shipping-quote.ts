@@ -61,7 +61,7 @@ export const declaredGoodsCnyForAdminLogisticsEstimate =
 
 export function cnyToUsdCents(cny: number): number {
   if (cny <= 0) return 0;
-  return Math.max(0, Math.round((cny / CNY_PER_USD) * 100));
+  return Math.max(1, Math.round((cny / CNY_PER_USD) * 100));
 }
 
 /**
