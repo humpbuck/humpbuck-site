@@ -4,103 +4,6 @@
   "yanwenDomesticToWarehouseCny": 5,
   "freeInternationalLegCny": 50,
   "cainiaoPreferenceMarginCny": 5,
-  "countryDestinationFees": {
-    "RO": {
-      "cainiaoFlatCnyPerShipment": 41,
-      "cainiaoRemarksLabel": "罗马尼亚 菜鸟OH固定费用 41元/票"
-    },
-    "NZ": {
-      "cainiaoFlatCnyPerShipment": 10,
-      "cainiaoRemarksLabel": "新西兰 菜鸟通关手续费 10元/票"
-    },
-    "DE": {
-      "cainiaoRemarksLabel": "德国 菜鸟不规则件处理费 130元/票"
-    },
-    "FR": {
-      "cainiaoRemarksLabel": "法国 菜鸟不规则件处理费 130元/票"
-    },
-    "US": {
-      "cainiaoRemarksLabel": "美国 无服务邮编/偏远地区请参考规则"
-    },
-    "CA": {
-      "cainiaoRemarksLabel": "加拿大 派送地址更改费 7CAD/票"
-    },
-    "GB": {
-      "cainiaoRemarksLabel": "英国 偏远地区收费 9元/票"
-    },
-    "DK": {
-      "cainiaoRemarksLabel": "丹麦 自提点/偏远规则参考报价表"
-    },
-    "KR": {
-      "cainiaoRemarksLabel": "韩国 海关编码必填参考"
-    },
-    "SA": {
-      "cainiaoVatRateOnDeclaredCifCny": 0.15,
-      "cainiaoFlatCnyPerShipment": 33.35,
-      "cainiaoRemarksLabel": "沙特 菜鸟OH通关费 33.35元/票",
-      "yanwenVatRateOnDeclaredCifCny": 0.15,
-      "yanwenFlatCnyPerShipment": 34,
-      "label": "沙特 VAT 15% + 34 RMB/票"
-    },
-    "AE": {
-      "cainiaoVatRateOnDeclaredCifCny": 0.05,
-      "yanwenVatRateOnDeclaredCifCny": 0.05,
-      "label": "阿联酋 VAT 5%"
-    },
-    "QA": {
-      "cainiaoFlatCnyPerShipment": 40,
-      "cainiaoRemarksLabel": "卡塔尔 通关手续费 40元/票",
-      "yanwenFlatCnyPerShipment": 50,
-      "label": "卡塔尔 清关手续费 50 RMB/件"
-    },
-    "KW": {
-      "cainiaoVatRateOnDeclaredCifCny": 0.05,
-      "cainiaoFlatCnyPerShipment": 35,
-      "cainiaoRemarksLabel": "科威特 通关手续费 35元/票"
-    },
-    "BH": {
-      "cainiaoVatRateOnDeclaredCifCny": 0.10,
-      "label": "巴林 VAT 10%"
-    },
-    "OM": {
-      "cainiaoVatRateOnDeclaredCifCny": 0.05,
-      "cainiaoFlatCnyPerShipment": 20,
-      "cainiaoRemarksLabel": "阿曼 通过手续费 20元/票",
-      "yanwenVatRateOnDeclaredCifCny": 0.05,
-      "yanwenFlatCnyPerShipment": 25,
-      "label": "阿曼 VAT 5% + 25 RMB/件"
-    },
-    "MA": {
-      "cainiaoDutyRateOnDeclaredCifCny": 0.56,
-      "cainiaoRemarksLabel": "摩洛哥 Duty 56%",
-      "yanwenDutyRateOnDeclaredCifCny": 0.52,
-      "label": "摩洛哥 Duty 52% on USD 5"
-    },
-    "MX": {
-      "yanwenVatRateOnDeclaredCifCny": 0.335,
-      "label": "墨西哥 税费 33.5%"
-    },
-    "AR": {
-      "yanwenVatRateOnDeclaredCifCny": 0.21,
-      "label": "阿根廷 VAT 21%"
-    },
-    "CL": {
-      "yanwenVatRateOnDeclaredCifCny": 0.19,
-      "label": "智利 税 19%"
-    },
-    "JO": {
-      "yanwenDutyRateOnDeclaredCifCny": 0.16,
-      "label": "约旦 Duty 16%（最低 53 RMB/件）"
-    },
-    "AO": {
-      "yanwenDutyRateOnDeclaredCifCny": 0.16,
-      "label": "安哥拉 Duty 16% on USD 12"
-    },
-    "RW": {
-      "yanwenFlatCnyPerShipment": 253,
-      "label": "卢旺达 到达费/清关代理费/仓储费"
-    }
-  },
   "cainiao": {
     "S5059": {
       "美国": [
@@ -137,22 +40,6 @@
           "wMax": 0.2,
           "rmbPerKg": 81.0,
           "regRmb": 18.0
-        }
-      ],
-      "韩国": [
-        {
-          "wMin": 0.0,
-          "wMax": 1.0,
-          "rmbPerKg": 6.0,
-          "regRmb": 19.0
-        }
-      ],
-      "巴西": [
-        {
-          "wMin": 0.0,
-          "wMax": 0.2,
-          "rmbPerKg": 0.0,
-          "regRmb": 0.0
         }
       ],
       "英国": [
@@ -315,22 +202,6 @@
           "regRmb": 18.0
         }
       ],
-      "韩国": [
-        {
-          "wMin": 0.0,
-          "wMax": 1.0,
-          "rmbPerKg": 6.0,
-          "regRmb": 19.0
-        }
-      ],
-      "巴西": [
-        {
-          "wMin": 0.0,
-          "wMax": 0.2,
-          "rmbPerKg": 0.0,
-          "regRmb": 0.0
-        }
-      ],
       "德国": [
         {
           "wMin": 0.0,
@@ -353,22 +224,6 @@
           "wMax": 0.2,
           "rmbPerKg": 98.0,
           "regRmb": 24.0
-        }
-      ],
-      "澳大利亚": [
-        {
-          "wMin": 0.0,
-          "wMax": 0.2,
-          "rmbPerKg": 0.0,
-          "regRmb": 0.0
-        }
-      ],
-      "新西兰": [
-        {
-          "wMin": 0.0,
-          "wMax": 0.2,
-          "rmbPerKg": 0.0,
-          "regRmb": 0.0
         }
       ],
       "西班牙": [
@@ -2149,301 +2004,6 @@
         "minChargeKg": 0.05
       }
     ],
-    "AR": [
-      {
-        "wMin": 0.001,
-        "wMax": 1.0,
-        "rmbPerKg": 140.0,
-        "pieceRmb": 0.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "CL": [
-      {
-        "wMin": 0.001,
-        "wMax": 30.0,
-        "rmbPerKg": 110.0,
-        "pieceRmb": 0.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "AE": [
-      {
-        "wMin": 0.001,
-        "wMax": 1.0,
-        "rmbPerKg": 75.0,
-        "pieceRmb": 22.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 1.001,
-        "wMax": 5.0,
-        "rmbPerKg": 75.0,
-        "pieceRmb": 22.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 5.001,
-        "wMax": 30.0,
-        "rmbPerKg": 75.0,
-        "pieceRmb": 24.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "JO": [
-      {
-        "wMin": 0.001,
-        "wMax": 0.5,
-        "rmbPerKg": 120.0,
-        "pieceRmb": 37.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 0.501,
-        "wMax": 2.0,
-        "rmbPerKg": 120.0,
-        "pieceRmb": 30.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 2.001,
-        "wMax": 5.0,
-        "rmbPerKg": 118.0,
-        "pieceRmb": 25.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 5.001,
-        "wMax": 15.0,
-        "rmbPerKg": 118.0,
-        "pieceRmb": 25.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "OM": [
-      {
-        "wMin": 0.001,
-        "wMax": 20.0,
-        "rmbPerKg": 103.0,
-        "pieceRmb": 37.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "QA": [
-      {
-        "wMin": 0.001,
-        "wMax": 0.5,
-        "rmbPerKg": 75.0,
-        "pieceRmb": 45.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 0.501,
-        "wMax": 2.0,
-        "rmbPerKg": 80.0,
-        "pieceRmb": 45.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 2.001,
-        "wMax": 5.0,
-        "rmbPerKg": 95.0,
-        "pieceRmb": 55.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 5.001,
-        "wMax": 30.0,
-        "rmbPerKg": 95.0,
-        "pieceRmb": 55.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "SA": [
-      {
-        "wMin": 0.001,
-        "wMax": 0.5,
-        "rmbPerKg": 83.0,
-        "pieceRmb": 40.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 0.501,
-        "wMax": 1.0,
-        "rmbPerKg": 84.0,
-        "pieceRmb": 35.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 1.001,
-        "wMax": 2.0,
-        "rmbPerKg": 84.0,
-        "pieceRmb": 35.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 2.001,
-        "wMax": 5.0,
-        "rmbPerKg": 84.0,
-        "pieceRmb": 35.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 5.001,
-        "wMax": 30.0,
-        "rmbPerKg": 84.0,
-        "pieceRmb": 25.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "VN": [
-      {
-        "wMin": 0.001,
-        "wMax": 30.0,
-        "rmbPerKg": 31.0,
-        "pieceRmb": 11.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "AO": [
-      {
-        "wMin": 0.001,
-        "wMax": 2.0,
-        "rmbPerKg": 180.0,
-        "pieceRmb": 24.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "GH": [
-      {
-        "wMin": 0.001,
-        "wMax": 2.0,
-        "rmbPerKg": 170.0,
-        "pieceRmb": 22.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 2.001,
-        "wMax": 10.0,
-        "rmbPerKg": 260.0,
-        "pieceRmb": 22.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 10.001,
-        "wMax": 30.0,
-        "rmbPerKg": 230.0,
-        "pieceRmb": 22.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "KE": [
-      {
-        "wMin": 0.001,
-        "wMax": 2.0,
-        "rmbPerKg": 135.0,
-        "pieceRmb": 22.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 2.001,
-        "wMax": 10.0,
-        "rmbPerKg": 190.0,
-        "pieceRmb": 22.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 10.001,
-        "wMax": 30.0,
-        "rmbPerKg": 170.0,
-        "pieceRmb": 22.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "MA": [
-      {
-        "wMin": 0.001,
-        "wMax": 2.0,
-        "rmbPerKg": 130.0,
-        "pieceRmb": 48.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "NG": [
-      {
-        "wMin": 0.001,
-        "wMax": 2.0,
-        "rmbPerKg": 140.0,
-        "pieceRmb": 27.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 2.001,
-        "wMax": 10.0,
-        "rmbPerKg": 195.0,
-        "pieceRmb": 27.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 10.001,
-        "wMax": 30.0,
-        "rmbPerKg": 175.0,
-        "pieceRmb": 27.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "RW": [
-      {
-        "wMin": 0.001,
-        "wMax": 2.0,
-        "rmbPerKg": 155.0,
-        "pieceRmb": 18.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "TZ": [
-      {
-        "wMin": 0.001,
-        "wMax": 2.0,
-        "rmbPerKg": 125.0,
-        "pieceRmb": 21.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "UG": [
-      {
-        "wMin": 0.001,
-        "wMax": 2.0,
-        "rmbPerKg": 160.0,
-        "pieceRmb": 22.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 2.001,
-        "wMax": 10.0,
-        "rmbPerKg": 250.0,
-        "pieceRmb": 22.0,
-        "minChargeKg": 0.05
-      },
-      {
-        "wMin": 10.001,
-        "wMax": 30.0,
-        "rmbPerKg": 220.0,
-        "pieceRmb": 22.0,
-        "minChargeKg": 0.05
-      }
-    ],
-    "ZA": [
-      {
-        "wMin": 0.001,
-        "wMax": 8.0,
-        "rmbPerKg": 171.0,
-        "pieceRmb": 28.0,
-        "minChargeKg": 0.05
-      }
-    ]
-  },
-  "cainiaoIsoFallback": {
     "PR": [
       {
         "wMin": 0.001,
@@ -2548,22 +2108,6 @@
         "minChargeKg": 0.001
       }
     ],
-    "GB": [
-      {
-        "wMin": 0.001,
-        "wMax": 1.0,
-        "rmbPerKg": 83.0,
-        "pieceRmb": 16.0,
-        "minChargeKg": 0.001
-      },
-      {
-        "wMin": 1.001,
-        "wMax": 20.0,
-        "rmbPerKg": 85.0,
-        "pieceRmb": 16.0,
-        "minChargeKg": 0.001
-      }
-    ],
     "DE": [
       {
         "wMin": 0.001,
@@ -2665,352 +2209,6 @@
         "minChargeKg": 0.001
       }
     ],
-    "AU": {
-      "1": [
-        {
-          "wMin": 0.001,
-          "wMax": 0.25,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 20.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 0.251,
-          "wMax": 0.3,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 20.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 0.301,
-          "wMax": 0.5,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 20.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 0.501,
-          "wMax": 1.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 20.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 1.001,
-          "wMax": 2.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 21.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 2.001,
-          "wMax": 3.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 25.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 3.001,
-          "wMax": 4.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 40.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 4.001,
-          "wMax": 5.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 40.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 5.001,
-          "wMax": 7.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 40.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 7.001,
-          "wMax": 10.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 40.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 10.001,
-          "wMax": 15.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 55.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 15.001,
-          "wMax": 22.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 55.0,
-          "minChargeKg": 0.001
-        }
-      ],
-      "2": [
-        {
-          "wMin": 0.001,
-          "wMax": 0.25,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 27.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 0.251,
-          "wMax": 0.3,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 27.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 0.301,
-          "wMax": 0.5,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 28.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 0.501,
-          "wMax": 1.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 32.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 1.001,
-          "wMax": 2.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 34.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 2.001,
-          "wMax": 3.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 34.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 3.001,
-          "wMax": 4.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 50.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 4.001,
-          "wMax": 5.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 50.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 5.001,
-          "wMax": 7.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 50.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 7.001,
-          "wMax": 10.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 50.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 10.001,
-          "wMax": 15.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 66.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 15.001,
-          "wMax": 22.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 66.0,
-          "minChargeKg": 0.001
-        }
-      ],
-      "3": [
-        {
-          "wMin": 0.001,
-          "wMax": 0.25,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 49.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 0.251,
-          "wMax": 0.3,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 49.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 0.301,
-          "wMax": 0.5,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 49.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 0.501,
-          "wMax": 1.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 72.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 1.001,
-          "wMax": 2.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 72.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 2.001,
-          "wMax": 3.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 85.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 3.001,
-          "wMax": 4.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 110.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 4.001,
-          "wMax": 5.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 110.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 5.001,
-          "wMax": 7.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 110.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 7.001,
-          "wMax": 10.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 110.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 10.001,
-          "wMax": 15.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 125.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 15.001,
-          "wMax": 22.0,
-          "rmbPerKg": 55.0,
-          "pieceRmb": 125.0,
-          "minChargeKg": 0.001
-        }
-      ],
-      "4": [
-        {
-          "wMin": 0.001,
-          "wMax": 0.25,
-          "rmbPerKg": 62.0,
-          "pieceRmb": 55.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 0.251,
-          "wMax": 0.3,
-          "rmbPerKg": 62.0,
-          "pieceRmb": 55.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 0.301,
-          "wMax": 0.5,
-          "rmbPerKg": 62.0,
-          "pieceRmb": 55.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 0.501,
-          "wMax": 1.0,
-          "rmbPerKg": 62.0,
-          "pieceRmb": 95.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 1.001,
-          "wMax": 2.0,
-          "rmbPerKg": 62.0,
-          "pieceRmb": 115.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 2.001,
-          "wMax": 3.0,
-          "rmbPerKg": 62.0,
-          "pieceRmb": 117.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 3.001,
-          "wMax": 4.0,
-          "rmbPerKg": 62.0,
-          "pieceRmb": 140.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 4.001,
-          "wMax": 5.0,
-          "rmbPerKg": 62.0,
-          "pieceRmb": 140.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 5.001,
-          "wMax": 7.0,
-          "rmbPerKg": 62.0,
-          "pieceRmb": 140.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 7.001,
-          "wMax": 10.0,
-          "rmbPerKg": 62.0,
-          "pieceRmb": 140.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 10.001,
-          "wMax": 15.0,
-          "rmbPerKg": 62.0,
-          "pieceRmb": 155.0,
-          "minChargeKg": 0.001
-        },
-        {
-          "wMin": 15.001,
-          "wMax": 22.0,
-          "rmbPerKg": 62.0,
-          "pieceRmb": 155.0,
-          "minChargeKg": 0.001
-        }
-      ]
-    },
     "BE": [
       {
         "wMin": 0.001,
@@ -3050,184 +2248,6 @@
         "minChargeKg": 0.05
       }
     ],
-    "CA": {
-      "1": [
-        {
-          "wMin": 0.001,
-          "wMax": 0.15,
-          "rmbPerKg": 101.0,
-          "pieceRmb": 19.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 0.151,
-          "wMax": 0.45,
-          "rmbPerKg": 102.0,
-          "pieceRmb": 20.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 0.451,
-          "wMax": 0.75,
-          "rmbPerKg": 104.0,
-          "pieceRmb": 21.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 0.751,
-          "wMax": 1.0,
-          "rmbPerKg": 106.0,
-          "pieceRmb": 22.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 1.001,
-          "wMax": 2.0,
-          "rmbPerKg": 106.0,
-          "pieceRmb": 22.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 2.001,
-          "wMax": 30.0,
-          "rmbPerKg": 106.0,
-          "pieceRmb": 22.0,
-          "minChargeKg": 0.05
-        }
-      ],
-      "2": [
-        {
-          "wMin": 0.001,
-          "wMax": 0.15,
-          "rmbPerKg": 95.0,
-          "pieceRmb": 24.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 0.151,
-          "wMax": 0.45,
-          "rmbPerKg": 96.0,
-          "pieceRmb": 23.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 0.451,
-          "wMax": 0.75,
-          "rmbPerKg": 98.0,
-          "pieceRmb": 23.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 0.751,
-          "wMax": 1.0,
-          "rmbPerKg": 100.0,
-          "pieceRmb": 23.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 1.001,
-          "wMax": 2.0,
-          "rmbPerKg": 100.0,
-          "pieceRmb": 23.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 2.001,
-          "wMax": 30.0,
-          "rmbPerKg": 100.0,
-          "pieceRmb": 23.0,
-          "minChargeKg": 0.05
-        }
-      ],
-      "3": [
-        {
-          "wMin": 0.001,
-          "wMax": 0.15,
-          "rmbPerKg": 102.0,
-          "pieceRmb": 36.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 0.151,
-          "wMax": 0.45,
-          "rmbPerKg": 103.0,
-          "pieceRmb": 36.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 0.451,
-          "wMax": 0.75,
-          "rmbPerKg": 105.0,
-          "pieceRmb": 36.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 0.751,
-          "wMax": 1.0,
-          "rmbPerKg": 107.0,
-          "pieceRmb": 36.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 1.001,
-          "wMax": 2.0,
-          "rmbPerKg": 107.0,
-          "pieceRmb": 36.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 2.001,
-          "wMax": 30.0,
-          "rmbPerKg": 107.0,
-          "pieceRmb": 36.0,
-          "minChargeKg": 0.05
-        }
-      ],
-      "4": [
-        {
-          "wMin": 0.001,
-          "wMax": 0.15,
-          "rmbPerKg": 112.0,
-          "pieceRmb": 116.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 0.151,
-          "wMax": 0.45,
-          "rmbPerKg": 113.0,
-          "pieceRmb": 116.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 0.451,
-          "wMax": 0.75,
-          "rmbPerKg": 115.0,
-          "pieceRmb": 116.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 0.751,
-          "wMax": 1.0,
-          "rmbPerKg": 117.0,
-          "pieceRmb": 116.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 1.001,
-          "wMax": 2.0,
-          "rmbPerKg": 117.0,
-          "pieceRmb": 116.0,
-          "minChargeKg": 0.05
-        },
-        {
-          "wMin": 2.001,
-          "wMax": 30.0,
-          "rmbPerKg": 117.0,
-          "pieceRmb": 116.0,
-          "minChargeKg": 0.05
-        }
-      ]
-    },
     "CH": [
       {
         "wMin": 0.001,
@@ -4120,36 +3140,544 @@
         "pieceRmb": 28.0,
         "minChargeKg": 0.05
       }
-    ]
-  },
-  "cainiaoIsoFallback": {
-    "HK": {
-      "S5059": [
+    ],
+    "CA": {
+      "1": [
         {
-          "wMin": 0,
-          "wMax": 2,
-          "rmbPerKg": 15,
-          "regRmb": 22
+          "wMin": 0.001,
+          "wMax": 0.15,
+          "rmbPerKg": 101.0,
+          "pieceRmb": 19.0,
+          "minChargeKg": 0.05
         },
         {
-          "wMin": 2,
-          "wMax": 20,
-          "rmbPerKg": 15,
-          "regRmb": 40
+          "wMin": 0.151,
+          "wMax": 0.45,
+          "rmbPerKg": 102.0,
+          "pieceRmb": 20.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.451,
+          "wMax": 0.75,
+          "rmbPerKg": 104.0,
+          "pieceRmb": 21.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.751,
+          "wMax": 1.0,
+          "rmbPerKg": 106.0,
+          "pieceRmb": 22.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 106.0,
+          "pieceRmb": 22.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 30.0,
+          "rmbPerKg": 106.0,
+          "pieceRmb": 22.0,
+          "minChargeKg": 0.05
         }
       ],
-      "OH": [
+      "2": [
         {
-          "wMin": 0,
-          "wMax": 2,
-          "rmbPerKg": 20,
-          "regRmb": 21
+          "wMin": 0.001,
+          "wMax": 0.15,
+          "rmbPerKg": 95.0,
+          "pieceRmb": 24.0,
+          "minChargeKg": 0.05
         },
         {
-          "wMin": 2,
-          "wMax": 20,
-          "rmbPerKg": 15,
-          "regRmb": 40
+          "wMin": 0.151,
+          "wMax": 0.45,
+          "rmbPerKg": 96.0,
+          "pieceRmb": 23.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.451,
+          "wMax": 0.75,
+          "rmbPerKg": 98.0,
+          "pieceRmb": 23.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.751,
+          "wMax": 1.0,
+          "rmbPerKg": 100.0,
+          "pieceRmb": 23.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 100.0,
+          "pieceRmb": 23.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 30.0,
+          "rmbPerKg": 100.0,
+          "pieceRmb": 23.0,
+          "minChargeKg": 0.05
+        }
+      ],
+      "3": [
+        {
+          "wMin": 0.001,
+          "wMax": 0.15,
+          "rmbPerKg": 102.0,
+          "pieceRmb": 36.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.151,
+          "wMax": 0.45,
+          "rmbPerKg": 103.0,
+          "pieceRmb": 36.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.451,
+          "wMax": 0.75,
+          "rmbPerKg": 105.0,
+          "pieceRmb": 36.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.751,
+          "wMax": 1.0,
+          "rmbPerKg": 107.0,
+          "pieceRmb": 36.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 107.0,
+          "pieceRmb": 36.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 30.0,
+          "rmbPerKg": 107.0,
+          "pieceRmb": 36.0,
+          "minChargeKg": 0.05
+        }
+      ],
+      "4": [
+        {
+          "wMin": 0.001,
+          "wMax": 0.15,
+          "rmbPerKg": 112.0,
+          "pieceRmb": 116.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.151,
+          "wMax": 0.45,
+          "rmbPerKg": 113.0,
+          "pieceRmb": 116.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.451,
+          "wMax": 0.75,
+          "rmbPerKg": 115.0,
+          "pieceRmb": 116.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 0.751,
+          "wMax": 1.0,
+          "rmbPerKg": 117.0,
+          "pieceRmb": 116.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 117.0,
+          "pieceRmb": 116.0,
+          "minChargeKg": 0.05
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 30.0,
+          "rmbPerKg": 117.0,
+          "pieceRmb": 116.0,
+          "minChargeKg": 0.05
+        }
+      ]
+    },
+    "GB": [
+      {
+        "wMin": 0.001,
+        "wMax": 1.0,
+        "rmbPerKg": 83.0,
+        "pieceRmb": 16.0,
+        "minChargeKg": 0.001
+      },
+      {
+        "wMin": 1.001,
+        "wMax": 20.0,
+        "rmbPerKg": 85.0,
+        "pieceRmb": 16.0,
+        "minChargeKg": 0.001
+      }
+    ],
+    "AU": {
+      "1": [
+        {
+          "wMin": 0.001,
+          "wMax": 0.25,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 20.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.251,
+          "wMax": 0.3,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 20.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.301,
+          "wMax": 0.5,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 20.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.501,
+          "wMax": 1.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 20.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 21.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 3.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 25.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 3.001,
+          "wMax": 4.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 40.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 4.001,
+          "wMax": 5.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 40.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 5.001,
+          "wMax": 7.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 40.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 7.001,
+          "wMax": 10.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 40.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 10.001,
+          "wMax": 15.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 55.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 15.001,
+          "wMax": 22.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 55.0,
+          "minChargeKg": 0.001
+        }
+      ],
+      "2": [
+        {
+          "wMin": 0.001,
+          "wMax": 0.25,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 27.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.251,
+          "wMax": 0.3,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 27.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.301,
+          "wMax": 0.5,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 28.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.501,
+          "wMax": 1.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 32.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 34.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 3.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 34.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 3.001,
+          "wMax": 4.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 50.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 4.001,
+          "wMax": 5.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 50.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 5.001,
+          "wMax": 7.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 50.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 7.001,
+          "wMax": 10.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 50.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 10.001,
+          "wMax": 15.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 66.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 15.001,
+          "wMax": 22.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 66.0,
+          "minChargeKg": 0.001
+        }
+      ],
+      "3": [
+        {
+          "wMin": 0.001,
+          "wMax": 0.25,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 49.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.251,
+          "wMax": 0.3,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 49.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.301,
+          "wMax": 0.5,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 49.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.501,
+          "wMax": 1.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 72.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 72.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 3.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 85.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 3.001,
+          "wMax": 4.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 110.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 4.001,
+          "wMax": 5.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 110.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 5.001,
+          "wMax": 7.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 110.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 7.001,
+          "wMax": 10.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 110.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 10.001,
+          "wMax": 15.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 125.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 15.001,
+          "wMax": 22.0,
+          "rmbPerKg": 55.0,
+          "pieceRmb": 125.0,
+          "minChargeKg": 0.001
+        }
+      ],
+      "4": [
+        {
+          "wMin": 0.001,
+          "wMax": 0.25,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 55.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.251,
+          "wMax": 0.3,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 55.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.301,
+          "wMax": 0.5,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 55.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 0.501,
+          "wMax": 1.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 95.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 1.001,
+          "wMax": 2.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 115.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 2.001,
+          "wMax": 3.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 117.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 3.001,
+          "wMax": 4.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 140.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 4.001,
+          "wMax": 5.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 140.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 5.001,
+          "wMax": 7.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 140.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 7.001,
+          "wMax": 10.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 140.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 10.001,
+          "wMax": 15.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 155.0,
+          "minChargeKg": 0.001
+        },
+        {
+          "wMin": 15.001,
+          "wMax": 22.0,
+          "rmbPerKg": 62.0,
+          "pieceRmb": 155.0,
+          "minChargeKg": 0.001
         }
       ]
     }
@@ -4222,5 +3750,37 @@
     "加拿大": "CA",
     "英国": "GB",
     "澳大利亚": "AU"
+  },
+  "cainiaoIsoFallback": {
+    "HK": {
+      "S5059": [
+        {
+          "wMin": 0,
+          "wMax": 2,
+          "rmbPerKg": 15,
+          "regRmb": 22
+        },
+        {
+          "wMin": 2,
+          "wMax": 20,
+          "rmbPerKg": 15,
+          "regRmb": 40
+        }
+      ],
+      "OH": [
+        {
+          "wMin": 0,
+          "wMax": 2,
+          "rmbPerKg": 20,
+          "regRmb": 21
+        },
+        {
+          "wMin": 2,
+          "wMax": 20,
+          "rmbPerKg": 15,
+          "regRmb": 40
+        }
+      ]
+    }
   }
 }

@@ -232,7 +232,7 @@ export function quoteCheckoutShipping(input: {
       ok: true,
       shippingCny: sup,
       shippingUsdCents: cnyToUsdCents(sup),
-      lineLabel: "International shipping (Cainiao)",
+      lineLabel: "International shipping (Cainiao International / S5059-OH)",
     };
   }
 
@@ -248,7 +248,7 @@ export function quoteCheckoutShipping(input: {
       ok: true,
       shippingCny: sup,
       shippingUsdCents: cnyToUsdCents(sup),
-      lineLabel: "International shipping (Yanwen)",
+      lineLabel: "International shipping (Yanwen Logistics 484)",
     };
   }
 

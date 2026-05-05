@@ -125,7 +125,7 @@ export function CheckoutShippingSection({
         postalCode: shippingPostalCode,
       });
       if (m.id === "cainiao") return coverage.cainiao && q.ok;
-      if (m.id === "yanwen") return q.ok;
+      if (m.id === "yanwen") return coverage.yanwen && q.ok;
       return q.ok;
     });
   }, [coverage.cainiao, coverage.yanwen, countryLabel, totalUnits, shippingState, shippingPostalCode]);
@@ -145,6 +145,8 @@ export function CheckoutShippingSection({
   const destinationOk = Boolean(countryLabel.trim()) && iso2 !== null;
 
   const servedByEconomy = coverage.cainiao || coverage.yanwen;
+  const cainiaoMethodVisible = visibleIntlMethods.some((m) => m.id === "cainiao");
+  const yanwenMethodVisible = visibleIntlMethods.some((m) => m.id === "yanwen");
 
   const methodQuotes = useMemo(() => {
     const map = new Map<ShippingMethodId, CheckoutShippingQuote>();
@@ -317,6 +319,10 @@ export function CheckoutShippingSection({
               This address is supported for checkout — choose a shipping method below.
             </p>
             <p className="mt-1 text-xs opacity-90">
+              {cainiaoMethodVisible ? "Cainiao International is available here." : null}
+              {cainiaoMethodVisible && yanwenMethodVisible ? " " : null}
+              {yanwenMethodVisible ? "Yanwen Logistics is available here." : null}
+              {(cainiaoMethodVisible || yanwenMethodVisible) ? " " : null}
               Questions?{" "}
               <a
                 href={WHATSAPP_URL}
