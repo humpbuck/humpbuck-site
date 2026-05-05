@@ -388,6 +388,10 @@ export function computeDestinationFeesBreakdown(
     lines.push(`${label} ¥${amount.toFixed(2)}`);
     return amount;
   };
+  const addUsdFlat = (label: string, usd: number, bucket: "shared" | "carrier") =>
+    addFlat(label, Math.round(usd * 7.2 * 100) / 100, bucket);
+  const addUsdRate = (label: string, usd: number, rate: number, bucket: "shared" | "carrier") =>
+    addFlat(label, Math.round(usd * rate * 7.2 * 100) / 100, bucket);
   const addRate = (label: string, rate: number, minAmount?: number) => {
     if (rate <= 0) return 0;
     const rawFee = Math.round(base * rate * 100) / 100;
