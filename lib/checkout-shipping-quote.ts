@@ -1,6 +1,4 @@
 import {
-  buyerSupplementCnyCainiao,
-  buyerSupplementCnyYanwen,
   countryLabelToIso2,
   estimateLogistics,
   getDestinationCoverage,
@@ -221,13 +219,7 @@ export function quoteCheckoutShipping(input: {
   }
 
   if (input.method === "cainiao") {
-    const sup = buyerSupplementCnyCainiao(est);
-    if (sup === null) {
-      return {
-        ok: false,
-        error: `We can't quote that option for this address. Try the other method below or contact us on WhatsApp: ${WHATSAPP_DISPLAY}.`,
-      };
-    }
+    const sup = est.buyerSupplementCny;
     return {
       ok: true,
       shippingCny: sup,
@@ -240,13 +232,7 @@ export function quoteCheckoutShipping(input: {
   }
 
   if (input.method === "yanwen") {
-    const sup = buyerSupplementCnyYanwen(est);
-    if (sup === null) {
-      return {
-        ok: false,
-        error: `We can't quote that option for this address. Try the other method below or contact us on WhatsApp: ${WHATSAPP_DISPLAY}.`,
-      };
-    }
+    const sup = est.buyerSupplementCny;
     return {
       ok: true,
       shippingCny: sup,
