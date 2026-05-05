@@ -35,11 +35,15 @@ function checkoutMethodLabel(id: ShippingMethodId): string {
   }
 }
 
-function cainiaoLineWithRemark(base: number | null, dest: number): string {
-  if (base == null) return "-";
-  if (dest <= 0) return `¥${base.toFixed(2)}`;
-  const sum = Math.round((base + dest) * 100) / 100;
-  return `¥${base.toFixed(2)} + ¥${dest.toFixed(2)} = ¥${sum.toFixed(2)}`;
+function money(v: number | null | undefined): string {
+  return v == null ? "-" : `¥${v.toFixed(2)}`;
+}
+
+function totalLine(parts: Array<number | null | undefined>): string {
+  const vals = parts.filter((v): v is number => typeof v === "number" && Number.isFinite(v));
+  if (vals.length === 0) return "-";
+  const sum = Math.round(vals.reduce((a, b) => a + b, 0) * 100) / 100;
+  return `¥${sum.toFixed(2)}`;
 }
 
 function unavailableLine(note: string): string {
@@ -55,7 +59,7 @@ function s5059AdminLine(est: {
   if (kg != null && kg > CAINIAO_S5059_MAX_CHARGEABLE_KG + 1e-9) {
     return unavailableLine(`S5059 > ${CAINIAO_S5059_MAX_CHARGEABLE_KG} kg`);
   }
-  return cainiaoLineWithRemark(est.s5059InternationalCny, est.destinationFeesCnyCainiao);
+  return totalLine([est.s5059InternationalCny, est.destinationFeesCnyCainiao]);
 }
 
 function ohAdminLine(est: {
@@ -64,7 +68,7 @@ function ohAdminLine(est: {
 }): string {
   const base = est.ohInternationalCny;
   if (base == null) return "-";
-  return cainiaoLineWithRemark(base, est.destinationFeesCnyCainiao);
+  return totalLine([base, est.destinationFeesCnyCainiao]);
 }
 
 /** Yanwen lines show merchant reference costs; domestic leg is internal. */
@@ -245,20 +249,28 @@ export function LogisticsReferencePanel({
           <ul className="mt-2 space-y-3 tabular-nums">
             <li className="grid gap-2 border-b border-line/60 pb-3 last:border-0 sm:grid-cols-[minmax(9rem,13rem)_minmax(0,1fr)] sm:items-start">
               <span className="font-medium text-ink">Cainiao International S5059</span>
-              <div className="min-w-0 text-right leading-snug sm:text-left">
-                {s5059AdminLine(est)}
+              <div className="min-w-0 space-y-1 text-right leading-snug sm:text-left">
+                <p>Base freight: {money(est.s5059InternationalCny)}</p>
+                <p>Destination fees: {money(est.destinationFeesCnyCainiao)}</p>
+                <p>Total: {totalLine([est.s5059InternationalCny, est.destinationFeesCnyCainiao])}</p>
+                {s5059AdminLine(est).startsWith("-") ? <p className="text-muted">Unavailable</p> : null}
               </div>
             </li>
             <li className="grid gap-2 border-b border-line/60 pb-3 last:border-0 sm:grid-cols-[minmax(9rem,13rem)_minmax(0,1fr)] sm:items-start">
               <span className="font-medium text-ink">Cainiao International OH</span>
-              <div className="min-w-0 text-right leading-snug sm:text-left">
-                {ohAdminLine(est)}
+              <div className="min-w-0 space-y-1 text-right leading-snug sm:text-left">
+                <p>Base freight: {money(est.ohInternationalCny)}</p>
+                <p>Destination fees: {money(est.destinationFeesCnyCainiao)}</p>
+                <p>Total: {totalLine([est.ohInternationalCny, est.destinationFeesCnyCainiao])}</p>
               </div>
             </li>
             <li className="grid gap-2 pb-1 sm:grid-cols-[minmax(9rem,13rem)_minmax(0,1fr)] sm:items-start">
               <span className="font-medium text-ink">Yanwen Logistics 484</span>
               <div className="min-w-0 space-y-1 text-right leading-snug sm:text-left">
-                <p className="wrap-break-word">{yanwenAdminPrimaryLine(est)}</p>
+                <p>Base freight: {money(est.yanwen484InternationalCny)}</p>
+                <p>Domestic leg: ¥5.00</p>
+                <p>Destination fees: {money(est.destinationFeesCnyYanwen)}</p>
+                <p>Total: {totalLine([est.yanwen484InternationalCny, 5, est.destinationFeesCnyYanwen])}</p>
                 {yanwenWeightNote ? (
                   <p className="text-[11px] text-muted">{yanwenWeightNote}</p>
                 ) : null}
