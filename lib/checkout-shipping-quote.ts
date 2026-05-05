@@ -254,13 +254,7 @@ export function quoteCheckoutShipping(input: {
   }
 
   if (isPremiumExpressMethod(input.method)) {
-    const kg =
-      est.chargeableKgYanwen ?? est.chargeableKgCainiao ?? PREMIUM_EXPRESS_INCLUDED_KG;
-    const dest = Math.max(
-      est.destinationFeesCnyCainiao ?? 0,
-      est.destinationFeesCnyYanwen ?? 0,
-    );
-    const full = Math.round((premiumExpressTotalCny(kg) + dest) * 100) / 100;
+    const full = PREMIUM_EXPRESS_BASE_CNY;
     return {
       ok: true,
       shippingCny: full,
