@@ -216,12 +216,6 @@ function getCainiaoBands(
     const main = R.cainiao[product][zh];
     if (main?.length) return main;
   }
-  if (iso2 === "KW" && product === "OH") {
-    const kw = R.countryDestinationFees?.KW;
-    if (kw?.cainiaoFlatCnyPerShipment != null || kw?.cainiaoVatRateOnDeclaredCifCny != null) {
-      return [{ wMin: 0, wMax: 9999, rmbPerKg: 0, regRmb: 0 }];
-    }
-  }
   const fb = R.cainiaoIsoFallback?.[iso2]?.[product];
   if (fb?.length) return fb;
   return undefined;
@@ -255,9 +249,6 @@ function cainiaoInternationalCny(
     weightKg > CAINIAO_S5059_MAX_CHARGEABLE_KG + 1e-9
   ) {
     return null;
-  }
-  if (iso2 === "KW" && product === "OH") {
-    return Math.round((0.2 * 80 + 40 + 1.2 * 0.05 + 35) * 100) / 100;
   }
   const bands = getCainiaoBands(iso2, zhCountry, product);
   const b = pickCainiaoBand(weightKg, bands);
@@ -335,6 +326,40 @@ function getYanwenBandsForMinChargeKg(
   return Array.isArray(raw) ? raw : undefined;
 }
 
+function getDestinationExtraFee(
+  iso2: string,
+  carrier: CarrierKind,
+  product?: string,
+): number {
+  const baseVatVal = 1.2 * 7.2;
+  if (carrier === "cainiao") {
+    if (iso2 === "MX") return baseVatVal * 0.335;
+    if (product === "OH") {
+      if (iso2 === "RO") return 41;
+      if (iso2 === "AE") return baseVatVal * 0.05;
+      if (iso2 === "OM") return baseVatVal * 0.05 + 20;
+      if (iso2 === "QA") return 40;
+      if (iso2 === "CL") return (baseVatVal * 1.02 + 10) * 0.19;
+      if (iso2 === "MA") return baseVatVal * 0.56;
+      if (iso2 === "NZ") return 10;
+      if (iso2 === "BH") return baseVatVal * 0.10;
+    }
+  }
+  if (carrier === "yanwen") {
+    if (iso2 === "RO") return baseVatVal * 0.21 + 41;
+    if (iso2 === "MX") return baseVatVal * 0.335;
+    if (iso2 === "AE") return baseVatVal * 0.05;
+    if (iso2 === "OM") return baseVatVal * 0.05 + 25;
+    if (iso2 === "QA") return 50;
+    if (iso2 === "CL") return baseVatVal * 0.19;
+    if (iso2 === "MA") return 5 * 7.2 * 0.52;
+    if (iso2 === "AR") return baseVatVal * 0.21;
+    if (iso2 === "AO") return 12 * 7.2 * 0.16;
+    if (iso2 === "JO") return Math.max(53, baseVatVal * 0.16);
+  }
+  return 0;
+}
+
 function yanwen484InternationalCnyFromBands(
   bands: YanwenBand[] | undefined,
   billingKg: number,
@@ -397,10 +422,6 @@ export function computeDestinationFeesBreakdown(
     lines.push(`${label} ¥${amount.toFixed(2)}`);
     return amount;
   };
-  const addUsd = (label: string, usd: number, bucket: "shared" | "carrier") =>
-    addFlat(label, Math.round(usd * 7.2 * 100) / 100, bucket);
-  const addUsdRate = (label: string, usd: number, rate: number, bucket: "shared" | "carrier") =>
-    addFlat(label, Math.round(usd * rate * 7.2 * 100) / 100, bucket);
   const addRate = (label: string, rate: number, basis: number = base, minAmount?: number) => {
     if (rate <= 0) return 0;
     const rawFee = Math.round(basis * rate * 100) / 100;
@@ -412,53 +433,21 @@ export function computeDestinationFeesBreakdown(
   };
 
   if (carrier === "cainiao") {
-    if (iso2 === "MX") {
-      addRate("【菜鸟S5059】墨西哥税费", 0.335, 1.2 * 7.2);
-    } else if (iso2 === "CL") {
-      const cif = 1.2 * 7.2 * 1.02 + (R.yanwenDomesticToWarehouseCny ?? 5);
-      addRate("【菜鸟OH】智利CIF税", 0.19, cif);
+    const extra = getDestinationExtraFee(iso2, "cainiao", "OH");
+    if (iso2 === "CL") {
+      addFlat("【菜鸟】智利CIF", extra, "carrier");
     } else {
       addFlat("【菜鸟】固定费用", cfg.cainiaoFlatCnyPerShipment ?? cfg.flatCnyPerShipment ?? 0, "carrier");
       addRate("【菜鸟】VAT", cfg.cainiaoVatRateOnDeclaredCifCny ?? cfg.vatRateOnDeclaredCifCny ?? 0);
       addRate("【菜鸟】Duty", cfg.cainiaoDutyRateOnDeclaredCifCny ?? cfg.dutyRateOnDeclaredCifCny ?? 0);
-      addFlat("【菜鸟】附加", cfg.cainiaoRemarksFlatCny ?? 0, "carrier");
+      addFlat("【菜鸟】附加", (cfg.cainiaoRemarksFlatCny ?? 0) + extra, "carrier");
     }
   } else {
-    if (iso2 === "RO") {
-      addRate("【燕文】罗马尼亚税费", 0.21, 1.2 * 7.2);
-      addFlat("【燕文】罗马尼亚固定费用", 41, "carrier");
-    } else if (iso2 === "MX") {
-      addRate("【燕文】墨西哥税费", 0.335, 1.2 * 7.2);
-    } else if (iso2 === "SA") {
-      addRate("【燕文】沙特VAT", 0.15, 1.2 * 7.2);
-      addFlat("【燕文】沙特清关处理费", 34, "carrier");
-    } else if (iso2 === "AE") {
-      addRate("【燕文】阿联酋VAT", 0.05, 1.2 * 7.2);
-    } else if (iso2 === "OM") {
-      addRate("【燕文】阿曼VAT", 0.05, 1.2 * 7.2);
-      addFlat("【燕文】阿曼清关手续费", 25, "carrier");
-    } else if (iso2 === "QA") {
-      addFlat("【燕文】卡塔尔清关手续费", 50, "carrier");
-    } else if (iso2 === "CL") {
-      addRate("【燕文】智利税费", 0.19, 1.2 * 7.2);
-    } else if (iso2 === "MA") {
-      addRate("【燕文】摩洛哥关税", 0.52, 5 * 7.2);
-    } else if (iso2 === "AR") {
-      addRate("【燕文】阿根廷VAT", 0.21, base);
-    } else if (iso2 === "JO") {
-      addRate("【燕文】约旦关税", 0.16, base, 53);
-    } else if (iso2 === "AO") {
-      addRate("【燕文】安哥拉关税", 0.16, 12 * 7.2);
-    } else if (iso2 === "RW") {
-      addFlat("【燕文】卢旺达到达费", 35, "carrier");
-      addFlat("【燕文】卢旺达清关代理费", 118, "carrier");
-      addFlat("【燕文】卢旺达仓储费", 100, "carrier");
-    } else {
-      addFlat("【燕文】处理费", cfg.yanwenFlatCnyPerShipment ?? cfg.flatCnyPerShipment ?? 0, "carrier");
-      addRate("【燕文】VAT", cfg.yanwenVatRateOnDeclaredCifCny ?? cfg.vatRateOnDeclaredCifCny ?? 0);
-      addRate("【燕文】Duty", cfg.yanwenDutyRateOnDeclaredCifCny ?? cfg.dutyRateOnDeclaredCifCny ?? 0);
-      addFlat("【燕文】附加", cfg.yanwenRemarksFlatCny ?? 0, "carrier");
-    }
+    const extra = getDestinationExtraFee(iso2, "yanwen");
+    addFlat("【燕文】处理费", cfg.yanwenFlatCnyPerShipment ?? cfg.flatCnyPerShipment ?? 0, "carrier");
+    addRate("【燕文】VAT", cfg.yanwenVatRateOnDeclaredCifCny ?? cfg.vatRateOnDeclaredCifCny ?? 0);
+    addRate("【燕文】Duty", cfg.yanwenDutyRateOnDeclaredCifCny ?? cfg.dutyRateOnDeclaredCifCny ?? 0);
+    addFlat("【燕文】附加", (cfg.yanwenRemarksFlatCny ?? 0) + extra, "carrier");
   }
 
   shared = Math.round(shared * 100) / 100;
@@ -484,6 +473,12 @@ export type LogisticsEstimateResult = {
   yanwenPreMinChargeKg: number | null;
   /** Yanwen: embedded band min billable kg floor when present (`minChargeKg`). */
   yanwenMinChargeFloorKg: number | null;
+  /** Base freight before destination extras. */
+  baseFee: number | null;
+  /** Destination tax / extra fee. */
+  taxExtraFee: number;
+  /** Internal merchant cost (Yanwen includes domestic 5 RMB). */
+  internalCost: number;
   s5059InternationalCny: number | null;
   ohInternationalCny: number | null;
   yanwen484InternationalCny: number | null;
@@ -558,6 +553,9 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     chargeableKgYanwen: null,
     yanwenPreMinChargeKg: null,
     yanwenMinChargeFloorKg: null,
+    baseFee: null,
+    taxExtraFee: 0,
+    internalCost: 0,
     s5059InternationalCny: null,
     ohInternationalCny: null,
     yanwen484InternationalCny: null,
@@ -587,6 +585,35 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     };
   }
 
+  if (iso2 === "CN") {
+    return {
+      ...empty,
+      iso2,
+      cainiaoZhCountry: null,
+      cainiaoUsedIsoFallback: false,
+      chargeableKgCainiao: 0,
+      chargeableKgYanwen: 0,
+      yanwenPreMinChargeKg: 0,
+      yanwenMinChargeFloorKg: null,
+      baseFee: 0,
+      taxExtraFee: 0,
+      internalCost: 0,
+      s5059InternationalCny: 0,
+      ohInternationalCny: 0,
+      yanwen484InternationalCny: 0,
+      yanwenWithDomesticCny: 0,
+      bestCainiaoInternationalCny: 0,
+      preferCainiao: true,
+      policyInternationalCny: 0,
+      destinationFeesCny: 0,
+      destinationFeesCnyCainiao: 0,
+      destinationFeesCnyYanwen: 0,
+      destinationFeesLines: [],
+      freeInternational: true,
+      buyerSupplementCny: 0,
+      summaryLines: ["China mainland: ZTO shipping is fully covered."],
+    };
+  }
   if (iso2 === "US" && isUsStateExcludedFromEconomyCarriers(input.state)) {
     return {
       ...empty,
@@ -594,32 +621,6 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
       summaryLines: [
         "Cainiao / Yanwen economy lines do not apply to this U.S. minor outlying or uninhabited area — use premium express or contact us.",
       ],
-    };
-  }
-  if (iso2 === "KW") {
-    return {
-      ...empty,
-      iso2,
-      cainiaoZhCountry: null,
-      cainiaoUsedIsoFallback: false,
-      chargeableKgCainiao: null,
-      chargeableKgYanwen: null,
-      yanwenPreMinChargeKg: null,
-      yanwenMinChargeFloorKg: null,
-      s5059InternationalCny: null,
-      ohInternationalCny: null,
-      yanwen484InternationalCny: null,
-      yanwenWithDomesticCny: null,
-      bestCainiaoInternationalCny: null,
-      preferCainiao: true,
-      policyInternationalCny: null,
-      destinationFeesCny: 0,
-      destinationFeesCnyCainiao: 0,
-      destinationFeesCnyYanwen: 0,
-      destinationFeesLines: [],
-      freeInternational: false,
-      buyerSupplementCny: 0,
-      summaryLines: ["Kuwait is supported via Cainiao OH."],
     };
   }
 
@@ -689,9 +690,6 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
   );
   let destinationFeesCnyCainiao = destBreakdownCainiao.cainiaoTotalCny;
   const destinationFeesCnyYanwen = destBreakdownYanwen.yanwenTotalCny;
-  if (iso2 === "KW") {
-    destinationFeesCnyCainiao = Math.round((destinationFeesCnyCainiao + 1.2 * 0.05 + 35) * 100) / 100;
-  }
   const destinationFeesLines = [
     ...destBreakdownCainiao.lines,
     ...destBreakdownYanwen.lines.filter((line) => !destBreakdownCainiao.lines.includes(line)),
@@ -717,18 +715,15 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     ? destinationFeesCnyCainiao
     : destinationFeesCnyYanwen;
 
-  let freeInternational = true;
-  let buyerSupplementCny = 0;
-  const intlOnly = policyInternationalCny;
-  const combinedForCap =
-    (intlOnly ?? 0) + destinationFeesCny;
-  if (intlOnly != null || destinationFeesCny > 0) {
-    buyerSupplementCny = Math.max(
-      0,
-      Math.round((combinedForCap - R.freeInternationalLegCny) * 100) / 100,
-    );
-    freeInternational = buyerSupplementCny <= 0;
-  }
+  const baseFee = preferCainiao ? bestCainiao : yIntl;
+  const taxExtraFee = destinationFeesCny;
+  const internalCost = preferCainiao
+    ? destinationFeesCnyCainiao
+    : Math.round((destinationFeesCnyYanwen + R.yanwenDomesticToWarehouseCny) * 100) / 100;
+
+  const totalFee = (policyInternationalCny ?? 0) + destinationFeesCny;
+  const buyerSupplementCny = Math.max(0, Math.round((totalFee - R.freeInternationalLegCny) * 100) / 100);
+  const freeInternational = buyerSupplementCny <= 0;
 
   const summaryLines: string[] = [];
   if (zh == null && !hasFbS5059 && !hasFbOh) {
@@ -793,6 +788,9 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     chargeableKgYanwen,
     yanwenPreMinChargeKg: rawYanwen,
     yanwenMinChargeFloorKg,
+    baseFee,
+    taxExtraFee,
+    internalCost,
     s5059InternationalCny: s5059,
     ohInternationalCny: oh,
     yanwen484InternationalCny: yIntl,
@@ -808,33 +806,6 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     buyerSupplementCny,
     summaryLines,
   };
-}
-
-/** Buyer top-up vs ¥50 int’l cap when explicitly choosing Cainiao (min S5059/OH). */
-export function buyerSupplementCnyCainiao(
-  est: LogisticsEstimateResult,
-): number | null {
-  const intl = est.bestCainiaoInternationalCny;
-  if (intl == null) return null;
-  const dest = est.destinationFeesCnyCainiao ?? 0;
-  if (est.iso2 === "KW") {
-    return Math.max(0.01, Math.round((intl + dest) * 100) / 100);
-  }
-  const topUp = Math.round((intl + dest - R.freeInternationalLegCny) * 100) / 100;
-  return Math.max(0.01, topUp);
-}
-
-/** Buyer top-up vs ¥50 cap when choosing Yanwen 484 international leg. */
-export function buyerSupplementCnyYanwen(
-  est: LogisticsEstimateResult,
-): number | null {
-  const intl = est.yanwen484InternationalCny;
-  if (intl == null) return null;
-  const dest = est.destinationFeesCnyYanwen ?? 0;
-  return Math.max(
-    0,
-    Math.round((intl + dest - R.freeInternationalLegCny) * 100) / 100,
-  );
 }
 
 /** Whether embedded rate tables include this destination (for checkout copy). */
