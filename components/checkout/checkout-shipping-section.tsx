@@ -118,7 +118,7 @@ export function CheckoutShippingSection({
       });
       return q.ok;
     });
-  }, [countryLabel, totalUnits, shippingState, shippingPostalCode, method]);
+  }, [countryLabel, totalUnits, shippingState, shippingPostalCode]);
 
   const quote = useMemo(
     () =>
@@ -165,7 +165,7 @@ export function CheckoutShippingSection({
       );
     }
     return map;
-  }, [visibleIntlMethods, countryLabel, totalUnits, shippingState, shippingPostalCode, method]);
+  }, [visibleIntlMethods, countryLabel, totalUnits, shippingState, shippingPostalCode]);
 
   if (isCn && destinationOk) {
     return (

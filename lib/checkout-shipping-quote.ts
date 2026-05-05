@@ -189,15 +189,6 @@ export function quoteCheckoutShipping(input: {
     };
   }
 
-  console.log('--- GLOBAL SHIPPING CALC ---', {
-    phase: 'entry',
-    country: input.countryLabel,
-    method: input.method,
-    totalUnits: input.totalUnits,
-    state: input.state ?? null,
-    postalCode: input.postalCode ?? null,
-  });
-
   const est = estimateLogistics({
     countryLabel: input.countryLabel,
     totalUnits: input.totalUnits,
@@ -236,13 +227,6 @@ export function quoteCheckoutShipping(input: {
 
   if (input.method === "cainiao") {
     if (est.baseFee == null || est.policyInternationalCny == null) {
-      console.log('--- GLOBAL SHIPPING CALC ---', {
-        phase: 'exit',
-        country: input.countryLabel,
-        method: input.method,
-        resultCny: null,
-        error: 'Shipping Unavailable for this destination',
-      });
       return {
         ok: false,
         error: "Shipping Unavailable for this destination",
@@ -258,24 +242,11 @@ export function quoteCheckoutShipping(input: {
           ? "International shipping (Cainiao International / OH)"
           : "International shipping (Cainiao International / S5059-OH)",
     };
-    console.log('--- GLOBAL SHIPPING CALC ---', {
-      phase: 'exit',
-      country: input.countryLabel,
-      method: input.method,
-      resultCny: result.shippingCny,
-    });
     return result;
   }
 
   if (input.method === "yanwen") {
     if (est.iso2 === "KW" || est.baseFee == null || est.policyInternationalCny == null) {
-      console.log('--- GLOBAL SHIPPING CALC ---', {
-        phase: 'exit',
-        country: input.countryLabel,
-        method: input.method,
-        resultCny: null,
-        error: 'Shipping Unavailable for this destination',
-      });
       return {
         ok: false,
         error: "Shipping Unavailable for this destination",
@@ -288,12 +259,6 @@ export function quoteCheckoutShipping(input: {
       shippingUsdCents: cnyToUsdCents(sup),
       lineLabel: "International shipping (Yanwen Logistics 484)",
     };
-    console.log('--- GLOBAL SHIPPING CALC ---', {
-      phase: 'exit',
-      country: input.countryLabel,
-      method: input.method,
-      resultCny: result.shippingCny,
-    });
     return result;
   }
 
