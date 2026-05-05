@@ -220,22 +220,6 @@ export function quoteCheckoutShipping(input: {
     }
   }
 
-  if (est.iso2 === "KW" && input.method === "cainiao") {
-    const kw = buyerSupplementCnyCainiao(est);
-    if (kw == null) {
-      return {
-        ok: false,
-        error: `We can't quote that option for this address. Try the other method below or contact us on WhatsApp: ${WHATSAPP_DISPLAY}.`,
-      };
-    }
-    return {
-      ok: true,
-      shippingCny: kw,
-      shippingUsdCents: cnyToUsdCents(kw),
-      lineLabel: "International shipping (Cainiao International / OH)",
-    };
-  }
-
   if (input.method === "cainiao") {
     const sup = buyerSupplementCnyCainiao(est);
     if (sup === null) {
@@ -248,7 +232,10 @@ export function quoteCheckoutShipping(input: {
       ok: true,
       shippingCny: sup,
       shippingUsdCents: cnyToUsdCents(sup),
-      lineLabel: "International shipping (Cainiao International / S5059-OH)",
+      lineLabel:
+        est.iso2 === "KW"
+          ? "International shipping (Cainiao International / OH)"
+          : "International shipping (Cainiao International / S5059-OH)",
     };
   }
 
