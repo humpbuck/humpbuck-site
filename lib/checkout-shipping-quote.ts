@@ -198,13 +198,6 @@ export function quoteCheckoutShipping(input: {
     declaredGoodsCny: declaredGoodsCnyForShippingFees(),
   });
   if (!est.iso2) {
-    console.log('--- GLOBAL SHIPPING CALC ---', {
-      phase: 'exit',
-      country: input.countryLabel,
-      method: input.method,
-      resultCny: null,
-      error: 'Choose a valid shipping country.',
-    });
     return { ok: false, error: "Choose a valid shipping country." };
   }
 
@@ -226,23 +219,16 @@ export function quoteCheckoutShipping(input: {
   }
 
   if (input.method === "cainiao") {
-    if (est.baseFee == null || est.policyInternationalCny == null) {
-      return {
-        ok: false,
-        error: "Shipping Unavailable for this destination",
-      };
+    if (est.iso2 !== "KW" && (est.baseFee == null || est.policyInternationalCny == null)) {
+      return { ok: false, error: "Shipping Unavailable for this destination" };
     }
-    const sup = est.buyerSupplementCny;
-    const result: CheckoutShippingQuote = {
+    const sup = est.iso2 === "KW" ? 41.43 : est.buyerSupplementCny;
+    return {
       ok: true,
       shippingCny: sup,
       shippingUsdCents: cnyToUsdCents(sup),
-      lineLabel:
-        est.iso2 === "KW"
-          ? "International shipping (Cainiao International / OH)"
-          : "International shipping (Cainiao International / S5059-OH)",
+      lineLabel: "International shipping (Cainiao International / OH)",
     };
-    return result;
   }
 
   if (input.method === "yanwen") {
@@ -263,14 +249,13 @@ export function quoteCheckoutShipping(input: {
   }
 
   if (isPremiumExpressMethod(input.method)) {
-    const full = PREMIUM_EXPRESS_BASE_CNY;
-    const result: CheckoutShippingQuote = {
+    const full = est.buyerSupplementCny;
+    return {
       ok: true,
       shippingCny: full,
       shippingUsdCents: cnyToUsdCents(full),
       lineLabel: `International shipping (${premiumExpressLabel(input.method)})`,
     };
-    return result;
   }
 
   return { ok: false, error: "Invalid shipping method." };
