@@ -340,7 +340,7 @@ function PhoneField({
       <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
         {label}
         {required ? (
-          <span className="text-rose-600" aria-hidden="true">
+          <span style={{ color: "#e11d48" }} aria-hidden="true">
             {" "}
             *
           </span>
@@ -450,7 +450,7 @@ function Field({
       <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
         {label}
         {required ? (
-          <span className="text-rose-600" aria-hidden="true">
+          <span style={{ color: "#e11d48" }} aria-hidden="true">
             {" "}
             *
           </span>
