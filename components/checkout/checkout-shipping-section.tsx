@@ -220,12 +220,12 @@ export function CheckoutShippingSection({
                       <span className="font-medium text-ink">{m.title}</span>
                       {rec === "primary" ? (
                         <span className="rounded-full bg-emerald-700/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-900">
-                          Default
+                          RECOMMENDED
                         </span>
                       ) : null}
                       {rec === "secondary" ? (
                         <span className="rounded-full bg-sky-800/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-sky-900">
-                          Faster
+                          GOOD VALUE
                         </span>
                       ) : null}
                     </span>
@@ -354,12 +354,12 @@ export function CheckoutShippingSection({
                         <span className="font-medium text-ink">{m.title}</span>
                         {rec === "primary" ? (
                           <span className="rounded-full bg-emerald-700/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-900">
-                            Recommended
+                            RECOMMENDED
                           </span>
                         ) : null}
                         {rec === "secondary" ? (
                           <span className="rounded-full bg-sky-800/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-sky-900">
-                            Good value
+                            GOOD VALUE
                           </span>
                         ) : null}
                       </span>
