@@ -43,7 +43,7 @@ export function isCheckoutTaxIdValid(country: string, taxId: string): boolean {
       return true;
   }
 }
-*** End Patch
+
 export type CheckoutAddressForm = {
   firstName: string;
   lastName: string;
