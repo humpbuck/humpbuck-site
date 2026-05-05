@@ -118,7 +118,7 @@ export function CheckoutShippingSection({
       });
       return q.ok;
     });
-  }, [countryLabel, totalUnits, method, shippingState, shippingPostalCode]);
+  }, [countryLabel, totalUnits, shippingState, shippingPostalCode]);
 
   const quote = useMemo(
     () =>
