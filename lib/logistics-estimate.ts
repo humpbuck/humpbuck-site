@@ -348,7 +348,13 @@ function getDestinationExtraFee(
       if (iso2 === "AE") return declaredUsd * 0.05 * usd;
       if (iso2 === "OM") return declaredUsd * 0.05 * usd + 20;
       if (iso2 === "QA") return 40;
-      if (iso2 === "CL") return (declaredUsd * 1.02 * usd + declaredUsd * 0.02 * usd + declaredUsd * usd) * 0.19;
+      if (iso2 === "CL") {
+        const declaredGoodsUsd = declaredUsd;
+        const insuranceUsd = declaredGoodsUsd * 0.02;
+        const freightUsd = declaredGoodsUsd;
+        const cifUsd = declaredGoodsUsd + insuranceUsd + freightUsd;
+        return cifUsd * 0.19 * usd;
+      }
       if (iso2 === "MA") return declaredUsd * 0.56 * usd;
       if (iso2 === "NZ") return 10;
       if (iso2 === "KW") return declaredUsd * 0.05 * usd + 35;
