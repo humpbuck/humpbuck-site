@@ -811,10 +811,8 @@ export function buyerSupplementCnyCainiao(
   const intl = est.bestCainiaoInternationalCny;
   if (intl == null) return null;
   const dest = est.destinationFeesCnyCainiao ?? 0;
-  return Math.max(
-    0,
-    Math.round((intl + dest - R.freeInternationalLegCny) * 100) / 100,
-  );
+  const topUp = Math.round((intl + dest - R.freeInternationalLegCny) * 100) / 100;
+  return Math.max(0.01, topUp);
 }
 
 /** Buyer top-up vs ¥50 cap when choosing Yanwen 484 international leg. */
