@@ -111,10 +111,19 @@ def load_yanwen_484(
         try:
             pk = float(row[3])
             fee = float(row[4])
+            band_s = row[5]
+            min_w = row[6]
         except (TypeError, ValueError):
-            continue
-        band_s = row[5]
-        min_w = row[6]
+            if iso == "JP" and len(row) >= 7:
+                try:
+                    band_s = row[3]
+                    fee = float(row[4])
+                    pk = float(row[5])
+                    min_w = row[6]
+                except (TypeError, ValueError):
+                    continue
+            else:
+                continue
         wmin, wmax = None, None
         if isinstance(band_s, str) and " - " in band_s:
             a, b = band_s.split(" - ", 1)

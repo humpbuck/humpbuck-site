@@ -3141,6 +3141,22 @@
         "minChargeKg": 0.05
       }
     ],
+    "JP": [
+      {
+        "wMin": 0.001,
+        "wMax": 2.0,
+        "rmbPerKg": 34.0,
+        "pieceRmb": 0.5,
+        "minChargeKg": 0.5
+      },
+      {
+        "wMin": 2.001,
+        "wMax": 10.0,
+        "rmbPerKg": 34.0,
+        "pieceRmb": 0.5,
+        "minChargeKg": 0.5
+      }
+    ],
     "CA": {
       "1": [
         {
