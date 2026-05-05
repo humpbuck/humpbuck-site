@@ -286,7 +286,7 @@ export function quoteCheckoutShipping(input: {
     if (est.iso2 !== "KW" && (est.baseFee == null || est.policyInternationalCny == null)) {
       return { ok: false, error: "Shipping Unavailable for this destination" };
     }
-    const sup = est.iso2 === "KW" ? 41.43 : est.buyerSupplementCny;
+    const sup = est.iso2 === "KW" ? 41.43 : est.cainiaoTopUpCny;
     return {
       ok: true,
       shippingCny: sup,
@@ -302,7 +302,7 @@ export function quoteCheckoutShipping(input: {
         error: "Shipping Unavailable for this destination",
       };
     }
-    const sup = est.buyerSupplementCny;
+    const sup = est.yanwenTopUpCny;
     const result: CheckoutShippingQuote = {
       ok: true,
       shippingCny: sup,

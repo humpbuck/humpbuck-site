@@ -337,7 +337,6 @@ function getDestinationExtraFee(
 ): number {
   const usd = 7.2;
   const declaredUsd = 1.2;
-  const declaredCny = declaredUsd * usd;
   if (carrier === "cainiao") {
     if (product === "S5059") {
       if (iso2 === "MX") return declaredUsd * 0.335 * usd;
@@ -513,6 +512,8 @@ export type LogisticsEstimateResult = {
   destinationFeesLines: string[];
   freeInternational: boolean;
   buyerSupplementCny: number;
+  cainiaoTopUpCny: number;
+  yanwenTopUpCny: number;
   summaryLines: string[];
 };
 
@@ -581,6 +582,8 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     destinationFeesLines: [],
     freeInternational: true,
     buyerSupplementCny: 0,
+    cainiaoTopUpCny: 0,
+    yanwenTopUpCny: 0,
     summaryLines: ["Add items to estimate shipping."],
   };
 
@@ -623,6 +626,8 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
       destinationFeesLines: [],
       freeInternational: true,
       buyerSupplementCny: 0,
+      cainiaoTopUpCny: 0,
+      yanwenTopUpCny: 0,
       summaryLines: ["China mainland: ZTO shipping is fully covered."],
     };
   }
@@ -736,12 +741,12 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     : Math.round((destinationFeesCnyYanwen + R.yanwenDomesticToWarehouseCny) * 100) / 100;
 
   const FREE_THRESHOLD = 50;
-  // 如果找不到基础运费，说明运费表缺失，强制设置极高价格拦截订单，而不是当做 0 元处理
-  const totalPayable = policyInternationalCny != null ? policyInternationalCny + destinationFeesCny : 9999;
-  const buyerSupplementCny = Math.max(
-    0,
-    Math.round((totalPayable - FREE_THRESHOLD) * 100) / 100,
-  );
+  const cainiaoTotal = (bestCainiao ?? 9999) + destinationFeesCnyCainiao;
+  const yanwenTotal = (yWithDom ?? 9999) + destinationFeesCnyYanwen;
+  const cainiaoTopUpCny = Math.max(0, cainiaoTotal - FREE_THRESHOLD);
+  const yanwenTopUpCny = Math.max(0, yanwenTotal - FREE_THRESHOLD);
+  const buyerSupplementCny = preferCainiao ? cainiaoTopUpCny : yanwenTopUpCny;
+  const totalPayable = preferCainiao ? cainiaoTotal : yanwenTotal;
   const freeInternational = buyerSupplementCny <= 0 && totalPayable !== 9999;
 
   const summaryLines: string[] = [];
@@ -823,6 +828,8 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     destinationFeesLines,
     freeInternational,
     buyerSupplementCny,
+    cainiaoTopUpCny,
+    yanwenTopUpCny,
     summaryLines,
   };
 }
