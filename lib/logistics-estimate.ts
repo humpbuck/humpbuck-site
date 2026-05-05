@@ -258,7 +258,8 @@ function cainiaoInternationalCny(
   }
   if (iso2 === "KW" && product === "OH") {
     const base = 0.2 * 80 + 40;
-    const dest = Math.round(((1.2 * 0.05) * 7.2 * 100) / 100 + 35);
+    const vat = 1.2 * 0.05;
+    const dest = vat + 35;
     return Math.round((base + dest) * 100) / 100;
   }
   const bands = getCainiaoBands(iso2, zhCountry, product);
