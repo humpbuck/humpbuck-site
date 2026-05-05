@@ -108,7 +108,23 @@ export function CheckoutShippingSection({
   const isCn = isCheckoutCountryChina(countryLabel);
 
   const visibleIntlMethods = useMemo(() => {
+    const canShowCainiao = quoteCheckoutShipping({
+      countryLabel,
+      totalUnits,
+      method: "cainiao",
+      state: shippingState?.trim() || null,
+      postalCode: shippingPostalCode,
+    }).ok;
+    const canShowYanwen = quoteCheckoutShipping({
+      countryLabel,
+      totalUnits,
+      method: "yanwen",
+      state: shippingState?.trim() || null,
+      postalCode: shippingPostalCode,
+    }).ok;
     return INTL_METHODS.filter((m) => {
+      if (m.id === "cainiao") return canShowCainiao || canShowYanwen;
+      if (m.id === "yanwen") return canShowYanwen;
       const q = quoteCheckoutShipping({
         countryLabel,
         totalUnits,

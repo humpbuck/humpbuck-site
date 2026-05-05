@@ -100,6 +100,21 @@ export const SHIPPING_METHOD_IDS = [
 
 export type ShippingMethodId = (typeof SHIPPING_METHOD_IDS)[number];
 
+export type RequiredTaxField =
+  | "recipientTaxId"
+  | "senderTaxId"
+  | "rfcOrCurp"
+  | "voec"
+  | "rut"
+  | "taxId";
+
+export type TaxIdRequirement = {
+  field: RequiredTaxField;
+  label: string;
+  description: string;
+  pattern?: string;
+};
+
 const PREMIUM_IDS: ShippingMethodId[] = ["dhl", "fedex", "ups", "usps"];
 
 export function isShippingMethodId(s: string): s is ShippingMethodId {
@@ -126,6 +141,55 @@ export function premiumExpressLabel(id: ShippingMethodId): string {
       return "USPS (via partner)";
     default:
       return "Express";
+  }
+}
+
+export function getTaxIdRequirement(iso2: string | null): TaxIdRequirement | null {
+  switch (iso2) {
+    case "BR":
+      return {
+        field: "taxId",
+        label: "Tax ID",
+        description: "Required. Brazilian CPF/CNPJ numbers are accepted as digits only.",
+        pattern: "^\\d{11}$",
+      };
+    case "KR":
+      return {
+        field: "recipientTaxId",
+        label: "Personal customs code",
+        description: "Required. Must start with P followed by 12 digits.",
+        pattern: "^P\\d{12}$",
+      };
+    case "MX":
+      return {
+        field: "rfcOrCurp",
+        label: "RFC or CURP",
+        description: "Required. Provide either RFC (13 chars) or CURP (18 chars).",
+        pattern: "^(?:[A-Z&Ñ]{3,4}\\d{6}[A-Z0-9]{3}|[A-Z]{4}\\d{6}[A-Z0-9]{8})$",
+      };
+    case "NO":
+      return {
+        field: "voec",
+        label: "VOEC tax number",
+        description: "Required. Must be a 7-digit number and entered in sender tax field.",
+        pattern: "^\\d{7}$",
+      };
+    case "AR":
+      return {
+        field: "taxId",
+        label: "Tax ID",
+        description: "Required. 11 digits only.",
+        pattern: "^\\d{11}$",
+      };
+    case "CL":
+      return {
+        field: "recipientTaxId",
+        label: "Recipient tax ID",
+        description: "Required. Format xxxxxxx-y or xxxxxxxx-y, where y is digit or K.",
+        pattern: "^\\d{7,8}-[\\dK]$",
+      };
+    default:
+      return null;
   }
 }
 

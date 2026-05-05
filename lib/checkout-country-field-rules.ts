@@ -98,7 +98,7 @@ const COUNTRY_RULES: Record<string, CountryFieldRule> = {
     postalEmptyMessage: "Type to search or enter your CEP",
     taxIdLabel: "CPF *",
     taxIdHint: "11 digits after removing punctuation.",
-    taxIdPlaceholder: "CPF",
+    taxIdPlaceholder: "00000000000",
   },
   JP: {
     stateLabel: "Prefecture",
@@ -166,7 +166,7 @@ const COUNTRY_RULES: Record<string, CountryFieldRule> = {
     stateSearchPlaceholder: "Search region...",
     taxIdLabel: "Recipient tax ID *",
     taxIdHint: "Required for Chile. Format like 18121446-5 or 22272244-K.",
-    taxIdPlaceholder: "18121446-5",
+    taxIdPlaceholder: "xxxxxxxx-x",
   },
 };
 

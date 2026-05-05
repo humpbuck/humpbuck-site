@@ -19,11 +19,16 @@ import {
 } from "@/lib/checkout-address";
 import { validateCheckoutAddressForm } from "@/lib/checkout-address-consistency";
 import {
+  getTaxIdRequirement,
   isCheckoutCountryChina,
   quoteCheckoutShipping,
   type ShippingMethodId,
 } from "@/lib/checkout-shipping-quote";
-import { getDestinationCoverage } from "@/lib/logistics-estimate";
+import {
+  computeDestinationFeesBreakdown,
+  estimateLogistics,
+  getDestinationCoverage,
+} from "@/lib/logistics-estimate";
 import {
   captureAffiliatePidAttribution,
   getAffiliatePidForCheckout,
@@ -183,6 +188,32 @@ export default function CheckoutPage() {
       }),
     [shipCountryLabel, totalUnits, shippingMethod, shipPostalCode, shipState],
   );
+  const shippingEst = useMemo(
+    () =>
+      estimateLogistics({
+        countryLabel: shipCountryLabel,
+        totalUnits,
+        state: shipState,
+        postalCode: shipPostalCode,
+        declaredGoodsCny: undefined,
+      }),
+    [shipCountryLabel, totalUnits, shipState, shipPostalCode],
+  );
+  const shippingFeeBreakdown = useMemo(() => {
+    if (!shippingEst.iso2) return null;
+    return {
+      cainiao: computeDestinationFeesBreakdown(
+        shippingEst.iso2,
+        undefined,
+        "cainiao",
+      ),
+      yanwen: computeDestinationFeesBreakdown(
+        shippingEst.iso2,
+        undefined,
+        "yanwen",
+      ),
+    };
+  }, [shippingEst.iso2]);
 
   const shippingUsd =
     shippingQuote.ok && shippingQuote.shippingUsdCents > 0
@@ -514,6 +545,50 @@ export default function CheckoutPage() {
       </div>
 
       <div className="mt-10 space-y-6">
+        <div className="rounded-2xl border border-line bg-white/60 p-5">
+          <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+            Merchant shipping reference
+          </h2>
+          <div className="mt-3 grid gap-3 lg:grid-cols-3">
+            {[
+              {
+                title: "Cainiao International (S5059 / OH)",
+                body: shippingFeeBreakdown
+                  ? [
+                      `Base freight: ${shippingFeeBreakdown.cainiao.sharedCny > 0 ? `¥${shippingFeeBreakdown.cainiao.sharedCny.toFixed(2)}` : "-"}`,
+                      `Carrier / fixed: ${shippingFeeBreakdown.cainiao.cainiaoCarrierCny > 0 ? `¥${shippingFeeBreakdown.cainiao.cainiaoCarrierCny.toFixed(2)}` : "-"}`,
+                    ]
+                  : ["Base freight: -", "Carrier / fixed: -"],
+              },
+              {
+                title: "Yanwen Logistics 484",
+                body: shippingFeeBreakdown
+                  ? [
+                      `Base freight: ${shippingFeeBreakdown.yanwen.sharedCny > 0 ? `¥${shippingFeeBreakdown.yanwen.sharedCny.toFixed(2)}` : "-"}`,
+                      `Carrier / fixed: ${shippingFeeBreakdown.yanwen.yanwenCarrierCny > 0 ? `¥${shippingFeeBreakdown.yanwen.yanwenCarrierCny.toFixed(2)}` : "-"}`,
+                    ]
+                  : ["Base freight: -", "Carrier / fixed: -"],
+              },
+              {
+                title: "Premium Express",
+                body: ["Base freight: ¥500", "Carrier / fixed: -"],
+              },
+            ].map((panel) => (
+              <div key={panel.title} className="rounded-xl border border-line bg-paper/70 p-4">
+                <p className="text-sm font-medium text-ink">{panel.title}</p>
+                <ul className="mt-2 space-y-1 text-xs text-muted">
+                  {panel.body.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-muted">
+            Merchant backend should show freight + tax + fees separately. Unavailable lines display as -.
+          </p>
+        </div>
+
         {session?.user?.id && savedAddressesAvailable ? (
           <div className="rounded-xl border border-line bg-white/50 px-4 py-3 text-sm text-ink/90">
             <p className="text-muted">
@@ -586,21 +661,12 @@ export default function CheckoutPage() {
 
         {(() => {
           const shipIso = shipCountryLabel ? shipCountryLabel.trim().toUpperCase() : "";
-          const taxRequired = ["BR", "KR", "MX", "NO", "AR", "CL"].includes(shipIso);
-          if (!taxRequired) return null;
+          const req = getTaxIdRequirement(shipIso || null);
+          if (!req) return null;
           return (
             <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-              {shipIso === "NO"
-                ? "Norway checkout requires a 7-digit VOEC number in the sender tax ID field."
-                : shipIso === "MX"
-                  ? "Mexico checkout requires RFC or CURP in the tax ID field."
-                  : shipIso === "CL"
-                    ? "Chile checkout requires a valid tax ID in the recipient tax ID field."
-                    : shipIso === "KR"
-                      ? "Korea checkout requires recipient tax ID in the format P + 12 digits."
-                      : shipIso === "BR"
-                        ? "Brazil checkout requires CPF with 11 digits."
-                        : "Argentina checkout requires recipient tax ID with 11 digits."}
+              <span className="font-medium">{req.label}</span>
+              <span className="block mt-1">{req.description}</span>
             </p>
           );
         })()}

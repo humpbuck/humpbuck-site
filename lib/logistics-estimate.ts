@@ -335,32 +335,39 @@ function getDestinationExtraFee(
   carrier: CarrierKind,
   product?: string,
 ): number {
-  const baseVatVal = 1.2 * 7.2;
+  const usd = 7.2;
+  const declaredUsd = 1.2;
+  const declaredCny = declaredUsd * usd;
   if (carrier === "cainiao") {
-    if (iso2 === "MX") return baseVatVal * 0.335;
+    if (product === "S5059") {
+      if (iso2 === "MX") return declaredUsd * 0.335 * usd;
+    }
     if (product === "OH") {
-      if (iso2 === "KW") return 35.43;
       if (iso2 === "RO") return 41;
-      if (iso2 === "AE") return baseVatVal * 0.05;
-      if (iso2 === "OM") return baseVatVal * 0.05 + 20;
+      if (iso2 === "MX") return declaredUsd * 0.335 * usd;
+      if (iso2 === "SA") return declaredUsd * 0.15 * usd + 33.35;
+      if (iso2 === "AE") return declaredUsd * 0.05 * usd;
+      if (iso2 === "OM") return declaredUsd * 0.05 * usd + 20;
       if (iso2 === "QA") return 40;
-      if (iso2 === "CL") return (baseVatVal * 1.02 + 10) * 0.19;
-      if (iso2 === "MA") return baseVatVal * 0.56;
+      if (iso2 === "CL") return (declaredUsd * 1.02 * usd + declaredUsd * 0.02 * usd + declaredUsd * usd) * 0.19;
+      if (iso2 === "MA") return declaredUsd * 0.56 * usd;
       if (iso2 === "NZ") return 10;
-      if (iso2 === "BH") return baseVatVal * 0.10;
+      if (iso2 === "KW") return declaredUsd * 0.05 * usd + 35;
+      if (iso2 === "BH") return declaredUsd * 0.10 * usd;
     }
   }
   if (carrier === "yanwen") {
-    if (iso2 === "RO") return baseVatVal * 0.21 + 41;
-    if (iso2 === "MX") return baseVatVal * 0.335;
-    if (iso2 === "AE") return baseVatVal * 0.05;
-    if (iso2 === "OM") return baseVatVal * 0.05 + 25;
+    if (iso2 === "RO") return declaredUsd * 0.21 * usd + 41;
+    if (iso2 === "MX") return declaredUsd * 0.335 * usd;
+    if (iso2 === "SA") return declaredUsd * 0.15 * usd + 34;
+    if (iso2 === "AE") return declaredUsd * 0.05 * usd;
+    if (iso2 === "OM") return declaredUsd * 0.05 * usd + 25;
     if (iso2 === "QA") return 50;
-    if (iso2 === "CL") return baseVatVal * 0.19;
-    if (iso2 === "MA") return 5 * 7.2 * 0.52;
-    if (iso2 === "AR") return baseVatVal * 0.21;
-    if (iso2 === "AO") return 12 * 7.2 * 0.16;
-    if (iso2 === "JO") return Math.max(53, baseVatVal * 0.16);
+    if (iso2 === "CL") return declaredUsd * 0.19 * usd;
+    if (iso2 === "MA") return 5 * usd * 0.52;
+    if (iso2 === "AR") return declaredUsd * 0.21 * usd;
+    if (iso2 === "JO") return Math.max(53, declaredUsd * 0.16 * usd);
+    if (iso2 === "AO") return 12 * usd * 0.16;
   }
   return 0;
 }
