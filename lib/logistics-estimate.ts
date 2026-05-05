@@ -669,8 +669,8 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
   );
   const oh = cainiaoInternationalCny(chargeableKgCainiao, iso2, zh, "OH");
 
-  const yBandsQuote = getYanwenBandsForQuote(iso2, effectiveYanwenZone);
-  const yIntl = yanwen484InternationalCnyFromBands(yBandsQuote, chargeableKgYanwen);
+  const yBandsQuote = iso2 === "KW" ? undefined : getYanwenBandsForQuote(iso2, effectiveYanwenZone);
+  const yIntl = iso2 === "KW" ? null : yanwen484InternationalCnyFromBands(yBandsQuote, chargeableKgYanwen);
   const yDom = R.yanwenDomesticToWarehouseCny;
   const yWithDom = yIntl != null ? Math.round((yIntl + yDom) * 100) / 100 : null;
 
@@ -721,12 +721,13 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     ? destinationFeesCnyCainiao
     : Math.round((destinationFeesCnyYanwen + R.yanwenDomesticToWarehouseCny) * 100) / 100;
 
+  const FREE_THRESHOLD = 50;
   const totalPayable = (policyInternationalCny ?? 0) + destinationFeesCny;
   const buyerSupplementCny = Math.max(
     0,
-    Math.round((totalPayable - R.freeInternationalLegCny) * 100) / 100,
+    Math.round((totalPayable - FREE_THRESHOLD) * 100) / 100,
   );
-  const freeInternational = buyerSupplementCny === 0;
+  const freeInternational = buyerSupplementCny <= 0;
 
   const summaryLines: string[] = [];
   if (zh == null && !hasFbS5059 && !hasFbOh) {
@@ -768,7 +769,7 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
           : "";
       parts.push(
         freeInternational
-          ? `${lane}${destBit} (≤¥${R.freeInternationalLegCny} combined)`
+          ? `${lane}${destBit} (≤¥${FREE_THRESHOLD} combined)`
           : `${lane}${destBit} → top-up ¥${buyerSupplementCny.toFixed(2)}`,
       );
     }
@@ -852,7 +853,8 @@ export function getDestinationCoverage(
     | Yanwen484CountryEntry
     | undefined;
   const yanwen = Boolean(
-    raw &&
+    iso2 !== "KW" &&
+      raw &&
       (Array.isArray(raw)
         ? raw.length > 0
         : Object.values(raw).some((b) => Array.isArray(b) && b.length > 0)),
