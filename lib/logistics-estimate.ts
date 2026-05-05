@@ -257,10 +257,7 @@ function cainiaoInternationalCny(
     return null;
   }
   if (iso2 === "KW" && product === "OH") {
-    const base = 0.2 * 80 + 40;
-    const vat = 1.2 * 0.05;
-    const dest = vat + 35;
-    return Math.round((base + dest) * 100) / 100;
+    return Math.round((0.2 * 80 + 40) * 100) / 100;
   }
   const bands = getCainiaoBands(iso2, zhCountry, product);
   const b = pickCainiaoBand(weightKg, bands);
@@ -690,8 +687,11 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     input.declaredGoodsCny,
     "yanwen",
   );
-  const destinationFeesCnyCainiao = destBreakdownCainiao.cainiaoTotalCny;
+  let destinationFeesCnyCainiao = destBreakdownCainiao.cainiaoTotalCny;
   const destinationFeesCnyYanwen = destBreakdownYanwen.yanwenTotalCny;
+  if (iso2 === "KW") {
+    destinationFeesCnyCainiao = Math.round((destinationFeesCnyCainiao + 1.2 * 0.05 + 35) * 100) / 100;
+  }
   const destinationFeesLines = [
     ...destBreakdownCainiao.lines,
     ...destBreakdownYanwen.lines.filter((line) => !destBreakdownCainiao.lines.includes(line)),
