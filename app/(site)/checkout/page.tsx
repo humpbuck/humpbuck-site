@@ -597,6 +597,18 @@ export default function CheckoutPage() {
           );
         })()}
 
+        {shipCountryLabel.trim().toUpperCase() === "RO" ? (
+          <div className="rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-xs text-sky-950">
+            <p className="font-semibold uppercase tracking-[0.12em]">Romania shipping debug</p>
+            <p className="mt-1">Method: {shippingMethod}</p>
+            <p>Quote: {shippingQuote.ok ? `${shippingQuote.lineLabel} — ¥${shippingQuote.shippingCny.toFixed(2)}` : shippingQuote.error}</p>
+            <p>Cainiao top-up: ¥{shippingEst.cainiaoTopUpCny.toFixed(2)}</p>
+            <p>Yanwen top-up: ¥{shippingEst.yanwenTopUpCny.toFixed(2)}</p>
+            <p>Cainiao total: ¥{Math.max(0, shippingEst.cainiaoTopUpCny + 50).toFixed(2)}</p>
+            <p>Yanwen total: ¥{Math.max(0, shippingEst.yanwenTopUpCny + 50).toFixed(2)}</p>
+          </div>
+        ) : null}
+
         <div className="rounded-2xl border border-line bg-white/60 p-5">
           <label htmlFor="checkout-order-notes" className="block">
             <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
