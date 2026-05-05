@@ -134,11 +134,21 @@ export function CheckoutShippingSection({
 
   const destinationOk = Boolean(countryLabel.trim()) && iso2 !== null;
 
+  const cainiaoCoverage = countryLabel.trim()
+    ? getDestinationCoverage(countryLabel, {
+        state: shippingState?.trim() || null,
+      }).cainiao
+    : false;
+  const yanwenCoverage = countryLabel.trim()
+    ? getDestinationCoverage(countryLabel, {
+        state: shippingState?.trim() || null,
+      }).yanwen
+    : false;
   const servedByEconomy = visibleIntlMethods.some(
     (m) => m.id === "cainiao" || m.id === "yanwen",
-  );
-  const cainiaoMethodVisible = visibleIntlMethods.some((m) => m.id === "cainiao");
-  const yanwenMethodVisible = visibleIntlMethods.some((m) => m.id === "yanwen");
+  ) || cainiaoCoverage || yanwenCoverage;
+  const cainiaoMethodVisible = visibleIntlMethods.some((m) => m.id === "cainiao") && cainiaoCoverage;
+  const yanwenMethodVisible = visibleIntlMethods.some((m) => m.id === "yanwen") && yanwenCoverage;
 
   const methodQuotes = useMemo(() => {
     const map = new Map<ShippingMethodId, CheckoutShippingQuote>();

@@ -219,6 +219,12 @@ export function quoteCheckoutShipping(input: {
   }
 
   if (input.method === "cainiao") {
+    if (est.baseFee == null || est.policyInternationalCny == null) {
+      return {
+        ok: false,
+        error: "Shipping Unavailable for this destination",
+      };
+    }
     const sup = est.buyerSupplementCny;
     return {
       ok: true,
@@ -232,6 +238,12 @@ export function quoteCheckoutShipping(input: {
   }
 
   if (input.method === "yanwen") {
+    if (est.iso2 === "KW" || est.baseFee == null || est.policyInternationalCny == null) {
+      return {
+        ok: false,
+        error: "Shipping Unavailable for this destination",
+      };
+    }
     const sup = est.buyerSupplementCny;
     return {
       ok: true,

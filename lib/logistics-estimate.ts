@@ -722,12 +722,13 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     : Math.round((destinationFeesCnyYanwen + R.yanwenDomesticToWarehouseCny) * 100) / 100;
 
   const FREE_THRESHOLD = 50;
-  const totalPayable = (policyInternationalCny ?? 0) + destinationFeesCny;
+  // 如果找不到基础运费，说明运费表缺失，强制设置极高价格拦截订单，而不是当做 0 元处理
+  const totalPayable = policyInternationalCny != null ? policyInternationalCny + destinationFeesCny : 9999;
   const buyerSupplementCny = Math.max(
     0,
     Math.round((totalPayable - FREE_THRESHOLD) * 100) / 100,
   );
-  const freeInternational = buyerSupplementCny <= 0;
+  const freeInternational = buyerSupplementCny <= 0 && totalPayable !== 9999;
 
   const summaryLines: string[] = [];
   if (zh == null && !hasFbS5059 && !hasFbOh) {
