@@ -24,11 +24,7 @@ import {
   quoteCheckoutShipping,
   type ShippingMethodId,
 } from "@/lib/checkout-shipping-quote";
-import {
-  computeDestinationFeesBreakdown,
-  estimateLogistics,
-  getDestinationCoverage,
-} from "@/lib/logistics-estimate";
+import { getDestinationCoverage } from "@/lib/logistics-estimate";
 import {
   captureAffiliatePidAttribution,
   getAffiliatePidForCheckout,
@@ -188,33 +184,6 @@ export default function CheckoutPage() {
       }),
     [shipCountryLabel, totalUnits, shippingMethod, shipPostalCode, shipState],
   );
-  const shippingEst = useMemo(
-    () =>
-      estimateLogistics({
-        countryLabel: shipCountryLabel,
-        totalUnits,
-        state: shipState,
-        postalCode: shipPostalCode,
-        declaredGoodsCny: undefined,
-      }),
-    [shipCountryLabel, totalUnits, shipState, shipPostalCode],
-  );
-  const shippingFeeBreakdown = useMemo(() => {
-    if (!shippingEst.iso2) return null;
-    return {
-      cainiao: computeDestinationFeesBreakdown(
-        shippingEst.iso2,
-        undefined,
-        "cainiao",
-      ),
-      yanwen: computeDestinationFeesBreakdown(
-        shippingEst.iso2,
-        undefined,
-        "yanwen",
-      ),
-    };
-  }, [shippingEst.iso2]);
-
   const shippingUsd =
     shippingQuote.ok && shippingQuote.shippingUsdCents > 0
       ? shippingQuote.shippingUsdCents / 100
@@ -545,49 +514,6 @@ export default function CheckoutPage() {
       </div>
 
       <div className="mt-10 space-y-6">
-        <div className="rounded-2xl border border-line bg-white/60 p-5">
-          <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Merchant shipping reference
-          </h2>
-          <div className="mt-3 grid gap-3 lg:grid-cols-3">
-            {[
-              {
-                title: "Cainiao International (S5059 / OH)",
-                body: shippingFeeBreakdown
-                  ? [
-                      `Base freight: ${shippingFeeBreakdown.cainiao.sharedCny > 0 ? `¥${shippingFeeBreakdown.cainiao.sharedCny.toFixed(2)}` : "-"}`,
-                      `Carrier / fixed: ${shippingFeeBreakdown.cainiao.cainiaoCarrierCny > 0 ? `¥${shippingFeeBreakdown.cainiao.cainiaoCarrierCny.toFixed(2)}` : "-"}`,
-                    ]
-                  : ["Base freight: -", "Carrier / fixed: -"],
-              },
-              {
-                title: "Yanwen Logistics 484",
-                body: shippingFeeBreakdown
-                  ? [
-                      `Base freight: ${shippingFeeBreakdown.yanwen.sharedCny > 0 ? `¥${shippingFeeBreakdown.yanwen.sharedCny.toFixed(2)}` : "-"}`,
-                      `Carrier / fixed: ${shippingFeeBreakdown.yanwen.yanwenCarrierCny > 0 ? `¥${shippingFeeBreakdown.yanwen.yanwenCarrierCny.toFixed(2)}` : "-"}`,
-                    ]
-                  : ["Base freight: -", "Carrier / fixed: -"],
-              },
-              {
-                title: "Premium Express",
-                body: ["Base freight: ¥500", "Carrier / fixed: -"],
-              },
-            ].map((panel) => (
-              <div key={panel.title} className="rounded-xl border border-line bg-paper/70 p-4">
-                <p className="text-sm font-medium text-ink">{panel.title}</p>
-                <ul className="mt-2 space-y-1 text-xs text-muted">
-                  {panel.body.map((line) => (
-                    <li key={line}>{line}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <p className="mt-3 text-xs text-muted">
-            Merchant backend should show freight + tax + fees separately. Unavailable lines display as -.
-          </p>
-        </div>
 
         {session?.user?.id && savedAddressesAvailable ? (
           <div className="rounded-xl border border-line bg-white/50 px-4 py-3 text-sm text-ink/90">
