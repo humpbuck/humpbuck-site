@@ -216,6 +216,12 @@ function getCainiaoBands(
     const main = R.cainiao[product][zh];
     if (main?.length) return main;
   }
+  if (iso2 === "KW" && product === "OH") {
+    const kw = R.countryDestinationFees?.KW;
+    if (kw?.cainiaoFlatCnyPerShipment != null || kw?.cainiaoVatRateOnDeclaredCifCny != null) {
+      return [{ wMin: 0, wMax: 9999, rmbPerKg: 0, regRmb: 0 }];
+    }
+  }
   const fb = R.cainiaoIsoFallback?.[iso2]?.[product];
   if (fb?.length) return fb;
   return undefined;
@@ -585,6 +591,32 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
       summaryLines: [
         "Cainiao / Yanwen economy lines do not apply to this U.S. minor outlying or uninhabited area — use premium express or contact us.",
       ],
+    };
+  }
+  if (iso2 === "KW") {
+    return {
+      ...empty,
+      iso2,
+      cainiaoZhCountry: null,
+      cainiaoUsedIsoFallback: false,
+      chargeableKgCainiao: null,
+      chargeableKgYanwen: null,
+      yanwenPreMinChargeKg: null,
+      yanwenMinChargeFloorKg: null,
+      s5059InternationalCny: null,
+      ohInternationalCny: null,
+      yanwen484InternationalCny: null,
+      yanwenWithDomesticCny: null,
+      bestCainiaoInternationalCny: null,
+      preferCainiao: true,
+      policyInternationalCny: null,
+      destinationFeesCny: 0,
+      destinationFeesCnyCainiao: 0,
+      destinationFeesCnyYanwen: 0,
+      destinationFeesLines: [],
+      freeInternational: false,
+      buyerSupplementCny: 0,
+      summaryLines: ["Kuwait is supported via Cainiao OH."],
     };
   }
 
