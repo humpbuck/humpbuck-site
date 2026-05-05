@@ -817,6 +817,9 @@ export function buyerSupplementCnyCainiao(
   const intl = est.bestCainiaoInternationalCny;
   if (intl == null) return null;
   const dest = est.destinationFeesCnyCainiao ?? 0;
+  if (est.iso2 === "KW") {
+    return Math.max(0.01, Math.round((intl + dest) * 100) / 100);
+  }
   const topUp = Math.round((intl + dest - R.freeInternationalLegCny) * 100) / 100;
   return Math.max(0.01, topUp);
 }
