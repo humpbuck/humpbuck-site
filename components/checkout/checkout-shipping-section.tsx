@@ -370,7 +370,6 @@ export function CheckoutShippingSection({
                         Est. shipping: {(() => {
                           const q = methodQuotes.get(m.id);
                           if (!q || !q.ok) return "-";
-                          if (q.shippingUsdCents === 0) return "$0.00";
                           return `$${(q.shippingUsdCents / 100).toFixed(2)} (≈¥${q.shippingCny.toFixed(0)})`;
                         })()}
                       </span>
@@ -393,14 +392,10 @@ export function CheckoutShippingSection({
             {quote.ok ? (
               <p className="text-ink/90">
                 <span className="font-semibold text-ink">Shipping: </span>
-                {quote.shippingUsdCents === 0 ? (
-                  <span className="text-emerald-800">$0.00 (no top-up)</span>
-                ) : (
-                  <span className="tabular-nums">
-                    ${(quote.shippingUsdCents / 100).toFixed(2)} (≈¥
-                    {quote.shippingCny.toFixed(0)})
-                  </span>
-                )}
+                <span className="tabular-nums">
+                  ${(quote.shippingUsdCents / 100).toFixed(2)} (≈¥
+                  {quote.shippingCny.toFixed(0)})
+                </span>
                 {isPremiumExpressMethod(method) ? (
                   <span className="text-muted"> — {quote.lineLabel}</span>
                 ) : null}
