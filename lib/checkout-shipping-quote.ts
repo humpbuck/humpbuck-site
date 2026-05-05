@@ -222,10 +222,16 @@ export function quoteCheckoutShipping(input: {
 
   if (est.iso2 === "KW" && input.method === "cainiao") {
     const kw = buyerSupplementCnyCainiao(est);
+    if (kw == null) {
+      return {
+        ok: false,
+        error: `We can't quote that option for this address. Try the other method below or contact us on WhatsApp: ${WHATSAPP_DISPLAY}.`,
+      };
+    }
     return {
       ok: true,
-      shippingCny: kw ?? 0,
-      shippingUsdCents: cnyToUsdCents(kw ?? 0),
+      shippingCny: kw,
+      shippingUsdCents: cnyToUsdCents(kw),
       lineLabel: "International shipping (Cainiao International / OH)",
     };
   }

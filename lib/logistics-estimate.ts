@@ -257,7 +257,7 @@ function cainiaoInternationalCny(
     return null;
   }
   if (iso2 === "KW" && product === "OH") {
-    return Math.round((0.2 * 80 + 40) * 100) / 100;
+    return Math.round((0.2 * 80 + 40 + 1.2 * 0.05 + 35) * 100) / 100;
   }
   const bands = getCainiaoBands(iso2, zhCountry, product);
   const b = pickCainiaoBand(weightKg, bands);
