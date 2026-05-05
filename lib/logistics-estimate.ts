@@ -721,9 +721,12 @@ export function estimateLogistics(input: LogisticsEstimateInput): LogisticsEstim
     ? destinationFeesCnyCainiao
     : Math.round((destinationFeesCnyYanwen + R.yanwenDomesticToWarehouseCny) * 100) / 100;
 
-  const totalFee = (policyInternationalCny ?? 0) + destinationFeesCny;
-  const buyerSupplementCny = Math.max(0, Math.round((totalFee - R.freeInternationalLegCny) * 100) / 100);
-  const freeInternational = buyerSupplementCny <= 0;
+  const totalPayable = (policyInternationalCny ?? 0) + destinationFeesCny;
+  const buyerSupplementCny = Math.max(
+    0,
+    Math.round((totalPayable - R.freeInternationalLegCny) * 100) / 100,
+  );
+  const freeInternational = buyerSupplementCny === 0;
 
   const summaryLines: string[] = [];
   if (zh == null && !hasFbS5059 && !hasFbOh) {
