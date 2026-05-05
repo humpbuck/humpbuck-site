@@ -249,7 +249,7 @@ export function quoteCheckoutShipping(input: {
   }
 
   if (isPremiumExpressMethod(input.method)) {
-    const full = est.buyerSupplementCny;
+    const full = PREMIUM_EXPRESS_BASE_CNY;
     return {
       ok: true,
       shippingCny: full,
