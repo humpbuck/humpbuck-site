@@ -24,7 +24,7 @@ import {
   quoteCheckoutShipping,
   type ShippingMethodId,
 } from "@/lib/checkout-shipping-quote";
-import { getDestinationCoverage } from "@/lib/logistics-estimate";
+import { estimateLogistics, getDestinationCoverage } from "@/lib/logistics-estimate";
 import {
   captureAffiliatePidAttribution,
   getAffiliatePidForCheckout,
@@ -183,6 +183,16 @@ export default function CheckoutPage() {
         postalCode: shipPostalCode,
       }),
     [shipCountryLabel, totalUnits, shippingMethod, shipPostalCode, shipState],
+  );
+  const shippingEst = useMemo(
+    () =>
+      estimateLogistics({
+        countryLabel: shipCountryLabel,
+        totalUnits,
+        state: shipState,
+        postalCode: shipPostalCode,
+      }),
+    [shipCountryLabel, totalUnits, shipState, shipPostalCode],
   );
   const shippingUsd =
     shippingQuote.ok && shippingQuote.shippingUsdCents > 0
