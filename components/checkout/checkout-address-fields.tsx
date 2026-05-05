@@ -341,8 +341,9 @@ function PhoneField({
         {label}
         {required ? (
           <span
-            className="ml-1 align-middle text-[11px] font-semibold leading-none text-rose-600"
             aria-hidden="true"
+            style={{ color: "#e11d48", WebkitTextFillColor: "#e11d48" }}
+            className="ml-1 inline-block align-middle text-[11px] font-semibold leading-none"
           >
             *
           </span>
