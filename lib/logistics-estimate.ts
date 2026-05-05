@@ -388,30 +388,68 @@ export function computeDestinationFeesBreakdown(
     lines.push(`${label} ¥${amount.toFixed(2)}`);
     return amount;
   };
-  const addUsdFlat = (label: string, usd: number, bucket: "shared" | "carrier") =>
+  const addUsd = (label: string, usd: number, bucket: "shared" | "carrier") =>
     addFlat(label, Math.round(usd * 7.2 * 100) / 100, bucket);
   const addUsdRate = (label: string, usd: number, rate: number, bucket: "shared" | "carrier") =>
     addFlat(label, Math.round(usd * rate * 7.2 * 100) / 100, bucket);
-  const addRate = (label: string, rate: number, minAmount?: number) => {
+  const addRate = (label: string, rate: number, basis: number = base, minAmount?: number) => {
     if (rate <= 0) return 0;
-    const rawFee = Math.round(base * rate * 100) / 100;
+    const rawFee = Math.round(basis * rate * 100) / 100;
     const fee = Math.max(rawFee, minAmount ?? 0);
     shared += fee;
     const minText = minAmount != null ? ` · min ¥${minAmount.toFixed(2)}` : "";
-    lines.push(`${label} ${(rate * 100).toFixed(0)}%${minText} · ¥${base.toFixed(2)} → ¥${fee.toFixed(2)}`);
+    lines.push(`${label} ${(rate * 100).toFixed(0)}%${minText} · ¥${basis.toFixed(2)} → ¥${fee.toFixed(2)}`);
     return fee;
   };
 
   if (carrier === "cainiao") {
-    addFlat("【菜鸟】固定费用", cfg.cainiaoFlatCnyPerShipment ?? cfg.flatCnyPerShipment ?? 0, "carrier");
-    addRate("【菜鸟】VAT", cfg.cainiaoVatRateOnDeclaredCifCny ?? cfg.vatRateOnDeclaredCifCny ?? 0);
-    addRate("【菜鸟】Duty", cfg.cainiaoDutyRateOnDeclaredCifCny ?? cfg.dutyRateOnDeclaredCifCny ?? 0);
-    addFlat("【菜鸟】附加", cfg.cainiaoRemarksFlatCny ?? 0, "carrier");
+    if (iso2 === "MX") {
+      addRate("【菜鸟S5059】墨西哥税费", 0.335, 1.2 * 7.2);
+    } else if (iso2 === "CL") {
+      const cif = 1.2 * 7.2 * 1.02 + (R.yanwenDomesticToWarehouseCny ?? 5);
+      addRate("【菜鸟OH】智利CIF税", 0.19, cif);
+    } else {
+      addFlat("【菜鸟】固定费用", cfg.cainiaoFlatCnyPerShipment ?? cfg.flatCnyPerShipment ?? 0, "carrier");
+      addRate("【菜鸟】VAT", cfg.cainiaoVatRateOnDeclaredCifCny ?? cfg.vatRateOnDeclaredCifCny ?? 0);
+      addRate("【菜鸟】Duty", cfg.cainiaoDutyRateOnDeclaredCifCny ?? cfg.dutyRateOnDeclaredCifCny ?? 0);
+      addFlat("【菜鸟】附加", cfg.cainiaoRemarksFlatCny ?? 0, "carrier");
+    }
   } else {
-    addFlat("【燕文】处理费", cfg.yanwenFlatCnyPerShipment ?? cfg.flatCnyPerShipment ?? 0, "carrier");
-    addRate("【燕文】VAT", cfg.yanwenVatRateOnDeclaredCifCny ?? cfg.vatRateOnDeclaredCifCny ?? 0);
-    addRate("【燕文】Duty", cfg.yanwenDutyRateOnDeclaredCifCny ?? cfg.dutyRateOnDeclaredCifCny ?? 0);
-    addFlat("【燕文】附加", cfg.yanwenRemarksFlatCny ?? 0, "carrier");
+    if (iso2 === "RO") {
+      addRate("【燕文】罗马尼亚税费", 0.21, 1.2 * 7.2);
+      addFlat("【燕文】罗马尼亚固定费用", 41, "carrier");
+    } else if (iso2 === "MX") {
+      addRate("【燕文】墨西哥税费", 0.335, 1.2 * 7.2);
+    } else if (iso2 === "SA") {
+      addRate("【燕文】沙特VAT", 0.15, 1.2 * 7.2);
+      addFlat("【燕文】沙特清关处理费", 34, "carrier");
+    } else if (iso2 === "AE") {
+      addRate("【燕文】阿联酋VAT", 0.05, 1.2 * 7.2);
+    } else if (iso2 === "OM") {
+      addRate("【燕文】阿曼VAT", 0.05, 1.2 * 7.2);
+      addFlat("【燕文】阿曼清关手续费", 25, "carrier");
+    } else if (iso2 === "QA") {
+      addFlat("【燕文】卡塔尔清关手续费", 50, "carrier");
+    } else if (iso2 === "CL") {
+      addRate("【燕文】智利税费", 0.19, 1.2 * 7.2);
+    } else if (iso2 === "MA") {
+      addRate("【燕文】摩洛哥关税", 0.52, 5 * 7.2);
+    } else if (iso2 === "AR") {
+      addRate("【燕文】阿根廷VAT", 0.21, base);
+    } else if (iso2 === "JO") {
+      addRate("【燕文】约旦关税", 0.16, base, 53);
+    } else if (iso2 === "AO") {
+      addRate("【燕文】安哥拉关税", 0.16, 12 * 7.2);
+    } else if (iso2 === "RW") {
+      addFlat("【燕文】卢旺达到达费", 35, "carrier");
+      addFlat("【燕文】卢旺达清关代理费", 118, "carrier");
+      addFlat("【燕文】卢旺达仓储费", 100, "carrier");
+    } else {
+      addFlat("【燕文】处理费", cfg.yanwenFlatCnyPerShipment ?? cfg.flatCnyPerShipment ?? 0, "carrier");
+      addRate("【燕文】VAT", cfg.yanwenVatRateOnDeclaredCifCny ?? cfg.vatRateOnDeclaredCifCny ?? 0);
+      addRate("【燕文】Duty", cfg.yanwenDutyRateOnDeclaredCifCny ?? cfg.dutyRateOnDeclaredCifCny ?? 0);
+      addFlat("【燕文】附加", cfg.yanwenRemarksFlatCny ?? 0, "carrier");
+    }
   }
 
   shared = Math.round(shared * 100) / 100;
