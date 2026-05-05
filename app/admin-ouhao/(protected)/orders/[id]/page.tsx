@@ -7,7 +7,7 @@ import { AdminRefundButton } from "@/components/admin/admin-refund-button";
 import { DeleteOrderButton } from "@/components/admin/delete-order-button";
 import { OrderEditForm } from "@/components/admin/order-edit-form";
 import { OrderStatusBadge } from "@/components/admin/order-status-badge";
-import { formatPrice, getProductBySlug } from "@/lib/catalog";
+import { formatPrice, getCartLineImage, getProductBySlug } from "@/lib/catalog";
 import type { StructuredShippingAddress } from "@/lib/admin/order-ui";
 import {
   formatAddressLines,
@@ -400,7 +400,9 @@ export default async function AdminOrderDetailPage({
               <tbody>
                 {lines.map((line, i) => {
                   const product = getProductBySlug(line.slug);
-                  const img = product?.image;
+                  const img = product
+                    ? getCartLineImage(product, line.variantId)
+                    : undefined;
                   return (
                     <tr
                       key={`${line.slug}-${i}`}
@@ -412,10 +414,15 @@ export default async function AdminOrderDetailPage({
                             {img ? (
                               <Image
                                 src={img}
-                                alt=""
+                                alt={
+                                  line.variantLabel
+                                    ? `${line.name} — ${line.variantLabel}`
+                                    : line.name
+                                }
                                 fill
                                 className="object-cover"
                                 sizes="64px"
+                                unoptimized
                               />
                             ) : null}
                           </div>
