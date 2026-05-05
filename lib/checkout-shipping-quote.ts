@@ -314,10 +314,11 @@ export function quoteCheckoutShipping(input: {
 
   if (isPremiumExpressMethod(input.method)) {
     const full = PREMIUM_EXPRESS_BASE_CNY;
+    const topUp = Math.max(0, full - 50);
     return {
       ok: true,
-      shippingCny: full,
-      shippingUsdCents: cnyToUsdCents(full),
+      shippingCny: topUp,
+      shippingUsdCents: cnyToUsdCents(topUp),
       lineLabel: `International shipping (${premiumExpressLabel(input.method)})`,
     };
   }
