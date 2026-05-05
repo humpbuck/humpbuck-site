@@ -407,8 +407,8 @@ export function computeDestinationFeesBreakdown(
     lines: [],
   });
   if (!iso2) return empty();
-  const cfg = R.countryDestinationFees?.[iso2];
-  if (!cfg) return empty();
+  // 即使 JSON 中没有配置该国家，也不能提前 return，必须继续往下执行附加费逻辑
+  const cfg: Partial<CountryDestinationFeeDef> = R.countryDestinationFees?.[iso2] || {};
 
   const lines: string[] = [];
   let shared = 0;
