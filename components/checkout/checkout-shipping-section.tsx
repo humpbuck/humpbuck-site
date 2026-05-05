@@ -32,13 +32,13 @@ const INTL_METHODS: {
   {
     id: "cainiao",
     title: "Cainiao International",
-    subtitle: "Economy — combined Cainiao lane.",
+    subtitle: "Economy — choose this when Cainiao S5059 or OH is available.",
     recommend: "primary",
   },
   {
     id: "yanwen",
     title: "Yanwen Logistics",
-    subtitle: "Economy — Yanwen 484 lane.",
+    subtitle: "Economy — choose this when Yanwen 484 is available.",
     recommend: "secondary",
   },
   {
@@ -107,14 +107,6 @@ export function CheckoutShippingSection({
   );
   const isCn = isCheckoutCountryChina(countryLabel);
 
-  const coverage = useMemo(
-    () =>
-      getDestinationCoverage(countryLabel, {
-        state: shippingState?.trim() || null,
-      }),
-    [countryLabel, shippingState],
-  );
-
   const visibleIntlMethods = useMemo(() => {
     return INTL_METHODS.filter((m) => {
       const q = quoteCheckoutShipping({
@@ -124,11 +116,9 @@ export function CheckoutShippingSection({
         state: shippingState?.trim() || null,
         postalCode: shippingPostalCode,
       });
-      if (m.id === "cainiao") return coverage.cainiao && q.ok;
-      if (m.id === "yanwen") return coverage.yanwen && q.ok;
       return q.ok;
     });
-  }, [coverage.cainiao, coverage.yanwen, countryLabel, totalUnits, shippingState, shippingPostalCode]);
+  }, [countryLabel, totalUnits, method, shippingState, shippingPostalCode]);
 
   const quote = useMemo(
     () =>
@@ -144,7 +134,9 @@ export function CheckoutShippingSection({
 
   const destinationOk = Boolean(countryLabel.trim()) && iso2 !== null;
 
-  const servedByEconomy = coverage.cainiao || coverage.yanwen;
+  const servedByEconomy = visibleIntlMethods.some(
+    (m) => m.id === "cainiao" || m.id === "yanwen",
+  );
   const cainiaoMethodVisible = visibleIntlMethods.some((m) => m.id === "cainiao");
   const yanwenMethodVisible = visibleIntlMethods.some((m) => m.id === "yanwen");
 
@@ -319,10 +311,6 @@ export function CheckoutShippingSection({
               This address is supported for checkout — choose a shipping method below.
             </p>
             <p className="mt-1 text-xs opacity-90">
-              {cainiaoMethodVisible ? "Cainiao International is available here." : null}
-              {cainiaoMethodVisible && yanwenMethodVisible ? " " : null}
-              {yanwenMethodVisible ? "Yanwen Logistics is available here." : null}
-              {(cainiaoMethodVisible || yanwenMethodVisible) ? " " : null}
               Questions?{" "}
               <a
                 href={WHATSAPP_URL}

@@ -190,6 +190,12 @@ export function quoteCheckoutShipping(input: {
       error: `This address is not available for online checkout. For other shipping options, contact us on WhatsApp: ${WHATSAPP_DISPLAY}.`,
     };
   }
+  if (est.iso2 === "JP" && input.method === "yanwen") {
+    return {
+      ok: false,
+      error: "Yanwen Logistics is not available for Japan at checkout. Please choose Cainiao International or contact us on WhatsApp.",
+    };
+  }
 
   const est = estimateLogistics({
     countryLabel: input.countryLabel,
