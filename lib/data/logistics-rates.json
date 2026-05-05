@@ -4,6 +4,23 @@
   "yanwenDomesticToWarehouseCny": 5,
   "freeInternationalLegCny": 50,
   "cainiaoPreferenceMarginCny": 5,
+  "countryDestinationFees": {
+    "RO": { "cainiaoFlatCnyPerShipment": 41, "label": "罗马尼亚 菜鸟OH固定费用 41元/票" },
+    "NZ": { "cainiaoFlatCnyPerShipment": 10, "label": "新西兰 菜鸟通关手续费 10元/票" },
+    "SA": { "cainiaoVatRateOnDeclaredCifCny": 0.15, "cainiaoFlatCnyPerShipment": 33.35, "label": "沙特 VAT 15% + 33.35 RMB/票" },
+    "AE": { "cainiaoVatRateOnDeclaredCifCny": 0.05, "yanwenVatRateOnDeclaredCifCny": 0.05, "label": "阿联酋 VAT 5%" },
+    "QA": { "cainiaoFlatCnyPerShipment": 40, "yanwenFlatCnyPerShipment": 50, "label": "卡塔尔 通关手续费" },
+    "KW": { "cainiaoVatRateOnDeclaredCifCny": 0.05, "cainiaoFlatCnyPerShipment": 35, "label": "科威特 VAT 5% + 35 RMB/票" },
+    "BH": { "cainiaoVatRateOnDeclaredCifCny": 0.10, "label": "巴林 VAT 10%" },
+    "OM": { "cainiaoVatRateOnDeclaredCifCny": 0.05, "cainiaoFlatCnyPerShipment": 20, "yanwenVatRateOnDeclaredCifCny": 0.05, "yanwenFlatCnyPerShipment": 25, "label": "阿曼 VAT 5% + 通关手续费" },
+    "MA": { "cainiaoDutyRateOnDeclaredCifCny": 0.56, "yanwenDutyRateOnDeclaredCifCny": 0.52, "label": "摩洛哥 Duty 56% / 52%" },
+    "MX": { "yanwenVatRateOnDeclaredCifCny": 0.335, "label": "墨西哥 税费 33.5%" },
+    "AR": { "yanwenVatRateOnDeclaredCifCny": 0.21, "label": "阿根廷 VAT 21%" },
+    "CL": { "yanwenVatRateOnDeclaredCifCny": 0.19, "label": "智利 税 19%" },
+    "JO": { "yanwenDutyRateOnDeclaredCifCny": 0.16, "yanwenDutyMinCny": 53, "label": "约旦 Duty 16% 最低 53 RMB/件" },
+    "AO": { "yanwenDutyRateOnDeclaredCifCny": 0.16, "label": "安哥拉 Duty 16%" },
+    "RW": { "yanwenFlatCnyPerShipment": 253, "label": "卢旺达 到达费/代理费/仓储费" }
+  },
   "cainiao": {
     "S5059": {
       "美国": [

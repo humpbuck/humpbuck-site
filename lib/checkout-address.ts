@@ -14,6 +14,36 @@ import {
 } from "@/lib/logistics-estimate";
 import { deriveYanwenLaneZoneDigit } from "@/lib/yanwen-postcode-zones";
 
+const TAX_ID_COUNTRIES = new Set(["BR", "KR", "MX", "NO", "AR", "CL"]);
+
+function normalizedTaxId(country: string, taxId: string): string {
+  return taxId.trim().toUpperCase().replace(/[\s.-]/g, "");
+}
+
+export function isCheckoutTaxIdValid(country: string, taxId: string): boolean {
+  const iso = countryLabelToIso2(country);
+  const value = taxId.trim();
+  if (!iso || !TAX_ID_COUNTRIES.has(iso)) return true;
+  if (!value) return false;
+  const compact = normalizedTaxId(country, value);
+  switch (iso) {
+    case "BR":
+      return /^\d{11}$/.test(compact);
+    case "KR":
+      return /^P\d{12}$/.test(compact);
+    case "MX":
+      return /^(?:[A-Z&Ñ]{3,4}\d{6}[A-Z\d]{3}|[A-Z]{4}\d{6}[A-Z\d]{8})$/.test(compact);
+    case "NO":
+      return /^\d{7}$/.test(compact);
+    case "AR":
+      return /^\d{11}$/.test(compact);
+    case "CL":
+      return /^\d{7,8}-[\dK]$/.test(value.replace(/\s+/g, "").toUpperCase());
+    default:
+      return true;
+  }
+}
+*** End Patch
 export type CheckoutAddressForm = {
   firstName: string;
   lastName: string;
@@ -185,7 +215,8 @@ export function isCheckoutAddressComplete(a: CheckoutAddressForm): boolean {
     (stateRequired ? a.state.trim().length > 0 : true) &&
     (postalRequired ? a.postalCode.trim().length > 0 : true) &&
     a.country.trim().length > 0 &&
-    a.phone.trim().length > 0
+    a.phone.trim().length > 0 &&
+    isCheckoutTaxIdValid(a.country, a.taxId)
   );
 }
 
@@ -210,6 +241,7 @@ export function isAddressRecordComplete(
     (stateRequired ? (r.state || "").trim().length > 0 : true) &&
     (postalRequired ? postal.length > 0 : true) &&
     (r.country || "").trim().length > 0 &&
-    (r.phone || "").trim().length > 0
+    (r.phone || "").trim().length > 0 &&
+    isCheckoutTaxIdValid(country, r.taxId || r.vatNumber || "")
   );
 }
