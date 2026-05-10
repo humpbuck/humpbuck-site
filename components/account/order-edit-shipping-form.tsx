@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CheckoutAddressForm } from "@/components/checkout/checkout-address-form";
+import { CheckoutAddressForm as CheckoutAddressFormFields } from "@/components/checkout/checkout-address-form";
 import {
   addressFormToRecord,
   isCheckoutAddressComplete,
@@ -111,7 +111,7 @@ export function OrderEditShippingForm({
 
   return (
     <div className="mt-6 space-y-6">
-      <CheckoutAddressForm
+      <CheckoutAddressFormFields
         idPrefix="order-ship"
         title="Shipping address"
         value={shipping}
