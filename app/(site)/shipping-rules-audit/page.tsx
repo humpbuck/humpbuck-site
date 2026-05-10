@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { estimateLogistics } from "@/lib/logistics-estimate";
+import { quoteCheckoutShipping } from "@/lib/checkout-shipping-quote";
 
 const COUNTRIES = [
   "AE","AL","AO","AR","AT","AU","BE","BG","BH","BO","BR","CA","CH","CL","CO","CR","CY","CZ","DE","DK","DO","EC","EE","ES","FI","FR","GB","GH","GR","GT","HK","HN","HR","HU","IE","IL","IN","IQ","IS","IT","JO","JP","KE","KR","KW","KZ","LK","LT","LU","LV","MA","MD","MN","MT","MX","MY","NG","NI","NL","NO","NZ","OM","PA","PE","PH","PL","PR","PT","PY","QA","RO","RS","RU","RW","SA","SE","SG","SI","SK","SV","TH","TT","TZ","UA","UG","US","UY","VN","ZA","CN",
@@ -43,13 +43,13 @@ export default function ShippingRulesAuditPage() {
   const rows = useMemo(
     () =>
       COUNTRIES.map((country) => {
-        const est = estimateLogistics({
-          countryLabel: country,
-          totalUnits: units,
-          state: null,
-          postalCode: null,
-        });
-        return { country, S5059: est.methods.S5059, OH: est.methods.OH, YANWEN_484: est.methods.YANWEN_484 };
+        const oh = quoteCheckoutShipping({ countryLabel: country, totalUnits: units, method: "cainiao", state: null, postalCode: null });
+        const yw = quoteCheckoutShipping({ countryLabel: country, totalUnits: units, method: "yanwen", state: null, postalCode: null });
+        return {
+          country,
+          OH: oh.ok ? { available: true, totalRMB: oh.shippingCny, topUpRMB: Math.max(0, oh.shippingCny - 50), baseRMB: oh.shippingCny, extraRMB: 0, domesticRMB: 0 } : { available: false, totalRMB: null, topUpRMB: null, baseRMB: null, extraRMB: null, domesticRMB: null },
+          YANWEN_484: yw.ok ? { available: true, totalRMB: yw.shippingCny, topUpRMB: Math.max(0, yw.shippingCny - 50), baseRMB: yw.shippingCny, extraRMB: 0, domesticRMB: 5 } : { available: false, totalRMB: null, topUpRMB: null, baseRMB: null, extraRMB: null, domesticRMB: null },
+        };
       }),
     [units],
   );

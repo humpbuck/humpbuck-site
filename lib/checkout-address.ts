@@ -15,6 +15,26 @@ export type CheckoutAddressForm = {
 
 export type CheckoutAddressRecord = Record<string, string>;
 
+export function isAddressRecordComplete(record: CheckoutAddressRecord): boolean {
+  return Boolean(
+    record.firstName?.trim() &&
+      record.lastName?.trim() &&
+      record.line1?.trim() &&
+      record.city?.trim() &&
+      record.state?.trim() &&
+      record.postalCode?.trim() &&
+      record.country?.trim(),
+  );
+}
+
+export function mergeDerivedLogisticsZone(record: CheckoutAddressRecord): CheckoutAddressRecord {
+  return record;
+}
+
+export function checkoutFormFromOrderRecord(address: CheckoutAddressRecord | null | undefined): CheckoutAddressForm | null {
+  return checkoutFormFromSavedAddress(address);
+}
+
 export function validateCheckoutAddressForm(form: CheckoutAddressForm): { ok: true } | { ok: false; error: string } {
   if (!form.firstName.trim()) return { ok: false, error: "First name is required" };
   if (!form.lastName.trim()) return { ok: false, error: "Last name is required" };

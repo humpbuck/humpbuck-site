@@ -53,6 +53,10 @@ export function isCheckoutCountryChina(countryLabel: string): boolean {
   return v === "cn" || v === "china" || v === "china mainland";
 }
 
+export function isShippingMethodId(value: string): value is ShippingMethodId {
+  return ["cainiao", "yanwen", "dhl", "fedex", "ups", "usps", "china_zto", "china_sf"].includes(value);
+}
+
 export function quoteCheckoutShipping(input: {
   countryLabel: string;
   totalUnits: number;
