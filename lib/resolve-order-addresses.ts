@@ -1,8 +1,8 @@
 ﻿import {
   isAddressRecordComplete,
   mergeDerivedLogisticsZone,
+  validateCheckoutAddressForm,
 } from "@/lib/checkout-address";
-import { validateAddressRecordConsistencyStrict } from "@/lib/checkout-address-consistency-strict";
 
 /**
  * Builds `billingJson` / `shippingJson` for Order.create.
@@ -22,11 +22,11 @@ export function resolveOrderAddressJson(body: {
       return { ok: false, error: "Billing address is incomplete" };
     if (!isAddressRecordComplete(s))
       return { ok: false, error: "Shipping address is incomplete" };
-    const billCheck = validateAddressRecordConsistencyStrict(b);
+    const billCheck = validateCheckoutAddressForm(b as any);
     if (!billCheck.ok) {
       return { ok: false, error: `Billing: ${billCheck.error}` };
     }
-    const shipCheck = validateAddressRecordConsistencyStrict(s);
+    const shipCheck = validateCheckoutAddressForm(s as any);
     if (!shipCheck.ok) {
       return { ok: false, error: `Shipping: ${shipCheck.error}` };
     }
@@ -41,7 +41,7 @@ export function resolveOrderAddressJson(body: {
 
   const single = s ?? b;
   if (single && isAddressRecordComplete(single)) {
-    const oneCheck = validateAddressRecordConsistencyStrict(single);
+    const oneCheck = validateCheckoutAddressForm(single as any);
     if (!oneCheck.ok) {
       return { ok: false, error: oneCheck.error };
     }

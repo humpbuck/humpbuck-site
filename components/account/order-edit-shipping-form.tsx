@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CheckoutAddressFields } from "@/components/checkout/checkout-address-fields";
+import { CheckoutAddressForm } from "@/components/checkout/checkout-address-form";
 import {
   addressFormToRecord,
   isCheckoutAddressComplete,
   type CheckoutAddressForm,
+  validateCheckoutAddressForm,
 } from "@/lib/checkout-address";
-import { validateCheckoutAddressForm } from "@/lib/checkout-address-consistency";
 
 export function OrderEditShippingForm({
   orderId,
@@ -111,7 +111,7 @@ export function OrderEditShippingForm({
 
   return (
     <div className="mt-6 space-y-6">
-      <CheckoutAddressFields
+      <CheckoutAddressForm
         idPrefix="order-ship"
         title="Shipping address"
         value={shipping}
