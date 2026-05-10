@@ -101,12 +101,15 @@ export default async function ProductPage({
   const gallerySlides =
     pdpR2?.gallery && pdpR2.gallery.length > 0
       ? pdpR2.gallery
-      : (product.galleryImages ??
-          staticProduct?.galleryImages ??
-          product.images ??
-          staticProduct?.images ??
-          (product.image ? [product.image] : []) ??
-          (staticProduct?.image ? [staticProduct.image] : []));
+      : product.galleryImages ??
+        staticProduct?.galleryImages ??
+        product.images ??
+        staticProduct?.images ??
+        (product.image
+          ? [product.image]
+          : staticProduct?.image
+            ? [staticProduct.image]
+            : []);
 
   const staticVariants = product.variantOptions ?? staticProduct?.variantOptions ?? [];
   const discoveredVariants =
