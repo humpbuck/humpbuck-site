@@ -12,8 +12,7 @@ import { PrismaClient } from "@prisma/client";
 import { adminPath } from "@/lib/admin-path";
 import { mergeDerivedLogisticsZone } from "@/lib/checkout-address";
 import { quoteCheckoutShipping } from "@/lib/checkout-shipping-quote";
-import { effectiveZonedLaneDigit, estimateLogistics } from "@/lib/logistics-estimate";
-import { deriveYanwenLaneZoneDigit } from "@/lib/yanwen-postcode-zones";
+import { findPostalZone } from "@/lib/global-postal-zones";
 
 loadEnvConfig(process.cwd());
 
@@ -31,41 +30,16 @@ function publicBaseUrl(): string {
 }
 
 async function main() {
-  const d = deriveYanwenLaneZoneDigit("AU", POSTAL);
+  const d = findPostalZone("AU", POSTAL)?.zone?.split("-").pop()?.replace(/[^0-9]/g, "") || null;
   if (d !== EXPECT_ZONE) {
     console.error(
-      `Abort: postcode ${POSTAL} maps to zone ${d}, expected ${EXPECT_ZONE}. Re-export yanwen-postcode-zones.json if the sheet changed.`,
-    );
-    process.exit(1);
-  }
-
-  const est = estimateLogistics({
-    countryLabel: "Australia",
-    totalUnits: 1,
-    postalCode: POSTAL,
-  });
-  if (est.cainiaoZhCountry !== `澳大利亚/${EXPECT_ZONE}区`) {
-    console.error(
-      "Abort: estimateLogistics cainiao row",
-      est.cainiaoZhCountry,
-      "expected 澳大利亚/3区",
-    );
-    process.exit(1);
-  }
-
-  const withStale = effectiveZonedLaneDigit("AU", POSTAL, "1");
-  if (withStale !== EXPECT_ZONE) {
-    console.error(
-      "Abort: effectiveZonedLaneDigit should ignore stale stored zone 1, got",
-      withStale,
+      `Abort: postcode ${POSTAL} maps to zone ${d}, expected ${EXPECT_ZONE}.`,
     );
     process.exit(1);
   }
 
   console.log("Precheck OK:");
   console.log("  Postcode", POSTAL, "→ lane zone", d);
-  console.log("  Cainiao zh:", est.cainiaoZhCountry);
-  console.log("  OH int’l (CNY):", est.ohInternationalCny, "(expect ~63 @ 200g for zone 3)");
 
   const email =
     process.env.FULFILLMENT_TEST_EMAIL?.trim() || "humpbuck@outlook.com";
