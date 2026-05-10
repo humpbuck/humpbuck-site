@@ -212,7 +212,6 @@ export function ProductManager({
       if (messageTimer != null) window.clearTimeout(messageTimer);
     };
   }, [messageTimer]);
-  const [messageTimer, setMessageTimer] = useState<number | null>(null);
 
   const current = useMemo(() => {
     if (selected == null) return null;
