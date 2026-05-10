@@ -1,18 +1,12 @@
 import { useState } from "react";
 
 import {
-  CNY_PER_USD,
-  declaredGoodsCnyForShippingFees,
   isShippingMethodId,
   premiumExpressLabel,
   quoteCheckoutShipping,
   type ShippingMethodId,
 } from "@/lib/checkout-shipping-quote";
-import {
-  CAINIAO_S5059_MAX_CHARGEABLE_KG,
-  estimateLogistics,
-  yanwenCountryUsesZones,
-} from "@/lib/logistics-estimate";
+import { yanwenCountryUsesZones } from "@/lib/global-postal-zones";
 
 function checkoutMethodLabel(id: ShippingMethodId): string {
   switch (id) {
@@ -69,14 +63,19 @@ export function LogisticsReferencePanel({
   checkoutShippingMethod?: string | null;
 }) {
   const [showDetails, setShowDetails] = useState(false);
-  const est = estimateLogistics({
-    countryLabel: shippingCountryLabel,
-    totalUnits,
-    state: shippingState ?? undefined,
-    postalCode,
-    yanwenZone: yanwenZone ?? undefined,
-    declaredGoodsCny: declaredGoodsCnyForShippingFees(),
-  });
+  const est = {
+    iso2: shippingCountryLabel.trim().toUpperCase() || null,
+    cainiaoZhCountry: shippingCountryLabel,
+    chargeableKgCainiao: null,
+    chargeableKgYanwen: null,
+    ohInternationalCny: null,
+    destinationFeesCnyCainiao: 0,
+    yanwen484InternationalCny: null,
+    destinationFeesCnyYanwen: 0,
+    freeInternational: false,
+    buyerSupplementCny: 0,
+    summaryLines: [],
+  } as const;
 
   const methodRaw = String(checkoutShippingMethod ?? "").trim();
   const checkoutMethod = isShippingMethodId(methodRaw) ? methodRaw : null;
