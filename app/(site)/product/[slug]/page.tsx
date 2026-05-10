@@ -101,9 +101,14 @@ export default async function ProductPage({
   const gallerySlides =
     pdpR2?.gallery && pdpR2.gallery.length > 0
       ? pdpR2.gallery
-      : (staticProduct?.galleryImages ?? staticProduct?.images ?? []);
+      : (product.galleryImages ??
+          staticProduct?.galleryImages ??
+          product.images ??
+          staticProduct?.images ??
+          (product.image ? [product.image] : []) ??
+          (staticProduct?.image ? [staticProduct.image] : []));
 
-  const staticVariants = staticProduct?.variantOptions ?? [];
+  const staticVariants = product.variantOptions ?? staticProduct?.variantOptions ?? [];
   const discoveredVariants =
     pdpR2?.variants && pdpR2.variants.length > 0 ? pdpR2.variants : null;
   const variantOptions =
@@ -124,12 +129,15 @@ export default async function ProductPage({
   const detailImages =
     pdpR2?.detail && pdpR2.detail.length > 0
       ? pdpR2.detail
-      : (staticProduct?.detailImages ?? []);
+      : (product.detailImages ?? staticProduct?.detailImages ?? []);
 
   const firstSlide =
     gallerySlides[0] ??
-    (staticProduct?.galleryImages?.[0] ??
+    (product.galleryImages?.[0] ??
+      staticProduct?.galleryImages?.[0] ??
+      product.images[0] ??
       staticProduct?.images[0] ??
+      product.promoVideo?.poster ??
       staticProduct?.promoVideo?.poster);
   const preferredPromoVideo = product.promoVideo ?? staticProduct?.promoVideo;
   const promoVideosForMedia: { src: string; poster?: string }[] | null =
