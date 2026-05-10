@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import { formatPrice, getProductBySlug } from "@/lib/catalog";
-import { emptyCheckoutAddress } from "@/lib/checkout-address";
+import { emptyCheckoutAddress, validateCheckoutAddressForm } from "@/lib/checkout-address";
 import { CheckoutAddressForm } from "@/components/checkout/checkout-address-form";
 import { CheckoutShippingSection } from "@/components/checkout/checkout-shipping-section";
 import { PaymentBrandButtons } from "@/components/checkout/payment-brand-buttons";
@@ -18,6 +18,7 @@ export default function CheckoutPage() {
     setMounted(true);
   }, []);
   const [billing, setBilling] = useState(emptyCheckoutAddress);
+  const [customerEmail, setCustomerEmail] = useState("");
   const [shipping, setShipping] = useState(emptyCheckoutAddress);
   const [shipSameAsBilling, setShipSameAsBilling] = useState(true);
   const [shippingMethod, setShippingMethod] = useState<ShippingMethodId>("cainiao");
@@ -29,6 +30,7 @@ export default function CheckoutPage() {
     discountAmount: number;
   } | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(null);
 
   const totalUnits = useMemo(() => items.reduce((sum, line) => sum + line.qty, 0), [items]);
 
@@ -56,17 +58,48 @@ export default function CheckoutPage() {
     [shipAddress.country, shipAddress.postalCode, shipAddress.state, shippingMethod, totalUnits],
   );
 
+  const addressReady = validateCheckoutAddressForm(shipAddress).ok;
+  const canPay = mounted && itemCount > 0 && addressReady && shippingQuote.ok;
   const shippingPrice = mounted && shippingQuote.ok ? shippingQuote.shippingUsdCents / 100 : 0;
   const couponDiscount = appliedCoupon ? appliedCoupon.discountAmount : 0;
   const total = Math.max(0, subtotal + shippingPrice - couponDiscount);
 
+  async function ensureDraftOrder() {
+    const res = await fetch("/api/checkout/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: customerEmail,
+        totalUsd: total,
+        items: items.map((line) => {
+          const product = getProductBySlug(line.slug);
+          const unitPrice = product?.price ?? line.unitPrice ?? 0;
+          const lineTotal = unitPrice * line.qty;
+          return { slug: line.slug, name: product?.name ?? line.slug, qty: line.qty, unitPrice, lineTotal };
+        }),
+        billing,
+        shipping: shipAddress,
+        shippingMethod,
+        shippingEstimateCny: shippingQuote.ok ? shippingQuote.shippingCny : 0,
+        couponCode: appliedCoupon?.code ?? null,
+        discountCents: Math.round(couponDiscount * 100),
+      }),
+    });
+    const data = (await res.json()) as { ok?: boolean; orderId?: string; error?: string };
+    if (!res.ok || !data.ok || !data.orderId) throw new Error(data.error || "Unable to create draft order");
+    setOrderId(data.orderId);
+    return data.orderId;
+  }
+
   async function beginStripeCheckout() {
     setLoading("stripe");
     try {
+      const draftOrderId = orderId ?? (await ensureDraftOrder());
       const res = await fetch("/api/checkout/stripe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          orderId: draftOrderId,
           totalUsd: total,
           returnUrl: `${window.location.origin}/account/orders`,
           cancelUrl: window.location.href,
@@ -151,6 +184,18 @@ export default function CheckoutPage() {
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr] lg:items-start">
         <div className="space-y-6">
+          <div className="rounded-2xl border border-line bg-white/60 p-5">
+            <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Customer email</h2>
+            <div className="mt-4">
+              <input
+                value={customerEmail}
+                onChange={(e) => setCustomerEmail(e.target.value)}
+                placeholder="Enter email for order receipt"
+                className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+              />
+            </div>
+          </div>
+
           <div className="rounded-2xl border border-line bg-white/60 p-5">
             <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Coupon code</h2>
             <div className="mt-4 flex gap-3">
@@ -269,7 +314,7 @@ export default function CheckoutPage() {
 
           <div className="pt-1">
             <PaymentBrandButtons
-              disabled={itemCount <= 0 || (mounted && !shippingQuote.ok)}
+              disabled={!canPay}
               loading={loading}
               onStripe={() => void beginStripeCheckout()}
               onPayPal={() => void beginPayPalCheckout()}
