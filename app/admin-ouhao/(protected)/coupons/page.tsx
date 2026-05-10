@@ -39,6 +39,62 @@ function ymd(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
+async function sendAffiliateCouponEmail(input: {
+  affiliateId: string;
+  code: string;
+  amountOffCents: number;
+  quantity: number;
+  startsAt: Date;
+  endsAt: Date;
+}): Promise<boolean> {
+  const affiliate = await prisma.affiliateProfile.findUnique({
+    where: { id: input.affiliateId },
+    select: {
+      pid: true,
+      user: { select: { email: true, displayName: true, name: true } },
+    },
+  });
+  const user = affiliate?.user;
+  const to = user?.email?.trim();
+  if (!to || !user) return false;
+
+  const affiliateName = user.displayName?.trim() || user.name?.trim() || to;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://www.humpbuck.com";
+  const accountUrl = `${appUrl}/account/affiliate`;
+  const amountOffUsd = (input.amountOffCents / 100).toFixed(2);
+  const textLines = [
+    `Hi ${affiliateName},`,
+    "",
+    "Your affiliate coupon has been created successfully.",
+    `Coupon code: ${input.code}`,
+    `Discount: $${amountOffUsd} off`,
+    `Usage limit: ${input.quantity}`,
+    `Valid period: ${ymd(input.startsAt)} to ${ymd(input.endsAt)}`,
+    affiliate?.pid ? `Affiliate PID: ${affiliate.pid}` : "",
+    "",
+    `You can manage your affiliate details here: ${accountUrl}`,
+    "",
+    "Best regards,",
+    "HUMPBUCK",
+  ].filter(Boolean);
+  const emailResult = await sendTransactionalEmail({
+    to,
+    subject: "Your affiliate coupon is ready",
+    htmlContent: `<p>Hi ${affiliateName},</p>
+<p>Your affiliate coupon has been created successfully.</p>
+<p><strong>Coupon code:</strong> ${input.code}<br/>
+<strong>Discount:</strong> $${amountOffUsd} off<br/>
+<strong>Usage limit:</strong> ${input.quantity}<br/>
+<strong>Valid period:</strong> ${ymd(input.startsAt)} to ${ymd(input.endsAt)}${
+      affiliate?.pid ? `<br/><strong>Affiliate PID:</strong> ${affiliate.pid}` : ""
+    }</p>
+<p>You can manage your affiliate details here:<br/><a href="${accountUrl}">${accountUrl}</a></p>
+<p>Best regards,<br/>HUMPBUCK</p>`,
+    textContent: textLines.join("\n"),
+  });
+  return emailResult.ok;
+}
+
 function goCoupons(params?: { error?: string; success?: string }): never {
   const error = params?.error?.trim();
   const success = params?.success?.trim();
