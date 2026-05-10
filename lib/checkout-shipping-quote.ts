@@ -1,13 +1,34 @@
 import { getShippingOhQuote } from "@/lib/shipping-oh";
 import { getShippingYanwen484Quote } from "@/lib/shipping-yanwen484";
 
-export type ShippingMethodId = "cainiao" | "yanwen" | "dhl" | "fedex" | "ups" | "usps";
+export type ShippingMethodId = "cainiao" | "yanwen" | "dhl" | "fedex" | "ups" | "usps" | "china_zto" | "china_sf";
 
 export type CheckoutShippingQuote =
   | { ok: true; shippingCny: number; shippingUsdCents: number; lineLabel: string }
   | { ok: false; error: string };
 
-const CNY_PER_USD = 6.8;
+export const CNY_PER_USD = 6.8;
+
+export const PREMIUM_EXPRESS_BASE_CNY = 500;
+export const PREMIUM_EXPRESS_INCLUDED_KG = 1;
+export const PREMIUM_EXPRESS_PER_KG_CNY = 50;
+
+export function premiumExpressLabel(method: "dhl" | "fedex" | "ups" | "usps"): string {
+  return `${method.toUpperCase()} Express`;
+}
+
+export function isChinaDomesticMethod(method: ShippingMethodId): boolean {
+  return method === "china_zto" || method === "china_sf";
+}
+
+export function isPremiumExpressMethod(method: ShippingMethodId): boolean {
+  return method === "dhl" || method === "fedex" || method === "ups" || method === "usps";
+}
+
+export function isCheckoutCountryChina(countryLabel: string): boolean {
+  const v = countryLabel.trim().toLowerCase();
+  return v === "cn" || v === "china" || v === "china mainland";
+}
 
 function normalizeCountryIso2(countryLabel: string): string {
   const trimmed = countryLabel.trim();
@@ -43,7 +64,7 @@ export function quoteCheckoutShipping(input: {
   const countryIso2 = normalizeCountryIso2(input.countryLabel);
 
   if (input.method === "dhl" || input.method === "fedex" || input.method === "ups" || input.method === "usps") {
-    return { ok: true, shippingCny: 500, shippingUsdCents: Math.round((500 / CNY_PER_USD) * 100), lineLabel: `${input.method.toUpperCase()} fixed 500 RMB` };
+    return { ok: true, shippingCny: PREMIUM_EXPRESS_BASE_CNY, shippingUsdCents: Math.round((PREMIUM_EXPRESS_BASE_CNY / CNY_PER_USD) * 100), lineLabel: `${input.method.toUpperCase()} fixed 500 RMB` };
   }
 
   if (input.method === "yanwen") {
