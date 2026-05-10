@@ -46,6 +46,7 @@ async function sendAffiliateCouponEmail(input: {
   quantity: number;
   startsAt: Date;
   endsAt: Date;
+  createdBy: "create" | "update";
 }): Promise<boolean> {
   const affiliate = await prisma.affiliateProfile.findUnique({
     where: { id: input.affiliateId },
@@ -62,10 +63,13 @@ async function sendAffiliateCouponEmail(input: {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://www.humpbuck.com";
   const accountUrl = `${appUrl}/account/affiliate`;
   const amountOffUsd = (input.amountOffCents / 100).toFixed(2);
+  const subject = input.createdBy === "create" ? "Your affiliate coupon is ready" : "Your affiliate coupon was updated";
+  const intro = input.createdBy === "create" ? "Your affiliate coupon has been created successfully." : "Your affiliate coupon has been updated and is ready to use.";
   const textLines = [
     `Hi ${affiliateName},`,
     "",
-    "Your affiliate coupon has been created successfully.",
+    intro,
+    `Coupon code: ${input.code}`,
     `Coupon code: ${input.code}`,
     `Discount: $${amountOffUsd} off`,
     `Usage limit: ${input.quantity}`,
@@ -246,6 +250,22 @@ async function updateCouponAction(formData: FormData) {
     const msg = e instanceof Error ? e.message : "Failed to update coupon.";
     goCoupons({ error: msg.includes("Coupon_code_key") ? "Coupon code already exists." : msg });
   }
+
+  if (affiliateId) {
+    const emailResult = await sendAffiliateCouponEmail({
+      affiliateId,
+      code,
+      amountOffCents,
+      quantity,
+      startsAt,
+      endsAt,
+    });
+    if (!emailResult) {
+      revalidatePath(adminPath("/coupons"));
+      goCoupons({ success: "Coupon saved successfully, but affiliate notification email failed to send." });
+    }
+  }
+
   revalidatePath(adminPath("/coupons"));
   redirect(`${adminPath("/coupons")}?success=${encodeURIComponent("Coupon saved successfully")}`);
 }
