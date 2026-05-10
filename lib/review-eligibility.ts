@@ -7,9 +7,10 @@ export function orderStatusAllowsReview(status: string): boolean {
   return REVIEW_OK.has(status);
 }
 
-export function orderContainsProductSlug(
+export async function orderContainsProductSlug(
   itemsJson: string,
   productSlug: string,
-): boolean {
-  return parseOrderItemsJson(itemsJson).some((l) => l.slug === productSlug);
+): Promise<boolean> {
+  const lines = await parseOrderItemsJson(itemsJson);
+  return lines.some((l) => l.slug === productSlug);
 }
