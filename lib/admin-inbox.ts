@@ -91,14 +91,14 @@ export async function syncSystemInboxMessages() {
       .catch(() => []),
   ]);
 
-  const toPayload = (order: {
+  const toPayload = async (order: {
     id: string;
     email: string;
     itemsJson: string;
     merchantOrderCode: string | null;
     createdAt: Date;
   }) => {
-    const lines = parseOrderItemsJson(order.itemsJson);
+    const lines = await parseOrderItemsJson(order.itemsJson);
     const first = lines[0];
     const linePreviews = lines.map((line) => {
       const product = line.slug ? getProductBySlug(line.slug) : null;
@@ -134,20 +134,20 @@ export async function syncSystemInboxMessages() {
     };
   };
 
-  const rows = [
-    ...paidOrders.map((o) => ({
+  const rows = await Promise.all([
+    ...paidOrders.map(async (o) => ({
       category: ADMIN_INBOX_CATEGORY.order as AdminInboxCategory,
       dedupeKey: `order_paid:${o.id}`,
       sourceEmail: o.email,
-      payload: { ...toPayload(o), eventType: "paid" },
+      payload: await toPayload(o),
     })),
-    ...cancelledOrders.map((o) => ({
+    ...cancelledOrders.map(async (o) => ({
       category: ADMIN_INBOX_CATEGORY.order as AdminInboxCategory,
       dedupeKey: `order_cancelled:${o.id}`,
       sourceEmail: o.email,
-      payload: { ...toPayload(o), eventType: "cancelled" },
+      payload: await toPayload(o),
     })),
-  ];
+  ]);
 
   if (rows.length === 0) return;
   await Promise.all(
