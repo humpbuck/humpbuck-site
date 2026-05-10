@@ -41,9 +41,9 @@ export async function sendAffiliatePaidSummaryEmail(input: {
   const base = emailPublicBaseUrl();
   const waUrl = `https://wa.me/${WHATSAPP_E164}`;
   const supportEmail = publicSupportEmail();
-  const orderRows = input.ledgers
-    .map((l) => {
-      const lines = parseOrderItemsJson(l.itemsJson);
+  const orderRows = (await Promise.all(
+    input.ledgers.map(async (l) => {
+      const lines = await parseOrderItemsJson(l.itemsJson);
       const itemCards = lines
         .map((line) => {
           const p = getProductBySlug(line.slug);
@@ -75,8 +75,8 @@ export async function sendAffiliatePaidSummaryEmail(input: {
         </td></tr>
         ${itemCards}
       </table>`;
-    })
-    .join("");
+    }),
+  )).join("");
 
   const html = `<!doctype html><html><body style="margin:0;padding:24px;background:#ebe8e2;font-family:Arial,sans-serif;">
     <table width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background:#fff;border:1px solid #e0ddd6;border-radius:16px;overflow:hidden;">
