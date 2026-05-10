@@ -28,7 +28,20 @@ export default async function EditOrderShippingPage({
 
   const initial = checkoutFormFromOrderRecord(
     parseShippingRecord(order.shippingJson),
-  );
+  ) ?? {
+    firstName: "",
+    lastName: "",
+    company: "",
+    line1: "",
+    line2: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "United States (US)",
+    logisticsZone: "",
+    phone: "",
+    taxId: "",
+  };
   const canEdit =
     (order.status === "paid" || order.status === "processing") &&
     !order.trackingNumber?.trim();
