@@ -3,7 +3,7 @@ import { getMergedCatalogProductBySlug } from "@/lib/catalog-db";
 import type { ValidatedLine } from "@/lib/order-lines";
 
 async function hydrateOrderLine(
-  line: Pick<ValidatedLine, "slug" | "qty" | "variantId" | "variantLabel"> & {
+  line: Pick<ValidatedLine, "slug" | "qty" | "variantId" | "variantLabel" | "variantImage"> & {
     name?: string;
     productName?: string;
     unitAmountCents?: number;
@@ -42,6 +42,7 @@ async function hydrateOrderLine(
     lineTotalCents: resolvedLineTotalCents,
     variantId: line.variantId,
     variantLabel: line.variantLabel,
+    variantImage: line.variantImage,
   };
 }
 
@@ -53,7 +54,7 @@ export async function parseOrderItemsJson(json: string): Promise<ValidatedLine[]
     const lines = await Promise.all(
       arr
         .filter(
-          (x): x is Pick<ValidatedLine, "slug" | "qty" | "variantId" | "variantLabel"> & {
+          (x): x is Pick<ValidatedLine, "slug" | "qty" | "variantId" | "variantLabel" | "variantImage"> & {
             name?: string;
             productName?: string;
             unitAmountCents?: number;

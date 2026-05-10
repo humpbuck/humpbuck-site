@@ -389,6 +389,7 @@ export default async function AdminOrderDetailPage({
                 {lines.map((line, i) => {
                   const product = getProductBySlug(line.slug);
                   const img =
+                    line.variantImage ??
                     getR2VariantLineImageUrl(line.slug, line.variantId) ??
                     (product ? getCartLineImage(product, line.variantId) : undefined);
                   return (

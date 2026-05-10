@@ -12,6 +12,7 @@ export type ValidatedLine = {
   lineTotalCents: number;
   variantId?: string;
   variantLabel?: string;
+  variantImage?: string;
 };
 
 export async function validateCartLines(items: CartLine[]): Promise<{
@@ -40,6 +41,7 @@ export async function validateCartLines(items: CartLine[]): Promise<{
       lineTotalCents,
       variantId: item.variantId,
       variantLabel: item.variantLabel,
+      variantImage: item.variantImage,
     });
   }
 
