@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 type InventoryRecord = {
@@ -205,11 +205,39 @@ export function ProductManager({
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error" | "info">("info");
   const [busy, setBusy] = useState(false);
+  const [messageTimer, setMessageTimer] = useState<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (messageTimer != null) window.clearTimeout(messageTimer);
+    };
+  }, [messageTimer]);
+  const [messageTimer, setMessageTimer] = useState<number | null>(null);
 
   const current = useMemo(() => {
     if (selected == null) return null;
     return products.find((p) => (p.id ?? "__new__") === selected) ?? null;
   }, [products, selected]);
+
+  function clearMessageTimer() {
+    if (messageTimer != null) {
+      window.clearTimeout(messageTimer);
+      setMessageTimer(null);
+    }
+  }
+
+  function setFlashMessage(text: string, type: "success" | "error" | "info" = "info") {
+    clearMessageTimer();
+    setMessage(text);
+    setMessageType(type);
+    if (type === "success") {
+      const id = window.setTimeout(() => {
+        setMessage("");
+        setMessageTimer(null);
+      }, 5000);
+      setMessageTimer(id);
+    }
+  }
 
   function updateCurrent(mutator: (p: EditableProduct) => EditableProduct) {
     if (!current) return;
@@ -239,25 +267,21 @@ export function ProductManager({
     if (!current) return;
     if (section === "video") {
       if (file.type !== "video/mp4") {
-        setMessage("Video must be MP4.");
-        setMessageType("error");
+        setFlashMessage("Video must be MP4.", "error");
         return;
       }
       const ok = await validateVideoDimensions(file);
       if (!ok) {
-        setMessage("Video must be exactly 720x1280.");
-        setMessageType("error");
+        setFlashMessage("Video must be exactly 720x1280.", "error");
         return;
       }
     } else if (file.type !== "image/webp") {
-      setMessage("Images must be WEBP.");
-      setMessageType("error");
+      setFlashMessage("Images must be WEBP.", "error");
       return;
     }
 
     setBusy(true);
-    setMessage("");
-    setMessageType("info");
+    setFlashMessage("");
     const sortIndex =
       section === "gallery"
         ? nextIndexedSlot(current.gallery, "gallery")
@@ -285,8 +309,7 @@ export function ProductManager({
         error?: string;
       };
       if (!presign.ok || !payload.uploadUrl || !payload.publicUrl) {
-        setMessage(payload.error || "Failed to get upload URL.");
-        setMessageType("error");
+        setFlashMessage(payload.error || "Failed to get upload URL.", "error");
         return;
       }
       const put = await fetch(payload.uploadUrl, {
@@ -295,8 +318,7 @@ export function ProductManager({
         body: file,
       });
       if (!put.ok) {
-        setMessage("Upload failed.");
-        setMessageType("error");
+        setFlashMessage("Upload failed.", "error");
         return;
       }
 
@@ -334,11 +356,9 @@ export function ProductManager({
           ),
         };
       });
-      setMessage("Uploaded to R2.");
-      setMessageType("success");
+      setFlashMessage("Uploaded to R2.", "success");
     } catch {
-      setMessage("Upload error.");
-      setMessageType("error");
+      setFlashMessage("Upload error.", "error");
     } finally {
       setBusy(false);
     }
@@ -347,13 +367,11 @@ export function ProductManager({
   async function saveCurrent() {
     if (!current) return;
     if (!current.slug.trim() || !current.name.trim()) {
-      setMessage("Slug and name are required.");
-      setMessageType("error");
+      setFlashMessage("Slug and name are required.", "error");
       return;
     }
     setBusy(true);
-    setMessage("");
-    setMessageType("info");
+    setFlashMessage("");
     const payload = {
       slug: current.slug.trim(),
       name: current.name.trim(),
@@ -400,8 +418,7 @@ export function ProductManager({
       );
       const data = (await res.json()) as { ok?: boolean; id?: string; error?: string };
       if (!res.ok) {
-        setMessage(data.error || "Save failed.");
-        setMessageType("error");
+        setFlashMessage(data.error || "Save failed.", "error");
         return;
       }
       if (!current.id && data.id) {
@@ -414,12 +431,10 @@ export function ProductManager({
         );
         setSelected(data.id);
       }
-      setMessage("✅ Saved successfully.");
-      setMessageType("success");
+      setFlashMessage("✅ Saved successfully.", "success");
       startTransition(() => router.refresh());
     } catch {
-      setMessage("Save failed.");
-      setMessageType("error");
+      setFlashMessage("Save failed.", "error");
     } finally {
       setBusy(false);
     }
@@ -434,23 +449,20 @@ export function ProductManager({
     }
     if (!window.confirm(`Delete product ${current.slug}?`)) return;
     setBusy(true);
-    setMessage("");
+    setFlashMessage("");
     try {
       const res = await fetch(`/api/admin/products/${current.id}`, {
         method: "DELETE",
       });
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) {
-        setMessage(data.error || "Delete failed.");
-        setMessageType("error");
+        setFlashMessage(data.error || "Delete failed.", "error");
         return;
       }
-      setMessage("Deleted.");
-      setMessageType("success");
+      setFlashMessage("Deleted.", "success");
       startTransition(() => router.refresh());
     } catch {
-      setMessage("Delete failed.");
-      setMessageType("error");
+      setFlashMessage("Delete failed.", "error");
     } finally {
       setBusy(false);
     }
