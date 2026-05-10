@@ -165,6 +165,9 @@ export function OrderEditForm({
         }
       }
       setMsg(line);
+      window.setTimeout(() => {
+        setMsg(null);
+      }, 5000);
       // Let React paint the message before RSC refresh; avoids flash of empty state.
       requestAnimationFrame(() => {
         router.refresh();
