@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 
 import {
@@ -6,7 +8,6 @@ import {
   quoteCheckoutShipping,
   type ShippingMethodId,
 } from "@/lib/checkout-shipping-quote";
-import { yanwenCountryUsesZones } from "@/lib/global-postal-zones";
 
 function checkoutMethodLabel(id: ShippingMethodId): string {
   switch (id) {
@@ -74,7 +75,6 @@ export function LogisticsReferencePanel({
     destinationFeesCnyYanwen: 0,
     freeInternational: false,
     buyerSupplementCny: 0,
-    summaryLines: [],
   } as const;
 
   const methodRaw = String(checkoutShippingMethod ?? "").trim();
