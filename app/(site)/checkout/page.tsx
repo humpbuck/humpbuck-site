@@ -75,7 +75,19 @@ export default function CheckoutPage() {
           const product = getProductBySlug(line.slug);
           const unitPrice = product?.price ?? line.unitPrice ?? 0;
           const lineTotal = unitPrice * line.qty;
-          return { slug: line.slug, name: product?.name ?? line.slug, qty: line.qty, unitPrice, lineTotal };
+          return {
+            slug: line.slug,
+            name: product?.name ?? line.productName ?? line.slug,
+            productName: line.productName ?? product?.name ?? line.slug,
+            qty: line.qty,
+            unitPrice,
+            unitAmountCents: Math.round(unitPrice * 100),
+            lineTotal,
+            lineTotalCents: Math.round(lineTotal * 100),
+            variantId: line.variantId,
+            variantLabel: line.variantLabel,
+            variantImage: line.variantImage,
+          };
         }),
         billing,
         shipping: shipAddress,

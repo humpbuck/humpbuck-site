@@ -12,6 +12,12 @@ export async function POST(req: Request) {
       qty: number;
       unitPrice: number;
       lineTotal: number;
+      unitAmountCents?: number;
+      lineTotalCents?: number;
+      variantId?: string;
+      variantLabel?: string;
+      variantImage?: string;
+      productName?: string;
     }>;
     billing?: Record<string, string>;
     shipping?: Record<string, string>;

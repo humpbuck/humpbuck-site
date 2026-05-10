@@ -203,9 +203,9 @@ function buildBillToPlainText(order: {
   });
 }
 
-function buildOrderLineItemRowsHtml(
-  lines: ReturnType<typeof parseOrderItemsJson>,
-): string {
+async function buildOrderLineItemRowsHtml(
+  lines: Awaited<ReturnType<typeof parseOrderItemsJson>>,
+): Promise<string> {
   return lines
     .map((l) => {
       const product = getProductBySlug(l.slug);
@@ -251,7 +251,7 @@ export async function buildShippingAddressChangeEmailPayload(
     );
   }
 
-  const lines = parseOrderItemsJson(order.itemsJson);
+  const lines = await parseOrderItemsJson(order.itemsJson);
   const oid = orderDisplayCode(order);
   const placed = new Date(order.createdAt).toLocaleString(SITE_LOCALE, {
     dateStyle: "medium",
@@ -319,7 +319,7 @@ export async function buildShippingAddressChangeEmailPayload(
       </td></tr>`;
   }
 
-  const lineRows = buildOrderLineItemRowsHtml(lines);
+  const lineRows = await buildOrderLineItemRowsHtml(lines);
 
   const newShipHtml = buildShipToHtml({
     email: order.email,
@@ -548,7 +548,7 @@ export async function buildCustomerShippedEmailPayload(order: Order): Promise<{
   htmlContent: string;
   textContent: string;
 }> {
-  const lines = parseOrderItemsJson(order.itemsJson);
+  const lines = await parseOrderItemsJson(order.itemsJson);
   const oid = orderDisplayCode(order);
   const placed = new Date(order.createdAt).toLocaleString(SITE_LOCALE, {
     dateStyle: "medium",
@@ -579,7 +579,7 @@ export async function buildCustomerShippedEmailPayload(order: Order): Promise<{
   }
   const newsletterFallbackUrl = `${base}/#newsletter`;
 
-  const lineRows = buildOrderLineItemRowsHtml(lines);
+  const lineRows = await buildOrderLineItemRowsHtml(lines);
 
   const billAddrHtml = buildBillToHtml(order);
   const shipAddrHtml = buildShipToHtml(order);
