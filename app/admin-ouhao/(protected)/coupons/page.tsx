@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
+import { AdminFlashMessage } from "@/components/admin/admin-flash-message";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
@@ -274,14 +275,10 @@ export default async function AdminCouponsPage({
       </p>
 
       {sp.error ? (
-        <p className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
-          {sp.error}
-        </p>
+        <AdminFlashMessage kind="error" message={sp.error} clearHref={adminPath("/coupons")} />
       ) : null}
       {sp.success ? (
-        <p className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
-          {sp.success}
-        </p>
+        <AdminFlashMessage kind="success" message={sp.success} clearHref={adminPath("/coupons")} />
       ) : null}
 
       <section className="mt-8 rounded-2xl border border-line bg-white/60 p-5">
