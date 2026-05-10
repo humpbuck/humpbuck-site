@@ -151,57 +151,20 @@ async function createCouponAction(formData: FormData) {
   }
 
   if (affiliateId) {
-    const affiliate = await prisma.affiliateProfile.findUnique({
-      where: { id: affiliateId },
-      select: {
-        pid: true,
-        user: { select: { email: true, displayName: true, name: true } },
-      },
+    const emailResult = await sendAffiliateCouponEmail({
+      affiliateId,
+      code,
+      amountOffCents,
+      quantity,
+      startsAt,
+      endsAt,
+      createdBy: "create",
     });
-    const user = affiliate?.user;
-    const to = user?.email?.trim();
-    if (to && user) {
-      const affiliateName =
-        user.displayName?.trim() || user.name?.trim() || to;
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://www.humpbuck.com";
-      const accountUrl = `${appUrl}/account/affiliate`;
-      const amountOffUsd = (amountOffCents / 100).toFixed(2);
-      const textLines = [
-        `Hi ${affiliateName},`,
-        "",
-        "Your affiliate coupon has been created successfully.",
-        `Coupon code: ${code}`,
-        `Discount: $${amountOffUsd} off`,
-        `Usage limit: ${quantity}`,
-        `Valid period: ${ymd(startsAt)} to ${ymd(endsAt)}`,
-        affiliate?.pid ? `Affiliate PID: ${affiliate.pid}` : "",
-        "",
-        `You can manage your affiliate details here: ${accountUrl}`,
-        "",
-        "Best regards,",
-        "HUMPBUCK",
-      ].filter(Boolean);
-      const emailResult = await sendTransactionalEmail({
-        to,
-        subject: "Your affiliate coupon is ready",
-        htmlContent: `<p>Hi ${affiliateName},</p>
-<p>Your affiliate coupon has been created successfully.</p>
-<p><strong>Coupon code:</strong> ${code}<br/>
-<strong>Discount:</strong> $${amountOffUsd} off<br/>
-<strong>Usage limit:</strong> ${quantity}<br/>
-<strong>Valid period:</strong> ${ymd(startsAt)} to ${ymd(endsAt)}${
-          affiliate?.pid ? `<br/><strong>Affiliate PID:</strong> ${affiliate.pid}` : ""
-        }</p>
-<p>You can manage your affiliate details here:<br/><a href="${accountUrl}">${accountUrl}</a></p>
-<p>Best regards,<br/>HUMPBUCK</p>`,
-        textContent: textLines.join("\n"),
+    if (!emailResult) {
+      revalidatePath(adminPath("/coupons"));
+      goCoupons({
+        success: "Coupon created, but affiliate notification email failed to send.",
       });
-      if (!emailResult.ok) {
-        revalidatePath(adminPath("/coupons"));
-        goCoupons({
-          success: "Coupon created, but affiliate notification email failed to send.",
-        });
-      }
     }
   }
 
@@ -259,6 +222,7 @@ async function updateCouponAction(formData: FormData) {
       quantity,
       startsAt,
       endsAt,
+      createdBy: "update",
     });
     if (!emailResult) {
       revalidatePath(adminPath("/coupons"));
