@@ -65,6 +65,7 @@ async function main() {
   const shipQ = primaryQuote.ok ? primaryQuote : fallbackQuote;
   const shippingMethod: ShippingMethodId = primaryQuote.ok ? requestedMethod : fallbackMethod;
   const shippingUsdCents = shipQ.ok ? shipQ.shippingUsdCents : 0;
+  const shippingCny = shipQ.ok ? shipQ.shippingCny : 0;
 
   const slug = "digitemp-2412m";
   const unitAmountCents = 999;
@@ -88,7 +89,7 @@ async function main() {
   const shipping = {
     ...billing,
     shippingMethod,
-    shippingEstimateCny: String(shipQ.shippingCny),
+    shippingEstimateCny: String(shippingCny),
   };
   mergeDerivedLogisticsZone(shipping);
 
