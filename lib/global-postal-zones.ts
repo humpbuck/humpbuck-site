@@ -416,11 +416,11 @@ export function findPostalZone(countryCode: string, postalCode: string): PostalZ
 
   if (!bestMatch) return null;
 
-  const matchedZone = bestMatch.zone;
+  const matchedZone = bestMatch as { zone: PostalZone; specificity: number; order: number };
   return {
     countryCode: country.countryCode,
     countryName: country.countryName,
-    zone: matchedZone.zone,
+    zone: matchedZone.zone.zone,
   };
 }
 
