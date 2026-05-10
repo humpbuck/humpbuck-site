@@ -25,11 +25,6 @@ export function isPremiumExpressMethod(method: ShippingMethodId): boolean {
   return method === "dhl" || method === "fedex" || method === "ups" || method === "usps";
 }
 
-export function isCheckoutCountryChina(countryLabel: string): boolean {
-  const v = countryLabel.trim().toLowerCase();
-  return v === "cn" || v === "china" || v === "china mainland";
-}
-
 function normalizeCountryIso2(countryLabel: string): string {
   const trimmed = countryLabel.trim();
   const match = trimmed.match(/\(([A-Za-z]{2})\)\s*$/);
