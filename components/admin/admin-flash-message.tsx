@@ -18,7 +18,7 @@ export function AdminFlashMessage({
     if (!clearHref) return;
     const timer = window.setTimeout(() => {
       router.replace(clearHref);
-    }, 0);
+    }, 5000);
     return () => window.clearTimeout(timer);
   }, [clearHref, router]);
 
