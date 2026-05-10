@@ -691,14 +691,23 @@ export default async function AdminAffiliatePage({
 
       <section
         id="coupon-requests"
-        className={`mt-6 rounded-2xl border border-line bg-white/60 p-5 ${sp.couponRequests === "1" ? "ring-2 ring-ink/20" : ""}`}
+        className={`mt-6 rounded-2xl border border-line bg-white/60 p-5 ${sp.couponRequests === "1" ? "ring-2 ring-ink/20" : ""} ${couponRequests.length > 0 ? "border-amber-300 bg-amber-50/40" : ""}`}
       >
-        <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Coupon code requests
-        </h2>
-        <p className="mt-2 text-sm text-muted">
-          Pending affiliates asking for coupon code binding.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+              Coupon code requests
+            </h2>
+            <p className="mt-2 text-sm text-muted">
+              Pending affiliates asking for coupon code binding.
+            </p>
+          </div>
+          {couponRequests.length > 0 ? (
+            <div className="rounded-full border border-amber-300 bg-amber-100 px-3 py-1 text-[11px] font-semibold text-amber-900">
+              {couponRequests.length} affiliate{couponRequests.length === 1 ? "" : "s"} requested a coupon
+            </div>
+          ) : null}
+        </div>
         {couponRequests.length === 0 ? (
           <p className="mt-3 text-sm text-muted">No pending requests.</p>
         ) : (
