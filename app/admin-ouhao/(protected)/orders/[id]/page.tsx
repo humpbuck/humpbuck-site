@@ -146,7 +146,7 @@ export default async function AdminOrderDetailPage({
   });
   if (!order) notFound();
 
-  const lines = parseOrderItemsJson(order.itemsJson);
+  const lines = await parseOrderItemsJson(order.itemsJson);
   /** Legacy orders only had `shippingJson`; treat as both billing & shipping. */
   const billingRaw = parseShippingRecord(
     order.billingJson ?? order.shippingJson,
