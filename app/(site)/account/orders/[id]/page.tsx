@@ -35,7 +35,7 @@ export default async function AccountOrderDetailPage({
   });
   if (!order) notFound();
 
-  const lines = parseOrderItemsJson(order.itemsJson);
+  const lines = await parseOrderItemsJson(order.itemsJson);
   const lineSlugs = [...new Set(lines.map((l) => l.slug))];
   const existingReviews = await prisma.productReview.findMany({
     where: {
@@ -72,7 +72,7 @@ export default async function AccountOrderDetailPage({
       <p className="mt-2 text-xs text-muted">
         <Link
           href="/account/orders"
-          className="font-semibold uppercase tracking-[0.1em] text-ink underline-offset-4 hover:underline"
+          className="font-semibold uppercase tracking-widest text-ink underline-offset-4 hover:underline"
         >
           ← Order history
         </Link>
