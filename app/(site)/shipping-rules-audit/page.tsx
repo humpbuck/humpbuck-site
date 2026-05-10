@@ -7,7 +7,7 @@ const COUNTRIES = [
   "AE","AL","AO","AR","AT","AU","BE","BG","BH","BO","BR","CA","CH","CL","CO","CR","CY","CZ","DE","DK","DO","EC","EE","ES","FI","FR","GB","GH","GR","GT","HK","HN","HR","HU","IE","IL","IN","IQ","IS","IT","JO","JP","KE","KR","KW","KZ","LK","LT","LU","LV","MA","MD","MN","MT","MX","MY","NG","NI","NL","NO","NZ","OM","PA","PE","PH","PL","PR","PT","PY","QA","RO","RS","RU","RW","SA","SE","SG","SI","SK","SV","TH","TT","TZ","UA","UG","US","UY","VN","ZA","CN",
 ] as const;
 
-type MethodKey = "S5059" | "OH" | "YANWEN_484";
+type MethodKey = "OH" | "YANWEN_484";
 type ViewMode = "all" | "available" | MethodKey;
 type ZoneCheckRow = { country: string; label: string; state?: string; postalCode?: string };
 
@@ -58,7 +58,7 @@ export default function ShippingRulesAuditPage() {
     const q = filter.trim().toUpperCase();
     let next = q ? rows.filter((row) => row.country.includes(q)) : rows;
     if (viewMode === "available") {
-      next = next.filter((row) => row.S5059.available || row.OH.available || row.YANWEN_484.available);
+      next = next.filter((row) => row.OH.available || row.YANWEN_484.available);
     } else if (viewMode !== "all") {
       next = next.filter((row) => row[viewMode].available);
     }
@@ -67,21 +67,16 @@ export default function ShippingRulesAuditPage() {
 
   const zoneRows = useMemo(() => {
     return ZONE_CHECK_ROWS.map((z) => {
-      const est = estimateLogistics({
-        countryLabel: z.country,
-        totalUnits: units,
-        state: z.state ?? null,
-        postalCode: z.postalCode ?? null,
-      });
+      const oh = quoteCheckoutShipping({ countryLabel: z.country, totalUnits: units, method: "cainiao", state: z.state ?? null, postalCode: z.postalCode ?? null });
       return {
         ...z,
-        zone: est.methods.OH.available ? (est.methods.OH.reason ?? "-") : "-",
-        oh: est.methods.OH,
+        zone: oh.ok ? (oh.lineLabel ?? "-") : "-",
+        oh: oh.ok ? { available: true, baseRMB: oh.shippingCny, extraRMB: 0, domesticRMB: 0, totalRMB: oh.shippingCny, topUpRMB: Math.max(0, oh.shippingCny - 50) } : { available: false, baseRMB: null, extraRMB: null, domesticRMB: null, totalRMB: null, topUpRMB: null },
       };
     });
   }, [units]);
 
-  const methods: MethodKey[] = ["S5059", "OH", "YANWEN_484"];
+  const methods: MethodKey[] = ["OH", "YANWEN_484"];
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
@@ -185,7 +180,7 @@ export default function ShippingRulesAuditPage() {
       <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm">
         <p className="font-medium">说明</p>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-zinc-700">
-          <li>S5059 超过 0.2001kg 会不可用。</li>
+          <li>OH 线路与 Yanwen 484 现在是主线路。</li>
           <li>Yanwen 的 Domestic ¥5 仅用于商家成本与对账，客户只看 TopUp。</li>
           <li>TopUp = max(0, Total - ¥50).</li>
           <li>OH 分区测试行用于核对 AU / MY / PH 的解析是否命中正确分区。</li>
