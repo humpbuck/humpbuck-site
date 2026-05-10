@@ -113,7 +113,7 @@ function absoluteImageUrl(href: string): string {
   return `${base}${path}`;
 }
 
-function buildPlainText(order: Order, lines: ReturnType<typeof parseOrderItemsJson>): string {
+async function buildPlainText(order: Order, lines: Awaited<ReturnType<typeof parseOrderItemsJson>>): Promise<string> {
   const oid = orderDisplayCode(order);
   const rows = lines
     .map(
@@ -150,7 +150,7 @@ function buildPlainText(order: Order, lines: ReturnType<typeof parseOrderItemsJs
   return parts.join("\n");
 }
 
-function buildHtml(order: Order, lines: ReturnType<typeof parseOrderItemsJson>): string {
+async function buildHtml(order: Order, lines: Awaited<ReturnType<typeof parseOrderItemsJson>>): Promise<string> {
   const oid = orderDisplayCode(order);
   const placed = new Date(order.createdAt).toLocaleString(SITE_LOCALE, {
     dateStyle: "medium",
@@ -319,9 +319,9 @@ export async function notifyMerchantOrderPaid(orderId: string): Promise<void> {
   if (!order || order.status !== "paid") return;
   if (order.merchantNotifySentAt) return;
 
-  const lines = parseOrderItemsJson(order.itemsJson);
-  const html = buildHtml(order, lines);
-  const text = buildPlainText(order, lines);
+  const lines = await parseOrderItemsJson(order.itemsJson);
+  const html = await buildHtml(order, lines);
+  const text = await buildPlainText(order, lines);
   const subject = `New paid order #${orderDisplayCode(order)} · HUMPBUCK`;
 
   const result = await sendTransactionalEmail({
