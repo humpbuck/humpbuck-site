@@ -114,67 +114,69 @@ export default async function AccountOrdersPage({
         </div>
       ) : (
         <ul className="mt-10 space-y-6">
-          {orders.map((order, index) => {
-            const lines = parseOrderItemsJson(order.itemsJson);
-            const totalUsd = order.totalCents / 100;
-            return (
-              <li
-                key={`${order.id}-${index}`}
-                className="rounded-2xl border border-line bg-white/60 p-5"
-              >
-                <Link
-                  href={`/account/orders/${order.id}`}
-                  className="block rounded-xl outline-none ring-ink/20 focus-visible:ring-2"
+          {await Promise.all(
+            orders.map(async (order, index) => {
+              const lines = await parseOrderItemsJson(order.itemsJson);
+              const totalUsd = order.totalCents / 100;
+              return (
+                <li
+                  key={`${order.id}-${index}`}
+                  className="rounded-2xl border border-line bg-white/60 p-5"
                 >
-                  <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-4">
-                    <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-                        {new Date(order.createdAt).toLocaleString(SITE_LOCALE, {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        })}
-                      </p>
-                      <p className="mt-1 text-xs text-muted">
-                        Order #{orderDisplayCode(order)}
-                        <span className="text-muted/80">
-                          {" "}
-                          · Ref. {order.id.slice(-8)}
-                        </span>
-                      </p>
+                  <Link
+                    href={`/account/orders/${order.id}`}
+                    className="block rounded-xl outline-none ring-ink/20 focus-visible:ring-2"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-4">
+                      <div>
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+                          {new Date(order.createdAt).toLocaleString(SITE_LOCALE, {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          })}
+                        </p>
+                        <p className="mt-1 text-xs text-muted">
+                          Order #{orderDisplayCode(order)}
+                          <span className="text-muted/80">
+                            {" "}
+                            · Ref. {order.id.slice(-8)}
+                          </span>
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-semibold tabular-nums">
+                          {formatPrice(totalUsd)}
+                        </p>
+                        <BuyerOrderStatusBlock
+                          className="mt-2 text-right"
+                          providerLabel={order.provider}
+                          status={order.status}
+                        />
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold tabular-nums">
-                        {formatPrice(totalUsd)}
-                      </p>
-                      <BuyerOrderStatusBlock
-                        className="mt-2 text-right"
-                        providerLabel={order.provider}
-                        status={order.status}
-                      />
-                    </div>
-                  </div>
-                  <BuyerOrderLineItems
-                    lines={lines}
+                    <BuyerOrderLineItems
+                      lines={lines}
+                      compact
+                      className="mt-4 text-ink/85"
+                    />
+                    <p className="mt-4 text-[12px] font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4">
+                      View order details →
+                    </p>
+                  </Link>
+                  <BuyerCancelOrderActions
+                    enabled={showBuyerCancelOrderCta(order)}
+                    order={{
+                      id: order.id,
+                      status: order.status,
+                      trackingNumber: order.trackingNumber,
+                    }}
+                    orderNum={orderDisplayCode(order)}
                     compact
-                    className="mt-4 text-ink/85"
                   />
-                  <p className="mt-4 text-[12px] font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4">
-                    View order details →
-                  </p>
-                </Link>
-                <BuyerCancelOrderActions
-                  enabled={showBuyerCancelOrderCta(order)}
-                  order={{
-                    id: order.id,
-                    status: order.status,
-                    trackingNumber: order.trackingNumber,
-                  }}
-                  orderNum={orderDisplayCode(order)}
-                  compact
-                />
-              </li>
-            );
-          })}
+                </li>
+              );
+            }),
+          )}
         </ul>
       )}
     </div>
