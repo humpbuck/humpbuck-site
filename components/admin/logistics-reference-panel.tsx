@@ -64,7 +64,18 @@ export function LogisticsReferencePanel({
   checkoutShippingMethod?: string | null;
 }) {
   const [showDetails, setShowDetails] = useState(false);
-  const est = {
+  const est: {
+    iso2: string | null;
+    cainiaoZhCountry: string;
+    chargeableKgCainiao: number | null;
+    chargeableKgYanwen: number | null;
+    ohInternationalCny: number | null;
+    destinationFeesCnyCainiao: number;
+    yanwen484InternationalCny: number | null;
+    destinationFeesCnyYanwen: number;
+    freeInternational: boolean;
+    buyerSupplementCny: number;
+  } = {
     iso2: shippingCountryLabel.trim().toUpperCase() || null,
     cainiaoZhCountry: shippingCountryLabel,
     chargeableKgCainiao: null,
@@ -75,7 +86,7 @@ export function LogisticsReferencePanel({
     destinationFeesCnyYanwen: 0,
     freeInternational: false,
     buyerSupplementCny: 0,
-  } as const;
+  };
 
   const methodRaw = String(checkoutShippingMethod ?? "").trim();
   const checkoutMethod = isShippingMethodId(methodRaw) ? methodRaw : null;
