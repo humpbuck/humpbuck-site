@@ -24,12 +24,7 @@ import {
   isShippingMethodId,
   quoteCheckoutShipping,
 } from "@/lib/checkout-shipping-quote";
-import { DEFAULT_CHECKOUT_COUNTRY } from "@/lib/checkout-regions";
-import {
-  countryLabelToIso2,
-  effectiveZonedLaneDigit,
-  yanwenCountryUsesZones,
-} from "@/lib/logistics-estimate";
+import { findPostalZone } from "@/lib/global-postal-zones";
 import { parseOrderItemsJson } from "@/lib/parse-order-items";
 import { prisma } from "@/lib/prisma";
 import { SITE_LOCALE } from "@/lib/site-locale";
@@ -177,20 +172,14 @@ export default async function AdminOrderDetailPage({
   const orderTotalUnits = lines.reduce((s, l) => s + l.qty, 0);
   const logisticsCountry =
     (shipping?.country ?? billingRaw?.country ?? "").trim() ||
-    DEFAULT_CHECKOUT_COUNTRY;
+    "United States (US)";
   const logisticsYanwenZone =
     (shipping?.logisticsZone ?? "").trim() || null;
   const logisticsPostal =
     (shipping?.postalCode ?? shipping?.zip ?? "").trim() || null;
   const logisticsState = (shipping?.state ?? "").trim() || null;
-  const shippingIso = countryLabelToIso2(shipping?.country ?? "");
-  const shippingZoneDisplay = shippingIso
-    ? effectiveZonedLaneDigit(
-        shippingIso,
-        logisticsPostal,
-        logisticsYanwenZone,
-      )
-    : null;
+  const shippingIso = shipping?.country?.trim().toUpperCase() || null;
+  const shippingZoneDisplay = shippingIso && logisticsPostal ? findPostalZone(shippingIso, logisticsPostal)?.zone ?? logisticsYanwenZone : logisticsYanwenZone;
   const checkoutShippingMethodRaw = String(
     shipping?.shippingMethod ?? "",
   ).trim();
@@ -207,7 +196,7 @@ export default async function AdminOrderDetailPage({
           method: checkoutShippingMethodParsed,
           state: logisticsState,
           postalCode: logisticsPostal,
-          yanwenLogisticsZone: logisticsYanwenZone,
+          weightKg: orderTotalUnits * 0.2,
         })
       : null;
   const storedShippingEstimateCny = (() => {
