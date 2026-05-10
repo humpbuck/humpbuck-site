@@ -354,9 +354,7 @@ export default async function AdminOrderDetailPage({
               orderEmail={order.email}
               structured={structuredShipping}
               phoneIntl={phoneIntlShipping}
-              includeYanwenZoneRow={Boolean(
-                shippingIso && yanwenCountryUsesZones(shippingIso),
-              )}
+              includeYanwenZoneRow={Boolean(shippingZoneDisplay)}
               yanwenZoneValue={shippingZoneDisplay}
             />
             {!structuredShipping && addressLines.length > 0 ? (
