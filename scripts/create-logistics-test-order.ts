@@ -123,7 +123,7 @@ async function main() {
   console.log("  Country:        ", country);
   console.log("  Postal code:    ", postalCode);
   console.log("  Shipping method:", shippingMethod);
-  console.log("  Shipping (buyer):", `$${(shipQ.shippingUsdCents / 100).toFixed(2)}`, `(≈¥${shipQ.shippingCny.toFixed(2)} top-up)`);
+  console.log("  Shipping (buyer):", `$${(shippingUsdCents / 100).toFixed(2)}`, `(≈¥${shippingCny.toFixed(2)} top-up)`);
   console.log("  Order total:    ", `$${(orderTotalCents / 100).toFixed(2)}`);
   console.log("  Buyer email:    ", email);
   console.log("  Admin:          ", `${base}${adminPath(`/orders/${order.id}`)}`);
