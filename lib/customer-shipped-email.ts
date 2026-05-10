@@ -15,6 +15,7 @@ import {
   isMarketingOptOut,
 } from "@/lib/email-marketing-preference";
 import { getProductBySlug } from "@/lib/catalog";
+import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
 import { parseOrderItemsJson } from "@/lib/parse-order-items";
 import { prisma } from "@/lib/prisma";
 import { buildSubscribeMagicUrl } from "@/lib/subscribe-magic-link";
@@ -209,8 +210,9 @@ async function buildOrderLineItemRowsHtml(
   return lines
     .map((l) => {
       const product = getProductBySlug(l.slug);
-      const img = product?.image
-        ? `<img src="${escapeHtml(absoluteImageUrl(product.image))}" alt="" width="64" height="64" style="display:block;width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid #ece9e4;background:#f7f6f3;" />`
+      const imgSrc = getR2VariantLineImageUrl(l.slug, l.variantId) || product?.image || "";
+      const img = imgSrc
+        ? `<img src="${escapeHtml(absoluteImageUrl(imgSrc))}" alt="" width="64" height="64" style="display:block;width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid #ece9e4;background:#f7f6f3;" />`
         : `<div style="width:64px;height:64px;border-radius:10px;background:#ece9e4;border:1px solid #e0ddd6;"></div>`;
       const title = escapeHtml(l.name);
       const varLabel = l.variantLabel

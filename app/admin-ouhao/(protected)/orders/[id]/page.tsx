@@ -8,6 +8,7 @@ import { DeleteOrderButton } from "@/components/admin/delete-order-button";
 import { OrderEditForm } from "@/components/admin/order-edit-form";
 import { OrderStatusBadge } from "@/components/admin/order-status-badge";
 import { formatPrice, getCartLineImage, getProductBySlug } from "@/lib/catalog";
+import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
 import type { StructuredShippingAddress } from "@/lib/admin/order-ui";
 import {
   formatAddressLines,
@@ -387,9 +388,9 @@ export default async function AdminOrderDetailPage({
               <tbody>
                 {lines.map((line, i) => {
                   const product = getProductBySlug(line.slug);
-                  const img = product
-                    ? getCartLineImage(product, line.variantId)
-                    : undefined;
+                  const img =
+                    getR2VariantLineImageUrl(line.slug, line.variantId) ??
+                    (product ? getCartLineImage(product, line.variantId) : undefined);
                   return (
                     <tr
                       key={`${line.slug}-${i}`}
