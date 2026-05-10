@@ -23,7 +23,7 @@ async function LogoutButton({ inMenu = false }: { inMenu?: boolean }) {
         type="submit"
         className={`${navItemClass} cursor-pointer border-0 bg-transparent p-0 align-middle leading-none`}
       >
-        Sign out
+        SIGN OUT
       </button>
     </form>
   );
@@ -42,38 +42,19 @@ export default async function AdminProtectedLayout({
     pendingSubscribeCount,
     pendingMockupRequestCount,
   ] = await Promise.all([
-    prisma.affiliateCouponRequest
-      .count({
-        where: { status: "pending" },
-      })
-      .catch(() => 0),
-    prisma.adminInboxMessage
-      .count({
-        where: { category: ADMIN_INBOX_CATEGORY.order, status: "pending" },
-      })
-      .catch(() => 0),
-    prisma.adminInboxMessage
-      .count({
-        where: {
-          category: ADMIN_INBOX_CATEGORY.subscribe,
-          status: "pending",
-        },
-      })
-      .catch(() => 0),
-    prisma.adminInboxMessage
-      .count({
-        where: {
-          category: ADMIN_INBOX_CATEGORY.emailMockupRequest,
-          status: "pending",
-        },
-      })
-      .catch(() => 0),
+    prisma.affiliateCouponRequest.count({ where: { status: "pending" } }).catch(() => 0),
+    prisma.adminInboxMessage.count({
+      where: { category: ADMIN_INBOX_CATEGORY.order, status: "pending" },
+    }).catch(() => 0),
+    prisma.adminInboxMessage.count({
+      where: { category: ADMIN_INBOX_CATEGORY.subscribe, status: "pending" },
+    }).catch(() => 0),
+    prisma.adminInboxMessage.count({
+      where: { category: ADMIN_INBOX_CATEGORY.emailMockupRequest, status: "pending" },
+    }).catch(() => 0),
   ]);
   const totalPendingInboxCount =
-    pendingOrderCount +
-    pendingCouponRequestCount +
-    pendingSubscribeCount +
-    pendingMockupRequestCount;
+    pendingOrderCount + pendingCouponRequestCount + pendingSubscribeCount + pendingMockupRequestCount;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
@@ -83,74 +64,41 @@ export default async function AdminProtectedLayout({
           <p className="mt-1 text-xs text-muted">Orders, reviews & fulfillment</p>
         </div>
         <nav className="flex flex-wrap items-center gap-x-6 gap-y-2">
-          <Link
-            href={adminPath()}
-            className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
-          >
-            Overview
+          <Link href={adminPath()} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
+            OVERVIEW
           </Link>
-          <Link
-            href={adminPath("/orders")}
-            className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
-          >
-            Orders
+          <Link href={adminPath("/orders")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
+            ORDERS
           </Link>
-          <Link
-            href={adminPath("/reviews")}
-            className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
-          >
-            Reviews
+          <Link href={adminPath("/reviews")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
+            REVIEWS
           </Link>
-          <Link
-            href={adminPath("/inventory")}
-            className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
-          >
-            Products & Inventory
+          <Link href={adminPath("/inventory")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
+            PRODUCTS &amp; INVENTORY
           </Link>
-          <Link
-            href={adminPath("/customers")}
-            className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
-          >
-            Customers
+          <Link href={adminPath("/customers")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
+            CUSTOMERS
           </Link>
-          <Link
-            href={adminPath("/traffic")}
-            className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
-          >
-            Traffic
+          <Link href={adminPath("/traffic")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
+            TRAFFIC
           </Link>
-          <Link
-            href={adminPath("/coupons")}
-            className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink"
-          >
-            Coupons
+          <Link href={adminPath("/coupons")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
+            COUPONS
           </Link>
           <div className="group relative">
-            <button
-              type="button"
-              className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-muted hover:text-ink"
-            >
+            <button type="button" className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-muted hover:text-ink">
               More
               <ChevronDown className="h-3 w-3" />
             </button>
             <div className="pointer-events-none absolute right-0 top-6 z-20 hidden min-w-44 rounded-xl border border-line bg-white p-2 text-xs text-ink shadow-md group-hover:pointer-events-auto group-hover:block">
-              <Link
-                href={adminPath("/affiliate")}
-                className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-paper hover:text-ink"
-              >
-                Affiliate
+              <Link href={adminPath("/affiliate")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-paper hover:text-ink">
+                AFFILIATE
               </Link>
-              <Link
-                href={adminPath("/video-tutorial")}
-                className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-paper hover:text-ink"
-              >
-                Video tutorial
+              <Link href={adminPath("/video-tutorial")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-paper hover:text-ink">
+                VIDEO TUTORIAL
               </Link>
-              <Link
-                href="/"
-                className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-paper hover:text-ink"
-              >
-                View site
+              <Link href="https://www.humpbuck.com/" className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-paper hover:text-ink">
+                VIEW SITE
               </Link>
               <div className="mt-1 border-t border-line pt-1">
                 <LogoutButton inMenu />
@@ -179,8 +127,7 @@ export default async function AdminProtectedLayout({
                 <li>{adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.affiliates)}: {pendingCouponRequestCount}</li>
                 <li>{adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.subscribe)}: {pendingSubscribeCount}</li>
                 <li>
-                  {adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.emailMockupRequest)}:{" "}
-                  {pendingMockupRequestCount}
+                  {adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.emailMockupRequest)}: {pendingMockupRequestCount}
                 </li>
               </ul>
             </div>

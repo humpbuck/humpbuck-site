@@ -1,681 +1,282 @@
 "use client";
 
-import type { UserAddress } from "@prisma/client";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { CheckoutAddressFields } from "@/components/checkout/checkout-address-fields";
-import { CheckoutShippingSection } from "@/components/checkout/checkout-shipping-section";
-import { PaymentBrandButtons } from "@/components/checkout/payment-brand-buttons";
+import { useEffect, useMemo, useState } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import { formatPrice, getProductBySlug } from "@/lib/catalog";
-import {
-  addressFormToRecord,
-  checkoutAddressPhysicalEqual,
-  checkoutFormFromSavedAddress,
-  emptyCheckoutAddress,
-  isCheckoutAddressComplete,
-} from "@/lib/checkout-address";
-import { validateCheckoutAddressForm } from "@/lib/checkout-address-consistency";
-import {
-  getTaxIdRequirement,
-  isCheckoutCountryChina,
-  quoteCheckoutShipping,
-  type ShippingMethodId,
-} from "@/lib/checkout-shipping-quote";
-import { estimateLogistics, getDestinationCoverage } from "@/lib/logistics-estimate";
-import {
-  captureAffiliatePidAttribution,
-  getAffiliatePidForCheckout,
-  captureTrafficAttribution,
-  getTrafficSourceForCheckout,
-} from "@/lib/traffic-attribution";
-import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
+import { emptyCheckoutAddress } from "@/lib/checkout-address";
+import { CheckoutAddressForm } from "@/components/checkout/checkout-address-form";
+import { CheckoutShippingSection } from "@/components/checkout/checkout-shipping-section";
+import { PaymentBrandButtons } from "@/components/checkout/payment-brand-buttons";
+import { getTaxIdRequirement, quoteCheckoutShipping, type ShippingMethodId } from "@/lib/checkout-shipping-quote";
+import { getAffiliatePidForCheckout } from "@/lib/traffic-attribution";
 
 export default function CheckoutPage() {
+  const [mounted, setMounted] = useState(false);
   const { items, itemCount } = useCart();
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [billing, setBilling] = useState(emptyCheckoutAddress);
   const [shipping, setShipping] = useState(emptyCheckoutAddress);
   const [shipSameAsBilling, setShipSameAsBilling] = useState(true);
-  const [orderNotes, setOrderNotes] = useState("");
-  const [shippingMethod, setShippingMethod] =
-    useState<ShippingMethodId>("cainiao");
-  const [couponInput, setCouponInput] = useState("");
+  const [shippingMethod, setShippingMethod] = useState<ShippingMethodId>("cainiao");
+  const [loading, setLoading] = useState<"stripe" | "paypal" | null>(null);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponError, setCouponError] = useState<string | null>(null);
   const [appliedCoupon, setAppliedCoupon] = useState<{
     code: string;
-    discountCents: number;
+    discountAmount: number;
   } | null>(null);
-  const [couponError, setCouponError] = useState<string | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
-  const [loading, setLoading] = useState<"stripe" | "paypal" | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [savedAddressesAvailable, setSavedAddressesAvailable] = useState(false);
-  const [prefillFromAccountNotice, setPrefillFromAccountNotice] = useState(false);
-  const billingRef = useRef(billing);
-  billingRef.current = billing;
 
-  useEffect(() => {
-    if (session?.user?.email) {
-      setEmail((e) => e || session.user?.email || "");
-    }
-  }, [session?.user?.email]);
+  const totalUnits = useMemo(() => items.reduce((sum, line) => sum + line.qty, 0), [items]);
 
-  const applyAccountAddresses = useCallback(
-    async (force: boolean) => {
-      if (status !== "authenticated" || !session?.user?.id) return false;
-      const res = await fetch("/api/account/addresses", { cache: "no-store" });
-      if (!res.ok) return false;
-      const data = (await res.json()) as {
-        billing: UserAddress | null;
-        shipping: UserAddress | null;
-        profile: { firstName: string | null; lastName: string | null };
-      };
-      const billForm = checkoutFormFromSavedAddress(data.billing, data.profile);
-      const shipForm = checkoutFormFromSavedAddress(data.shipping, data.profile);
-      const hasSaved = Boolean(billForm ?? shipForm);
-      setSavedAddressesAvailable(hasSaved);
-      if (!billForm && !shipForm) return false;
-      if (!force && billingRef.current.line1.trim()) return false;
-
-      if (
-        billForm &&
-        shipForm &&
-        !checkoutAddressPhysicalEqual(billForm, shipForm)
-      ) {
-        setShipSameAsBilling(false);
-        setBilling(billForm);
-        setShipping(shipForm);
-      } else {
-        setShipSameAsBilling(true);
-        setBilling(billForm ?? shipForm!);
-      }
-      setPrefillFromAccountNotice(true);
-      return true;
-    },
-    [status, session?.user?.id],
-  );
-
-  useEffect(() => {
-    if (status !== "authenticated" || !session?.user?.id) {
-      setSavedAddressesAvailable(false);
-      setPrefillFromAccountNotice(false);
-      return;
-    }
-    void applyAccountAddresses(false);
-  }, [status, session?.user?.id, applyAccountAddresses]);
-
-  useEffect(() => {
-    captureTrafficAttribution();
-    captureAffiliatePidAttribution();
-  }, []);
-
-  useEffect(() => {
-    if (shipSameAsBilling) {
-      setShipping(billing);
-    }
-  }, [billing, shipSameAsBilling]);
-
-  const subtotal = items.reduce((sum, line) => {
-    const p = getProductBySlug(line.slug);
-    const unitPrice = p?.price ?? (typeof line.unitPrice === "number" ? line.unitPrice : 0);
-    return sum + unitPrice * line.qty;
-  }, 0);
-  const shipCountryLabel = useMemo(() => {
-    const src = shipSameAsBilling ? billing.country : shipping.country;
-    return (src || "").trim();
-  }, [shipSameAsBilling, billing.country, shipping.country]);
-
-  const shipPostalCode = useMemo(() => {
-    const src = shipSameAsBilling ? billing : shipping;
-    return (src.postalCode || "").trim();
-  }, [shipSameAsBilling, billing, shipping]);
-
-  const shipState = useMemo(() => {
-    const src = shipSameAsBilling ? billing : shipping;
-    return (src.state || "").trim();
-  }, [shipSameAsBilling, billing, shipping]);
-
-  const totalUnits = useMemo(
-    () => items.reduce((s, line) => s + line.qty, 0),
+  const subtotal = useMemo(
+    () =>
+      items.reduce((sum, line) => {
+        const product = getProductBySlug(line.slug);
+        const unitPrice = product?.price ?? line.unitPrice ?? 0;
+        return sum + unitPrice * line.qty;
+      }, 0),
     [items],
   );
 
-  useEffect(() => {
-    if (isCheckoutCountryChina(shipCountryLabel)) {
-      setShippingMethod((prev) =>
-        prev === "china_zto" || prev === "china_sf" ? prev : "china_zto",
-      );
-      return;
-    }
-    const cov = getDestinationCoverage(shipCountryLabel, {
-      state: shipState,
-    });
-    setShippingMethod((prev) => {
-      if (prev === "china_zto" || prev === "china_sf") {
-        if (cov.cainiao) return "cainiao";
-        if (cov.yanwen) return "yanwen";
-        return "cainiao";
-      }
-      if (!cov.cainiao && !cov.yanwen) return "cainiao";
-      if (prev === "cainiao" && !cov.cainiao) {
-        if (cov.yanwen) return "yanwen";
-        return "cainiao";
-      }
-      if (prev === "yanwen" && !cov.yanwen) {
-        if (cov.cainiao) return "cainiao";
-        return "yanwen";
-      }
-      return prev;
-    });
-  }, [shipCountryLabel, shipState]);
-
+  const shipAddress = shipSameAsBilling ? billing : shipping;
   const shippingQuote = useMemo(
     () =>
       quoteCheckoutShipping({
-        countryLabel: shipCountryLabel,
+        countryLabel: shipAddress.country,
         totalUnits,
         method: shippingMethod,
-        state: shipState,
-        postalCode: shipPostalCode,
+        state: shipAddress.state,
+        postalCode: shipAddress.postalCode,
+        weightKg: totalUnits * 0.2,
       }),
-    [shipCountryLabel, totalUnits, shippingMethod, shipPostalCode, shipState],
-  );
-  const shippingEst = useMemo(
-    () =>
-      estimateLogistics({
-        countryLabel: shipCountryLabel,
-        totalUnits,
-        state: shipState,
-        postalCode: shipPostalCode,
-      }),
-    [shipCountryLabel, totalUnits, shipState, shipPostalCode],
-  );
-  const shippingUsd =
-    shippingQuote.ok && shippingQuote.shippingUsdCents > 0
-      ? shippingQuote.shippingUsdCents / 100
-      : 0;
-  const totalDue = subtotal + shippingUsd;
-  const totalDueCents = Math.max(0, Math.round(totalDue * 100));
-  const appliedDiscountUsd = (appliedCoupon?.discountCents ?? 0) / 100;
-  const discountedTotalDue = Math.max(0, totalDue - appliedDiscountUsd);
-
-  const resolvedEmail = useMemo(() => {
-    return (email.trim() || session?.user?.email || "").trim();
-  }, [email, session?.user?.email]);
-
-  const billingOk = isCheckoutAddressComplete(billing);
-  const shippingOk =
-    shipSameAsBilling || isCheckoutAddressComplete(shipping);
-
-  const billingConsistency = useMemo(
-    () => validateCheckoutAddressForm(billing),
-    [billing],
-  );
-  const shippingConsistency = useMemo(
-    () => validateCheckoutAddressForm(shipping),
-    [shipping],
+    [shipAddress.country, shipAddress.postalCode, shipAddress.state, shippingMethod, totalUnits],
   );
 
-  const canCheckout =
-    itemCount > 0 &&
-    resolvedEmail.length > 0 &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(resolvedEmail) &&
-    billingOk &&
-    shippingOk &&
-    billingConsistency.ok &&
-    (shipSameAsBilling || shippingConsistency.ok) &&
-    shippingQuote.ok;
+  const shippingPrice = mounted && shippingQuote.ok ? shippingQuote.shippingUsdCents / 100 : 0;
+  const couponDiscount = appliedCoupon ? appliedCoupon.discountAmount : 0;
+  const total = Math.max(0, subtotal + shippingPrice - couponDiscount);
 
-  useEffect(() => {
-    if (!canCheckout || itemCount <= 0) return;
-    trackVisitorEvent(
-      {
-        type: "checkout_start",
-        source: getTrafficSourceForCheckout(),
-        meta: { itemCount },
-      },
-      { dedupeKey: "checkout_start" },
-    );
-  }, [canCheckout, itemCount]);
-
-  const validateCouponCode = useCallback(
-    async (rawCode: string) => {
-      const code = rawCode.trim().toUpperCase();
-      if (!code) {
-        setAppliedCoupon(null);
-        setCouponError("Enter a coupon code.");
-        return;
-      }
-      setCouponLoading(true);
-      setCouponError(null);
-      try {
-        const res = await fetch("/api/checkout/coupon", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code, totalCents: totalDueCents }),
-        });
-        const data = (await res.json()) as {
-          ok?: boolean;
-          code?: string;
-          discountCents?: number;
-          error?: string;
-        };
-        if (!res.ok || !data.ok || !data.code || typeof data.discountCents !== "number") {
-          throw new Error(data.error || "Coupon is invalid.");
-        }
-        setAppliedCoupon({ code: data.code, discountCents: data.discountCents });
-        setCouponInput(data.code);
-      } catch (e) {
-        setAppliedCoupon(null);
-        setCouponError(e instanceof Error ? e.message : "Coupon is invalid.");
-      } finally {
-        setCouponLoading(false);
-      }
-    },
-    [totalDueCents],
-  );
-
-  useEffect(() => {
-    const normalized = couponInput.trim().toUpperCase();
-    if (!normalized) {
-      setAppliedCoupon(null);
-      setCouponError(null);
-      return;
-    }
-    const timer = window.setTimeout(() => {
-      void validateCouponCode(normalized);
-    }, 450);
-    return () => window.clearTimeout(timer);
-  }, [couponInput, totalDueCents, validateCouponCode]);
-
-  const payloadAddresses = () => {
-    const b = addressFormToRecord(billing);
-    const s = shipSameAsBilling ? b : addressFormToRecord(shipping);
-    return { billing: b, shipping: s };
-  };
-
-  async function payStripe() {
-    const billValidation = validateCheckoutAddressForm(billing);
-    const shipValidation = shipSameAsBilling
-      ? billValidation
-      : validateCheckoutAddressForm(shipping);
-    if (!billValidation.ok) {
-      setError(`Billing address: ${billValidation.error}`);
-      return;
-    }
-    if (!shipValidation.ok) {
-      setError(`Shipping address: ${shipValidation.error}`);
-      return;
-    }
-    if (!shippingQuote.ok) {
-      setError(shippingQuote.error);
-      return;
-    }
-    setError(null);
+  async function beginStripeCheckout() {
     setLoading("stripe");
     try {
       const res = await fetch("/api/checkout/stripe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items,
-          email: resolvedEmail,
-          trafficSource: getTrafficSourceForCheckout(),
-          affiliatePid: getAffiliatePidForCheckout(),
-          orderNotes: orderNotes.trim() || undefined,
-          shippingMethod,
-          couponCode: appliedCoupon?.code,
-          ...payloadAddresses(),
+          totalUsd: total,
+          returnUrl: `${window.location.origin}/account/orders`,
+          cancelUrl: window.location.href,
         }),
       });
-      const data = (await res.json()) as { url?: string; error?: string };
-      if (!res.ok) {
-        throw new Error(data.error || "Checkout failed");
-      }
-      if (data.url) {
-        window.location.href = data.url;
-        return;
-      }
-      throw new Error("No redirect URL");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Error");
+      const data = (await res.json()) as { ok?: boolean; url?: string; error?: string };
+      if (!res.ok || !data.ok || !data.url) throw new Error(data.error || "Stripe not configured");
+      window.location.href = data.url;
     } finally {
       setLoading(null);
     }
   }
 
-  async function payPaypal() {
-    const billValidation = validateCheckoutAddressForm(billing);
-    const shipValidation = shipSameAsBilling
-      ? billValidation
-      : validateCheckoutAddressForm(shipping);
-    if (!billValidation.ok) {
-      setError(`Billing address: ${billValidation.error}`);
-      return;
-    }
-    if (!shipValidation.ok) {
-      setError(`Shipping address: ${shipValidation.error}`);
-      return;
-    }
-    if (!shippingQuote.ok) {
-      setError(shippingQuote.error);
-      return;
-    }
-    setError(null);
+  async function beginPayPalCheckout() {
     setLoading("paypal");
     try {
-      const res = await fetch("/api/checkout/paypal/create", {
+      const res = await fetch("/api/checkout/paypal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items,
-          email: resolvedEmail,
-          trafficSource: getTrafficSourceForCheckout(),
-          affiliatePid: getAffiliatePidForCheckout(),
-          orderNotes: orderNotes.trim() || undefined,
-          shippingMethod,
-          couponCode: appliedCoupon?.code,
-          ...payloadAddresses(),
+          action: "create",
+          totalUsd: total.toFixed(2),
+          returnUrl: `${window.location.origin}/account/orders`,
+          cancelUrl: window.location.href,
         }),
       });
-      const data = (await res.json()) as { url?: string; error?: string };
-      if (!res.ok) {
-        throw new Error(data.error || "PayPal failed");
-      }
-      if (data.url) {
-        window.location.href = data.url;
-        return;
-      }
-      throw new Error("No redirect URL");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Error");
+      const data = (await res.json()) as { ok?: boolean; approvalUrl?: string; error?: string };
+      if (!res.ok || !data.ok || !data.approvalUrl) throw new Error(data.error || "PayPal checkout failed");
+      window.location.href = data.approvalUrl;
     } finally {
       setLoading(null);
     }
   }
 
-  if (status === "loading") {
-    return (
-      <div className="mx-auto max-w-lg px-4 py-20 text-center text-muted">
-        Loading…
-      </div>
-    );
+  async function handleApplyCoupon() {
+    const code = couponCode.trim().toUpperCase();
+    if (!code) {
+      setCouponError("请输入优惠券码");
+      return;
+    }
+    setCouponError(null);
+    setCouponLoading(true);
+    try {
+      const res = await fetch("/api/checkout/coupon", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, affiliatePid: getAffiliatePidForCheckout() }),
+      });
+      const data = (await res.json()) as
+        | { ok: true; coupon: { code: string; discountAmount: number; currency: string } }
+        | { ok: false; error: string };
+      if (!res.ok || !data.ok) {
+        setAppliedCoupon(null);
+        setCouponError(!data.ok ? data.error : "Coupon validation failed.");
+        return;
+      }
+      setAppliedCoupon({ code: data.coupon.code, discountAmount: data.coupon.discountAmount / 100 });
+    } catch {
+      setCouponError("Unable to validate coupon.");
+    } finally {
+      setCouponLoading(false);
+    }
   }
 
-  if (items.length === 0) {
+  if (!mounted) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-20 text-center">
-        <p className="text-muted">Your bag is empty.</p>
-        <Link
-          href="/shop"
-          className="mt-4 inline-block text-sm font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4 hover:underline"
-        >
-          Shop catalog
-        </Link>
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="rounded-2xl border border-line bg-white/60 p-6 text-sm text-muted">Loading checkout…</div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto min-w-0 max-w-3xl px-4 py-12 sm:px-6 lg:py-16">
-      <h1 className="font-serif text-3xl tracking-tight">Checkout</h1>
-      <p className="mt-2 text-sm text-muted">
-        Subtotal{" "}
-        <span className="font-semibold tabular-nums text-ink">
-          {formatPrice(subtotal)}
-        </span>
-        {shippingQuote.ok && shippingUsd > 0 ? (
-          <>
-            {" "}
-            · Shipping{" "}
-            <span className="font-semibold tabular-nums text-ink">
-              {formatPrice(shippingUsd)}
-            </span>
-          </>
-        ) : shippingQuote.ok ? (
-          <>
-            {" "}
-            ·{" "}
-            {isCheckoutCountryChina(shipCountryLabel) ? (
-              <span>China domestic (free shipping)</span>
-            ) : (
-              <span>Shipping included (no top-up)</span>
-            )}
-          </>
-        ) : null}
-      </p>
-      <p className="mt-1 text-base font-semibold tabular-nums text-ink">
-        Total due {formatPrice(discountedTotalDue)}
-      </p>
-      {appliedCoupon && appliedDiscountUsd > 0 ? (
-        <p className="mt-1 text-sm text-emerald-800">
-          Coupon {appliedCoupon.code} applied: -{formatPrice(appliedDiscountUsd)}
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mb-8">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">Checkout</p>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-ink">Complete your order</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
+          Fresh rebuild of checkout. The page is intentionally minimal so you can refine the UI step by step.
         </p>
-      ) : null}
+      </div>
 
-      <div className="mt-8 space-y-4">
-        <div>
-          <p className="text-xs text-muted">
-            Guest checkout available — no account required. Please provide full
-            shipping address and phone for delivery.
-          </p>
-          <label
-            htmlFor="checkout-email"
-            className="mt-3 block text-[10px] font-semibold uppercase tracking-[0.2em] text-muted"
-          >
-            Email for receipt
-            <span className="text-rose-600" aria-hidden="true">
-              {" "}
-              *
-            </span>
-          </label>
-          <input
-            id="checkout-email"
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={session?.user?.email || "you@example.com"}
-            className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-          />
-          {session?.user?.email && (
-            <p className="mt-1 text-xs text-muted">
-              Signed in as {session.user.email}. You can override the email
-              above.
-            </p>
-          )}
-        </div>
-        <div>
-          <label
-            htmlFor="checkout-coupon"
-            className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted"
-          >
-            Coupon code
-          </label>
-          <div className="mt-2 flex gap-2">
+      <div className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr] lg:items-start">
+        <div className="space-y-6">
+          <div className="rounded-2xl border border-line bg-white/60 p-5">
+            <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Coupon code</h2>
+            <div className="mt-4 flex gap-3">
+              <input
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                placeholder="Enter coupon code"
+                className="min-w-0 flex-1 rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+              />
+              <button
+                type="button"
+                onClick={() => void handleApplyCoupon()}
+                disabled={couponLoading}
+                className="rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-white disabled:opacity-60"
+              >
+                {couponLoading ? "Checking…" : "Apply"}
+              </button>
+            </div>
+            {couponError ? <p className="mt-2 text-sm text-rose-600">{couponError}</p> : null}
+            {appliedCoupon ? (
+              <div className="mt-2 flex items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+                <span>Applied coupon: {appliedCoupon.code}</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAppliedCoupon(null);
+                    setCouponCode("");
+                    setCouponError(null);
+                  }}
+                  className="font-medium underline-offset-2 hover:underline"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : null}
+          </div>
+
+          <CheckoutAddressForm title="Billing address" value={billing} onChange={setBilling} idPrefix="bill" />
+
+          <div className="flex items-start gap-3 rounded-xl border border-line bg-white/40 px-4 py-3">
             <input
-              id="checkout-coupon"
-              type="text"
-              value={couponInput}
-              onChange={(e) => {
-                setCouponInput(e.target.value);
-                setCouponError(null);
-              }}
-              placeholder="Enter coupon"
-              className="w-full rounded-xl border border-line bg-paper px-4 py-3 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+              id="ship-same"
+              type="checkbox"
+              checked={shipSameAsBilling}
+              onChange={(e) => setShipSameAsBilling(e.target.checked)}
+              className="mt-1 h-4 w-4 rounded border-line text-ink"
             />
-            <button
-              type="button"
-              onClick={() => void validateCouponCode(couponInput)}
-              disabled={couponLoading || totalDueCents <= 0}
-              className="rounded-xl border border-line bg-white/70 px-4 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {couponLoading ? "Applying…" : "Apply"}
-            </button>
-          </div>
-          {couponError ? (
-            <p className="mt-1 text-xs text-rose-700">{couponError}</p>
-          ) : null}
-        </div>
-      </div>
-
-      <div className="mt-10 space-y-6">
-
-        {session?.user?.id && savedAddressesAvailable ? (
-          <div className="rounded-xl border border-line bg-white/50 px-4 py-3 text-sm text-ink/90">
-            <p className="text-muted">
-              {prefillFromAccountNotice
-                ? "Addresses below are filled from My Account. You can edit them before paying."
-                : "You have saved addresses in My Account. Use the button to load them, or keep what you’ve typed."}
-            </p>
-            <button
-              type="button"
-              className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4 hover:underline"
-              onClick={() => void applyAccountAddresses(true)}
-            >
-              Use My Account addresses
-            </button>
-            <span className="mx-2 text-muted">·</span>
-            <Link
-              href="/account/addresses"
-              className="text-xs font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4 hover:underline"
-            >
-              Edit saved addresses
-            </Link>
-          </div>
-        ) : null}
-
-        <CheckoutAddressFields
-          idPrefix="bill"
-          title="Billing address"
-          value={billing}
-          onChange={setBilling}
-        />
-
-        <div className="flex items-start gap-3 rounded-xl border border-line bg-white/40 px-4 py-3">
-          <input
-            id="ship-same"
-            type="checkbox"
-            checked={shipSameAsBilling}
-            onChange={(e) => {
-              const on = e.target.checked;
-              setShipSameAsBilling(on);
-              if (on) setShipping(billing);
-            }}
-            className="mt-1 h-4 w-4 rounded border-line text-ink"
-          />
-          <label htmlFor="ship-same" className="text-sm leading-snug text-ink/90">
-            <span className="font-medium">Ship to the same address</span>
-            <span className="mt-0.5 block text-xs text-muted">
-              Uncheck to enter a different delivery address (e.g. gift or
-              workplace).
-            </span>
-          </label>
-        </div>
-
-        {!shipSameAsBilling ? (
-          <CheckoutAddressFields
-            idPrefix="ship"
-            title="Shipping address"
-            value={shipping}
-            onChange={setShipping}
-          />
-        ) : null}
-
-        <CheckoutShippingSection
-          countryLabel={shipCountryLabel}
-          shippingState={shipState}
-          totalUnits={totalUnits}
-          method={shippingMethod}
-          onMethodChange={setShippingMethod}
-          shippingPostalCode={shipPostalCode}
-        />
-
-        {(() => {
-          const shipIso = shipCountryLabel ? shipCountryLabel.trim().toUpperCase() : "";
-          const req = getTaxIdRequirement(shipIso || null);
-          if (!req) return null;
-          return (
-            <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-              <span className="font-medium">{req.label}</span>
-              <span className="block mt-1">{req.description}</span>
-            </p>
-          );
-        })()}
-
-        {shipCountryLabel.trim().toUpperCase() === "RO" ? (
-          <div className="rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-xs text-sky-950">
-            <p className="font-semibold uppercase tracking-[0.12em]">Romania shipping debug</p>
-            <p className="mt-1">Method: {shippingMethod}</p>
-            <p>Quote: {shippingQuote.ok ? `${shippingQuote.lineLabel} — ¥${shippingQuote.shippingCny.toFixed(2)}` : shippingQuote.error}</p>
-            <p>Cainiao top-up: ¥{shippingEst.cainiaoTopUpCny.toFixed(2)}</p>
-            <p>Yanwen top-up: ¥{shippingEst.yanwenTopUpCny.toFixed(2)}</p>
-            <p>Cainiao total: ¥{Math.max(0, shippingEst.cainiaoTopUpCny + 50).toFixed(2)}</p>
-            <p>Yanwen total: ¥{Math.max(0, shippingEst.yanwenTopUpCny + 50).toFixed(2)}</p>
-          </div>
-        ) : null}
-
-        <div className="rounded-2xl border border-line bg-white/60 p-5">
-          <label htmlFor="checkout-order-notes" className="block">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-              Order notes{" "}
-              <span className="font-normal normal-case tracking-normal text-muted">
-                (optional)
+            <label htmlFor="ship-same" className="text-sm leading-snug text-ink/90">
+              <span className="font-medium">Ship to the same address</span>
+              <span className="mt-0.5 block text-xs text-muted">
+                Uncheck to enter a different delivery address.
               </span>
-            </span>
-            <textarea
-              id="checkout-order-notes"
-              name="orderNotes"
-              rows={4}
-              maxLength={2000}
-              value={orderNotes}
-              onChange={(e) => setOrderNotes(e.target.value)}
-              placeholder="Notes about your order, e.g. special notes for delivery."
-              className="mt-2 w-full resize-y rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-            />
-          </label>
+            </label>
+          </div>
+
+          {!shipSameAsBilling ? (
+            <CheckoutAddressForm title="Shipping address" value={shipping} onChange={setShipping} idPrefix="ship" />
+          ) : null}
+
+          <CheckoutShippingSection
+            countryLabel={shipAddress.country}
+            shippingState={shipAddress.state}
+            totalUnits={totalUnits}
+            method={shippingMethod}
+            onMethodChange={setShippingMethod}
+            shippingPostalCode={shipAddress.postalCode}
+          />
         </div>
+
+        <aside className="sticky top-[88px] space-y-4 self-start rounded-2xl border border-line bg-white/60 p-5">
+          <h2 className="text-sm font-semibold text-ink">Order summary</h2>
+          <div className="space-y-2 text-sm">
+            {items.length === 0 ? (
+              <p className="text-muted">Your cart is empty.</p>
+            ) : (
+              items.map((line) => {
+                const product = getProductBySlug(line.slug);
+                const name = product?.name ?? line.slug;
+                const price = (product?.price ?? line.unitPrice ?? 0) * line.qty;
+                return (
+                  <div key={line.slug} className="flex items-center justify-between gap-3 text-ink/90">
+                    <span className="truncate">{name} × {line.qty}</span>
+                    <span className="shrink-0">${price.toFixed(2)}</span>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          <div className="border-t border-line pt-3 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-muted">Subtotal</span>
+              <span className="font-medium">${subtotal.toFixed(2)}</span>
+            </div>
+            <div className="mt-2 flex items-center justify-between">
+              <span className="text-muted">Shipping</span>
+              <span className="font-medium">{mounted && shippingQuote.ok ? `$${shippingPrice.toFixed(2)}` : "—"}</span>
+            </div>
+            {appliedCoupon ? (
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-muted">Coupon</span>
+                <span className="font-medium text-emerald-700">-${couponDiscount.toFixed(2)}</span>
+              </div>
+            ) : null}
+            <div className="mt-2 flex items-center justify-between border-t border-line pt-3 text-base">
+              <span className="font-semibold text-ink">Total</span>
+              <span className="font-semibold text-ink">${total.toFixed(2)}</span>
+            </div>
+          </div>
+
+          {getTaxIdRequirement(shipAddress.country ? shipAddress.country.trim().toUpperCase() : null) ? (
+            <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+              Tax ID may be required for this destination.
+            </p>
+          ) : null}
+
+          <div className="pt-1">
+            <PaymentBrandButtons
+              disabled={itemCount <= 0 || (mounted && !shippingQuote.ok)}
+              loading={loading}
+              onStripe={() => void beginStripeCheckout()}
+              onPayPal={() => void beginPayPalCheckout()}
+            />
+          </div>
+        </aside>
       </div>
-
-      {error && (
-        <p className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-          {error}
-        </p>
-      )}
-
-      {!billingConsistency.ok ? (
-        <p className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-          Billing address: {billingConsistency.error}
-        </p>
-      ) : null}
-      {!shipSameAsBilling && !shippingConsistency.ok ? (
-        <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-          Shipping address: {shippingConsistency.error}
-        </p>
-      ) : null}
-
-      <div className="mt-8">
-        <PaymentBrandButtons
-          disabled={!canCheckout}
-          loading={loading}
-          onStripe={payStripe}
-          onPayPal={payPaypal}
-        />
-      </div>
-
-      <p className="mt-8 text-center text-xs text-muted">
-        <button
-          type="button"
-          onClick={() => router.push("/cart")}
-          className="underline-offset-4 hover:underline"
-        >
-          Back to bag
-        </button>
-      </p>
     </div>
   );
 }

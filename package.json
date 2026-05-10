@@ -21,7 +21,8 @@
     "db:cleanup-abandoned": "npx tsx scripts/cleanup-abandoned-orders.ts",
     "db:cleanup-affiliate-payout-whatsapp": "npx tsx scripts/cleanup-affiliate-payout-whatsapp.ts",
     "db:seed-affiliate-settlement-test-orders": "npx tsx scripts/seed-affiliate-settlement-test-orders.ts",
-    "db:fix-affiliate-growth-and-commission": "npx tsx scripts/fix-affiliate-growth-and-commission.ts"
+    "db:fix-affiliate-growth-and-commission": "npx tsx scripts/fix-affiliate-growth-and-commission.ts",
+    "geo:generate": "npx tsx scripts/generate-geo-data.ts"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
@@ -41,6 +42,7 @@
     "postcode-validator": "^3.10.15",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-hook-form": "^7.75.0",
     "stripe": "^22.0.2",
     "zipcodes": "^8.0.0"
   },

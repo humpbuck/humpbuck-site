@@ -1,21 +1,54 @@
 "use client";
 
-import Image from "next/image";
-
-/**
- * Checkout payment actions styled like common WooCommerce / Stripe default patterns.
- * Brand marks are verified SVG assets in /public/checkout (Simple Icons–derived paths).
- */
-
-function OrDivider() {
+function StripeLogo() {
   return (
-    <div className="flex items-center gap-3 py-1" aria-hidden="true">
-      <span className="h-px flex-1 bg-line" />
-      <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted">
-        or
+    <span className="inline-flex items-center justify-center gap-3 whitespace-nowrap">
+      <span className="text-[32px] font-black leading-none tracking-[-0.12em] text-white">S</span>
+      <span className="inline-flex items-baseline gap-1.5 text-white">
+        <span className="text-[18px] font-semibold tracking-[-0.04em]">Stripe</span>
+        <span className="text-[14px] font-normal tracking-[-0.01em] text-white/86">- Card / Apple Pay / Google Pay</span>
       </span>
-      <span className="h-px flex-1 bg-line" />
-    </div>
+    </span>
+  );
+}
+
+function PayPalLogo() {
+  return (
+    <span className="inline-flex items-center gap-3">
+      <span className="relative inline-flex h-8 w-9 items-center justify-center">
+        <span className="absolute left-1 top-0 text-[31px] font-black italic leading-none tracking-[-0.16em] text-[#003087]">P</span>
+        <span className="absolute left-3 top-0 text-[31px] font-black italic leading-none tracking-[-0.16em] text-[#009CDE]">P</span>
+      </span>
+      <span className="text-[20px] font-semibold tracking-[-0.06em] text-[#003087]">PayPal</span>
+    </span>
+  );
+}
+
+function ButtonShell({
+  children,
+  tone,
+  disabled,
+  onClick,
+}: {
+  children: React.ReactNode;
+  tone: "stripe" | "paypal";
+  disabled: boolean;
+  onClick: () => void;
+}) {
+  const base =
+    "group relative flex h-[74px] w-full items-center justify-center overflow-hidden rounded-[20px] border px-5 text-center transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-55";
+  const toneClasses =
+    tone === "stripe"
+      ? "border-[#5f58ef] bg-[#635BFF] text-white shadow-[0_1px_0_rgba(255,255,255,0.18),0_10px_24px_rgba(99,91,255,0.18)] hover:bg-[#5750f3] hover:shadow-[0_1px_0_rgba(255,255,255,0.22),0_14px_30px_rgba(99,91,255,0.24)] focus-visible:ring-[#635BFF]/30"
+      : "border-[#edc95d] bg-[#FFC439] text-[#003087] shadow-[0_1px_0_rgba(255,255,255,0.22),0_10px_24px_rgba(0,48,135,0.08)] hover:bg-[#ffcf55] hover:shadow-[0_1px_0_rgba(255,255,255,0.26),0_14px_30px_rgba(0,48,135,0.12)] focus-visible:ring-[#FFC439]/30";
+
+  return (
+    <button type="button" disabled={disabled} onClick={onClick} className={`${base} ${toneClasses}`}>
+      <span className="absolute inset-0 bg-white/0 transition group-hover:bg-black/5" />
+      <span className="relative flex w-full items-center justify-center gap-3">
+        {children}
+      </span>
+    </button>
   );
 }
 
@@ -30,83 +63,18 @@ export function PaymentBrandButtons({
   onStripe: () => void;
   onPayPal: () => void;
 }) {
+  const stripeDisabled = disabled || loading !== null;
+  const paypalDisabled = disabled || loading !== null;
+
   return (
-    <div className="space-y-3">
-      <p className="text-center text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
-        Pay securely
-      </p>
+    <div className="space-y-3.5">
+      <ButtonShell tone="stripe" disabled={stripeDisabled} onClick={onStripe}>
+        <StripeLogo />
+      </ButtonShell>
 
-      <p className="rounded-lg border border-line/80 bg-white/60 px-3 py-2.5 text-center text-[13px] leading-relaxed text-ink/90">
-        {
-          "You'll complete payment on Stripe's or PayPal's secure page. We never store your full card number on this site."
-        }
-      </p>
-
-      <button
-        type="button"
-        aria-label="Pay with card via Stripe"
-        disabled={disabled || loading !== null}
-        onClick={onStripe}
-        className="flex w-full items-center justify-center gap-3 rounded-lg bg-[#635BFF] px-4 py-3.5 text-[15px] font-semibold text-white shadow-sm transition hover:bg-[#5851EA] disabled:opacity-50"
-      >
-        {loading === "stripe" ? (
-          <span>Redirecting…</span>
-        ) : (
-          <>
-            <Image
-              src="/checkout/stripe-mark.svg"
-              alt=""
-              width={28}
-              height={28}
-              className="h-7 w-7 shrink-0"
-              unoptimized
-            />
-            <span className="min-[380px]:hidden font-semibold">
-              Stripe · Card / Apple Pay / Google Pay
-            </span>
-            <span className="hidden min-[380px]:inline">
-              <span className="font-semibold">Stripe</span>
-              <span className="font-normal text-white/95">
-                {" "}
-                — Card / Apple Pay / Google Pay
-              </span>
-            </span>
-          </>
-        )}
-      </button>
-
-      <OrDivider />
-
-      <button
-        type="button"
-        aria-label="Pay with PayPal"
-        disabled={disabled || loading !== null}
-        onClick={onPayPal}
-        className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#F2C94C] bg-[#FFC439] px-4 py-3.5 text-[15px] font-bold text-[#003087] shadow-sm transition hover:brightness-[0.98] disabled:opacity-50"
-      >
-        {loading === "paypal" ? (
-          <span className="text-[#003087]">Redirecting…</span>
-        ) : (
-          <>
-            <Image
-              src="/checkout/paypal-mark.svg"
-              alt=""
-              width={28}
-              height={28}
-              className="h-8 w-8 shrink-0"
-              unoptimized
-            />
-            <span className="text-lg font-bold tracking-tight text-[#003087]">
-              PayPal
-            </span>
-          </>
-        )}
-      </button>
-
-      <p className="pt-2 text-center text-[11px] leading-relaxed text-muted">
-        Pay Later, Google Pay, Apple Pay, and Link often appear on the next
-        secure screen, depending on your account and region.
-      </p>
+      <ButtonShell tone="paypal" disabled={paypalDisabled} onClick={onPayPal}>
+        <PayPalLogo />
+      </ButtonShell>
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
   CNY_PER_USD,
   declaredGoodsCnyForShippingFees,
@@ -39,66 +41,14 @@ function money(v: number | null | undefined): string {
   return v == null ? "-" : `¥${v.toFixed(2)}`;
 }
 
-function totalLine(parts: Array<number | null | undefined>): string {
+function usd(v: number): string {
+  return `$${(v / 6.8).toFixed(2)}`;
+}
+
+function lineTotal(parts: Array<number | null | undefined>): number | null {
   const vals = parts.filter((v): v is number => typeof v === "number" && Number.isFinite(v));
-  if (vals.length === 0) return "-";
-  const sum = Math.round(vals.reduce((a, b) => a + b, 0) * 100) / 100;
-  return `¥${sum.toFixed(2)}`;
-}
-
-function unavailableLine(note: string): string {
-  return `- (${note})`;
-}
-
-function s5059AdminLine(est: {
-  s5059InternationalCny: number | null;
-  destinationFeesCnyCainiao: number;
-  chargeableKgCainiao: number | null;
-}): string {
-  const kg = est.chargeableKgCainiao;
-  if (kg != null && kg > CAINIAO_S5059_MAX_CHARGEABLE_KG + 1e-9) {
-    return unavailableLine(`S5059 > ${CAINIAO_S5059_MAX_CHARGEABLE_KG} kg`);
-  }
-  return totalLine([est.s5059InternationalCny, est.destinationFeesCnyCainiao]);
-}
-
-function ohAdminLine(est: {
-  ohInternationalCny: number | null;
-  destinationFeesCnyCainiao: number;
-}): string {
-  const base = est.ohInternationalCny;
-  if (base == null) return "-";
-  return totalLine([base, est.destinationFeesCnyCainiao]);
-}
-
-/** Yanwen lines show merchant reference costs; domestic leg is internal. */
-function yanwenAdminPrimaryLine(est: {
-  yanwen484InternationalCny: number | null;
-  yanwenWithDomesticCny: number | null;
-  destinationFeesCnyYanwen: number;
-}): string {
-  const intl = est.yanwen484InternationalCny;
-  const withDom = est.yanwenWithDomesticCny;
-  const dest = est.destinationFeesCnyYanwen;
-  if (intl == null || withDom == null) return "-";
-  const grand = Math.round((withDom + dest) * 100) / 100;
-  if (dest <= 0) return `¥${intl.toFixed(2)} + ¥5 = ¥${withDom.toFixed(2)}`;
-  return `¥${intl.toFixed(2)} + ¥5 + ¥${dest.toFixed(2)} = ¥${grand.toFixed(2)}`;
-}
-
-function yanwenAdminWeightNote(est: {
-  chargeableKgYanwen: number | null;
-  yanwenPreMinChargeKg: number | null;
-  yanwenMinChargeFloorKg: number | null;
-}): string | null {
-  const kg = est.chargeableKgYanwen;
-  if (kg == null) return null;
-  const pre = est.yanwenPreMinChargeKg;
-  const floor = est.yanwenMinChargeFloorKg;
-  const preSeg = pre != null ? ` · 实重/泡重 ${pre.toFixed(3)} kg` : "";
-  const floorSeg =
-    floor != null ? ` · 最小计费 ≥ ${floor.toFixed(3)} kg` : "";
-  return `计费重 ${kg.toFixed(3)} kg${preSeg}${floorSeg}`;
+  if (!vals.length) return null;
+  return Math.round(vals.reduce((a, b) => a + b, 0) * 100) / 100;
 }
 
 export function LogisticsReferencePanel({
@@ -111,17 +61,14 @@ export function LogisticsReferencePanel({
   checkoutShippingMethod,
 }: {
   shippingCountryLabel: string;
-  /** State/province from order address (US: ISO 3166-2). */
   shippingState?: string | null;
   totalUnits: number;
   postalCode?: string | null;
-  /** Stored lane zone when present; postcode mapping fills gaps for AU/CA. */
   yanwenZone?: string | null;
-  /** Postcode-first lane 1–4 for AU/CA (matches pricing; same as address table). */
   effectiveLaneZone?: string | null;
-  /** From order `shippingJson.shippingMethod` — drives buyer top-up recalculation. */
   checkoutShippingMethod?: string | null;
 }) {
+  const [showDetails, setShowDetails] = useState(false);
   const est = estimateLogistics({
     countryLabel: shippingCountryLabel,
     totalUnits,
@@ -133,233 +80,149 @@ export function LogisticsReferencePanel({
 
   const methodRaw = String(checkoutShippingMethod ?? "").trim();
   const checkoutMethod = isShippingMethodId(methodRaw) ? methodRaw : null;
-  const checkoutQuote =
-    checkoutMethod && totalUnits > 0
-      ? quoteCheckoutShipping({
-          countryLabel: shippingCountryLabel,
-          totalUnits,
-          method: checkoutMethod,
-          state: shippingState ?? null,
-          postalCode,
-          yanwenLogisticsZone: yanwenZone ?? null,
-        })
-      : null;
+
+  const cainiaoQuote = quoteCheckoutShipping({
+    countryLabel: shippingCountryLabel,
+    totalUnits,
+    method: "cainiao",
+    state: shippingState ?? null,
+    postalCode,
+    weightKg: undefined,
+  });
+  const yanwenQuote = quoteCheckoutShipping({
+    countryLabel: shippingCountryLabel,
+    totalUnits,
+    method: "yanwen",
+    state: shippingState ?? null,
+    postalCode,
+    weightKg: undefined,
+  });
+
+  const cainiaoShipping = cainiaoQuote.ok ? cainiaoQuote.shippingCny : null;
+  const yanwenShipping = yanwenQuote.ok ? yanwenQuote.shippingCny : null;
+  const preferred =
+    cainiaoShipping != null && yanwenShipping != null
+      ? cainiaoShipping <= yanwenShipping
+        ? { label: "Cainiao", price: cainiaoShipping }
+        : { label: "Yanwen", price: yanwenShipping }
+      : cainiaoShipping != null
+        ? { label: "Cainiao", price: cainiaoShipping }
+        : yanwenShipping != null
+          ? { label: "Yanwen", price: yanwenShipping }
+          : null;
 
   const zoneSuffix =
     est.iso2 && yanwenCountryUsesZones(est.iso2) && effectiveLaneZone
-      ? ` · Lane zone ${effectiveLaneZone}`
+      ? ` · Lane ${effectiveLaneZone}`
       : null;
 
-  const yanwenWeightNote =
-    est.yanwen484InternationalCny != null && est.yanwenWithDomesticCny != null
-      ? yanwenAdminWeightNote(est)
-      : null;
+  const yanwenTotal = lineTotal([
+    est.yanwen484InternationalCny,
+    5,
+    est.destinationFeesCnyYanwen,
+  ]);
 
   return (
-    <aside className="min-w-0 w-full rounded-2xl border border-line bg-zinc-50/90 p-6 text-sm ring-1 ring-zinc-200/80">
-      <h3 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-600">
-        Logistics reference
-      </h3>
-      <p className="mt-2 text-[11px] leading-relaxed text-muted">
-        Cainiao International (S5059 / OH) and Yanwen Logistics (484) reference tables —
-        200g/unit, 11×10×9cm volumetric. Destination-side fees (处理费、VAT、通关、税费) are shown
-        itemized below for the merchant, while checkout shows only the final shipping total. Yanwen Logistics 484 is priced by{" "}
-        <span className="text-zinc-800">weight bands + min billable kg</span> (see billable kg
-        row). Cainiao S5059 only applies when billable weight ≤{" "}
-        {CAINIAO_S5059_MAX_CHARGEABLE_KG} kg; above that the panel shows - for S5059. Cainiao
-        rows: <span className="text-zinc-800">international + destination fees</span>. Yanwen row:{" "}
-        <span className="text-zinc-800">
-          international + ¥5 (domestic internal) + destination fees
-        </span>
-        . Checkout uses the same shipping math as here. Compare with your live carrier quote before shipping.
-        {est.iso2 === "AU" ? (
-          <>
-            {" "}
-            <span className="text-zinc-700">
-              For Australia, Cainiao S5059/OH use the same 1–4 zone as Yanwen (Cainiao
-              rate key{" "}
-              <code className="rounded bg-zinc-200/80 px-1">澳大利亚/N区</code>), derived
-              from the shipping postcode via the Yanwen workbook extract.
-            </span>
-          </>
+    <aside className="w-full rounded-2xl border border-line bg-zinc-50/95 p-5 text-sm ring-1 ring-zinc-200/80">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-600">
+            Logistics summary
+          </h3>
+          <p className="mt-1 text-[11px] text-muted">
+            Checkout recalculates live using the selected carrier.
+          </p>
+        </div>
+        {preferred ? (
+          <div className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-medium text-emerald-900 ring-1 ring-emerald-200">
+            Recommended: {preferred.label}
+          </div>
         ) : null}
-        {est.iso2 === "CA" ? (
-          <>
-            {" "}
-            <span className="text-zinc-700">
-              Canada Yanwen 484 uses zones 1–4 from the Canadian postal sheet in
-              the same extract; checkout matches that mapping.
-            </span>
-          </>
-        ) : null}
-        {est.cainiaoUsedIsoFallback ? (
-          <>
-            {" "}
-            <span className="text-amber-900">
-              Cainiao S5059/OH use ISO fallback rows where the official XLSX has
-              no destination line (e.g. HK) — see{" "}
-              <code className="rounded bg-zinc-200/80 px-1">cainiaoIsoFallback</code>{" "}
-              in logistics-rates.json.
-            </span>
-          </>
-        ) : null}
-      </p>
-      {est.iso2 &&
-      yanwenCountryUsesZones(est.iso2) &&
-      yanwenZone &&
-      effectiveLaneZone &&
-      /^[1-4]$/.test(yanwenZone.trim()) &&
-      yanwenZone.trim() !== effectiveLaneZone ? (
-        <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50/90 px-3 py-2 text-[11px] leading-relaxed text-amber-950">
-          Order file has{" "}
-          <code className="rounded bg-amber-100/90 px-1">logisticsZone</code>{" "}
-          {yanwenZone.trim()}, but the postcode maps to zone {effectiveLaneZone}.
-          All figures below use zone {effectiveLaneZone} (same as checkout).
+      </div>
+
+      <div className="mt-3 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-[13px]">
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-muted">Selected</span>
+          <span className="font-medium text-ink">{checkoutMethod ? checkoutMethodLabel(checkoutMethod) : "—"}</span>
+        </div>
+        <div className="mt-1 flex items-center justify-between gap-3">
+          <span className="text-muted">Best price</span>
+          <span className="font-medium text-ink">{preferred ? `${preferred.label} · ${usd(preferred.price)}` : "—"}</span>
+        </div>
+      </div>
+
+      {est.iso2 && yanwenCountryUsesZones(est.iso2) && yanwenZone && effectiveLaneZone && /^[1-4]$/.test(yanwenZone.trim()) && yanwenZone.trim() !== effectiveLaneZone ? (
+        <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] text-amber-950">
+          Order zone {yanwenZone.trim()} differs from postcode zone {effectiveLaneZone}. Using zone {effectiveLaneZone}.
         </p>
       ) : null}
-      <dl className="mt-4 space-y-2.5 text-[13px]">
-        <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
-          <dt className="shrink-0 text-muted">Destination</dt>
-          <dd className="min-w-0 max-w-full text-right font-medium text-ink">
+
+      <dl className="mt-4 space-y-3">
+        <div className="flex items-center justify-between gap-4 text-[13px]">
+          <dt className="text-muted">Destination</dt>
+          <dd className="font-medium text-ink">
             {est.iso2 ?? "—"}
-            {est.cainiaoZhCountry ? (
-              <span className="text-muted"> · {est.cainiaoZhCountry}</span>
-            ) : null}
-            {zoneSuffix ? (
-              <span className="text-muted">{zoneSuffix}</span>
-            ) : null}
+            {est.cainiaoZhCountry ? <span className="text-muted"> · {est.cainiaoZhCountry}</span> : null}
+            {zoneSuffix ? <span className="text-muted">{zoneSuffix}</span> : null}
           </dd>
         </div>
-        <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
-          <dt className="shrink-0 text-muted">Billable kg (Cn / Yw)</dt>
-          <dd className="tabular-nums text-right text-ink">
-            {est.chargeableKgCainiao != null
-              ? est.chargeableKgCainiao.toFixed(3)
-              : "—"}
+
+        <div className="flex items-center justify-between gap-4 text-[13px]">
+          <dt className="text-muted">Billable kg</dt>
+          <dd className="tabular-nums text-ink">
+            {est.chargeableKgCainiao != null ? est.chargeableKgCainiao.toFixed(3) : "—"}
             {" / "}
-            {est.chargeableKgYanwen != null
-              ? est.chargeableKgYanwen.toFixed(3)
-              : "—"}
+            {est.chargeableKgYanwen != null ? est.chargeableKgYanwen.toFixed(3) : "—"}
           </dd>
         </div>
-        <div className="border-t border-line/80 pt-2.5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-            International (CNY)
-          </p>
-          <ul className="mt-2 space-y-3 tabular-nums">
-            <li className="grid gap-2 border-b border-line/60 pb-3 last:border-0 sm:grid-cols-[minmax(9rem,13rem)_minmax(0,1fr)] sm:items-start">
-              <span className="font-medium text-ink">Cainiao International S5059</span>
-              <div className="min-w-0 space-y-1 text-right leading-snug sm:text-left">
-                <p>Base freight: {money(est.s5059InternationalCny)}</p>
-                <p>Destination fees: {money(est.destinationFeesCnyCainiao)}</p>
-                <p>Total: {totalLine([est.s5059InternationalCny, est.destinationFeesCnyCainiao])}</p>
-                {s5059AdminLine(est).startsWith("-") ? <p className="text-muted">Unavailable</p> : null}
+
+        <button
+          type="button"
+          onClick={() => setShowDetails((v) => !v)}
+          className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-left text-[13px] font-medium text-ink hover:bg-zinc-50"
+        >
+          {showDetails ? "Hide details" : "Show details"}
+        </button>
+
+        {showDetails ? (
+          <div className="grid gap-3 border-t border-line/80 pt-3 md:grid-cols-2">
+            <section className="rounded-xl bg-white p-3 ring-1 ring-zinc-200/80">
+              <div className="flex items-center justify-between gap-3">
+                <h4 className="font-medium text-ink">Cainiao OH</h4>
+                <span className="text-xs text-muted">{cainiaoQuote.ok ? cainiaoQuote.lineLabel : "Unavailable"}</span>
               </div>
-            </li>
-            <li className="grid gap-2 border-b border-line/60 pb-3 last:border-0 sm:grid-cols-[minmax(9rem,13rem)_minmax(0,1fr)] sm:items-start">
-              <span className="font-medium text-ink">Cainiao International OH</span>
-              <div className="min-w-0 space-y-1 text-right leading-snug sm:text-left">
-                <p>Base freight: {money(est.ohInternationalCny)}</p>
-                <p>Destination fees: {money(est.destinationFeesCnyCainiao)}</p>
-                <p>Total: {totalLine([est.ohInternationalCny, est.destinationFeesCnyCainiao])}</p>
+              <div className="mt-2 space-y-1 text-[13px] tabular-nums">
+                <div className="flex justify-between gap-3"><span className="text-muted">Base</span><span>{money(est.ohInternationalCny)}</span></div>
+                <div className="flex justify-between gap-3"><span className="text-muted">Fees</span><span>{money(est.destinationFeesCnyCainiao)}</span></div>
+                <div className="flex justify-between gap-3 border-t border-dashed border-zinc-200 pt-1 font-medium"><span>Total</span><span>{cainiaoShipping == null ? "-" : (cainiaoShipping <= 0 ? "Free Shipping" : usd(cainiaoShipping))}</span></div>
               </div>
-            </li>
-            <li className="grid gap-2 pb-1 sm:grid-cols-[minmax(9rem,13rem)_minmax(0,1fr)] sm:items-start">
-              <span className="font-medium text-ink">Yanwen Logistics 484</span>
-              <div className="min-w-0 space-y-1 text-right leading-snug sm:text-left">
-                <p>Base freight: {money(est.yanwen484InternationalCny)}</p>
-                <p>Domestic leg: ¥5.00</p>
-                <p>Destination fees: {money(est.destinationFeesCnyYanwen)}</p>
-                <p>Total: {totalLine([est.yanwen484InternationalCny, 5, est.destinationFeesCnyYanwen])}</p>
-                {yanwenWeightNote ? (
-                  <p className="text-[11px] text-muted">{yanwenWeightNote}</p>
-                ) : null}
+            </section>
+
+            <section className="rounded-xl bg-white p-3 ring-1 ring-zinc-200/80">
+              <div className="flex items-center justify-between gap-3">
+                <h4 className="font-medium text-ink">Yanwen 484</h4>
+                <span className="text-xs text-muted">{yanwenQuote.ok ? yanwenQuote.lineLabel : "Unavailable"}</span>
               </div>
-            </li>
-          </ul>
-          {est.destinationFeesLines.length > 0 ? (
-            <ul className="mt-3 space-y-1.5 text-[11px] leading-relaxed text-muted">
-              <li className="text-[10px] font-medium uppercase tracking-[0.12em] text-zinc-500">
-                目的地费用（分项）
-              </li>
-              {est.destinationFeesLines.map((line) => (
-                <li key={line} className="wrap-break-word pl-0">
-                  {line}
-                </li>
-              ))}
-            </ul>
-          ) : null}
+              <div className="mt-2 space-y-1 text-[13px] tabular-nums">
+                <div className="flex justify-between gap-3"><span className="text-muted">Base</span><span>{money(est.yanwen484InternationalCny)}</span></div>
+                <div className="flex justify-between gap-3"><span className="text-muted">Domestic</span><span>¥5.00</span></div>
+                <div className="flex justify-between gap-3"><span className="text-muted">Fees</span><span>{money(est.destinationFeesCnyYanwen)}</span></div>
+                <div className="flex justify-between gap-3 border-t border-dashed border-zinc-200 pt-1 font-medium"><span>Total</span><span>{yanwenTotal == null ? "-" : (yanwenTotal <= 0 ? "Free Shipping" : usd(yanwenTotal))}</span></div>
+              </div>
+            </section>
+          </div>
+        ) : null}
+
+        <div className="flex items-center justify-between gap-3 border-t border-line/80 pt-3">
+          <dt className="text-muted">Current checkout method</dt>
+          <dd className="text-right font-medium text-ink">{checkoutMethod ? checkoutMethodLabel(checkoutMethod) : "—"}</dd>
         </div>
-        <div className="flex justify-between gap-3 border-t border-line/80 pt-2.5 font-medium">
+
+        <div className="flex items-center justify-between gap-3 text-[13px]">
           <dt className="text-muted">Policy</dt>
-          <dd className="text-right text-ink">
-            {est.preferCainiao
-              ? "Prefer Cainiao (margin rule)"
-              : "Yanwen cheaper (beyond margin)"}
-          </dd>
-        </div>
-        <div className="flex justify-between gap-3">
-          <dt className="text-muted">Intl + dest vs ¥50 (policy pick)</dt>
-          <dd className="text-right">
-            {est.freeInternational ? (
-              <span className="text-emerald-800">No top-up (¥0)</span>
-            ) : (
-              <span className="text-amber-900">
-                Top-up ¥{est.buyerSupplementCny.toFixed(2)}
-              </span>
-            )}
-          </dd>
-        </div>
-        <div className="border-t border-line/80 pt-2.5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-            Checkout recalculation
-          </p>
-          <p className="mt-2 text-[11px] leading-relaxed text-muted">
-            Same rules as live checkout (
-            <code className="rounded bg-zinc-200/80 px-1">
-              quoteCheckoutShipping
-            </code>
-            , FX ≈{CNY_PER_USD} CNY/USD).
-          </p>
-          {!checkoutMethod ? (
-            <p className="mt-2 text-[11px] text-amber-900">
-              No{" "}
-              <code className="rounded bg-zinc-200/70 px-1">shippingMethod</code>{" "}
-              on file — legacy order; table rates above still apply.
-            </p>
-          ) : checkoutQuote?.ok ? (
-            <ul className="mt-2 space-y-1.5 tabular-nums text-[13px]">
-              <li className="flex justify-between gap-2">
-                <span className="text-muted">Buyer chose</span>
-                <span className="text-right font-medium text-ink">
-                  {checkoutMethodLabel(checkoutMethod)}
-                </span>
-              </li>
-              <li className="flex justify-between gap-2">
-                <span className="text-muted">{checkoutQuote.lineLabel}</span>
-                <span className="text-right">
-                  <span className="text-ink">
-                    ${(checkoutQuote.shippingUsdCents / 100).toFixed(2)}
-                  </span>
-                  <span className="text-muted">
-                    {" "}
-                    (≈¥{checkoutQuote.shippingCny.toFixed(2)})
-                  </span>
-                </span>
-              </li>
-            </ul>
-          ) : (
-            <p className="mt-2 text-[11px] text-amber-900" role="alert">
-              {checkoutQuote?.error ?? "Cannot quote."}
-            </p>
-          )}
+          <dd className="text-right">{est.freeInternational ? "No top-up" : `Top-up ¥${est.buyerSupplementCny.toFixed(2)}`}</dd>
         </div>
       </dl>
-      {est.summaryLines.length > 0 && (
-        <p className="mt-4 text-[11px] leading-relaxed text-muted">
-          {est.summaryLines.join(" ")}
-        </p>
-      )}
     </aside>
   );
 }
