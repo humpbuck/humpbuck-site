@@ -97,7 +97,7 @@ function addressRowsPlain(rows: BuyerAddrRow[], empty: string): string {
 
 export async function buildOrderCancelledEmailPayload(
   order: Order,
-  lines: ReturnType<typeof parseOrderItemsJson>,
+  lines: Awaited<ReturnType<typeof parseOrderItemsJson>>,
   audience: "buyer" | "merchant",
 ): Promise<{ subject: string; htmlContent: string; textContent: string }> {
   const oid = orderDisplayCode(order);
@@ -421,7 +421,7 @@ export async function sendOrderCancelledNotifications(orderId: string): Promise<
     };
   }
 
-  const lines = parseOrderItemsJson(order.itemsJson);
+  const lines = await parseOrderItemsJson(order.itemsJson);
   const merchantPayload = await buildOrderCancelledEmailPayload(
     order,
     lines,
