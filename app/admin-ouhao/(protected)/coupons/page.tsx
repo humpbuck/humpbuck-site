@@ -191,7 +191,7 @@ async function updateCouponAction(formData: FormData) {
     goCoupons({ error: msg.includes("Coupon_code_key") ? "Coupon code already exists." : msg });
   }
   revalidatePath(adminPath("/coupons"));
-  redirect(adminPath("/coupons"));
+  redirect(`${adminPath("/coupons")}?success=${encodeURIComponent("Coupon saved successfully")}`);
 }
 
 async function deleteCouponAction(formData: FormData) {
