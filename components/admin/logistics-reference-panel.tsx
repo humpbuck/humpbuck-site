@@ -110,10 +110,7 @@ export function LogisticsReferencePanel({
           ? { label: "Yanwen", price: yanwenShipping }
           : null;
 
-  const zoneSuffix =
-    est.iso2 && yanwenCountryUsesZones(est.iso2) && effectiveLaneZone
-      ? ` · Lane ${effectiveLaneZone}`
-      : null;
+  const zoneSuffix = effectiveLaneZone ? ` · Lane ${effectiveLaneZone}` : null;
 
   const yanwenTotal = lineTotal([
     est.yanwen484InternationalCny,
@@ -150,7 +147,7 @@ export function LogisticsReferencePanel({
         </div>
       </div>
 
-      {est.iso2 && yanwenCountryUsesZones(est.iso2) && yanwenZone && effectiveLaneZone && /^[1-4]$/.test(yanwenZone.trim()) && yanwenZone.trim() !== effectiveLaneZone ? (
+      {yanwenZone && effectiveLaneZone && /^[1-4]$/.test(yanwenZone.trim()) && yanwenZone.trim() !== effectiveLaneZone ? (
         <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] text-amber-950">
           Order zone {yanwenZone.trim()} differs from postcode zone {effectiveLaneZone}. Using zone {effectiveLaneZone}.
         </p>
