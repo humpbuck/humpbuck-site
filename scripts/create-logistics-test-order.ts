@@ -64,11 +64,12 @@ async function main() {
 
   const shipQ = primaryQuote.ok ? primaryQuote : fallbackQuote;
   const shippingMethod: ShippingMethodId = primaryQuote.ok ? requestedMethod : fallbackMethod;
+  const shippingUsdCents = shipQ.ok ? shipQ.shippingUsdCents : 0;
 
   const slug = "digitemp-2412m";
   const unitAmountCents = 999;
   const lineTotalCents = unitAmountCents * qty;
-  const orderTotalCents = lineTotalCents + shipQ.shippingUsdCents;
+  const orderTotalCents = lineTotalCents + shippingUsdCents;
 
   const billing = {
     firstName: "Test",
