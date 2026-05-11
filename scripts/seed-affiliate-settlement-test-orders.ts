@@ -78,15 +78,6 @@ async function main() {
         providerRef: `${providerPrefix}_${i + 1}`,
         totalCents: seed.totalCents,
         currency: "usd",
-        itemsJson: JSON.stringify([
-          {
-            slug: `settlement-test-${i + 1}`,
-            name: `Settlement Test Product ${i + 1}`,
-            qty: 1,
-            unitAmountCents: seed.totalCents,
-            lineTotalCents: seed.totalCents,
-          },
-        ]),
         billingJson: JSON.stringify({
           firstName: "Affiliate",
           lastName: "Tester",
@@ -113,6 +104,23 @@ async function main() {
         refundReason: seed.orderStatus === "refunded" ? "test_refund_seed" : null,
         refundAmountCents: seed.orderStatus === "refunded" ? seed.totalCents : null,
         createdAt,
+        items: {
+          create: [
+            {
+              productSlug: `settlement-test-${i + 1}`,
+              productName: `Settlement Test Product ${i + 1}`,
+              productImage: null,
+              variantId: null,
+              variantLabel: null,
+              variantImage: null,
+              qty: 1,
+              unitPriceCents: seed.totalCents,
+              lineTotalCents: seed.totalCents,
+              currency: "usd",
+              productSnapshotJson: null,
+            },
+          ],
+        },
       },
     });
     createdOrders += 1;
