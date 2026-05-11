@@ -119,7 +119,7 @@ async function main() {
             variantLabel: "au-z3-verify",
             variantImage: null,
             qty: QTY,
-            unitPriceCents,
+            unitPriceCents: unitAmountCents,
             lineTotalCents,
             currency: "usd",
             productSnapshotJson: null,
