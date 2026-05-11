@@ -11,7 +11,7 @@ import {
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { getProductBySlug } from "@/lib/catalog";
 import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
-import { parseOrderItemsJson } from "@/lib/parse-order-items";
+import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { publicSupportEmail } from "@/lib/support-contact";
 import { SITE_LOCALE } from "@/lib/site-locale";
 import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
@@ -423,7 +423,7 @@ export async function sendOrderCancelledNotifications(orderId: string): Promise<
     };
   }
 
-  const lines = await parseOrderItemsJson(order.itemsJson);
+  const lines = orderItemsFromOrder(order);
   const merchantPayload = await buildOrderCancelledEmailPayload(
     order,
     lines,
