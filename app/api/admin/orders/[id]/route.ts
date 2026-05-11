@@ -3,7 +3,7 @@ import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import { upsertAffiliateCommissionLedgerForOrder } from "@/lib/affiliate-commission-ledger";
 import { notifyCustomerOrderShipped } from "@/lib/customer-shipped-email";
 import { restoreInventory } from "@/lib/inventory";
-import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
+import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { syncAffiliateGrowthTierByOrderCount } from "@/lib/affiliate-tier-growth";
 import { prisma } from "@/lib/prisma";
 
@@ -102,10 +102,10 @@ export async function PATCH(
     paidStates.has(current.status)
   ) {
     try {
-      const lines = current.items.map((line) => ({
-        slug: line.productSlug,
+      const lines = orderItemsFromOrder(current).map((line) => ({
+        slug: line.slug,
         qty: line.qty,
-        variantId: line.variantId ?? undefined,
+        variantId: line.variantId,
       }));
       await restoreInventory(lines);
     } catch (e) {
