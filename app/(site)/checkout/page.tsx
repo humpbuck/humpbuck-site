@@ -33,6 +33,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState<"stripe" | "paypal" | null>(null);
   const [couponCode, setCouponCode] = useState("");
   const [couponError, setCouponError] = useState<string | null>(null);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
   const [appliedCoupon, setAppliedCoupon] = useState<{
     code: string;
     discountAmount: number;
@@ -66,7 +67,8 @@ export default function CheckoutPage() {
   );
 
   const addressReady = validateCheckoutAddressForm(shipAddress).ok;
-  const canPay = mounted && itemCount > 0 && addressReady && shippingQuote.ok;
+  const emailReady = customerEmail.trim().length > 0;
+  const canPay = mounted && itemCount > 0 && emailReady && addressReady && shippingQuote.ok;
   const shippingPrice = mounted && shippingQuote.ok ? shippingQuote.shippingUsdCents / 100 : 0;
   const couponDiscount = appliedCoupon ? appliedCoupon.discountAmount : 0;
   const total = Math.max(0, subtotal + shippingPrice - couponDiscount);
@@ -112,7 +114,7 @@ export default function CheckoutPage() {
 
   async function beginStripeCheckout() {
     if (!customerEmail.trim()) {
-      setCouponError("Customer email is required.");
+      setPaymentError("Customer email is required.");
       return;
     }
     setLoading("stripe");
@@ -138,7 +140,7 @@ export default function CheckoutPage() {
 
   async function beginPayPalCheckout() {
     if (!customerEmail.trim()) {
-      setCouponError("Customer email is required.");
+      setPaymentError("Customer email is required.");
       return;
     }
     setLoading("paypal");
@@ -164,10 +166,11 @@ export default function CheckoutPage() {
   async function handleApplyCoupon() {
     const code = couponCode.trim().toUpperCase();
     if (!code) {
-      setCouponError("请输入优惠券码");
+      setCouponError("Please enter a coupon code.");
       return;
     }
     setCouponError(null);
+    setPaymentError(null);
     setCouponLoading(true);
     try {
       const res = await fetch("/api/checkout/coupon", {
@@ -222,9 +225,6 @@ export default function CheckoutPage() {
                 placeholder="Enter email for order receipt"
                 className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
               />
-              {!customerEmail.trim() ? (
-                <p className="mt-2 text-xs text-rose-600">Email is required to place an order.</p>
-              ) : null}
             </div>
           </div>
 
@@ -247,6 +247,7 @@ export default function CheckoutPage() {
               </button>
             </div>
             {couponError ? <p className="mt-2 text-sm text-rose-600">{couponError}</p> : null}
+            {paymentError ? <p className="mt-2 text-sm text-rose-600">{paymentError}</p> : null}
             {appliedCoupon ? (
               <div className="mt-2 flex items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
                 <span>Applied coupon: {appliedCoupon.code}</span>
