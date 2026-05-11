@@ -205,7 +205,7 @@ function buildBillToPlainText(order: {
 }
 
 async function buildOrderLineItemRowsHtml(
-  lines: Awaited<ReturnType<typeof parseOrderItemsJson>>,
+  lines: Awaited<ReturnType<typeof orderItemsFromOrder>>,
 ): Promise<string> {
   return lines
     .map((l) => {
