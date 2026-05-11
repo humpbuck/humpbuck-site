@@ -8,9 +8,10 @@ export function orderStatusAllowsReview(status: string): boolean {
 }
 
 export function orderContainsProductSlug(
-  order: { items?: Array<{ productSlug: string }> },
+  order: { items?: Array<{ productSlug: string }>; itemsJson?: string | null } | null | undefined,
   productSlug: string,
 ): boolean {
-  const lines = orderItemsFromOrder(order);
+  if (!order) return false;
+  const lines = orderItemsFromOrder(order as { items?: Array<{ productSlug: string }>; itemsJson?: string | null });
   return lines.some((l) => l.slug === productSlug);
 }
