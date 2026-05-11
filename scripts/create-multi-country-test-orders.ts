@@ -343,7 +343,7 @@ async function main() {
               variantLabel: `${c.key}-test`,
               variantImage: null,
               qty: QTY,
-              unitPriceCents,
+              unitPriceCents: unitAmountCents,
               lineTotalCents,
               currency: "usd",
               productSnapshotJson: null,
