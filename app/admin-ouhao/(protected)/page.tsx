@@ -84,8 +84,12 @@ export default async function AdminHomePage() {
         merchantOrderCode: true,
       },
     }),
-    prisma.catalogProduct.count({ where: { status: "active" } }),
-    prisma.catalogProduct.count({ where: { status: "archived" } }),
+    prisma.catalogProduct
+      .count({ where: { status: "active" } })
+      .catch(() => 0),
+    prisma.catalogProduct
+      .count({ where: { status: "archived" } })
+      .catch(() => 0),
   ]);
 
   const numLink =
