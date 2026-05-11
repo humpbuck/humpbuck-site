@@ -102,7 +102,11 @@ export async function PATCH(
     paidStates.has(current.status)
   ) {
     try {
-      const lines = parseOrderItemsForInventory(current.itemsJson);
+      const lines = current.items.map((line) => ({
+        slug: line.productSlug,
+        qty: line.qty,
+        variantId: line.variantId ?? undefined,
+      }));
       await restoreInventory(lines);
     } catch (e) {
       console.error("[admin orders PATCH] inventory restore failed:", e);
