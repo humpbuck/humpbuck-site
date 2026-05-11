@@ -98,7 +98,7 @@ function addressRowsPlain(rows: BuyerAddrRow[], empty: string): string {
 
 export async function buildOrderCancelledEmailPayload(
   order: Order,
-  lines: Awaited<ReturnType<typeof parseOrderItemsJson>>,
+  lines: Awaited<ReturnType<typeof orderItemsFromOrder>>,
   audience: "buyer" | "merchant",
 ): Promise<{ subject: string; htmlContent: string; textContent: string }> {
   const oid = orderDisplayCode(order);
