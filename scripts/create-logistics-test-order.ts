@@ -114,7 +114,7 @@ async function main() {
             variantLabel: `${country}-${shippingMethod}`,
             variantImage: null,
             qty,
-            unitPriceCents,
+            unitPriceCents: unitAmountCents,
             lineTotalCents,
             currency: "usd",
             productSnapshotJson: null,
