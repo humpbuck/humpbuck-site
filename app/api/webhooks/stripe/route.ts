@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { notifyMerchantOrderPaid } from "@/lib/merchant-order-email";
 import { syncOrderAddressesToUserAccount } from "@/lib/sync-order-addresses-to-user";
 import { decrementInventory } from "@/lib/inventory";
-import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
+import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
 import { reverseAffiliateCommissionLedgerForOrder } from "@/lib/affiliate-commission-ledger";
@@ -51,17 +51,17 @@ export async function POST(req: Request) {
       if (count > 0) {
         const paidOrder = await prisma.order.findFirst({
           where: { id: orderId, provider: "stripe" },
-          select: {
-            affiliateId: true,
-            userId: true,
-            billingJson: true,
-            shippingJson: true,
-            itemsJson: true,
+          include: {
+            items: true,
           },
         });
         if (paidOrder) {
           try {
-            const lines = parseOrderItemsForInventory(paidOrder.itemsJson);
+            const lines = orderItemsFromOrder(paidOrder).map((line) => ({
+              slug: line.slug,
+              qty: line.qty,
+              variantId: line.variantId,
+            }));
             await decrementInventory(lines);
           } catch (e) {
             console.error("[stripe webhook] inventory decrement failed:", e);
