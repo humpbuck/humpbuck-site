@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getAllProducts, type Product, type SeriesSlug } from "@/lib/catalog";
+import type { Product, SeriesSlug } from "@/lib/catalog";
 
 type CatalogProductRow = {
   slug: string;
@@ -33,6 +33,11 @@ function parseArray<T>(raw: string | null | undefined, fallback: T[]): T[] {
 function asSeriesSlug(v: string): SeriesSlug {
   if (v === "digitemp" || v === "tonneau" || v === "rd-astral") return v;
   return "digitemp";
+}
+
+async function getStaticProductsFallback(): Promise<Product[]> {
+  const { getAllProducts } = await import("@/lib/catalog");
+  return getAllProducts();
 }
 
 function toProduct(row: CatalogProductRow): Product {
@@ -87,38 +92,28 @@ function toProduct(row: CatalogProductRow): Product {
 /**
  * Frontend catalog source:
  * - Prefer admin-managed DB products (CatalogProduct).
- * - Keep static catalog as fallback for slugs not yet migrated.
+ * - Keep static catalog only as a fallback when the DB query fails or is empty.
  */
 export async function getMergedCatalogProducts(): Promise<Product[]> {
-  if (process.env.NODE_ENV !== "production") {
-    return getAllProducts();
-  }
-
-  let dbRows: CatalogProductRow[] = [];
   try {
-    dbRows = await prisma.catalogProduct.findMany({
-      where: { status: "active" },
-      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-    });
+    const dbRows = await prisma.catalogProduct.findMany();
+    if (dbRows.length === 0) return getStaticProductsFallback();
+    return dbRows.map(toProduct);
   } catch (e) {
     console.error("[catalog-db] failed to load CatalogProduct, fallback to static:", e);
-    return getAllProducts();
+    return getStaticProductsFallback();
   }
-
-  if (dbRows.length === 0) return getAllProducts();
-
-  const dbProducts = dbRows.map(toProduct);
-  const bySlug = new Map<string, Product>();
-  for (const p of dbProducts) bySlug.set(p.slug, p);
-  for (const p of getAllProducts()) {
-    if (!bySlug.has(p.slug)) bySlug.set(p.slug, p);
-  }
-  return [...bySlug.values()];
 }
 
 export async function getMergedCatalogProductBySlug(
   slug: string,
 ): Promise<Product | undefined> {
-  const list = await getMergedCatalogProducts();
-  return list.find((p) => p.slug === slug);
+  try {
+    const row = await prisma.catalogProduct.findUnique({ where: { slug } });
+    if (row) return toProduct(row);
+  } catch (e) {
+    console.error("[catalog-db] failed to load CatalogProduct by slug, fallback to static:", e);
+  }
+  const fallback = await getStaticProductsFallback();
+  return fallback.find((p) => p.slug === slug);
 }

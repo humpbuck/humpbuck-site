@@ -1,12 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Check } from "lucide-react";
-import {
-  formatPrice,
-  getAllProducts,
-  getProductBySlug as getStaticProductBySlug,
-  getSeriesBySlug,
-} from "@/lib/catalog";
+import { formatPrice, getSeriesBySlug } from "@/lib/catalog";
 import {
   getMergedCatalogProductBySlug,
   getMergedCatalogProducts,
@@ -27,7 +22,8 @@ import { TrackProductView } from "@/components/analytics/track-product-view";
 export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
-  return getAllProducts().map((p) => ({ slug: p.slug }));
+  const products = await getMergedCatalogProducts();
+  return products.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -101,17 +97,9 @@ export default async function ProductPage({
   const gallerySlides =
     pdpR2?.gallery && pdpR2.gallery.length > 0
       ? pdpR2.gallery
-      : product.galleryImages ??
-        staticProduct?.galleryImages ??
-        product.images ??
-        staticProduct?.images ??
-        (product.image
-          ? [product.image]
-          : staticProduct?.image
-            ? [staticProduct.image]
-            : []);
+      : product.galleryImages ?? product.images ?? (product.image ? [product.image] : []);
 
-  const staticVariants = product.variantOptions ?? staticProduct?.variantOptions ?? [];
+  const staticVariants = product.variantOptions ?? [];
   const discoveredVariants =
     pdpR2?.variants && pdpR2.variants.length > 0 ? pdpR2.variants : null;
   const variantOptions =
@@ -132,12 +120,11 @@ export default async function ProductPage({
   const detailImages =
     pdpR2?.detail && pdpR2.detail.length > 0
       ? pdpR2.detail
-      : (product.detailImages ?? staticProduct?.detailImages ?? []);
+      : product.detailImages ?? [];
 
   const firstSlide =
     gallerySlides[0] ??
     (product.galleryImages?.[0] ??
-      staticProduct?.galleryImages?.[0] ??
       product.images[0] ??
       staticProduct?.images[0] ??
       product.promoVideo?.poster ??

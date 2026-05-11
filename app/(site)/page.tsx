@@ -5,13 +5,8 @@ import { ArrowRight, Factory, Globe2, ShieldCheck, Sparkles } from "lucide-react
 import { HeroSpaceVideo } from "@/components/site/HeroSpaceVideo";
 import { NewsletterSubscribe } from "@/components/site/NewsletterSubscribe";
 import { ProductCard } from "@/components/site/ProductCard";
-import {
-  formatPrice,
-  getHomeFeaturedProducts,
-  getProductBySlug,
-  getProductsBySeries,
-  seriesList,
-} from "@/lib/catalog";
+import { formatPrice, seriesList } from "@/lib/catalog";
+import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { R2 } from "@/lib/r2";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
@@ -43,13 +38,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
-  const featured = getHomeFeaturedProducts(12);
+export default async function HomePage() {
+  const all = await getMergedCatalogProducts();
+  const featured = [...all].slice(0, 12);
   const tonneau = seriesList.find((s) => s.slug === "tonneau")!;
   const rdAstral = seriesList.find((s) => s.slug === "rd-astral")!;
-  const heroFeatured = getProductBySlug("digitemp-2301")!;
-  const tonneauCount = getProductsBySeries("tonneau").length;
-  const rdAstralCount = getProductsBySeries("rd-astral").length;
+  const heroFeatured = all.find((p) => p.slug === "digitemp-2301") ?? featured[0]!;
+  const tonneauCount = all.filter((p) => p.seriesSlug === "tonneau").length;
+  const rdAstralCount = all.filter((p) => p.seriesSlug === "rd-astral").length;
   const deferredSectionStyle = {
     contentVisibility: "auto",
     containIntrinsicSize: "1000px",

@@ -113,7 +113,7 @@ function FilterPill({
       className={`rounded-full border px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] transition ${
         active
           ? "border-ink bg-ink text-paper"
-          : "border-[color:var(--color-line)] bg-white/60 text-ink/75 hover:border-ink/15 hover:text-ink"
+          : "border-line bg-white/60 text-ink/75 hover:border-ink/15 hover:text-ink"
       }`}
     >
       {label}
