@@ -5,7 +5,7 @@ import {
 } from "@/lib/paypal";
 import { getStripe } from "@/lib/stripe";
 import { restoreInventory } from "@/lib/inventory";
-import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
+import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { reverseAffiliateCommissionLedgerForOrder } from "@/lib/affiliate-commission-ledger";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
@@ -80,7 +80,11 @@ export async function refundOrderById(
     // Restore inventory on full refund
     if (isFullRefund) {
       try {
-        const lines = parseOrderItemsForInventory(order.itemsJson);
+        const lines = orderItemsFromOrder(order).map((line) => ({
+          slug: line.slug,
+          qty: line.qty,
+          variantId: line.variantId,
+        }));
         await restoreInventory(lines);
       } catch (e) {
         console.error("[refund] inventory restore failed:", e);
