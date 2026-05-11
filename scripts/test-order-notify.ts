@@ -12,16 +12,6 @@ const prisma = new PrismaClient();
 
 async function main() {
   const slug = "digitemp-2412m";
-  const itemsJson = JSON.stringify([
-    {
-      slug,
-      name: "HUMPBUCK DIGITEMP Test Line (script)",
-      qty: 1,
-      unitAmountCents: 999,
-      lineTotalCents: 999,
-      variantLabel: "style-test",
-    },
-  ]);
 
   const billingJson = JSON.stringify({
     fullName: "Test Buyer",
@@ -51,11 +41,27 @@ async function main() {
       provider: "stripe",
       providerRef: `test_${Date.now()}`,
       totalCents: 999,
-      itemsJson,
       billingJson,
       shippingJson,
       orderNotes: "Smoke test from scripts/test-order-notify.ts",
       trafficSource: "direct",
+      items: {
+        create: [
+          {
+            productSlug: slug,
+            productName: "HUMPBUCK DIGITEMP Test Line (script)",
+            productImage: null,
+            variantId: null,
+            variantLabel: "style-test",
+            variantImage: null,
+            qty: 1,
+            unitPriceCents: 999,
+            lineTotalCents: 999,
+            currency: "usd",
+            productSnapshotJson: null,
+          },
+        ],
+      },
     },
   });
 
