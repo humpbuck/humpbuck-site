@@ -31,16 +31,6 @@ async function main() {
     process.env.FULFILLMENT_TEST_EMAIL?.trim() || "humpbuck@outlook.com";
 
   const slug = "digitemp-2412m";
-  const itemsJson = JSON.stringify([
-    {
-      slug,
-      name: "HUMPBUCK — fulfillment test (script)",
-      qty: 1,
-      unitAmountCents: 999,
-      lineTotalCents: 999,
-      variantLabel: "test-ship",
-    },
-  ]);
 
   const billingJson = JSON.stringify({
     fullName: "Fulfillment Test",
@@ -65,11 +55,27 @@ async function main() {
       provider: "stripe",
       providerRef: `fulfillment_test_${Date.now()}`,
       totalCents: 999,
-      itemsJson,
       billingJson,
       shippingJson,
       orderNotes: "Created by scripts/create-fulfillment-test-order.ts — delete after testing.",
       trafficSource: "direct",
+      items: {
+        create: [
+          {
+            productSlug: slug,
+            productName: "HUMPBUCK — fulfillment test (script)",
+            productImage: null,
+            variantId: null,
+            variantLabel: "test-ship",
+            variantImage: null,
+            qty: 1,
+            unitPriceCents: 999,
+            lineTotalCents: 999,
+            currency: "usd",
+            productSnapshotJson: null,
+          },
+        ],
+      },
     },
   });
 
