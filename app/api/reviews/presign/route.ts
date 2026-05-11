@@ -88,7 +88,7 @@ export async function POST(req: Request) {
       { status: 403 },
     );
   }
-  if (!orderContainsProductSlug(order.itemsJson, productSlug)) {
+  if (!orderContainsProductSlug(order, productSlug)) {
     return NextResponse.json(
       { error: "This product is not on that order." },
       { status: 403 },
