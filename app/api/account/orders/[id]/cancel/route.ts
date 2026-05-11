@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { buyerCancelBlockedReason } from "@/lib/account-buyer-order";
 import { sendOrderCancelledNotifications } from "@/lib/order-cancelled-email";
 import { restoreInventory } from "@/lib/inventory";
-import { parseOrderItemsForInventory } from "@/lib/parse-order-items";
+import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { prisma } from "@/lib/prisma";
 
 /** Statuses where payment was captured — inventory needs restoring on cancel. */
@@ -54,7 +54,11 @@ export async function POST(
   // Restore inventory if payment was already captured
   if (wasPaid) {
     try {
-      const lines = parseOrderItemsForInventory(order.itemsJson);
+      const lines = orderItemsFromOrder(order).map((line) => ({
+        slug: line.slug,
+        qty: line.qty,
+        variantId: line.variantId,
+      }));
       await restoreInventory(lines);
     } catch (e) {
       console.error("[buyer-cancel-order] inventory restore failed:", e);
