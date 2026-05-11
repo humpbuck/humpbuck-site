@@ -1,7 +1,6 @@
 import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { getProductBySlug, getCartLineImage } from "@/lib/catalog";
-import { parseOrderItemsJson } from "@/lib/parse-order-items";
 import { publicSupportEmail } from "@/lib/support-contact";
 import { WHATSAPP_DISPLAY, WHATSAPP_E164 } from "@/lib/whatsapp";
 
@@ -34,7 +33,13 @@ export async function sendAffiliatePaidSummaryEmail(input: {
     payoutBatchId?: string | null;
     payoutTxnRef?: string | null;
     paidNote?: string | null;
-    itemsJson: string;
+    items: Array<{
+      productSlug: string;
+      productName: string;
+      variantId: string | null;
+      variantLabel: string | null;
+      qty: number;
+    }>;
   }>;
 }): Promise<{ ok: true } | { ok: false; error: string }> {
   if (!input.ledgers.length) return { ok: false, error: "No paid ledgers to notify." };
@@ -43,7 +48,13 @@ export async function sendAffiliatePaidSummaryEmail(input: {
   const supportEmail = publicSupportEmail();
   const orderRows = (await Promise.all(
     input.ledgers.map(async (l) => {
-      const lines = await parseOrderItemsJson(l.itemsJson);
+      const lines = l.items.map((line) => ({
+        slug: line.productSlug,
+        name: line.productName,
+        qty: Math.max(1, Math.floor(line.qty || 1)),
+        variantId: line.variantId,
+        variantLabel: line.variantLabel,
+      }));
       const itemCards = lines
         .map((line) => {
           const p = getProductBySlug(line.slug);
