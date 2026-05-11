@@ -1,4 +1,3 @@
-import { getAllProducts } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { prisma } from "@/lib/prisma";
 
@@ -71,9 +70,6 @@ export async function listVideoTutorials({
   await ensureVideoTutorialTable();
   const merged = await getMergedCatalogProducts();
   const bySlug = new Map(merged.map((p) => [p.slug, p]));
-  for (const p of getAllProducts()) {
-    if (!bySlug.has(p.slug)) bySlug.set(p.slug, p);
-  }
 
   const rows = (await prisma.$queryRawUnsafe(`
     SELECT "productSlug", "title", "url", "youtubeUrl", "aspectRatio", "sortOrder", "updatedAt"
@@ -127,11 +123,7 @@ export async function listVideoTutorialProductOptions(): Promise<
   VideoTutorialProductOption[]
 > {
   const merged = await getMergedCatalogProducts();
-  const bySlug = new Map(merged.map((p) => [p.slug, p]));
-  for (const p of getAllProducts()) {
-    if (!bySlug.has(p.slug)) bySlug.set(p.slug, p);
-  }
-  return [...bySlug.values()]
+  return [...merged]
     .map((p) => ({ slug: p.slug, name: p.name }))
     .sort((a, b) => a.name.localeCompare(b.name));
 }

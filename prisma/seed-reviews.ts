@@ -25,7 +25,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
-import { getAllProducts } from "../lib/catalog";
+import { getMergedCatalogProducts } from "../lib/catalog-db";
 
 loadEnvConfig(process.cwd());
 /** Shell/IDE may set DATABASE_URL to localhost; for this script, `.env.local` wins. */
@@ -133,7 +133,7 @@ async function main() {
   });
   console.log(`Removed ${deleted.count} prior seed reviewer account(s) (reviews cascade).`);
 
-  const catalog = getAllProducts();
+  const catalog = await getMergedCatalogProducts();
   let reviews = 0;
 
   for (const product of catalog) {

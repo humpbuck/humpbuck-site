@@ -3,7 +3,7 @@ import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { adminPath } from "@/lib/admin-path";
 import { DeleteReviewButton } from "@/components/admin/delete-review-button";
 import { MerchantReplyBox } from "@/components/admin/merchant-reply-box";
-import { getProductBySlug } from "@/lib/catalog";
+
 import { prisma } from "@/lib/prisma";
 import { parseReviewImageUrls } from "@/lib/product-reviews-queries";
 
@@ -49,8 +49,7 @@ export default async function AdminReviewsPage() {
             </thead>
             <tbody>
               {rows.map((r) => {
-                const product = getProductBySlug(r.productSlug);
-                const title = product?.name ?? r.productSlug;
+                const title = r.productSlug;
                 const email = r.user.email ?? "—";
                 const name = r.user.name?.trim();
                 const buyer = name ? `${name} · ${email}` : email;

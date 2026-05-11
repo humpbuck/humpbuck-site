@@ -135,7 +135,7 @@ async function presignForAppend(
   }
 
   if (isR2ReviewUploadConfigured()) {
-    const key = reviewAppendImageObjectKey(review.productSlug, userId);
+    const key = await reviewAppendImageObjectKey(review.productSlug, userId);
     const uploadUrl = await presignReviewImagePut(key, contentType);
     const publicUrl = publicUrlForReviewKey(key);
     return NextResponse.json({ uploadUrl, publicUrl, key });
@@ -167,7 +167,7 @@ async function respondWithNewReviewUpload(
   contentType: string,
 ) {
   if (isR2ReviewUploadConfigured()) {
-    const key = reviewImageObjectKey(productSlug, userId);
+    const key = await reviewImageObjectKey(productSlug, userId);
     const uploadUrl = await presignReviewImagePut(key, contentType);
     const publicUrl = publicUrlForReviewKey(key);
     return NextResponse.json({ uploadUrl, publicUrl, key });

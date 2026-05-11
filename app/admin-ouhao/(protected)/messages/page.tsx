@@ -232,11 +232,11 @@ function parseItemsPreview(payload: Record<string, unknown>): Array<{
   }
 }
 
-function getOrderItemImageSources(
+async function getOrderItemImageSources(
   item: { image: string; slug: string; variantId: string },
   payload: Record<string, unknown>,
-): string[] {
-  const product = getProductBySlug(item.slug || asText(payload.itemSlug, ""));
+): Promise<string[]> {
+  const product = await getProductBySlug(item.slug || asText(payload.itemSlug, ""));
   const variantId = item.variantId || asText(payload.itemVariantId, "");
   const normalizedVariantId = product
     ? resolveCatalogVariantId(product, variantId) ?? variantId
@@ -615,10 +615,10 @@ export default async function AdminMessagesPage({
                               image: asText(payload.itemImage, ""),
                             },
                           ]
-                      ).map((item, idx) => (
+                      ).map(async (item, idx) => (
                         <div key={`${msg.id}-${idx}`} className="flex items-center gap-2">
                           <ResilientImage
-                            sources={getOrderItemImageSources(item, payload)}
+                            sources={await getOrderItemImageSources(item, payload)}
                             alt={item.name}
                             className="h-9 w-9 rounded object-cover"
                           />

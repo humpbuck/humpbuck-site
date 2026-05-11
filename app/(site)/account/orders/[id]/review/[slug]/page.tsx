@@ -21,7 +21,7 @@ export default async function AccountOrderProductReviewPage({
     redirect(`/auth/login?callbackUrl=/account/orders/${orderId}/review/${productSlug}`);
   }
 
-  const product = getProductBySlug(productSlug);
+  const product = await getProductBySlug(productSlug);
   if (!product) notFound();
 
   const order = await prisma.order.findFirst({

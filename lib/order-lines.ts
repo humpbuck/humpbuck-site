@@ -1,4 +1,4 @@
-import { getProductBySlug, isVariantAvailableForSale } from "@/lib/catalog";
+import { isVariantAvailableForSale } from "@/lib/catalog";
 import type { CartLine } from "@/lib/cart-types";
 import { getMergedCatalogProductBySlug } from "@/lib/catalog-db";
 
@@ -26,7 +26,7 @@ export async function validateCartLines(items: CartLine[]): Promise<{
     if (!item.slug || item.qty < 1 || item.qty > CART_QTY_MAX) {
       throw new Error("Invalid cart line");
     }
-    const product = getProductBySlug(item.slug) ?? (await getMergedCatalogProductBySlug(item.slug));
+    const product = await getMergedCatalogProductBySlug(item.slug);
     if (!product || !isVariantAvailableForSale(product, item.variantId)) {
       throw new Error(`Unavailable: ${item.slug}`);
     }

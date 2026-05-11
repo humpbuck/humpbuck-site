@@ -2,7 +2,8 @@ import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { adminPath } from "@/lib/admin-path";
 import { prisma } from "@/lib/prisma";
 import { ProductManager } from "@/components/admin/product-manager";
-import { getAllProducts, type Product } from "@/lib/catalog";
+import { type Product } from "@/lib/catalog";
+import { getMergedCatalogProducts } from "@/lib/catalog-db";
 
 const EMPTY_JSON = JSON.stringify([]);
 
@@ -31,11 +32,10 @@ function toCatalogProductRecord(p: Product) {
 export default async function AdminInventoryPage() {
   let products = [] as ReturnType<typeof toCatalogProductRecord>[];
   try {
-    products = (await prisma.catalogProduct.findMany({
-      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-    })) as unknown as ReturnType<typeof toCatalogProductRecord>[];
+    const dbProducts = await getMergedCatalogProducts();
+    products = dbProducts.map(toCatalogProductRecord);
   } catch {
-    products = getAllProducts().map(toCatalogProductRecord);
+    products = [];
   }
   const inventory = await prisma.productInventory.findMany({
     orderBy: [{ productSlug: "asc" }, { variantId: "asc" }],

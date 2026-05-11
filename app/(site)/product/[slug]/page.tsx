@@ -92,8 +92,6 @@ export default async function ProductPage({
 
   const gallerySpec = R2_GALLERY_SPECS_BY_SLUG[slug];
   const pdpR2 = gallerySpec != null ? await getPdpR2Media(gallerySpec) : null;
-  const staticProduct = getStaticProductBySlug(slug);
-
   const gallerySlides =
     pdpR2?.gallery && pdpR2.gallery.length > 0
       ? pdpR2.gallery
@@ -124,12 +122,10 @@ export default async function ProductPage({
 
   const firstSlide =
     gallerySlides[0] ??
-    (product.galleryImages?.[0] ??
-      product.images[0] ??
-      staticProduct?.images[0] ??
-      product.promoVideo?.poster ??
-      staticProduct?.promoVideo?.poster);
-  const preferredPromoVideo = product.promoVideo ?? staticProduct?.promoVideo;
+    product.galleryImages?.[0] ??
+    product.images[0] ??
+    product.promoVideo?.poster;
+  const preferredPromoVideo = product.promoVideo;
   const promoVideosForMedia: { src: string; poster?: string }[] | null =
     pdpR2?.videos && pdpR2.videos.length > 0
       ? pdpR2.videos.map((src) => ({

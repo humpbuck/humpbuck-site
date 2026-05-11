@@ -36,8 +36,7 @@ function asSeriesSlug(v: string): SeriesSlug {
 }
 
 async function getStaticProductsFallback(): Promise<Product[]> {
-  const { getAllProducts } = await import("@/lib/catalog");
-  return getAllProducts();
+  return [];
 }
 
 function toProduct(row: CatalogProductRow): Product {
@@ -92,7 +91,7 @@ function toProduct(row: CatalogProductRow): Product {
 /**
  * Frontend catalog source:
  * - Prefer admin-managed DB products (CatalogProduct).
- * - Keep static catalog only as a fallback when the DB query fails or is empty.
+ * - Return database catalog first and fail closed if the DB query is unavailable.
  */
 export async function getMergedCatalogProducts(): Promise<Product[]> {
   try {

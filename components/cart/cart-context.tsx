@@ -9,7 +9,6 @@ import {
   useState,
 } from "react";
 import type { CartLine } from "@/lib/cart-types";
-import { getProductBySlug } from "@/lib/catalog";
 import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 
 const STORAGE_KEY = "humpbuck-cart";
@@ -42,11 +41,6 @@ function mergeDuplicateLines(lines: CartLine[]): CartLine[] {
 function normalizeCartLine(line: CartLine): CartLine | null {
   const rawSlug = line.slug.trim();
   if (!rawSlug) return null;
-  const exact = getProductBySlug(rawSlug);
-  if (exact) return { ...line, slug: exact.slug };
-  const lowered = rawSlug.toLowerCase();
-  const byLower = getProductBySlug(lowered);
-  if (byLower) return { ...line, slug: byLower.slug };
   // Keep unknown slugs so custom/legacy products are still visible in bag.
   return { ...line, slug: rawSlug };
 }

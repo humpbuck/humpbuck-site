@@ -1,13 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import { loadEnvConfig } from "@next/env";
-import { getCartLineImage, getProductBySlug } from "@/lib/catalog";
 
 loadEnvConfig(process.cwd());
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const now = Date.now();
   const demoEmails = [
     "james.chen.demo@humpbuck-check.local",
     "sarah.miller.demo@humpbuck-check.local",
@@ -40,14 +38,13 @@ async function main() {
     qty?: number;
     note: string;
   }) {
-    const product = getProductBySlug(input.slug);
-    const itemImage = product ? getCartLineImage(product, input.variantId) : "";
+    const itemImage = "";
     const qty = input.qty ?? 1;
     return {
       email: input.email,
       eventType: input.eventType,
       orderId: input.orderId,
-      itemName: product?.name ?? input.slug,
+      itemName: input.slug,
       itemSlug: input.slug,
       itemVariantId: input.variantId,
       itemVariant: input.variantLabel,
@@ -56,7 +53,7 @@ async function main() {
       itemCount: 1,
       itemsPreviewJson: JSON.stringify([
         {
-          name: product?.name ?? input.slug,
+          name: input.slug,
           slug: input.slug,
           variantId: input.variantId,
           variant: input.variantLabel,

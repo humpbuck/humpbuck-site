@@ -43,7 +43,8 @@ export default async function HomePage() {
   const featured = [...all].slice(0, 12);
   const tonneau = seriesList.find((s) => s.slug === "tonneau")!;
   const rdAstral = seriesList.find((s) => s.slug === "rd-astral")!;
-  const heroFeatured = all.find((p) => p.slug === "digitemp-2301") ?? featured[0]!;
+  const heroFeatured =
+    all.find((p) => p.slug === "digitemp-2301") ?? featured[0] ?? null;
   const tonneauCount = all.filter((p) => p.seriesSlug === "tonneau").length;
   const rdAstralCount = all.filter((p) => p.seriesSlug === "rd-astral").length;
   const deferredSectionStyle = {
@@ -113,45 +114,56 @@ export default async function HomePage() {
           </div>
 
           <div className="relative mx-auto w-full max-w-lg min-w-0 md:max-w-none md:mx-0">
-            <Link
-              href={`/product/${heroFeatured.slug}`}
-              className="group relative block aspect-square overflow-hidden rounded-[24px] border border-white/10 bg-gradient-to-b from-white/10 to-white/0 shadow-[var(--shadow-glow-digital)] transition outline-offset-4 focus-visible:outline-2 focus-visible:outline-cyan-400/80 sm:rounded-[28px]"
-            >
-              <Image
-                src={R2.home.digitemp2301Webp}
-                alt="HUMPBUCK DIGI-TEMP 2301"
-                fill
-                priority
-                fetchPriority="high"
-                quality={68}
-                className="object-cover opacity-95 transition group-hover:opacity-100"
-                sizes="(max-width:767px) 92vw, (max-width:1279px) 50vw, 560px"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#070a10] via-transparent to-transparent opacity-70" />
-              <div className="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/10 bg-black/35 p-4 backdrop-blur-md">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <div className="text-[10px] uppercase tracking-[0.2em] text-white/55">
-                      Featured
-                    </div>
-                    <div className="mt-1 font-serif text-lg">{heroFeatured.name}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-xl font-semibold tabular-nums text-white">
-                      {formatPrice(heroFeatured.price)}
-                    </div>
-                    {heroFeatured.compareAtPrice != null && (
-                      <div className="text-[12px] text-white/55 line-through tabular-nums">
-                        {formatPrice(heroFeatured.compareAtPrice)}
+            {heroFeatured ? (
+              <Link
+                href={`/product/${heroFeatured.slug}`}
+                className="group relative block aspect-square overflow-hidden rounded-[24px] border border-white/10 bg-gradient-to-b from-white/10 to-white/0 shadow-[var(--shadow-glow-digital)] transition outline-offset-4 focus-visible:outline-2 focus-visible:outline-cyan-400/80 sm:rounded-[28px]"
+              >
+                <Image
+                  src={R2.home.digitemp2301Webp}
+                  alt="HUMPBUCK DIGI-TEMP 2301"
+                  fill
+                  priority
+                  fetchPriority="high"
+                  quality={68}
+                  className="object-cover opacity-95 transition group-hover:opacity-100"
+                  sizes="(max-width:767px) 92vw, (max-width:1279px) 50vw, 560px"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#070a10] via-transparent to-transparent opacity-70" />
+                <div className="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/10 bg-black/35 p-4 backdrop-blur-md">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <div className="text-[10px] uppercase tracking-[0.2em] text-white/55">
+                        Featured
                       </div>
-                    )}
+                      <div className="mt-1 font-serif text-lg">{heroFeatured.name}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xl font-semibold tabular-nums text-white">
+                        {formatPrice(heroFeatured.price)}
+                      </div>
+                      {heroFeatured.compareAtPrice != null && (
+                        <div className="text-[12px] text-white/55 line-through tabular-nums">
+                          {formatPrice(heroFeatured.compareAtPrice)}
+                        </div>
+                      )}
+                    </div>
                   </div>
+                  <span className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-cyan-400/90 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[#06252d] transition group-hover:bg-cyan-300">
+                    View product
+                  </span>
                 </div>
-                <span className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-cyan-400/90 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[#06252d] transition group-hover:bg-cyan-300">
-                  View product
-                </span>
+              </Link>
+            ) : (
+              <div className="flex aspect-square items-center justify-center rounded-[24px] border border-white/10 bg-white/5 p-8 text-center text-white/75 sm:rounded-[28px]">
+                <div>
+                  <div className="font-serif text-2xl">Featured product coming soon</div>
+                  <p className="mt-3 text-sm text-white/60">
+                    We&apos;re syncing catalog data. Please check back shortly.
+                  </p>
+                </div>
               </div>
-            </Link>
+            )}
           </div>
         </div>
       </section>

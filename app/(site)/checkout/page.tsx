@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useCart } from "@/components/cart/cart-context";
-import { formatPrice, getProductBySlug } from "@/lib/catalog";
+import { formatPrice } from "@/lib/catalog";
 import { emptyCheckoutAddress, validateCheckoutAddressForm } from "@/lib/checkout-address";
 import { CheckoutAddressForm } from "@/components/checkout/checkout-address-form";
 import { CheckoutShippingSection } from "@/components/checkout/checkout-shipping-section";
@@ -37,8 +37,7 @@ export default function CheckoutPage() {
   const subtotal = useMemo(
     () =>
       items.reduce((sum, line) => {
-        const product = getProductBySlug(line.slug);
-        const unitPrice = product?.price ?? line.unitPrice ?? 0;
+        const unitPrice = line.unitPrice ?? 0;
         return sum + unitPrice * line.qty;
       }, 0),
     [items],
@@ -72,13 +71,12 @@ export default function CheckoutPage() {
         email: customerEmail,
         totalUsd: total,
         items: items.map((line) => {
-          const product = getProductBySlug(line.slug);
-          const unitPrice = product?.price ?? line.unitPrice ?? 0;
+          const unitPrice = line.unitPrice ?? 0;
           const lineTotal = unitPrice * line.qty;
           return {
             slug: line.slug,
-            name: product?.name ?? line.productName ?? line.slug,
-            productName: line.productName ?? product?.name ?? line.slug,
+            name: line.productName ?? line.slug,
+            productName: line.productName ?? line.slug,
             qty: line.qty,
             unitPrice,
             unitAmountCents: Math.round(unitPrice * 100),
@@ -284,9 +282,8 @@ export default function CheckoutPage() {
               <p className="text-muted">Your cart is empty.</p>
             ) : (
               items.map((line) => {
-                const product = getProductBySlug(line.slug);
-                const name = product?.name ?? line.slug;
-                const price = (product?.price ?? line.unitPrice ?? 0) * line.qty;
+                const name = line.productName ?? line.slug;
+                const price = (line.unitPrice ?? 0) * line.qty;
                 return (
                   <div key={line.slug} className="flex items-center justify-between gap-3 text-ink/90">
                     <span className="truncate">{name} × {line.qty}</span>

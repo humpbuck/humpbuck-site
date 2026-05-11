@@ -23,7 +23,7 @@ export default async function ReviewAppendPage({
   });
   if (!review) notFound();
 
-  const product = getProductBySlug(review.productSlug);
+  const product = await getProductBySlug(review.productSlug);
   if (!product) notFound();
 
   if (review._count.appends >= MAX_REVIEW_APPENDS) {

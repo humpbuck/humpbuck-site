@@ -9,12 +9,8 @@
  */
 import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
-import {
-  getAllProducts,
-  type Product,
-  type ProductVariantOption,
-  type SeriesSlug,
-} from "@/lib/catalog";
+import { type Product, type ProductVariantOption, type SeriesSlug } from "@/lib/catalog";
+import { getMergedCatalogProducts } from "@/lib/catalog-db";
 
 loadEnvConfig(process.cwd());
 
@@ -77,7 +73,7 @@ async function upsertProduct(product: Product) {
 }
 
 async function main() {
-  const products = getAllProducts();
+  const products = await getMergedCatalogProducts();
   for (const product of products) {
     await upsertProduct(product);
   }

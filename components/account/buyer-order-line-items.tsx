@@ -1,10 +1,6 @@
 import Link from "next/link";
 import { OrderLineProductImage } from "@/components/account/order-line-product-image";
-import {
-  formatPrice,
-  getCartLineImage,
-  getProductBySlug,
-} from "@/lib/catalog";
+import { formatPrice, getCartLineImage } from "@/lib/catalog";
 import type { ValidatedLine } from "@/lib/order-lines";
 import { orderStatusAllowsReview } from "@/lib/review-eligibility";
 
@@ -39,10 +35,7 @@ export function BuyerOrderLineItems({
   return (
     <ul className={`space-y-3 text-sm text-ink/90 ${className}`}>
       {lines.map((line, li) => {
-        const product = getProductBySlug(line.slug);
-        const imgSrc = product
-          ? getCartLineImage(product, line.variantId)
-          : undefined;
+        const imgSrc = line.variantImage ?? undefined;
         const alt =
           line.variantLabel != null && line.variantLabel !== ""
             ? `${line.name} — ${line.variantLabel}`
@@ -84,7 +77,7 @@ export function BuyerOrderLineItems({
                 )}
               </div>
               <div className="min-w-0 pt-0.5">
-                {resolvedLink && product ? (
+                {resolvedLink ? (
                   <Link
                     href={`/product/${line.slug}`}
                     className="font-medium text-ink underline-offset-4 hover:underline"
@@ -101,10 +94,9 @@ export function BuyerOrderLineItems({
                 {formatPrice(line.lineTotalCents / 100)}
               </span>
               {reviewContext &&
-              orderStatusAllowsReview(reviewContext.orderStatus) &&
-              product ? (
+              orderStatusAllowsReview(reviewContext.orderStatus) ? (
                 reviewContext.reviewedProductSlugs.includes(line.slug) ? (
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted">
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-muted">
                     Review submitted
                   </span>
                 ) : (

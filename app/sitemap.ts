@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
-import { getAllProducts, seriesList } from "@/lib/catalog";
+import { seriesList } from "@/lib/catalog";
+import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getSiteUrl } from "@/lib/seo";
 
 /** Use build time as lastModified instead of current time. */
@@ -20,7 +21,7 @@ const STATIC_PATHS: {
     { path: "/privacy", changeFrequency: "yearly", priority: 0.4 },
   ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.map((e) => ({
@@ -37,7 +38,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.85,
   }));
 
-  const products = getAllProducts();
+  const products = await getMergedCatalogProducts();
   const productEntries: MetadataRoute.Sitemap = products.map((p) => ({
     url: `${base}/product/${encodeURIComponent(p.slug)}`,
     lastModified: BUILD_TIME,

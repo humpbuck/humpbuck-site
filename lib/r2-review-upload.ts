@@ -1,7 +1,6 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { randomBytes } from "crypto";
-import { getProductBySlug } from "@/lib/catalog";
 import { R2_PUBLIC_BASE } from "@/lib/r2";
 
 export function isR2ReviewUploadConfigured(): boolean {
@@ -53,11 +52,7 @@ export function slugifyProductTitleForR2Folder(name: string): string {
 }
 
 export function getReviewR2ProductFolderName(productSlug: string): string {
-  const p = getProductBySlug(productSlug);
-  if (!p) {
-    return safeReviewProductFolderSegment(productSlug);
-  }
-  return `${slugifyProductTitleForR2Folder(p.name)}__${p.slug}`;
+  return safeReviewProductFolderSegment(productSlug);
 }
 
 export function reviewImageObjectKey(
