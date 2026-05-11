@@ -3,10 +3,7 @@
  * Set `NEXT_PUBLIC_ADMIN_PATH` in `.env` / Vercel to change (e.g. `"/backoffice"`). Rebuild after changing.
  */
 function readAdminPath(): string {
-  const raw = process.env.NEXT_PUBLIC_ADMIN_PATH?.trim();
-  if (!raw || raw === "/") return "/admin-ouhao";
-  const noTrail = raw.replace(/\/+$/, "");
-  return noTrail.startsWith("/") ? noTrail : `/${noTrail}`;
+  return "/admin-ouhao";
 }
 
 export const ADMIN_PATH = readAdminPath();
