@@ -70,17 +70,6 @@ async function main() {
     process.exit(1);
   }
 
-  const itemsJson = JSON.stringify([
-    {
-      slug,
-      name: "HUMPBUCK — UK test (script)",
-      qty: QTY,
-      unitAmountCents,
-      lineTotalCents,
-      variantLabel: "uk-test",
-    },
-  ]);
-
   const billing = ukAddress();
   const shipping = {
     ...ukAddress(),
@@ -97,12 +86,28 @@ async function main() {
       provider: "stripe",
       providerRef: `uk_test_${Date.now()}`,
       totalCents: orderTotalCents,
-      itemsJson,
       billingJson: JSON.stringify(billing),
       shippingJson: JSON.stringify(shipping),
       orderNotes:
         "Created by scripts/create-uk-test-order.ts — delete after testing.",
       trafficSource: "direct",
+      items: {
+        create: [
+          {
+            productSlug: slug,
+            productName: "HUMPBUCK — UK test (script)",
+            productImage: null,
+            variantId: null,
+            variantLabel: "uk-test",
+            variantImage: null,
+            qty: QTY,
+            unitPriceCents,
+            lineTotalCents,
+            currency: "usd",
+            productSnapshotJson: null,
+          },
+        ],
+      },
     },
   });
 
