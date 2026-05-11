@@ -520,10 +520,10 @@ export default async function AdminAffiliatePage({
   await assertAdmin();
   await ensureDefaultTierId();
   const sp = await searchParams;
-  const selectedAffiliateId = normalizeFilterValue(sp.affiliateId);
-  const selectedOrderStatus = normalizeFilterValue(sp.orderStatus);
-  const selectedSettlement = normalizeFilterValue(sp.settle) || "eligible";
-  const onlyVerifiedPayout = normalizeFilterValue(sp.onlyVerifiedPayout) === "1";
+  const selectedAffiliateId = String(sp.affiliateId ?? "").trim();
+  const selectedOrderStatus = String(sp.orderStatus ?? "").trim();
+  const selectedSettlement = String(sp.settle ?? "").trim() || "eligible";
+  const onlyVerifiedPayout = String(sp.onlyVerifiedPayout ?? "").trim() === "1";
   const settlePageRaw = Number.parseInt(String(sp.settlePage ?? "1"), 10);
   const settlePage = Number.isFinite(settlePageRaw) && settlePageRaw > 0 ? settlePageRaw : 1;
   const SETTLEMENT_PAGE_SIZE = 10;
