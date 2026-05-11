@@ -28,10 +28,10 @@ export function orderItemsFromSnapshotRows(
   }));
 }
 
-export function orderItemsFromOrder(order: {
-  items?: Array<OrderItemSnapshotLike>;
-}): ValidatedLine[] {
-  return orderItemsFromSnapshotRows(order.items);
+export function orderItemsFromOrder(order: unknown): ValidatedLine[] {
+  if (!order || typeof order !== "object") return [];
+  const maybeItems = (order as { items?: Array<OrderItemSnapshotLike> }).items;
+  return orderItemsFromSnapshotRows(maybeItems);
 }
 
 export function orderLineSnapshotJson(line: ValidatedLine): string | null {
