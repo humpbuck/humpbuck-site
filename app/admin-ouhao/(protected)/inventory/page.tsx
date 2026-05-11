@@ -4,14 +4,38 @@ import { prisma } from "@/lib/prisma";
 import { ProductManager } from "@/components/admin/product-manager";
 import { getAllProducts, type Product } from "@/lib/catalog";
 
+const EMPTY_JSON = JSON.stringify([]);
+
+function toCatalogProductRecord(p: Product) {
+  return {
+    id: p.slug,
+    slug: p.slug,
+    name: p.name,
+    seriesSlug: p.seriesSlug,
+    categoryLabel: p.categoryLabel,
+    shortDescription: p.shortDescription,
+    description: p.description,
+    price: p.price,
+    compareAtPrice: p.compareAtPrice ?? null,
+    image: p.image,
+    inStock: p.inStock,
+    highlightsJson: EMPTY_JSON,
+    specsJson: EMPTY_JSON,
+    galleryJson: JSON.stringify(p.galleryImages ?? p.images ?? []),
+    detailJson: JSON.stringify(p.detailImages ?? []),
+    variantsJson: JSON.stringify(p.variantOptions ?? []),
+    promoVideoJson: p.promoVideo ? JSON.stringify(p.promoVideo) : null,
+  };
+}
+
 export default async function AdminInventoryPage() {
-  let products: Product[] = [];
+  let products = [] as ReturnType<typeof toCatalogProductRecord>[];
   try {
-    products = await prisma.catalogProduct.findMany({
+    products = (await prisma.catalogProduct.findMany({
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-    }) as unknown as Product[];
+    })) as unknown as ReturnType<typeof toCatalogProductRecord>[];
   } catch {
-    products = getAllProducts();
+    products = getAllProducts().map(toCatalogProductRecord);
   }
   const inventory = await prisma.productInventory.findMany({
     orderBy: [{ productSlug: "asc" }, { variantId: "asc" }],
