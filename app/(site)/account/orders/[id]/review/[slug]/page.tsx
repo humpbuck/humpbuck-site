@@ -49,7 +49,7 @@ export default async function AccountOrderProductReviewPage({
     );
   }
 
-  if (!orderContainsProductSlug(order.itemsJson, productSlug)) {
+  if (!orderContainsProductSlug(order, productSlug)) {
     notFound();
   }
 
