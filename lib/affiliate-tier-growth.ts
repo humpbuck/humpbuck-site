@@ -1,13 +1,13 @@
 import { prisma } from "@/lib/prisma";
 
-const GROWTH_TIERS: Array<{ name: string; commissionValue: number; minOrders: number; isDefault: boolean }> = [
-  { name: "Level 1", commissionValue: 5, minOrders: 0, isDefault: true },
-  { name: "Level 2", commissionValue: 7, minOrders: 100, isDefault: false },
-  { name: "Level 3", commissionValue: 9, minOrders: 300, isDefault: false },
-  { name: "Level 4", commissionValue: 11, minOrders: 600, isDefault: false },
-  { name: "Level 5", commissionValue: 13, minOrders: 1000, isDefault: false },
-  { name: "Level 6", commissionValue: 15, minOrders: 1500, isDefault: false },
-];
+const GROWTH_TIERS = [
+  { name: "Level 1", commissionValue: 5, isDefault: true },
+  { name: "Level 2", commissionValue: 7, isDefault: false },
+  { name: "Level 3", commissionValue: 9, isDefault: false },
+  { name: "Level 4", commissionValue: 11, isDefault: false },
+  { name: "Level 5", commissionValue: 13, isDefault: false },
+  { name: "Level 6", commissionValue: 15, isDefault: false },
+] as const;
 
 function growthTierNameForPaidCommissionCount(paidCommissionOrderCount: number): string {
   if (paidCommissionOrderCount >= 1500) return "Level 6";

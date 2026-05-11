@@ -55,9 +55,6 @@ function parseCommissionValue(raw: FormDataEntryValue | null): number | null {
   return n;
 }
 
-function normalizeFilterValue(raw: string | undefined): string {
-  return String(raw ?? "").trim();
-}
 
 async function createTierAction(formData: FormData) {
   "use server";
