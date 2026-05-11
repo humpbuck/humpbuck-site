@@ -549,7 +549,7 @@ export async function buildCustomerShippedEmailPayload(order: Order): Promise<{
   htmlContent: string;
   textContent: string;
 }> {
-  const lines = await parseOrderItemsJson(order.itemsJson);
+  const lines = orderItemsFromOrder(order);
   const oid = orderDisplayCode(order);
   const placed = new Date(order.createdAt).toLocaleString(SITE_LOCALE, {
     dateStyle: "medium",
