@@ -50,17 +50,21 @@ async function main() {
   }
 
   const slug = "rm-m01";
-  const itemsJson = JSON.stringify([
+  const items = [
     {
-      slug,
-      name: "RM-M01 Tonneau Ultra-thin",
-      qty: 1,
-      unitAmountCents: 329_00,
-      lineTotalCents: 329_00,
+      productSlug: slug,
+      productName: "RM-M01 Tonneau Ultra-thin",
+      productImage: null,
       variantId: "style-01",
       variantLabel: "RM-M01: Style 01",
+      variantImage: null,
+      qty: 1,
+      unitPriceCents: 329_00,
+      lineTotalCents: 329_00,
+      currency: "usd",
+      productSnapshotJson: null,
     },
-  ]);
+  ];
 
   const shippingAddr = {
     firstName: "Maria",
@@ -102,12 +106,12 @@ async function main() {
       provider: "stripe",
       providerRef: `cancel_scenario_paid_${ts}`,
       totalCents: 329_00,
-      itemsJson,
       billingJson: JSON.stringify(billingAddr),
       shippingJson: JSON.stringify(shippingAddr),
       orderNotes:
         "[scenario: paid then cancel] scripts/create-cancel-scenarios.ts — expect refund notice + admin Refund.",
       trafficSource: "direct",
+      items: { create: items },
     },
   });
 
@@ -119,12 +123,12 @@ async function main() {
       provider: "stripe",
       providerRef: null,
       totalCents: 329_00,
-      itemsJson,
       billingJson: JSON.stringify(billingAddr),
       shippingJson: JSON.stringify(shippingAddr),
       orderNotes:
         "[scenario: unpaid cancel] scripts/create-cancel-scenarios.ts — expect no refund notice; admin no Refund button.",
       trafficSource: "direct",
+      items: { create: items },
     },
   });
 
