@@ -21,16 +21,6 @@ const PREVIEW_TO = process.argv[2]?.trim() || DEFAULT_PREVIEW_EMAIL;
 
 async function main() {
   const slug = "digitemp-2412m";
-  const itemsJson = JSON.stringify([
-    {
-      slug,
-      name: "HUMPBUCK DIGITEMP (preview)",
-      qty: 1,
-      unitAmountCents: 99900,
-      lineTotalCents: 99900,
-      variantLabel: "Preview",
-    },
-  ]);
 
   const shippingJson = JSON.stringify({
     fullName: "Preview Customer",
@@ -47,11 +37,27 @@ async function main() {
       provider: "stripe",
       providerRef: `preview_${Date.now()}`,
       totalCents: 99900,
-      itemsJson,
       shippingJson,
       carrier: "DHL Express",
       trackingNumber: "1234567890",
       trafficSource: "direct",
+      items: {
+        create: [
+          {
+            productSlug: slug,
+            productName: "HUMPBUCK DIGITEMP (preview)",
+            productImage: null,
+            variantId: null,
+            variantLabel: "Preview",
+            variantImage: null,
+            qty: 1,
+            unitPriceCents: 99900,
+            lineTotalCents: 99900,
+            currency: "usd",
+            productSnapshotJson: null,
+          },
+        ],
+      },
     },
   });
 
