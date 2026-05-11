@@ -59,15 +59,6 @@ async function main() {
         providerRef: `${providerPrefix}_${i + 1}`,
         totalCents,
         currency: "usd",
-        itemsJson: JSON.stringify([
-          {
-            slug: `paid-commission-seed-${i + 1}`,
-            name: `Paid Commission Seed Product ${i + 1}`,
-            qty: 1,
-            unitAmountCents: totalCents,
-            lineTotalCents: totalCents,
-          },
-        ]),
         billingJson: JSON.stringify({
           firstName: "Affiliate",
           lastName: "Tester",
@@ -91,6 +82,23 @@ async function main() {
         shippedAt,
         deliveredAt,
         createdAt,
+        items: {
+          create: [
+            {
+              productSlug: `paid-commission-seed-${i + 1}`,
+              productName: `Paid Commission Seed Product ${i + 1}`,
+              productImage: null,
+              variantId: null,
+              variantLabel: null,
+              variantImage: null,
+              qty: 1,
+              unitPriceCents: totalCents,
+              lineTotalCents: totalCents,
+              currency: "usd",
+              productSnapshotJson: null,
+            },
+          ],
+        },
       },
     });
 
