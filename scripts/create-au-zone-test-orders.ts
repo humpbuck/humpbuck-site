@@ -65,17 +65,6 @@ async function createOne(
     process.exit(1);
   }
 
-  const itemsJson = JSON.stringify([
-    {
-      slug,
-      name: `HUMPBUCK — AU Yanwen ${zoneLabel} (script)`,
-      qty: QTY,
-      unitAmountCents,
-      lineTotalCents,
-      variantLabel: `au-${postalCode}`,
-    },
-  ]);
-
   const billing = auAddress(postalCode, zoneLabel);
   mergeDerivedLogisticsZone(billing);
   const shipping = {
@@ -94,11 +83,27 @@ async function createOne(
       provider: "stripe",
       providerRef: `au_pc${postalCode}_test_${Date.now()}`,
       totalCents: orderTotalCents,
-      itemsJson,
       billingJson: JSON.stringify(billing),
       shippingJson: JSON.stringify(shipping),
       orderNotes: `Created by scripts/create-au-zone-test-orders.ts — AU postcode ${postalCode} (${zoneLabel}) — delete after testing.`,
       trafficSource: "direct",
+      items: {
+        create: [
+          {
+            productSlug: slug,
+            productName: `HUMPBUCK — AU Yanwen ${zoneLabel} (script)`,
+            productImage: null,
+            variantId: null,
+            variantLabel: `au-${postalCode}`,
+            variantImage: null,
+            qty: QTY,
+            unitPriceCents,
+            lineTotalCents,
+            currency: "usd",
+            productSnapshotJson: null,
+          },
+        ],
+      },
     },
   });
 
