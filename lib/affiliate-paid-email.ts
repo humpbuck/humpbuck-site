@@ -58,7 +58,7 @@ export async function sendAffiliatePaidSummaryEmail(input: {
       const itemCards = lines
         .map((line) => {
           const p = getProductBySlug(line.slug);
-          const imgSrc = p ? getCartLineImage(p, line.variantId) : "";
+          const imgSrc = p ? getCartLineImage(p, line.variantId ?? undefined) : "";
           const img = imgSrc
             ? `<img src="${esc(abs(imgSrc))}" alt="" width="56" height="56" style="display:block;width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid #ece9e4;background:#f7f6f3;" />`
             : `<div style="width:56px;height:56px;border-radius:8px;background:#ece9e4;border:1px solid #e0ddd6;"></div>`;
