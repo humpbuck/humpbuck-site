@@ -6,10 +6,10 @@
  *
  * Optional env:
  *   FULFILLMENT_TEST_EMAIL — buyer email (default: 84374506@qq.com)
- *   TEST_COUNTRY            — country label (default: Kuwait)
- *   TEST_POSTAL_CODE        — postal code (default: 00000)
- *   TEST_SHIPPING_METHOD    — cainiao | yanwen (default: yanwen)
- *   TEST_QTY                — item quantity (default: 1)
+ *   TEST_COUNTRY           — country label (default: Kuwait)
+ *   TEST_POSTAL_CODE       — postal code (default: 00000)
+ *   TEST_SHIPPING_METHOD   — cainiao | yanwen (default: yanwen)
+ *   TEST_QTY               — item quantity (default: 1)
  */
 import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
@@ -100,20 +100,27 @@ async function main() {
       provider: "stripe",
       providerRef: `logistics_test_${Date.now()}`,
       totalCents: orderTotalCents,
-      itemsJson: JSON.stringify([
-        {
-          slug,
-          name: `HUMPBUCK — Logistics test (${country})`,
-          qty,
-          unitAmountCents,
-          lineTotalCents,
-          variantLabel: `${country}-${shippingMethod}`,
-        },
-      ]),
       billingJson: JSON.stringify(billing),
       shippingJson: JSON.stringify(shipping),
       orderNotes: `Created by scripts/create-logistics-test-order.ts — ${country} (${shippingMethod}) — delete after testing.`,
       trafficSource: "direct",
+      items: {
+        create: [
+          {
+            productSlug: slug,
+            productName: `HUMPBUCK — Logistics test (${country})`,
+            productImage: null,
+            variantId: null,
+            variantLabel: `${country}-${shippingMethod}`,
+            variantImage: null,
+            qty,
+            unitPriceCents,
+            lineTotalCents,
+            currency: "usd",
+            productSnapshotJson: null,
+          },
+        ],
+      },
     },
   });
 
