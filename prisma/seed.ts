@@ -23,13 +23,17 @@ async function main() {
 
   const items = [
     {
-      slug: "rm-m01",
-      name: "RM-M01 Tonneau Ultra-thin",
-      qty: 1,
-      unitAmountCents: 329_00,
-      lineTotalCents: 329_00,
+      productSlug: "rm-m01",
+      productName: "RM-M01 Tonneau Ultra-thin",
+      productImage: null,
       variantId: "style-01",
       variantLabel: "RM-M01: Style 01",
+      variantImage: null,
+      qty: 1,
+      unitPriceCents: 329_00,
+      lineTotalCents: 329_00,
+      currency: "usd",
+      productSnapshotJson: null,
     },
   ];
 
@@ -42,7 +46,6 @@ async function main() {
       provider: "stripe",
       providerRef: DEMO_REF,
       totalCents,
-      itemsJson: JSON.stringify(items),
       billingJson: JSON.stringify({
         firstName: "Antonio",
         lastName: "Ybarra",
@@ -71,6 +74,9 @@ async function main() {
       carrier: "USPS",
       trackingNumber: "LP1000043960094CN",
       trafficSource: "google",
+      items: {
+        create: items,
+      },
     },
   });
 
