@@ -97,7 +97,7 @@ async function createOne(
             variantLabel: `au-${postalCode}`,
             variantImage: null,
             qty: QTY,
-            unitPriceCents,
+            unitPriceCents: unitAmountCents,
             lineTotalCents,
             currency: "usd",
             productSnapshotJson: null,
