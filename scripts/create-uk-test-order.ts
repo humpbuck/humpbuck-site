@@ -101,7 +101,7 @@ async function main() {
             variantLabel: "uk-test",
             variantImage: null,
             qty: QTY,
-            unitPriceCents,
+            unitPriceCents: unitAmountCents,
             lineTotalCents,
             currency: "usd",
             productSnapshotJson: null,
