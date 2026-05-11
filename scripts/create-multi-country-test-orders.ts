@@ -313,17 +313,6 @@ async function main() {
       continue;
     }
 
-    const itemsJson = JSON.stringify([
-      {
-        slug,
-        name: `HUMPBUCK — ${c.label} (script)`,
-        qty: QTY,
-        unitAmountCents,
-        lineTotalCents,
-        variantLabel: `${c.key}-test`,
-      },
-    ]);
-
     const shipping = {
       ...billing,
       country: c.country,
@@ -339,12 +328,28 @@ async function main() {
         provider: "stripe",
         providerRef: `${c.key}_test_${Date.now()}`,
         totalCents: orderTotalCents,
-        itemsJson,
         billingJson: JSON.stringify(billing),
         shippingJson: JSON.stringify(shipping),
         orderNotes:
           "Created by scripts/create-multi-country-test-orders.ts — delete after testing.",
         trafficSource: "direct",
+        items: {
+          create: [
+            {
+              productSlug: slug,
+              productName: `HUMPBUCK — ${c.label} (script)`,
+              productImage: null,
+              variantId: null,
+              variantLabel: `${c.key}-test`,
+              variantImage: null,
+              qty: QTY,
+              unitPriceCents,
+              lineTotalCents,
+              currency: "usd",
+              productSnapshotJson: null,
+            },
+          ],
+        },
       },
     });
 
