@@ -16,7 +16,7 @@ import {
 } from "@/lib/email-marketing-preference";
 import { getProductBySlug } from "@/lib/catalog";
 import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
-import { parseOrderItemsJson } from "@/lib/parse-order-items";
+import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { prisma } from "@/lib/prisma";
 import { buildSubscribeMagicUrl } from "@/lib/subscribe-magic-link";
 import { trackingUrlForCarrier } from "@/lib/tracking-url";
@@ -252,7 +252,7 @@ export async function buildShippingAddressChangeEmailPayload(
     );
   }
 
-  const lines = await parseOrderItemsJson(order.itemsJson);
+  const lines = orderItemsFromOrder(order);
   const oid = orderDisplayCode(order);
   const placed = new Date(order.createdAt).toLocaleString(SITE_LOCALE, {
     dateStyle: "medium",
