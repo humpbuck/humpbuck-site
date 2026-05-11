@@ -2,14 +2,14 @@ import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { adminPath } from "@/lib/admin-path";
 import { prisma } from "@/lib/prisma";
 import { ProductManager } from "@/components/admin/product-manager";
-import { getAllProducts } from "@/lib/catalog";
+import { getAllProducts, type Product } from "@/lib/catalog";
 
 export default async function AdminInventoryPage() {
-  let products = [];
+  let products: Product[] = [];
   try {
     products = await prisma.catalogProduct.findMany({
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-    });
+    }) as unknown as Product[];
   } catch {
     products = getAllProducts();
   }
