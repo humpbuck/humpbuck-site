@@ -212,7 +212,7 @@ export default function CheckoutPage() {
       <div className="grid gap-6 lg:grid-cols-[1.4fr_0.9fr] lg:items-start">
         <div className="space-y-6">
           <div className="rounded-2xl border border-line bg-white/60 p-5">
-            <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Customer email</h2>
+            <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Customer email <span className="text-rose-500">*</span></h2>
             <div className="mt-4">
               <input
                 type="email"
