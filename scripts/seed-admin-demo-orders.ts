@@ -67,17 +67,6 @@ async function main() {
   for (let i = 0; i < orders.length; i++) {
     const o = orders[i]!;
     const lineTotalCents = o.unitAmountCents;
-    const itemsJson = JSON.stringify([
-      {
-        slug: o.slug,
-        name: o.name,
-        qty: 1,
-        unitAmountCents: o.unitAmountCents,
-        lineTotalCents,
-        variantId: o.variantId,
-        variantLabel: o.variantId ? `${o.slug}: ${o.variantId}` : undefined,
-      },
-    ]);
 
     const order = await prisma.order.create({
       data: {
@@ -86,13 +75,29 @@ async function main() {
         provider: "stripe",
         providerRef: `${PREFIX}_${ts}_${i}`,
         totalCents: lineTotalCents,
-        itemsJson,
         billingJson: JSON.stringify(usShipping),
         shippingJson: JSON.stringify(usShipping),
         orderNotes: `Demo order ${i + 1} of 3 — scripts/seed-admin-demo-orders.ts`,
         carrier: o.carrier ?? null,
         trackingNumber: o.trackingNumber ?? null,
         trafficSource: i === 0 ? "google" : i === 1 ? "direct" : "unknown",
+        items: {
+          create: [
+            {
+              productSlug: o.slug,
+              productName: o.name,
+              productImage: null,
+              variantId: o.variantId ?? null,
+              variantLabel: o.variantId ? `${o.slug}: ${o.variantId}` : null,
+              variantImage: null,
+              qty: 1,
+              unitPriceCents: o.unitAmountCents,
+              lineTotalCents,
+              currency: "usd",
+              productSnapshotJson: null,
+            },
+          ],
+        },
       },
     });
 
