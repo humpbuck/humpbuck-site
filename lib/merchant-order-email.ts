@@ -12,7 +12,7 @@ import { buildShippingAddressChangeEmailPayload } from "@/lib/customer-shipped-e
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { getProductBySlug } from "@/lib/catalog";
 import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
-import { parseOrderItemsJson } from "@/lib/parse-order-items";
+import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
 import { prisma } from "@/lib/prisma";
 import { SITE_LOCALE } from "@/lib/site-locale";
@@ -114,7 +114,7 @@ function absoluteImageUrl(href: string): string {
   return `${base}${path}`;
 }
 
-async function buildPlainText(order: Order, lines: Awaited<ReturnType<typeof parseOrderItemsJson>>): Promise<string> {
+async function buildPlainText(order: Order, lines: Awaited<ReturnType<typeof orderItemsFromOrder>>): Promise<string> {
   const oid = orderDisplayCode(order);
   const rows = lines
     .map(
@@ -321,7 +321,7 @@ export async function notifyMerchantOrderPaid(orderId: string): Promise<void> {
   if (!order || order.status !== "paid") return;
   if (order.merchantNotifySentAt) return;
 
-  const lines = await parseOrderItemsJson(order.itemsJson);
+  const lines = orderItemsFromOrder(order);
   const html = await buildHtml(order, lines);
   const text = await buildPlainText(order, lines);
   const subject = `New paid order #${orderDisplayCode(order)} · HUMPBUCK`;
