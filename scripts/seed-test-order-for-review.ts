@@ -49,17 +49,6 @@ async function main() {
 
   const ts = Date.now();
   const lineTotalCents = UNIT_CENTS;
-  const itemsJson = JSON.stringify([
-    {
-      slug: SLUG,
-      name: NAME,
-      qty: 1,
-      unitAmountCents: UNIT_CENTS,
-      lineTotalCents,
-      variantId: "style-01",
-      variantLabel: `${SLUG}: style-01`,
-    },
-  ]);
 
   const order = await prisma.order.create({
     data: {
@@ -69,13 +58,29 @@ async function main() {
       provider: "dev_seed",
       providerRef: `${PROVIDER_PREFIX}_${ts}`,
       totalCents: lineTotalCents,
-      itemsJson,
       billingJson: JSON.stringify(shipping),
       shippingJson: JSON.stringify(shipping),
       orderNotes: `Test order for buyer review flow — ${PROVIDER_PREFIX}`,
       carrier: "Test Carrier",
       trackingNumber: `TEST${String(ts).slice(-10)}`,
       trafficSource: "unknown",
+      items: {
+        create: [
+          {
+            productSlug: SLUG,
+            productName: NAME,
+            productImage: null,
+            variantId: "style-01",
+            variantLabel: `${SLUG}: style-01`,
+            variantImage: null,
+            qty: 1,
+            unitPriceCents: UNIT_CENTS,
+            lineTotalCents,
+            currency: "usd",
+            productSnapshotJson: null,
+          },
+        ],
+      },
     },
   });
 
