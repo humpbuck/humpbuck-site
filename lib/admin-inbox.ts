@@ -97,7 +97,21 @@ export async function syncSystemInboxMessages() {
         select: {
           id: true,
           email: true,
-          itemsJson: true,
+          items: {
+            select: {
+              productSlug: true,
+              productName: true,
+              productImage: true,
+              variantId: true,
+              variantLabel: true,
+              variantImage: true,
+              qty: true,
+              unitPriceCents: true,
+              lineTotalCents: true,
+              currency: true,
+              productSnapshotJson: true,
+            },
+          },
           merchantOrderCode: true,
           createdAt: true,
         },
