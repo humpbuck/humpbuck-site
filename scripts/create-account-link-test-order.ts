@@ -47,16 +47,21 @@ async function main() {
   }
 
   const slug = "digitemp-2412m";
-  const itemsJson = JSON.stringify([
+  const items = [
     {
-      slug,
-      name: "HUMPBUCK — account order test (script)",
-      qty: 1,
-      unitAmountCents: 100,
-      lineTotalCents: 100,
+      productSlug: slug,
+      productName: "HUMPBUCK — account order test (script)",
+      productImage: null,
+      variantId: null,
       variantLabel: "address-test",
+      variantImage: null,
+      qty: 1,
+      unitPriceCents: 100,
+      lineTotalCents: 100,
+      currency: "usd",
+      productSnapshotJson: null,
     },
-  ]);
+  ];
 
   const shippingAddr = {
     firstName: "Test",
@@ -102,13 +107,15 @@ async function main() {
       provider: "stripe",
       providerRef: `account_test_${Date.now()}`,
       totalCents: 100,
-      itemsJson,
       billingJson,
       shippingJson,
       orderNotes: differentAddresses
         ? "Created by scripts/create-account-link-test-order.ts (--different-addresses) — safe to delete."
         : "Created by scripts/create-account-link-test-order.ts — safe to delete after testing.",
       trafficSource: "direct",
+      items: {
+        create: items,
+      },
     },
   });
 
@@ -127,12 +134,9 @@ async function main() {
   console.log("  Display #:   ", shortId);
   console.log("");
   console.log("Buyer:");
-  console.log("  ", `${base}/account/orders`);
-  console.log("  ", `${base}/account/orders/${order.id}`);
-  console.log("  ", `${base}/account/orders/${order.id}/edit-shipping`);
-  console.log("");
-  console.log("Merchant inbox: MERCHANT_NOTIFY_EMAIL or humpbuck@outlook.com (after save on edit page).");
-  console.log("");
+  console.log(`  ${base}/account/orders/${order.id}`);
+  console.log("Admin:");
+  console.log(`  ${base}/admin/ouhao/orders/${order.id}`);
 }
 
 main()
@@ -140,4 +144,6 @@ main()
     console.error(e);
     process.exit(1);
   })
-  .finally(() => prisma.$disconnect());
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
