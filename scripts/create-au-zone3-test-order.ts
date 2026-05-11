@@ -105,20 +105,27 @@ async function main() {
       provider: "stripe",
       providerRef: `au_z3_verify_${Date.now()}`,
       totalCents: orderTotalCents,
-      itemsJson: JSON.stringify([
-        {
-          slug,
-          name: "HUMPBUCK — AU zone 3 verify (4350 / Cainiao)",
-          qty: QTY,
-          unitAmountCents,
-          lineTotalCents,
-          variantLabel: "au-z3-verify",
-        },
-      ]),
       billingJson: JSON.stringify(billing),
       shippingJson: JSON.stringify(shipping),
       orderNotes: `AU zone 3 verification order — postcode ${POSTAL}, logisticsZone must be ${EXPECT_ZONE}. Delete after testing.`,
       trafficSource: "direct",
+      items: {
+        create: [
+          {
+            productSlug: slug,
+            productName: "HUMPBUCK — AU zone 3 verify (4350 / Cainiao)",
+            productImage: null,
+            variantId: null,
+            variantLabel: "au-z3-verify",
+            variantImage: null,
+            qty: QTY,
+            unitPriceCents,
+            lineTotalCents,
+            currency: "usd",
+            productSnapshotJson: null,
+          },
+        ],
+      },
     },
   });
 
