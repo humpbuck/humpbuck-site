@@ -40,17 +40,19 @@ async function main() {
   }
 
   const slug = "rm-m01";
-  const itemsJson = JSON.stringify([
-    {
-      slug,
-      name: "RM-M01 Tonneau Ultra-thin",
-      qty: 1,
-      unitAmountCents: 329_00,
-      lineTotalCents: 329_00,
-      variantId: "style-01",
-      variantLabel: "RM-M01: Style 01",
-    },
-  ]);
+  const item = {
+    productSlug: slug,
+    productName: "RM-M01 Tonneau Ultra-thin",
+    productImage: null,
+    variantId: "style-01",
+    variantLabel: "RM-M01: Style 01",
+    variantImage: null,
+    qty: 1,
+    unitPriceCents: 329_00,
+    lineTotalCents: 329_00,
+    currency: "usd",
+    productSnapshotJson: null,
+  };
 
   const shippingAddr = {
     firstName: "Maria",
@@ -90,12 +92,14 @@ async function main() {
       provider: "stripe",
       providerRef: `cancel_test_${Date.now()}`,
       totalCents: 329_00,
-      itemsJson,
       billingJson: JSON.stringify(billingAddr),
       shippingJson: JSON.stringify(shippingAddr),
       orderNotes:
         "Created by scripts/create-cancel-test-order.ts — cancel from account to test email.",
       trafficSource: "direct",
+      items: {
+        create: [item],
+      },
     },
   });
 
