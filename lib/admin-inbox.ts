@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { parseOrderItemsJson } from "@/lib/parse-order-items";
+import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { getProductBySlug, resolveCatalogVariantId } from "@/lib/catalog";
 import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
 
@@ -66,7 +66,21 @@ export async function syncSystemInboxMessages() {
         select: {
           id: true,
           email: true,
-          itemsJson: true,
+          items: {
+            select: {
+              productSlug: true,
+              productName: true,
+              productImage: true,
+              variantId: true,
+              variantLabel: true,
+              variantImage: true,
+              qty: true,
+              unitPriceCents: true,
+              lineTotalCents: true,
+              currency: true,
+              productSnapshotJson: true,
+            },
+          },
           merchantOrderCode: true,
           createdAt: true,
         },
@@ -94,11 +108,23 @@ export async function syncSystemInboxMessages() {
   const toPayload = async (order: {
     id: string;
     email: string;
-    itemsJson: string;
+    items?: Array<{
+      productSlug: string;
+      productName: string;
+      productImage: string | null;
+      variantId: string | null;
+      variantLabel: string | null;
+      variantImage: string | null;
+      qty: number;
+      unitPriceCents: number;
+      lineTotalCents: number;
+      currency: string;
+      productSnapshotJson: string | null;
+    }>;
     merchantOrderCode: string | null;
     createdAt: Date;
   }) => {
-    const lines = await parseOrderItemsJson(order.itemsJson);
+    const lines = orderItemsFromOrder(order);
     const first = lines[0];
     const linePreviews = lines.map((line) => {
       const product = line.slug ? getProductBySlug(line.slug) : null;
