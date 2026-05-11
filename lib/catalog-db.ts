@@ -90,6 +90,10 @@ function toProduct(row: CatalogProductRow): Product {
  * - Keep static catalog as fallback for slugs not yet migrated.
  */
 export async function getMergedCatalogProducts(): Promise<Product[]> {
+  if (process.env.NODE_ENV !== "production") {
+    return getAllProducts();
+  }
+
   let dbRows: CatalogProductRow[] = [];
   try {
     dbRows = await prisma.catalogProduct.findMany({
