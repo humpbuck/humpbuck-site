@@ -23,6 +23,10 @@ function r2Client(): S3Client {
   });
 }
 
+/**
+ * Canonical product slug used by the DB and upload routing.
+ * Keep this lowercase so API, DB, and storefront matching stay stable.
+ */
 function normalizeSlug(s: string): string {
   return (
     s
@@ -64,6 +68,7 @@ export function buildProductMediaObjectKey(params: {
     if (section === "video") return `products/${slug}/video/${slug}-video.${ext}`;
     const n = Math.max(1, Math.floor(params.sortIndex ?? 1));
     const mid = section === "variants" ? "style" : section;
+    // Default fallback keeps the canonical lowercase slug path.
     return `products/${slug}/${section}/${slug}-${mid}-${pad2(n)}.${ext}`;
   }
 

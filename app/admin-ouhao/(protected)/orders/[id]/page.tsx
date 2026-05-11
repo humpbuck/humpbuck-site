@@ -26,7 +26,7 @@ import {
   quoteCheckoutShipping,
 } from "@/lib/checkout-shipping-quote";
 import { findPostalZone } from "@/lib/global-postal-zones";
-import { parseOrderItemsJson } from "@/lib/parse-order-items";
+import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { prisma } from "@/lib/prisma";
 import { SITE_LOCALE } from "@/lib/site-locale";
 
@@ -143,11 +143,12 @@ export default async function AdminOrderDetailPage({
           lastName: true,
         },
       },
+      items: true,
     },
   });
   if (!order) notFound();
 
-  const lines = await parseOrderItemsJson(order.itemsJson);
+  const lines = orderItemsFromOrder(order as { items?: Array<{ productSlug: string; productName: string; productImage: string | null; variantId: string | null; variantLabel: string | null; variantImage: string | null; qty: number; unitPriceCents: number; lineTotalCents: number; currency: string; productSnapshotJson: string | null; }>; itemsJson?: string | null });
   /** Legacy orders only had `shippingJson`; treat as both billing & shipping. */
   const billingRaw = parseShippingRecord(
     order.billingJson ?? order.shippingJson,

@@ -46,6 +46,7 @@ export async function GET() {
   }
   try {
     const products = await prisma.catalogProduct.findMany({
+      where: { status: { not: "archived" } },
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
     });
     const inventory = await prisma.productInventory.findMany({
@@ -117,6 +118,7 @@ export async function POST(req: Request) {
             ? null
             : Number(body.compareAtPrice) || null,
         image: asString(body.image),
+        status: String(body.status ?? "active").toLowerCase() === "archived" ? "archived" : "active",
         inStock: Boolean(body.inStock),
         highlightsJson: JSON.stringify(
           Array.isArray(body.highlights) ? (body.highlights as string[]) : [],

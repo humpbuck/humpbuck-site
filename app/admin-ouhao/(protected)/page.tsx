@@ -25,6 +25,8 @@ export default async function AdminHomePage() {
     revenueToday,
     lowStockItems,
     recentOrders,
+    activeProducts,
+    archivedProducts,
   ] = await Promise.all([
     prisma.order.count({ where: { deletedAt: null } }),
     prisma.order.count({ where: { status: "shipped", deletedAt: null } }),
@@ -32,12 +34,10 @@ export default async function AdminHomePage() {
       where: { status: { in: ["paid", "processing"] }, deletedAt: null },
     }),
     prisma.productReview.count(),
-    // Total revenue (all paid orders)
     prisma.order.aggregate({
       _sum: { totalCents: true },
       where: { status: { in: paidStatuses }, deletedAt: null },
     }),
-    // 7-day revenue
     prisma.order.aggregate({
       _sum: { totalCents: true },
       _count: true,
@@ -47,7 +47,6 @@ export default async function AdminHomePage() {
         deletedAt: null,
       },
     }),
-    // 30-day revenue
     prisma.order.aggregate({
       _sum: { totalCents: true },
       _count: true,
@@ -57,7 +56,6 @@ export default async function AdminHomePage() {
         deletedAt: null,
       },
     }),
-    // Today revenue
     prisma.order.aggregate({
       _sum: { totalCents: true },
       _count: true,
@@ -67,13 +65,11 @@ export default async function AdminHomePage() {
         deletedAt: null,
       },
     }),
-    // Low stock items
     prisma.productInventory.findMany({
       where: { quantity: { lte: 10 } },
       orderBy: { quantity: "asc" },
       take: 10,
     }),
-    // Recent 5 orders
     prisma.order.findMany({
       where: { deletedAt: null },
       orderBy: { createdAt: "desc" },
@@ -88,6 +84,8 @@ export default async function AdminHomePage() {
         merchantOrderCode: true,
       },
     }),
+    prisma.catalogProduct.count({ where: { status: "active" } }),
+    prisma.catalogProduct.count({ where: { status: "archived" } }),
   ]);
 
   const numLink =
@@ -104,6 +102,49 @@ export default async function AdminHomePage() {
       <p className="mt-2 text-sm text-muted">
         Quick stats from your database (all payment providers).
       </p>
+
+      <div className="mt-8">
+        <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+          Catalog
+        </h2>
+        <ul className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <li className="rounded-2xl border border-line bg-white/60 px-5 py-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+              Active products
+            </p>
+            <Link href={adminPath("/products")} className={numLink}>
+              {activeProducts}
+            </Link>
+          </li>
+          <li className="rounded-2xl border border-line bg-white/60 px-5 py-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+              Archived products
+            </p>
+            <Link href={adminPath("/products")} className={numLink}>
+              {archivedProducts}
+            </Link>
+          </li>
+          <li className="rounded-2xl border border-line bg-white/60 px-5 py-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+              Today
+            </p>
+            <p className="mt-2 font-serif text-2xl tabular-nums text-ink">
+              {formatUsd(revenueToday._sum.totalCents ?? 0)}
+            </p>
+            <p className="mt-1 text-[10px] text-muted">
+              {revenueToday._count} order{revenueToday._count !== 1 ? "s" : ""}
+            </p>
+          </li>
+          <li className="rounded-2xl border border-line bg-white/60 px-5 py-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+              All time
+            </p>
+            <p className="mt-2 font-serif text-2xl tabular-nums text-ink">
+              {formatUsd(revenueAll._sum.totalCents ?? 0)}
+            </p>
+          </li>
+        </ul>
+      </div>
 
       {/* Revenue cards */}
       <div className="mt-8">
@@ -214,7 +255,6 @@ export default async function AdminHomePage() {
         </ul>
       </div>
 
-      {/* Inventory alerts */}
       {(outOfStockCount > 0 || lowStockCount > 0) && (
         <div className="mt-8 rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-4">
           <div className="flex items-center justify-between">
@@ -245,7 +285,6 @@ export default async function AdminHomePage() {
         </div>
       )}
 
-      {/* Recent orders */}
       {recentOrders.length > 0 && (
         <div className="mt-8">
           <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
@@ -264,10 +303,7 @@ export default async function AdminHomePage() {
               </thead>
               <tbody>
                 {recentOrders.map((o) => (
-                  <tr
-                    key={o.id}
-                    className="border-b border-line/50 last:border-0"
-                  >
+                  <tr key={o.id} className="border-b border-line/50 last:border-0">
                     <td className="px-4 py-3">
                       <Link
                         href={adminPath(`/orders/${o.id}`)}
@@ -300,29 +336,14 @@ export default async function AdminHomePage() {
       )}
 
       <div className="mt-10 flex flex-wrap gap-3">
-        <Link
-          href={adminPath("/orders")}
-          className="inline-flex rounded-2xl bg-ink px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
-        >
+        <Link href={adminPath("/orders")} className="inline-flex rounded-2xl bg-ink px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90">
           View all orders
         </Link>
-        <Link
-          href={adminPath("/inventory")}
-          className="inline-flex rounded-2xl border border-line bg-white/70 px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20"
-        >
+        <Link href={adminPath("/products")} className="inline-flex rounded-2xl border border-line bg-white/70 px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20">
+          Manage products
+        </Link>
+        <Link href={adminPath("/inventory")} className="inline-flex rounded-2xl border border-line bg-white/70 px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20">
           Manage inventory
-        </Link>
-        <Link
-          href={adminPath("/reviews")}
-          className="inline-flex rounded-2xl border border-line bg-white/70 px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20"
-        >
-          Manage reviews
-        </Link>
-        <Link
-          href={adminPath("/customers")}
-          className="inline-flex rounded-2xl border border-line bg-white/70 px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20"
-        >
-          Customers
         </Link>
       </div>
     </div>

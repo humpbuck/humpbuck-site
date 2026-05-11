@@ -93,6 +93,7 @@ export async function getMergedCatalogProducts(): Promise<Product[]> {
   let dbRows: CatalogProductRow[] = [];
   try {
     dbRows = await prisma.catalogProduct.findMany({
+      where: { status: "active" },
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
     });
   } catch (e) {

@@ -439,29 +439,59 @@ export function ProductManager({
     }
   }
 
-  async function removeCurrent() {
+  async function archiveCurrent() {
     if (!current) return;
     if (!current.id) {
-      setProducts((prev) => prev.filter((p) => p !== current));
-      setSelected(products[0]?.id ?? null);
+      setFlashMessage("Save the product first before archiving.", "error");
       return;
     }
-    if (!window.confirm(`Delete product ${current.slug}?`)) return;
+    if (!window.confirm(`Archive product ${current.slug}? It will stop selling.`)) return;
     setBusy(true);
     setFlashMessage("");
     try {
       const res = await fetch(`/api/admin/products/${current.id}`, {
         method: "DELETE",
       });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
-      if (!res.ok || !data.ok) {
-        setFlashMessage(data.error || "Delete failed.", "error");
+      const data = (await res.json()) as { archived?: boolean; error?: string };
+      if (!res.ok || !data.archived) {
+        setFlashMessage(data.error || "Archive failed.", "error");
         return;
       }
-      setFlashMessage("Deleted.", "success");
+      setProducts((prev) =>
+        prev.map((p) => (p.id === current.id ? { ...p, inStock: false } : p)),
+      );
+      setFlashMessage("Archived.", "success");
       startTransition(() => router.refresh());
     } catch {
-      setFlashMessage("Delete failed.", "error");
+      setFlashMessage("Archive failed.", "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function purgeCurrent() {
+    if (!current?.id) return;
+    if ((products.find((p) => p.id === current.id)?.inStock ?? true) && current.inStock) {
+      // ignore, UI shows a confirm anyway
+    }
+    if (!window.confirm(`Permanently delete archived product ${current.slug}? This cannot be undone.`)) return;
+    setBusy(true);
+    setFlashMessage("");
+    try {
+      const res = await fetch(`/api/admin/products/${current.id}/purge`, {
+        method: "DELETE",
+      });
+      const data = (await res.json()) as { deleted?: boolean; error?: string };
+      if (!res.ok || !data.deleted) {
+        setFlashMessage(data.error || "Delete forever failed.", "error");
+        return;
+      }
+      setProducts((prev) => prev.filter((p) => p.id !== current.id));
+      setSelected(products.find((p) => p.id !== current.id)?.id ?? null);
+      setFlashMessage("Deleted forever.", "success");
+      startTransition(() => router.refresh());
+    } catch {
+      setFlashMessage("Delete forever failed.", "error");
     } finally {
       setBusy(false);
     }
@@ -835,10 +865,18 @@ export function ProductManager({
               <button
                 type="button"
                 disabled={busy || isPending}
-                onClick={() => void removeCurrent()}
+                onClick={() => void archiveCurrent()}
+                className="rounded-xl border border-amber-200 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-amber-800 hover:bg-amber-50 disabled:opacity-50"
+              >
+                Archive / 下架
+              </button>
+              <button
+                type="button"
+                disabled={busy || isPending || current.inStock}
+                onClick={() => void purgeCurrent()}
                 className="rounded-xl border border-red-200 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-red-700 hover:bg-red-50 disabled:opacity-50"
               >
-                Delete product
+                Delete forever
               </button>
             </div>
           </div>

@@ -17,7 +17,7 @@ import {
 import { BuyerOrderLineItems } from "@/components/account/buyer-order-line-items";
 import { BuyerConfirmReceivedButton } from "@/components/account/buyer-confirm-received-button";
 import { formatPrice } from "@/lib/catalog";
-import { parseOrderItemsJson } from "@/lib/parse-order-items";
+import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { prisma } from "@/lib/prisma";
 import { SITE_LOCALE } from "@/lib/site-locale";
 
@@ -32,10 +32,13 @@ export default async function AccountOrderDetailPage({
 
   const order = await prisma.order.findFirst({
     where: { id, userId: session.user.id, deletedAt: null },
+    include: {
+      items: true,
+    },
   });
   if (!order) notFound();
 
-  const lines = await parseOrderItemsJson(order.itemsJson);
+  const lines = orderItemsFromOrder(order as { items?: Array<{ productSlug: string; productName: string; productImage: string | null; variantId: string | null; variantLabel: string | null; variantImage: string | null; qty: number; unitPriceCents: number; lineTotalCents: number; currency: string; productSnapshotJson: string | null; }>; itemsJson?: string | null });
   const lineSlugs = [...new Set(lines.map((l) => l.slug))];
   const existingReviews = await prisma.productReview.findMany({
     where: {

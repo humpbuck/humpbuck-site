@@ -76,6 +76,7 @@ export async function PATCH(
             ? null
             : Number(body.compareAtPrice) || null,
         image: asString(body.image),
+        status: String(body.status ?? prev.status ?? "active").toLowerCase() === "archived" ? "archived" : "active",
         inStock: Boolean(body.inStock),
         highlightsJson: JSON.stringify(
           Array.isArray(body.highlights) ? (body.highlights as string[]) : [],
@@ -141,9 +142,12 @@ export async function DELETE(
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
-    await prisma.catalogProduct.delete({ where: { id } });
+    await prisma.catalogProduct.update({
+      where: { id },
+      data: { status: "archived", inStock: false },
+    });
     await prisma.productInventory.deleteMany({ where: { productSlug: product.slug } });
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, archived: true });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     return NextResponse.json(

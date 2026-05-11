@@ -82,7 +82,6 @@ model Order {
   providerRef                String?
   totalCents                 Int
   currency                   String                     @default("usd")
-  itemsJson                  String
   billingJson                String?
   shippingJson               String?
   orderNotes                 String?
@@ -106,6 +105,7 @@ model Order {
   shippedAt                  DateTime?
   deliveredAt                DateTime?
   deliveryConfirmedBy        String?
+  items                      OrderItemSnapshot[]
   affiliateCommission        AffiliateCommissionLedger?
   affiliate                  AffiliateProfile?          @relation(fields: [affiliateId], references: [id])
   user                       User?                      @relation(fields: [userId], references: [id])
@@ -113,6 +113,29 @@ model Order {
   @@index([deletedAt])
   @@index([affiliateId, createdAt])
   @@index([status, shippedAt])
+}
+
+model OrderItemSnapshot {
+  id                  String   @id @default(cuid())
+  orderId             String
+  productSlug         String
+  productName         String
+  productImage        String?
+  variantId           String?
+  variantLabel        String?
+  variantImage        String?
+  qty                 Int
+  unitPriceCents      Int
+  lineTotalCents      Int
+  currency            String   @default("usd")
+  productSnapshotJson String?
+  createdAt           DateTime @default(now())
+
+  order               Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([productSlug])
+  @@index([variantId])
 }
 
 model EmailMarketingPreference {
@@ -176,6 +199,7 @@ model CatalogProduct {
   price            Float
   compareAtPrice   Float?
   image            String
+  status           String   @default("active")
   inStock          Boolean  @default(true)
   highlightsJson   String   @default("[]")
   specsJson        String   @default("[]")

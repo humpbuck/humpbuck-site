@@ -6,7 +6,7 @@ import { showBuyerCancelOrderCta } from "@/lib/account-buyer-order";
 import { orderDisplayCode } from "@/lib/admin/order-ui";
 import { BuyerOrderLineItems } from "@/components/account/buyer-order-line-items";
 import { formatPrice } from "@/lib/catalog";
-import { parseOrderItemsJson } from "@/lib/parse-order-items";
+import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { prisma } from "@/lib/prisma";
 import { SITE_LOCALE } from "@/lib/site-locale";
 
@@ -60,7 +60,21 @@ export default async function AccountOrdersPage({
       status: true,
       provider: true,
       totalCents: true,
-      itemsJson: true,
+      items: {
+        select: {
+          productSlug: true,
+          productName: true,
+          productImage: true,
+          variantId: true,
+          variantLabel: true,
+          variantImage: true,
+          qty: true,
+          unitPriceCents: true,
+          lineTotalCents: true,
+          currency: true,
+          productSnapshotJson: true,
+        },
+      },
       trackingNumber: true,
       merchantOrderCode: true,
     },
@@ -116,7 +130,21 @@ export default async function AccountOrdersPage({
         <ul className="mt-10 space-y-6">
           {await Promise.all(
             orders.map(async (order, index) => {
-              const lines = await parseOrderItemsJson(order.itemsJson);
+              const lines = orderItemsFromOrder(order as {
+                items?: Array<{
+                  productSlug: string;
+                  productName: string;
+                  productImage: string | null;
+                  variantId: string | null;
+                  variantLabel: string | null;
+                  variantImage: string | null;
+                  qty: number;
+                  unitPriceCents: number;
+                  lineTotalCents: number;
+                  currency: string;
+                  productSnapshotJson: string | null;
+                }>;
+              });
               const totalUsd = order.totalCents / 100;
               return (
                 <li
