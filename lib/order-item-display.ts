@@ -10,6 +10,7 @@ type OrderItemSnapshotLike = {
   qty: number;
   unitPriceCents: number;
   lineTotalCents: number;
+};
 
 export function orderItemsFromSnapshotRows(
   rows: OrderItemSnapshotLike[] | null | undefined,
