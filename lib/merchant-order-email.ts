@@ -151,7 +151,7 @@ async function buildPlainText(order: Order, lines: Awaited<ReturnType<typeof ord
   return parts.join("\n");
 }
 
-async function buildHtml(order: Order, lines: Awaited<ReturnType<typeof parseOrderItemsJson>>): Promise<string> {
+async function buildHtml(order: Order, lines: Awaited<ReturnType<typeof orderItemsFromOrder>>): Promise<string> {
   const oid = orderDisplayCode(order);
   const placed = new Date(order.createdAt).toLocaleString(SITE_LOCALE, {
     dateStyle: "medium",
