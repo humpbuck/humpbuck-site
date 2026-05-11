@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSession } from "next-auth/react";
 import { useCart } from "@/components/cart/cart-context";
 import { formatPrice } from "@/lib/catalog";
 import { emptyCheckoutAddress, validateCheckoutAddressForm } from "@/lib/checkout-address";
@@ -12,11 +13,18 @@ import { getAffiliatePidForCheckout } from "@/lib/traffic-attribution";
 
 export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false);
+  const { data: session } = useSession();
   const { items, itemCount } = useCart();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (session?.user?.email) {
+      setCustomerEmail(session.user.email);
+    }
+  }, [session?.user?.email]);
   const [billing, setBilling] = useState(emptyCheckoutAddress);
   const [customerEmail, setCustomerEmail] = useState("");
   const [shipping, setShipping] = useState(emptyCheckoutAddress);
@@ -64,6 +72,7 @@ export default function CheckoutPage() {
   const total = Math.max(0, subtotal + shippingPrice - couponDiscount);
 
   async function ensureDraftOrder() {
+    if (!customerEmail.trim()) throw new Error("Customer email is required");
     const res = await fetch("/api/checkout/order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -102,6 +111,10 @@ export default function CheckoutPage() {
   }
 
   async function beginStripeCheckout() {
+    if (!customerEmail.trim()) {
+      setCouponError("Customer email is required.");
+      return;
+    }
     setLoading("stripe");
     try {
       const draftOrderId = orderId ?? (await ensureDraftOrder());
@@ -124,6 +137,10 @@ export default function CheckoutPage() {
   }
 
   async function beginPayPalCheckout() {
+    if (!customerEmail.trim()) {
+      setCouponError("Customer email is required.");
+      return;
+    }
     setLoading("paypal");
     try {
       const res = await fetch("/api/checkout/paypal", {
@@ -198,11 +215,16 @@ export default function CheckoutPage() {
             <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Customer email</h2>
             <div className="mt-4">
               <input
+                type="email"
+                required
                 value={customerEmail}
                 onChange={(e) => setCustomerEmail(e.target.value)}
                 placeholder="Enter email for order receipt"
                 className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
               />
+              {!customerEmail.trim() ? (
+                <p className="mt-2 text-xs text-rose-600">Email is required to place an order.</p>
+              ) : null}
             </div>
           </div>
 
