@@ -185,14 +185,8 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
             <p className={`text-xs ${status === "success" ? "text-ink/80" : "text-red-600/90"}`}>{message}</p>
           ) : null}
         </div>
-        <div className="sm:col-span-2 flex items-center justify-end pt-2">
-          <button
-            type="submit"
-            disabled={status === "loading"}
-            className="inline-flex items-center justify-center rounded-full bg-digital px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-digital-dim disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {status === "loading" ? "Submitting..." : "Submit request"}
-          </button>
+        <div className="sm:col-span-2">
+          <p className="text-xs text-muted">Use the Email mockup request button on the right to submit after verification.</p>
         </div>
       </form>
     </>

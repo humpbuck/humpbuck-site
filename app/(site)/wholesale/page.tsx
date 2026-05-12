@@ -122,7 +122,7 @@ export default function WholesalePage() {
               type="submit"
               form="wholesale-brief-form"
               className="inline-flex items-center justify-center gap-2 rounded-2xl border border-stone-400/35 bg-paper px-6 py-4 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink/90 shadow-sm transition hover:border-ink/20 hover:bg-stone-100/90"
-              aria-label={`Submit wholesale mockup request to ${supportMail}`}
+              aria-label={`Email mockup request to ${supportMail}`}
             >
               <Mail size={18} />
               Email mockup request
