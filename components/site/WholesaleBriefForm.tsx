@@ -1,14 +1,22 @@
 "use client";
 
 import Script from "next/script";
-import { useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Status = "idle" | "loading" | "success" | "error";
 
 declare global {
   interface Window {
     turnstile?: {
-      render: (container: string | HTMLElement, options: { sitekey: string; callback: (token: string) => void; "expired-callback"?: () => void; "error-callback"?: () => void }) => string;
+      render: (
+        container: string | HTMLElement,
+        options: {
+          sitekey: string;
+          callback: (token: string) => void;
+          "expired-callback"?: () => void;
+          "error-callback"?: () => void;
+        }
+      ) => string;
       reset: (widgetId?: string) => void;
     };
   }
@@ -26,9 +34,22 @@ export function WholesaleBriefForm() {
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileReady, setTurnstileReady] = useState(false);
   const [widgetId, setWidgetId] = useState<string | null>(null);
+  const widgetRef = useRef<HTMLDivElement | null>(null);
 
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
-  const canRenderTurnstile = useMemo(() => Boolean(siteKey), [siteKey]);
+  const canRenderTurnstile = Boolean(siteKey);
+
+  useEffect(() => {
+    if (!canRenderTurnstile || turnstileReady || !widgetRef.current || !window.turnstile) return;
+    const rendered = window.turnstile.render(widgetRef.current, {
+      sitekey: siteKey,
+      callback: (token) => setTurnstileToken(token),
+      "expired-callback": () => setTurnstileToken(""),
+      "error-callback": () => setTurnstileToken(""),
+    });
+    setWidgetId(rendered);
+    setTurnstileReady(true);
+  }, [canRenderTurnstile, siteKey, turnstileReady]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -75,21 +96,7 @@ export function WholesaleBriefForm() {
   return (
     <>
       {canRenderTurnstile ? (
-        <Script
-          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-          strategy="afterInteractive"
-          onLoad={() => {
-            if (turnstileReady || !window.turnstile) return;
-            const rendered = window.turnstile.render("turnstile-widget", {
-              sitekey: siteKey,
-              callback: (token) => setTurnstileToken(token),
-              "expired-callback": () => setTurnstileToken(""),
-              "error-callback": () => setTurnstileToken(""),
-            });
-            setWidgetId(rendered);
-            setTurnstileReady(true);
-          }}
-        />
+        <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" strategy="afterInteractive" onLoad={() => setTurnstileReady((current) => current)} />
       ) : null}
       <form
         id="wholesale-brief-form"
@@ -161,7 +168,7 @@ export function WholesaleBriefForm() {
           aria-hidden="true"
         />
         <div className="sm:col-span-2">
-          <div id="turnstile-widget" className="min-h-[65px]" />
+          <div ref={widgetRef} className="min-h-[65px]" />
           {!canRenderTurnstile ? (
             <p className="mt-2 text-xs text-red-600/90">Verification is unavailable right now.</p>
           ) : null}
