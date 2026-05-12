@@ -162,19 +162,27 @@ export function WholesaleBriefForm() {
         />
         <div className="sm:col-span-2">
           <div id="turnstile-widget" className="min-h-[65px]" />
+          {!canRenderTurnstile ? (
+            <p className="mt-2 text-xs text-red-600/90">Verification is unavailable right now.</p>
+          ) : null}
+          {canRenderTurnstile && !turnstileToken ? (
+            <p className="mt-2 text-xs text-muted">Please complete the verification before submitting.</p>
+          ) : null}
         </div>
         <div className="sm:col-span-2">
           {message ? (
             <p className={`text-xs ${status === "success" ? "text-ink/80" : "text-red-600/90"}`}>{message}</p>
           ) : null}
         </div>
-        <button
-          type="submit"
-          disabled={status === "loading"}
-          className="hidden"
-          aria-hidden="true"
-          tabIndex={-1}
-        />
+        <div className="sm:col-span-2 flex items-center justify-end pt-2">
+          <button
+            type="submit"
+            disabled={status === "loading"}
+            className="inline-flex items-center justify-center rounded-full bg-digital px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-digital-dim disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {status === "loading" ? "Submitting..." : "Submit request"}
+          </button>
+        </div>
       </form>
     </>
   );
