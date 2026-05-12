@@ -185,9 +185,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
             <p className={`text-xs ${status === "success" ? "text-ink/80" : "text-red-600/90"}`}>{message}</p>
           ) : null}
         </div>
-        <div className="sm:col-span-2">
-          <p className="text-xs text-muted">Use the Email mockup request button on the right to submit after verification.</p>
-        </div>
+        <div className="sm:col-span-2" />
       </form>
     </>
   );

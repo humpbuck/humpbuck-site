@@ -104,9 +104,7 @@ export default function WholesalePage() {
               quick iterations.
             </p>
             <WholesaleBriefForm siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ""} />
-            <p className="mt-4 text-xs text-muted">
-              Mockup request submissions are sent to support for manual follow-up.
-            </p>
+            
           </div>
           <div className="flex flex-col gap-3">
             <a
