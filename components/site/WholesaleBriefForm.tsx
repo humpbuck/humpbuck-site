@@ -22,7 +22,7 @@ declare global {
   }
 }
 
-export function WholesaleBriefForm() {
+export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
   const [company, setCompany] = useState("");
   const [targetRegion, setTargetRegion] = useState("");
   const [estimatedQty, setEstimatedQty] = useState("");
@@ -32,15 +32,15 @@ export function WholesaleBriefForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
-  const [turnstileReady, setTurnstileReady] = useState(false);
+  const [turnstileScriptLoaded, setTurnstileScriptLoaded] = useState(false);
   const [widgetId, setWidgetId] = useState<string | null>(null);
   const widgetRef = useRef<HTMLDivElement | null>(null);
 
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
   const canRenderTurnstile = Boolean(siteKey);
 
   useEffect(() => {
-    if (!canRenderTurnstile || turnstileReady || !widgetRef.current || !window.turnstile) return;
+    if (!canRenderTurnstile || !turnstileScriptLoaded || !widgetRef.current || !window.turnstile) return;
+    if (widgetId) return;
     const rendered = window.turnstile.render(widgetRef.current, {
       sitekey: siteKey,
       callback: (token) => setTurnstileToken(token),
@@ -48,8 +48,7 @@ export function WholesaleBriefForm() {
       "error-callback": () => setTurnstileToken(""),
     });
     setWidgetId(rendered);
-    setTurnstileReady(true);
-  }, [canRenderTurnstile, siteKey, turnstileReady]);
+  }, [canRenderTurnstile, siteKey, turnstileScriptLoaded, widgetId]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -96,7 +95,12 @@ export function WholesaleBriefForm() {
   return (
     <>
       {canRenderTurnstile ? (
-        <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" strategy="afterInteractive" onLoad={() => setTurnstileReady((current) => current)} />
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+          strategy="afterInteractive"
+          onLoad={() => setTurnstileScriptLoaded(true)}
+          onError={() => setMessage("Verification script failed to load. Please refresh and try again.")}
+        />
       ) : null}
       <form
         id="wholesale-brief-form"
