@@ -112,12 +112,6 @@ export async function POST(req: Request) {
   }
 
   const nowIso = new Date().toISOString();
-  const rateLimitKey = getRateLimitKey(forwardedFor, email);
-  const rateLimit = checkRateLimit(rateLimitKey);
-  if (!rateLimit.allowed) {
-    return NextResponse.json({ error: "Too many requests. Please wait a few minutes and try again." }, { status: 429 });
-  }
-
   const notifyTo = process.env.MERCHANT_NOTIFY_EMAIL?.trim() || "humpbuck@outlook.com";
   await createAdminInboxMessage({
     category: ADMIN_INBOX_CATEGORY.emailMockupRequest,
