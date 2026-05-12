@@ -103,7 +103,7 @@ export default function WholesalePage() {
               Email works—but WhatsApp is fastest for photos, references, and
               quick iterations.
             </p>
-            <WholesaleBriefForm />
+            <WholesaleBriefForm siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ""} />
             <p className="mt-4 text-xs text-muted">
               Mockup request submissions are sent to support for manual follow-up.
             </p>
