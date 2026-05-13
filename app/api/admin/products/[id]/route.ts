@@ -104,21 +104,38 @@ export async function PATCH(
       });
     }
 
-    for (const row of inventory) {
-      const variantId = asString(row.variantId).trim();
+    const normalizedVariants = variants
+      .map((v) => asString(v.id).trim())
+      .filter(Boolean);
+    const existingInventory = await prisma.productInventory.findMany({
+      where: { productSlug: slug },
+    });
+    const inventoryMap = new Map(
+      existingInventory.map((row) => [row.variantId, row]),
+    );
+
+    for (const variantId of normalizedVariants) {
+      const row = inventory.find((item) => asString(item.variantId).trim() === variantId);
+      const quantity = Math.max(0, Math.floor(Number(row?.quantity) || 0));
+      const lowStockThreshold = Math.max(0, Math.floor(Number(row?.lowStockThreshold) || 5));
       await prisma.productInventory.upsert({
         where: { productSlug_variantId: { productSlug: slug, variantId } },
         create: {
           productSlug: slug,
           variantId,
-          quantity: Math.max(0, Math.floor(Number(row.quantity) || 0)),
-          lowStockThreshold: Math.max(0, Math.floor(Number(row.lowStockThreshold) || 5)),
+          quantity,
+          lowStockThreshold,
         },
         update: {
-          quantity: Math.max(0, Math.floor(Number(row.quantity) || 0)),
-          lowStockThreshold: Math.max(0, Math.floor(Number(row.lowStockThreshold) || 5)),
+          quantity,
+          lowStockThreshold,
         },
       });
+      inventoryMap.delete(variantId);
+    }
+
+    for (const orphan of inventoryMap.values()) {
+      await prisma.productInventory.delete({ where: { id: orphan.id } }).catch(() => null);
     }
 
     return NextResponse.json({ ok: true });
