@@ -87,6 +87,11 @@ function buildEditableProduct(
       lowStockThreshold: String(row.lowStockThreshold),
     };
   }
+  for (const variant of parseArray<VariantRow>(p.variantsJson, [])) {
+    if (!map[variant.id]) {
+      map[variant.id] = { quantity: "100", lowStockThreshold: "5" };
+    }
+  }
   return {
     id: p.id,
     slug: p.slug,
