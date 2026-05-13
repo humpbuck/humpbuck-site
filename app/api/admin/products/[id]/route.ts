@@ -104,14 +104,9 @@ export async function PATCH(
       });
     }
 
-    const normalizedVariants = variants
-      .map((v) => asString(v.id).trim())
-      .filter(Boolean);
-    const existingInventory = await prisma.productInventory.findMany({
-      where: { productSlug: slug },
-    });
+    const normalizedVariants = variants.map((v) => asString(v.id).trim()).filter(Boolean);
     const inventoryMap = new Map(
-      existingInventory.map((row) => [row.variantId, row]),
+      (await prisma.productInventory.findMany({ where: { productSlug: slug } })).map((row) => [row.variantId, row]),
     );
 
     for (const variantId of normalizedVariants) {
