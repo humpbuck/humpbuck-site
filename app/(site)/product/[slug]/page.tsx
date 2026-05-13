@@ -201,7 +201,6 @@ export default async function ProductPage({
                   {formatPrice(product.compareAtPrice)}
                 </div>
               )}
-              <div className="text-sm text-muted">{stockLabel}</div>
             </div>
 
             <ProductCartSection
