@@ -69,7 +69,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
       if (res.ok && data.ok) {
         setStatus("success");
-        setMessage("Request submitted. We have sent your details to support for review.");
+        setMessage("Email sent successfully. We will review your request and reply soon.");
         setCompany("");
         setTargetRegion("");
         setEstimatedQty("");
@@ -182,7 +182,13 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
         </div>
         <div className="sm:col-span-2">
           {message ? (
-            <p className={`text-xs ${status === "success" ? "text-ink/80" : "text-red-600/90"}`}>{message}</p>
+            <p
+              role="status"
+              aria-live="polite"
+              className={`text-xs ${status === "success" ? "text-emerald-700" : "text-red-600/90"}`}
+            >
+              {message}
+            </p>
           ) : null}
         </div>
         <div className="sm:col-span-2" />
