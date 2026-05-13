@@ -7,10 +7,6 @@ import {
   getMergedCatalogProducts,
 } from "@/lib/catalog-db";
 import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
-import { R2_GALLERY_SPECS_BY_SLUG } from "@/lib/r2";
-import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
-import { styleNumFromR2VariantUrl } from "@/lib/r2-line-image";
-import { getPdpR2Media } from "@/lib/r2-pdp-media";
 import { ProductCard } from "@/components/site/ProductCard";
 import { ProductDetailImageStrip } from "@/components/site/ProductDetailImageStrip";
 import { ProductPdpMediaColumn } from "@/components/site/ProductPdpMediaColumn";
@@ -90,37 +86,9 @@ export default async function ProductPage({
         ? "from-[color:var(--color-luxe)]/15 to-transparent"
         : "from-violet-500/10 to-transparent";
 
-  const gallerySpec = R2_GALLERY_SPECS_BY_SLUG[slug];
-  const pdpR2 = gallerySpec != null ? await getPdpR2Media(gallerySpec) : null;
-  const gallerySlides =
-    pdpR2?.gallery && pdpR2.gallery.length > 0
-      ? pdpR2.gallery
-      : product.galleryImages ?? product.images ?? (product.image ? [product.image] : []);
-
-  const staticVariants = product.variantOptions ?? [];
-  const discoveredVariants =
-    pdpR2?.variants && pdpR2.variants.length > 0 ? pdpR2.variants : null;
-  const variantOptions =
-    discoveredVariants != null
-      ? discoveredVariants.map((src) => {
-          const n = styleNumFromR2VariantUrl(src) ?? 1;
-          const id = `style-${String(n).padStart(2, "0")}`;
-          const cat = staticVariants.find((v) => v.id === id);
-          return {
-            id,
-            label: `Style ${String(n).padStart(2, "0")}`,
-            image: src,
-            ...(cat?.inStock === false ? { inStock: false as const } : {}),
-            ...(cat?.stockQuantity != null ? { stockQuantity: cat.stockQuantity } : {}),
-          };
-        })
-      : staticVariants;
-
-  const detailImages =
-    pdpR2?.detail && pdpR2.detail.length > 0
-      ? pdpR2.detail
-      : product.detailImages ?? [];
-
+  const gallerySlides = product.galleryImages ?? product.images ?? (product.image ? [product.image] : []);
+  const variantOptions = product.variantOptions ?? [];
+  const detailImages = product.detailImages ?? [];
   const firstSlide =
     gallerySlides[0] ??
     product.galleryImages?.[0] ??
@@ -128,19 +96,14 @@ export default async function ProductPage({
     product.promoVideo?.poster;
   const preferredPromoVideo = product.promoVideo;
   const promoVideosForMedia: { src: string; poster?: string }[] | null =
-    pdpR2?.videos && pdpR2.videos.length > 0
-      ? pdpR2.videos.map((src) => ({
-          src,
-          poster: firstSlide,
-        }))
-      : preferredPromoVideo
-        ? [
-            {
-              src: preferredPromoVideo.src,
-              poster: firstSlide ?? preferredPromoVideo.poster,
-            },
-          ]
-        : null;
+    preferredPromoVideo
+      ? [
+          {
+            src: preferredPromoVideo.src,
+            poster: firstSlide ?? preferredPromoVideo.poster,
+          },
+        ]
+      : null;
 
   return (
     <div>
