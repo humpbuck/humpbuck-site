@@ -105,14 +105,22 @@ export async function PATCH(
     }
 
     const normalizedVariants = variants.map((v) => asString(v.id).trim()).filter(Boolean);
-    const inventoryMap = new Map(
-      (await prisma.productInventory.findMany({ where: { productSlug: slug } })).map((row) => [row.variantId, row]),
-    );
+    const existingInventory = await prisma.productInventory.findMany({ where: { productSlug: slug } });
+    const inventoryMap = new Map(existingInventory.map((row) => [row.variantId, row]));
 
     for (const variantId of normalizedVariants) {
       const row = inventory.find((item) => asString(item.variantId).trim() === variantId);
-      const quantity = Math.max(0, Math.floor(Number(row?.quantity) || 0));
-      const lowStockThreshold = Math.max(0, Math.floor(Number(row?.lowStockThreshold) || 5));
+      const hasQuantity = row?.quantity !== undefined && row?.quantity !== null && String(row.quantity).trim() !== "";
+      const hasThreshold = row?.lowStockThreshold !== undefined && row?.lowStockThreshold !== null && String(row.lowStockThreshold).trim() !== "";
+      const current = inventoryMap.get(variantId);
+      const quantity = hasQuantity ? Math.max(0, Math.floor(Number(row?.quantity) || 0)) : current?.quantity;
+      const lowStockThreshold = hasThreshold ? Math.max(0, Math.floor(Number(row?.lowStockThreshold) || 5)) : current?.lowStockThreshold ?? 5;
+
+      if (quantity === undefined) {
+        inventoryMap.delete(variantId);
+        continue;
+      }
+
       await prisma.productInventory.upsert({
         where: { productSlug_variantId: { productSlug: slug, variantId } },
         create: {
