@@ -33,6 +33,14 @@ export function ProductCartSection({
 
   const current = variant ?? null;
   const currentStock = current?.stockQuantity;
+  const stockLabel =
+    currentStock === 0
+      ? "Out of stock"
+      : currentStock != null && currentStock <= 10
+        ? `Low stock (${currentStock})`
+        : currentStock != null
+          ? `In stock (${currentStock})`
+          : "Out of stock";
   const canAdd = (currentStock ?? 0) > 0 && current?.inStock !== false;
   const showAdded = addedTick > 0;
 
@@ -74,6 +82,10 @@ export function ProductCartSection({
 
   return (
     <>
+      <p className="mt-3 text-sm text-muted" role="status">
+        {stockLabel}
+      </p>
+
       <div className="mt-8 flex flex-col gap-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-3">
           <button
