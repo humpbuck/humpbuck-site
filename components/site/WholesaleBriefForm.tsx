@@ -53,7 +53,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
 
   useEffect(() => {
     if (!showSuccessModal) return;
-    const timer = window.setTimeout(() => setShowSuccessModal(false), 3000);
+    const timer = window.setTimeout(() => setShowSuccessModal(false), 6000);
     return () => window.clearTimeout(timer);
   }, [showSuccessModal]);
 
