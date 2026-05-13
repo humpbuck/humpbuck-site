@@ -198,7 +198,6 @@ export default async function ProductPage({
               name={product.name}
               price={product.price}
               inStock={product.inStock}
-              stockQuantity={product.stockQuantity}
               variantOptions={variantOptions}
             />
 
