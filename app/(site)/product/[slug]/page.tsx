@@ -30,14 +30,8 @@ export async function generateMetadata({
   const { slug } = await params;
   const product = await getMergedCatalogProductBySlug(slug);
   if (!product) return { title: "Product" };
-  const spec = R2_GALLERY_SPECS_BY_SLUG[slug];
-  let ogSrc = product.image;
-  if (spec) {
-    const pdp = await getPdpR2Media(spec);
-    if (pdp.gallery?.[0]) ogSrc = pdp.gallery[0];
-  }
   const pageUrl = `${getSiteUrl()}/product/${encodeURIComponent(slug)}`;
-  const og = absoluteOgImageUrl(ogSrc);
+  const og = absoluteOgImageUrl(product.image);
   return {
     title: product.name,
     description: product.shortDescription,
@@ -75,19 +69,8 @@ export default async function ProductPage({
   const related = all
     .filter((p) => p.slug !== product.slug && p.seriesSlug === product.seriesSlug)
     .slice(0, 3);
-  const relatedCardImages = await Promise.all(
-    related.map((p) => getShopCardR2GalleryImage(p.slug)),
-  );
-
-  const theme =
-    series?.theme === "digital"
-      ? "from-cyan-500/15 to-transparent"
-      : series?.theme === "luxe"
-        ? "from-[color:var(--color-luxe)]/15 to-transparent"
-        : "from-violet-500/10 to-transparent";
 
   const gallerySlides = product.galleryImages ?? product.images ?? (product.image ? [product.image] : []);
-  const variantOptions = product.variantOptions ?? [];
   const detailImages = product.detailImages ?? [];
   const firstSlide =
     gallerySlides[0] ??
@@ -121,7 +104,13 @@ export default async function ProductPage({
           <ProductPdpMediaColumn
             productName={product.name}
             gallerySlides={gallerySlides}
-            themeGlowClass={theme}
+            themeGlowClass={
+              series?.theme === "digital"
+                ? "from-cyan-500/15 to-transparent"
+                : series?.theme === "luxe"
+                  ? "from-[color:var(--color-luxe)]/15 to-transparent"
+                  : "from-violet-500/10 to-transparent"
+            }
             promoVideos={promoVideosForMedia ?? undefined}
           />
 
@@ -160,7 +149,7 @@ export default async function ProductPage({
               name={product.name}
               price={product.price}
               inStock={product.inStock}
-              variantOptions={variantOptions}
+              variantOptions={product.variantOptions ?? []}
             />
 
             <div className="mt-10 space-y-3">
@@ -236,7 +225,7 @@ export default async function ProductPage({
                 <ProductCard
                   key={p.slug}
                   product={p}
-                  cardImageUrl={relatedCardImages[i] ?? undefined}
+                  cardImageUrl={undefined}
                 />
               ))}
             </div>
