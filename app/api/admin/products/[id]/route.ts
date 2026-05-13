@@ -56,13 +56,15 @@ export async function PATCH(
     : [];
 
   try {
-    const prev = await prisma.catalogProduct.findUnique({ where: { id } });
+    const prev =
+      (await prisma.catalogProduct.findUnique({ where: { id } })) ??
+      (slug ? await prisma.catalogProduct.findUnique({ where: { slug } }) : null);
     if (!prev) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
     await prisma.catalogProduct.update({
-      where: { id },
+      where: { id: prev.id },
       data: {
         slug,
         name,
