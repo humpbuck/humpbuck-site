@@ -32,6 +32,12 @@ export function ProductDetailClient({
 
   return (
     <div>
+      <div className="mt-8 flex flex-wrap items-end gap-4">
+        <p className="text-sm text-muted" role="status">
+          {stockLabel}
+        </p>
+      </div>
+
       {options.length > 0 && (
         <ProductStyleVariants
           options={options}
@@ -40,10 +46,6 @@ export function ProductDetailClient({
           onSelectedIndexChange={setSelectedIndex}
         />
       )}
-
-      <p className="mt-3 text-sm text-muted" role="status">
-        {stockLabel}
-      </p>
 
       <ProductCartSection slug={slug} name={name} price={price} variant={current} />
     </div>
