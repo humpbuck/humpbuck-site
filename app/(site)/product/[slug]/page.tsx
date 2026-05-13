@@ -152,38 +152,46 @@ export default async function ProductPage({
               variantOptions={product.variantOptions ?? []}
             />
 
-            <div className="mt-10 space-y-3">
-              {product.highlights.map((h) => (
-                <div key={h} className="flex gap-3 text-sm text-ink/85">
-                  <Check
-                    className="mt-0.5 shrink-0 text-digital-dim"
-                    size={18}
-                    strokeWidth={2}
-                  />
-                  <span>{h}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-10 rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-6">
-              <h2 className="font-serif text-xl">Details</h2>
-              <p className="mt-3 text-sm leading-relaxed text-muted">
-                {product.description}
-              </p>
-              <dl className="mt-6 grid gap-3 sm:grid-cols-2">
-                {product.specs.map((row) => (
-                  <div
-                    key={row.label}
-                    className="rounded-xl border border-[color:var(--color-line)] bg-paper px-4 py-3"
-                  >
-                    <dt className="text-[10px] uppercase tracking-[0.16em] text-muted">
-                      {row.label}
-                    </dt>
-                    <dd className="mt-1 text-sm font-medium">{row.value}</dd>
+            {product.highlights.length > 0 && (
+              <div className="mt-10 space-y-3">
+                {product.highlights.map((h) => (
+                  <div key={h} className="flex gap-3 text-sm text-ink/85">
+                    <Check
+                      className="mt-0.5 shrink-0 text-digital-dim"
+                      size={18}
+                      strokeWidth={2}
+                    />
+                    <span>{h}</span>
                   </div>
                 ))}
-              </dl>
-            </div>
+              </div>
+            )}
+
+            {(product.description || product.specs.length > 0) && (
+              <div className="mt-10 rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-6">
+                <h2 className="font-serif text-xl">Details</h2>
+                {product.description && (
+                  <p className="mt-3 text-sm leading-relaxed text-muted">
+                    {product.description}
+                  </p>
+                )}
+                {product.specs.length > 0 && (
+                  <dl className="mt-6 grid gap-3 sm:grid-cols-2">
+                    {product.specs.map((row) => (
+                      <div
+                        key={row.label}
+                        className="rounded-xl border border-[color:var(--color-line)] bg-paper px-4 py-3"
+                      >
+                        <dt className="text-[10px] uppercase tracking-[0.16em] text-muted">
+                          {row.label}
+                        </dt>
+                        <dd className="mt-1 text-sm font-medium">{row.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+              </div>
+            )}
 
             <div className="mt-auto flex flex-wrap gap-4 pt-8 text-[12px] text-muted">
               <Link href="/shipping" className="underline-offset-4 hover:underline">
