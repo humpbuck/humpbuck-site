@@ -89,7 +89,7 @@ function buildEditableProduct(
   }
   for (const variant of parseArray<VariantRow>(p.variantsJson, [])) {
     if (!map[variant.id]) {
-      map[variant.id] = { quantity: "100", lowStockThreshold: "5" };
+      map[variant.id] = { quantity: "", lowStockThreshold: "5" };
     }
   }
   return {
@@ -134,7 +134,7 @@ function newProductDraft(): EditableProduct {
     variants: [{ id: "style-01", label: "Style 01", image: "", inStock: true }],
     promoVideo: null,
     inventory: {
-      "style-01": { quantity: "100", lowStockThreshold: "5" },
+      "style-01": { quantity: "", lowStockThreshold: "5" },
     },
   };
 }
