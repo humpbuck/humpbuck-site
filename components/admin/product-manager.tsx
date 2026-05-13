@@ -403,11 +403,8 @@ export function ProductManager({
       promoVideo: current.promoVideo?.src ? current.promoVideo : null,
       inventory: Object.entries(current.inventory).map(([variantId, row]) => ({
         variantId,
-        quantity: Math.max(0, parseInt(row.quantity || "0", 10) || 0),
-        lowStockThreshold: Math.max(
-          0,
-          parseInt(row.lowStockThreshold || "5", 10) || 5,
-        ),
+        quantity: row.quantity,
+        lowStockThreshold: row.lowStockThreshold,
       })),
     };
 

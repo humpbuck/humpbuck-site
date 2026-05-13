@@ -100,7 +100,7 @@ export async function POST(req: Request) {
   }
   const variants = Array.isArray(body.variants) ? (body.variants as ProductVariant[]) : [];
   const inventory = Array.isArray(body.inventory)
-    ? (body.inventory as { variantId?: string; quantity?: number; lowStockThreshold?: number }[])
+    ? (body.inventory as { variantId?: string; quantity?: string | number | null; lowStockThreshold?: string | number | null }[])
     : [];
 
   try {
