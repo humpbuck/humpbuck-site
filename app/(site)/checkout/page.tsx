@@ -9,7 +9,7 @@ import { CheckoutAddressForm } from "@/components/checkout/checkout-address-form
 import { CheckoutShippingSection } from "@/components/checkout/checkout-shipping-section";
 import { PaymentBrandButtons } from "@/components/checkout/payment-brand-buttons";
 import { getTaxIdRequirement, quoteCheckoutShipping, type ShippingMethodId } from "@/lib/checkout-shipping-quote";
-import { getAffiliatePidForCheckout } from "@/lib/traffic-attribution";
+import { getAffiliatePidForCheckout, getTrafficSourceForCheckout } from "@/lib/traffic-attribution";
 
 export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false);
