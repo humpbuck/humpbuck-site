@@ -2,45 +2,16 @@ import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { adminPath } from "@/lib/admin-path";
 import { prisma } from "@/lib/prisma";
 import { ProductManager } from "@/components/admin/product-manager";
-import { type Product } from "@/lib/catalog";
-import { getMergedCatalogProducts } from "@/lib/catalog-db";
 
 const EMPTY_JSON = JSON.stringify([]);
 
-function toCatalogProductRecord(p: Product) {
-  return {
-    id: p.slug,
-    slug: p.slug,
-    name: p.name,
-    seriesSlug: p.seriesSlug,
-    categoryLabel: p.categoryLabel,
-    shortDescription: p.shortDescription,
-    description: p.description,
-    price: p.price,
-    compareAtPrice: p.compareAtPrice ?? null,
-    image: p.image,
-    inStock: p.inStock,
-    highlightsJson: EMPTY_JSON,
-    specsJson: EMPTY_JSON,
-    galleryJson: JSON.stringify(p.galleryImages ?? p.images ?? []),
-    detailJson: JSON.stringify(p.detailImages ?? []),
-    variantsJson: JSON.stringify(p.variantOptions ?? []),
-    promoVideoJson: p.promoVideo ? JSON.stringify(p.promoVideo) : null,
-  };
-}
-
 export default async function AdminInventoryPage() {
-  let products = [] as ReturnType<typeof toCatalogProductRecord>[];
-  try {
-    const dbProducts = await getMergedCatalogProducts();
-    products = dbProducts.map(toCatalogProductRecord);
-  } catch {
-    products = [];
-  }
-  const inventory = await prisma.productInventory.findMany({
-    orderBy: [{ productSlug: "asc" }, { variantId: "asc" }],
-  });
-
+  const [products, inventory] = await Promise.all([
+    prisma.catalogProduct.findMany({ orderBy: [{ slug: "asc" }] }),
+    prisma.productInventory.findMany({
+      orderBy: [{ productSlug: "asc" }, { variantId: "asc" }],
+    }),
+  ]);
   return (
     <div>
       <AdminBackLink href={adminPath()} label="Overview" />
@@ -51,7 +22,25 @@ export default async function AdminInventoryPage() {
 
       <div className="mt-8">
         <ProductManager
-          initialProducts={products}
+          initialProducts={products.map((p) => ({
+            id: p.id,
+            slug: p.slug,
+            name: p.name,
+            seriesSlug: p.seriesSlug,
+            categoryLabel: p.categoryLabel,
+            shortDescription: p.shortDescription,
+            description: p.description,
+            price: p.price,
+            compareAtPrice: p.compareAtPrice,
+            image: p.image,
+            inStock: p.inStock,
+            highlightsJson: p.highlightsJson ?? EMPTY_JSON,
+            specsJson: p.specsJson ?? EMPTY_JSON,
+            galleryJson: p.galleryJson ?? EMPTY_JSON,
+            detailJson: p.detailJson ?? EMPTY_JSON,
+            variantsJson: p.variantsJson ?? EMPTY_JSON,
+            promoVideoJson: p.promoVideoJson,
+          }))}
           initialInventory={inventory}
         />
       </div>
