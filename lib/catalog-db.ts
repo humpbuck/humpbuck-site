@@ -20,6 +20,13 @@ type CatalogProductRow = {
   promoVideoJson: string | null;
 };
 
+type InventoryRow = {
+  productSlug: string;
+  variantId: string;
+  quantity: number;
+  lowStockThreshold: number;
+};
+
 function parseArray<T>(raw: string | null | undefined, fallback: T[]): T[] {
   if (!raw) return fallback;
   try {
@@ -39,7 +46,7 @@ async function getStaticProductsFallback(): Promise<Product[]> {
   return [];
 }
 
-function toProduct(row: CatalogProductRow): Product {
+function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
   const gallery = parseArray<string>(row.galleryJson, []);
   const detail = parseArray<string>(row.detailJson, []);
   const variants = parseArray<
@@ -58,6 +65,19 @@ function toProduct(row: CatalogProductRow): Product {
       })()
     : undefined;
 
+  const variantStock = variants.map((v) => {
+    const id = v.id ? String(v.id) : "";
+    const inv = inventory.find((r) => r.productSlug === row.slug && r.variantId === id);
+    return {
+      id,
+      label: v.label ? String(v.label) : "",
+      image: v.image ? String(v.image) : "",
+      inStock: (inv?.quantity ?? 0) > 0 && v.inStock !== false,
+    };
+  });
+  const computedInStock =
+    variantStock.length > 0 ? variantStock.some((v) => v.inStock) : row.inStock;
+
   return {
     slug: row.slug,
     name: row.name,
@@ -72,19 +92,12 @@ function toProduct(row: CatalogProductRow): Product {
     galleryImages: gallery,
     detailImages: detail,
     promoVideo: promo,
-    variantOptions: variants
-      .filter((v) => v.id && v.label && v.image)
-      .map((v) => ({
-        id: String(v.id),
-        label: String(v.label),
-        image: String(v.image),
-        inStock: v.inStock !== false,
-      })),
+    variantOptions: variantStock.filter((v) => v.id && v.label && v.image),
     highlights: highlights.filter((h) => typeof h === "string" && h.trim().length > 0),
     specs: specs
       .filter((s) => s.label && s.value)
       .map((s) => ({ label: String(s.label), value: String(s.value) })),
-    inStock: row.inStock,
+    inStock: computedInStock,
   };
 }
 
@@ -95,9 +108,12 @@ function toProduct(row: CatalogProductRow): Product {
  */
 export async function getMergedCatalogProducts(): Promise<Product[]> {
   try {
-    const dbRows = await prisma.catalogProduct.findMany();
+    const [dbRows, inventory] = await Promise.all([
+      prisma.catalogProduct.findMany(),
+      prisma.productInventory.findMany(),
+    ]);
     if (dbRows.length === 0) return getStaticProductsFallback();
-    return dbRows.map(toProduct);
+    return dbRows.map((row) => toProduct(row, inventory));
   } catch (e) {
     console.error("[catalog-db] failed to load CatalogProduct, fallback to static:", e);
     return getStaticProductsFallback();
@@ -108,8 +124,11 @@ export async function getMergedCatalogProductBySlug(
   slug: string,
 ): Promise<Product | undefined> {
   try {
-    const row = await prisma.catalogProduct.findUnique({ where: { slug } });
-    if (row) return toProduct(row);
+    const [row, inventory] = await Promise.all([
+      prisma.catalogProduct.findUnique({ where: { slug } }),
+      prisma.productInventory.findMany({ where: { productSlug: slug } }),
+    ]);
+    if (row) return toProduct(row, inventory);
   } catch (e) {
     console.error("[catalog-db] failed to load CatalogProduct by slug, fallback to static:", e);
   }
