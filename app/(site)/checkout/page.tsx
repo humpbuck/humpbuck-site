@@ -104,6 +104,8 @@ export default function CheckoutPage() {
         shippingEstimateCny: shippingQuote.ok ? shippingQuote.shippingCny : 0,
         couponCode: appliedCoupon?.code ?? null,
         discountCents: Math.round(couponDiscount * 100),
+        affiliatePid: getAffiliatePidForCheckout(),
+        trafficSource: getTrafficSourceForCheckout(),
       }),
     });
     const data = (await res.json()) as { ok?: boolean; orderId?: string; error?: string };

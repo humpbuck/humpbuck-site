@@ -11,6 +11,8 @@ export async function POST(req: Request) {
     returnUrl?: string;
     cancelUrl?: string;
     paypalOrderId?: string;
+    affiliatePid?: string | null;
+    trafficSource?: string | null;
   };
 
   try {

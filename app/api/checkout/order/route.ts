@@ -50,6 +50,8 @@ export async function POST(req: Request) {
     couponCode?: string | null;
     discountCents?: number;
     returnUrl?: string;
+    affiliatePid?: string | null;
+    trafficSource?: string | null;
   };
 
   try {
@@ -111,6 +113,8 @@ export async function POST(req: Request) {
           shippingJson: body.shipping ? JSON.stringify(body.shipping) : null,
           couponCode: body.couponCode ?? null,
           discountCents,
+          affiliatePid: typeof body.affiliatePid === "string" ? body.affiliatePid : null,
+          trafficSource: typeof body.trafficSource === "string" ? body.trafficSource : "unknown",
         },
       });
 
