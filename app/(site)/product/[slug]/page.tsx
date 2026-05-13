@@ -111,6 +111,7 @@ export default async function ProductPage({
             label: `Style ${String(n).padStart(2, "0")}`,
             image: src,
             ...(cat?.inStock === false ? { inStock: false as const } : {}),
+            ...(cat?.stockQuantity != null ? { stockQuantity: cat.stockQuantity } : {}),
           };
         })
       : staticVariants;

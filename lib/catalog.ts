@@ -21,6 +21,7 @@ export interface ProductVariantOption {
   image: string;
   /** When `false`, this style cannot be added to cart (default: in stock). */
   inStock?: boolean;
+  stockQuantity?: number;
 }
 
 export interface Product {

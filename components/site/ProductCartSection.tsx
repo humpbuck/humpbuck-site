@@ -40,7 +40,7 @@ export function ProductCartSection({
   } | null>(null);
   const opts = variantOptions ?? [];
   const current = opts[variantIndex];
-  const variantSellable = current ? current.inStock !== false : true;
+  const variantSellable = current ? (current.stockQuantity ?? 0) > 0 && current.inStock !== false : true;
   const productSellable = stockQuantity == null ? inStock : stockQuantity > 0;
   const canAdd = productSellable && variantSellable;
   const showAdded = addedTick > 0;

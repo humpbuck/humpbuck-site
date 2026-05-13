@@ -105,6 +105,7 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
       label: v.label,
       image: v.image,
       inStock: v.inStock,
+      stockQuantity: v.quantity,
     })),
     highlights: highlights.filter((h) => typeof h === "string" && h.trim().length > 0),
     specs: specs
