@@ -36,7 +36,7 @@ export function ProductPdpMediaColumn({
 
   if (videos.length > 0) {
     return (
-      <div className="flex min-h-0 min-w-0 flex-col gap-10 lg:h-full lg:min-h-0">
+      <div className="flex min-h-0 min-w-0 flex-col justify-between gap-10 lg:h-full lg:min-h-0">
         <div className="min-w-0 shrink-0">
           <ProductImageCarousel
             alt={productName}
@@ -44,16 +44,18 @@ export function ProductPdpMediaColumn({
             themeGlowClass={themeGlowClass}
           />
         </div>
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-end gap-10 lg:min-h-0">
-          {videos.map((v) => (
-            <ProductPromoVideo
-              key={v.src}
-              embedded
-              productName={productName}
-              src={v.src}
-              poster={v.poster}
-            />
-          ))}
+        <div className="min-w-0 flex-1">
+          <div className="flex min-h-0 flex-col justify-end gap-10 lg:min-h-0">
+            {videos.map((v) => (
+              <ProductPromoVideo
+                key={v.src}
+                embedded
+                productName={productName}
+                src={v.src}
+                poster={v.poster}
+              />
+            ))}
+          </div>
         </div>
       </div>
     );
