@@ -6,7 +6,6 @@ import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import type { ProductVariantOption } from "@/lib/catalog";
-import { ProductStyleVariants } from "@/components/site/ProductStyleVariants";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
 import { WhatsAppChatLink } from "@/components/site/WhatsAppChatLink";
 
@@ -14,23 +13,16 @@ export function ProductCartSection({
   slug,
   name,
   price,
-  inStock,
-  stockQuantity,
-  variantOptions,
+  variant,
 }: {
   slug: string;
   name: string;
   price: number;
-  inStock: boolean;
-  stockQuantity?: number;
-  variantOptions?: ProductVariantOption[] | null;
+  variant?: ProductVariantOption | null;
 }) {
   const { addItem, openCartDrawer } = useCart();
   const addButtonRef = useRef<HTMLButtonElement>(null);
-  const [variantIndex, setVariantIndex] = useState(0);
-  /** Incrementing tick resets the "Added" timer on repeat clicks. */
   const [addedTick, setAddedTick] = useState(0);
-  /** Flying "+1" toward header bag (viewport coords + delta). */
   const [flyParticle, setFlyParticle] = useState<{
     id: number;
     sx: number;
@@ -38,8 +30,8 @@ export function ProductCartSection({
     dx: number;
     dy: number;
   } | null>(null);
-  const opts = variantOptions ?? [];
-  const current = opts[variantIndex];
+
+  const current = variant ?? null;
   const currentStock = current?.stockQuantity;
   const stockLabel =
     currentStock === 0
@@ -48,16 +40,9 @@ export function ProductCartSection({
         ? `Low stock (${currentStock})`
         : currentStock != null
           ? `In stock (${currentStock})`
-          : inStock
-            ? "In stock"
-            : "Out of stock";
-  const variantSellable = current ? (current.stockQuantity ?? 0) > 0 && current.inStock !== false : true;
-  const canAdd = variantSellable;
+          : "Out of stock";
+  const canAdd = (currentStock ?? 0) > 0 && current?.inStock !== false;
   const showAdded = addedTick > 0;
-
-  useEffect(() => {
-    setAddedTick(0);
-  }, [variantIndex]);
 
   useEffect(() => {
     if (addedTick === 0) return;
@@ -66,15 +51,15 @@ export function ProductCartSection({
   }, [addedTick]);
 
   function handleAdd() {
-    if (!canAdd) return;
+    if (!canAdd || !current) return;
     addItem({
       slug,
       qty: 1,
       productName: name,
       unitPrice: price,
-      variantId: current?.id,
-      variantLabel: current?.label,
-      variantImage: current?.image,
+      variantId: current.id,
+      variantLabel: current.label,
+      variantImage: current.image,
     });
     setAddedTick((n) => n + 1);
     window.dispatchEvent(new CustomEvent(CART_ADDED_EVENT));
@@ -84,36 +69,19 @@ export function ProductCartSection({
       const btn = addButtonRef.current;
       const bag = document.querySelector<HTMLElement>("[data-bag-fly-target]");
       if (!btn || !bag) return;
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        return;
-      }
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       const a = btn.getBoundingClientRect();
       const b = bag.getBoundingClientRect();
       const sx = a.left + a.width / 2;
       const sy = a.top + a.height / 2;
       const ex = b.left + b.width / 2;
       const ey = b.top + b.height / 2;
-      setFlyParticle({
-        id: Date.now(),
-        sx,
-        sy,
-        dx: ex - sx,
-        dy: ey - sy,
-      });
+      setFlyParticle({ id: Date.now(), sx, sy, dx: ex - sx, dy: ey - sy });
     });
   }
 
   return (
     <>
-      {opts.length > 0 && (
-        <ProductStyleVariants
-          options={opts}
-          productName={name}
-          selectedIndex={variantIndex}
-          onSelectedIndexChange={setVariantIndex}
-        />
-      )}
-
       <p className="mt-3 text-sm text-muted" role="status">
         {stockLabel}
       </p>

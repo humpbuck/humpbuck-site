@@ -15,8 +15,8 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { ProductDetailImageStrip } from "@/components/site/ProductDetailImageStrip";
 import { ProductPdpMediaColumn } from "@/components/site/ProductPdpMediaColumn";
 import { ProductReviewsSection } from "@/components/site/ProductReviewsSection";
-import { ProductCartSection } from "@/components/site/ProductCartSection";
 import { TrackProductView } from "@/components/analytics/track-product-view";
+import { ProductDetailClient } from "@/components/site/ProductDetailClient";
 
 /** Fresh buyer reviews + R2 gallery discovery on each request (avoid stale static PDP). */
 export const dynamic = "force-dynamic";
@@ -127,17 +127,6 @@ export default async function ProductPage({
     product.images[0] ??
     product.promoVideo?.poster;
   const preferredPromoVideo = product.promoVideo;
-  const currentVariant = variantOptions[0] ?? null;
-  const stockLabel =
-    currentVariant?.stockQuantity === 0
-      ? "Out of stock"
-      : currentVariant?.stockQuantity != null && currentVariant.stockQuantity <= 10
-        ? `Low stock (${currentVariant.stockQuantity})`
-        : currentVariant?.stockQuantity != null
-          ? `In stock (${currentVariant.stockQuantity})`
-          : product.inStock
-            ? "In stock"
-            : "Out of stock";
   const promoVideosForMedia: { src: string; poster?: string }[] | null =
     pdpR2?.videos && pdpR2.videos.length > 0
       ? pdpR2.videos.map((src) => ({
@@ -203,7 +192,7 @@ export default async function ProductPage({
               )}
             </div>
 
-            <ProductCartSection
+            <ProductDetailClient
               slug={product.slug}
               name={product.name}
               price={product.price}
