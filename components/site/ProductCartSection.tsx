@@ -40,9 +40,19 @@ export function ProductCartSection({
   } | null>(null);
   const opts = variantOptions ?? [];
   const current = opts[variantIndex];
-  const variantSellable = current ? current.inStock !== false : true;
-  const productSellable = stockQuantity == null ? inStock : stockQuantity > 0;
-  const canAdd = productSellable && variantSellable;
+  const currentStock = current?.stockQuantity;
+  const stockLabel =
+    currentStock === 0
+      ? "Out of stock"
+      : currentStock != null && currentStock <= 10
+        ? `Low stock (${currentStock})`
+        : currentStock != null
+          ? `In stock (${currentStock})`
+          : inStock
+            ? "In stock"
+            : "Out of stock";
+  const variantSellable = current ? (current.stockQuantity ?? 0) > 0 && current.inStock !== false : true;
+  const canAdd = variantSellable;
   const showAdded = addedTick > 0;
 
   useEffect(() => {
@@ -104,11 +114,9 @@ export function ProductCartSection({
         />
       )}
 
-      {opts.length > 0 && !variantSellable && (
-        <p className="mt-3 text-sm text-muted" role="status">
-          This style is currently unavailable.
-        </p>
-      )}
+      <p className="mt-3 text-sm text-muted" role="status">
+        {stockLabel}
+      </p>
 
       <div className="mt-8 flex flex-col gap-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-3">

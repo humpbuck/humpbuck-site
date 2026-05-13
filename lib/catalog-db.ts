@@ -74,6 +74,7 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
       label: v.label ? String(v.label) : "",
       image: v.image ? String(v.image) : "",
       inStock: quantity > 0 && v.inStock !== false,
+      stockQuantity: quantity,
     };
   });
   const computedInStock =
@@ -98,6 +99,7 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
       label: v.label,
       image: v.image,
       inStock: v.inStock,
+      stockQuantity: v.stockQuantity,
     })),
     highlights: highlights.filter((h) => typeof h === "string" && h.trim().length > 0),
     specs: specs
