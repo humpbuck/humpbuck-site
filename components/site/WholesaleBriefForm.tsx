@@ -31,6 +31,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
   const [website, setWebsite] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileScriptLoaded, setTurnstileScriptLoaded] = useState(false);
   const [widgetId, setWidgetId] = useState<string | null>(null);
@@ -49,6 +50,12 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
     });
     setWidgetId(rendered);
   }, [canRenderTurnstile, siteKey, turnstileScriptLoaded, widgetId]);
+
+  useEffect(() => {
+    if (!showSuccessModal) return;
+    const timer = window.setTimeout(() => setShowSuccessModal(false), 3000);
+    return () => window.clearTimeout(timer);
+  }, [showSuccessModal]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -69,7 +76,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
       if (res.ok && data.ok) {
         setStatus("success");
-        setMessage("Email sent successfully. We will review your request and reply soon.");
+        setShowSuccessModal(true);
         setCompany("");
         setTargetRegion("");
         setEstimatedQty("");
@@ -180,19 +187,33 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
             <p className="mt-2 text-xs text-muted">Please complete the verification before submitting.</p>
           ) : null}
         </div>
-        <div className="sm:col-span-2">
-          {message ? (
-            <p
-              role="status"
-              aria-live="polite"
-              className={`text-xs ${status === "success" ? "text-emerald-700" : "text-red-600/90"}`}
-            >
-              {message}
-            </p>
-          ) : null}
-        </div>
         <div className="sm:col-span-2" />
       </form>
+
+      {showSuccessModal ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="wholesale-success-title"
+          onClick={() => setShowSuccessModal(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-3xl border border-white/10 bg-paper p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700">
+              Request sent
+            </p>
+            <h3 id="wholesale-success-title" className="mt-3 font-serif text-2xl text-ink">
+              Email sent successfully
+            </h3>
+            <p className="mt-3 text-sm text-muted">
+              We will review your request and reply soon.
+            </p>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }
