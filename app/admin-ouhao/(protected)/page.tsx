@@ -116,7 +116,7 @@ export default async function AdminHomePage() {
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
               Active products
             </p>
-            <Link href={adminPath("/products")} className={numLink}>
+            <Link href={adminPath("/inventory")} className={numLink}>
               {activeProducts}
             </Link>
           </li>
@@ -124,7 +124,7 @@ export default async function AdminHomePage() {
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
               Archived products
             </p>
-            <Link href={adminPath("/products")} className={numLink}>
+            <Link href={adminPath("/inventory")} className={numLink}>
               {archivedProducts}
             </Link>
           </li>
@@ -155,7 +155,7 @@ export default async function AdminHomePage() {
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Revenue
         </h2>
-        <ul className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <li className="rounded-2xl border border-line bg-white/60 px-5 py-4">
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
               Today
@@ -342,9 +342,6 @@ export default async function AdminHomePage() {
       <div className="mt-10 flex flex-wrap gap-3">
         <Link href={adminPath("/orders")} className="inline-flex rounded-2xl bg-ink px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90">
           View all orders
-        </Link>
-        <Link href={adminPath("/products")} className="inline-flex rounded-2xl border border-line bg-white/70 px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20">
-          Manage products
         </Link>
         <Link href={adminPath("/inventory")} className="inline-flex rounded-2xl border border-line bg-white/70 px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20">
           Manage inventory
