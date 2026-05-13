@@ -69,22 +69,15 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
     const id = v.id ? String(v.id) : "";
     const inv = inventory.find((r) => r.productSlug === row.slug && r.variantId === id);
     const quantity = Math.max(0, inv?.quantity ?? 0);
-    const lowStockThreshold = Math.max(0, inv?.lowStockThreshold ?? 5);
     return {
       id,
       label: v.label ? String(v.label) : "",
       image: v.image ? String(v.image) : "",
       inStock: quantity > 0 && v.inStock !== false,
-      quantity,
-      lowStockThreshold,
     };
   });
   const computedInStock =
-    variantStock.length > 0 ? variantStock.some((v) => v.quantity > 0 && v.inStock !== false) : row.inStock;
-  const computedStockQuantity =
-    variantStock.length > 0
-      ? variantStock.reduce((sum, v) => sum + v.quantity, 0)
-      : 0;
+    variantStock.length > 0 ? variantStock.some((v) => v.inStock) : row.inStock;
 
   return {
     slug: row.slug,
@@ -105,14 +98,12 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
       label: v.label,
       image: v.image,
       inStock: v.inStock,
-      stockQuantity: v.quantity,
     })),
     highlights: highlights.filter((h) => typeof h === "string" && h.trim().length > 0),
     specs: specs
       .filter((s) => s.label && s.value)
       .map((s) => ({ label: String(s.label), value: String(s.value) })),
     inStock: computedInStock,
-    stockQuantity: computedStockQuantity,
   };
 }
 

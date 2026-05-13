@@ -111,7 +111,6 @@ export default async function ProductPage({
             label: `Style ${String(n).padStart(2, "0")}`,
             image: src,
             ...(cat?.inStock === false ? { inStock: false as const } : {}),
-            ...(cat?.stockQuantity != null ? { stockQuantity: cat.stockQuantity } : {}),
           };
         })
       : staticVariants;
@@ -127,16 +126,7 @@ export default async function ProductPage({
     product.images[0] ??
     product.promoVideo?.poster;
   const preferredPromoVideo = product.promoVideo;
-  const stockLabel =
-    product.stockQuantity === 0
-      ? "Out of stock"
-      : product.stockQuantity != null && product.stockQuantity <= 10
-        ? `Low stock (${product.stockQuantity})`
-        : product.stockQuantity != null
-          ? `In stock (${product.stockQuantity})`
-          : product.inStock
-            ? "In stock"
-            : "Out of stock";
+  const stockLabel = product.inStock ? "In stock" : "Out of stock";
   const promoVideosForMedia: { src: string; poster?: string }[] | null =
     pdpR2?.videos && pdpR2.videos.length > 0
       ? pdpR2.videos.map((src) => ({
