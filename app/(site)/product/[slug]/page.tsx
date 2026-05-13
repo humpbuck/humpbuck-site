@@ -177,15 +177,19 @@ export default async function ProductPage({
                 )}
                 {product.specs.length > 0 && (
                   <dl className="mt-6 grid gap-3 sm:grid-cols-2">
-                    {product.specs.map((row) => (
+                    {product.specs.map((row, idx) => (
                       <div
-                        key={row.label}
+                        key={`${row.label || row.value || "spec"}-${idx}`}
                         className="rounded-xl border border-[color:var(--color-line)] bg-paper px-4 py-3"
                       >
-                        <dt className="text-[10px] uppercase tracking-[0.16em] text-muted">
-                          {row.label}
-                        </dt>
-                        <dd className="mt-1 text-sm font-medium">{row.value}</dd>
+                        {row.label && (
+                          <dt className="text-[10px] uppercase tracking-[0.16em] text-muted">
+                            {row.label}
+                          </dt>
+                        )}
+                        {row.value && (
+                          <dd className="mt-1 text-sm font-medium">{row.value}</dd>
+                        )}
                       </div>
                     ))}
                   </dl>

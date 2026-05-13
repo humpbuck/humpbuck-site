@@ -103,8 +103,11 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
     })),
     highlights: highlights.filter((h) => typeof h === "string" && h.trim().length > 0),
     specs: specs
-      .filter((s) => s.label && s.value)
-      .map((s) => ({ label: String(s.label), value: String(s.value) })),
+      .filter((s) => s.label || s.value)
+      .map((s) => ({
+        label: String(s.label ?? "").trim(),
+        value: String(s.value ?? "").trim(),
+      })),
     inStock: computedInStock,
   };
 }
