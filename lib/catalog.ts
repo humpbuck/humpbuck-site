@@ -41,6 +41,7 @@ export interface Product {
   highlights: string[];
   specs: { label: string; value: string }[];
   inStock: boolean;
+  stockQuantity?: number;
 }
 
 /**

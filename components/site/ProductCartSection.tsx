@@ -15,12 +15,14 @@ export function ProductCartSection({
   name,
   price,
   inStock,
+  stockQuantity,
   variantOptions,
 }: {
   slug: string;
   name: string;
   price: number;
   inStock: boolean;
+  stockQuantity?: number;
   variantOptions?: ProductVariantOption[] | null;
 }) {
   const { addItem, openCartDrawer } = useCart();
@@ -39,7 +41,8 @@ export function ProductCartSection({
   const opts = variantOptions ?? [];
   const current = opts[variantIndex];
   const variantSellable = current ? current.inStock !== false : true;
-  const canAdd = inStock && variantSellable;
+  const productSellable = stockQuantity == null ? inStock : stockQuantity > 0;
+  const canAdd = productSellable && variantSellable;
   const showAdded = addedTick > 0;
 
   useEffect(() => {
