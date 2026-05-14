@@ -45,6 +45,12 @@ export default async function HomePage() {
   const rdAstral = seriesList.find((s) => s.slug === "rd-astral")!;
   const heroFeatured =
     all.find((p) => p.slug === "digitemp-2301") ?? featured[0] ?? null;
+  const heroFallback = {
+    slug: "digitemp",
+    name: "HUMPBUCK DIGI-TEMP",
+    price: 0,
+    compareAtPrice: undefined,
+  };
   const tonneauCount = all.filter((p) => p.seriesSlug === "tonneau").length;
   const rdAstralCount = all.filter((p) => p.seriesSlug === "rd-astral").length;
   const deferredSectionStyle = {
@@ -114,9 +120,9 @@ export default async function HomePage() {
           </div>
 
           <div className="relative mx-auto w-full max-w-lg min-w-0 md:max-w-none md:mx-0">
-            {heroFeatured ? (
+            {(heroFeatured ?? heroFallback) ? (
               <Link
-                href={`/product/${heroFeatured.slug}`}
+                href={(heroFeatured ?? heroFallback).slug === "digitemp" ? "/shop?series=digitemp" : `/product/${(heroFeatured ?? heroFallback).slug}`}
                 className="group relative block aspect-square overflow-hidden rounded-[24px] border border-white/10 bg-gradient-to-b from-white/10 to-white/0 shadow-[var(--shadow-glow-digital)] transition outline-offset-4 focus-visible:outline-2 focus-visible:outline-cyan-400/80 sm:rounded-[28px]"
               >
                 <Image
@@ -136,15 +142,15 @@ export default async function HomePage() {
                       <div className="text-[10px] uppercase tracking-[0.2em] text-white/55">
                         Featured
                       </div>
-                      <div className="mt-1 font-serif text-lg">{heroFeatured.name}</div>
+                      <div className="mt-1 font-serif text-lg">{(heroFeatured ?? heroFallback).name}</div>
                     </div>
                     <div className="text-right">
                       <div className="text-xl font-semibold tabular-nums text-white">
-                        {formatPrice(heroFeatured.price)}
+                        {formatPrice((heroFeatured ?? heroFallback).price)}
                       </div>
-                      {heroFeatured.compareAtPrice != null && (
+                      {(heroFeatured ?? heroFallback).compareAtPrice != null && (
                         <div className="text-[12px] text-white/55 line-through tabular-nums">
-                          {formatPrice(heroFeatured.compareAtPrice)}
+                          {formatPrice((heroFeatured ?? heroFallback).compareAtPrice!)}
                         </div>
                       )}
                     </div>
