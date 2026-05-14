@@ -38,10 +38,7 @@ export async function POST(req: Request) {
 
     const affiliatePid = body?.affiliatePid?.trim() || null;
     if (coupon.affiliateId && coupon.affiliate?.pid) {
-      if (!affiliatePid) {
-        return NextResponse.json({ ok: false, error: "This coupon is restricted to a specific affiliate." }, { status: 403 });
-      }
-      if (affiliatePid !== coupon.affiliate.pid) {
+      if (affiliatePid && affiliatePid !== coupon.affiliate.pid) {
         return NextResponse.json({ ok: false, error: "This coupon is not valid for your referral source." }, { status: 403 });
       }
     }

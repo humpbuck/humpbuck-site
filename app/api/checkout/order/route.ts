@@ -111,6 +111,8 @@ export async function POST(req: Request) {
         buyerUserId: userId,
         buyerEmail: body.email,
       }).catch(() => ({ affiliateId: null, affiliatePid: null, source: null }));
+      const effectiveAffiliatePid =
+        attribution.affiliatePid || (typeof body.affiliatePid === "string" ? body.affiliatePid.trim().toLowerCase() : null) || null;
 
       const created = await tx.order.create({
         data: {
@@ -124,8 +126,8 @@ export async function POST(req: Request) {
           shippingJson: body.shipping ? JSON.stringify(body.shipping) : null,
           discountCents,
           affiliateId: attribution.affiliateId,
-          affiliatePid: attribution.affiliatePid,
-          affiliateAttribution: attribution.affiliatePid,
+          affiliatePid: effectiveAffiliatePid,
+          affiliateAttribution: effectiveAffiliatePid,
           trafficSource: typeof body.trafficSource === "string" ? body.trafficSource : "unknown",
           couponCode: body.couponCode ?? null,
         },
