@@ -9,7 +9,7 @@ import { CheckoutAddressForm } from "@/components/checkout/checkout-address-form
 import { CheckoutShippingSection } from "@/components/checkout/checkout-shipping-section";
 import { PaymentBrandButtons } from "@/components/checkout/payment-brand-buttons";
 import { getTaxIdRequirement, quoteCheckoutShipping, type ShippingMethodId } from "@/lib/checkout-shipping-quote";
-import { getAffiliatePidForCheckout, getTrafficSourceForCheckout } from "@/lib/traffic-attribution";
+import { captureAffiliatePidAttribution, captureTrafficAttribution, getAffiliatePidForCheckout, getAffiliatePidForCheckoutFromUrl, getTrafficSourceForCheckout } from "@/lib/traffic-attribution";
 
 export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false);
@@ -18,6 +18,10 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     setMounted(true);
+    // Capture attribution again on checkout so direct visits, cart transitions,
+    // and URL-based affiliate links all preserve the same pid.
+    captureTrafficAttribution();
+    captureAffiliatePidAttribution();
   }, []);
 
   useEffect(() => {
@@ -75,6 +79,7 @@ export default function CheckoutPage() {
 
   async function ensureDraftOrder() {
     if (!customerEmail.trim()) throw new Error("Customer email is required");
+    const affiliatePid = getAffiliatePidForCheckoutFromUrl() ?? getAffiliatePidForCheckout();
     const res = await fetch("/api/checkout/order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -104,7 +109,7 @@ export default function CheckoutPage() {
         shippingEstimateCny: shippingQuote.ok ? shippingQuote.shippingCny : 0,
         couponCode: appliedCoupon?.code ?? null,
         discountCents: Math.round(couponDiscount * 100),
-        affiliatePid: getAffiliatePidForCheckout(),
+        affiliatePid,
         trafficSource: getTrafficSourceForCheckout(),
       }),
     });

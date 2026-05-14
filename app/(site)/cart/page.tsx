@@ -1,16 +1,26 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus } from "lucide-react";
 import { useCart } from "@/components/cart/cart-context";
 import { formatPrice } from "@/lib/catalog";
 import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
+import {
+  captureAffiliatePidAttribution,
+  captureTrafficAttribution,
+} from "@/lib/traffic-attribution";
 
 const CART_QTY_MAX = 9999;
 
 export default function CartPage() {
   const { items, setQty, removeItem } = useCart();
+
+  useEffect(() => {
+    captureTrafficAttribution();
+    captureAffiliatePidAttribution();
+  }, []);
 
   const subtotal = items.reduce((sum, line) => {
     const unitPrice = typeof line.unitPrice === "number" ? line.unitPrice : 0;

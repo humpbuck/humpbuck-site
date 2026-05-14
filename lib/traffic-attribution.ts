@@ -111,8 +111,7 @@ export function captureAffiliatePidAttribution(): void {
   }
 }
 
-/** Read captured pid for checkout payload. */
-export function getAffiliatePidForCheckout(): string | null {
+function readStoredAffiliatePid(): string | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = localStorage.getItem(AFFILIATE_STORAGE_KEY);
@@ -128,4 +127,21 @@ export function getAffiliatePidForCheckout(): string | null {
   } catch {
     return null;
   }
+}
+
+/** Read captured pid for checkout payload. */
+export function getAffiliatePidForCheckout(): string | null {
+  return readStoredAffiliatePid();
+}
+
+/** Read pid from the current URL or storage, whichever is available first. */
+export function getAffiliatePidForCheckoutFromUrl(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const fromUrl = normalizePid(new URLSearchParams(window.location.search).get("pid"));
+    if (fromUrl) return fromUrl;
+  } catch {
+    /* ignore */
+  }
+  return readStoredAffiliatePid();
 }
