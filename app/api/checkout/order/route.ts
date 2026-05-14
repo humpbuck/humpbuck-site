@@ -110,7 +110,7 @@ export async function POST(req: Request) {
         affiliatePid: typeof body.affiliatePid === "string" ? body.affiliatePid : null,
         buyerUserId: userId,
         buyerEmail: body.email,
-      }).catch(() => ({ affiliateId: null, affiliatePid: null, source: null as const }));
+      }).catch(() => ({ affiliateId: null, affiliatePid: null, source: null }));
 
       const created = await tx.order.create({
         data: {
