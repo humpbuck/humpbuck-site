@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { resolveAffiliateAttribution } from "@/lib/affiliate-attribution";
 import { prisma } from "@/lib/prisma";
 
 type CheckoutItem = {
@@ -101,6 +102,16 @@ export async function POST(req: Request) {
 
   try {
     const order = await prisma.$transaction(async (tx) => {
+      const coupon = body.couponCode
+        ? await tx.coupon.findUnique({ where: { code: body.couponCode.trim().toUpperCase() } })
+        : null;
+      const attribution = await resolveAffiliateAttribution({
+        couponId: coupon?.id ?? null,
+        affiliatePid: typeof body.affiliatePid === "string" ? body.affiliatePid : null,
+        buyerUserId: userId,
+        buyerEmail: body.email,
+      }).catch(() => ({ affiliateId: null, affiliatePid: null, source: null as const }));
+
       const created = await tx.order.create({
         data: {
           userId,
@@ -111,10 +122,12 @@ export async function POST(req: Request) {
           currency: "usd",
           billingJson: body.billing ? JSON.stringify(body.billing) : null,
           shippingJson: body.shipping ? JSON.stringify(body.shipping) : null,
-          couponCode: body.couponCode ?? null,
           discountCents,
-          affiliatePid: typeof body.affiliatePid === "string" ? body.affiliatePid : null,
+          affiliateId: attribution.affiliateId,
+          affiliatePid: attribution.affiliatePid,
+          affiliateAttribution: attribution.affiliatePid,
           trafficSource: typeof body.trafficSource === "string" ? body.trafficSource : "unknown",
+          couponCode: body.couponCode ?? null,
         },
       });
 

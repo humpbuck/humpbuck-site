@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
-import { upsertAffiliateCommissionLedgerForOrder } from "@/lib/affiliate-commission-ledger";
+import {
+  reverseAffiliateCommissionLedgerForOrder,
+  upsertAffiliateCommissionLedgerForOrder,
+} from "@/lib/affiliate-commission-ledger";
 import { notifyCustomerOrderShipped } from "@/lib/customer-shipped-email";
 import { restoreInventory } from "@/lib/inventory";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
@@ -136,11 +139,14 @@ export async function PATCH(
   if (data.status === "delivered" && current.status !== "delivered") {
     await upsertAffiliateCommissionLedgerForOrder(updated.id);
   }
-  if (
-    current.affiliateId &&
-    data.status !== undefined &&
-    data.status !== current.status
-  ) {
+  if (data.status === "refunded" && current.status !== "refunded") {
+    await reverseAffiliateCommissionLedgerForOrder({
+      orderId: updated.id,
+      reason: "order_refunded",
+      refundAmountCents: updated.totalCents,
+    });
+  }
+  if (current.affiliateId && data.status !== undefined && data.status !== current.status) {
     await syncAffiliateGrowthTierByOrderCount(current.affiliateId);
   }
 

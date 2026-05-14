@@ -171,6 +171,35 @@ async function submitAffiliateApplicationAction(formData: FormData) {
     select: { id: true },
   });
 
+  const merchantEmail = process.env.MERCHANT_NOTIFY_EMAIL?.trim() || "humpbuck@outlook.com";
+  const supportFrom = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "support@humpbuck.com";
+  const profileStatus = existingProfile?.blacklist
+    ? "blacklisted"
+    : risk.highRisk
+      ? "pending"
+      : "active";
+  await sendTransactionalEmail({
+    to: merchantEmail,
+    subject: "New affiliate application received",
+    htmlContent: `
+      <p>Hello,</p>
+      <p>An affiliate application has been submitted and the profile was ${profileStatus === "active" ? "created/updated successfully" : "saved for review"}.</p>
+      <ul>
+        <li><strong>Name:</strong> ${session?.user?.name?.trim() || session?.user?.email?.split("@")[0] || "Affiliate partner"}</li>
+        <li><strong>Email:</strong> ${session?.user?.email || "-"}</li>
+        <li><strong>PID:</strong> ${pid}</li>
+        <li><strong>Status:</strong> ${profileStatus}</li>
+        <li><strong>Risk flag:</strong> ${risk.highRisk ? "Yes" : "No"}</li>
+        <li><strong>Blacklist:</strong> ${Boolean(existingProfile?.blacklist) ? "Yes" : "No"}</li>
+        <li><strong>Payout email:</strong> ${payoutEmail || "-"}</li>
+        <li><strong>WhatsApp:</strong> ${whatsapp || "-"}</li>
+        <li><strong>Support:</strong> ${supportFrom}</li>
+      </ul>
+      <p>Please review the new affiliate in the admin panel if needed.</p>
+    `,
+    textContent: `New affiliate application received\nName: ${session?.user?.name?.trim() || session?.user?.email?.split("@")[0] || "Affiliate partner"}\nEmail: ${session?.user?.email || "-"}\nPID: ${pid}\nStatus: ${profileStatus}\nRisk flag: ${risk.highRisk ? "Yes" : "No"}\nBlacklist: ${Boolean(existingProfile?.blacklist) ? "Yes" : "No"}\nPayout email: ${payoutEmail || "-"}\nWhatsApp: ${whatsapp || "-"}\nSupport: ${supportFrom}\nPlease review the new affiliate in the admin panel if needed.`,
+  }).catch(() => null);
+
   await prisma.affiliateApplication.create({
     data: {
       userId,

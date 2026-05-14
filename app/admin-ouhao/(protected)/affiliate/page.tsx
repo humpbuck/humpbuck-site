@@ -14,6 +14,7 @@ import {
   syncAffiliateGrowthTierByOrderCount,
 } from "@/lib/affiliate-tier-growth";
 import { stripEmbeddedWhatsAppFromPayoutAccount } from "@/lib/affiliate-payout-account";
+import { sendAffiliatePaidSummaryEmail } from "@/lib/affiliate-paid-email";
 import {
   normalizeCountryCodeInput,
   normalizePhone,
@@ -325,31 +326,74 @@ async function markLedgerPaidAction(formData: FormData) {
 async function markAllEligiblePaidAction() {
   "use server";
   await assertAdmin();
-  const affected = await prisma.affiliateCommissionLedger.findMany({
+  const now = new Date();
+  const paidLedgers = await prisma.affiliateCommissionLedger.findMany({
     where: {
       status: "eligible",
       paidAt: null,
       reversedAt: null,
       order: { deletedAt: null },
     },
-    select: { affiliateId: true },
-    distinct: ["affiliateId"],
+    include: {
+      affiliate: {
+        include: {
+          user: { select: { email: true, displayName: true, name: true } },
+        },
+      },
+      order: { include: { items: true } },
+    },
+    orderBy: [{ affiliateId: "asc" }, { eligibleAt: "asc" }, { createdAt: "asc" }],
   });
+
   await prisma.affiliateCommissionLedger.updateMany({
     where: {
-      status: "eligible",
-      paidAt: null,
-      reversedAt: null,
-      order: { deletedAt: null },
+      id: { in: paidLedgers.map((l) => l.id) },
     },
     data: {
       status: "paid",
-      paidAt: new Date(),
+      paidAt: now,
     },
   });
-  await Promise.all(
-    affected.map((x) => syncAffiliateGrowthTierByOrderCount(x.affiliateId)),
-  );
+
+  const byAffiliate = new Map<string, typeof paidLedgers>();
+  for (const ledger of paidLedgers) {
+    const list = byAffiliate.get(ledger.affiliateId) ?? [];
+    list.push(ledger);
+    byAffiliate.set(ledger.affiliateId, list);
+  }
+
+  for (const [affiliateId, ledgers] of byAffiliate.entries()) {
+    const affiliate = ledgers[0]?.affiliate;
+    if (!affiliate?.user?.email) continue;
+    const result = await sendAffiliatePaidSummaryEmail({
+      to: affiliate.user.email,
+      affiliateName: affiliate.user.displayName || affiliate.user.name || affiliate.user.email,
+      affiliateLoginUrl: `${process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://www.humpbuck.com"}/account/affiliate`,
+      ledgers: ledgers.map((l) => ({
+        orderId: l.orderId,
+        commissionCents: l.commissionCents,
+        paidAt: now,
+        payoutBatchId: l.payoutBatchId,
+        payoutTxnRef: l.payoutTxnRef,
+        paidNote: l.paidNote,
+        items: l.order.items.map((item) => ({
+          productSlug: item.productSlug,
+          productName: item.productName,
+          variantId: item.variantId,
+          variantLabel: item.variantLabel,
+          qty: item.qty,
+        })),
+      })),
+    });
+    if (result.ok) {
+      await prisma.affiliateCommissionLedger.updateMany({
+        where: { id: { in: ledgers.map((l) => l.id) } },
+        data: { paidEmailSentAt: now },
+      });
+    }
+    await syncAffiliateGrowthTierByOrderCount(affiliateId);
+  }
+
   revalidatePath(adminPath("/affiliate"));
   redirect(adminPath("/affiliate"));
 }
@@ -372,7 +416,12 @@ async function updateSelectedLedgersStatusAction(formData: FormData) {
 
   const selectedRows = await prisma.affiliateCommissionLedger.findMany({
     where: { id: { in: ids }, order: { deletedAt: null } },
-    select: { id: true, affiliateId: true, commissionCents: true },
+    include: {
+      affiliate: {
+        include: { user: { select: { email: true, displayName: true, name: true } } },
+      },
+      order: { include: { items: true } },
+    },
   });
   if (selectedRows.length === 0) goAffiliate("No matching settlement rows found.");
 
@@ -419,6 +468,36 @@ async function updateSelectedLedgersStatusAction(formData: FormData) {
     });
   }
   const affectedAffiliateIds = Array.from(new Set(selectedRows.map((row) => row.affiliateId)));
+  for (const row of selectedRows) {
+    if (row.status !== "eligible" || row.paidAt || row.reversedAt) continue;
+    if (!row.affiliate?.user?.email) continue;
+    const result = await sendAffiliatePaidSummaryEmail({
+      to: row.affiliate.user.email,
+      affiliateName: row.affiliate.user.displayName || row.affiliate.user.name || row.affiliate.user.email,
+      affiliateLoginUrl: `${process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://www.humpbuck.com"}/account/affiliate`,
+      ledgers: [{
+        orderId: row.orderId,
+        commissionCents: row.commissionCents,
+        paidAt: now,
+        payoutBatchId: payoutBatchId || null,
+        payoutTxnRef: payoutTxnRef || null,
+        paidNote: paidNote || null,
+        items: row.order.items.map((item) => ({
+          productSlug: item.productSlug,
+          productName: item.productName,
+          variantId: item.variantId,
+          variantLabel: item.variantLabel,
+          qty: item.qty,
+        })),
+      }],
+    });
+    if (result.ok) {
+      await prisma.affiliateCommissionLedger.update({
+        where: { id: row.id },
+        data: { paidEmailSentAt: now },
+      });
+    }
+  }
   await Promise.all(affectedAffiliateIds.map((id) => syncAffiliateGrowthTierByOrderCount(id)));
   revalidatePath(adminPath("/affiliate"));
   redirect(adminPath("/affiliate"));
@@ -443,22 +522,60 @@ async function markFilteredEligiblePaidAction(formData: FormData) {
   };
   const affected = await prisma.affiliateCommissionLedger.findMany({
     where,
-    select: { affiliateId: true },
-    distinct: ["affiliateId"],
+    include: {
+      affiliate: {
+        include: { user: { select: { email: true, displayName: true, name: true } } },
+      },
+      order: { include: { items: true } },
+    },
   });
+  const now = new Date();
   await prisma.affiliateCommissionLedger.updateMany({
     where,
     data: {
       status: "paid",
-      paidAt: new Date(),
+      paidAt: now,
       payoutBatchId: payoutBatchId || null,
       payoutTxnRef: payoutTxnRef || null,
       paidNote: paidNote || null,
     },
   });
-  await Promise.all(
-    affected.map((x) => syncAffiliateGrowthTierByOrderCount(x.affiliateId)),
-  );
+  const grouped = new Map<string, typeof affected>();
+  for (const row of affected) {
+    const list = grouped.get(row.affiliateId) ?? [];
+    list.push(row);
+    grouped.set(row.affiliateId, list);
+  }
+  for (const row of affected) {
+    if (!row.affiliate?.user?.email) continue;
+    const result = await sendAffiliatePaidSummaryEmail({
+      to: row.affiliate.user.email,
+      affiliateName: row.affiliate.user.displayName || row.affiliate.user.name || row.affiliate.user.email,
+      affiliateLoginUrl: `${process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://www.humpbuck.com"}/account/affiliate`,
+      ledgers: [{
+        orderId: row.orderId,
+        commissionCents: row.commissionCents,
+        paidAt: now,
+        payoutBatchId: payoutBatchId || null,
+        payoutTxnRef: payoutTxnRef || null,
+        paidNote: paidNote || null,
+        items: row.order.items.map((item) => ({
+          productSlug: item.productSlug,
+          productName: item.productName,
+          variantId: item.variantId,
+          variantLabel: item.variantLabel,
+          qty: item.qty,
+        })),
+      }],
+    });
+    if (result.ok) {
+      await prisma.affiliateCommissionLedger.update({
+        where: { id: row.id },
+        data: { paidEmailSentAt: now },
+      });
+    }
+  }
+  await Promise.all(Array.from(grouped.keys()).map((id) => syncAffiliateGrowthTierByOrderCount(id)));
   revalidatePath(adminPath("/affiliate"));
   redirect(adminPath("/affiliate"));
 }
