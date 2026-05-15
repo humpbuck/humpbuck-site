@@ -423,7 +423,6 @@ export async function notifyMerchantOrderPaid(orderId: string): Promise<void> {
 export async function notifyCustomerOrderPaid(orderId: string): Promise<void> {
   const order = await prisma.order.findUnique({ where: { id: orderId } });
   if (!order || order.status !== "paid") return;
-  if (order.paidEmailSentAt) return;
 
   const payload = await buildCustomerPaymentConfirmedEmailPayload(order);
   const result = await sendTransactionalEmail({
@@ -433,12 +432,7 @@ export async function notifyCustomerOrderPaid(orderId: string): Promise<void> {
     textContent: payload.textContent,
   });
 
-  if (result.ok) {
-    await prisma.order.update({
-      where: { id: orderId },
-      data: { paidEmailSentAt: new Date() },
-    });
-  } else {
+  if (!result.ok) {
     console.error("[customer-payment-confirmation-email]", result.error);
   }
 }
