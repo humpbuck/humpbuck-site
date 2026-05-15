@@ -28,7 +28,7 @@ export function TrackCheckout({
             : stage === "payment_success"
               ? "payment_success"
               : "payment_fail",
-      orderId: orderId ?? null,
+      orderId: orderId ?? undefined,
       meta: {
         stage,
         totalUsd: totalUsd ?? null,
