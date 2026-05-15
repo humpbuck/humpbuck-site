@@ -151,7 +151,7 @@ export function LogisticsReferencePanel({
   const cainiaoQuoteDetails = checkoutCainiaoQuote.ok
     ? getShippingOhQuote({
         countryCode: shippingCountryLabel,
-        postalCode,
+        postalCode: postalCode ?? undefined,
         weightKg: undefined,
         quantity: totalUnits,
       })
@@ -159,7 +159,7 @@ export function LogisticsReferencePanel({
   const yanwenQuoteDetails = checkoutYanwenQuote.ok
     ? getShippingYanwen484Quote({
         countryCode: shippingCountryLabel,
-        postalCode,
+        postalCode: postalCode ?? undefined,
         weightKg: undefined,
         quantity: totalUnits,
       })
