@@ -237,7 +237,7 @@ export default async function AdminTrafficPage({
         events: {
           orderBy: { createdAt: "asc" },
           take: 12,
-          select: { type: true, path: true, productSlug: true },
+          select: { type: true, path: true, productSlug: true, createdAt: true },
         },
       },
     }),
@@ -536,39 +536,81 @@ export default async function AdminTrafficPage({
         </Panel>
       </div>
 
-      <div className="mt-8 rounded-2xl border border-line bg-white/70 p-5">
-        <div className="flex items-center justify-between gap-2">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Recent visitor journeys</p>
+      <div id="recent-visitor-journeys" className="mt-8 rounded-2xl border border-line bg-white/70 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Recent visitor journeys</p>
+            <p className="mt-1 text-xs text-muted">排查入口、路径、卡点和成交前的最后动作。</p>
+          </div>
           {recentSessionsTotal > 0 ? <p className="text-xs text-muted">Page {safeJourneysPage} / {journeysTotalPages}</p> : null}
         </div>
-        <div className="mt-3 space-y-4">
+        <div className="mt-4 space-y-4">
           {recentSessions.length === 0 ? (
             <p className="text-sm text-muted">No sessions captured yet.</p>
           ) : (
-            recentSessions.map((s) => (
-              <div key={s.id} className="rounded-xl border border-line/60 bg-paper/60 p-3">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted break-all">
-                  <span className="font-mono break-all">{s.sessionKey.slice(-12)}</span>
-                  <span className="break-all">{s.createdAt.toLocaleString("en-US")}</span>
-                  <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink/80">[{sourceLabel(s.utmSource)}]</span>
-                  {s.country ? <span className="break-all">{s.country}</span> : null}
-                  {s.city ? <span className="break-all">{s.city}</span> : null}
-                  {s.utmCampaign ? <span className="break-all">cmp: {s.utmCampaign}</span> : null}
-                  {s.landingPath ? <span className="break-all">landing: {s.landingPath}</span> : null}
-                </div>
-                <div className="mt-2 rounded-lg border border-line/50 bg-white/60 px-3 py-2 text-sm text-ink/85 break-all">
-                  {s.events
-                    .filter((e) => e.type !== "heartbeat")
-                    .map((e) => {
+            recentSessions.map((s) => {
+              const events = s.events.filter((e) => e.type !== "heartbeat");
+              const lastEvent = events[events.length - 1] ?? null;
+              const pageCount = events.filter((e) => e.type === "page_view").length;
+              const productCount = events.filter((e) => e.type === "product_view").length;
+              const cartCount = events.filter((e) => e.type === "add_to_cart").length;
+              const checkoutCount = events.filter((e) => e.type === "checkout_start").length;
+              const purchased = events.some((e) => e.type === "purchase");
+
+              return (
+                <div key={s.id} className="rounded-xl border border-line/60 bg-paper/60 p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted break-all">
+                        <span className="font-mono break-all">{s.sessionKey.slice(-12)}</span>
+                        <span>{s.createdAt.toLocaleString("en-US")}</span>
+                        <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink/80">[{sourceLabel(s.utmSource)}]</span>
+                        {s.country ? <span>{s.country}</span> : null}
+                        {s.city ? <span>{s.city}</span> : null}
+                        {s.utmCampaign ? <span>cmp: {s.utmCampaign}</span> : null}
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
+                        <span className="rounded-full border border-line bg-white px-2 py-1">Pages {pageCount}</span>
+                        <span className="rounded-full border border-line bg-white px-2 py-1">Products {productCount}</span>
+                        <span className="rounded-full border border-line bg-white px-2 py-1">Cart {cartCount}</span>
+                        <span className="rounded-full border border-line bg-white px-2 py-1">Checkout {checkoutCount}</span>
+                        <span className={`rounded-full border px-2 py-1 ${purchased ? "border-green-200 bg-green-50 text-green-800" : "border-line bg-white text-muted"}`}>
+                          {purchased ? "Purchased" : "No purchase"}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-right text-xs text-muted">
+                      <p className="font-semibold text-ink/85">Last action</p>
+                      <p className="mt-1 break-all">{lastEvent ? `${compactEventLabel(lastEvent.type)}${lastEvent.productSlug ? `: ${lastEvent.productSlug}` : lastEvent.path ? `: ${lastEvent.path}` : ""}` : "No events"}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 rounded-lg border border-line/50 bg-white/60 px-3 py-2 text-sm text-ink/85 break-all">
+                    {events.map((e) => {
                       const base = compactEventLabel(e.type);
                       if (e.productSlug) return `${base}:${e.productSlug}`;
                       if (e.path) return `${base}:${e.path}`;
                       return base;
-                    })
-                    .join(" -> ") || "No journey events"}
+                    }).join(" -> ") || "No journey events"}
+                  </div>
+
+                  <div className="mt-3 grid gap-2 text-xs text-muted sm:grid-cols-3">
+                    <div className="rounded-lg border border-line/60 bg-white/50 px-3 py-2">
+                      <p className="font-semibold uppercase tracking-[0.08em] text-ink/80">Landing</p>
+                      <p className="mt-1 break-all">{s.landingPath ?? "Unknown"}</p>
+                    </div>
+                    <div className="rounded-lg border border-line/60 bg-white/50 px-3 py-2">
+                      <p className="font-semibold uppercase tracking-[0.08em] text-ink/80">Campaign</p>
+                      <p className="mt-1 break-all">{s.utmCampaign ?? "None"}</p>
+                    </div>
+                    <div className="rounded-lg border border-line/60 bg-white/50 px-3 py-2">
+                      <p className="font-semibold uppercase tracking-[0.08em] text-ink/80">Journey note</p>
+                      <p className="mt-1 break-all">{purchased ? "Reached purchase" : lastEvent?.type === "checkout_start" ? "Stopped at checkout" : lastEvent?.type === "add_to_cart" ? "Stopped after add to cart" : "Browsing"}</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
         {recentSessionsTotal > JOURNEYS_PAGE_SIZE ? (
