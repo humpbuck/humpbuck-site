@@ -48,6 +48,14 @@ function lineTotal(parts: Array<number | null | undefined>): number | null {
   return Math.round(vals.reduce((a, b) => a + b, 0) * 100) / 100;
 }
 
+function extractCountryCode(label: string): string | null {
+  const trimmed = label.trim();
+  const match = trimmed.match(/\(([A-Za-z]{2})\)\s*$/);
+  if (match) return match[1].toUpperCase();
+  const upper = trimmed.toUpperCase();
+  return /^[A-Z]{2}$/.test(upper) ? upper : null;
+}
+
 export function LogisticsReferencePanel({
   shippingCountryLabel,
   shippingState,
@@ -66,7 +74,7 @@ export function LogisticsReferencePanel({
   checkoutShippingMethod?: string | null;
 }) {
   const [showDetails, setShowDetails] = useState(false);
-  const countryCode = shippingCountryLabel.trim().toUpperCase() || null;
+  const countryCode = extractCountryCode(shippingCountryLabel);
   const cainiaoQuote = countryCode
     ? getShippingOhQuote({
         countryCode,
