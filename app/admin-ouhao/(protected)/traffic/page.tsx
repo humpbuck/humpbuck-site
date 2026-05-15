@@ -138,6 +138,7 @@ export default async function AdminTrafficPage({
     refundCountCurrent,
     onlineNowCount,
     topSources,
+    topPages,
     topProductsRaw,
     topCountries,
     topCities,
@@ -172,6 +173,13 @@ export default async function AdminTrafficPage({
       _count: { _all: true },
       orderBy: { _count: { utmSource: "desc" } },
       take: 8,
+    }),
+    prisma.visitorSession.groupBy({
+      by: ["landingPath"],
+      where: { createdAt: { gte: since }, landingPath: { not: null } },
+      _count: { _all: true },
+      orderBy: { _count: { landingPath: "desc" } },
+      take: 10,
     }),
     prisma.visitorEvent.groupBy({
       by: ["productSlug"],
@@ -356,6 +364,7 @@ export default async function AdminTrafficPage({
     .slice(0, 10);
 
   const topSourceCards = topSources.map((s) => ({ label: sourceLabel(s.utmSource), count: s._count._all }));
+  const topPageCards = topPages.map((p) => ({ label: p.landingPath ?? "unknown", count: p._count._all }));
 
   return (
     <div>
@@ -472,7 +481,7 @@ export default async function AdminTrafficPage({
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         <Panel title="商品表现">
-          <p className="mt-2 text-xs text-muted">按销售额排序，显示真实商品名、销量和浏览/加购表现。</p>
+          <p className="mt-2 text-xs text-muted">按销售额排序，显示真实商品名、销量、浏览和加购表现。</p>
           <ul className="mt-4 space-y-3 text-sm">
             {topProducts.length === 0 ? (
               <li className="text-muted">No product sales yet.</li>
@@ -500,13 +509,18 @@ export default async function AdminTrafficPage({
           </ul>
         </Panel>
         <Panel title="热门页面">
-          <p className="mt-2 text-xs text-muted">当前版本先显示业务关键页，后续可接真实 page view 排名。</p>
-          <ul className="mt-3 space-y-2 text-sm text-ink/85">
-            <li className="flex justify-between gap-4"><span>/</span><span className="text-muted">home</span></li>
-            <li className="flex justify-between gap-4"><span>/shop</span><span className="text-muted">catalog</span></li>
-            <li className="flex justify-between gap-4"><span>/product/[slug]</span><span className="text-muted">product</span></li>
-            <li className="flex justify-between gap-4"><span>/cart</span><span className="text-muted">cart</span></li>
-            <li className="flex justify-between gap-4"><span>/checkout</span><span className="text-muted">checkout</span></li>
+          <p className="mt-2 text-xs text-muted">按入口页面排序，帮助你判断流量先进入哪里。</p>
+          <ul className="mt-3 space-y-2 text-sm">
+            {topPageCards.length === 0 ? (
+              <li className="text-muted">No page data yet.</li>
+            ) : (
+              topPageCards.map((p) => (
+                <li key={p.label} className="flex items-center justify-between gap-4">
+                  <span className="truncate text-ink/85">{p.label}</span>
+                  <span className="tabular-nums text-muted">{p.count}</span>
+                </li>
+              ))
+            )}
           </ul>
         </Panel>
         <Panel title="地区和设备">
