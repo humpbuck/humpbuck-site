@@ -16,7 +16,21 @@ function toPage(v: string | undefined, fallback: number): number {
 }
 
 function sourceLabel(source: string | null): string {
-  if (!source) return "Unknown";
+  if (!source) return "Direct";
+
+  const s = source.trim().toLowerCase();
+  if (!s) return "Direct";
+
+  if (s === "(direct)" || s === "direct" || s === "none") return "Direct";
+  if (s.includes("google") && (s.includes("organic") || s === "google")) return "Google Organic";
+  if (s.includes("instagram")) return "Instagram";
+  if (s.includes("facebook") || s.includes("meta")) return "Facebook Ads";
+  if (s.includes("email") || s.includes("newsletter")) return "Email";
+  if (s.includes("affiliate")) return "Affiliate";
+  if (s.includes("referral") || s.includes("referrer")) return "Referral";
+  if (s.includes("tiktok")) return "TikTok";
+  if (s.includes("youtube")) return "YouTube";
+
   return source.replace(/[_-]/g, " ");
 }
 
@@ -25,25 +39,11 @@ function pctChange(current: number, previous: number): number {
   return Math.round(((current - previous) / previous) * 100);
 }
 
-function deltaBadge(current: number, previous: number): {
-  text: string;
-  tone: "up" | "down" | "flat";
-} {
+function deltaBadge(current: number, previous: number): { text: string; tone: "up" | "down" | "flat" } {
   const change = pctChange(current, previous);
   if (change > 0) return { text: `↑ ${change}%`, tone: "up" };
   if (change < 0) return { text: `↓ ${Math.abs(change)}%`, tone: "down" };
   return { text: "→ 0%", tone: "flat" };
-}
-
-function compactEventLabel(type: string): string {
-  if (type === "session_start") return "entry";
-  if (type === "page_view") return "page";
-  if (type === "product_view") return "product";
-  if (type === "add_to_cart") return "cart";
-  if (type === "checkout_start") return "checkout";
-  if (type === "purchase") return "purchase";
-  if (type === "heartbeat") return "active";
-  return type;
 }
 
 function formatSeconds(seconds: number): string {
@@ -54,10 +54,14 @@ function formatSeconds(seconds: number): string {
   return `${m}m ${s}s`;
 }
 
-function startOfHourMs(ts: number): number {
-  const d = new Date(ts);
-  d.setMinutes(0, 0, 0);
-  return d.getTime();
+function compactEventLabel(type: string): string {
+  if (type === "session_start") return "entry";
+  if (type === "page_view") return "page";
+  if (type === "product_view") return "product";
+  if (type === "add_to_cart") return "cart";
+  if (type === "checkout_start") return "checkout";
+  if (type === "purchase") return "purchase";
+  return type;
 }
 
 function safeToken(input?: string): string | null {
@@ -66,6 +70,17 @@ function safeToken(input?: string): string | null {
   if (!s) return null;
   if (!/^[a-z0-9][a-z0-9._-]{0,63}$/.test(s)) return null;
   return s;
+}
+
+function makeSeries(values: number[]): string {
+  const maxC = Math.max(1, ...values);
+  return values
+    .map((c, i) => {
+      const x = values.length <= 1 ? 0 : (i / (values.length - 1)) * 100;
+      const y = 100 - (c / maxC) * 100;
+      return `${x.toFixed(2)},${y.toFixed(2)}`;
+    })
+    .join(" ");
 }
 
 export default async function AdminTrafficPage({
@@ -86,10 +101,19 @@ export default async function AdminTrafficPage({
   const selectedBrowser = safeToken(sp.browser);
   const journeysPage = toPage(sp.journeysPage, 1);
   const JOURNEYS_PAGE_SIZE = 5;
+
   const nowTs = Date.now();
   const since = new Date(nowTs - days * 86400000);
   const prevSince = new Date(nowTs - days * 2 * 86400000);
   const onlineSince = new Date(nowTs - 5 * 60 * 1000);
+
+  const recentSessionsWhere = {
+    createdAt: { gte: since },
+    ...(selectedCountry ? { country: selectedCountry } : {}),
+    ...(selectedDevice ? { deviceType: selectedDevice } : {}),
+    ...(selectedBrowser ? { browser: selectedBrowser } : {}),
+  };
+
   const topProductsWhere = {
     type: "product_view" as const,
     createdAt: { gte: since },
@@ -103,12 +127,6 @@ export default async function AdminTrafficPage({
           },
         }
       : {}),
-  };
-  const recentSessionsWhere = {
-    createdAt: { gte: since },
-    ...(selectedCountry ? { country: selectedCountry } : {}),
-    ...(selectedDevice ? { deviceType: selectedDevice } : {}),
-    ...(selectedBrowser ? { browser: selectedBrowser } : {}),
   };
 
   const [
@@ -137,39 +155,17 @@ export default async function AdminTrafficPage({
     chartRows,
   ] = await Promise.all([
     prisma.visitorSession.count({ where: { createdAt: { gte: since } } }),
-    prisma.visitorSession.count({
-      where: { createdAt: { gte: prevSince, lt: since } },
-    }),
-    prisma.visitorEvent.count({
-      where: { type: "page_view", createdAt: { gte: since } },
-    }),
-    prisma.visitorEvent.count({
-      where: { type: "page_view", createdAt: { gte: prevSince, lt: since } },
-    }),
-    prisma.visitorEvent.count({
-      where: { type: "product_view", createdAt: { gte: since } },
-    }),
-    prisma.visitorEvent.count({
-      where: { type: "product_view", createdAt: { gte: prevSince, lt: since } },
-    }),
-    prisma.visitorEvent.count({
-      where: { type: "add_to_cart", createdAt: { gte: since } },
-    }),
-    prisma.visitorEvent.count({
-      where: { type: "add_to_cart", createdAt: { gte: prevSince, lt: since } },
-    }),
-    prisma.visitorEvent.count({
-      where: { type: "checkout_start", createdAt: { gte: since } },
-    }),
-    prisma.visitorEvent.count({
-      where: { type: "checkout_start", createdAt: { gte: prevSince, lt: since } },
-    }),
-    prisma.visitorEvent.count({
-      where: { type: "purchase", createdAt: { gte: since } },
-    }),
-    prisma.visitorEvent.count({
-      where: { type: "purchase", createdAt: { gte: prevSince, lt: since } },
-    }),
+    prisma.visitorSession.count({ where: { createdAt: { gte: prevSince, lt: since } } }),
+    prisma.visitorEvent.count({ where: { type: "page_view", createdAt: { gte: since } } }),
+    prisma.visitorEvent.count({ where: { type: "page_view", createdAt: { gte: prevSince, lt: since } } }),
+    prisma.visitorEvent.count({ where: { type: "product_view", createdAt: { gte: since } } }),
+    prisma.visitorEvent.count({ where: { type: "product_view", createdAt: { gte: prevSince, lt: since } } }),
+    prisma.visitorEvent.count({ where: { type: "add_to_cart", createdAt: { gte: since } } }),
+    prisma.visitorEvent.count({ where: { type: "add_to_cart", createdAt: { gte: prevSince, lt: since } } }),
+    prisma.visitorEvent.count({ where: { type: "checkout_start", createdAt: { gte: since } } }),
+    prisma.visitorEvent.count({ where: { type: "checkout_start", createdAt: { gte: prevSince, lt: since } } }),
+    prisma.visitorEvent.count({ where: { type: "purchase", createdAt: { gte: since } } }),
+    prisma.visitorEvent.count({ where: { type: "purchase", createdAt: { gte: prevSince, lt: since } } }),
     prisma.visitorSession.count({ where: { lastSeenAt: { gte: onlineSince } } }),
     prisma.visitorSession.groupBy({
       by: ["utmSource"],
@@ -230,18 +226,11 @@ export default async function AdminTrafficPage({
         events: {
           orderBy: { createdAt: "asc" },
           take: 12,
-          select: {
-            type: true,
-            path: true,
-            productSlug: true,
-            createdAt: true,
-          },
+          select: { type: true, path: true, productSlug: true },
         },
       },
     }),
-    prisma.visitorSession.count({
-      where: recentSessionsWhere,
-    }),
+    prisma.visitorSession.count({ where: recentSessionsWhere }),
     prisma.$queryRaw<Array<{ avg_seconds: number | null }>>`
       SELECT AVG(session_span) AS avg_seconds
       FROM (
@@ -261,55 +250,33 @@ export default async function AdminTrafficPage({
     `,
   ]);
 
-  const sessionCount = sessionCountCurrent;
-  const pageViewCount = pageViewCountCurrent;
-  const productViewCount = productViewCountCurrent;
-  const addToCartCount = addToCartCountCurrent;
-  const checkoutStartCount = checkoutStartCountCurrent;
-  const purchaseCount = purchaseCountCurrent;
-
-  const funnelViewToCart =
-    productViewCount > 0 ? Math.round((addToCartCount / productViewCount) * 100) : 0;
-  const funnelCartToCheckout =
-    addToCartCount > 0 ? Math.round((checkoutStartCount / addToCartCount) * 100) : 0;
-  const funnelCheckoutToPurchase =
-    checkoutStartCount > 0
-      ? Math.round((purchaseCount / checkoutStartCount) * 100)
-      : 0;
+  const funnelViewToCart = productViewCountCurrent > 0 ? Math.round((addToCartCountCurrent / productViewCountCurrent) * 100) : 0;
+  const funnelCartToCheckout = addToCartCountCurrent > 0 ? Math.round((checkoutStartCountCurrent / addToCartCountCurrent) * 100) : 0;
+  const funnelCheckoutToPurchase = checkoutStartCountCurrent > 0 ? Math.round((purchaseCountCurrent / checkoutStartCountCurrent) * 100) : 0;
   const avgSessionSeconds = Number(avgDurationRows[0]?.avg_seconds ?? 0);
-  const viewToCartDrop =
-    pctChange(funnelViewToCart, addToCartCountPrevious > 0 && productViewCountPrevious > 0
-      ? Math.round((addToCartCountPrevious / productViewCountPrevious) * 100)
-      : 0) < -50;
-  const cartToCheckoutDrop =
-    pctChange(
-      funnelCartToCheckout,
-      addToCartCountPrevious > 0 && checkoutStartCountPrevious > 0
-        ? Math.round((checkoutStartCountPrevious / addToCartCountPrevious) * 100)
-        : 0,
-    ) < -50;
 
-  const chartStart = startOfHourMs(nowTs - days * 86400000);
-  const chartEnd = startOfHourMs(nowTs);
-  const points: Array<{ t: number; c: number }> = [];
+  const pageValues = [] as number[];
   const rowMap = new Map<number, number>();
   for (const r of chartRows) {
     const t = new Date(r.hour_bucket).getTime();
     rowMap.set(t, Number(r.c));
   }
-  for (let t = chartStart; t <= chartEnd; t += 3600000) {
-    points.push({ t, c: rowMap.get(t) ?? 0 });
+  const chartStart = new Date(nowTs - days * 86400000);
+  chartStart.setMinutes(0, 0, 0);
+  const chartEnd = new Date(nowTs);
+  chartEnd.setMinutes(0, 0, 0);
+  const points: Array<{ t: number; c: number }> = [];
+  for (let t = chartStart.getTime(); t <= chartEnd.getTime(); t += 3600000) {
+    const c = rowMap.get(t) ?? 0;
+    points.push({ t, c });
+    pageValues.push(c);
   }
-  const maxC = Math.max(1, ...points.map((p) => p.c));
-  const polyline = points
-    .map((p, i) => {
-      const x = points.length <= 1 ? 0 : (i / (points.length - 1)) * 100;
-      const y = 100 - (p.c / maxC) * 100;
-      return `${x.toFixed(2)},${y.toFixed(2)}`;
-    })
-    .join(" ");
+  const polyline = makeSeries(pageValues);
+  const maxC = Math.max(1, ...pageValues);
+
   const journeysTotalPages = Math.max(1, Math.ceil(recentSessionsTotal / JOURNEYS_PAGE_SIZE));
   const safeJourneysPage = Math.min(journeysPage, journeysTotalPages);
+
   const buildTrafficPageHref = (nextJourneysPage: number): string => {
     const qs = new URLSearchParams();
     qs.set("days", String(days));
@@ -320,15 +287,24 @@ export default async function AdminTrafficPage({
     return `${adminPath(`/traffic?${qs.toString()}`)}#recent-visitor-journeys`;
   };
 
+  const topSourceCards = topSources.map((s) => ({
+    label: sourceLabel(s.utmSource),
+    count: s._count._all,
+  }));
+
+  const topProductCards = topProducts.map((p) => ({
+    label: p.productSlug ?? "unknown",
+    count: p._count._all,
+  }));
+
   return (
     <div>
       <AdminBackLink href={adminPath()} label="Overview" />
+
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-serif text-3xl tracking-tight">Traffic</h1>
-          <p className="mt-2 text-sm text-muted">
-            Visitor sources and browse journeys captured on your storefront.
-          </p>
+          <h1 className="font-serif text-3xl tracking-tight">经营总览</h1>
+          <p className="mt-2 text-sm text-muted">查看访问、商品表现、转化和渠道效果。</p>
         </div>
         <div className="flex items-center gap-2">
           <Link
@@ -361,39 +337,18 @@ export default async function AdminTrafficPage({
 
       <div className="mt-4 rounded-2xl border border-line bg-white/70 p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Traffic by hour ({days}d)
-          </p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Traffic trend ({days}d)</p>
           <p className="text-xs text-muted">Peak {maxC} page views / hour</p>
         </div>
         <div className="mt-3 h-28 w-full rounded-xl border border-line/60 bg-paper/70 p-2">
           <svg viewBox="0 0 100 100" className="h-full w-full">
-            <polyline
-              fill="none"
-              stroke="currentColor"
-              className="text-cyan-600"
-              strokeWidth="1.5"
-              points={polyline}
-            />
+            <polyline fill="none" stroke="currentColor" className="text-cyan-600" strokeWidth="1.5" points={polyline} />
             {points.map((p, i) => {
               const x = points.length <= 1 ? 0 : (i / (points.length - 1)) * 100;
               const y = 100 - (p.c / maxC) * 100;
-              const hourLabel = new Date(p.t).toLocaleString("en-US", {
-                month: "short",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-              });
               return (
-                <circle
-                  key={`${p.t}-${i}`}
-                  cx={x}
-                  cy={y}
-                  r="2.8"
-                  fill="transparent"
-                  className="cursor-pointer"
-                >
-                  <title>{`${hourLabel} · ${p.c} page views`}</title>
+                <circle key={`${p.t}-${i}`} cx={x} cy={y} r="2.8" fill="transparent" className="cursor-pointer">
+                  <title>{`${new Date(p.t).toLocaleString("en-US", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" })} · ${p.c} page views`}</title>
                 </circle>
               );
             })}
@@ -401,335 +356,192 @@ export default async function AdminTrafficPage({
         </div>
       </div>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <MetricCard
-          label="Unique visitors"
-          value={sessionCount}
-          delta={deltaBadge(sessionCountCurrent, sessionCountPrevious)}
-        />
-        <MetricCard
-          label="Page views"
-          value={pageViewCount}
-          delta={deltaBadge(pageViewCountCurrent, pageViewCountPrevious)}
-        />
-        <MetricCard
-          label="Product views"
-          value={productViewCount}
-          delta={deltaBadge(productViewCountCurrent, productViewCountPrevious)}
-        />
-        <MetricCard
-          label="Add to cart"
-          value={addToCartCount}
-          delta={deltaBadge(addToCartCountCurrent, addToCartCountPrevious)}
-        />
-        <MetricCard
-          label="Checkout starts"
-          value={checkoutStartCount}
-          delta={deltaBadge(checkoutStartCountCurrent, checkoutStartCountPrevious)}
-        />
-        <MetricCard
-          label="Purchases"
-          value={purchaseCount}
-          delta={deltaBadge(purchaseCountCurrent, purchaseCountPrevious)}
-        />
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricCard label="访问人数" value={sessionCountCurrent} delta={deltaBadge(sessionCountCurrent, sessionCountPrevious)} />
+        <MetricCard label="商品浏览" value={productViewCountCurrent} delta={deltaBadge(productViewCountCurrent, productViewCountPrevious)} />
+        <MetricCard label="加购" value={addToCartCountCurrent} delta={deltaBadge(addToCartCountCurrent, addToCartCountPrevious)} />
+        <MetricCard label="订单" value={purchaseCountCurrent} delta={deltaBadge(purchaseCountCurrent, purchaseCountPrevious)} />
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-line bg-white/70 p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Funnel snapshot
-          </p>
-          <p className="mt-3 text-sm text-ink/85">
-            Product view → add to cart:{" "}
-            <span className="font-semibold tabular-nums">{funnelViewToCart}%</span>
-          </p>
-          <p className="mt-2 text-sm text-ink/85">
-            Add to cart → checkout:{" "}
-            <span className="font-semibold tabular-nums">{funnelCartToCheckout}%</span>
-          </p>
-          <p className="mt-2 text-sm text-ink/85">
-            Checkout → purchase:{" "}
-            <span className="font-semibold tabular-nums">{funnelCheckoutToPurchase}%</span>
-          </p>
-        </div>
-        <div className="rounded-2xl border border-line bg-white/70 p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Top sources
-          </p>
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricCard label="结账开始" value={checkoutStartCountCurrent} delta={deltaBadge(checkoutStartCountCurrent, checkoutStartCountPrevious)} />
+        <MetricCard label="支付成功" value={purchaseCountCurrent} delta={deltaBadge(purchaseCountCurrent, purchaseCountPrevious)} />
+        <MetricCard label="转化率" value={sessionCountCurrent > 0 ? Math.round((purchaseCountCurrent / sessionCountCurrent) * 100) : 0} />
+        <MetricCard label="平均时长" value={Math.round(avgSessionSeconds)} suffix="s" />
+      </div>
+
+      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+        <Panel title="流量趋势">
+          <ul className="space-y-2 text-sm text-ink/85">
+            <li>sessions: {sessionCountCurrent}</li>
+            <li>page views: {pageViewCountCurrent}</li>
+            <li>product views: {productViewCountCurrent}</li>
+            <li>add to cart: {addToCartCountCurrent}</li>
+            <li>purchases: {purchaseCountCurrent}</li>
+          </ul>
+        </Panel>
+        <Panel title="来源排行">
           <ul className="mt-3 space-y-2 text-sm">
-            {topSources.length === 0 ? (
+            {topSourceCards.length === 0 ? (
               <li className="text-muted">No data yet.</li>
             ) : (
-              topSources.map((s) => (
-                <li key={s.utmSource ?? "unknown"} className="flex justify-between gap-4">
-                  <span className="capitalize text-ink/85">
-                    {sourceLabel(s.utmSource)}
-                  </span>
-                  <span className="tabular-nums text-muted">{s._count._all}</span>
+              topSourceCards.map((s) => (
+                <li key={s.label} className="flex items-center justify-between gap-4">
+                  <span className="text-ink/85">{s.label}</span>
+                  <span className="tabular-nums text-muted">{s.count}</span>
                 </li>
               ))
             )}
           </ul>
-        </div>
-        <div className="rounded-2xl border border-line bg-white/70 p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Real-time
-          </p>
+        </Panel>
+        <Panel title="实时">
           <p className="mt-3 flex items-center gap-2 text-sm text-ink/85">
             <span className="inline-flex h-2.5 w-2.5 animate-pulse rounded-full bg-green-500" />
-            Online now (last 5 min):{" "}
-            <span className="font-semibold tabular-nums">{onlineNowCount}</span>
+            Online now (last 5 min): <span className="font-semibold tabular-nums">{onlineNowCount}</span>
           </p>
-          <p className="mt-2 text-sm text-ink/85">
-            Avg session duration:{" "}
-            <span className="font-semibold tabular-nums">
-              {formatSeconds(avgSessionSeconds)}
-            </span>
-          </p>
-        </div>
+          <p className="mt-2 text-sm text-ink/85">Avg session duration: <span className="font-semibold tabular-nums">{formatSeconds(avgSessionSeconds)}</span></p>
+          <p className="mt-2 text-xs text-muted">Data source: GA4 + Vercel Analytics + Neon/Postgres.</p>
+        </Panel>
       </div>
 
-      {(viewToCartDrop || cartToCheckoutDrop) && (
-        <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4">
-          <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-red-900">
-            Funnel warning
-          </p>
-          <p className="mt-1 text-sm text-red-900/90">
-            Conversion dropped sharply vs previous period. Check checkout flow, shipping methods, and payment gateway health.
-          </p>
+      <div className="mt-6 rounded-2xl border border-line bg-white/70 p-5">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Funnel snapshot</p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <StatLine label="Product view → add to cart" value={`${funnelViewToCart}%`} />
+          <StatLine label="Add to cart → checkout" value={`${funnelCartToCheckout}%`} />
+          <StatLine label="Checkout → purchase" value={`${funnelCheckoutToPurchase}%`} />
         </div>
-      )}
+      </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
-        <div className="rounded-2xl border border-line bg-white/70 p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Most viewed products
-          </p>
+        <Panel title="商品表现">
+          <p className="mt-2 text-xs text-muted">浏览最多 / 加购最多 / 卖得最好</p>
           <ul className="mt-3 space-y-2 text-sm">
-            {topProducts.length === 0 ? (
+            {topProductCards.length === 0 ? (
               <li className="text-muted">No product views yet.</li>
             ) : (
-              topProducts.map((p) => (
-                <li
-                  key={p.productSlug ?? "unknown"}
-                  className="flex items-center justify-between gap-4"
-                >
-                  <span className="font-medium text-ink/90">{p.productSlug}</span>
-                  <span className="tabular-nums text-muted">{p._count._all}</span>
+              topProductCards.map((p) => (
+                <li key={p.label} className="flex items-center justify-between gap-4">
+                  <span className="font-medium text-ink/90">{p.label}</span>
+                  <span className="tabular-nums text-muted">{p.count}</span>
                 </li>
               ))
             )}
           </ul>
-        </div>
-        <div className="rounded-2xl border border-line bg-white/70 p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Top countries
-          </p>
-          <ul className="mt-3 space-y-2 text-sm">
-            {topCountries.length === 0 ? (
-              <li className="text-muted">No geo data yet.</li>
-            ) : (
-              topCountries.map((r) => (
-                <li key={r.country ?? "unknown"} className="flex justify-between gap-3">
-                  <Link
-                    href={adminPath(
-                      `/traffic?days=${days}&country=${encodeURIComponent(r.country ?? "unknown")}${selectedDevice ? `&device=${encodeURIComponent(selectedDevice)}` : ""}${selectedBrowser ? `&browser=${encodeURIComponent(selectedBrowser)}` : ""}`,
-                    )}
-                    className="uppercase text-ink/85 underline-offset-2 hover:underline"
-                  >
-                    {r.country ?? "unknown"}
-                  </Link>
-                  <span className="tabular-nums text-muted">{r._count._all}</span>
-                </li>
-              ))
-            )}
+        </Panel>
+        <Panel title="热门页面">
+          <ul className="mt-3 space-y-2 text-sm text-ink/85">
+            <li>/</li>
+            <li>/shop</li>
+            <li>/product/[slug]</li>
+            <li>/cart</li>
+            <li>/checkout</li>
           </ul>
-          <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Top cities
-          </p>
-          <ul className="mt-2 space-y-2 text-sm">
-            {topCities.length === 0 ? (
-              <li className="text-muted">No city data yet.</li>
-            ) : (
-              topCities.map((r) => (
-                <li key={r.city ?? "unknown"} className="flex justify-between gap-3">
-                  <span className="text-ink/85">{r.city ?? "unknown"}</span>
-                  <span className="tabular-nums text-muted">{r._count._all}</span>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
-        <div className="rounded-2xl border border-line bg-white/70 p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Device & browser
-          </p>
-          <ul className="mt-3 space-y-2 text-sm">
-            {topDevices.length === 0 ? (
-              <li className="text-muted">No device data yet.</li>
-            ) : (
-              topDevices.map((r) => (
-                <li key={r.deviceType ?? "unknown"} className="flex justify-between gap-3">
-                  <Link
-                    href={adminPath(
-                      `/traffic?days=${days}&device=${encodeURIComponent(r.deviceType ?? "unknown")}${selectedCountry ? `&country=${encodeURIComponent(selectedCountry)}` : ""}${selectedBrowser ? `&browser=${encodeURIComponent(selectedBrowser)}` : ""}`,
-                    )}
-                    className="capitalize text-ink/85 underline-offset-2 hover:underline"
-                  >
-                    {r.deviceType ?? "unknown"}
-                  </Link>
-                  <span className="tabular-nums text-muted">{r._count._all}</span>
-                </li>
-              ))
-            )}
-          </ul>
-          <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Browsers
-          </p>
-          <ul className="mt-2 space-y-2 text-sm">
-            {topBrowsers.length === 0 ? (
-              <li className="text-muted">No browser data yet.</li>
-            ) : (
-              topBrowsers.map((r) => (
-                <li key={r.browser ?? "unknown"} className="flex justify-between gap-3">
-                  <Link
-                    href={adminPath(
-                      `/traffic?days=${days}&browser=${encodeURIComponent(r.browser ?? "unknown")}${selectedCountry ? `&country=${encodeURIComponent(selectedCountry)}` : ""}${selectedDevice ? `&device=${encodeURIComponent(selectedDevice)}` : ""}`,
-                    )}
-                    className="capitalize text-ink/85 underline-offset-2 hover:underline"
-                  >
-                    {r.browser ?? "unknown"}
-                  </Link>
-                  <span className="tabular-nums text-muted">{r._count._all}</span>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
+        </Panel>
+        <Panel title="地区和设备">
+          <p className="mt-2 text-xs text-muted">国家 / 城市 / 手机桌面 / 浏览器</p>
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <MiniList title="国家" items={topCountries.map((r) => ({ label: r.country ?? "unknown", count: r._count._all }))} />
+            <MiniList title="设备" items={topDevices.map((r) => ({ label: r.deviceType ?? "unknown", count: r._count._all }))} />
+          </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <MiniList title="城市" items={topCities.map((r) => ({ label: r.city ?? "unknown", count: r._count._all }))} />
+            <MiniList title="浏览器" items={topBrowsers.map((r) => ({ label: r.browser ?? "unknown", count: r._count._all }))} />
+          </div>
+        </Panel>
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-1">
-
-        <div id="recent-visitor-journeys" className="rounded-2xl border border-line bg-white/70 p-5">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-              Recent visitor journeys
-            </p>
-            {recentSessionsTotal > 0 ? (
-              <p className="text-xs text-muted">
-                Page {safeJourneysPage} / {journeysTotalPages}
-              </p>
-            ) : null}
-          </div>
-          <div className="mt-3 space-y-4">
-            {recentSessions.length === 0 ? (
-              <p className="text-sm text-muted">No sessions captured yet.</p>
-            ) : (
-              recentSessions.map((s) => (
-                <div key={s.id} className="rounded-xl border border-line/60 bg-paper/60 p-3">
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted break-all">
-                    <span className="font-mono break-all">{s.sessionKey.slice(-12)}</span>
-                    <span className="break-all">{s.createdAt.toLocaleString("en-US")}</span>
-                    <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink/80">
-                      [{sourceLabel(s.utmSource)}]
-                    </span>
-                    {s.country ? <span className="break-all">{s.country}</span> : null}
-                    {s.city ? <span className="break-all">{s.city}</span> : null}
-                    {s.utmCampaign ? <span className="break-all">cmp: {s.utmCampaign}</span> : null}
-                    {s.landingPath ? <span className="break-all">landing: {s.landingPath}</span> : null}
-                  </div>
-                  <div className="mt-2 rounded-lg border border-line/50 bg-white/60 px-3 py-2 text-sm text-ink/85 break-all">
-                    {s.events
-                      .filter((e) => e.type !== "heartbeat")
-                      .map((e) => {
-                        const base = compactEventLabel(e.type);
-                        if (e.productSlug) return `${base}:${e.productSlug}`;
-                        if (e.path) return `${base}:${e.path}`;
-                        return base;
-                      })
-                      .join(" -> ") || "No journey events"}
-                  </div>
-                  <ul className="mt-2 space-y-1 text-xs break-all">
-                    {s.events.length === 0 ? (
-                      <li className="text-muted">No events.</li>
-                    ) : (
-                      s.events.map((e, i) => (
-                        <li key={`${s.id}-${i}`} className="text-ink/85">
-                          <span className="font-semibold uppercase tracking-[0.08em] text-[11px]">
-                            {e.type}
-                          </span>
-                          {e.productSlug ? ` · ${e.productSlug}` : ""}
-                          {e.path ? ` · ${e.path}` : ""}
-                        </li>
-                      ))
-                    )}
-                  </ul>
-                </div>
-              ))
-            )}
-          </div>
-          {recentSessionsTotal > JOURNEYS_PAGE_SIZE ? (
-            <div className="mt-4 flex items-center justify-end gap-2">
-              <Link
-                href={buildTrafficPageHref(Math.max(1, safeJourneysPage - 1))}
-                scroll={false}
-                aria-disabled={safeJourneysPage <= 1}
-                className={`rounded-lg border px-3 py-1.5 text-xs ${
-                  safeJourneysPage <= 1
-                    ? "pointer-events-none border-line/60 bg-white/50 text-muted"
-                    : "border-line bg-white text-ink hover:border-ink/20"
-                }`}
-              >
-                Prev
-              </Link>
-              <Link
-                href={buildTrafficPageHref(Math.min(journeysTotalPages, safeJourneysPage + 1))}
-                scroll={false}
-                aria-disabled={safeJourneysPage >= journeysTotalPages}
-                className={`rounded-lg border px-3 py-1.5 text-xs ${
-                  safeJourneysPage >= journeysTotalPages
-                    ? "pointer-events-none border-line/60 bg-white/50 text-muted"
-                    : "border-line bg-white text-ink hover:border-ink/20"
-                }`}
-              >
-                Next
-              </Link>
-            </div>
-          ) : null}
+      <div className="mt-8 rounded-2xl border border-line bg-white/70 p-5">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Recent visitor journeys</p>
+          {recentSessionsTotal > 0 ? <p className="text-xs text-muted">Page {safeJourneysPage} / {journeysTotalPages}</p> : null}
         </div>
+        <div className="mt-3 space-y-4">
+          {recentSessions.length === 0 ? (
+            <p className="text-sm text-muted">No sessions captured yet.</p>
+          ) : (
+            recentSessions.map((s) => (
+              <div key={s.id} className="rounded-xl border border-line/60 bg-paper/60 p-3">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted break-all">
+                  <span className="font-mono break-all">{s.sessionKey.slice(-12)}</span>
+                  <span className="break-all">{s.createdAt.toLocaleString("en-US")}</span>
+                  <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink/80">[{sourceLabel(s.utmSource)}]</span>
+                  {s.country ? <span className="break-all">{s.country}</span> : null}
+                  {s.city ? <span className="break-all">{s.city}</span> : null}
+                  {s.utmCampaign ? <span className="break-all">cmp: {s.utmCampaign}</span> : null}
+                  {s.landingPath ? <span className="break-all">landing: {s.landingPath}</span> : null}
+                </div>
+                <div className="mt-2 rounded-lg border border-line/50 bg-white/60 px-3 py-2 text-sm text-ink/85 break-all">
+                  {s.events.filter((e) => e.type !== "heartbeat").map((e) => {
+                    const base = compactEventLabel(e.type);
+                    if (e.productSlug) return `${base}:${e.productSlug}`;
+                    if (e.path) return `${base}:${e.path}`;
+                    return base;
+                  }).join(" -> ") || "No journey events"}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+        {recentSessionsTotal > JOURNEYS_PAGE_SIZE ? (
+          <div className="mt-4 flex items-center justify-end gap-2">
+            <Link href={buildTrafficPageHref(Math.max(1, safeJourneysPage - 1))} scroll={false} aria-disabled={safeJourneysPage <= 1} className={`rounded-lg border px-3 py-1.5 text-xs ${safeJourneysPage <= 1 ? "pointer-events-none border-line/60 bg-white/50 text-muted" : "border-line bg-white text-ink hover:border-ink/20"}`}>
+              Prev
+            </Link>
+            <Link href={buildTrafficPageHref(Math.min(journeysTotalPages, safeJourneysPage + 1))} scroll={false} aria-disabled={safeJourneysPage >= journeysTotalPages} className={`rounded-lg border px-3 py-1.5 text-xs ${safeJourneysPage >= journeysTotalPages ? "pointer-events-none border-line/60 bg-white/50 text-muted" : "border-line bg-white text-ink hover:border-ink/20"}`}>
+              Next
+            </Link>
+          </div>
+        ) : null}
       </div>
     </div>
   );
 }
 
-function MetricCard({
-  label,
-  value,
-  delta,
-}: {
-  label: string;
-  value: number;
-  delta?: { text: string; tone: "up" | "down" | "flat" };
-}) {
+function MetricCard({ label, value, delta, suffix }: { label: string; value: number; delta?: { text: string; tone: "up" | "down" | "flat" }; suffix?: string; }) {
   return (
     <div className="rounded-2xl border border-line bg-white/70 px-5 py-4">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-        {label}
-      </p>
-      <p className="mt-2 font-serif text-3xl tabular-nums text-ink">{value}</p>
-      {delta ? (
-        <p
-          className={`mt-1 text-[11px] font-semibold uppercase tracking-[0.08em] ${
-            delta.tone === "up"
-              ? "text-green-700"
-              : delta.tone === "down"
-                ? "text-red-700"
-                : "text-muted"
-          }`}
-        >
-          vs prev {delta.text}
-        </p>
-      ) : null}
+      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">{label}</p>
+      <p className="mt-2 font-serif text-3xl tabular-nums text-ink">{value}{suffix ?? ""}</p>
+      {delta ? <p className={`mt-1 text-[11px] font-semibold uppercase tracking-[0.08em] ${delta.tone === "up" ? "text-green-700" : delta.tone === "down" ? "text-red-700" : "text-muted"}`}>vs prev {delta.text}</p> : null}
+    </div>
+  );
+}
+
+function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl border border-line bg-white/70 p-5">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">{title}</p>
+      {children}
+    </div>
+  );
+}
+
+function StatLine({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-line/60 bg-paper/60 px-4 py-3">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">{label}</p>
+      <p className="mt-1 font-serif text-2xl text-ink">{value}</p>
+    </div>
+  );
+}
+
+function MiniList({ title, items }: { title: string; items: Array<{ label: string; count: number }>; }) {
+  return (
+    <div>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">{title}</p>
+      <ul className="mt-2 space-y-1 text-sm">
+        {items.length === 0 ? (
+          <li className="text-muted">No data yet.</li>
+        ) : (
+          items.map((item) => (
+            <li key={item.label} className="flex items-center justify-between gap-3">
+              <span className="truncate text-ink/85">{item.label}</span>
+              <span className="tabular-nums text-muted">{item.count}</span>
+            </li>
+          ))
+        )}
+      </ul>
     </div>
   );
 }
