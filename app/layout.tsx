@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AppProviders } from "@/components/providers/app-providers";
 import { OrganizationJsonLd } from "@/components/seo/organization-json-ld";
 import { R2_PUBLIC_BASE } from "@/lib/r2";
@@ -70,6 +72,8 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col font-sans">
         <OrganizationJsonLd />
         <AppProviders>{children}</AppProviders>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
