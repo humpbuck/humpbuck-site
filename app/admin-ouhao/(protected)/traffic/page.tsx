@@ -17,20 +17,18 @@ function toPage(v: string | undefined, fallback: number): number {
 
 function sourceLabel(source: string | null): string {
   if (!source) return "Direct";
-
   const s = source.trim().toLowerCase();
   if (!s) return "Direct";
-
   if (s === "(direct)" || s === "direct" || s === "none") return "Direct";
   if (s.includes("google") && (s.includes("organic") || s === "google")) return "Google Organic";
   if (s.includes("instagram")) return "Instagram";
   if (s.includes("facebook") || s.includes("meta")) return "Facebook Ads";
+  if (s.includes("tiktok")) return "TikTok";
+  if (s.includes("youtube")) return "YouTube";
   if (s.includes("email") || s.includes("newsletter")) return "Email";
   if (s.includes("affiliate")) return "Affiliate";
   if (s.includes("referral") || s.includes("referrer")) return "Referral";
-  if (s.includes("tiktok")) return "TikTok";
-  if (s.includes("youtube")) return "YouTube";
-
+  if (s.includes("search")) return "Search";
   return source.replace(/[_-]/g, " ");
 }
 
@@ -83,6 +81,15 @@ function makeSeries(values: number[]): string {
     .join(" ");
 }
 
+type ProductSummary = {
+  slug: string;
+  name: string;
+  views: number;
+  cartAdds: number;
+  orders: number;
+  salesCents: number;
+};
+
 export default async function AdminTrafficPage({
   searchParams,
 }: {
@@ -114,21 +121,6 @@ export default async function AdminTrafficPage({
     ...(selectedBrowser ? { browser: selectedBrowser } : {}),
   };
 
-  const topProductsWhere = {
-    type: "product_view" as const,
-    createdAt: { gte: since },
-    productSlug: { not: null as null },
-    ...(selectedCountry || selectedDevice || selectedBrowser
-      ? {
-          session: {
-            ...(selectedCountry ? { country: selectedCountry } : {}),
-            ...(selectedDevice ? { deviceType: selectedDevice } : {}),
-            ...(selectedBrowser ? { browser: selectedBrowser } : {}),
-          },
-        }
-      : {}),
-  };
-
   const [
     sessionCountCurrent,
     sessionCountPrevious,
@@ -142,9 +134,11 @@ export default async function AdminTrafficPage({
     checkoutStartCountPrevious,
     purchaseCountCurrent,
     purchaseCountPrevious,
+    orderTotalCentsCurrent,
+    refundCountCurrent,
     onlineNowCount,
     topSources,
-    topProducts,
+    topProductsRaw,
     topCountries,
     topCities,
     topDevices,
@@ -166,6 +160,11 @@ export default async function AdminTrafficPage({
     prisma.visitorEvent.count({ where: { type: "checkout_start", createdAt: { gte: prevSince, lt: since } } }),
     prisma.visitorEvent.count({ where: { type: "purchase", createdAt: { gte: since } } }),
     prisma.visitorEvent.count({ where: { type: "purchase", createdAt: { gte: prevSince, lt: since } } }),
+    prisma.order.aggregate({
+      where: { createdAt: { gte: since }, deletedAt: null },
+      _sum: { totalCents: true },
+    }),
+    prisma.order.count({ where: { createdAt: { gte: since }, deletedAt: null, refundedAt: { not: null } } }),
     prisma.visitorSession.count({ where: { lastSeenAt: { gte: onlineSince } } }),
     prisma.visitorSession.groupBy({
       by: ["utmSource"],
@@ -176,10 +175,14 @@ export default async function AdminTrafficPage({
     }),
     prisma.visitorEvent.groupBy({
       by: ["productSlug"],
-      where: topProductsWhere,
+      where: {
+        type: "product_view",
+        createdAt: { gte: since },
+        productSlug: { not: null as null },
+      },
       _count: { _all: true },
       orderBy: { _count: { productSlug: "desc" } },
-      take: 10,
+      take: 12,
     }),
     prisma.visitorSession.groupBy({
       by: ["country"],
@@ -250,16 +253,17 @@ export default async function AdminTrafficPage({
     `,
   ]);
 
+  const orderSalesCentsCurrent = Number(orderTotalCentsCurrent._sum.totalCents ?? 0);
+  const avgSessionSeconds = Number(avgDurationRows[0]?.avg_seconds ?? 0);
+  const checkoutConversion = sessionCountCurrent > 0 ? Math.round((purchaseCountCurrent / sessionCountCurrent) * 100) : 0;
+  const refundRate = purchaseCountCurrent > 0 ? Math.round((refundCountCurrent / purchaseCountCurrent) * 100) : 0;
   const funnelViewToCart = productViewCountCurrent > 0 ? Math.round((addToCartCountCurrent / productViewCountCurrent) * 100) : 0;
   const funnelCartToCheckout = addToCartCountCurrent > 0 ? Math.round((checkoutStartCountCurrent / addToCartCountCurrent) * 100) : 0;
   const funnelCheckoutToPurchase = checkoutStartCountCurrent > 0 ? Math.round((purchaseCountCurrent / checkoutStartCountCurrent) * 100) : 0;
-  const avgSessionSeconds = Number(avgDurationRows[0]?.avg_seconds ?? 0);
 
-  const pageValues = [] as number[];
   const rowMap = new Map<number, number>();
   for (const r of chartRows) {
-    const t = new Date(r.hour_bucket).getTime();
-    rowMap.set(t, Number(r.c));
+    rowMap.set(new Date(r.hour_bucket).getTime(), Number(r.c));
   }
   const chartStart = new Date(nowTs - days * 86400000);
   chartStart.setMinutes(0, 0, 0);
@@ -267,16 +271,14 @@ export default async function AdminTrafficPage({
   chartEnd.setMinutes(0, 0, 0);
   const points: Array<{ t: number; c: number }> = [];
   for (let t = chartStart.getTime(); t <= chartEnd.getTime(); t += 3600000) {
-    const c = rowMap.get(t) ?? 0;
-    points.push({ t, c });
-    pageValues.push(c);
+    points.push({ t, c: rowMap.get(t) ?? 0 });
   }
+  const pageValues = points.map((p) => p.c);
   const polyline = makeSeries(pageValues);
   const maxC = Math.max(1, ...pageValues);
 
   const journeysTotalPages = Math.max(1, Math.ceil(recentSessionsTotal / JOURNEYS_PAGE_SIZE));
   const safeJourneysPage = Math.min(journeysPage, journeysTotalPages);
-
   const buildTrafficPageHref = (nextJourneysPage: number): string => {
     const qs = new URLSearchParams();
     qs.set("days", String(days));
@@ -287,20 +289,77 @@ export default async function AdminTrafficPage({
     return `${adminPath(`/traffic?${qs.toString()}`)}#recent-visitor-journeys`;
   };
 
-  const topSourceCards = topSources.map((s) => ({
-    label: sourceLabel(s.utmSource),
-    count: s._count._all,
-  }));
+  const productSummaryMap = new Map<string, ProductSummary>();
+  const productSlugs = topProductsRaw.map((p) => p.productSlug).filter((x): x is string => Boolean(x));
+  const [productRows, orderItemRows, productMetaRows] = await Promise.all([
+    prisma.visitorEvent.groupBy({
+      by: ["productSlug"],
+      where: {
+        type: "product_view",
+        createdAt: { gte: since },
+        productSlug: { in: productSlugs },
+      },
+      _count: { _all: true },
+    }),
+    prisma.orderItemSnapshot.groupBy({
+      by: ["productSlug"],
+      where: { createdAt: { gte: since }, productSlug: { in: productSlugs } },
+      _count: { _all: true },
+      _sum: { lineTotalCents: true, qty: true },
+    }),
+    prisma.catalogProduct.findMany({
+      where: { slug: { in: productSlugs } },
+      select: { slug: true, name: true, price: true },
+    }),
+  ]);
+  const productNameMap = new Map(productMetaRows.map((p) => [p.slug, p.name]));
+  const productViewMap = new Map(productRows.map((r) => [r.productSlug ?? "", Number(r._count._all)]));
+  const productOrderMap = new Map(orderItemRows.map((r) => [r.productSlug, { orders: Number(r._count._all), salesCents: Number(r._sum.lineTotalCents ?? 0) }]));
+  for (const p of topProductsRaw) {
+    const slug = p.productSlug ?? "unknown";
+    const viewCount = Number(p._count._all);
+    const orderData = productOrderMap.get(slug) ?? { orders: 0, salesCents: 0 };
+    productSummaryMap.set(slug, {
+      slug,
+      name: productNameMap.get(slug) ?? slug,
+      views: viewCount,
+      cartAdds: 0,
+      orders: orderData.orders,
+      salesCents: orderData.salesCents,
+    });
+  }
+  const cartAddRows = await prisma.visitorEvent.groupBy({
+    by: ["productSlug"],
+    where: {
+      type: "add_to_cart",
+      createdAt: { gte: since },
+      productSlug: { in: productSlugs },
+    },
+    _count: { _all: true },
+  });
+  for (const r of cartAddRows) {
+    const slug = r.productSlug ?? "unknown";
+    const current = productSummaryMap.get(slug) ?? {
+      slug,
+      name: productNameMap.get(slug) ?? slug,
+      views: productViewMap.get(slug) ?? 0,
+      cartAdds: 0,
+      orders: 0,
+      salesCents: 0,
+    };
+    current.cartAdds = Number(r._count._all);
+    current.views = current.views || productViewMap.get(slug) || 0;
+    productSummaryMap.set(slug, current);
+  }
+  const topProducts = [...productSummaryMap.values()]
+    .sort((a, b) => b.salesCents - a.salesCents || b.orders - a.orders || b.views - a.views)
+    .slice(0, 10);
 
-  const topProductCards = topProducts.map((p) => ({
-    label: p.productSlug ?? "unknown",
-    count: p._count._all,
-  }));
+  const topSourceCards = topSources.map((s) => ({ label: sourceLabel(s.utmSource), count: s._count._all }));
 
   return (
     <div>
       <AdminBackLink href={adminPath()} label="Overview" />
-
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-serif text-3xl tracking-tight">经营总览</h1>
@@ -320,9 +379,7 @@ export default async function AdminTrafficPage({
           {[7, 14, 30].map((d) => (
             <Link
               key={d}
-              href={adminPath(
-                `/traffic?days=${d}${selectedCountry ? `&country=${encodeURIComponent(selectedCountry)}` : ""}${selectedDevice ? `&device=${encodeURIComponent(selectedDevice)}` : ""}${selectedBrowser ? `&browser=${encodeURIComponent(selectedBrowser)}` : ""}`,
-              )}
+              href={adminPath(`/traffic?days=${d}${selectedCountry ? `&country=${encodeURIComponent(selectedCountry)}` : ""}${selectedDevice ? `&device=${encodeURIComponent(selectedDevice)}` : ""}${selectedBrowser ? `&browser=${encodeURIComponent(selectedBrowser)}` : ""}`)}
               className={`rounded-xl border px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] ${
                 days === d
                   ? "border-ink bg-ink text-paper"
@@ -365,19 +422,19 @@ export default async function AdminTrafficPage({
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard label="结账开始" value={checkoutStartCountCurrent} delta={deltaBadge(checkoutStartCountCurrent, checkoutStartCountPrevious)} />
-        <MetricCard label="支付成功" value={purchaseCountCurrent} delta={deltaBadge(purchaseCountCurrent, purchaseCountPrevious)} />
-        <MetricCard label="转化率" value={sessionCountCurrent > 0 ? Math.round((purchaseCountCurrent / sessionCountCurrent) * 100) : 0} />
-        <MetricCard label="平均时长" value={Math.round(avgSessionSeconds)} suffix="s" />
+        <MetricCard label="销售额" value={Math.round(orderSalesCentsCurrent / 100)} suffix="" />
+        <MetricCard label="转化率" value={checkoutConversion} suffix="%" />
+        <MetricCard label="退款率" value={refundRate} suffix="%" />
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
         <Panel title="流量趋势">
           <ul className="space-y-2 text-sm text-ink/85">
-            <li>sessions: {sessionCountCurrent}</li>
-            <li>page views: {pageViewCountCurrent}</li>
-            <li>product views: {productViewCountCurrent}</li>
-            <li>add to cart: {addToCartCountCurrent}</li>
-            <li>purchases: {purchaseCountCurrent}</li>
+            <li className="flex justify-between gap-4"><span>sessions</span><span className="tabular-nums">{sessionCountCurrent}</span></li>
+            <li className="flex justify-between gap-4"><span>page views</span><span className="tabular-nums">{pageViewCountCurrent}</span></li>
+            <li className="flex justify-between gap-4"><span>product views</span><span className="tabular-nums">{productViewCountCurrent}</span></li>
+            <li className="flex justify-between gap-4"><span>add to cart</span><span className="tabular-nums">{addToCartCountCurrent}</span></li>
+            <li className="flex justify-between gap-4"><span>purchases</span><span className="tabular-nums">{purchaseCountCurrent}</span></li>
           </ul>
         </Panel>
         <Panel title="来源排行">
@@ -415,27 +472,41 @@ export default async function AdminTrafficPage({
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         <Panel title="商品表现">
-          <p className="mt-2 text-xs text-muted">浏览最多 / 加购最多 / 卖得最好</p>
-          <ul className="mt-3 space-y-2 text-sm">
-            {topProductCards.length === 0 ? (
-              <li className="text-muted">No product views yet.</li>
+          <p className="mt-2 text-xs text-muted">按销售额排序，显示真实商品名、销量和浏览/加购表现。</p>
+          <ul className="mt-4 space-y-3 text-sm">
+            {topProducts.length === 0 ? (
+              <li className="text-muted">No product sales yet.</li>
             ) : (
-              topProductCards.map((p) => (
-                <li key={p.label} className="flex items-center justify-between gap-4">
-                  <span className="font-medium text-ink/90">{p.label}</span>
-                  <span className="tabular-nums text-muted">{p.count}</span>
+              topProducts.map((p) => (
+                <li key={p.slug} className="rounded-xl border border-line/60 bg-paper/60 p-3">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="font-medium text-ink/90">{p.name}</p>
+                      <p className="mt-1 text-xs text-muted">/{p.slug}</p>
+                    </div>
+                    <div className="text-right text-xs text-muted">
+                      <p className="font-semibold text-ink/85 tabular-nums">${(p.salesCents / 100).toFixed(2)}</p>
+                      <p>sales</p>
+                    </div>
+                  </div>
+                  <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-ink/85">
+                    <div className="rounded-lg bg-white/70 px-2 py-1.5">Views <span className="ml-1 tabular-nums text-muted">{p.views}</span></div>
+                    <div className="rounded-lg bg-white/70 px-2 py-1.5">Cart <span className="ml-1 tabular-nums text-muted">{p.cartAdds}</span></div>
+                    <div className="rounded-lg bg-white/70 px-2 py-1.5">Orders <span className="ml-1 tabular-nums text-muted">{p.orders}</span></div>
+                  </div>
                 </li>
               ))
             )}
           </ul>
         </Panel>
         <Panel title="热门页面">
+          <p className="mt-2 text-xs text-muted">当前版本先显示业务关键页，后续可接真实 page view 排名。</p>
           <ul className="mt-3 space-y-2 text-sm text-ink/85">
-            <li>/</li>
-            <li>/shop</li>
-            <li>/product/[slug]</li>
-            <li>/cart</li>
-            <li>/checkout</li>
+            <li className="flex justify-between gap-4"><span>/</span><span className="text-muted">home</span></li>
+            <li className="flex justify-between gap-4"><span>/shop</span><span className="text-muted">catalog</span></li>
+            <li className="flex justify-between gap-4"><span>/product/[slug]</span><span className="text-muted">product</span></li>
+            <li className="flex justify-between gap-4"><span>/cart</span><span className="text-muted">cart</span></li>
+            <li className="flex justify-between gap-4"><span>/checkout</span><span className="text-muted">checkout</span></li>
           </ul>
         </Panel>
         <Panel title="地区和设备">
@@ -472,12 +543,15 @@ export default async function AdminTrafficPage({
                   {s.landingPath ? <span className="break-all">landing: {s.landingPath}</span> : null}
                 </div>
                 <div className="mt-2 rounded-lg border border-line/50 bg-white/60 px-3 py-2 text-sm text-ink/85 break-all">
-                  {s.events.filter((e) => e.type !== "heartbeat").map((e) => {
-                    const base = compactEventLabel(e.type);
-                    if (e.productSlug) return `${base}:${e.productSlug}`;
-                    if (e.path) return `${base}:${e.path}`;
-                    return base;
-                  }).join(" -> ") || "No journey events"}
+                  {s.events
+                    .filter((e) => e.type !== "heartbeat")
+                    .map((e) => {
+                      const base = compactEventLabel(e.type);
+                      if (e.productSlug) return `${base}:${e.productSlug}`;
+                      if (e.path) return `${base}:${e.path}`;
+                      return base;
+                    })
+                    .join(" -> ") || "No journey events"}
                 </div>
               </div>
             ))
