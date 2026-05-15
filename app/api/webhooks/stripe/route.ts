@@ -42,9 +42,10 @@ export async function POST(req: Request) {
       session.client_reference_id ?? session.metadata?.orderId ?? null;
     if (orderId) {
       const { count } = await prisma.order.updateMany({
-        where: { id: orderId, provider: "stripe", status: "pending_payment" },
+        where: { id: orderId, status: "pending_payment" },
         data: {
           status: "paid",
+          provider: "stripe",
           providerRef: session.id,
         },
       });

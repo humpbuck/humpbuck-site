@@ -12,6 +12,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   const slug = "digitemp-2412m";
+  const recipientEmail = process.env.TEST_ORDER_EMAIL?.trim() || "test-order-script@example.com";
 
   const billingJson = JSON.stringify({
     fullName: "Test Buyer",
@@ -36,7 +37,7 @@ async function main() {
 
   const order = await prisma.order.create({
     data: {
-      email: "test-order-script@example.com",
+      email: recipientEmail,
       status: "paid",
       provider: "stripe",
       providerRef: `test_${Date.now()}`,
@@ -66,6 +67,7 @@ async function main() {
   });
 
   console.log("Created paid order:", order.id);
+  console.log("Recipient email:", recipientEmail);
   console.log("Display #:", order.id.slice(-6).toUpperCase());
 
   await notifyMerchantOrderPaid(order.id);
