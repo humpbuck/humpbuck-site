@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { notifyMerchantOrderPaid } from "@/lib/merchant-order-email";
+import { notifyCustomerOrderPaid, notifyMerchantOrderPaid } from "@/lib/merchant-order-email";
 import { paypalCaptureOrder, paypalCreateOrder } from "@/lib/paypal";
 import { prisma } from "@/lib/prisma";
 
@@ -59,6 +59,7 @@ export async function POST(req: Request) {
           providerRef: body.paypalOrderId,
         },
       });
+      await notifyCustomerOrderPaid(order.id);
       await notifyMerchantOrderPaid(order.id);
     }
 
