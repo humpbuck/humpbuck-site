@@ -8,6 +8,8 @@ import {
   quoteCheckoutShipping,
   type ShippingMethodId,
 } from "@/lib/checkout-shipping-quote";
+import { getShippingOhQuote } from "@/lib/shipping-oh";
+import { getShippingYanwen484Quote } from "@/lib/shipping-yanwen484";
 
 function checkoutMethodLabel(id: ShippingMethodId): string {
   switch (id) {
@@ -64,6 +66,23 @@ export function LogisticsReferencePanel({
   checkoutShippingMethod?: string | null;
 }) {
   const [showDetails, setShowDetails] = useState(false);
+  const countryCode = shippingCountryLabel.trim().toUpperCase() || null;
+  const cainiaoQuote = countryCode
+    ? getShippingOhQuote({
+        countryCode,
+        postalCode: postalCode ?? undefined,
+        weightKg: totalUnits * 0.2,
+        quantity: totalUnits,
+      })
+    : null;
+  const yanwenQuoteData = countryCode
+    ? getShippingYanwen484Quote({
+        countryCode,
+        postalCode: postalCode ?? undefined,
+        weightKg: totalUnits * 0.2,
+        quantity: totalUnits,
+      })
+    : null;
   const est: {
     iso2: string | null;
     cainiaoZhCountry: string;
@@ -76,22 +95,28 @@ export function LogisticsReferencePanel({
     freeInternational: boolean;
     buyerSupplementCny: number;
   } = {
-    iso2: shippingCountryLabel.trim().toUpperCase() || null,
+    iso2: countryCode,
     cainiaoZhCountry: shippingCountryLabel,
-    chargeableKgCainiao: null,
-    chargeableKgYanwen: null,
-    ohInternationalCny: null,
-    destinationFeesCnyCainiao: 0,
-    yanwen484InternationalCny: null,
-    destinationFeesCnyYanwen: 0,
-    freeInternational: false,
-    buyerSupplementCny: 0,
+    chargeableKgCainiao: cainiaoQuote?.billableWeightKg ?? null,
+    chargeableKgYanwen: yanwenQuoteData?.billableWeightKg ?? null,
+    ohInternationalCny: cainiaoQuote?.baseFreightRmb ?? null,
+    destinationFeesCnyCainiao:
+      cainiaoQuote != null
+        ? Math.max(0, cainiaoQuote.checkoutPriceRmb - (cainiaoQuote.baseFreightRmb - 50))
+        : 0,
+    yanwen484InternationalCny: yanwenQuoteData?.baseFreightRmb ?? null,
+    destinationFeesCnyYanwen:
+      yanwenQuoteData != null
+        ? Math.max(0, yanwenQuoteData.checkoutPriceRmb - (yanwenQuoteData.baseFreightRmb - 5 + 50))
+        : 0,
+    freeInternational: Boolean(cainiaoQuote && cainiaoQuote.checkoutPriceRmb <= 0),
+    buyerSupplementCny: cainiaoQuote ? Math.max(0, cainiaoQuote.checkoutPriceRmb) : 0,
   };
 
   const methodRaw = String(checkoutShippingMethod ?? "").trim();
   const checkoutMethod = isShippingMethodId(methodRaw) ? methodRaw : null;
 
-  const cainiaoQuote = quoteCheckoutShipping({
+  const checkoutCainiaoQuote = quoteCheckoutShipping({
     countryLabel: shippingCountryLabel,
     totalUnits,
     method: "cainiao",
@@ -99,7 +124,7 @@ export function LogisticsReferencePanel({
     postalCode,
     weightKg: undefined,
   });
-  const yanwenQuote = quoteCheckoutShipping({
+  const checkoutYanwenQuote = quoteCheckoutShipping({
     countryLabel: shippingCountryLabel,
     totalUnits,
     method: "yanwen",
@@ -108,8 +133,8 @@ export function LogisticsReferencePanel({
     weightKg: undefined,
   });
 
-  const cainiaoShipping = cainiaoQuote.ok ? cainiaoQuote.shippingCny : null;
-  const yanwenShipping = yanwenQuote.ok ? yanwenQuote.shippingCny : null;
+  const cainiaoShipping = checkoutCainiaoQuote.ok ? checkoutCainiaoQuote.shippingCny : null;
+  const yanwenShipping = checkoutYanwenQuote.ok ? checkoutYanwenQuote.shippingCny : null;
   const preferred =
     cainiaoShipping != null && yanwenShipping != null
       ? cainiaoShipping <= yanwenShipping
