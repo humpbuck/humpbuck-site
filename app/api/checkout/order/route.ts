@@ -156,7 +156,7 @@ export async function POST(req: Request) {
       return created;
     });
 
-    await notifyMerchantOrderPlaced(order);
+    await notifyMerchantOrderPlaced(order.id);
 
     return NextResponse.json({ ok: true, orderId: order.id });
   } catch (error) {
