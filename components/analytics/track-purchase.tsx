@@ -28,7 +28,7 @@ export function TrackPurchase({
     trackVisitorEvent({
       type: "purchase",
       orderId,
-      source: provider ?? null,
+      source: provider ?? undefined,
       meta: { totalUsd, provider: provider ?? null, channel: provider ?? null },
     });
   }, [orderId, provider, totalUsd]);
