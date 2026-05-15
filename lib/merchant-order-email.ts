@@ -390,6 +390,30 @@ async function buildHtml(order: Order, lines: Awaited<ReturnType<typeof orderIte
 /**
  * Sends merchant notification for a paid order (Brevo). Idempotent via merchantNotifySentAt.
  */
+export async function notifyMerchantOrderPlaced(orderId: string): Promise<void> {
+  const to =
+    process.env.MERCHANT_NOTIFY_EMAIL?.trim() || DEFAULT_MERCHANT_EMAIL;
+
+  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  if (!order || order.status !== "pending_payment") return;
+
+  const lines = orderItemsFromOrder(order);
+  const html = await buildHtml(order, lines);
+  const text = await buildPlainText(order, lines);
+  const subject = `New order received #${orderDisplayCode(order)} · HUMPBUCK`;
+
+  const result = await sendTransactionalEmail({
+    to,
+    subject,
+    htmlContent: html,
+    textContent: text,
+  });
+
+  if (!result.ok) {
+    console.error("[merchant-order-email:placed]", result.error);
+  }
+}
+
 export async function notifyMerchantOrderPaid(orderId: string): Promise<void> {
   const to =
     process.env.MERCHANT_NOTIFY_EMAIL?.trim() || DEFAULT_MERCHANT_EMAIL;

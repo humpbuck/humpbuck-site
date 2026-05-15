@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { resolveAffiliateAttribution } from "@/lib/affiliate-attribution";
+import { notifyMerchantOrderPlaced } from "@/lib/merchant-order-email";
 import { prisma } from "@/lib/prisma";
 
 type CheckoutItem = {
@@ -154,6 +155,8 @@ export async function POST(req: Request) {
 
       return created;
     });
+
+    await notifyMerchantOrderPlaced(order);
 
     return NextResponse.json({ ok: true, orderId: order.id });
   } catch (error) {

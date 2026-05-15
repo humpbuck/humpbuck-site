@@ -4,7 +4,7 @@
  */
 import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
-import { notifyMerchantOrderPaid } from "../lib/merchant-order-email";
+import { notifyCustomerOrderPaid, notifyMerchantOrderPaid } from "../lib/merchant-order-email";
 
 loadEnvConfig(process.cwd());
 
@@ -70,7 +70,11 @@ async function main() {
   console.log("Recipient email:", recipientEmail);
   console.log("Display #:", order.id.slice(-6).toUpperCase());
 
+  await notifyCustomerOrderPaid(order.id);
+  console.log("customer notification sent");
+
   await notifyMerchantOrderPaid(order.id);
+  console.log("merchant notification sent");
 
   const updated = await prisma.order.findUnique({ where: { id: order.id } });
   console.log(
