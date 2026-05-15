@@ -148,7 +148,7 @@ export function LogisticsReferencePanel({
 
   const zoneSuffix = effectiveLaneZone ? ` · Lane ${effectiveLaneZone}` : null;
 
-  const cainiaoQuote = checkoutCainiaoQuote.ok
+  const cainiaoQuoteDetails = checkoutCainiaoQuote.ok
     ? getShippingOhQuote({
         countryCode: shippingCountryLabel,
         postalCode,
@@ -156,7 +156,7 @@ export function LogisticsReferencePanel({
         quantity: totalUnits,
       })
     : null;
-  const yanwenQuoteData = checkoutYanwenQuote.ok
+  const yanwenQuoteDetails = checkoutYanwenQuote.ok
     ? getShippingYanwen484Quote({
         countryCode: shippingCountryLabel,
         postalCode,
