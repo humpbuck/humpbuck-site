@@ -148,6 +148,8 @@ export function LogisticsReferencePanel({
 
   const zoneSuffix = effectiveLaneZone ? ` · Lane ${effectiveLaneZone}` : null;
 
+  const cainiaoLineLabel = cainiaoQuote?.lineLabel ?? "Unavailable";
+  const yanwenLineLabel = yanwenQuoteData?.lineLabel ?? "Unavailable";
   const yanwenTotal = lineTotal([
     est.yanwen484InternationalCny,
     5,
@@ -221,7 +223,7 @@ export function LogisticsReferencePanel({
             <section className="rounded-xl bg-white p-3 ring-1 ring-zinc-200/80">
               <div className="flex items-center justify-between gap-3">
                 <h4 className="font-medium text-ink">Cainiao OH</h4>
-                <span className="text-xs text-muted">{cainiaoQuote.ok ? cainiaoQuote.lineLabel : "Unavailable"}</span>
+                <span className="text-xs text-muted">{cainiaoLineLabel}</span>
               </div>
               <div className="mt-2 space-y-1 text-[13px] tabular-nums">
                 <div className="flex justify-between gap-3"><span className="text-muted">Base</span><span>{money(est.ohInternationalCny)}</span></div>
@@ -233,7 +235,7 @@ export function LogisticsReferencePanel({
             <section className="rounded-xl bg-white p-3 ring-1 ring-zinc-200/80">
               <div className="flex items-center justify-between gap-3">
                 <h4 className="font-medium text-ink">Yanwen 484</h4>
-                <span className="text-xs text-muted">{yanwenQuote.ok ? yanwenQuote.lineLabel : "Unavailable"}</span>
+                <span className="text-xs text-muted">{yanwenLineLabel}</span>
               </div>
               <div className="mt-2 space-y-1 text-[13px] tabular-nums">
                 <div className="flex justify-between gap-3"><span className="text-muted">Base</span><span>{money(est.yanwen484InternationalCny)}</span></div>
