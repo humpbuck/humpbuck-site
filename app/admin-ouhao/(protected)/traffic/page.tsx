@@ -373,17 +373,18 @@ export default async function AdminTrafficPage({
     orderBy: { _count: { source: "desc" } },
     take: 8,
   });
-  const purchaseByProvider = purchaseProviderRowsRaw.map((r) => ({
-    label:
-      r.source === "stripe"
-        ? "Stripe"
-        : r.source === "paypal"
-          ? "PayPal"
-          : r.source
-            ? sourceLabel(r.source)
+  const purchaseByProvider = ["stripe", "paypal", "unknown"].map((provider) => {
+    const row = purchaseProviderRowsRaw.find((r) => (r.source ?? "unknown") === provider);
+    return {
+      label:
+        provider === "stripe"
+          ? "Stripe"
+          : provider === "paypal"
+            ? "PayPal"
             : "Unknown",
-    count: r._count._all,
-  }));
+      count: row ? Number(row._count._all) : 0,
+    };
+  });
 
   return (
     <div>
@@ -492,36 +493,25 @@ export default async function AdminTrafficPage({
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
         <Panel title="Purchase by channel">
           <p className="mt-2 text-xs text-muted">按支付通道统计购买，和 success 页链路一致。</p>
-          <ul className="mt-3 space-y-2 text-sm">
+          <div className="mt-3 grid gap-3 sm:grid-cols-3">
             {purchaseByProvider.length === 0 ? (
-              <li className="text-muted">No purchases yet.</li>
+              <div className="rounded-xl border border-line/60 bg-paper/60 px-3 py-3 text-sm text-muted sm:col-span-3">No purchases yet.</div>
             ) : (
               purchaseByProvider.map((p) => (
-                <li key={p.label} className="flex items-center justify-between gap-4">
-                  <span className="text-ink/85">{p.label}</span>
-                  <span className="tabular-nums text-muted">{p.count}</span>
-                </li>
+                <StatLine key={p.label} label={p.label} value={String(p.count)} />
               ))
             )}
-          </ul>
+          </div>
         </Panel>
         <Panel title="Funnel snapshot">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Funnel snapshot</p>
-        <div className="mt-3 grid gap-3 sm:grid-cols-4">
-          <StatLine label="Product view → add to cart" value={`${funnelViewToCart}%`} />
-          <StatLine label="Add to cart → checkout" value={`${funnelCartToCheckout}%`} />
-          <StatLine label="Checkout → payment" value={`${funnelCheckoutToPayment}%`} />
-          <StatLine label="Payment → purchase" value={`${funnelPaymentToPurchase}%`} />
-        </div>
-      </div>
-
-      <div className="mt-6 rounded-2xl border border-line bg-white/70 p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Purchase by channel</p>
-        <div className="mt-3 grid gap-3 sm:grid-cols-3">
-          {purchaseProviderRows.map((row) => (
-            <StatLine key={row.label} label={row.label} value={String(row.count)} />
-          ))}
-        </div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Funnel snapshot</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-4">
+            <StatLine label="Product view → add to cart" value={`${funnelViewToCart}%`} />
+            <StatLine label="Add to cart → checkout" value={`${funnelCartToCheckout}%`} />
+            <StatLine label="Checkout → payment" value={`${funnelCheckoutToPayment}%`} />
+            <StatLine label="Payment → purchase" value={`${funnelPaymentToPurchase}%`} />
+          </div>
+        </Panel>
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
