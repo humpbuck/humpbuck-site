@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 import { useSession } from "next-auth/react";
 import { useCart } from "@/components/cart/cart-context";
 import { formatPrice } from "@/lib/catalog";
@@ -22,6 +23,11 @@ export default function CheckoutPage() {
     // and URL-based affiliate links all preserve the same pid.
     captureTrafficAttribution();
     captureAffiliatePidAttribution();
+    trackVisitorEvent({
+      type: "checkout_start",
+      source: "checkout_page",
+      meta: { stage: "begin_checkout" },
+    }, { dedupeKey: "checkout_start:page" });
   }, []);
 
   useEffect(() => {
@@ -125,6 +131,12 @@ export default function CheckoutPage() {
       return;
     }
     setLoading("stripe");
+    trackVisitorEvent({
+      type: "payment_start",
+      source: "stripe",
+      orderId: orderId,
+      meta: { paymentMethod: "stripe", totalUsd: total },
+    }, { dedupeKey: `payment_start:stripe:${orderId ?? "draft"}` });
     try {
       const draftOrderId = orderId ?? (await ensureDraftOrder());
       const res = await fetch("/api/checkout/stripe", {
@@ -133,7 +145,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           orderId: draftOrderId,
           totalUsd: total,
-          returnUrl: `${window.location.origin}/account/orders`,
+          returnUrl: `${window.location.origin}/checkout/success?orderId=${encodeURIComponent(draftOrderId)}&provider=stripe`,
           cancelUrl: window.location.href,
         }),
       });
@@ -152,13 +164,24 @@ export default function CheckoutPage() {
     }
     setLoading("paypal");
     try {
+      const draftOrderId = orderId ?? (await ensureDraftOrder());
+      trackVisitorEvent(
+        {
+          type: "payment_start",
+          source: "paypal",
+          orderId: draftOrderId,
+          meta: { paymentMethod: "paypal", totalUsd: total },
+        },
+        { dedupeKey: `payment_start:paypal:${draftOrderId}` },
+      );
       const res = await fetch("/api/checkout/paypal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "create",
+          orderId: draftOrderId,
           totalUsd: total.toFixed(2),
-          returnUrl: `${window.location.origin}/account/orders`,
+          returnUrl: `${window.location.origin}/checkout/success?orderId=${encodeURIComponent(draftOrderId)}&provider=paypal`,
           cancelUrl: window.location.href,
         }),
       });

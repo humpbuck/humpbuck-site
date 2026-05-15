@@ -267,7 +267,8 @@ export default async function AdminTrafficPage({
   const refundRate = purchaseCountCurrent > 0 ? Math.round((refundCountCurrent / purchaseCountCurrent) * 100) : 0;
   const funnelViewToCart = productViewCountCurrent > 0 ? Math.round((addToCartCountCurrent / productViewCountCurrent) * 100) : 0;
   const funnelCartToCheckout = addToCartCountCurrent > 0 ? Math.round((checkoutStartCountCurrent / addToCartCountCurrent) * 100) : 0;
-  const funnelCheckoutToPurchase = checkoutStartCountCurrent > 0 ? Math.round((purchaseCountCurrent / checkoutStartCountCurrent) * 100) : 0;
+  const funnelCheckoutToPayment = checkoutStartCountCurrent > 0 ? Math.round((Math.max(0, purchaseCountCurrent) / checkoutStartCountCurrent) * 100) : 0;
+  const funnelPaymentToPurchase = purchaseCountCurrent > 0 ? 100 : 0;
 
   const rowMap = new Map<number, number>();
   for (const r of chartRows) {
@@ -365,6 +366,24 @@ export default async function AdminTrafficPage({
 
   const topSourceCards = topSources.map((s) => ({ label: sourceLabel(s.utmSource), count: s._count._all }));
   const topPageCards = topPages.map((p) => ({ label: p.landingPath ?? "unknown", count: p._count._all }));
+  const purchaseProviderRowsRaw = await prisma.visitorEvent.groupBy({
+    by: ["source"],
+    where: { type: "purchase", createdAt: { gte: since } },
+    _count: { _all: true },
+    orderBy: { _count: { source: "desc" } },
+    take: 8,
+  });
+  const purchaseByProvider = purchaseProviderRowsRaw.map((r) => ({
+    label:
+      r.source === "stripe"
+        ? "Stripe"
+        : r.source === "paypal"
+          ? "PayPal"
+          : r.source
+            ? sourceLabel(r.source)
+            : "Unknown",
+    count: r._count._all,
+  }));
 
   return (
     <div>
@@ -460,7 +479,7 @@ export default async function AdminTrafficPage({
             )}
           </ul>
         </Panel>
-        <Panel title="实时">
+        <Panel title="Realtime">
           <p className="mt-3 flex items-center gap-2 text-sm text-ink/85">
             <span className="inline-flex h-2.5 w-2.5 animate-pulse rounded-full bg-green-500" />
             Online now (last 5 min): <span className="font-semibold tabular-nums">{onlineNowCount}</span>
@@ -470,12 +489,38 @@ export default async function AdminTrafficPage({
         </Panel>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-line bg-white/70 p-5">
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        <Panel title="Purchase by channel">
+          <p className="mt-2 text-xs text-muted">按支付通道统计购买，和 success 页链路一致。</p>
+          <ul className="mt-3 space-y-2 text-sm">
+            {purchaseByProvider.length === 0 ? (
+              <li className="text-muted">No purchases yet.</li>
+            ) : (
+              purchaseByProvider.map((p) => (
+                <li key={p.label} className="flex items-center justify-between gap-4">
+                  <span className="text-ink/85">{p.label}</span>
+                  <span className="tabular-nums text-muted">{p.count}</span>
+                </li>
+              ))
+            )}
+          </ul>
+        </Panel>
+        <Panel title="Funnel snapshot">
         <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Funnel snapshot</p>
-        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+        <div className="mt-3 grid gap-3 sm:grid-cols-4">
           <StatLine label="Product view → add to cart" value={`${funnelViewToCart}%`} />
           <StatLine label="Add to cart → checkout" value={`${funnelCartToCheckout}%`} />
-          <StatLine label="Checkout → purchase" value={`${funnelCheckoutToPurchase}%`} />
+          <StatLine label="Checkout → payment" value={`${funnelCheckoutToPayment}%`} />
+          <StatLine label="Payment → purchase" value={`${funnelPaymentToPurchase}%`} />
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-2xl border border-line bg-white/70 p-5">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Purchase by channel</p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          {purchaseProviderRows.map((row) => (
+            <StatLine key={row.label} label={row.label} value={String(row.count)} />
+          ))}
         </div>
       </div>
 

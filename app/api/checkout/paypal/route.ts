@@ -22,11 +22,20 @@ export async function POST(req: Request) {
   }
 
   if (body.action === "create") {
-    if (!body.totalUsd || !body.returnUrl || !body.cancelUrl) {
+    if (!body.totalUsd || !body.returnUrl || !body.cancelUrl || !body.orderId) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const created = await paypalCreateOrder(body.totalUsd, body.returnUrl, body.cancelUrl);
+    const successUrl = new URL(body.returnUrl);
+    successUrl.searchParams.set("orderId", body.orderId);
+    successUrl.searchParams.set("provider", "paypal");
+
+    const cancelUrl = new URL(body.cancelUrl);
+    cancelUrl.searchParams.set("payment", "cancelled");
+    cancelUrl.searchParams.set("provider", "paypal");
+    cancelUrl.searchParams.set("orderId", body.orderId);
+
+    const created = await paypalCreateOrder(body.totalUsd, successUrl.toString(), cancelUrl.toString());
     return NextResponse.json({ ok: true, paypalOrderId: created.id, approvalUrl: created.approvalUrl });
   }
 

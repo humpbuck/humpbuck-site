@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ProductVariantOption } from "@/lib/catalog";
 import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
+import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 
 export function ProductStyleVariants({
   options,
@@ -26,6 +27,15 @@ export function ProductStyleVariants({
   function setSelected(i: number) {
     onSelectedIndexChange?.(i);
     if (!controlled) setInternal(i);
+    const opt = options[i];
+    if (opt) {
+      trackVisitorEvent({
+        type: "page_view",
+        source: "variant_select",
+        productSlug: productName,
+        meta: { variantId: opt.id, variantLabel: opt.label },
+      });
+    }
   }
 
   if (options.length === 0) return null;

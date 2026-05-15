@@ -164,6 +164,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setQty = useCallback((slug: string, qty: number, variantId?: string) => {
+    trackVisitorEvent({
+      type: qty < 1 ? "remove_from_cart" : "view_cart",
+      productSlug: slug,
+      meta: { qty: Math.max(0, Math.min(CART_QTY_MAX, qty)), variantId: variantId ?? null },
+    });
     setItems((prev) => {
       if (qty < 1) {
         return prev.filter(

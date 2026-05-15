@@ -12,7 +12,12 @@ type TrackEventInput = {
     | "heartbeat"
     | "product_view"
     | "add_to_cart"
+    | "remove_from_cart"
+    | "view_cart"
     | "checkout_start"
+    | "payment_start"
+    | "payment_success"
+    | "payment_fail"
     | "purchase";
   path?: string;
   productSlug?: string;
@@ -91,6 +96,10 @@ export function trackVisitorEvent(
     utmSource: new URLSearchParams(window.location.search).get("utm_source"),
     utmMedium: new URLSearchParams(window.location.search).get("utm_medium"),
     utmCampaign: new URLSearchParams(window.location.search).get("utm_campaign"),
+    meta: {
+      ...payload.meta,
+      pageTitle: document.title.slice(0, 256),
+    },
   };
 
   void fetch("/api/analytics/event", {
