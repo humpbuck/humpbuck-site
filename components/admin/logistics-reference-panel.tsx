@@ -148,8 +148,8 @@ export function LogisticsReferencePanel({
 
   const zoneSuffix = effectiveLaneZone ? ` · Lane ${effectiveLaneZone}` : null;
 
-  const cainiaoLineLabel = cainiaoQuote?.lineLabel ?? "Unavailable";
-  const yanwenLineLabel = yanwenQuoteData?.lineLabel ?? "Unavailable";
+  const cainiaoLineLabel = checkoutCainiaoQuote.ok ? checkoutCainiaoQuote.lineLabel : "Unavailable";
+  const yanwenLineLabel = checkoutYanwenQuote.ok ? checkoutYanwenQuote.lineLabel : "Unavailable";
   const yanwenTotal = lineTotal([
     est.yanwen484InternationalCny,
     5,
