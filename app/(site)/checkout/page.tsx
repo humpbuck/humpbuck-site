@@ -134,7 +134,7 @@ export default function CheckoutPage() {
     trackVisitorEvent({
       type: "payment_start",
       source: "stripe",
-      orderId: orderId,
+      orderId: orderId ?? undefined,
       meta: { paymentMethod: "stripe", totalUsd: total },
     }, { dedupeKey: `payment_start:stripe:${orderId ?? "draft"}` });
     try {
