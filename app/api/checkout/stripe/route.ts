@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   let body: {
@@ -15,7 +16,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  if (!body.returnUrl || !body.cancelUrl || typeof body.totalUsd !== "number") {
+  if (!body.returnUrl || !body.cancelUrl || typeof body.totalUsd !== "number" || !body.orderId) {
     return NextResponse.json({ ok: false, error: "Missing required fields" }, { status: 400 });
   }
 
@@ -40,8 +41,19 @@ export async function POST(req: Request) {
     success_url: body.returnUrl,
     cancel_url: body.cancelUrl,
     client_reference_id: body.orderId,
-    metadata: body.orderId ? { orderId: body.orderId } : undefined,
+    metadata: { orderId: body.orderId },
   });
+
+  await prisma.order.updateMany({
+    where: { id: body.orderId, status: "pending_payment" },
+    data: {
+      provider: "stripe",
+      providerRef: session.id,
+    },
+  });
+
+  // Keep the order linked to Stripe so the webhook can mark it paid
+  // and trigger the existing merchant notification email.
 
   return NextResponse.json({ ok: true, url: session.url, id: session.id });
 }

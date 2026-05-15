@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { notifyMerchantOrderPaid } from "@/lib/merchant-order-email";
+import { notifyCustomerOrderPaid, notifyMerchantOrderPaid } from "@/lib/merchant-order-email";
 import { syncOrderAddressesToUserAccount } from "@/lib/sync-order-addresses-to-user";
 import { decrementInventory } from "@/lib/inventory";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
@@ -77,6 +77,7 @@ export async function POST(req: Request) {
             await syncAffiliateGrowthTierByOrderCount(paidOrder.affiliateId);
           }
         }
+        await notifyCustomerOrderPaid(orderId);
         await notifyMerchantOrderPaid(orderId);
       }
     }

@@ -18,6 +18,84 @@ import { prisma } from "@/lib/prisma";
 import { SITE_LOCALE } from "@/lib/site-locale";
 import { adminPath } from "@/lib/admin-path";
 
+async function buildCustomerPaymentConfirmedEmailPayload(order: Order): Promise<{
+  subject: string;
+  htmlContent: string;
+  textContent: string;
+}> {
+  const oid = orderDisplayCode(order);
+  const placed = new Date(order.createdAt).toLocaleString(SITE_LOCALE, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+  const base = emailPublicBaseUrl();
+  const support = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "support@humpbuck.com";
+  const lines = orderItemsFromOrder(order);
+  const lineRows = lines
+    .map((l) => `- ${l.name}${l.variantLabel ? ` (${l.variantLabel})` : ""} ×${l.qty} — ${formatUsdEmail(l.lineTotalCents / 100)}`)
+    .join("\n");
+
+  return {
+    subject: `Your payment for order #${oid} was successful · HUMPBUCK`,
+    htmlContent: `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/></head>
+<body style="margin:0;padding:0;background:#ebe8e2;-webkit-text-size-adjust:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ebe8e2;padding:32px 16px;">
+  <tr><td align="center">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e0ddd6;">
+      <tr><td style="background:linear-gradient(135deg,#5b4dcb 0%,#4338a8 100%);padding:22px 24px 20px 24px;">
+        <p style="margin:0 0 4px 0;font-size:11px;font-weight:700;letter-spacing:0.2em;color:rgba(255,255,255,0.85);">HUMPBUCK</p>
+        <p style="margin:0;font-size:20px;font-weight:700;color:#ffffff;">Payment successful</p>
+        <p style="margin:8px 0 0 0;font-size:14px;color:rgba(255,255,255,0.92);">Order <span style="font-weight:600;">#${escapeHtml(oid)}</span></p>
+      </td></tr>
+      <tr><td style="padding:22px 24px 8px 24px;">
+        <p style="margin:0 0 12px 0;font-size:15px;line-height:1.55;color:#14120f;">Hi,</p>
+        <p style="margin:0 0 12px 0;font-size:15px;line-height:1.55;color:#14120f;">We’ve received your payment and saved your HUMPBUCK order. You can review the details below and follow your order status in your account.</p>
+        <p style="margin:0;padding:10px 14px;background:#f7f6f3;border-radius:10px;font-size:13px;color:#5c5a57;">Placed ${escapeHtml(placed)} · <a href="${escapeHtml(`${base}/account/orders`)}" style="color:#5b4dcb;font-weight:600;text-decoration:none;">View orders</a></p>
+      </td></tr>
+      <tr><td style="padding:8px 24px 8px 24px;">
+        <p style="margin:0 0 10px 0;font-size:10px;font-weight:700;letter-spacing:0.14em;color:#8a8680;">ORDER SUMMARY</p>
+        <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:14px;border:1px solid #ece9e4;border-radius:12px;overflow:hidden;">
+          <thead><tr style="background:#faf9f7;"><th align="left" style="padding:10px 12px;font-size:11px;color:#8a8680;">Item</th><th align="right" style="padding:10px 12px;font-size:11px;color:#8a8680;">Total</th></tr></thead>
+          <tbody>${lines.map((l) => `<tr><td style="padding:12px;border-bottom:1px solid #ece9e4;color:#14120f;">${escapeHtml(l.name)}${l.variantLabel ? ` — ${escapeHtml(l.variantLabel)}` : ""}<br/><span style="color:#8a8680;font-size:12px;">Qty ${l.qty}</span></td><td style="padding:12px;border-bottom:1px solid #ece9e4;text-align:right;font-weight:600;color:#14120f;">${formatUsdEmail(l.lineTotalCents / 100)}</td></tr>`).join("")}</tbody>
+        </table>
+      </td></tr>
+      <tr><td style="padding:8px 24px 20px 24px;">
+        <table width="100%" cellspacing="0" cellpadding="0" style="border-radius:12px;background:linear-gradient(180deg,#faf9ff 0%,#f5f3ff 100%);border:1px solid #e8e4ff;">
+          <tr><td style="padding:16px 18px;">
+            <table width="100%" style="font-size:14px;color:#14120f;"><tr><td style="padding:0 0 8px 0;font-weight:600;">Order total</td><td align="right" style="padding:0 0 8px 0;font-size:20px;font-weight:700;color:#5b4dcb;">${formatUsdEmail(order.totalCents / 100)}</td></tr></table>
+          </td></tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:0 24px 24px 24px;">
+        <table width="100%" cellspacing="0" cellpadding="0" style="border-radius:12px;background:#ffffff;border:1px solid #ece9e4;">
+          <tr><td style="padding:18px;">
+            <p style="margin:0 0 8px 0;font-size:10px;font-weight:700;letter-spacing:0.14em;color:#8a8680;">NEED HELP?</p>
+            <p style="margin:0;font-size:14px;line-height:1.55;color:#14120f;">Reply anytime or email <a href="mailto:${escapeHtml(support)}" style="color:#5b4dcb;font-weight:600;text-decoration:none;">${escapeHtml(support)}</a>.</p>
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`,
+    textContent: [
+      `Hi,`,
+      ``,
+      `We’ve received your payment for HUMPBUCK order #${oid}.`,
+      ``,
+      `Placed: ${placed}`,
+      `Order total: ${formatUsdEmail(order.totalCents / 100)}`,
+      ``,
+      `Items:`,
+      lineRows,
+      ``,
+      `View orders: ${base}/account/orders`,
+      `Support: ${support}`,
+    ].join("\n"),
+  };
+}
+
 const DEFAULT_MERCHANT_EMAIL = "humpbuck@outlook.com";
 
 /** USD for transactional email (avoid de-DE rounding quirks in formatPrice). */
@@ -323,7 +401,7 @@ export async function notifyMerchantOrderPaid(orderId: string): Promise<void> {
   const lines = orderItemsFromOrder(order);
   const html = await buildHtml(order, lines);
   const text = await buildPlainText(order, lines);
-  const subject = `New paid order #${orderDisplayCode(order)} · HUMPBUCK`;
+  const subject = `Payment received for order #${orderDisplayCode(order)} · HUMPBUCK`;
 
   const result = await sendTransactionalEmail({
     to,
@@ -339,6 +417,29 @@ export async function notifyMerchantOrderPaid(orderId: string): Promise<void> {
     });
   } else {
     console.error("[merchant-order-email]", result.error);
+  }
+}
+
+export async function notifyCustomerOrderPaid(orderId: string): Promise<void> {
+  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  if (!order || order.status !== "paid") return;
+  if (order.paidEmailSentAt) return;
+
+  const payload = await buildCustomerPaymentConfirmedEmailPayload(order);
+  const result = await sendTransactionalEmail({
+    to: order.email,
+    subject: payload.subject,
+    htmlContent: payload.htmlContent,
+    textContent: payload.textContent,
+  });
+
+  if (result.ok) {
+    await prisma.order.update({
+      where: { id: orderId },
+      data: { paidEmailSentAt: new Date() },
+    });
+  } else {
+    console.error("[customer-payment-confirmation-email]", result.error);
   }
 }
 
