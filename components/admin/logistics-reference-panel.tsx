@@ -148,6 +148,22 @@ export function LogisticsReferencePanel({
 
   const zoneSuffix = effectiveLaneZone ? ` · Lane ${effectiveLaneZone}` : null;
 
+  const cainiaoQuote = checkoutCainiaoQuote.ok
+    ? getShippingOhQuote({
+        countryCode: shippingCountryLabel,
+        postalCode,
+        weightKg: undefined,
+        quantity: totalUnits,
+      })
+    : null;
+  const yanwenQuoteData = checkoutYanwenQuote.ok
+    ? getShippingYanwen484Quote({
+        countryCode: shippingCountryLabel,
+        postalCode,
+        weightKg: undefined,
+        quantity: totalUnits,
+      })
+    : null;
   const cainiaoLineLabel = checkoutCainiaoQuote.ok ? checkoutCainiaoQuote.lineLabel : "Unavailable";
   const yanwenLineLabel = checkoutYanwenQuote.ok ? checkoutYanwenQuote.lineLabel : "Unavailable";
   const yanwenTotal = lineTotal([
