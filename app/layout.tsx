@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
@@ -23,16 +23,16 @@ const siteUrl = getSiteUrl();
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const t = await getTranslations({ locale, namespace: "SiteMetadata" });
   const ogLocale = locale === "es" ? "es_ES" : "en_US";
 
   return {
     metadataBase: new URL(siteUrl),
     title: {
-      default: "HUMPBUCK — DIGI-TEMP Ana-Digi Watches & RM-TONNEAU",
+      default: t("titleDefault"),
       template: "%s · HUMPBUCK",
     },
-    description:
-      "HUMPBUCK DIGI-TEMP flagship ana-digi watches — dual LCD, TIME/DATE/ALM/OUT/STW modes, stainless steel, mineral glass, 30 m WR. RM-TONNEAU barrel-case line & wholesale programs.",
+    description: t("descriptionDefault"),
     applicationName: "HUMPBUCK",
     authors: [{ name: "HUMPBUCK" }],
     openGraph: {
@@ -40,16 +40,14 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: ogLocale,
       url: siteUrl,
       siteName: "HUMPBUCK",
-      title: "HUMPBUCK — DIGI-TEMP & RM-TONNEAU",
-      description:
-        "Official DIGI-TEMP ana-digi collection plus RM-TONNEAU quartz. Factory programs available.",
+      title: t("ogTitle"),
+      description: t("ogDescription"),
       images: [defaultOgImage],
     },
     twitter: {
       card: "summary_large_image",
-      title: "HUMPBUCK — DIGI-TEMP & RM-TONNEAU",
-      description:
-        "Official DIGI-TEMP ana-digi collection plus RM-TONNEAU quartz. Factory programs available.",
+      title: t("ogTitle"),
+      description: t("ogDescription"),
       images: [defaultOgImage.url],
     },
     robots: {

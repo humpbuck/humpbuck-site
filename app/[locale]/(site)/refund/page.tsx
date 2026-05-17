@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PolicyContactCard } from "@/components/site/PolicyContactCard";
 import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/whatsapp";
 import { routing } from "@/i18n/routing";
-import { getSiteUrl } from "@/lib/seo";
+import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
 const linkContact =
   "font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-[3px] transition hover:text-blue-800 hover:decoration-blue-800/50";
@@ -22,10 +22,7 @@ export async function generateMetadata({
     description: t("refundMetaDescription"),
     alternates: {
       canonical: path,
-      languages: {
-        en: `${getSiteUrl()}/refund`,
-        es: `${getSiteUrl()}/es/refund`,
-      },
+      languages: storefrontHreflangLanguages("/refund"),
     },
   };
 }

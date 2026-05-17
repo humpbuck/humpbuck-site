@@ -8,6 +8,7 @@ import {
   getMergedCatalogProducts,
 } from "@/lib/catalog-db";
 import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
+import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { routing } from "@/i18n/routing";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
 import { ProductCard } from "@/components/site/ProductCard";
@@ -46,10 +47,7 @@ export async function generateMetadata({
     description: product.shortDescription,
     alternates: {
       canonical: `${pathPrefix}/product/${encodeURIComponent(slug)}`,
-      languages: {
-        en: `${getSiteUrl()}/product/${encodeURIComponent(slug)}`,
-        es: `${getSiteUrl()}/es/product/${encodeURIComponent(slug)}`,
-      },
+      languages: storefrontHreflangLanguages(`/product/${encodeURIComponent(slug)}`),
     },
     openGraph: {
       type: "website",

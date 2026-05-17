@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
-import { getSiteUrl } from "@/lib/seo";
+import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { listVideoTutorials, type VideoTutorial } from "@/lib/video-tutorials";
 
 export const dynamic = "force-dynamic";
@@ -20,10 +20,7 @@ export async function generateMetadata({
     description: t("metaDescription"),
     alternates: {
       canonical: path,
-      languages: {
-        en: `${getSiteUrl()}/video-tutorial`,
-        es: `${getSiteUrl()}/es/video-tutorial`,
-      },
+      languages: storefrontHreflangLanguages("/video-tutorial"),
     },
   };
 }

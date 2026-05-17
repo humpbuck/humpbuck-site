@@ -1,5 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { routing } from "@/i18n/routing";
+import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
 export async function generateMetadata({
   params,
@@ -8,9 +10,14 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "NewsletterConfirmed" });
+  const pathPrefix = locale === routing.defaultLocale ? "" : `/${locale}`;
   return {
     title: t("metaTitle"),
     robots: { index: false, follow: false },
+    alternates: {
+      canonical: `${pathPrefix}/newsletter/confirmed`,
+      languages: storefrontHreflangLanguages("/newsletter/confirmed"),
+    },
   };
 }
 

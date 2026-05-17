@@ -38,7 +38,7 @@ import { prisma } from "@/lib/prisma";
 
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
-import { getSiteUrl } from "@/lib/seo";
+import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
 const AFFILIATE_ERR_CODES = [
   "promo_plan_short",
@@ -497,10 +497,7 @@ export async function generateMetadata({
     description: t("metaDescription"),
     alternates: {
       canonical: path,
-      languages: {
-        en: `${getSiteUrl()}/account/affiliate`,
-        es: `${getSiteUrl()}/es/account/affiliate`,
-      },
+      languages: storefrontHreflangLanguages("/account/affiliate"),
     },
   };
 }

@@ -1,7 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
-import { getSiteUrl } from "@/lib/seo";
+import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
 export async function generateMetadata({
   params,
@@ -17,10 +17,7 @@ export async function generateMetadata({
     description: t("metaDescription"),
     alternates: {
       canonical: path,
-      languages: {
-        en: `${getSiteUrl()}/affiliates`,
-        es: `${getSiteUrl()}/es/affiliates`,
-      },
+      languages: storefrontHreflangLanguages("/affiliates"),
     },
   };
 }

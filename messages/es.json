@@ -1,4 +1,10 @@
 {
+  "SiteMetadata": {
+    "titleDefault": "HUMPBUCK — Relojes ana-dígitales DIGI-TEMP y RM-TONNEAU",
+    "descriptionDefault": "Buque insignia DIGI-TEMP de HUMPBUCK: relojes ana-dígitales con doble LCD, modos TIME/DATE/ALM/OUT/STW; acero inoxidable, cristal mineral, 30 m WR. Línea RM-TONNEAU y programas mayoristas.",
+    "ogTitle": "HUMPBUCK — DIGI-TEMP y RM-TONNEAU",
+    "ogDescription": "Colección oficial DIGI-TEMP ana-dígital y cuarzo RM-TONNEAU. Programas de fábrica disponibles."
+  },
   "LocaleSwitcher": {
     "en": "English",
     "es": "Español",

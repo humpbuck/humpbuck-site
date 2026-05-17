@@ -11,6 +11,7 @@ import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { routing } from "@/i18n/routing";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
+import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
 const slugOk = (s: string | undefined): s is SeriesSlug =>
   s === "digitemp" || s === "tonneau" || s === "rd-astral";
@@ -29,6 +30,7 @@ export async function generateMetadata({
     description: t("metaDescription"),
     alternates: {
       canonical: `${pathPrefix}/shop`,
+      languages: storefrontHreflangLanguages("/shop"),
     },
     openGraph: {
       title: t("ogTitle"),

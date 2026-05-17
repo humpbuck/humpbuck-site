@@ -11,6 +11,7 @@ import { formatPrice, seriesList } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { R2 } from "@/lib/r2";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
+import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
 
@@ -32,10 +33,7 @@ export async function generateMetadata({
     description: t("metaDescription"),
     alternates: {
       canonical: pathPrefix ? `${pathPrefix}/` : "/",
-      languages: {
-        en: `${base}/`,
-        es: `${base}/es`,
-      },
+      languages: storefrontHreflangLanguages("/"),
     },
     openGraph: {
       url: openGraphUrl,

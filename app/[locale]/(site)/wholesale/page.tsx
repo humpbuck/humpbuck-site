@@ -5,7 +5,7 @@ import { publicSupportEmail } from "@/lib/support-contact";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
-import { getSiteUrl } from "@/lib/seo";
+import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import type { LucideIcon } from "lucide-react";
 
 export async function generateMetadata({
@@ -22,10 +22,7 @@ export async function generateMetadata({
     description: t("metaDescription"),
     alternates: {
       canonical: path,
-      languages: {
-        en: `${getSiteUrl()}/wholesale`,
-        es: `${getSiteUrl()}/es/wholesale`,
-      },
+      languages: storefrontHreflangLanguages("/wholesale"),
     },
   };
 }

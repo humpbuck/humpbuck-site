@@ -9,7 +9,7 @@ import { publicSupportEmail } from "@/lib/support-contact";
 import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/whatsapp";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
-import { getSiteUrl } from "@/lib/seo";
+import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
 export async function generateMetadata({
   params,
@@ -25,10 +25,7 @@ export async function generateMetadata({
     description: t("metaDescription"),
     alternates: {
       canonical: path,
-      languages: {
-        en: `${getSiteUrl()}/about`,
-        es: `${getSiteUrl()}/es/about`,
-      },
+      languages: storefrontHreflangLanguages("/about"),
     },
   };
 }

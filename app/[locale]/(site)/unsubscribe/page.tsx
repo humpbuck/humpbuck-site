@@ -1,11 +1,13 @@
 import { Link } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { routing } from "@/i18n/routing";
 import { redirectWithLocale } from "@/lib/storefront-redirect";
 import { createAdminInboxMessage, ADMIN_INBOX_CATEGORY } from "@/lib/admin-inbox";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { optOutByToken } from "@/lib/email-marketing-preference";
 import { sendUnsubscribeSuccessEmail } from "@/lib/unsubscribe-success-email";
 import { publicSupportEmail } from "@/lib/support-contact";
+import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
 export async function generateMetadata({
   params,
@@ -14,9 +16,14 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "UnsubscribeFlow" });
+  const pathPrefix = locale === routing.defaultLocale ? "" : `/${locale}`;
   return {
     title: t("metaTitle"),
     robots: { index: false, follow: false },
+    alternates: {
+      canonical: `${pathPrefix}/unsubscribe`,
+      languages: storefrontHreflangLanguages("/unsubscribe"),
+    },
   };
 }
 

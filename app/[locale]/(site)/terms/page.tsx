@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { TermsBodyEn } from "@/components/site/terms-body-en";
 import { TermsBodyEs } from "@/components/site/terms-body-es";
 import { routing } from "@/i18n/routing";
-import { getSiteUrl } from "@/lib/seo";
+import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
 export async function generateMetadata({
   params,
@@ -19,10 +19,7 @@ export async function generateMetadata({
     description: t("termsMetaDescription"),
     alternates: {
       canonical: path,
-      languages: {
-        en: `${getSiteUrl()}/terms`,
-        es: `${getSiteUrl()}/es/terms`,
-      },
+      languages: storefrontHreflangLanguages("/terms"),
     },
   };
 }

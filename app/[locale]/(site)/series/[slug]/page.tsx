@@ -8,6 +8,7 @@ import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { routing } from "@/i18n/routing";
 import { getSiteUrl } from "@/lib/seo";
+import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
 
 /** Same Postgres source as `/shop`; that route stays fresh via `searchParams`. Without this, series pages are SSG at build and can show "0 pieces" if the build-time DB was empty or unreachable. */
@@ -38,10 +39,7 @@ export async function generateMetadata({
     description: localized.description,
     alternates: {
       canonical: path,
-      languages: {
-        en: `${getSiteUrl()}/series/${encodeURIComponent(slug)}`,
-        es: `${getSiteUrl()}/es/series/${encodeURIComponent(slug)}`,
-      },
+      languages: storefrontHreflangLanguages(`/series/${encodeURIComponent(slug)}`),
     },
     openGraph: {
       type: "website",
