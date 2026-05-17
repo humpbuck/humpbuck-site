@@ -7,6 +7,9 @@ import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { getSiteUrl } from "@/lib/seo";
 
+/** Same Postgres source as `/shop`; that route stays fresh via `searchParams`. Without this, series pages are SSG at build and can show "0 pieces" if the build-time DB was empty or unreachable. */
+export const dynamic = "force-dynamic";
+
 export async function generateStaticParams() {
   return seriesList.map((s) => ({ slug: s.slug }));
 }

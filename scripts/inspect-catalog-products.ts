@@ -1,4 +1,7 @@
+import { loadEnvConfig } from "@next/env";
 import { prisma } from "@/lib/prisma";
+
+loadEnvConfig(process.cwd());
 
 async function main() {
   const rows = await prisma.catalogProduct.findMany({ orderBy: { slug: "asc" } });
