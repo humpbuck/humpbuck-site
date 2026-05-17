@@ -11,7 +11,7 @@ import { prisma } from "@/lib/prisma";
 
 async function LogoutButton({ inMenu = false }: { inMenu?: boolean }) {
   const navItemClass = inMenu
-    ? "block w-full rounded-lg px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-paper hover:text-ink"
+    ? "block w-full rounded-lg px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink"
     : "text-[11px] font-semibold uppercase tracking-[0.12em] text-muted hover:text-ink";
   return (
     <form
@@ -91,13 +91,13 @@ export default async function AdminProtectedLayout({
               <ChevronDown className="h-3 w-3" />
             </button>
             <div className="pointer-events-none absolute right-0 top-6 z-20 hidden min-w-44 rounded-xl border border-line bg-white p-2 text-xs text-ink shadow-md group-hover:pointer-events-auto group-hover:block">
-              <Link href={adminPath("/affiliate")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-paper hover:text-ink">
+              <Link href={adminPath("/affiliate")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
                 AFFILIATE
               </Link>
-              <Link href={adminPath("/video-tutorial")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-paper hover:text-ink">
+              <Link href={adminPath("/video-tutorial")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
                 VIDEO TUTORIAL
               </Link>
-              <Link href="https://www.humpbuck.com/" className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-paper hover:text-ink">
+              <Link href="https://www.humpbuck.com/" className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
                 VIEW SITE
               </Link>
               <div className="mt-1 border-t border-line pt-1">

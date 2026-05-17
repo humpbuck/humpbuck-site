@@ -66,7 +66,7 @@ export default async function UnsubscribePage({
   const emailFromResult = typeof e === "string" ? e : "";
 
   let state: "missing" | "invalid" | "confirm" | "done" | "already" = "missing";
-  let emailHint = emailFromResult;
+  const emailHint = emailFromResult;
   if (resultFlag === "invalid") state = "invalid";
   else if (resultFlag === "done") state = "done";
   else if (resultFlag === "already") state = "already";

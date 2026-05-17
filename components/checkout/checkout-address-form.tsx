@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
 import { Country, State, City } from "country-state-city";
 import type { CheckoutAddressForm as CheckoutAddressFormValue } from "@/lib/checkout-address";
 import { SPECIAL_CITY_OPTIONS } from "@/lib/special-city-options";
@@ -24,8 +23,6 @@ const DIAL_CODE_LABELS = DIAL_CODE_OPTIONS
     return aDigits.length - bDigits.length;
   });
 
-type FormValues = { countryIso2: string; stateCode: string; phoneDialCode: string; city: string; phone: string };
-
 function parsePhoneValue(raw: string) {
   const trimmed = raw.trim();
   if (!trimmed) return { dialCode: "+1", nationalNumber: "" };
@@ -42,10 +39,6 @@ function formatPhoneValue(dialCode: string, nationalNumber: string) {
 
 function countryLabel(iso2: string) {
   return COUNTRY_LABELS.of(iso2) ?? iso2;
-}
-
-function stateLabel(countryIso2: string) {
-  return countryIso2 === "US" ? "State" : "Province";
 }
 
 function normalizeCountryText(text: string) {
@@ -89,11 +82,11 @@ export function CheckoutAddressForm({
 
   const [phoneCodeCommitted, setPhoneCodeCommitted] = useState(initialPhone.dialCode);
   const [countryText, setCountryText] = useState(defaultCountryText);
-  const [countryCommitted, setCountryCommitted] = useState(defaultCountryText);
+  const [, setCountryCommitted] = useState(defaultCountryText);
   const [stateText, setStateText] = useState(value.state || "");
-  const [stateCommitted, setStateCommitted] = useState(value.state || "");
+  const [, setStateCommitted] = useState(value.state || "");
   const [cityText, setCityText] = useState(value.city || "");
-  const [cityCommitted, setCityCommitted] = useState(value.city || "");
+  const [, setCityCommitted] = useState(value.city || "");
   const countryRestoreRef = useRef(defaultCountryText);
   const stateRestoreRef = useRef(value.state || "");
   const cityRestoreRef = useRef(value.city || "");

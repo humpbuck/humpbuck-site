@@ -41,7 +41,7 @@ export default async function AccountOverviewPage() {
       <div className="mt-10 grid gap-4 sm:grid-cols-2">
         <Link
           href="/account/orders"
-          className="rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-5 transition hover:border-ink/15 hover:shadow-sm"
+          className="rounded-2xl border border-line bg-white/60 p-5 transition hover:border-ink/15 hover:shadow-sm"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
             Orders
@@ -54,7 +54,7 @@ export default async function AccountOverviewPage() {
         </Link>
         <Link
           href="/account/details"
-          className="rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-5 transition hover:border-ink/15 hover:shadow-sm"
+          className="rounded-2xl border border-line bg-white/60 p-5 transition hover:border-ink/15 hover:shadow-sm"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
             Profile

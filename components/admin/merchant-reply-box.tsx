@@ -67,7 +67,7 @@ export function MerchantReplyBox({
             setText(displayReply);
             setEditing(true);
           }}
-          className="mt-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-ink/70 hover:text-ink"
+          className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-ink/70 hover:text-ink"
         >
           Edit
         </button>
@@ -89,7 +89,7 @@ export function MerchantReplyBox({
       <button
         type="submit"
         disabled={saving}
-        className="rounded-md bg-ink px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-paper"
+        className="rounded-md bg-ink px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-paper"
       >
         {saving ? "…" : "Save reply"}
       </button>

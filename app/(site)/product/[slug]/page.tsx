@@ -168,7 +168,7 @@ export default async function ProductPage({
             )}
 
             {(product.description || product.specs.length > 0) && (
-              <div className="mt-10 rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-6">
+              <div className="mt-10 rounded-2xl border border-line bg-white/60 p-6">
                 <h2 className="font-serif text-xl">Details</h2>
                 {product.description && (
                   <p className="mt-3 text-sm leading-relaxed text-muted">
@@ -180,7 +180,7 @@ export default async function ProductPage({
                     {product.specs.map((row, idx) => (
                       <div
                         key={`${row.label || row.value || "spec"}-${idx}`}
-                        className="rounded-xl border border-[color:var(--color-line)] bg-paper px-4 py-3"
+                        className="rounded-xl border border-line bg-paper px-4 py-3"
                       >
                         {row.label && (
                           <dt className="text-[10px] uppercase tracking-[0.16em] text-muted">
@@ -210,7 +210,7 @@ export default async function ProductPage({
         </div>
 
         {detailImages.length > 0 && (
-          <section className="mt-16 border-t border-[color:var(--color-line)] pt-14">
+          <section className="mt-16 border-t border-line pt-14">
             <h2 className="font-serif text-2xl tracking-tight">Closer look</h2>
             <p className="mt-2 max-w-2xl text-sm text-muted">
               Detail photography and specifications for {product.name}.
@@ -229,11 +229,11 @@ export default async function ProductPage({
       </div>
 
       {related.length > 0 && (
-        <section className="border-t border-[color:var(--color-line)] bg-paper py-14">
+        <section className="border-t border-line bg-paper py-14">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <h2 className="font-serif text-2xl">You may also like</h2>
             <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
-              {related.map((p, i) => (
+              {related.map((p) => (
                 <ProductCard
                   key={p.slug}
                   product={p}

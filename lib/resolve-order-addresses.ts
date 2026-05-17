@@ -2,7 +2,26 @@
   isAddressRecordComplete,
   mergeDerivedLogisticsZone,
   validateCheckoutAddressForm,
+  type CheckoutAddressForm,
+  type CheckoutAddressRecord,
 } from "@/lib/checkout-address";
+
+function checkoutFormFromRecord(record: CheckoutAddressRecord): CheckoutAddressForm {
+  return {
+    firstName: record.firstName ?? "",
+    lastName: record.lastName ?? "",
+    company: record.company ?? "",
+    line1: record.line1 ?? "",
+    line2: record.line2 ?? "",
+    city: record.city ?? "",
+    state: record.state ?? "",
+    postalCode: record.postalCode ?? "",
+    country: record.country ?? "",
+    logisticsZone: record.logisticsZone ?? "",
+    phone: record.phone ?? "",
+    taxId: record.taxId ?? "",
+  };
+}
 
 /**
  * Builds `billingJson` / `shippingJson` for Order.create.
@@ -22,11 +41,11 @@ export function resolveOrderAddressJson(body: {
       return { ok: false, error: "Billing address is incomplete" };
     if (!isAddressRecordComplete(s))
       return { ok: false, error: "Shipping address is incomplete" };
-    const billCheck = validateCheckoutAddressForm(b as any);
+    const billCheck = validateCheckoutAddressForm(checkoutFormFromRecord(b));
     if (!billCheck.ok) {
       return { ok: false, error: `Billing: ${billCheck.error}` };
     }
-    const shipCheck = validateCheckoutAddressForm(s as any);
+    const shipCheck = validateCheckoutAddressForm(checkoutFormFromRecord(s));
     if (!shipCheck.ok) {
       return { ok: false, error: `Shipping: ${shipCheck.error}` };
     }
@@ -41,7 +60,7 @@ export function resolveOrderAddressJson(body: {
 
   const single = s ?? b;
   if (single && isAddressRecordComplete(single)) {
-    const oneCheck = validateCheckoutAddressForm(single as any);
+    const oneCheck = validateCheckoutAddressForm(checkoutFormFromRecord(single));
     if (!oneCheck.ok) {
       return { ok: false, error: oneCheck.error };
     }

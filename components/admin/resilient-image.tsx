@@ -23,6 +23,8 @@ export function ResilientImage({
   }
 
   return (
+    // Intentional: multi-URL fallback on `onError`; `next/image` is single-src without a custom loader.
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={cleaned[idx]}
       alt={alt}

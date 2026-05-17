@@ -16,7 +16,7 @@ export function HeroSpaceVideo() {
 
       {/* Vignette + cyan/purple haze overlay */}
       <div
-        className="absolute inset-0 z-[2] bg-gradient-to-b from-[#070a10]/72 via-[#070a10]/36 to-[#070a10]/94"
+        className="absolute inset-0 z-[2] bg-linear-to-b from-[#070a10]/72 via-[#070a10]/36 to-[#070a10]/94"
         aria-hidden
       />
       <div

@@ -10,7 +10,6 @@ import {
 } from "@/lib/admin/order-ui";
 import { buildShippingAddressChangeEmailPayload } from "@/lib/customer-shipped-email";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
-import { getProductBySlug } from "@/lib/catalog";
 import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { emailPublicBaseUrl } from "@/lib/email-public-base-url";

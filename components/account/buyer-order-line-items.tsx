@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { OrderLineProductImage } from "@/components/account/order-line-product-image";
-import { formatPrice, getCartLineImage } from "@/lib/catalog";
+import { formatPrice } from "@/lib/catalog";
 import type { ValidatedLine } from "@/lib/order-lines";
 import { orderStatusAllowsReview } from "@/lib/review-eligibility";
 

@@ -138,16 +138,6 @@ const PRMM03_FILE = "HUMPBUCK-RM-M03";
 const PRMM04_SLUG = "RM-M04";
 const PRMM04_FILE = "HUMPBUCK-RM-M04";
 
-/**
- * RD-ASTRAL Excalibur line — `products/RD-Excalibur{NN}/{gallery|detail|variants|video}/`.
- * Stills + video: `HUMPBUCK-RD-Excalibur{NN}-*.webp` / `…-video.mp4` (same as RM-TONNEAU).
- */
-function rdExcaliburProductAssets(skuSuffix: string) {
-  const slugFolder = `RD-Excalibur${skuSuffix}`;
-  const filePrefix = `HUMPBUCK-RD-Excalibur${skuSuffix}`;
-  return rmTonneauProductAssets(slugFolder, filePrefix, { variants: 10 });
-}
-
 export type R2GallerySpec = {
   slugFolder: string;
   filePrefix: string;

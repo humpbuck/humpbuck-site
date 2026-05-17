@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint . --max-warnings 0",
     "postinstall": "prisma generate",
     "db:seed": "prisma db seed",
     "db:migrate": "npx tsx scripts/migrate-with-env.ts",

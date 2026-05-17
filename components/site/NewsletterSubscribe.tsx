@@ -80,7 +80,7 @@ export function NewsletterSubscribe() {
               setMessage("");
             }
           }}
-          className="w-full rounded-2xl border border-[color:var(--color-line)] bg-paper px-4 py-3 text-sm outline-none ring-0 placeholder:text-muted focus:border-ink/25 disabled:opacity-60"
+          className="w-full rounded-2xl border border-line bg-paper px-4 py-3 text-sm outline-none ring-0 placeholder:text-muted focus:border-ink/25 disabled:opacity-60"
         />
         {message ? (
           <p

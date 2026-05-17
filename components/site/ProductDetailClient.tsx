@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { ProductVariantOption } from "@/lib/catalog";
+import { variantOptionStockLabel, type ProductVariantOption } from "@/lib/catalog";
 import { ProductStyleVariants } from "@/components/site/ProductStyleVariants";
 import { ProductCartSection } from "@/components/site/ProductCartSection";
 
@@ -22,13 +22,10 @@ export function ProductDetailClient({
   const options = variantOptions ?? [];
   const current = options[selectedIndex];
 
-  const stockLabel = useMemo(() => {
-    const qty = current?.stockQuantity;
-    if (qty === 0) return "Out of stock";
-    if (qty != null && qty <= 10) return `Low stock (${qty})`;
-    if (qty != null) return `In stock (${qty})`;
-    return inStock ? "In stock" : "Out of stock";
-  }, [current, inStock]);
+  const stockLabel = useMemo(
+    () => variantOptionStockLabel(current, inStock ? "In stock" : "Out of stock"),
+    [current, inStock],
+  );
 
   return (
     <div>

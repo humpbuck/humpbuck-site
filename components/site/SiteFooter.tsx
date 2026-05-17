@@ -36,7 +36,7 @@ export function SiteFooter() {
   const supportMail = publicSupportEmail();
 
   return (
-    <footer className="border-t border-[color:var(--color-line)] bg-paper">
+    <footer className="border-t border-line bg-paper">
       <div className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:pb-14 sm:pt-12 md:pb-14 md:pt-14">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-[1.2fr_2fr] md:gap-10">
           <div className="min-w-0">
@@ -78,7 +78,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-10 space-y-4 border-t border-[color:var(--color-line)] pt-7 sm:mt-12 sm:pt-8">
+        <div className="mt-10 space-y-4 border-t border-line pt-7 sm:mt-12 sm:pt-8">
           <div className="grid gap-4 sm:grid-cols-[1fr_1.1fr] sm:items-start sm:gap-10">
             <div className="min-w-0 space-y-2.5 text-left">
               <p className="text-[12px] leading-relaxed text-muted">

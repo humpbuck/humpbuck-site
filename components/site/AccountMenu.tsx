@@ -63,7 +63,7 @@ export function AccountMenu({
         <div
           role="menu"
           aria-label="Account menu"
-          className="absolute right-0 top-full z-50 mt-2 min-w-[220px] rounded-2xl border border-[color:var(--color-line)] bg-paper/95 py-2 shadow-[var(--shadow-card)] backdrop-blur-md"
+          className="absolute right-0 top-full z-50 mt-2 min-w-[220px] rounded-2xl border border-line bg-paper/95 py-2 shadow-card backdrop-blur-md"
         >
           <Link
             href="/account"
@@ -74,7 +74,7 @@ export function AccountMenu({
             Overview
           </Link>
           {userEmail && (
-            <p className="border-t border-[color:var(--color-line)] px-4 py-2 text-[10px] uppercase tracking-[0.1em] text-muted">
+            <p className="border-t border-line px-4 py-2 text-[10px] uppercase tracking-widest text-muted">
               {userEmail}
             </p>
           )}
@@ -85,7 +85,7 @@ export function AccountMenu({
               setOpen(false);
               void signOut({ callbackUrl: "/" });
             }}
-            className="w-full border-t border-[color:var(--color-line)] px-4 py-2.5 text-left text-[12px] font-semibold uppercase tracking-[0.1em] text-ink/80 transition hover:bg-ink/[0.04]"
+            className="w-full border-t border-line px-4 py-2.5 text-left text-[12px] font-semibold uppercase tracking-widest text-ink/80 transition hover:bg-ink/[0.04]"
           >
             Sign out
           </button>

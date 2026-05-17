@@ -63,11 +63,11 @@ export function CartDrawer() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="cart-drawer-title"
-        className={`relative flex h-full w-[min(100vw,420px)] max-w-full flex-col border-l border-[color:var(--color-line)] bg-paper transition-[transform,box-shadow] duration-300 ease-out ${
+        className={`relative flex h-full w-[min(100vw,420px)] max-w-full flex-col border-l border-line bg-paper transition-[transform,box-shadow] duration-300 ease-out ${
           cartDrawerOpen ? "translate-x-0 shadow-2xl" : "translate-x-full shadow-none"
         }`}
       >
-        <div className="flex items-center justify-between border-b border-[color:var(--color-line)] px-4 py-4">
+        <div className="flex items-center justify-between border-b border-line px-4 py-4">
           <h2 id="cart-drawer-title" className="font-serif text-xl tracking-tight text-ink">
             Bag
           </h2>
@@ -111,7 +111,7 @@ export function CartDrawer() {
                 return (
                   <li
                     key={key}
-                    className="flex gap-3 rounded-xl border border-[color:var(--color-line)] bg-white/70 p-3"
+                    className="flex gap-3 rounded-xl border border-line bg-white/70 p-3"
                   >
                     <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-paper">
                       {lineImage ? (
@@ -140,7 +140,7 @@ export function CartDrawer() {
                         {formatPrice(typeof line.unitPrice === "number" ? line.unitPrice : 0)} each
                       </p>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <div className="inline-flex items-stretch overflow-hidden rounded-lg border border-[color:var(--color-line)] bg-paper">
+                        <div className="inline-flex items-stretch overflow-hidden rounded-lg border border-line bg-paper">
                           <button
                             type="button"
                             aria-label={line.qty <= 1 ? "Remove from bag" : "Decrease quantity"}
@@ -169,7 +169,7 @@ export function CartDrawer() {
                               const next = Math.max(1, Math.min(CART_QTY_MAX, Math.floor(n)));
                               setQty(line.slug, next, line.variantId);
                             }}
-                            className="w-14 border-x border-[color:var(--color-line)] bg-transparent px-1 text-center text-xs font-semibold tabular-nums outline-none"
+                            className="w-14 border-x border-line bg-transparent px-1 text-center text-xs font-semibold tabular-nums outline-none"
                           />
                           <button
                             type="button"
@@ -202,7 +202,7 @@ export function CartDrawer() {
           )}
         </div>
 
-        <div className="border-t border-[color:var(--color-line)] bg-paper px-4 py-4">
+        <div className="border-t border-line bg-paper px-4 py-4">
           {displayItems.length > 0 && (
             <p className="mb-4 text-base font-semibold tabular-nums">Subtotal {formatPrice(subtotal)}</p>
           )}
@@ -219,7 +219,7 @@ export function CartDrawer() {
             <Link
               href="/cart"
               onClick={closeCartDrawer}
-              className="inline-flex w-full items-center justify-center rounded-2xl border border-[color:var(--color-line)] bg-white px-6 py-3.5 text-center text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:bg-ink/[0.03]"
+              className="inline-flex w-full items-center justify-center rounded-2xl border border-line bg-white px-6 py-3.5 text-center text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:bg-ink/[0.03]"
             >
               View bag
             </Link>

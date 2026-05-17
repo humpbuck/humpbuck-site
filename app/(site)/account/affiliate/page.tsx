@@ -644,18 +644,6 @@ export default async function AccountAffiliatePage({
     paid: settlementCountMap.get("paid") ?? 0,
     reversed: settlementCountMap.get("reversed") ?? 0,
   };
-  const settlementHref = (target: SettlementFilter) => {
-    const qs = new URLSearchParams();
-    if (target !== "all") qs.set("settlement", target);
-    if (dateFromInput) qs.set("from", dateFromInput);
-    if (dateToInput) qs.set("to", dateToInput);
-    return `/account/affiliate${qs.toString() ? `?${qs.toString()}` : ""}#settlement-orders`;
-  };
-  const settlementOnlyHref = (target: SettlementFilter) => {
-    const qs = new URLSearchParams();
-    if (target !== "all") qs.set("settlement", target);
-    return `/account/affiliate${qs.toString() ? `?${qs.toString()}` : ""}#settlement-orders`;
-  };
   const settlementTotalPages = Math.max(1, Math.ceil(settlementTotal / SETTLEMENT_PAGE_SIZE));
   const settlementPage = Math.min(settlementPageRaw, settlementTotalPages);
   const settlementPageHref = (nextPage: number) => {

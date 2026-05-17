@@ -73,9 +73,6 @@ async function updateAffiliateDetailsAction(formData: FormData) {
   const payoutMethod = String(formData.get("payoutMethod") ?? "").trim();
   const payoutAccountRaw = String(formData.get("payoutAccount") ?? "").trim();
   const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
-  const whatsappContact = sanitizeAffiliatePayoutWhatsappContact(
-    String(formData.get("whatsappContact") ?? "").trim(),
-  );
   const whatsappRaw = String(formData.get("whatsapp") ?? "").trim();
   const whatsappLocal = String(formData.get("whatsappLocal") ?? "");
   const whatsappCountryInput = normalizeCountryCodeInput(

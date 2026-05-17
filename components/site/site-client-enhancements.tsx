@@ -35,22 +35,6 @@ const TrackPageView = dynamic(
   { ssr: false },
 );
 
-const TrackCheckout = dynamic(
-  () =>
-    import("@/components/analytics/track-checkout").then(
-      (m) => m.TrackCheckout,
-    ),
-  { ssr: false },
-);
-
-const TrackPurchase = dynamic(
-  () =>
-    import("@/components/analytics/track-purchase").then(
-      (m) => m.TrackPurchase,
-    ),
-  { ssr: false },
-);
-
 const SiteFloatingActions = dynamic(
   () =>
     import("@/components/site/SiteFloatingActions").then(

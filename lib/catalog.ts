@@ -152,6 +152,31 @@ export function getCartLineImage(product: Product, variantId?: string): string {
   return match?.image ?? product.image;
 }
 
+/**
+ * Single source of truth for “can a buyer add this variant to cart?”
+ * (merged `productInventory.quantity` + catalog `inStock` flags from `catalog-db`).
+ */
+export function isVariantOptionSellable(opt: ProductVariantOption | null | undefined): boolean {
+  if (!opt?.id) return false;
+  if (opt.inStock === false) return false;
+  const qty = opt.stockQuantity;
+  if (qty != null) return qty > 0;
+  return true;
+}
+
+/** Human-readable stock line for the PDP; keep in sync with `isVariantOptionSellable`. */
+export function variantOptionStockLabel(
+  opt: ProductVariantOption | null | undefined,
+  whenNoSelection: string,
+): string {
+  if (!opt) return whenNoSelection;
+  if (!isVariantOptionSellable(opt)) return "Out of stock";
+  const qty = opt.stockQuantity;
+  if (qty != null && qty <= 10) return `Low stock (${qty})`;
+  if (qty != null) return `In stock (${qty})`;
+  return "In stock";
+}
+
 export function isVariantAvailableForSale(product: Product, variantId?: string): boolean {
   if (!product.inStock) return false;
   if (!product.variantOptions?.length) return true;
@@ -159,7 +184,7 @@ export function isVariantAvailableForSale(product: Product, variantId?: string):
   const id = resolveCatalogVariantId(product, variantId) ?? variantId;
   const opt = product.variantOptions.find((v) => v.id === id);
   if (!opt) return false;
-  return opt.inStock !== false;
+  return isVariantOptionSellable(opt);
 }
 
 export function formatPrice(usd: number): string {

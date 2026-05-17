@@ -33,8 +33,8 @@ function methodTitle(key: MethodKey) {
 
 export default function ShippingRulesAuditPage() {
   const [filter, setFilter] = useState("");
-  const [weightKg, setWeightKg] = useState("0.2");
-  const [viewMode, setViewMode] = useState<ViewMode>("all");
+  const weightKg = "0.2";
+  const viewMode = "all" as ViewMode;
 
   const parsedWeight = Number(weightKg);
   const effectiveWeightKg = Number.isFinite(parsedWeight) && parsedWeight > 0 ? parsedWeight : 0.2;

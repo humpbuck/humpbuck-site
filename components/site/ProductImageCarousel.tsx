@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
 
 export function ProductImageCarousel({
@@ -46,18 +46,20 @@ export function ProductImageCarousel({
     return () => el.removeEventListener("scroll", onScroll);
   }, [onScroll]);
 
+  const imagesKey = useMemo(() => images.join("\0"), [images]);
+
   useEffect(() => {
-    setActive(0);
-  }, [images.join("\0")]);
+    queueMicrotask(() => setActive(0));
+  }, [imagesKey]);
 
   if (images.length === 0) return null;
 
   return (
     <div className="relative min-w-0 max-w-full">
       <div
-        className={`pointer-events-none absolute -inset-3 rounded-[32px] bg-gradient-to-br sm:-inset-6 ${themeGlowClass} blur-2xl opacity-70`}
+        className={`pointer-events-none absolute -inset-3 rounded-[32px] bg-linear-to-br sm:-inset-6 ${themeGlowClass} blur-2xl opacity-70`}
       />
-      <div className="relative overflow-hidden rounded-[28px] border border-[color:var(--color-line)] bg-paper shadow-[var(--shadow-card)]">
+      <div className="relative overflow-hidden rounded-[28px] border border-line bg-paper shadow-card">
         <div className="relative">
           <div
             ref={scrollerRef}
@@ -85,7 +87,7 @@ export function ProductImageCarousel({
               <button
                 type="button"
                 onClick={() => scrollTo(active - 1)}
-                className="absolute left-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[color:var(--color-line)] bg-white/90 text-ink shadow-sm backdrop-blur-sm transition hover:bg-white"
+                className="absolute left-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white/90 text-ink shadow-sm backdrop-blur-sm transition hover:bg-white"
                 aria-label="Previous image"
               >
                 <ChevronLeft size={22} strokeWidth={2} />
@@ -93,7 +95,7 @@ export function ProductImageCarousel({
               <button
                 type="button"
                 onClick={() => scrollTo(active + 1)}
-                className="absolute right-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[color:var(--color-line)] bg-white/90 text-ink shadow-sm backdrop-blur-sm transition hover:bg-white"
+                className="absolute right-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white/90 text-ink shadow-sm backdrop-blur-sm transition hover:bg-white"
                 aria-label="Next image"
               >
                 <ChevronRight size={22} strokeWidth={2} />
@@ -114,7 +116,7 @@ export function ProductImageCarousel({
                 className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition ${
                   active === i
                     ? "border-ink ring-2 ring-ink/10"
-                    : "border-[color:var(--color-line)] hover:border-ink/25"
+                    : "border-line hover:border-ink/25"
                 }`}
                 aria-label={`View image ${i + 1}`}
               >

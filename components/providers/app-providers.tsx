@@ -15,7 +15,8 @@ function LazyCartDrawer() {
   const [shouldMount, setShouldMount] = useState(false);
 
   useEffect(() => {
-    if (cartDrawerOpen) setShouldMount(true);
+    if (!cartDrawerOpen) return;
+    queueMicrotask(() => setShouldMount(true));
   }, [cartDrawerOpen]);
 
   if (!shouldMount && !cartDrawerOpen) return null;

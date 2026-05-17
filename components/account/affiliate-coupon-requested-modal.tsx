@@ -20,7 +20,7 @@ export function AffiliateCouponRequestedModal({
     const lastSeenRid = window.sessionStorage.getItem(seenKey);
     if (lastSeenRid === rid) return;
     window.sessionStorage.setItem(seenKey, rid);
-    setOpen(true);
+    queueMicrotask(() => setOpen(true));
 
     const url = new URL(window.location.href);
     if (url.searchParams.get("ok") !== "coupon_requested") return;

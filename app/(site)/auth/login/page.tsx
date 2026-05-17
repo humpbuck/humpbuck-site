@@ -71,7 +71,7 @@ function LoginForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-[color:var(--color-line)] bg-paper px-4 py-3 text-sm outline-none ring-ink/20 focus:ring-2"
+            className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3 text-sm outline-none ring-ink/20 focus:ring-2"
           />
         </div>
         <div>

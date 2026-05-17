@@ -30,7 +30,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
   const [notes, setNotes] = useState("");
   const [website, setWebsite] = useState("");
   const [status, setStatus] = useState<Status>("idle");
-  const [message, setMessage] = useState("");
+  const [, setMessage] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [turnstileScriptLoaded, setTurnstileScriptLoaded] = useState(false);

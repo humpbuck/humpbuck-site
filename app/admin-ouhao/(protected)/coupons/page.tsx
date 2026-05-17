@@ -84,7 +84,7 @@ async function sendAffiliateCouponEmail(input: {
   ].filter(Boolean);
   const emailResult = await sendTransactionalEmail({
     to,
-    subject: "Your affiliate coupon is ready",
+    subject,
     htmlContent: `<p>Hi ${affiliateName},</p>
 <p>Your affiliate coupon has been created successfully.</p>
 <p><strong>Coupon code:</strong> ${input.code}<br/>

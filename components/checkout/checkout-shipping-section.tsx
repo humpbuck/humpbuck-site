@@ -36,7 +36,7 @@ export function CheckoutShippingSection({
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    queueMicrotask(() => setMounted(true));
   }, []);
 
   const quotes = useMemo(

@@ -55,7 +55,7 @@ export default function AdminLoginPage() {
             autoComplete="off"
             value={secret}
             onChange={(e) => setSecret(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-[color:var(--color-line)] bg-white px-4 py-3 text-sm outline-none ring-ink/20 focus:ring-2"
+            className="mt-2 w-full rounded-xl border border-line bg-white px-4 py-3 text-sm outline-none ring-ink/20 focus:ring-2"
             required
           />
         </div>

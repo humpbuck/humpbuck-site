@@ -33,7 +33,7 @@ export default function RefundPage() {
         </p>
       </div>
 
-      <hr className="my-10 border-[color:var(--color-line)]" />
+      <hr className="my-10 border-line" />
 
       <div className="space-y-12 text-sm leading-[1.65] text-ink/85">
         <section>
@@ -57,7 +57,7 @@ export default function RefundPage() {
             . Please note that returns will need to be sent to the following
             address:
           </p>
-          <div className="mt-5 rounded-xl border border-[color:var(--color-line)] bg-paper/70 px-4 py-3 sm:px-5">
+          <div className="mt-5 rounded-xl border border-line bg-paper/70 px-4 py-3 sm:px-5">
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
               Return shipping address
             </p>
@@ -148,7 +148,7 @@ export default function RefundPage() {
         <PolicyContactCard intro="For returns, refunds, or policy questions, reach out to our team:" />
       </div>
 
-      <p className="mt-12 border-t border-[color:var(--color-line)] pt-8 text-sm text-muted">
+      <p className="mt-12 border-t border-line pt-8 text-sm text-muted">
         Related:{" "}
         <Link
           href="/shipping"

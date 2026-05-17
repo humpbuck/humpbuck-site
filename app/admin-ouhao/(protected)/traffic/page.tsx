@@ -125,7 +125,7 @@ export default async function AdminTrafficPage({
     sessionCountCurrent,
     sessionCountPrevious,
     pageViewCountCurrent,
-    pageViewCountPrevious,
+    ,
     productViewCountCurrent,
     productViewCountPrevious,
     addToCartCountCurrent,

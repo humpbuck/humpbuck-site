@@ -12,10 +12,6 @@ import {
   recordMarketingOptOutByEmail,
 } from "@/lib/email-marketing-preference";
 
-function goSubscribe(status: string, error?: string): never {
-  return goSubscribeWithEmail("", status, error);
-}
-
 function goSubscribeWithEmail(email: string, status: string, error?: string): never {
   const params = new URLSearchParams();
   if (email.trim()) params.set("email", email.trim().toLowerCase());

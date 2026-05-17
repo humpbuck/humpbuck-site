@@ -24,7 +24,7 @@ export async function compressReviewImageToWebP(file: File): Promise<Blob> {
   };
 
   const first = await imageCompression(file, base);
-  let blob: Blob =
+  const blob: Blob =
     first instanceof File ? first : new Blob([first], { type: WEBP });
 
   /* Presign allow max 2 MB in `app/api/reviews/presign/route.ts` */

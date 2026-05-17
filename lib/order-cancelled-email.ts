@@ -9,7 +9,6 @@ import {
   trafficSourceLabel,
 } from "@/lib/admin/order-ui";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
-import { getProductBySlug } from "@/lib/catalog";
 import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { publicSupportEmail } from "@/lib/support-contact";

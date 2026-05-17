@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import type { ProductVariantOption } from "@/lib/catalog";
+import { useState } from "react";
+import { isVariantOptionSellable, type ProductVariantOption } from "@/lib/catalog";
 import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
 import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 
@@ -50,7 +50,7 @@ export function ProductStyleVariants({
       </p>
       <div className="mt-4 grid w-full min-w-0 grid-cols-4 gap-2 sm:grid-cols-6">
         {options.map((opt, i) => {
-          const unavailable = opt.inStock === false;
+          const unavailable = !isVariantOptionSellable(opt);
           return (
             <button
               key={opt.id}
@@ -59,7 +59,7 @@ export function ProductStyleVariants({
               className={`relative aspect-square min-w-0 overflow-hidden rounded-xl border-2 transition ${
                 selected === i
                   ? "border-ink ring-2 ring-inset ring-ink/10"
-                  : "border-[color:var(--color-line)] hover:border-ink/30"
+                  : "border-line hover:border-ink/30"
               } ${unavailable ? "opacity-45" : ""}`}
               aria-pressed={selected === i}
               aria-label={

@@ -93,7 +93,7 @@ export default async function HomePage() {
             </p>
             {/* Mobile: long tag full-width, 2-up below. md+: one flex row, wraps on iPad/Surface */}
             <div className="relative mt-7 flex max-w-full flex-col gap-2 md:flex-row md:flex-wrap md:items-center md:gap-2">
-              <span className="inline-flex w-full flex-shrink-0 items-center justify-center rounded-full border border-cyan-400/25 bg-cyan-400/10 px-3 py-2 text-center text-[10px] font-semibold uppercase tracking-[0.1em] text-cyan-100 md:w-auto md:justify-start md:px-3.5 md:text-[11px] md:tracking-[0.12em]">
+              <span className="inline-flex w-full shrink-0 items-center justify-center rounded-full border border-cyan-400/25 bg-cyan-400/10 px-3 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-cyan-100 md:w-auto md:justify-start md:px-3.5 md:text-[11px] md:tracking-[0.12em]">
                 TIME · DATE · ALM · OUT · STW
               </span>
               <div className="grid grid-cols-2 gap-2 md:contents">
@@ -126,7 +126,7 @@ export default async function HomePage() {
             {(heroFeatured ?? heroFallback) ? (
               <Link
                 href={(heroFeatured ?? heroFallback).slug === "digitemp" ? "/shop?series=digitemp" : `/product/${(heroFeatured ?? heroFallback).slug}`}
-                className="group relative block aspect-square overflow-hidden rounded-[24px] border border-white/10 bg-gradient-to-b from-white/10 to-white/0 shadow-[var(--shadow-glow-digital)] transition outline-offset-4 focus-visible:outline-2 focus-visible:outline-cyan-400/80 sm:rounded-[28px]"
+                className="group relative block aspect-square overflow-hidden rounded-[24px] border border-white/10 bg-linear-to-b from-white/10 to-white/0 shadow-glow-digital transition outline-offset-4 focus-visible:outline-2 focus-visible:outline-cyan-400/80 sm:rounded-[28px]"
               >
                 <Image
                   src={R2.home.digitemp2301Webp}
@@ -138,7 +138,7 @@ export default async function HomePage() {
                   className="object-cover opacity-95 transition group-hover:opacity-100"
                   sizes="(max-width:767px) 92vw, (max-width:1279px) 50vw, 560px"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#070a10] via-transparent to-transparent opacity-70" />
+                <div className="absolute inset-0 bg-linear-to-t from-[#070a10] via-transparent to-transparent opacity-70" />
                 <div className="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/10 bg-black/35 p-4 backdrop-blur-md">
                   <div className="flex items-center justify-between gap-4">
                     <div>
@@ -185,7 +185,7 @@ export default async function HomePage() {
         <div className="grid gap-5 lg:grid-cols-2 lg:gap-7">
           <Link
             href="/series/tonneau"
-            className="group relative overflow-hidden rounded-3xl border border-[color:var(--color-line)] bg-[#141210] p-8 text-white shadow-[var(--shadow-card)]"
+            className="group relative overflow-hidden rounded-3xl border border-line bg-[#141210] p-8 text-white shadow-card"
           >
             <div className="pointer-events-none absolute inset-0 opacity-40">
               <Image
@@ -197,7 +197,7 @@ export default async function HomePage() {
                 sizes="(max-width:1024px) 100vw, (max-width:1536px) 50vw, 720px"
               />
             </div>
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-black/70 via-black/45 to-[#141210]/20" />
+            <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-black/70 via-black/45 to-[#141210]/20" />
             <div className="relative">
               <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[color:var(--color-luxe)]">
                 RM-TONNEAU
@@ -228,7 +228,7 @@ export default async function HomePage() {
 
           <Link
             href="/series/rd-astral"
-            className="group relative overflow-hidden rounded-3xl border border-[color:var(--color-line)] bg-[#1a1224] p-8 text-white shadow-[var(--shadow-card)]"
+            className="group relative overflow-hidden rounded-3xl border border-line bg-[#1a1224] p-8 text-white shadow-card"
           >
             <div className="pointer-events-none absolute inset-0 opacity-45">
               <Image
@@ -240,7 +240,7 @@ export default async function HomePage() {
                 sizes="(max-width:1024px) 100vw, (max-width:1536px) 50vw, 720px"
               />
             </div>
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-violet-950/80 via-black/50 to-[#1a1224]/25" />
+            <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-violet-950/80 via-black/50 to-[#1a1224]/25" />
             <div className="relative">
               <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-violet-200/90">
                 RD-ASTRAL
@@ -273,7 +273,7 @@ export default async function HomePage() {
 
       {/* Featured */}
       <section
-        className="border-t border-[color:var(--color-line)] bg-paper py-16 sm:py-20"
+        className="border-t border-line bg-paper py-16 sm:py-20"
         style={deferredSectionStyle}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -305,7 +305,7 @@ export default async function HomePage() {
         className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20"
         style={deferredSectionStyle}
       >
-        <div className="relative overflow-hidden rounded-[28px] border border-[color:var(--color-line)] bg-gradient-to-br from-ink via-[#161821] to-[#0f1114] p-8 text-paper shadow-[var(--shadow-card)] sm:p-12">
+        <div className="relative overflow-hidden rounded-[28px] border border-line bg-linear-to-br from-ink via-[#161821] to-[#0f1114] p-8 text-paper shadow-card sm:p-12">
           <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[color:var(--color-luxe)]/15 blur-3xl" />
           <div className="relative grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
             <div>
@@ -345,7 +345,7 @@ export default async function HomePage() {
 
       {/* Stats + trust */}
       <section
-        className="border-t border-[color:var(--color-line)] bg-white/55 py-14"
+        className="border-t border-line bg-white/55 py-14"
         style={deferredSectionStyle}
       >
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
@@ -364,7 +364,7 @@ export default async function HomePage() {
           ))}
         </div>
         <div className="mx-auto mt-10 grid max-w-7xl gap-4 px-4 sm:grid-cols-3 sm:px-6">
-          <div className="flex items-start gap-3 rounded-2xl border border-[color:var(--color-line)] bg-paper p-5">
+          <div className="flex items-start gap-3 rounded-2xl border border-line bg-paper p-5">
             <ShieldCheck
               className="mt-0.5 text-digital-dim"
               size={20}
@@ -377,7 +377,7 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
-          <div className="flex items-start gap-3 rounded-2xl border border-[color:var(--color-line)] bg-paper p-5">
+          <div className="flex items-start gap-3 rounded-2xl border border-line bg-paper p-5">
             <Globe2
               className="mt-0.5 text-luxe-dim"
               size={20}
@@ -390,7 +390,7 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
-          <div className="flex items-start gap-3 rounded-2xl border border-[color:var(--color-line)] bg-paper p-5">
+          <div className="flex items-start gap-3 rounded-2xl border border-line bg-paper p-5">
             <Sparkles
               className="mt-0.5 text-luxe-dim"
               size={20}
@@ -412,7 +412,7 @@ export default async function HomePage() {
         className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20"
         style={deferredSectionStyle}
       >
-        <div className="rounded-3xl border border-[color:var(--color-line)] bg-white/70 p-8 sm:p-10">
+        <div className="rounded-3xl border border-line bg-white/70 p-8 sm:p-10">
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div>
               <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">

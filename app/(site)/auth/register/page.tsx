@@ -90,7 +90,7 @@ function RegisterForm() {
             autoComplete="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-[color:var(--color-line)] bg-paper px-4 py-3 text-sm outline-none ring-ink/20 focus:ring-2"
+            className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3 text-sm outline-none ring-ink/20 focus:ring-2"
           />
         </div>
         <div>
@@ -107,7 +107,7 @@ function RegisterForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-[color:var(--color-line)] bg-paper px-4 py-3 text-sm outline-none ring-ink/20 focus:ring-2"
+            className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3 text-sm outline-none ring-ink/20 focus:ring-2"
           />
         </div>
         <div>
@@ -138,7 +138,7 @@ function RegisterForm() {
             later under Account → Profile (30 built-in avatars or a WebP
             upload to R2).
           </p>
-          <div className="mt-3 flex max-h-40 flex-wrap gap-2 overflow-y-auto rounded-xl border border-[color:var(--color-line)] bg-paper/50 p-3">
+          <div className="mt-3 flex max-h-40 flex-wrap gap-2 overflow-y-auto rounded-xl border border-line bg-paper/50 p-3">
             <button
               type="button"
               onClick={() => setAvatarPreset(null)}

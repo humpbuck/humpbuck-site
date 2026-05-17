@@ -115,7 +115,7 @@ export function AccountAvatarPicker({ initialImage }: Props) {
   }
 
   return (
-    <section className="rounded-2xl border border-[color:var(--color-line)] bg-paper/60 p-6">
+    <section className="rounded-2xl border border-line bg-paper/60 p-6">
       <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-ink/85">
         Profile photo
       </h2>
@@ -148,7 +148,7 @@ export function AccountAvatarPicker({ initialImage }: Props) {
         </div>
         <div className="flex flex-col gap-2">
           <label className="inline-flex cursor-pointer">
-            <span className="rounded-xl border border-[color:var(--color-line)] bg-white/80 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/25">
+            <span className="rounded-xl border border-line bg-white/80 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/25">
               {busy ? "Working…" : "Upload photo"}
             </span>
             <input

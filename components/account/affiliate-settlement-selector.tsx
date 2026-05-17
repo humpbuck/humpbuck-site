@@ -32,7 +32,7 @@ export function AffiliateSettlementSelector({
       if (!raw) return;
       const parsed = JSON.parse(raw) as Record<string, number>;
       if (parsed && typeof parsed === "object") {
-        setSelected(parsed);
+        queueMicrotask(() => setSelected(parsed));
       }
     } catch {
       // ignore malformed cache
@@ -45,7 +45,7 @@ export function AffiliateSettlementSelector({
     } catch {
       // ignore quota/private mode
     }
-  }, [selected]);
+  }, [selected, storageKey]);
 
   const selectedCount = useMemo(() => Object.keys(selected).length, [selected]);
   const selectedCommission = useMemo(

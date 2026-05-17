@@ -3,6 +3,8 @@ export function parseAustraliaPostcodeNumeric(value: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-export function deriveYanwenLaneZoneDigit(_iso2: string, _postalCode: string): string | null {
+export function deriveYanwenLaneZoneDigit(iso2: string, postalCode: string): string | null {
+  void iso2;
+  void postalCode;
   return null;
 }

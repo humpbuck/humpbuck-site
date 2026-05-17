@@ -1,6 +1,5 @@
 import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
-import { getProductBySlug } from "@/lib/catalog";
 import { publicSupportEmail } from "@/lib/support-contact";
 import { WHATSAPP_DISPLAY, WHATSAPP_E164 } from "@/lib/whatsapp";
 

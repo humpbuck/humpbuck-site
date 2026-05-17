@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "@/components/cart/cart-context";
-import type { ProductVariantOption } from "@/lib/catalog";
+import { isVariantOptionSellable, type ProductVariantOption } from "@/lib/catalog";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
 import { WhatsAppChatLink } from "@/components/site/WhatsAppChatLink";
 import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
@@ -33,8 +33,7 @@ export function ProductCartSection({
   } | null>(null);
 
   const current = variant ?? null;
-  const currentStock = current?.stockQuantity;
-  const canAdd = (currentStock ?? 0) > 0 && current?.inStock !== false;
+  const canAdd = current != null && isVariantOptionSellable(current);
   const showAdded = addedTick > 0;
 
   useEffect(() => {
@@ -107,7 +106,7 @@ export function ProductCartSection({
           </button>
           <WhatsAppChatLink
             productName={name}
-            className="inline-flex min-h-[48px] w-full min-w-0 flex-1 items-center justify-center rounded-2xl border border-[color:var(--color-line)] bg-white/70 px-5 py-3.5 text-center text-[12px] font-semibold uppercase tracking-[0.12em] text-ink/80 transition hover:border-ink/20 sm:px-6"
+            className="inline-flex min-h-[48px] w-full min-w-0 flex-1 items-center justify-center rounded-2xl border border-line bg-white/70 px-5 py-3.5 text-center text-[12px] font-semibold uppercase tracking-[0.12em] text-ink/80 transition hover:border-ink/20 sm:px-6"
           />
         </div>
         {showAdded && (

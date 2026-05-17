@@ -27,8 +27,10 @@ export function SiteAnalyticsConsent() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setReady(true);
-    setChoice(readStoredConsent());
+    queueMicrotask(() => {
+      setReady(true);
+      setChoice(readStoredConsent());
+    });
   }, []);
 
   const onGtagLoad = useCallback(() => {

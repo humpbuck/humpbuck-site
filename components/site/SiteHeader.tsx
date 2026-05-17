@@ -87,7 +87,7 @@ export function SiteHeader() {
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-[background,box-shadow,padding] duration-300 ${
           scrolled
-            ? "border-b border-[color:var(--color-line)] bg-paper/90 py-3 shadow-sm backdrop-blur-md"
+            ? "border-b border-line bg-paper/90 py-3 shadow-sm backdrop-blur-md"
             : "border-b border-transparent bg-transparent py-4 md:py-5"
         }`}
       >
@@ -182,7 +182,7 @@ export function SiteHeader() {
         onClick={() => setOpen(false)}
       />
       <div
-        className={`fixed left-0 top-0 z-[60] h-full w-[min(88vw,360px)] border-r border-[color:var(--color-line)] bg-paper transition-[transform,box-shadow] duration-300 ease-out md:hidden ${
+        className={`fixed left-0 top-0 z-[60] h-full w-[min(88vw,360px)] border-r border-line bg-paper transition-[transform,box-shadow] duration-300 ease-out md:hidden ${
           open ? "translate-x-0 shadow-2xl" : "-translate-x-full shadow-none"
         }`}
         role="dialog"
@@ -190,7 +190,7 @@ export function SiteHeader() {
         aria-label="Main navigation"
         aria-hidden={!open}
       >
-        <div className="flex h-16 min-w-0 items-center justify-between border-b border-[color:var(--color-line)] px-3 sm:px-4">
+        <div className="flex h-16 min-w-0 items-center justify-between border-b border-line px-3 sm:px-4">
           <Link
             href="/"
             onClick={() => setOpen(false)}

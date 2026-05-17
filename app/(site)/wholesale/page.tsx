@@ -41,7 +41,7 @@ export default function WholesalePage() {
       </div>
 
       <div className="mt-12 grid gap-5 lg:grid-cols-3">
-        <div className="rounded-3xl border border-[color:var(--color-line)] bg-white/70 p-6 shadow-[var(--shadow-card)]">
+        <div className="rounded-3xl border border-line bg-white/70 p-6 shadow-card">
           <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
             MOQ starting points
           </div>
@@ -54,7 +54,7 @@ export default function WholesalePage() {
             Exact MOQs depend on dial complexity, materials, and packaging.
           </p>
         </div>
-        <div className="rounded-3xl border border-[color:var(--color-line)] bg-white/70 p-6 shadow-[var(--shadow-card)] lg:col-span-2">
+        <div className="rounded-3xl border border-line bg-white/70 p-6 shadow-card lg:col-span-2">
           <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
             What you can customize
           </div>
@@ -68,7 +68,7 @@ export default function WholesalePage() {
             ].map((t) => (
               <div
                 key={t}
-                className="rounded-2xl border border-[color:var(--color-line)] bg-paper px-4 py-3 text-sm"
+                className="rounded-2xl border border-line bg-paper px-4 py-3 text-sm"
               >
                 {t}
               </div>
@@ -81,7 +81,7 @@ export default function WholesalePage() {
         {steps.map(({ icon: Icon, title, body }) => (
           <div
             key={title}
-            className="rounded-3xl border border-[color:var(--color-line)] bg-paper p-6"
+            className="rounded-3xl border border-line bg-paper p-6"
           >
             <Icon className="text-luxe-dim" size={22} strokeWidth={1.75} />
             <div className="mt-4 font-serif text-lg">{title}</div>
@@ -90,7 +90,7 @@ export default function WholesalePage() {
         ))}
       </div>
 
-      <div className="mt-12 rounded-3xl border border-stone-400/25 bg-stone-300/90 p-8 shadow-[var(--shadow-card)] sm:p-10">
+      <div className="mt-12 rounded-3xl border border-stone-400/25 bg-stone-300/90 p-8 shadow-card sm:p-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">

@@ -32,7 +32,7 @@ export async function ProductReviewsSection({
   }
 
   return (
-    <section className="mt-16 border-t border-[color:var(--color-line)] pt-14">
+    <section className="mt-16 border-t border-line pt-14">
       <h2 className="font-serif text-2xl tracking-tight">Buyer reviews</h2>
       <p className="mt-2 max-w-2xl text-sm text-muted">
         From verified purchases. You can also open{" "}
@@ -78,7 +78,7 @@ export async function ProductReviewsSection({
             return (
               <li
                 key={r.id}
-                className="rounded-2xl border border-[color:var(--color-line)] bg-paper/80 p-5"
+                className="rounded-2xl border border-line bg-paper/80 p-5"
               >
                 <div className="flex flex-wrap items-start gap-3">
                   <ReviewerAvatar src={avatarSrc} label={author} />

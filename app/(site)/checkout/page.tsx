@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 import { useSession } from "next-auth/react";
 import { useCart } from "@/components/cart/cart-context";
-import { formatPrice } from "@/lib/catalog";
 import { emptyCheckoutAddress, validateCheckoutAddressForm } from "@/lib/checkout-address";
 import { CheckoutAddressForm } from "@/components/checkout/checkout-address-form";
 import { CheckoutShippingSection } from "@/components/checkout/checkout-shipping-section";

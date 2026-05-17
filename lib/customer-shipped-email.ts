@@ -14,7 +14,6 @@ import {
   getOrCreateUnsubscribeToken,
   isMarketingOptOut,
 } from "@/lib/email-marketing-preference";
-import { getProductBySlug } from "@/lib/catalog";
 import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { prisma } from "@/lib/prisma";

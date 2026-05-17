@@ -46,12 +46,14 @@ export function WhatsAppFloatingButton() {
   const fabVisible = !isHome || homeFabRevealed;
 
   useEffect(() => {
-    const pageUrl = pageUrlForPathname(pathname);
-    if (pageUrl) {
-      setHref(whatsappInquiryHref({ kind: "page", pageUrl }));
-    } else {
-      setHref(WHATSAPP_URL);
-    }
+    queueMicrotask(() => {
+      const pageUrl = pageUrlForPathname(pathname);
+      if (pageUrl) {
+        setHref(whatsappInquiryHref({ kind: "page", pageUrl }));
+      } else {
+        setHref(WHATSAPP_URL);
+      }
+    });
   }, [pathname]);
 
   useEffect(() => {

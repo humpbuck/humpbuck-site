@@ -50,7 +50,7 @@ export function AffiliateQuickGuide() {
 
   useEffect(() => {
     const hidden = window.localStorage.getItem("affiliate_quick_guide_hidden_v1");
-    if (hidden === "1") setOpen(false);
+    if (hidden === "1") queueMicrotask(() => setOpen(false));
   }, []);
 
   if (!open) {

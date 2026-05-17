@@ -17,7 +17,7 @@ export function ProductDetailImageStrip({
       {imageUrls.map((src, i) => (
         <div
           key={`${i}-${src}`}
-          className="relative overflow-hidden rounded-2xl border border-[color:var(--color-line)] bg-paper shadow-sm"
+          className="relative overflow-hidden rounded-2xl border border-line bg-paper shadow-sm"
         >
           <Image
             src={src}

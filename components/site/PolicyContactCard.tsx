@@ -13,7 +13,7 @@ type PolicyContactCardProps = {
 
 export function PolicyContactCard({ intro }: PolicyContactCardProps) {
   return (
-    <section className="rounded-2xl border border-[color:var(--color-line)] bg-white/50 px-5 py-6 sm:px-6">
+    <section className="rounded-2xl border border-line bg-white/50 px-5 py-6 sm:px-6">
       <h2 className="font-serif text-xl tracking-tight text-ink">Contact us</h2>
       <p className="mt-4 text-ink/85">{intro ?? DEFAULT_INTRO}</p>
       <ul className="mt-5 list-disc space-y-3 pl-5 text-sm leading-[1.65] text-ink/85 marker:text-ink/40">

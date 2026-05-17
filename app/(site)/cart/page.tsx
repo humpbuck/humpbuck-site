@@ -35,7 +35,7 @@ export default function CartPage() {
       </p>
 
       {items.length === 0 ? (
-        <div className="mt-10 rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-10 text-center text-muted">
+        <div className="mt-10 rounded-2xl border border-line bg-white/60 p-10 text-center text-muted">
           <p>Your bag is empty.</p>
           <Link
             href="/shop"
@@ -53,7 +53,7 @@ export default function CartPage() {
               return (
                 <li
                   key={key}
-                  className="flex gap-4 rounded-2xl border border-[color:var(--color-line)] bg-white/60 p-4"
+                  className="flex gap-4 rounded-2xl border border-line bg-white/60 p-4"
                 >
                   <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-paper">
                     {imageSrc ? (
@@ -85,7 +85,7 @@ export default function CartPage() {
                         <span className="text-xs uppercase tracking-[0.14em] text-muted">
                           Qty
                         </span>
-                        <div className="inline-flex items-stretch overflow-hidden rounded-xl border border-[color:var(--color-line)] bg-paper">
+                        <div className="inline-flex items-stretch overflow-hidden rounded-xl border border-line bg-paper">
                           <button
                             type="button"
                             aria-label={line.qty <= 1 ? "Remove from bag" : "Decrease quantity"}
@@ -114,7 +114,7 @@ export default function CartPage() {
                               const next = Math.max(1, Math.min(CART_QTY_MAX, Math.floor(n)));
                               setQty(line.slug, next, line.variantId);
                             }}
-                            className="w-16 border-x border-[color:var(--color-line)] bg-transparent px-2 text-center text-sm font-semibold tabular-nums text-ink outline-none"
+                            className="w-16 border-x border-line bg-transparent px-2 text-center text-sm font-semibold tabular-nums text-ink outline-none"
                           />
                           <button
                             type="button"
@@ -142,7 +142,7 @@ export default function CartPage() {
               );
             })}
           </ul>
-          <div className="mt-8 flex items-center justify-between rounded-2xl border border-[color:var(--color-line)] bg-white/70 p-4">
+          <div className="mt-8 flex items-center justify-between rounded-2xl border border-line bg-white/70 p-4">
             <span className="text-sm uppercase tracking-[0.14em] text-muted">Subtotal</span>
             <span className="text-xl font-semibold tabular-nums">{formatPrice(subtotal)}</span>
           </div>

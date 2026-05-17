@@ -8,19 +8,11 @@ import { SettlementBulkActions } from "@/components/admin/settlement-bulk-action
 import { SettlementSelectionSummary } from "@/components/admin/settlement-selection-summary";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
-import { buildAffiliatePidSeed } from "@/lib/affiliate";
 import {
   ensureAffiliateGrowthTiers,
   syncAffiliateGrowthTierByOrderCount,
 } from "@/lib/affiliate-tier-growth";
-import { stripEmbeddedWhatsAppFromPayoutAccount } from "@/lib/affiliate-payout-account";
 import { sendAffiliatePaidSummaryEmail } from "@/lib/affiliate-paid-email";
-import {
-  normalizeCountryCodeInput,
-  normalizePhone,
-  splitPhoneForInput,
-  validateInternationalPhone,
-} from "@/lib/phone-normalize";
 import { prisma } from "@/lib/prisma";
 
 function goAffiliate(error?: string): never {
@@ -30,24 +22,6 @@ function goAffiliate(error?: string): never {
 
 async function ensureDefaultTierId(): Promise<string> {
   return ensureAffiliateGrowthTiers();
-}
-
-async function ensureUniqueAffiliatePid(input: {
-  userId: string;
-  email?: string | null;
-  currentPid?: string | null;
-}): Promise<string> {
-  if (input.currentPid) return input.currentPid;
-  const base = buildAffiliatePidSeed({ userId: input.userId, email: input.email });
-  for (let i = 0; i < 20; i += 1) {
-    const candidate = i === 0 ? base : `${base}-${i + 1}`;
-    const exists = await prisma.affiliateProfile.findUnique({
-      where: { pid: candidate },
-      select: { id: true },
-    });
-    if (!exists) return candidate;
-  }
-  return `${base}-${Date.now().toString(36).slice(-4)}`;
 }
 
 function parseCommissionValue(raw: FormDataEntryValue | null): number | null {
@@ -134,265 +108,6 @@ async function deleteTierAction(formData: FormData) {
   await prisma.affiliateTier.delete({
     where: { id: tierId },
   });
-
-  revalidatePath(adminPath("/affiliate"));
-  redirect(adminPath("/affiliate"));
-}
-
-async function approveApplicationAction(formData: FormData) {
-  "use server";
-  await assertAdmin();
-  const id = String(formData.get("applicationId") ?? "").trim();
-  if (!id) goAffiliate("Missing application id.");
-  const app = await prisma.affiliateApplication.findUnique({
-    where: { id },
-    include: { affiliate: true, user: true },
-  });
-  if (!app) goAffiliate("Application not found.");
-
-  const defaultTierId = await ensureDefaultTierId();
-  const pid = await ensureUniqueAffiliatePid({
-    userId: app.userId,
-    email: app.user.email,
-    currentPid: app.affiliate?.pid ?? null,
-  });
-  const profile = await prisma.affiliateProfile.upsert({
-    where: { userId: app.userId },
-    create: {
-      userId: app.userId,
-      displayName:
-        app.user.displayName?.trim() ||
-        app.user.name?.trim() ||
-        app.user.email?.split("@")[0]?.trim() ||
-        null,
-      status: "active",
-      riskFlag: false,
-      blacklist: false,
-      tierId: defaultTierId,
-      pid,
-    },
-    update: {
-      status: "active",
-      riskFlag: false,
-      blacklist: false,
-      tierId: app.affiliate?.tierId ?? defaultTierId,
-      pid,
-    },
-    select: { id: true },
-  });
-
-  await prisma.affiliateApplication.update({
-    where: { id },
-    data: {
-      affiliateId: profile.id,
-      status: "approved",
-      reviewedBy: "admin",
-      reviewedAt: new Date(),
-    },
-  });
-  revalidatePath(adminPath("/affiliate"));
-  redirect(adminPath("/affiliate"));
-}
-
-async function rejectApplicationAction(formData: FormData) {
-  "use server";
-  await assertAdmin();
-  const id = String(formData.get("applicationId") ?? "").trim();
-  const reason = String(formData.get("reason") ?? "").trim();
-  if (!id) goAffiliate("Missing application id.");
-  await prisma.affiliateApplication.update({
-    where: { id },
-    data: {
-      status: "rejected",
-      reviewedBy: "admin",
-      reviewedAt: new Date(),
-      riskReason: reason || undefined,
-    },
-  });
-  revalidatePath(adminPath("/affiliate"));
-  redirect(adminPath("/affiliate"));
-}
-
-async function updateProfileAction(formData: FormData) {
-  "use server";
-  await assertAdmin();
-  const profileId = String(formData.get("profileId") ?? "").trim();
-  const tierId = String(formData.get("tierId") ?? "").trim();
-  const whitelist = String(formData.get("whitelist") ?? "") === "on";
-  const notes = String(formData.get("notes") ?? "").trim();
-  const payoutMethod = String(formData.get("payoutMethod") ?? "").trim();
-  const payoutAccount = stripEmbeddedWhatsAppFromPayoutAccount(
-    String(formData.get("payoutAccount") ?? "").trim(),
-  );
-  const payoutEmail = String(formData.get("payoutEmail") ?? "").trim();
-  const whatsappRaw = String(formData.get("whatsapp") ?? "").trim();
-  const whatsappLocal = String(formData.get("whatsappLocal") ?? "");
-  const whatsappCountryInput = normalizeCountryCodeInput(
-    String(formData.get("whatsappCountryCode") ?? ""),
-  );
-  if (!profileId) goAffiliate("Missing affiliate profile id.");
-  const existing = await prisma.affiliateProfile.findUnique({
-    where: { id: profileId },
-    select: {
-      payoutMethod: true,
-      payoutAccount: true,
-      payoutEmail: true,
-      whatsapp: true,
-    },
-  });
-  const existingWhatsappCountryCode = splitPhoneForInput(existing?.whatsapp).countryCode;
-  const whatsapp = normalizePhone(
-    whatsappCountryInput || existingWhatsappCountryCode || "+1",
-    whatsappLocal,
-  ) || whatsappRaw;
-  const whatsappCheck = validateInternationalPhone(whatsapp, {
-    required: false,
-    label: "WhatsApp number",
-  });
-  if (!whatsappCheck.ok) goAffiliate(whatsappCheck.error);
-  const payoutChanged =
-    (existing?.payoutMethod ?? "") !== payoutMethod ||
-    (existing?.payoutAccount ?? "") !== payoutAccount ||
-    (existing?.payoutEmail ?? "") !== payoutEmail ||
-    (existing?.whatsapp ?? "") !== whatsapp;
-
-  await prisma.affiliateProfile.update({
-    where: { id: profileId },
-    data: {
-      tierId: tierId || null,
-      whitelist,
-      notes: notes || null,
-      payoutMethod: payoutMethod || null,
-      payoutAccount: payoutAccount || null,
-      payoutEmail: payoutEmail || null,
-      whatsapp: whatsapp || null,
-      paymentInfoPending: !(payoutMethod || payoutAccount || payoutEmail || whatsapp),
-      ...(payoutChanged ? { payoutVerifiedAt: null, payoutVerifiedBy: null } : {}),
-    },
-  });
-
-  revalidatePath(adminPath("/affiliate"));
-  redirect(adminPath("/affiliate"));
-}
-
-async function toggleBlacklistAction(formData: FormData) {
-  "use server";
-  await assertAdmin();
-  const profileId = String(formData.get("profileId") ?? "").trim();
-  const nextBlacklisted = String(formData.get("nextBlacklisted") ?? "") === "true";
-  if (!profileId) goAffiliate("Missing affiliate profile id.");
-
-  await prisma.affiliateProfile.update({
-    where: { id: profileId },
-    data: {
-      blacklist: nextBlacklisted,
-      status: nextBlacklisted ? "blacklisted" : "active",
-      riskFlag: nextBlacklisted,
-    },
-  });
-  revalidatePath(adminPath("/affiliate"));
-  redirect(adminPath("/affiliate"));
-}
-
-async function markLedgerPaidAction(formData: FormData) {
-  "use server";
-  await assertAdmin();
-  const ledgerId = String(formData.get("ledgerId") ?? "").trim();
-  if (!ledgerId) goAffiliate("Missing ledger id.");
-
-  const row = await prisma.affiliateCommissionLedger.findUnique({
-    where: { id: ledgerId },
-    select: { affiliateId: true },
-  });
-  await prisma.affiliateCommissionLedger.updateMany({
-    where: {
-      id: ledgerId,
-      status: "eligible",
-      paidAt: null,
-      reversedAt: null,
-    },
-    data: {
-      status: "paid",
-      paidAt: new Date(),
-    },
-  });
-  if (row?.affiliateId) {
-    await syncAffiliateGrowthTierByOrderCount(row.affiliateId);
-  }
-  revalidatePath(adminPath("/affiliate"));
-  redirect(adminPath("/affiliate"));
-}
-
-async function markAllEligiblePaidAction() {
-  "use server";
-  await assertAdmin();
-  const now = new Date();
-  const paidLedgers = await prisma.affiliateCommissionLedger.findMany({
-    where: {
-      status: "eligible",
-      paidAt: null,
-      reversedAt: null,
-      order: { deletedAt: null },
-    },
-    include: {
-      affiliate: {
-        include: {
-          user: { select: { email: true, displayName: true, name: true } },
-        },
-      },
-      order: { include: { items: true } },
-    },
-    orderBy: [{ affiliateId: "asc" }, { eligibleAt: "asc" }, { createdAt: "asc" }],
-  });
-
-  await prisma.affiliateCommissionLedger.updateMany({
-    where: {
-      id: { in: paidLedgers.map((l) => l.id) },
-    },
-    data: {
-      status: "paid",
-      paidAt: now,
-    },
-  });
-
-  const byAffiliate = new Map<string, typeof paidLedgers>();
-  for (const ledger of paidLedgers) {
-    const list = byAffiliate.get(ledger.affiliateId) ?? [];
-    list.push(ledger);
-    byAffiliate.set(ledger.affiliateId, list);
-  }
-
-  for (const [affiliateId, ledgers] of byAffiliate.entries()) {
-    const affiliate = ledgers[0]?.affiliate;
-    if (!affiliate?.user?.email) continue;
-    const result = await sendAffiliatePaidSummaryEmail({
-      to: affiliate.user.email,
-      affiliateName: affiliate.user.displayName || affiliate.user.name || affiliate.user.email,
-      affiliateLoginUrl: `${process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://www.humpbuck.com"}/account/affiliate`,
-      ledgers: ledgers.map((l) => ({
-        orderId: l.orderId,
-        commissionCents: l.commissionCents,
-        paidAt: now,
-        payoutBatchId: l.payoutBatchId,
-        payoutTxnRef: l.payoutTxnRef,
-        paidNote: l.paidNote,
-        items: l.order.items.map((item) => ({
-          productSlug: item.productSlug,
-          productName: item.productName,
-          variantId: item.variantId,
-          variantLabel: item.variantLabel,
-          qty: item.qty,
-        })),
-      })),
-    });
-    if (result.ok) {
-      await prisma.affiliateCommissionLedger.updateMany({
-        where: { id: { in: ledgers.map((l) => l.id) } },
-        data: { paidEmailSentAt: now },
-      });
-    }
-    await syncAffiliateGrowthTierByOrderCount(affiliateId);
-  }
 
   revalidatePath(adminPath("/affiliate"));
   redirect(adminPath("/affiliate"));
@@ -503,99 +218,6 @@ async function updateSelectedLedgersStatusAction(formData: FormData) {
   redirect(adminPath("/affiliate"));
 }
 
-async function markFilteredEligiblePaidAction(formData: FormData) {
-  "use server";
-  await assertAdmin();
-  const affiliateId = String(formData.get("affiliateId") ?? "").trim();
-  const orderStatus = String(formData.get("orderStatus") ?? "").trim();
-  const onlyVerifiedPayout = String(formData.get("onlyVerifiedPayout") ?? "") === "true";
-  const payoutBatchId = String(formData.get("payoutBatchId") ?? "").trim();
-  const payoutTxnRef = String(formData.get("payoutTxnRef") ?? "").trim();
-  const paidNote = String(formData.get("paidNote") ?? "").trim();
-  const where = {
-    status: "eligible" as const,
-    paidAt: null,
-    reversedAt: null,
-    order: { deletedAt: null as Date | null, ...(orderStatus ? { status: orderStatus } : {}) },
-    ...(affiliateId ? { affiliateId } : {}),
-    ...(onlyVerifiedPayout ? { affiliate: { payoutVerifiedAt: { not: null } } } : {}),
-  };
-  const affected = await prisma.affiliateCommissionLedger.findMany({
-    where,
-    include: {
-      affiliate: {
-        include: { user: { select: { email: true, displayName: true, name: true } } },
-      },
-      order: { include: { items: true } },
-    },
-  });
-  const now = new Date();
-  await prisma.affiliateCommissionLedger.updateMany({
-    where,
-    data: {
-      status: "paid",
-      paidAt: now,
-      payoutBatchId: payoutBatchId || null,
-      payoutTxnRef: payoutTxnRef || null,
-      paidNote: paidNote || null,
-    },
-  });
-  const grouped = new Map<string, typeof affected>();
-  for (const row of affected) {
-    const list = grouped.get(row.affiliateId) ?? [];
-    list.push(row);
-    grouped.set(row.affiliateId, list);
-  }
-  for (const row of affected) {
-    if (!row.affiliate?.user?.email) continue;
-    const result = await sendAffiliatePaidSummaryEmail({
-      to: row.affiliate.user.email,
-      affiliateName: row.affiliate.user.displayName || row.affiliate.user.name || row.affiliate.user.email,
-      affiliateLoginUrl: `${process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://www.humpbuck.com"}/account/affiliate`,
-      ledgers: [{
-        orderId: row.orderId,
-        commissionCents: row.commissionCents,
-        paidAt: now,
-        payoutBatchId: payoutBatchId || null,
-        payoutTxnRef: payoutTxnRef || null,
-        paidNote: paidNote || null,
-        items: row.order.items.map((item) => ({
-          productSlug: item.productSlug,
-          productName: item.productName,
-          variantId: item.variantId,
-          variantLabel: item.variantLabel,
-          qty: item.qty,
-        })),
-      }],
-    });
-    if (result.ok) {
-      await prisma.affiliateCommissionLedger.update({
-        where: { id: row.id },
-        data: { paidEmailSentAt: now },
-      });
-    }
-  }
-  await Promise.all(Array.from(grouped.keys()).map((id) => syncAffiliateGrowthTierByOrderCount(id)));
-  revalidatePath(adminPath("/affiliate"));
-  redirect(adminPath("/affiliate"));
-}
-
-async function confirmPayoutDetailsAction(formData: FormData) {
-  "use server";
-  await assertAdmin();
-  const profileId = String(formData.get("profileId") ?? "").trim();
-  if (!profileId) goAffiliate("Missing affiliate profile id.");
-  await prisma.affiliateProfile.update({
-    where: { id: profileId },
-    data: {
-      payoutVerifiedAt: new Date(),
-      payoutVerifiedBy: "admin",
-    },
-  });
-  revalidatePath(adminPath("/affiliate"));
-  redirect(adminPath("/affiliate"));
-}
-
 async function markCouponRequestHandledAction(formData: FormData) {
   "use server";
   await assertAdmin();
@@ -607,16 +229,6 @@ async function markCouponRequestHandledAction(formData: FormData) {
   });
   revalidatePath(adminPath("/affiliate"));
   redirect(adminPath("/affiliate?couponRequests=1"));
-}
-
-function asLinks(raw: string): string[] {
-  try {
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.map((x) => String(x)).filter(Boolean);
-  } catch {
-    return [];
-  }
 }
 
 export default async function AdminAffiliatePage({
@@ -654,7 +266,7 @@ export default async function AdminAffiliatePage({
     ...(onlyVerifiedPayout ? { affiliate: { payoutVerifiedAt: { not: null } } } : {}),
   };
 
-  const [tiers, pendingApps, profiles, blacklistedCount, recentAttributedOrders, ledgerSummary, recentLedgers, settlementRows, settlementTotalCount, couponRequests] =
+  const [tiers, pendingApps, profiles, blacklistedCount, settlementRows, settlementTotalCount, couponRequests] =
     await Promise.all([
       prisma.affiliateTier.findMany({ orderBy: [{ isDefault: "desc" }, { createdAt: "asc" }] }),
       prisma.affiliateApplication.findMany({
@@ -674,26 +286,6 @@ export default async function AdminAffiliatePage({
         where: {
           OR: [{ blacklist: true }, { status: "blacklisted" }],
         },
-      }),
-      prisma.order.findMany({
-        where: { affiliateId: { not: null }, deletedAt: null },
-        include: { affiliate: { include: { user: { select: { email: true, displayName: true } } } } },
-        orderBy: { createdAt: "desc" },
-        take: 12,
-      }),
-      prisma.affiliateCommissionLedger.groupBy({
-        by: ["status"],
-        where: { order: { deletedAt: null } },
-        _count: { _all: true },
-      }),
-      prisma.affiliateCommissionLedger.findMany({
-        where: { order: { deletedAt: null } },
-        include: {
-          affiliate: { include: { user: { select: { email: true, displayName: true } } } },
-          order: { select: { id: true, totalCents: true, status: true } },
-        },
-        orderBy: { createdAt: "desc" },
-        take: 12,
       }),
       prisma.affiliateCommissionLedger.findMany({
         where: settlementWhere,
@@ -728,7 +320,6 @@ export default async function AdminAffiliatePage({
   const settlementTotalPages = Math.max(1, Math.ceil(settlementTotalCount / SETTLEMENT_PAGE_SIZE));
   const currentSettlementPage = Math.min(settlePage, settlementTotalPages);
 
-  const blacklistedProfiles = profiles.filter((p) => p.blacklist || p.status === "blacklisted");
   const autoApprovedCount = profiles.filter((p) => p.applications[0]?.status === "auto_approved").length;
   const growthTierList = [...tiers]
     .filter((t) => t.commissionType === "percent")

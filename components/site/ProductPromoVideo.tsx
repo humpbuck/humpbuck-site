@@ -18,7 +18,7 @@ export function ProductPromoVideo({
   embedded?: boolean;
 }) {
   const videoBox = (
-    <div className="relative isolate aspect-[9/16] w-full overflow-hidden rounded-2xl border border-[color:var(--color-line)] bg-paper shadow-sm">
+    <div className="relative isolate aspect-[9/16] w-full overflow-hidden rounded-2xl border border-line bg-paper shadow-sm">
       <video
         className="absolute inset-0 z-0 block h-full w-full object-cover"
         controls
@@ -48,7 +48,7 @@ export function ProductPromoVideo({
   }
 
   return (
-    <section className="mt-16 border-t border-[color:var(--color-line)] pt-14">
+    <section className="mt-16 border-t border-line pt-14">
       <h2 className="text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-muted sm:text-[11px]">
         Product showcase
       </h2>

@@ -39,7 +39,7 @@ export default function ShippingPage() {
         </p>
       </div>
 
-      <hr className="my-10 border-[color:var(--color-line)]" />
+      <hr className="my-10 border-line" />
 
       <div className="space-y-12 text-sm leading-[1.65] text-ink/85">
         <section>
@@ -185,7 +185,7 @@ export default function ShippingPage() {
         <PolicyContactCard />
       </div>
 
-      <p className="mt-12 border-t border-[color:var(--color-line)] pt-8 text-sm text-muted">
+      <p className="mt-12 border-t border-line pt-8 text-sm text-muted">
         Related:{" "}
         <Link href="/refund" className="font-medium text-ink underline-offset-4 hover:underline">
           Refund policy

@@ -57,7 +57,7 @@ export default async function SeriesPage({
       ? "bg-[#070a10] text-white"
       : series.theme === "luxe"
         ? "bg-[#141210] text-white"
-        : "bg-gradient-to-br from-[#151025] to-[#0f1114] text-white";
+        : "bg-linear-to-br from-[#151025] to-[#0f1114] text-white";
 
   return (
     <div>
@@ -72,7 +72,7 @@ export default async function SeriesPage({
             sizes="100vw"
           />
         </div>
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/55 to-black/25" />
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/85 via-black/55 to-black/25" />
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60">

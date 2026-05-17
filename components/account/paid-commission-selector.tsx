@@ -35,7 +35,7 @@ export function PaidCommissionSelector({ rows }: { rows: Row[] }) {
 
   useEffect(() => {
     if (page > totalPages) {
-      setPage(totalPages);
+      queueMicrotask(() => setPage(totalPages));
     }
   }, [page, totalPages]);
 

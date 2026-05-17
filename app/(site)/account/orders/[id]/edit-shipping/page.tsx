@@ -61,13 +61,13 @@ export default async function EditOrderShippingPage({
       <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
         <Link
           href={`/account/orders/${order.id}`}
-          className="font-semibold uppercase tracking-[0.1em] text-ink underline-offset-4 hover:underline"
+          className="font-semibold uppercase tracking-widest text-ink underline-offset-4 hover:underline"
         >
           ← Order details
         </Link>
         <Link
           href="/account/orders"
-          className="font-semibold uppercase tracking-[0.1em] text-ink underline-offset-4 hover:underline"
+          className="font-semibold uppercase tracking-widest text-ink underline-offset-4 hover:underline"
         >
           All orders
         </Link>

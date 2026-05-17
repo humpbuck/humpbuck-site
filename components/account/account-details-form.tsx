@@ -97,7 +97,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
             <input
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-[color:var(--color-line)] bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
+              className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
             />
           </label>
           <label className="block">
@@ -107,7 +107,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
             <input
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-[color:var(--color-line)] bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
+              className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
             />
           </label>
           <label className="block">
@@ -117,7 +117,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
             <input
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-[color:var(--color-line)] bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
+              className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
             />
           </label>
           <label className="block">
@@ -128,7 +128,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
               value={initial.email ?? ""}
               readOnly
               disabled
-              className="mt-1 w-full cursor-not-allowed rounded-xl border border-[color:var(--color-line)] bg-paper/80 px-3 py-2 text-sm text-muted"
+              className="mt-1 w-full cursor-not-allowed rounded-xl border border-line bg-paper/80 px-3 py-2 text-sm text-muted"
             />
             <span className="mt-1 block text-xs text-muted">
               Email changes require support for now.
@@ -168,7 +168,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
               autoComplete="current-password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-[color:var(--color-line)] bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
+              className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
             />
           </label>
           <label className="block">
@@ -180,7 +180,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
               autoComplete="new-password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-[color:var(--color-line)] bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
+              className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
             />
           </label>
           <label className="block">
@@ -192,7 +192,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
               autoComplete="new-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-[color:var(--color-line)] bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
+              className="mt-1 w-full rounded-xl border border-line bg-paper px-3 py-2 text-sm outline-none ring-ink/20 focus:ring-2"
             />
           </label>
           {pwErr && (
@@ -208,7 +208,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
           <button
             type="submit"
             disabled={pwLoading}
-            className="rounded-2xl border border-[color:var(--color-line)] bg-white/70 px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20 disabled:opacity-50"
+            className="rounded-2xl border border-line bg-white/70 px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20 disabled:opacity-50"
           >
             {pwLoading ? "Updating…" : "Update password"}
           </button>
