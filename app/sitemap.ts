@@ -3,8 +3,8 @@ import { seriesList } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getSiteUrl } from "@/lib/seo";
 
-/** Use build time as lastModified instead of current time. */
-const BUILD_TIME = new Date();
+/** Regenerate periodically so new PDP URLs appear without a full redeploy. */
+export const revalidate = 3600;
 
 const STATIC_PATHS: {
   path: string;
@@ -23,17 +23,18 @@ const STATIC_PATHS: {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
+  const lastModified = new Date();
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.map((e) => ({
     url: `${base}${e.path}`,
-    lastModified: BUILD_TIME,
+    lastModified,
     changeFrequency: e.changeFrequency,
     priority: e.priority,
   }));
 
   const seriesEntries: MetadataRoute.Sitemap = seriesList.map((s) => ({
     url: `${base}/series/${encodeURIComponent(s.slug)}`,
-    lastModified: BUILD_TIME,
+    lastModified,
     changeFrequency: "weekly" as const,
     priority: 0.85,
   }));
@@ -41,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await getMergedCatalogProducts();
   const productEntries: MetadataRoute.Sitemap = products.map((p) => ({
     url: `${base}/product/${encodeURIComponent(p.slug)}`,
-    lastModified: BUILD_TIME,
+    lastModified,
     changeFrequency: "weekly" as const,
     priority: 0.8,
   }));

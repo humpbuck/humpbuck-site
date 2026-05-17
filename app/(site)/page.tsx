@@ -38,6 +38,9 @@ export const metadata: Metadata = {
   },
 };
 
+/** Avoid SSG at build with an empty or unreachable DB (same pattern as `/series/[slug]`). */
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const all = await getMergedCatalogProducts();
   const featured = [...all].slice(0, 12);

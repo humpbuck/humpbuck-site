@@ -42,8 +42,9 @@ function asSeriesSlug(v: string): SeriesSlug {
   return "digitemp";
 }
 
-async function getStaticProductsFallback(): Promise<Product[]> {
-  return [];
+/** Storefront has no bundled catalog; empty DB or failed query yields an empty list. */
+function emptyStorefrontCatalog(): Promise<Product[]> {
+  return Promise.resolve([]);
 }
 
 function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
@@ -113,9 +114,8 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
 }
 
 /**
- * Frontend catalog source:
- * - Prefer admin-managed DB products (CatalogProduct).
- * - Return database catalog first and fail closed if the DB query is unavailable.
+ * Frontend catalog source: admin-managed `CatalogProduct` + inventory.
+ * If the table is empty or the query fails, returns [] (no in-repo static fallback).
  */
 export async function getMergedCatalogProducts(): Promise<Product[]> {
   try {
@@ -123,11 +123,11 @@ export async function getMergedCatalogProducts(): Promise<Product[]> {
       prisma.catalogProduct.findMany(),
       prisma.productInventory.findMany(),
     ]);
-    if (dbRows.length === 0) return getStaticProductsFallback();
+    if (dbRows.length === 0) return emptyStorefrontCatalog();
     return dbRows.map((row) => toProduct(row, inventory));
   } catch (e) {
-    console.error("[catalog-db] failed to load CatalogProduct, fallback to static:", e);
-    return getStaticProductsFallback();
+    console.error("[catalog-db] Failed to load CatalogProduct; returning empty storefront catalog.", e);
+    return emptyStorefrontCatalog();
   }
 }
 
@@ -141,8 +141,7 @@ export async function getMergedCatalogProductBySlug(
     ]);
     if (row) return toProduct(row, inventory);
   } catch (e) {
-    console.error("[catalog-db] failed to load CatalogProduct by slug, fallback to static:", e);
+    console.error("[catalog-db] Failed to load CatalogProduct by slug:", slug, e);
   }
-  const fallback = await getStaticProductsFallback();
-  return fallback.find((p) => p.slug === slug);
+  return undefined;
 }
