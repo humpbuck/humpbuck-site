@@ -1,0 +1,106 @@
+import type { ComponentProps } from "react";
+
+type SvgProps = ComponentProps<"svg">;
+
+/** United States — simplified 13 stripes + canton with stylized stars (readable at ~20px width). */
+export function FlagUnitedStates({ className, ...props }: SvgProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 60 30"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      {...props}
+    >
+      <rect width="60" height="30" fill="#B22234" />
+      <path
+        fill="#FFF"
+        d="M0 2.307h60v2.307H0zm0 4.615h60v2.307H0zm0 4.615h60v2.307H0zm0 4.615h60v2.307H0zm0 4.615h60v2.307H0zm0 4.615h60v2.307H0z"
+      />
+      <rect width="24.38" height="16.154" fill="#3C3B6E" />
+      <g fill="#FFF">
+        <circle r="0.55" cx="2.9" cy="2.3" />
+        <circle r="0.55" cx="5.45" cy="2.3" />
+        <circle r="0.55" cx="8" cy="2.3" />
+        <circle r="0.55" cx="10.55" cy="2.3" />
+        <circle r="0.55" cx="13.1" cy="2.3" />
+        <circle r="0.55" cx="15.65" cy="2.3" />
+        <circle r="0.55" cx="18.2" cy="2.3" />
+        <circle r="0.55" cx="20.75" cy="2.3" />
+        <circle r="0.55" cx="4.1" cy="4.85" />
+        <circle r="0.55" cx="6.65" cy="4.85" />
+        <circle r="0.55" cx="9.2" cy="4.85" />
+        <circle r="0.55" cx="11.75" cy="4.85" />
+        <circle r="0.55" cx="14.3" cy="4.85" />
+        <circle r="0.55" cx="16.85" cy="4.85" />
+        <circle r="0.55" cx="19.4" cy="4.85" />
+        <circle r="0.55" cx="21.95" cy="4.85" />
+        <circle r="0.55" cx="2.9" cy="7.45" />
+        <circle r="0.55" cx="5.45" cy="7.45" />
+        <circle r="0.55" cx="8" cy="7.45" />
+        <circle r="0.55" cx="10.55" cy="7.45" />
+        <circle r="0.55" cx="13.1" cy="7.45" />
+        <circle r="0.55" cx="15.65" cy="7.45" />
+        <circle r="0.55" cx="18.2" cy="7.45" />
+        <circle r="0.55" cx="20.75" cy="7.45" />
+        <circle r="0.55" cx="4.1" cy="10.05" />
+        <circle r="0.55" cx="6.65" cy="10.05" />
+        <circle r="0.55" cx="9.2" cy="10.05" />
+        <circle r="0.55" cx="11.75" cy="10.05" />
+        <circle r="0.55" cx="14.3" cy="10.05" />
+        <circle r="0.55" cx="16.85" cy="10.05" />
+        <circle r="0.55" cx="19.4" cy="10.05" />
+        <circle r="0.55" cx="21.95" cy="10.05" />
+        <circle r="0.55" cx="2.9" cy="12.65" />
+        <circle r="0.55" cx="5.45" cy="12.65" />
+        <circle r="0.55" cx="8" cy="12.65" />
+        <circle r="0.55" cx="10.55" cy="12.65" />
+        <circle r="0.55" cx="13.1" cy="12.65" />
+        <circle r="0.55" cx="15.65" cy="12.65" />
+        <circle r="0.55" cx="18.2" cy="12.65" />
+        <circle r="0.55" cx="20.75" cy="12.65" />
+      </g>
+    </svg>
+  );
+}
+
+/** Spain — national flag bands (1:2:1 red / yellow / red); escutcheon omitted for clarity at small sizes. */
+export function FlagSpain({ className, ...props }: SvgProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 30 20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      {...props}
+    >
+      <rect width="30" height="5" fill="#AA151B" />
+      <rect y="5" width="30" height="10" fill="#F1BF00" />
+      <rect y="15" width="30" height="5" fill="#AA151B" />
+    </svg>
+  );
+}
+
+const LOCALE_FLAGS = {
+  en: FlagUnitedStates,
+  es: FlagSpain,
+} as const;
+
+export function LocaleFlagIcon({
+  locale,
+  className,
+}: {
+  locale: string;
+  className?: string;
+}) {
+  const Cmp = LOCALE_FLAGS[locale as keyof typeof LOCALE_FLAGS];
+  if (!Cmp) return null;
+  return (
+    <Cmp
+      className={
+        className ??
+        "h-[0.9rem] w-[1.26rem] shrink-0 rounded-[1px] border border-line/50 shadow-[0_0_0_0.5px_rgba(0,0,0,0.04)]"
+      }
+    />
+  );
+}
