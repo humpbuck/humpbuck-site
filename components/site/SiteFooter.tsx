@@ -1,39 +1,42 @@
-import Link from "next/link";
-
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { CookieSettingsLink } from "@/components/analytics/cookie-settings-link";
 import { publicSupportEmail } from "@/lib/support-contact";
 
-const cols = [
-  {
-    title: "Shop",
-    links: [
-      { label: "All products", href: "/shop" },
-      { label: "DIGI-TEMP", href: "/series/digitemp" },
-      { label: "RM-TONNEAU", href: "/series/tonneau" },
-      { label: "RD-ASTRAL", href: "/series/rd-astral" },
-    ],
-  },
-  {
-    title: "Company",
-    links: [
-      { label: "Wholesale", href: "/wholesale" },
-      { label: "Affiliates", href: "/affiliates" },
-      { label: "About", href: "/about" },
-    ],
-  },
-  {
-    title: "Support",
-    links: [
-      { label: "Shipping & tax", href: "/shipping" },
-      { label: "Refund policy", href: "/refund" },
-      { label: "Privacy policy", href: "/privacy" },
-      { label: "Terms of service", href: "/terms" },
-    ],
-  },
-] as const;
-
-export function SiteFooter() {
+export async function SiteFooter() {
+  const t = await getTranslations("Footer");
   const supportMail = publicSupportEmail();
+  const year = new Date().getFullYear();
+
+  const cols = [
+    {
+      title: t("shopTitle"),
+      links: [
+        { label: t("allProducts"), href: "/shop" },
+        { label: t("linkDigitemp"), href: "/series/digitemp" },
+        { label: t("linkTonneau"), href: "/series/tonneau" },
+        { label: t("linkRdAstral"), href: "/series/rd-astral" },
+      ],
+    },
+    {
+      title: t("companyTitle"),
+      links: [
+        { label: t("wholesale"), href: "/wholesale" },
+        { label: t("affiliates"), href: "/affiliates" },
+        { label: t("about"), href: "/about" },
+      ],
+    },
+    {
+      title: t("supportTitle"),
+      links: [
+        { label: t("shippingTax"), href: "/shipping" },
+        { label: t("refundPolicy"), href: "/refund" },
+        { label: t("privacyPolicy"), href: "/privacy" },
+        { label: t("termsOfService"), href: "/terms" },
+      ],
+    },
+  ] as const;
 
   return (
     <footer className="border-t border-line bg-paper">
@@ -42,14 +45,12 @@ export function SiteFooter() {
           <div className="min-w-0">
             <div className="font-serif text-2xl tracking-tight">HUMPBUCK</div>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted sm:mt-4">
-              DIGI-TEMP ana-digi flagship, RM-TONNEAU barrel-case line, and
-              wholesale factory programs — clear products, clear checkout.
+              {t("tagline")}
             </p>
             <p className="mt-4 text-[11px] uppercase leading-snug tracking-[0.14em] text-muted sm:mt-6 sm:text-xs sm:tracking-[0.16em]">
-              Secure payments · Global shipping · 24/7 support
+              {t("highlights")}
             </p>
           </div>
-          {/* Whole block centered when wider than max-w-2xl; per-column: title centered, links text-left */}
           <div className="flex w-full min-w-0 justify-center">
             <div className="grid w-full min-w-0 max-w-2xl grid-cols-3 gap-x-3 sm:gap-x-8">
               {cols.map((c) => (
@@ -82,15 +83,15 @@ export function SiteFooter() {
           <div className="grid gap-4 sm:grid-cols-[1fr_1.1fr] sm:items-start sm:gap-10">
             <div className="min-w-0 space-y-2.5 text-left">
               <p className="text-[12px] leading-relaxed text-muted">
-                © {new Date().getFullYear()} HUMPBUCK. All rights reserved.
+                {t("copyright", { year })}
               </p>
+              <LocaleSwitcher />
               <div>
                 <CookieSettingsLink />
               </div>
             </div>
             <p className="min-w-0 text-[12px] leading-relaxed text-muted sm:text-balance sm:text-right">
-              Prices, taxes, and shipping are confirmed at checkout. For shipping,
-              refunds, privacy, and terms, see Support above. Questions:{" "}
+              {t("disclaimer")}{" "}
               <a
                 href={`mailto:${supportMail}`}
                 className="break-words text-ink/80 underline underline-offset-2 transition hover:text-ink"

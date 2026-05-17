@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 type Row = {
@@ -23,6 +24,7 @@ export function AffiliateSettlementSelector({
   rows: Row[];
   scopeKey: string;
 }) {
+  const t = useTranslations("AccountAffiliate");
   const [selected, setSelected] = useState<Record<string, number>>({});
   const storageKey = `affiliate_settlement_selected_v1:${scopeKey}`;
 
@@ -76,13 +78,14 @@ export function AffiliateSettlementSelector({
               });
             }}
           />
-          Select all orders on this page
+          {t("settlementUi.selectAll")}
         </label>
         <span>
-          Selected orders: <span className="font-medium tabular-nums">{selectedCount}</span>
+          {t("settlementUi.selectedOrders")}{" "}
+          <span className="font-medium tabular-nums">{selectedCount}</span>
         </span>
         <span>
-          Selected commission:{" "}
+          {t("settlementUi.selectedCommission")}{" "}
           <span className="font-medium tabular-nums">{usd(selectedCommission)}</span>
         </span>
       </div>
@@ -91,13 +94,13 @@ export function AffiliateSettlementSelector({
         <table className="w-full min-w-[820px] text-left text-sm text-ink/90">
           <thead>
             <tr className="border-b border-line text-[10px] uppercase tracking-[0.12em] text-muted">
-              <th className="px-2 py-2">Pick</th>
-              <th className="px-2 py-2">Order</th>
-              <th className="px-2 py-2">Order status</th>
-              <th className="px-2 py-2">Settlement</th>
-              <th className="px-2 py-2">Eligible at</th>
-              <th className="px-2 py-2">Paid / reversed at</th>
-              <th className="px-2 py-2 text-right">Commission</th>
+              <th className="px-2 py-2">{t("settlementUi.colPick")}</th>
+              <th className="px-2 py-2">{t("settlementUi.colOrder")}</th>
+              <th className="px-2 py-2">{t("settlementUi.colOrderStatus")}</th>
+              <th className="px-2 py-2">{t("settlementUi.colSettlement")}</th>
+              <th className="px-2 py-2">{t("settlementUi.colEligibleAt")}</th>
+              <th className="px-2 py-2">{t("settlementUi.colPaidReversed")}</th>
+              <th className="px-2 py-2 text-right">{t("settlementUi.colCommission")}</th>
             </tr>
           </thead>
           <tbody>
@@ -129,7 +132,7 @@ export function AffiliateSettlementSelector({
             {rows.length === 0 ? (
               <tr>
                 <td className="px-2 py-3 text-muted" colSpan={7}>
-                  No orders in this settlement status yet. Keep sharing your affiliate link - your next conversion is coming soon.
+                  {t("settlementUi.empty")}
                 </td>
               </tr>
             ) : null}

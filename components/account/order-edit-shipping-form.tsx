@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
 import { CheckoutAddressForm as CheckoutAddressFormFields } from "@/components/checkout/checkout-address-form";
 import {
   addressFormToRecord,
@@ -10,6 +8,8 @@ import {
   type CheckoutAddressForm,
   validateCheckoutAddressForm,
 } from "@/lib/checkout-address";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
 
 export function OrderEditShippingForm({
   orderId,
@@ -23,6 +23,8 @@ export function OrderEditShippingForm({
   /** Defaults to order detail page */
   cancelHref?: string;
 }) {
+  const t = useTranslations("Account");
+  const tCheckout = useTranslations("CheckoutAddress");
   const backHref = cancelHref ?? `/account/orders/${orderId}`;
   const router = useRouter();
   const [shipping, setShipping] = useState<CheckoutAddressForm>(initial);
@@ -35,12 +37,12 @@ export function OrderEditShippingForm({
     setError(null);
     setOkMsg(null);
     if (!isCheckoutAddressComplete(shipping)) {
-      setError("Please complete all required address fields.");
+      setError(t("editShipErrIncomplete"));
       return;
     }
     const c = validateCheckoutAddressForm(shipping);
     if (!c.ok) {
-      setError(c.error);
+      setError(tCheckout(`validation.${c.errorKey}`));
       return;
     }
     setLoading(true);
@@ -56,37 +58,27 @@ export function OrderEditShippingForm({
         buyerNotified?: boolean;
         unchanged?: boolean;
       };
-      if (!res.ok) throw new Error(data.error || "Update failed");
+      if (!res.ok) throw new Error(data.error || t("editShipErrUpdate"));
       if (data.unchanged) {
         setOkTone("neutral");
-        setOkMsg(
-          "No changes detected — your shipping address was already saved. No emails were sent.",
-        );
+        setOkMsg(t("editShipOkUnchanged"));
         return;
       }
       setOkTone("success");
       const m = data.merchantNotified === true;
       const b = data.buyerNotified === true;
       if (m && b) {
-        setOkMsg(
-          "Shipping address updated. We’ve emailed you a confirmation and notified the shop.",
-        );
+        setOkMsg(t("editShipOkBothNotified"));
       } else if (b && !m) {
-        setOkMsg(
-          "Shipping address updated. We emailed you a confirmation; the shop notification could not be sent.",
-        );
+        setOkMsg(t("editShipOkBuyerOnly"));
       } else if (m && !b) {
-        setOkMsg(
-          "Shipping address updated. The shop was notified; we could not send a confirmation to your email.",
-        );
+        setOkMsg(t("editShipOkMerchantOnly"));
       } else {
-        setOkMsg(
-          "Shipping address updated. Email notifications could not be sent — we still saved your address.",
-        );
+        setOkMsg(t("editShipOkNeither"));
       }
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Error");
+      setError(e instanceof Error ? e.message : t("profileGenericError"));
     } finally {
       setLoading(false);
     }
@@ -96,14 +88,13 @@ export function OrderEditShippingForm({
     return (
       <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-950">
         <p>
-          This order can no longer be edited here (for example, it may not be
-          paid yet, or a tracking number has already been added).
+          {t("editShipCannotEdit")}
         </p>
         <Link
           href={backHref}
           className="mt-3 inline-block text-xs font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4 hover:underline"
         >
-          Back
+          {t("editShipBack")}
         </Link>
       </div>
     );
@@ -113,7 +104,7 @@ export function OrderEditShippingForm({
     <div className="mt-6 space-y-6">
       <CheckoutAddressFormFields
         idPrefix="order-ship"
-        title="Shipping address"
+        title={t("editShipFormTitle")}
         value={shipping}
         onChange={setShipping}
       />
@@ -146,13 +137,13 @@ export function OrderEditShippingForm({
           onClick={() => void save()}
           className="rounded-2xl bg-ink px-8 py-3.5 text-[12px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90 disabled:opacity-50"
         >
-          {loading ? "Saving…" : "Save shipping address"}
+          {loading ? t("editShipSaving") : t("editShipSave")}
         </button>
         <Link
           href={backHref}
           className="text-xs font-semibold uppercase tracking-[0.12em] text-muted underline-offset-4 hover:text-ink hover:underline"
         >
-          Cancel
+          {t("editShipCancel")}
         </Link>
       </div>
     </div>

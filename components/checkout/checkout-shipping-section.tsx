@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { quoteCheckoutShipping, type ShippingMethodId } from "@/lib/checkout-shipping-quote";
 
 type Props = {
@@ -14,15 +15,14 @@ type Props = {
 
 const METHODS: Array<{
   id: ShippingMethodId;
-  label: string;
-  badge?: string;
+  badge?: "RECOMMENDED" | "GOOD_VALUE";
 }> = [
-  { id: "cainiao", label: "Cainiao International", badge: "RECOMMENDED" },
-  { id: "yanwen", label: "Yanwen Logistics", badge: "GOOD VALUE" },
-  { id: "dhl", label: "DHL Express" },
-  { id: "fedex", label: "FedEx" },
-  { id: "ups", label: "UPS" },
-  { id: "usps", label: "USPS" },
+  { id: "cainiao", badge: "RECOMMENDED" },
+  { id: "yanwen", badge: "GOOD_VALUE" },
+  { id: "dhl" },
+  { id: "fedex" },
+  { id: "ups" },
+  { id: "usps" },
 ];
 
 export function CheckoutShippingSection({
@@ -33,6 +33,7 @@ export function CheckoutShippingSection({
   onMethodChange,
   shippingPostalCode,
 }: Props) {
+  const t = useTranslations("CheckoutShipping");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -53,13 +54,32 @@ export function CheckoutShippingSection({
 
   const quoteFor = (id: ShippingMethodId) => quotes[id as keyof typeof quotes];
 
+  const methodLabel = (id: ShippingMethodId) => {
+    switch (id) {
+      case "cainiao":
+        return t("methodCainiao");
+      case "yanwen":
+        return t("methodYanwen");
+      case "dhl":
+        return t("methodDhl");
+      case "fedex":
+        return t("methodFedex");
+      case "ups":
+        return t("methodUps");
+      case "usps":
+        return t("methodUsps");
+      default:
+        return id;
+    }
+  };
+
   if (!mounted) {
     return (
       <div className="rounded-2xl border border-line bg-white/60 p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-sm font-semibold text-ink">Shipping Fee</h2>
-            <p className="mt-1 text-xs text-muted">Loading shipping options…</p>
+            <h2 className="text-sm font-semibold text-ink">{t("feeTitle")}</h2>
+            <p className="mt-1 text-xs text-muted">{t("loadingOptions")}</p>
           </div>
         </div>
       </div>
@@ -70,14 +90,19 @@ export function CheckoutShippingSection({
     <div className="rounded-2xl border border-line bg-white/60 p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-sm font-semibold text-ink">Choose shipping route</h2>
+          <h2 className="text-sm font-semibold text-ink">{t("chooseRoute")}</h2>
           <p className="mt-1 text-xs text-muted">
-            Pick the route the customer will actually use. Country: {countryLabel || "—"} · State: {shippingState || "—"} · Units: {totalUnits} · Postal code: {shippingPostalCode || "—"}
+            {t("routeMeta", {
+              country: countryLabel || "—",
+              state: shippingState || "—",
+              units: totalUnits,
+              postal: shippingPostalCode || "—",
+            })}
           </p>
         </div>
       </div>
       <div className="mt-3 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs text-muted">
-        Selected route will be saved with the order and used for recalculation.
+        {t("saveNote")}
       </div>
 
       <div className="mt-4 space-y-3">
@@ -86,9 +111,11 @@ export function CheckoutShippingSection({
           const quote = quoteFor(item.id);
           const priceText = quote.ok
             ? quote.shippingUsdCents <= 0
-              ? "Free Shipping"
-              : `Shipping Fee: $${(quote.shippingUsdCents / 100).toFixed(2)}`
-            : "Shipping Fee: Unavailable";
+              ? t("freeShipping")
+              : t("shippingFee", {
+                  amount: `$${(quote.shippingUsdCents / 100).toFixed(2)}`,
+                })
+            : t("shippingUnavailable");
           return (
             <button
               key={item.id}
@@ -99,17 +126,21 @@ export function CheckoutShippingSection({
             >
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <div className="text-sm font-medium text-ink">{item.label}</div>
+                  <div className="text-sm font-medium text-ink">{methodLabel(item.id)}</div>
                   {item.badge ? (
                     <span
                       className={`inline-flex items-center rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] ${item.badge === "RECOMMENDED" ? "bg-[#e7f1ed] text-[#0f5c4e]" : "bg-[#e8eff4] text-[#165d87]"}`}
                     >
-                      {item.badge}
+                      {item.badge === "RECOMMENDED"
+                        ? t("badgeRecommended")
+                        : t("badgeGoodValue")}
                     </span>
                   ) : null}
                 </div>
                 <div className="mt-1 text-xs text-muted">{priceText}</div>
-                {!quote.ok ? <div className="mt-1 text-[11px] text-amber-800">Not available for this destination.</div> : null}
+                {!quote.ok ? (
+                  <div className="mt-1 text-[11px] text-amber-800">{t("notForDestination")}</div>
+                ) : null}
               </div>
               <div className="ml-3 flex h-6 w-6 shrink-0 items-center justify-center">
                 <div className={`flex h-5 w-5 items-center justify-center rounded-full border ${active ? "border-ink bg-ink" : "border-line bg-white"}`}>

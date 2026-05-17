@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
 import { auth } from "@/auth";
 import { getProductBySlug } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
@@ -91,7 +91,7 @@ export async function POST(req: Request) {
         imageUrlsJson: JSON.stringify(imageUrls),
       },
     });
-    revalidatePath(`/product/${encodeURIComponent(productSlug)}`);
+    revalidateStorefrontPath(`/product/${encodeURIComponent(productSlug)}`);
     return NextResponse.json({ id: review.id });
   } catch {
     return NextResponse.json(

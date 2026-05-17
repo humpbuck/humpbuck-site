@@ -1,25 +1,16 @@
 "use client";
 
 import { MessageCircle } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { usePathname } from "@/i18n/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { CenterModal } from "@/components/ui/center-modal";
 import { FAB_SHOW_AFTER_SCROLL_PX } from "@/lib/floating-actions";
 import {
   WHATSAPP_DISPLAY,
   WHATSAPP_URL,
-  whatsappInquiryHref,
+  whatsappHrefWithBody,
 } from "@/lib/whatsapp";
-
-function pageUrlForPathname(pathname: string): string {
-  const base = (process.env.NEXT_PUBLIC_APP_URL || "")
-    .replace(/\/$/, "")
-    .trim();
-  if (base) return `${base}${pathname}`;
-  if (typeof window !== "undefined")
-    return `${window.location.origin}${pathname}`;
-  return "";
-}
 
 function isHomePathname(pathname: string | null): boolean {
   return pathname === "/";
@@ -33,28 +24,26 @@ function isHomePathname(pathname: string | null): boolean {
  * show.
  */
 export function WhatsAppFloatingButton() {
+  const t = useTranslations("WhatsAppFab");
+  const tProduct = useTranslations("Product");
   const pathname = usePathname();
   const isHome = isHomePathname(pathname);
   const [href, setHref] = useState(WHATSAPP_URL);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  /**
-   * Only on `/`: `false` until the user has scrolled down past the threshold
-   * at least once; then stays `true` (latched) even when scroll returns to 0.
-   */
   const [homeFabRevealed, setHomeFabRevealed] = useState(false);
 
   const fabVisible = !isHome || homeFabRevealed;
 
   useEffect(() => {
     queueMicrotask(() => {
-      const pageUrl = pageUrlForPathname(pathname);
-      if (pageUrl) {
-        setHref(whatsappInquiryHref({ kind: "page", pageUrl }));
-      } else {
-        setHref(WHATSAPP_URL);
-      }
+      const pageUrl = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+      setHref(
+        whatsappHrefWithBody(
+          tProduct("whatsappPrefillPage", { url: pageUrl }),
+        ),
+      );
     });
-  }, [pathname]);
+  }, [pathname, tProduct]);
 
   useEffect(() => {
     if (!isHome) {
@@ -85,7 +74,7 @@ export function WhatsAppFloatingButton() {
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none translate-y-2 opacity-0"
         }`}
-        aria-label="Contact HUMPBUCK on WhatsApp"
+        aria-label={t("ariaContact")}
         aria-haspopup="dialog"
         aria-expanded={confirmOpen}
         aria-hidden={!fabVisible}
@@ -99,17 +88,11 @@ export function WhatsAppFloatingButton() {
 
       {confirmOpen && (
         <CenterModal
-          title="Open WhatsApp?"
+          title={t("modalTitle")}
           onClose={() => setConfirmOpen(false)}
         >
           <p className="text-sm leading-relaxed text-ink/85">
-            This will open <strong>WhatsApp</strong> so you can message
-            HUMPBUCK at{" "}
-            <span className="font-medium text-ink tabular-nums">
-              {WHATSAPP_DISPLAY}
-            </span>
-            . A short line about this page may be included. Do you want to
-            continue?
+            {t("modalBody", { phone: WHATSAPP_DISPLAY })}
           </p>
           <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end sm:gap-3">
             <button
@@ -117,14 +100,14 @@ export function WhatsAppFloatingButton() {
               onClick={() => setConfirmOpen(false)}
               className="rounded-full border border-line bg-paper px-5 py-2.5 text-sm font-semibold text-ink/85 transition hover:bg-ink/4"
             >
-              Cancel
+              {t("cancel")}
             </button>
             <button
               type="button"
               onClick={openWhatsapp}
               className="rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#20bd5a]"
             >
-              Open WhatsApp
+              {t("confirm")}
             </button>
           </div>
         </CenterModal>

@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import {
   sanitizeAffiliatePayoutWhatsappContact,
@@ -68,6 +69,7 @@ export function AffiliatePayoutDetailsForm({
   cancelHref,
   showSaveSuccess = false,
 }: Props) {
+  const t = useTranslations("AccountAffiliate");
   const defaultWhatsappPhone = splitPhoneForInput(defaultWhatsapp);
   const defaultAccountClean = stripEmbeddedWhatsAppFromPayoutAccount(defaultPayoutAccount);
   const [payoutMethod, setPayoutMethod] = useState(defaultPayoutMethod);
@@ -156,23 +158,21 @@ export function AffiliatePayoutDetailsForm({
   const isInternationalBank = isBank && bankTransferScope === "international";
   const dynamicPlaceholder =
     payoutMethod === "paypal"
-      ? "Please enter PayPal account (email)"
+      ? t("payoutForm.placeholderPaypal")
       : payoutMethod === "alipay"
-        ? "Please enter Alipay account"
+        ? t("payoutForm.placeholderAlipay")
         : payoutMethod === "bank"
-          ? "Please enter bank name, account number, and real name"
+          ? t("payoutForm.placeholderBank")
           : payoutMethod === "wise" || payoutMethod === "payoneer"
-            ? "Please enter registered email"
-            : "Describe your preferred payout method";
+            ? t("payoutForm.placeholderWisePayoneer")
+            : t("payoutForm.placeholderOther");
   const SCROLL_STORAGE_KEY = "affiliate_payout_submit_scroll_y";
 
   return (
     <form
       action={action}
       onSubmit={(e) => {
-        const ok = window.confirm(
-          "Please confirm your payout details are correct. Incorrect details may delay or fail commission payout.",
-        );
+        const ok = window.confirm(t("payoutForm.confirm"));
         if (!ok) {
           e.preventDefault();
           return;
@@ -201,18 +201,15 @@ export function AffiliatePayoutDetailsForm({
         }}
         className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
       >
-        <option value="">Select payout method</option>
-        <option value="paypal">PayPal</option>
-        <option value="alipay">Alipay</option>
-        <option value="wise">Wise</option>
-        <option value="bank">Bank account</option>
-        <option value="payoneer">Payoneer</option>
-        <option value="other">Other</option>
+        <option value="">{t("payoutForm.selectMethod")}</option>
+        <option value="paypal">{t("payoutPaypal")}</option>
+        <option value="alipay">{t("payoutAlipay")}</option>
+        <option value="wise">{t("payoutWise")}</option>
+        <option value="bank">{t("payoutBank")}</option>
+        <option value="payoneer">{t("payoutPayoneer")}</option>
+        <option value="other">{t("payoutOther")}</option>
       </select>
-      <p className="text-xs text-muted md:col-span-2">
-        Tip: Alipay/PayPal are usually faster. Bank transfer may take 1-3 business days. Receiving-side
-        processing fees are borne by the receiver.
-      </p>
+      <p className="text-xs text-muted md:col-span-2">{t("payoutForm.tip")}</p>
 
       {!isBank ? (
         isFreeText ? (
@@ -223,8 +220,8 @@ export function AffiliatePayoutDetailsForm({
               isOther
                 ? dynamicPlaceholder
                 : payoutMethod === "wise" || payoutMethod === "payoneer"
-                  ? "Please enter Wise/Payoneer registered email (double-check spelling)"
-                  : `${dynamicPlaceholder} (recipient/account/email/ID)`
+                  ? t("payoutForm.placeholderWisePayoneerCheck")
+                  : t("payoutForm.placeholderFreeTextDetail", { hint: dynamicPlaceholder })
             }
             rows={3}
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
@@ -235,7 +232,7 @@ export function AffiliatePayoutDetailsForm({
             onChange={(e) => setDirectAccount(e.target.value)}
             placeholder={
               payoutMethod === "wise" || payoutMethod === "payoneer"
-                ? "Please enter Wise/Payoneer registered email (double-check spelling)"
+                ? t("payoutForm.placeholderWisePayoneerCheck")
                 : dynamicPlaceholder
             }
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
@@ -248,19 +245,19 @@ export function AffiliatePayoutDetailsForm({
             onChange={(e) => setBankTransferScope(e.target.value as "domestic" | "international")}
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           >
-            <option value="domestic">Domestic bank transfer (CN)</option>
-            <option value="international">International bank transfer</option>
+            <option value="domestic">{t("payoutForm.bankDomestic")}</option>
+            <option value="international">{t("payoutForm.bankInternational")}</option>
           </select>
           <input
             value={realName}
             onChange={(e) => setRealName(e.target.value)}
-            placeholder="Real name (must match bank card holder)"
+            placeholder={t("payoutForm.realNameBank")}
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           />
           <input
             value={accountNumber}
             onChange={(e) => setAccountNumber(e.target.value)}
-            placeholder="Bank account number / IBAN"
+            placeholder={t("payoutForm.accountNumber")}
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           />
         </div>
@@ -271,7 +268,7 @@ export function AffiliatePayoutDetailsForm({
           <input
             value={bankName}
             onChange={(e) => setBankName(e.target.value)}
-            placeholder="Bank name"
+            placeholder={t("payoutForm.bankName")}
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           />
           <input
@@ -279,8 +276,8 @@ export function AffiliatePayoutDetailsForm({
             onChange={(e) => setBranch(e.target.value)}
             placeholder={
               isInternationalBank
-                ? "Branch (optional)"
-                : "Branch (optional but recommended for domestic transfer)"
+                ? t("payoutForm.branchOptionalIntl")
+                : t("payoutForm.branchOptionalDomestic")
             }
             className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           />
@@ -289,13 +286,13 @@ export function AffiliatePayoutDetailsForm({
               <input
                 value={swiftCode}
                 onChange={(e) => setSwiftCode(e.target.value)}
-                placeholder="SWIFT / BIC code"
+                placeholder={t("payoutForm.swift")}
                 className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
               />
               <input
                 value={bankAddress}
                 onChange={(e) => setBankAddress(e.target.value)}
-                placeholder="Bank address"
+                placeholder={t("payoutForm.bankAddress")}
                 className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2 md:col-span-2"
               />
             </>
@@ -307,15 +304,14 @@ export function AffiliatePayoutDetailsForm({
         <input
           value={realName}
           onChange={(e) => setRealName(e.target.value)}
-          placeholder="Real name (required for Alipay verification)"
+          placeholder={t("payoutForm.realNameAlipay")}
           className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
       ) : null}
 
       {isOther ? (
         <p className="md:col-span-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
-          If your payout method is not listed, please leave your contact details below. We will contact
-          you to confirm the payout method.
+          {t("payoutForm.otherNotice")}
         </p>
       ) : null}
 
@@ -323,7 +319,7 @@ export function AffiliatePayoutDetailsForm({
         <input
           value={recipientName}
           onChange={(e) => setRecipientName(e.target.value)}
-          placeholder="Recipient name (for payout verification)"
+          placeholder={t("payoutForm.recipientName")}
           className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
       ) : null}
@@ -331,7 +327,7 @@ export function AffiliatePayoutDetailsForm({
       <input
         name="payoutEmail"
         defaultValue={defaultPayoutEmail}
-        placeholder="Contact email for settlement"
+        placeholder={t("payoutForm.contactEmail")}
         className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
       />
       <div className="grid grid-cols-[120px_1fr] gap-2">
@@ -340,7 +336,7 @@ export function AffiliatePayoutDetailsForm({
           value={whatsappCountryCode}
           list={PHONE_COUNTRY_CODE_DATALIST_ID}
           inputMode="tel"
-          placeholder="+1"
+          placeholder={t("payoutForm.phoneCountryPlaceholder")}
           onChange={(e) => setWhatsappCountryCode(normalizeCountryCodeInput(e.target.value))}
           className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
@@ -349,19 +345,19 @@ export function AffiliatePayoutDetailsForm({
           value={whatsappLocal}
           onChange={(e) => setWhatsappLocal(e.target.value)}
           inputMode="numeric"
-          placeholder="Telephone number"
+          placeholder={t("payoutForm.telephone")}
           className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
       </div>
       <div className="rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus-within:ring-2 md:col-span-2">
-        <span className="font-medium text-ink/90">WhatsApp: </span>
+        <span className="font-medium text-ink/90">{t("payoutForm.whatsappLabel")} </span>
         <input
           name="whatsappContact"
           value={whatsappContact}
           onChange={(e) =>
             setWhatsappContact(sanitizeAffiliatePayoutWhatsappContact(e.target.value))
           }
-          placeholder="+86 180 2429 0526"
+          placeholder={t("payoutForm.whatsappPlaceholder")}
           className="w-[calc(100%-88px)] border-0 bg-transparent p-0 text-sm text-ink outline-none"
         />
       </div>
@@ -381,18 +377,18 @@ export function AffiliatePayoutDetailsForm({
           type="submit"
           className="inline-flex items-center justify-center rounded-xl bg-ink px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
         >
-          Save payout details
+          {t("payoutForm.save")}
         </button>
         <Link
           href={cancelHref}
           scroll={false}
           className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20"
         >
-          Cancel
+          {t("payoutForm.cancel")}
         </Link>
         {showSaveSuccess ? (
           <span className="inline-flex items-center rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-[11px] font-medium text-sky-900">
-            Saved successfully.
+            {t("payoutForm.savedSuccess")}
           </span>
         ) : null}
       </div>

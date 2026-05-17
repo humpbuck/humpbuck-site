@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Country, State, City } from "country-state-city";
 import type { CheckoutAddressForm as CheckoutAddressFormValue } from "@/lib/checkout-address";
 import { SPECIAL_CITY_OPTIONS } from "@/lib/special-city-options";
@@ -56,6 +57,8 @@ export function CheckoutAddressForm({
   onChange: (next: CheckoutAddressFormValue) => void;
   idPrefix: string;
 }) {
+  const t = useTranslations("CheckoutAddress");
+  const tTax = useTranslations("TaxId");
   const initialPhone = parsePhoneValue(value.phone);
   const initialCountryIso2 = useMemo(
     () => Country.getAllCountries().find((item) => item.name === value.country || item.isoCode === value.country)?.isoCode || DEFAULT_COUNTRY,
@@ -214,17 +217,17 @@ export function CheckoutAddressForm({
     <div className="rounded-2xl border border-line bg-white/60 p-5">
       <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">{title}</h2>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <Field id={`${idPrefix}-firstName`} label="First name" required value={value.firstName} onChange={(v) => onChange({ ...value, firstName: v })} />
-        <Field id={`${idPrefix}-lastName`} label="Last name" required value={value.lastName} onChange={(v) => onChange({ ...value, lastName: v })} />
-        <Field id={`${idPrefix}-company`} className="sm:col-span-2" label="Company name (optional)" value={value.company} onChange={(v) => onChange({ ...value, company: v })} />
+        <Field id={`${idPrefix}-firstName`} label={t("firstName")} required value={value.firstName} onChange={(v) => onChange({ ...value, firstName: v })} />
+        <Field id={`${idPrefix}-lastName`} label={t("lastName")} required value={value.lastName} onChange={(v) => onChange({ ...value, lastName: v })} />
+        <Field id={`${idPrefix}-company`} className="sm:col-span-2" label={t("company")} value={value.company} onChange={(v) => onChange({ ...value, company: v })} />
 
         <PickerField
           id={`${idPrefix}-country`}
-          label="Country / Region"
+          label={t("country")}
           value={countryText}
           open={countryOpen}
           options={countryOptions}
-          placeholder="Type or choose country"
+          placeholder={t("countryPlaceholder")}
           autoComplete="country-name"
           onOpen={() => {
             setCountryText("");
@@ -249,17 +252,17 @@ export function CheckoutAddressForm({
           renderOption={(item) => `${item.label} (${item.iso2})`}
         />
 
-        <Field id={`${idPrefix}-line1`} className="sm:col-span-2" label="Street address" required value={value.line1} onChange={(v) => onChange({ ...value, line1: v })} />
-        <Field id={`${idPrefix}-line2`} className="sm:col-span-2" label="Apartment, suite, unit, etc. (optional)" value={value.line2} onChange={(v) => onChange({ ...value, line2: v })} />
+        <Field id={`${idPrefix}-line1`} className="sm:col-span-2" label={t("street")} required value={value.line1} onChange={(v) => onChange({ ...value, line1: v })} />
+        <Field id={`${idPrefix}-line2`} className="sm:col-span-2" label={t("line2")} value={value.line2} onChange={(v) => onChange({ ...value, line2: v })} />
 
         {hasStates && !useFreeStateInput ? (
           <PickerField
             id={`${idPrefix}-state`}
-            label="State / Province"
+            label={t("state")}
             value={stateText}
             open={stateOpen}
             options={stateOptions}
-            placeholder="Type or choose state"
+            placeholder={t("statePlaceholder")}
             autoComplete="address-level1"
             onOpen={() => {
               setStateText("");
@@ -281,7 +284,7 @@ export function CheckoutAddressForm({
         ) : (
           <Field
             id={`${idPrefix}-state`}
-            label="State / Province"
+            label={t("state")}
             value={stateText}
             onChange={(next) => {
               setStateText(next);
@@ -294,11 +297,11 @@ export function CheckoutAddressForm({
 
         <PickerField
           id={`${idPrefix}-city`}
-          label="Town / City"
+          label={t("city")}
           value={cityText}
           open={cityOpen}
           options={cityOptions}
-          placeholder={countryIso2 === "AX" ? "Type or choose municipality" : "Type or choose city"}
+          placeholder={countryIso2 === "AX" ? t("cityPlaceholderMuni") : t("cityPlaceholder")}
           autoComplete="address-level2"
           onOpen={() => {
             setCityText("");
@@ -321,7 +324,7 @@ export function CheckoutAddressForm({
         <div className="relative sm:col-span-2">
           <label className="block">
             <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
-              Phone <span className="text-rose-600">*</span>
+              {t("phone")} <span className="text-rose-600">*</span>
             </span>
             <div className="mt-1.5 grid grid-cols-[120px_1fr] gap-3">
               <div className="relative z-30">
@@ -385,15 +388,22 @@ export function CheckoutAddressForm({
                   onChange({ ...value, phone: formatPhoneValue(phoneCodeInput || phoneCodeCommitted || "+1", next) });
                 }}
                 className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-                placeholder="Phone number"
+                placeholder={t("phonePlaceholder")}
                 autoComplete="tel-national"
               />
             </div>
           </label>
         </div>
 
-        <Field id={`${idPrefix}-postalCode`} label="Postcode / ZIP" required value={value.postalCode} onChange={(v) => onChange({ ...value, postalCode: v })} />
-        <Field id={`${idPrefix}-taxId`} label={taxIdRule.label} required={taxIdRule.required} value={value.taxId} onChange={(v) => onChange({ ...value, taxId: v })} placeholder={taxIdRule.placeholder} />
+        <Field id={`${idPrefix}-postalCode`} label={t("postalCode")} required value={value.postalCode} onChange={(v) => onChange({ ...value, postalCode: v })} />
+        <Field
+          id={`${idPrefix}-taxId`}
+          label={tTax(`${taxIdRule.ruleKey}.label` as "fallback.label" | "BR.label" | "KR.label" | "MX.label" | "NO.label" | "AR.label" | "CL.label")}
+          required={taxIdRule.required}
+          value={value.taxId}
+          onChange={(v) => onChange({ ...value, taxId: v })}
+          placeholder={tTax(`${taxIdRule.ruleKey}.placeholder` as "fallback.placeholder" | "BR.placeholder" | "KR.placeholder" | "MX.placeholder" | "NO.placeholder" | "AR.placeholder" | "CL.placeholder")}
+        />
       </div>
     </div>
   );

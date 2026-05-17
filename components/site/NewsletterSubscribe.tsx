@@ -1,10 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 type Status = "idle" | "loading" | "success" | "error";
 
 export function NewsletterSubscribe() {
+  const t = useTranslations("Newsletter");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
@@ -16,7 +18,7 @@ export function NewsletterSubscribe() {
     const trimmed = email.trim();
     if (!trimmed) {
       setStatus("error");
-      setMessage("Please enter your email.");
+      setMessage(t("enterEmail"));
       return;
     }
 
@@ -39,19 +41,17 @@ export function NewsletterSubscribe() {
       if (res.ok && data.ok) {
         setStatus("success");
         setMessage(
-          data.already
-            ? "You’re already on the list — thanks for checking in."
-            : "Thanks — you’re subscribed.",
+          data.already ? t("alreadyOnList") : t("thanksSubscribed"),
         );
         setEmail("");
         return;
       }
 
       setStatus("error");
-      setMessage(data.error ?? "Something went wrong. Please try again.");
+      setMessage(data.error ?? t("genericError"));
     } catch {
       setStatus("error");
-      setMessage("Network error. Please try again.");
+      setMessage(t("networkError"));
     }
   }
 
@@ -63,14 +63,14 @@ export function NewsletterSubscribe() {
     >
       <div className="flex w-full flex-col gap-2 sm:flex-1">
         <label className="sr-only" htmlFor="newsletter-email">
-          Email
+          {t("emailLabel")}
         </label>
         <input
           id="newsletter-email"
           name="email"
           type="email"
           autoComplete="email"
-          placeholder="Email address"
+          placeholder={t("placeholder")}
           value={email}
           disabled={status === "loading"}
           onChange={(e) => {
@@ -99,7 +99,7 @@ export function NewsletterSubscribe() {
         disabled={status === "loading"}
         className="shrink-0 rounded-2xl bg-ink px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90 disabled:opacity-60 sm:mt-0"
       >
-        {status === "loading" ? "…" : "Subscribe"}
+        {status === "loading" ? t("submitting") : t("subscribe")}
       </button>
     </form>
   );

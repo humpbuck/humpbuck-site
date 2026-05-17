@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 
 export function AffiliateLinkGenerator({
@@ -9,9 +10,12 @@ export function AffiliateLinkGenerator({
   pid: string;
   siteBaseUrl: string;
 }) {
+  const t = useTranslations("AccountAffiliate");
   const [rawUrl, setRawUrl] = useState("");
   const [generated, setGenerated] = useState("");
   const [copyState, setCopyState] = useState<"idle" | "done" | "error">("idle");
+
+  const baseTrim = siteBaseUrl.replace(/\/+$/, "");
 
   const preview = useMemo(() => {
     const base = rawUrl.trim() || siteBaseUrl;
@@ -41,7 +45,7 @@ export function AffiliateLinkGenerator({
         <input
           value={rawUrl}
           onChange={(e) => setRawUrl(e.target.value)}
-          placeholder={`${siteBaseUrl}/product/your-slug`}
+          placeholder={t("linkGen.placeholderExample", { base: baseTrim })}
           className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         />
         <button
@@ -55,14 +59,14 @@ export function AffiliateLinkGenerator({
           disabled={!preview}
           className="inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Generate & Copy
+          {t("linkGen.generateCopy")}
         </button>
       </div>
       <div className="grid gap-2 md:grid-cols-[1fr_auto]">
         <input
           readOnly
           value={generated || ""}
-          placeholder={`Generated tracking link will appear here (PID: ${pid})`}
+          placeholder={t("linkGen.placeholderResult", { pid })}
           className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-xs text-ink/90 outline-none"
         />
         <button
@@ -70,17 +74,20 @@ export function AffiliateLinkGenerator({
           onClick={() => generated && void copy(generated)}
           disabled={!generated}
           className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20 disabled:cursor-not-allowed disabled:opacity-50"
-          title="Copy generated link"
+          title={t("linkGen.copyTitleAttr")}
         >
-          {copyState === "done" ? "Copied" : copyState === "error" ? "Copy failed" : "Copy"}
+          {copyState === "done"
+            ? t("linkGen.copied")
+            : copyState === "error"
+              ? t("linkGen.copyFailedShort")
+              : t("linkGen.copy")}
         </button>
       </div>
       {copyState === "done" ? (
-        <p className="text-xs text-emerald-700">Copy successful.</p>
+        <p className="text-xs text-emerald-700">{t("linkGen.copySuccessMsg")}</p>
       ) : copyState === "error" ? (
-        <p className="text-xs text-rose-700">Copy failed. Please try again.</p>
+        <p className="text-xs text-rose-700">{t("linkGen.copyErrorMsg")}</p>
       ) : null}
     </div>
   );
 }
-

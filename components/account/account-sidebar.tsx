@@ -1,15 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
-const links = [
-  { href: "/account", label: "Overview" },
-  { href: "/account/orders", label: "Orders" },
-  { href: "/account/addresses", label: "Addresses" },
-  { href: "/account/subscribe", label: "Subscribe" },
-  { href: "/account/affiliate", label: "Affiliate" },
-  { href: "/account/details", label: "Account details" },
+const NAV_LINKS = [
+  { href: "/account", msgKey: "navOverview" as const },
+  { href: "/account/orders", msgKey: "navOrders" as const },
+  { href: "/account/addresses", msgKey: "navAddresses" as const },
+  { href: "/account/subscribe", msgKey: "navSubscribe" as const },
+  { href: "/account/affiliate", msgKey: "navAffiliate" as const },
+  { href: "/account/details", msgKey: "navDetails" as const },
 ] as const;
 
 function isActive(href: string, pathname: string): boolean {
@@ -19,16 +19,17 @@ function isActive(href: string, pathname: string): boolean {
 
 export function AccountSidebar() {
   const pathname = usePathname();
+  const t = useTranslations("Account");
 
   return (
     <nav
       className="flex flex-wrap gap-2 border-b border-line pb-6 lg:w-56 lg:flex-col lg:flex-nowrap lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8"
-      aria-label="Account"
+      aria-label={t("navAriaLabel")}
     >
       <p className="hidden w-full text-[10px] font-semibold uppercase tracking-[0.2em] text-muted lg:mb-3 lg:block">
-        My account
+        {t("navHeading")}
       </p>
-      {links.map(({ href, label }) => (
+      {NAV_LINKS.map(({ href, msgKey }) => (
         <Link
           key={href}
           href={href}
@@ -38,7 +39,7 @@ export function AccountSidebar() {
               : "text-ink/75 hover:bg-ink/4 hover:text-ink"
           }`}
         >
-          {label}
+          {t(msgKey)}
         </Link>
       ))}
     </nav>

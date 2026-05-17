@@ -22,6 +22,11 @@ export function whatsappInquiryHref(ctx: WhatsAppInquiryContext): string {
     ctx.kind === "product"
       ? `Hi, I have a question about ${ctx.productName}:\n${ctx.pageUrl}`
       : `Hi, I have a question about this page:\n${ctx.pageUrl}`;
+  return whatsappHrefWithBody(body);
+}
+
+/** Build a `wa.me` link with an arbitrary (UTF-8) message body. */
+export function whatsappHrefWithBody(body: string): string {
   const text = encodeURIComponent(body);
   return `https://wa.me/${publicWhatsAppE164()}?text=${text}`;
 }

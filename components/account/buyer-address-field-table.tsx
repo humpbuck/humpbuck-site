@@ -1,12 +1,14 @@
+import { getTranslations } from "next-intl/server";
 import type { BuyerAddressFieldRow } from "@/lib/account-buyer-order";
 
-export function BuyerAddressFieldTable({
+export async function BuyerAddressFieldTable({
   rows,
 }: {
   rows: BuyerAddressFieldRow[];
 }) {
+  const t = await getTranslations("Account");
   if (rows.length === 0) {
-    return <p className="mt-3 text-sm text-muted">No address on file.</p>;
+    return <p className="mt-3 text-sm text-muted">{t("addressTableEmpty")}</p>;
   }
 
   return (
@@ -15,10 +17,10 @@ export function BuyerAddressFieldTable({
         <thead>
           <tr className="border-b border-line">
             <th className="py-2 pr-4 text-xs font-semibold uppercase tracking-wide text-muted">
-              Field name
+              {t("addressTableFieldName")}
             </th>
             <th className="py-2 text-xs font-semibold uppercase tracking-wide text-muted">
-              Content
+              {t("addressTableContent")}
             </th>
           </tr>
         </thead>

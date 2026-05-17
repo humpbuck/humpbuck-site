@@ -1,6 +1,7 @@
 "use client";
 
 import { Check } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
@@ -21,6 +22,7 @@ export function ProductCartSection({
   price: number;
   variant?: ProductVariantOption | null;
 }) {
+  const t = useTranslations("Product");
   const { addItem, openCartDrawer } = useCart();
   const addButtonRef = useRef<HTMLButtonElement>(null);
   const [addedTick, setAddedTick] = useState(0);
@@ -96,22 +98,24 @@ export function ProductCartSection({
             {showAdded ? (
               <>
                 <Check className="size-4 shrink-0 stroke-[2.5]" aria-hidden />
-                Added to bag
+                {t("addedToBag")}
               </>
             ) : canAdd ? (
-              "Add to bag"
+              t("addToBag")
             ) : (
-              "Out of stock"
+              t("outOfStock")
             )}
           </button>
           <WhatsAppChatLink
             productName={name}
             className="inline-flex min-h-[48px] w-full min-w-0 flex-1 items-center justify-center rounded-2xl border border-line bg-white/70 px-5 py-3.5 text-center text-[12px] font-semibold uppercase tracking-[0.12em] text-ink/80 transition hover:border-ink/20 sm:px-6"
-          />
+          >
+            {t("chatWhatsApp")}
+          </WhatsAppChatLink>
         </div>
         {showAdded && (
           <p className="text-[13px] text-muted">
-            Review your bag in the panel — or keep browsing here.
+            {t("addedHint")}
           </p>
         )}
       </div>

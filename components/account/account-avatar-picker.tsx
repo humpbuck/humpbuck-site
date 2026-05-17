@@ -2,12 +2,13 @@
 
 import imageCompression from "browser-image-compression";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { getSession } from "next-auth/react";
+import { PresetAvatarImage } from "@/components/account/preset-avatar-image";
+import { useRouter } from "@/i18n/navigation";
 import { shouldUnoptimizeAvatarUrl } from "@/lib/avatar-cdn";
 import { BUYER_AVATAR_PRESET_URLS } from "@/lib/avatar-presets";
-import { PresetAvatarImage } from "@/components/account/preset-avatar-image";
+import { useTranslations } from "next-intl";
+import { getSession } from "next-auth/react";
+import { useState } from "react";
 
 type Props = {
   initialImage: string | null;
@@ -15,6 +16,7 @@ type Props = {
 
 export function AccountAvatarPicker({ initialImage }: Props) {
   const router = useRouter();
+  const t = useTranslations("Account");
   const [image, setImage] = useState<string | null>(initialImage);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -31,13 +33,13 @@ export function AccountAvatarPicker({ initialImage }: Props) {
         body: JSON.stringify({ image: next }),
       });
       const data = (await res.json()) as { error?: string };
-      if (!res.ok) throw new Error(data.error || "Could not update photo");
+      if (!res.ok) throw new Error(data.error || t("avatarErrUpdate"));
       setImage(next);
-      setOk(next ? "Profile photo updated." : "Photo removed.");
+      setOk(next ? t("avatarOkUpdated") : t("avatarOkRemoved"));
       router.refresh();
       await getSession();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Error");
+      setErr(e instanceof Error ? e.message : t("profileGenericError"));
     } finally {
       setBusy(false);
     }
@@ -68,7 +70,7 @@ export function AccountAvatarPicker({ initialImage }: Props) {
       const out =
         blob instanceof File ? blob : new Blob([blob], { type: "image/webp" });
       if (out.size > 600 * 1024) {
-        throw new Error("Photo is still too large after compression.");
+        throw new Error(t("avatarErrTooLarge"));
       }
 
       const pre = await fetch("/api/account/avatar/presign", {
@@ -81,7 +83,7 @@ export function AccountAvatarPicker({ initialImage }: Props) {
       });
       if (!pre.ok) {
         const j = (await pre.json().catch(() => ({}))) as { error?: string };
-        throw new Error(j.error || "Could not prepare upload");
+        throw new Error(j.error || t("avatarErrPresign"));
       }
       const { uploadUrl, publicUrl } = (await pre.json()) as {
         uploadUrl: string;
@@ -93,7 +95,7 @@ export function AccountAvatarPicker({ initialImage }: Props) {
         body: out,
         headers: { "Content-Type": "image/webp" },
       });
-      if (!put.ok) throw new Error("Upload failed");
+      if (!put.ok) throw new Error(t("avatarErrUpload"));
 
       const save = await fetch("/api/account/profile", {
         method: "PATCH",
@@ -101,14 +103,14 @@ export function AccountAvatarPicker({ initialImage }: Props) {
         body: JSON.stringify({ image: publicUrl }),
       });
       const saveData = (await save.json()) as { error?: string };
-      if (!save.ok) throw new Error(saveData.error || "Could not save profile");
+      if (!save.ok) throw new Error(saveData.error || t("avatarErrSave"));
 
       setImage(publicUrl);
-      setOk("Profile photo updated.");
+      setOk(t("avatarOkUpdated"));
       router.refresh();
       await getSession();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Error");
+      setErr(e instanceof Error ? e.message : t("profileGenericError"));
     } finally {
       setBusy(false);
     }
@@ -117,15 +119,17 @@ export function AccountAvatarPicker({ initialImage }: Props) {
   return (
     <section className="rounded-2xl border border-line bg-paper/60 p-6">
       <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-ink/85">
-        Profile photo
+        {t("avatarTitle")}
       </h2>
       <p className="mt-2 max-w-lg text-sm text-muted">
-        If you do not use a custom photo, we show your{" "}
-        <strong className="font-medium text-ink/90">Gravatar</strong> for this
-        email (header and reviews). Choose one of 30 built-in avatars
-        (hosted on our CDN) or upload your own. Uploads are compressed to WebP
-        in your browser, then stored in R2 under{" "}
-        <code className="rounded bg-paper px-1 text-xs">Avatar/</code>.
+        {t.rich("avatarIntro", {
+          gravatar: (chunks) => (
+            <strong className="font-medium text-ink/90">{chunks}</strong>
+          ),
+          code: (chunks) => (
+            <code className="rounded bg-paper px-1 text-xs">{chunks}</code>
+          ),
+        })}
       </p>
 
       <div className="mt-6 flex flex-wrap items-center gap-6">
@@ -149,7 +153,7 @@ export function AccountAvatarPicker({ initialImage }: Props) {
         <div className="flex flex-col gap-2">
           <label className="inline-flex cursor-pointer">
             <span className="rounded-xl border border-line bg-white/80 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/25">
-              {busy ? "Working…" : "Upload photo"}
+              {busy ? t("avatarWorking") : t("avatarUpload")}
             </span>
             <input
               type="file"
@@ -170,7 +174,7 @@ export function AccountAvatarPicker({ initialImage }: Props) {
               onClick={() => void onRemove()}
               className="text-left text-xs font-semibold text-muted underline-offset-4 hover:text-ink hover:underline disabled:opacity-50"
             >
-              Remove photo
+              {t("avatarRemove")}
             </button>
           ) : null}
         </div>
@@ -178,7 +182,7 @@ export function AccountAvatarPicker({ initialImage }: Props) {
 
       <div className="mt-6">
         <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          30 built-in avatars
+          {t("avatarBuiltInHeading")}
         </p>
         <div className="mt-3 flex max-h-56 flex-wrap gap-2 overflow-y-auto pr-1">
           {BUYER_AVATAR_PRESET_URLS.map((url) => (
@@ -192,7 +196,7 @@ export function AccountAvatarPicker({ initialImage }: Props) {
                   ? "ring-ink"
                   : "ring-transparent hover:ring-ink/30"
               } disabled:opacity-50`}
-              aria-label="Choose built-in avatar"
+              aria-label={t("avatarChooseBuiltinAria")}
             >
               <PresetAvatarImage src={url} sizes="48px" />
             </button>

@@ -1,7 +1,9 @@
 "use client";
 
 import { signOut } from "next-auth/react";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
+import { storefrontHomePath } from "@/lib/storefront-home-path";
 
 type Profile = {
   firstName: string | null;
@@ -13,6 +15,9 @@ type Profile = {
 };
 
 export function AccountDetailsForm({ initial }: { initial: Profile }) {
+  const locale = useLocale();
+  const t = useTranslations("Account");
+  const signOutCallbackUrl = storefrontHomePath(locale);
   const [firstName, setFirstName] = useState(initial.firstName ?? "");
   const [lastName, setLastName] = useState(initial.lastName ?? "");
   const [displayName, setDisplayName] = useState(initial.displayName ?? "");
@@ -43,10 +48,10 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
         }),
       });
       const data = (await res.json()) as { error?: string };
-      if (!res.ok) throw new Error(data.error || "Save failed");
-      setProfileMsg("Profile updated.");
+      if (!res.ok) throw new Error(data.error || t("profileSaveFailed"));
+      setProfileMsg(t("profileUpdated"));
     } catch (e) {
-      setProfileErr(e instanceof Error ? e.message : "Error");
+      setProfileErr(e instanceof Error ? e.message : t("profileGenericError"));
     } finally {
       setProfileLoading(false);
     }
@@ -57,7 +62,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
     setPwErr(null);
     setPwMsg(null);
     if (newPassword !== confirmPassword) {
-      setPwErr("New password and confirmation do not match.");
+      setPwErr(t("profilePasswordMismatch"));
       return;
     }
     setPwLoading(true);
@@ -71,13 +76,13 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
         }),
       });
       const data = (await res.json()) as { error?: string };
-      if (!res.ok) throw new Error(data.error || "Could not update password");
-      setPwMsg("Password updated.");
+      if (!res.ok) throw new Error(data.error || t("profilePasswordUpdateFailed"));
+      setPwMsg(t("profilePasswordUpdated"));
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (e) {
-      setPwErr(e instanceof Error ? e.message : "Error");
+      setPwErr(e instanceof Error ? e.message : t("profileGenericError"));
     } finally {
       setPwLoading(false);
     }
@@ -87,12 +92,12 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
     <div className="space-y-14">
       <section>
         <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-ink/85">
-          Account details
+          {t("profileSectionAccount")}
         </h2>
         <form onSubmit={saveProfile} className="mt-6 max-w-md space-y-4">
           <label className="block">
             <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-              First name
+              {t("profileLabelFirstName")}
             </span>
             <input
               value={firstName}
@@ -102,7 +107,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
           </label>
           <label className="block">
             <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-              Last name
+              {t("profileLabelLastName")}
             </span>
             <input
               value={lastName}
@@ -112,7 +117,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
           </label>
           <label className="block">
             <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-              Display name
+              {t("profileLabelDisplayName")}
             </span>
             <input
               value={displayName}
@@ -122,7 +127,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
           </label>
           <label className="block">
             <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-              Email address
+              {t("profileLabelEmail")}
             </span>
             <input
               value={initial.email ?? ""}
@@ -131,7 +136,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
               className="mt-1 w-full cursor-not-allowed rounded-xl border border-line bg-paper/80 px-3 py-2 text-sm text-muted"
             />
             <span className="mt-1 block text-xs text-muted">
-              Email changes require support for now.
+              {t("profileEmailReadonlyHint")}
             </span>
           </label>
           {profileErr && (
@@ -149,19 +154,19 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
             disabled={profileLoading}
             className="rounded-2xl bg-ink px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90 disabled:opacity-50"
           >
-            {profileLoading ? "Saving…" : "Save profile"}
+            {profileLoading ? t("profileSaving") : t("profileSaveButton")}
           </button>
         </form>
       </section>
 
       <section>
         <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-ink/85">
-          Password
+          {t("profileSectionPassword")}
         </h2>
         <form onSubmit={changePassword} className="mt-6 max-w-md space-y-4">
           <label className="block">
             <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-              Current password
+              {t("profileLabelCurrentPassword")}
             </span>
             <input
               type="password"
@@ -173,7 +178,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
           </label>
           <label className="block">
             <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-              New password
+              {t("profileLabelNewPassword")}
             </span>
             <input
               type="password"
@@ -185,7 +190,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
           </label>
           <label className="block">
             <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-              Confirm new password
+              {t("profileLabelConfirmPassword")}
             </span>
             <input
               type="password"
@@ -210,21 +215,21 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
             disabled={pwLoading}
             className="rounded-2xl border border-line bg-white/70 px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:border-ink/20 disabled:opacity-50"
           >
-            {pwLoading ? "Updating…" : "Update password"}
+            {pwLoading ? t("profilePasswordUpdating") : t("profilePasswordSubmit")}
           </button>
         </form>
       </section>
 
       <section>
         <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-ink/85">
-          Session
+          {t("profileSectionSession")}
         </h2>
         <button
           type="button"
-          onClick={() => void signOut({ callbackUrl: "/" })}
+          onClick={() => void signOut({ callbackUrl: signOutCallbackUrl })}
           className="mt-4 rounded-2xl bg-ink px-6 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
         >
-          Sign out
+          {t("profileSignOut")}
         </button>
       </section>
     </div>

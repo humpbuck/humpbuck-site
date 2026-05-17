@@ -1,24 +1,26 @@
 "use client";
 
-import Link from "next/link";
+import { Link, usePathname } from "@/i18n/navigation";
 import { Menu, ShoppingBag, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
-import { usePathname, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState, useSyncExternalStore } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import { AccountMenu } from "@/components/site/AccountMenu";
 import { HeaderUserAvatar } from "@/components/site/HeaderUserAvatar";
 import { buildLoginHref } from "@/lib/auth-callback-url";
+import { storefrontHomePath } from "@/lib/storefront-home-path";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
 
-const nav = [
-  { label: "Shop", href: "/shop" },
-  { label: "DIGI-TEMP", href: "/series/digitemp" },
-  { label: "RM-TONNEAU", href: "/series/tonneau" },
-  { label: "RD-ASTRAL", href: "/series/rd-astral" },
-  { label: "Affiliates", href: "/affiliates" },
-  { label: "Video tutorial", href: "/video-tutorial" },
-  { label: "About", href: "/about" },
+const NAV_ITEMS = [
+  { labelKey: "shop", href: "/shop" },
+  { labelKey: "seriesDigitemp", href: "/series/digitemp" },
+  { labelKey: "seriesTonneau", href: "/series/tonneau" },
+  { labelKey: "seriesRdAstral", href: "/series/rd-astral" },
+  { labelKey: "affiliates", href: "/affiliates" },
+  { labelKey: "videoTutorial", href: "/video-tutorial" },
+  { labelKey: "about", href: "/about" },
 ] as const;
 
 function HeaderLoginLink({
@@ -30,18 +32,22 @@ function HeaderLoginLink({
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const t = useTranslations("Navigation");
   return (
     <Link
       href={buildLoginHref(pathname, searchParams)}
       onClick={onNavigate}
       className={className}
     >
-      Login
+      {t("login")}
     </Link>
   );
 }
 
 export function SiteHeader() {
+  const t = useTranslations("Navigation");
+  const locale = useLocale();
+  const signOutCallbackUrl = storefrontHomePath(locale);
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [bagBump, setBagBump] = useState(false);
@@ -54,10 +60,12 @@ export function SiteHeader() {
   const { data: session, status } = useSession();
   const displayItemCount = hydrated ? itemCount : 0;
 
+  const navItems = useMemo(() => NAV_ITEMS, []);
+
   const accountAvatarLabel =
     session?.user?.name?.trim() ||
     session?.user?.email?.split("@")[0]?.trim() ||
-    "Account";
+    t("accountFallback");
 
   useEffect(() => {
     const onAdded = () => {
@@ -93,8 +101,6 @@ export function SiteHeader() {
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex items-center gap-3">
-            {/* When drawer is open, hide the header control (z-50) so it does not overlay the
-                drawer label; close via the X inside the panel or the backdrop. */}
             {open ? (
               <div
                 className="shrink-0 rounded-lg p-2 md:hidden"
@@ -106,7 +112,7 @@ export function SiteHeader() {
               <button
                 type="button"
                 className="rounded-lg p-2 text-ink/80 hover:bg-ink/[0.04] hover:text-ink md:hidden"
-                aria-label="Open menu"
+                aria-label={t("openMenu")}
                 onClick={() => setOpen(true)}
               >
                 <Menu size={22} />
@@ -121,13 +127,13 @@ export function SiteHeader() {
           </div>
 
           <nav className="hidden items-center gap-7 lg:flex">
-            {nav.map((item) => (
+            {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 className="text-[12px] font-medium uppercase tracking-[0.14em] text-ink/75 transition hover:text-ink"
               >
-                {item.label}
+                {t(item.labelKey)}
               </Link>
             ))}
           </nav>
@@ -148,7 +154,7 @@ export function SiteHeader() {
                     href="/auth/login"
                     className="hidden rounded-full px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/75 transition hover:text-ink md:inline-flex"
                   >
-                    Login
+                    {t("login")}
                   </Link>
                 }
               >
@@ -163,17 +169,16 @@ export function SiteHeader() {
                 if (e.animationName === "cart-bump") setBagBump(false);
               }}
               className={`inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90 ${bagBump ? "animate-cart-bump" : ""}`}
-              aria-label={`Open shopping bag, ${displayItemCount} items`}
+              aria-label={t("openBag", { count: displayItemCount })}
             >
               <ShoppingBag size={16} strokeWidth={1.75} />
-              <span className="hidden sm:inline">Bag</span>
+              <span className="hidden sm:inline">{t("bag")}</span>
               <span className="tabular-nums">{displayItemCount}</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile drawer */}
       <div
         className={`fixed inset-0 z-40 bg-ink/40 backdrop-blur-sm transition-opacity md:hidden ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
@@ -187,7 +192,7 @@ export function SiteHeader() {
         }`}
         role="dialog"
         aria-modal="true"
-        aria-label="Main navigation"
+        aria-label={t("mainNav")}
         aria-hidden={!open}
       >
         <div className="flex h-16 min-w-0 items-center justify-between border-b border-line px-3 sm:px-4">
@@ -202,20 +207,20 @@ export function SiteHeader() {
             type="button"
             className="shrink-0 rounded-lg p-2 text-ink/70 hover:bg-ink/[0.04] active:bg-ink/10"
             onClick={() => setOpen(false)}
-            aria-label="Close menu"
+            aria-label={t("closeMenu")}
           >
             <X size={22} />
           </button>
         </div>
         <nav className="flex flex-col p-2">
-          {nav.map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
               className="rounded-xl px-4 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-ink/85 hover:bg-ink/[0.04]"
             >
-              {item.label}
+              {t(item.labelKey)}
             </Link>
           ))}
           <Link
@@ -223,14 +228,14 @@ export function SiteHeader() {
             onClick={() => setOpen(false)}
             className="mt-4 rounded-xl px-4 py-3 text-sm text-muted hover:bg-ink/[0.04]"
           >
-            Shipping & tax
+            {t("shippingTax")}
           </Link>
           <Link
             href="/refund"
             onClick={() => setOpen(false)}
             className="rounded-xl px-4 py-3 text-sm text-muted hover:bg-ink/[0.04]"
           >
-            Refunds
+            {t("refunds")}
           </Link>
           <button
             type="button"
@@ -240,7 +245,7 @@ export function SiteHeader() {
             }}
             className="w-full rounded-xl px-4 py-3 text-left text-sm font-semibold text-ink/85 hover:bg-ink/[0.04]"
           >
-            Bag ({displayItemCount})
+            {t("bagWithCount", { count: displayItemCount })}
           </button>
           {status === "authenticated" ? (
             <>
@@ -256,17 +261,17 @@ export function SiteHeader() {
                   label={accountAvatarLabel}
                   size={36}
                 />
-                My account
+                {t("myAccount")}
               </Link>
               <button
                 type="button"
                 onClick={() => {
                   setOpen(false);
-                  void signOut({ callbackUrl: "/" });
+                  void signOut({ callbackUrl: signOutCallbackUrl });
                 }}
                 className="w-full rounded-xl px-4 py-3 text-left text-sm font-semibold text-muted hover:bg-ink/[0.04]"
               >
-                Sign out
+                {t("signOut")}
               </button>
             </>
           ) : (
@@ -277,7 +282,7 @@ export function SiteHeader() {
                   onClick={() => setOpen(false)}
                   className="mt-2 block rounded-xl px-4 py-3 text-sm font-semibold text-ink/85 hover:bg-ink/[0.04]"
                 >
-                  Login
+                  {t("login")}
                 </Link>
               }
             >

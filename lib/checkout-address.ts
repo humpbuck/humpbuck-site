@@ -15,6 +15,35 @@ export type CheckoutAddressForm = {
 
 export type CheckoutAddressRecord = Record<string, string>;
 
+export type CheckoutAddressValidationErrorKey =
+  | "firstNameRequired"
+  | "lastNameRequired"
+  | "streetRequired"
+  | "cityRequired"
+  | "stateRequired"
+  | "postalRequired"
+  | "countryRequired";
+
+const CHECKOUT_ADDRESS_VALIDATION_EN: Record<
+  CheckoutAddressValidationErrorKey,
+  string
+> = {
+  firstNameRequired: "First name is required",
+  lastNameRequired: "Last name is required",
+  streetRequired: "Street address is required",
+  cityRequired: "City is required",
+  stateRequired: "State / Province is required",
+  postalRequired: "Postcode / ZIP is required",
+  countryRequired: "Country / Region is required",
+};
+
+/** English message for API / server logs (storefront UI should use next-intl keys under `CheckoutAddress.validation`). */
+export function formatCheckoutAddressValidationEnglish(
+  key: CheckoutAddressValidationErrorKey,
+): string {
+  return CHECKOUT_ADDRESS_VALIDATION_EN[key];
+}
+
 export function isAddressRecordComplete(record: CheckoutAddressRecord): boolean {
   return Boolean(
     record.firstName?.trim() &&
@@ -35,14 +64,18 @@ export function checkoutFormFromOrderRecord(address: CheckoutAddressRecord | nul
   return checkoutFormFromSavedAddress(address);
 }
 
-export function validateCheckoutAddressForm(form: CheckoutAddressForm): { ok: true } | { ok: false; error: string } {
-  if (!form.firstName.trim()) return { ok: false, error: "First name is required" };
-  if (!form.lastName.trim()) return { ok: false, error: "Last name is required" };
-  if (!form.line1.trim()) return { ok: false, error: "Street address is required" };
-  if (!form.city.trim()) return { ok: false, error: "City is required" };
-  if (!form.state.trim()) return { ok: false, error: "State / Province is required" };
-  if (!form.postalCode.trim()) return { ok: false, error: "Postcode / ZIP is required" };
-  if (!form.country.trim()) return { ok: false, error: "Country / Region is required" };
+export function validateCheckoutAddressForm(
+  form: CheckoutAddressForm,
+):
+  | { ok: true }
+  | { ok: false; errorKey: CheckoutAddressValidationErrorKey } {
+  if (!form.firstName.trim()) return { ok: false, errorKey: "firstNameRequired" };
+  if (!form.lastName.trim()) return { ok: false, errorKey: "lastNameRequired" };
+  if (!form.line1.trim()) return { ok: false, errorKey: "streetRequired" };
+  if (!form.city.trim()) return { ok: false, errorKey: "cityRequired" };
+  if (!form.state.trim()) return { ok: false, errorKey: "stateRequired" };
+  if (!form.postalCode.trim()) return { ok: false, errorKey: "postalRequired" };
+  if (!form.country.trim()) return { ok: false, errorKey: "countryRequired" };
   return { ok: true };
 }
 

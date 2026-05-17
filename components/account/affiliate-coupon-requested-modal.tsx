@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { CenterModal } from "@/components/ui/center-modal";
 
@@ -10,6 +11,7 @@ export function AffiliateCouponRequestedModal({
   show: boolean;
   requestId?: string;
 }) {
+  const t = useTranslations("AccountAffiliate");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -32,17 +34,14 @@ export function AffiliateCouponRequestedModal({
 
   if (!open) return null;
   return (
-    <CenterModal title="Coupon request submitted" onClose={() => setOpen(false)}>
-      <p className="text-sm leading-relaxed text-ink/90">
-        Your coupon code request has been sent to admin. Please wait for review and approval. The coupon
-        code will appear here automatically once it is created and bound to your account.
-      </p>
+    <CenterModal title={t("couponModal.title")} onClose={() => setOpen(false)}>
+      <p className="text-sm leading-relaxed text-ink/90">{t("couponModal.body")}</p>
       <button
         type="button"
         onClick={() => setOpen(false)}
         className="mt-5 rounded-xl bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper hover:bg-ink/90"
       >
-        Got it
+        {t("couponModal.ok")}
       </button>
     </CenterModal>
   );

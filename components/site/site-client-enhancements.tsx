@@ -43,6 +43,12 @@ const SiteFloatingActions = dynamic(
   { ssr: false },
 );
 
+const LocaleSwitcherFab = dynamic(
+  () =>
+    import("@/components/site/LocaleSwitcherFab").then((m) => m.LocaleSwitcherFab),
+  { ssr: false },
+);
+
 export function SiteClientEnhancements() {
   const [ready, setReady] = useState(false);
 
@@ -80,6 +86,7 @@ export function SiteClientEnhancements() {
       <GoogleAnalyticsPageviews />
       <TrackPageView />
       <AttributionCapture />
+      <LocaleSwitcherFab />
       <SiteFloatingActions />
     </>
   );

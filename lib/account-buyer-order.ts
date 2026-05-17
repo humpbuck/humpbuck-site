@@ -11,12 +11,37 @@ export type BuyerAddressFieldRow = {
   href?: string;
 };
 
+export type BuyerAddressFieldLabels = {
+  name: string;
+  company: string;
+  streetAddress: string;
+  city: string;
+  stateFullName: string;
+  zip: string;
+  country: string;
+  phoneNumber: string;
+  email: string;
+};
+
+const DEFAULT_BUYER_ADDRESS_FIELD_LABELS: BuyerAddressFieldLabels = {
+  name: "Name",
+  company: "Company",
+  streetAddress: "Street address",
+  city: "City",
+  stateFullName: "State (full name)",
+  zip: "ZIP code",
+  country: "Country",
+  phoneNumber: "Phone number",
+  email: "Email",
+};
+
 /**
  * Field / content rows for shipping or billing (matches admin-style breakdown).
  */
 export function buyerOrderAddressFieldRows(
   rec: Record<string, string> | null,
   orderEmail: string,
+  labels: BuyerAddressFieldLabels = DEFAULT_BUYER_ADDRESS_FIELD_LABELS,
 ): BuyerAddressFieldRow[] {
   if (!rec || Object.keys(rec).length === 0) return [];
 
@@ -40,27 +65,27 @@ export function buyerOrderAddressFieldRows(
   const email = orderEmail.trim();
 
   const rows: BuyerAddressFieldRow[] = [
-    { label: "Name", value: name || "—" },
-    { label: "Company", value: company || "—" },
-    { label: "Street address", value: street || "—" },
-    { label: "City", value: city || "—" },
-    { label: "State (full name)", value: stateFull },
-    { label: "ZIP code", value: zip },
-    { label: "Country", value: country },
+    { label: labels.name, value: name || "—" },
+    { label: labels.company, value: company || "—" },
+    { label: labels.streetAddress, value: street || "—" },
+    { label: labels.city, value: city || "—" },
+    { label: labels.stateFullName, value: stateFull },
+    { label: labels.zip, value: zip },
+    { label: labels.country, value: country },
   ];
 
   if (phoneFmt) {
     rows.push({
-      label: "Phone number",
+      label: labels.phoneNumber,
       value: phoneFmt.display,
       href: phoneFmt.telHref,
     });
   } else {
-    rows.push({ label: "Phone number", value: "—" });
+    rows.push({ label: labels.phoneNumber, value: "—" });
   }
 
   rows.push({
-    label: "Email",
+    label: labels.email,
     value: email || "—",
     href: email ? `mailto:${email}` : undefined,
   });
@@ -87,6 +112,25 @@ export function buyerOrderStatusLabel(status: string): string {
     default:
       return status;
   }
+}
+
+const BUYER_ORDER_STATUS_I18N_KEYS = new Set([
+  "pending_payment",
+  "paid",
+  "processing",
+  "shipped",
+  "delivered",
+  "cancelled",
+  "refunded",
+]);
+
+/** Buyer-facing status label using next-intl `OrderStatus` messages when available. */
+export function buyerOrderStatusForLocale(
+  status: string,
+  t: (key: string) => string,
+): string {
+  if (BUYER_ORDER_STATUS_I18N_KEYS.has(status)) return t(status);
+  return status;
 }
 
 export function canBuyerEditShipping(order: {

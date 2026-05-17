@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Minus, Plus, X } from "lucide-react";
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useCart } from "@/components/cart/cart-context";
@@ -11,6 +12,7 @@ import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
 const CART_QTY_MAX = 9999;
 
 export function CartDrawer() {
+  const t = useTranslations("Cart");
   const { items, setQty, removeItem, cartDrawerOpen, closeCartDrawer } = useCart();
   const hydrated = useSyncExternalStore(
     () => () => {},
@@ -56,7 +58,7 @@ export function CartDrawer() {
         className={`absolute inset-0 bg-ink/40 backdrop-blur-sm transition-opacity duration-300 ${
           cartDrawerOpen ? "opacity-100" : "opacity-0"
         }`}
-        aria-label="Close bag"
+        aria-label={t("closeBagOverlayAria")}
         onClick={closeCartDrawer}
       />
       <div
@@ -69,25 +71,23 @@ export function CartDrawer() {
       >
         <div className="flex items-center justify-between border-b border-line px-4 py-4">
           <h2 id="cart-drawer-title" className="font-serif text-xl tracking-tight text-ink">
-            Bag
+            {t("title")}
           </h2>
           <button
             ref={closeBtnRef}
             type="button"
             onClick={closeCartDrawer}
             className="rounded-lg p-2 text-ink/70 transition hover:bg-ink/[0.06]"
-            aria-label="Close"
+            aria-label={t("closeAria")}
           >
             <X size={22} />
           </button>
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
-          <p className="mb-3 text-xs text-muted">
-            Guest checkout available — no account required. Fill shipping address and phone at checkout.
-          </p>
+          <p className="mb-3 text-xs text-muted">{t("drawerGuestHint")}</p>
           {displayItems.length === 0 ? (
-            <p className="text-sm text-muted">Your bag is empty. Add items from a product page.</p>
+            <p className="text-sm text-muted">{t("drawerEmpty")}</p>
           ) : (
             <ul className="space-y-4">
               {displayItems.map((line) => {
@@ -137,13 +137,14 @@ export function CartDrawer() {
                         <p className="mt-0.5 text-xs text-muted">{line.variantLabel}</p>
                       )}
                       <p className="mt-1 text-xs tabular-nums text-muted">
-                        {formatPrice(typeof line.unitPrice === "number" ? line.unitPrice : 0)} each
+                        {formatPrice(typeof line.unitPrice === "number" ? line.unitPrice : 0)}{" "}
+                        {t("each")}
                       </p>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         <div className="inline-flex items-stretch overflow-hidden rounded-lg border border-line bg-paper">
                           <button
                             type="button"
-                            aria-label={line.qty <= 1 ? "Remove from bag" : "Decrease quantity"}
+                            aria-label={line.qty <= 1 ? t("removeFromBagAria") : t("decreaseQtyAria")}
                             onClick={() => {
                               if (line.qty <= 1) {
                                 removeItem(line.slug, line.variantId);
@@ -162,7 +163,7 @@ export function CartDrawer() {
                             step={1}
                             inputMode="numeric"
                             value={line.qty}
-                            aria-label="Quantity"
+                            aria-label={t("qtyInputAria")}
                             onChange={(e) => {
                               const n = Number(e.target.value);
                               if (!Number.isFinite(n)) return;
@@ -173,7 +174,7 @@ export function CartDrawer() {
                           />
                           <button
                             type="button"
-                            aria-label="Increase quantity"
+                            aria-label={t("increaseQtyAria")}
                             disabled={line.qty >= CART_QTY_MAX}
                             onClick={() =>
                               setQty(line.slug, Math.min(CART_QTY_MAX, line.qty + 1), line.variantId)
@@ -188,7 +189,7 @@ export function CartDrawer() {
                           onClick={() => removeItem(line.slug, line.variantId)}
                           className="text-[11px] font-semibold uppercase tracking-widest text-muted hover:text-ink"
                         >
-                          Remove
+                          {t("remove")}
                         </button>
                       </div>
                     </div>
@@ -204,7 +205,9 @@ export function CartDrawer() {
 
         <div className="border-t border-line bg-paper px-4 py-4">
           {displayItems.length > 0 && (
-            <p className="mb-4 text-base font-semibold tabular-nums">Subtotal {formatPrice(subtotal)}</p>
+            <p className="mb-4 text-base font-semibold tabular-nums">
+              {t("subtotal")} {formatPrice(subtotal)}
+            </p>
           )}
           <div className="flex flex-col gap-2">
             {displayItems.length > 0 && (
@@ -213,7 +216,7 @@ export function CartDrawer() {
                 onClick={closeCartDrawer}
                 className="inline-flex w-full items-center justify-center rounded-2xl bg-ink px-6 py-3.5 text-center text-[12px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
               >
-                Checkout
+                {t("checkout")}
               </Link>
             )}
             <Link
@@ -221,7 +224,7 @@ export function CartDrawer() {
               onClick={closeCartDrawer}
               className="inline-flex w-full items-center justify-center rounded-2xl border border-line bg-white px-6 py-3.5 text-center text-[12px] font-bold uppercase tracking-[0.14em] text-ink transition hover:bg-ink/[0.03]"
             >
-              View bag
+              {t("viewBag")}
             </Link>
           </div>
         </div>

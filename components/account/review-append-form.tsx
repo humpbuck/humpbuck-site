@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { compressReviewImageToWebP } from "@/lib/review-image-compress-webp";
-import { useRouter } from "next/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 type Props = {
@@ -13,6 +13,7 @@ type Props = {
 
 export function ReviewAppendForm({ reviewId, productSlug, productName }: Props) {
   const router = useRouter();
+  const t = useTranslations("AccountReview");
   const [body, setBody] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
@@ -40,7 +41,7 @@ export function ReviewAppendForm({ reviewId, productSlug, productName }: Props) 
         });
         if (!pre.ok) {
           const j = (await pre.json().catch(() => ({}))) as { error?: string };
-          throw new Error(j.error || "Could not prepare upload");
+          throw new Error(j.error || t("errGeneric"));
         }
         const j = (await pre.json()) as {
           uploadUrl?: string;
@@ -57,7 +58,7 @@ export function ReviewAppendForm({ reviewId, productSlug, productName }: Props) 
           });
           if (!put.ok) {
             const errJ = (await put.json().catch(() => ({}))) as { error?: string };
-            throw new Error(errJ.error || "Image upload failed");
+            throw new Error(errJ.error || t("errGeneric"));
           }
           const data = (await put.json().catch(() => ({}))) as { publicUrl?: string };
           imageUrls.push((data.publicUrl || j.publicUrl) as string);
@@ -67,10 +68,10 @@ export function ReviewAppendForm({ reviewId, productSlug, productName }: Props) 
             body: blob,
             headers: { "Content-Type": "image/webp" },
           });
-          if (!put.ok) throw new Error("Image upload failed");
+          if (!put.ok) throw new Error(t("errGeneric"));
           imageUrls.push(j.publicUrl);
         } else {
-          throw new Error("Could not prepare upload");
+          throw new Error(t("errGeneric"));
         }
       }
 
@@ -81,12 +82,12 @@ export function ReviewAppendForm({ reviewId, productSlug, productName }: Props) 
       });
       if (!res.ok) {
         const j = (await res.json().catch(() => ({}))) as { error?: string };
-        throw new Error(j.error || "Could not save follow-up");
+        throw new Error(j.error || t("errGeneric"));
       }
       router.push(`/product/${productSlug}`);
       router.refresh();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Something went wrong");
+      setErr(e instanceof Error ? e.message : t("errGeneric"));
     } finally {
       setBusy(false);
     }
@@ -95,15 +96,14 @@ export function ReviewAppendForm({ reviewId, productSlug, productName }: Props) 
   return (
     <form onSubmit={submit} className="space-y-6">
       <p className="text-sm text-muted">
-        Optional photos are resized, compressed, and saved as WebP before upload. Up
-        to 4 images, under 2 MB each (typical 0.6–1.5 MB).
+        {t("appendPhotosHint")}
       </p>
       <div>
         <label
           htmlFor="append-body"
           className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted"
         >
-          Your follow-up ({productName})
+          {t("appendBodyLabel", { productName })}
         </label>
         <textarea
           id="append-body"
@@ -113,13 +113,13 @@ export function ReviewAppendForm({ reviewId, productSlug, productName }: Props) 
           maxLength={2000}
           required
           className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3 text-sm text-ink outline-none focus:ring-2 focus:ring-ink/15"
-          placeholder="Additional thoughts after more use, shipping, support…"
+          placeholder={t("appendPlaceholder")}
         />
         <p className="mt-1 text-xs text-muted tabular-nums">{body.length}/2000</p>
       </div>
       <div>
         <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Photos (optional)
+          {t("photosOptional")}
         </div>
         <input
           type="file"
@@ -142,13 +142,13 @@ export function ReviewAppendForm({ reviewId, productSlug, productName }: Props) 
           disabled={busy || !body.trim()}
           className="rounded-full bg-ink px-6 py-2.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-paper disabled:opacity-50"
         >
-          {busy ? "Submitting…" : "Post follow-up"}
+          {busy ? t("appendSubmitting") : t("appendSubmit")}
         </button>
         <Link
           href={`/product/${productSlug}`}
           className="inline-flex items-center rounded-full border border-line px-6 py-2.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink/80"
         >
-          Cancel
+          {t("cancel")}
         </Link>
       </div>
     </form>

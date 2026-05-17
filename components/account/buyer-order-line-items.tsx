@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { OrderLineProductImage } from "@/components/account/order-line-product-image";
 import { formatPrice } from "@/lib/catalog";
 import type { ValidatedLine } from "@/lib/order-lines";
@@ -11,6 +11,11 @@ type Props = {
   /** When true, product name links to `/product/[slug]` (use on order detail only). */
   linkToProduct?: boolean;
   className?: string;
+  /** Copy for review row (storefront i18n). */
+  lineItemLabels?: {
+    reviewSubmitted: string;
+    writeReview: string;
+  };
   /** When set with a paid order, eligible lines show “Write review”. */
   reviewContext?: {
     orderId: string;
@@ -24,9 +29,12 @@ export function BuyerOrderLineItems({
   compact = false,
   linkToProduct,
   className = "",
+  lineItemLabels,
   reviewContext,
 }: Props) {
   const resolvedLink = linkToProduct ?? !compact;
+  const reviewSubmitted = lineItemLabels?.reviewSubmitted ?? "Review submitted";
+  const writeReview = lineItemLabels?.writeReview ?? "Write review";
   const imgBox = compact
     ? "relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-zinc-100 ring-1 ring-[color:var(--color-line)]"
     : "relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-zinc-100 ring-1 ring-[color:var(--color-line)]";
@@ -97,14 +105,14 @@ export function BuyerOrderLineItems({
               orderStatusAllowsReview(reviewContext.orderStatus) ? (
                 reviewContext.reviewedProductSlugs.includes(line.slug) ? (
                   <span className="text-[10px] font-semibold uppercase tracking-widest text-muted">
-                    Review submitted
+                    {reviewSubmitted}
                   </span>
                 ) : (
                   <Link
                     href={`/account/orders/${reviewContext.orderId}/review/${line.slug}`}
                     className="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4 hover:underline"
                   >
-                    Write review
+                    {writeReview}
                   </Link>
                 )
               ) : null}

@@ -1,7 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import type { Session } from "next-auth";
+import { getLocale, getTranslations } from "next-intl/server";
 import { ReviewerAvatar } from "@/components/site/ReviewerAvatar";
 import { PdpReviewWriteCta } from "@/components/site/pdp-review-write-cta";
 import { MAX_REVIEW_APPENDS } from "@/lib/review-append-constants";
@@ -11,7 +12,7 @@ import {
   reviewAuthorLabel,
 } from "@/lib/product-reviews-queries";
 import { getReviewAvatarDisplayUrl } from "@/lib/avatar-resolve";
-import { SITE_LOCALE } from "@/lib/site-locale";
+import { intlLocaleFromAppLocale } from "@/lib/site-locale";
 
 export async function ProductReviewsSection({
   productSlug,
@@ -31,19 +32,25 @@ export async function ProductReviewsSection({
     console.error("[ProductReviewsSection] failed to load reviews", err);
   }
 
+  const locale = await getLocale();
+  const intlTag = intlLocaleFromAppLocale(locale);
+  const t = await getTranslations("Reviews");
+
   return (
     <section className="mt-16 border-t border-line pt-14">
-      <h2 className="font-serif text-2xl tracking-tight">Buyer reviews</h2>
+      <h2 className="font-serif text-2xl tracking-tight">{t("title")}</h2>
       <p className="mt-2 max-w-2xl text-sm text-muted">
-        From verified purchases. You can also open{" "}
-        <Link
-          href="/account/orders"
-          className="font-semibold text-ink underline-offset-4 hover:underline"
-        >
-          Order history
-        </Link>{" "}
-        and use <strong className="font-semibold">Write review</strong> on an
-        eligible line item, or add a follow-up from your own review below.
+        {t.rich("intro", {
+          orderHistory: (chunks) => (
+            <Link
+              href="/account/orders"
+              className="font-semibold text-ink underline-offset-4 hover:underline"
+            >
+              {chunks}
+            </Link>
+          ),
+          strong: (chunks) => <strong className="font-semibold">{chunks}</strong>,
+        })}
       </p>
       <div className="mt-3">
         <PdpReviewWriteCta
@@ -53,16 +60,13 @@ export async function ProductReviewsSection({
       </div>
 
       {reviewsLoadError ? (
-        <p className="mt-8 text-sm text-amber-800">
-          Reviews could not be loaded right now. The rest of this page should
-          still work — please try again later.
-        </p>
+        <p className="mt-8 text-sm text-amber-800">{t("loadError")}</p>
       ) : rows.length === 0 ? (
-        <p className="mt-8 text-sm text-muted">No reviews yet for this product.</p>
+        <p className="mt-8 text-sm text-muted">{t("empty")}</p>
       ) : (
         <ul className="mt-10 flex flex-col gap-8">
           {rows.map((r) => {
-            const when = new Date(r.createdAt).toLocaleString(SITE_LOCALE, {
+            const when = new Date(r.createdAt).toLocaleString(intlTag, {
               dateStyle: "medium",
               timeStyle: "short",
             });
@@ -86,7 +90,7 @@ export async function ProductReviewsSection({
                     <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
                       <span className="font-semibold text-ink">{author}</span>
                       <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
-                        Verified purchase
+                        {t("verifiedPurchase")}
                       </span>
                     </div>
                     <div className="mt-1 flex flex-wrap items-center gap-2 text-sm">
@@ -111,7 +115,7 @@ export async function ProductReviewsSection({
                           >
                             <Image
                               src={src}
-                              alt={`Review photo — ${productName}`}
+                              alt={t("reviewPhotoAlt", { name: productName })}
                               fill
                               className="object-cover"
                               sizes="96px"
@@ -124,14 +128,14 @@ export async function ProductReviewsSection({
                     {r.merchantReply ? (
                       <div className="mt-4 rounded-xl border border-line bg-ink/[0.03] px-4 py-3">
                         <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
-                          Store response
+                          {t("storeResponse")}
                         </p>
                         <p className="mt-2 whitespace-pre-wrap text-sm text-ink/90">
                           {r.merchantReply}
                         </p>
                         {r.merchantRepliedAt ? (
                           <p className="mt-1 text-xs text-muted">
-                            {new Date(r.merchantRepliedAt).toLocaleString(SITE_LOCALE, {
+                            {new Date(r.merchantRepliedAt).toLocaleString(intlTag, {
                               dateStyle: "medium",
                               timeStyle: "short",
                             })}
@@ -141,7 +145,7 @@ export async function ProductReviewsSection({
                     ) : null}
 
                     {r.appends.map((a) => {
-                      const aWhen = new Date(a.createdAt).toLocaleString(SITE_LOCALE, {
+                      const aWhen = new Date(a.createdAt).toLocaleString(intlTag, {
                         dateStyle: "medium",
                         timeStyle: "short",
                       });
@@ -152,7 +156,7 @@ export async function ProductReviewsSection({
                           className="mt-4 border-l-2 border-ink/15 pl-4"
                         >
                           <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
-                            Buyer follow-up · {aWhen}
+                            {t("followUp", { when: aWhen })}
                           </p>
                           <p className="mt-2 whitespace-pre-wrap text-sm text-ink/90">
                             {a.body}
@@ -169,7 +173,7 @@ export async function ProductReviewsSection({
                                 >
                                   <Image
                                     src={src}
-                                    alt={`Follow-up photo — ${productName}`}
+                                    alt={t("followUpPhotoAlt", { name: productName })}
                                     fill
                                     className="object-cover"
                                     sizes="80px"
@@ -188,7 +192,7 @@ export async function ProductReviewsSection({
                           href={`/account/reviews/${r.id}/append`}
                           className="text-ink underline-offset-4 hover:underline"
                         >
-                          Add follow-up
+                          {t("addFollowUp")}
                         </Link>
                       </p>
                     ) : null}

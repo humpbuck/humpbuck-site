@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 export function BuyerConfirmReceivedButton({
@@ -11,6 +12,7 @@ export function BuyerConfirmReceivedButton({
   enabled: boolean;
 }) {
   const router = useRouter();
+  const t = useTranslations("AccountConfirm");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -29,12 +31,12 @@ export function BuyerConfirmReceivedButton({
       });
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) {
-        throw new Error(data.error || "Failed to confirm receipt.");
+        throw new Error(data.error || t("errorGeneric"));
       }
-      setMsg("Thank you. This order is now marked as delivered.");
+      setMsg(t("success"));
       router.refresh();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Failed to confirm receipt.");
+      setErr(e instanceof Error ? e.message : t("errorGeneric"));
     } finally {
       setLoading(false);
     }
@@ -43,7 +45,7 @@ export function BuyerConfirmReceivedButton({
   return (
     <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
       <p className="text-sm text-emerald-950">
-        Received your order? Confirm receipt to complete this delivery.
+        {t("prompt")}
       </p>
       <button
         type="button"
@@ -51,11 +53,10 @@ export function BuyerConfirmReceivedButton({
         disabled={loading}
         className="mt-3 inline-flex items-center justify-center rounded-xl bg-emerald-800 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-white transition hover:bg-emerald-900 disabled:opacity-50"
       >
-        {loading ? "Confirming…" : "Confirm received"}
+        {loading ? t("confirming") : t("button")}
       </button>
       {msg ? <p className="mt-2 text-xs text-emerald-900">{msg}</p> : null}
       {err ? <p className="mt-2 text-xs text-rose-700">{err}</p> : null}
     </div>
   );
 }
-

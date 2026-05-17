@@ -1,15 +1,16 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { CenterModal } from "@/components/ui/center-modal";
+import { useRouter } from "@/i18n/navigation";
+import { publicSupportEmail } from "@/lib/support-contact";
+import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/whatsapp";
+import { useTranslations } from "next-intl";
 import {
   buyerCancelBlockedReason,
   buyerCancelShowsRefundNotice,
   canBuyerCancelOrder,
 } from "@/lib/account-buyer-order";
-import { CenterModal } from "@/components/ui/center-modal";
-import { publicSupportEmail } from "@/lib/support-contact";
-import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/whatsapp";
+import { useCallback, useState } from "react";
 
 type OrderLike = {
   id: string;
@@ -22,11 +23,11 @@ type ModalStep = "confirm" | "success" | "shipped" | "error";
 function ContactActionButtons({
   supportEmail,
   whatsappUrl,
-  whatsappDisplay,
+  whatsappLabel,
 }: {
   supportEmail: string;
   whatsappUrl: string;
-  whatsappDisplay: string;
+  whatsappLabel: string;
 }) {
   const linkClass =
     "block w-fit max-w-full break-words text-sm font-medium text-[#5b4dcb] no-underline hover:no-underline focus:no-underline";
@@ -41,7 +42,7 @@ function ContactActionButtons({
         rel="noopener noreferrer"
         className={linkClass}
       >
-        WhatsApp {whatsappDisplay}
+        {whatsappLabel}
       </a>
     </div>
   );
@@ -61,6 +62,7 @@ export function BuyerCancelOrderActions({
   enabled: boolean;
 }) {
   const router = useRouter();
+  const t = useTranslations("AccountCancel");
   const [modal, setModal] = useState<ModalStep | null>(null);
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState<string | null>(null);
@@ -78,11 +80,11 @@ export function BuyerCancelOrderActions({
     }
     if (!canCancel) {
       setModal("error");
-      setErrMsg("This order cannot be cancelled online.");
+      setErrMsg(t("errCannotOnline"));
       return;
     }
     setModal("confirm");
-  }, [canCancel, shippedBlock]);
+  }, [canCancel, shippedBlock, t]);
 
   const doCancel = useCallback(async () => {
     setLoading(true);
@@ -102,17 +104,17 @@ export function BuyerCancelOrderActions({
       }
       if (!res.ok) {
         setModal("error");
-        setErrMsg(data.message || data.error || "Could not cancel order.");
+        setErrMsg(data.message || data.error || t("errCancelFailed"));
         return;
       }
       setModal("success");
     } catch {
       setModal("error");
-      setErrMsg("Network error. Try again.");
+      setErrMsg(t("errNetwork"));
     } finally {
       setLoading(false);
     }
-  }, [order.id]);
+  }, [order.id, t]);
 
   const closeAll = useCallback(() => {
     const wasSuccess = modal === "success";
@@ -130,12 +132,14 @@ export function BuyerCancelOrderActions({
 
   const modalTitle =
     modal === "confirm"
-      ? "Cancel this order?"
+      ? t("modalConfirmTitle")
       : modal === "success"
-        ? "Order cancelled"
+        ? t("modalSuccessTitle")
         : modal === "shipped"
-          ? "Cannot cancel this order"
-          : "Something went wrong";
+          ? t("modalShippedTitle")
+          : t("modalErrorTitle");
+
+  const whatsappLabel = t("whatsappLink", { display: WHATSAPP_DISPLAY });
 
   return (
     <>
@@ -150,7 +154,7 @@ export function BuyerCancelOrderActions({
             onClick={() => openCancel()}
             className={`text-[12px] font-semibold uppercase tracking-[0.12em] text-rose-700 underline-offset-4 hover:underline ${compact ? "" : "block"}`}
           >
-            Cancel order
+            {t("openCancel")}
           </button>
         </div>
       ) : null}
@@ -160,31 +164,26 @@ export function BuyerCancelOrderActions({
           {modal === "confirm" ? (
             <>
               <p className="text-sm leading-relaxed text-ink/90">
-                Order <strong>#{orderNum}</strong> will be marked as cancelled.
-                You can no longer edit the shipping address for this order.
+                {t("confirmBody", { orderNum })}
               </p>
               {buyerCancelShowsRefundNotice(order) ? (
                 <div className="mt-4 rounded-xl border border-[#ffe8d9] border-l-4 border-l-[#d97706] bg-[#fffaf5] px-4 py-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#b45309]">
-                    Refunds
+                    {t("refundsLabel")}
                   </p>
                   <p className="mt-2 text-sm leading-relaxed text-ink/90">
-                    Refunds are reviewed by our team first, usually within 1–2
-                    business days. Once approved, your payment will be refunded
-                    to your original payment method — thank you for your
-                    patience. If you need urgent help, use the options below.
+                    {t("refundsNotice")}
                   </p>
                   <ContactActionButtons
                     supportEmail={support}
                     whatsappUrl={WHATSAPP_URL}
-                    whatsappDisplay={WHATSAPP_DISPLAY}
+                    whatsappLabel={whatsappLabel}
                   />
                 </div>
               ) : (
                 <div className="mt-4 rounded-xl border border-line bg-paper px-4 py-3">
                   <p className="text-sm leading-relaxed text-ink/90">
-                    No payment has been captured for this order yet. Cancelling
-                    will simply void it — no refund is needed.
+                    {t("noPaymentCaptured")}
                   </p>
                 </div>
               )}
@@ -195,14 +194,14 @@ export function BuyerCancelOrderActions({
                   onClick={() => void doCancel()}
                   className="rounded-xl bg-rose-700 px-5 py-2.5 text-[12px] font-bold uppercase tracking-[0.12em] text-white hover:bg-rose-800 disabled:opacity-50"
                 >
-                  {loading ? "Cancelling…" : "Yes, cancel order"}
+                  {loading ? t("cancelling") : t("yesCancel")}
                 </button>
                 <button
                   type="button"
                   onClick={closeAll}
                   className="rounded-xl border border-line px-5 py-2.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-ink hover:bg-paper"
                 >
-                  Keep order
+                  {t("keepOrder")}
                 </button>
               </div>
             </>
@@ -211,31 +210,26 @@ export function BuyerCancelOrderActions({
           {modal === "success" ? (
             <>
               <p className="text-sm leading-relaxed text-ink/90">
-                Your order was cancelled successfully. We&apos;ve sent a
-                confirmation email to you and the shop.
+                {t("successBody")}
               </p>
               {buyerCancelShowsRefundNotice(order) ? (
                 <div className="mt-4 rounded-xl border border-[#ffe8d9] border-l-4 border-l-[#d97706] bg-[#fffaf5] px-4 py-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#b45309]">
-                    Refunds
+                    {t("refundsLabel")}
                   </p>
                   <p className="mt-2 text-sm leading-relaxed text-ink/90">
-                    Refunds are reviewed by our team first, usually within 1–2
-                    business days. Once approved, your payment will be refunded
-                    to your original payment method — thank you for your
-                    patience. If you need urgent help, use the options below.
+                    {t("refundsNotice")}
                   </p>
                   <ContactActionButtons
                     supportEmail={support}
                     whatsappUrl={WHATSAPP_URL}
-                    whatsappDisplay={WHATSAPP_DISPLAY}
+                    whatsappLabel={whatsappLabel}
                   />
                 </div>
               ) : (
                 <div className="mt-4 rounded-xl border border-line bg-paper px-4 py-3">
                   <p className="text-sm leading-relaxed text-ink/90">
-                    This order was unpaid — nothing was charged, so no refund
-                    applies.
+                    {t("successUnpaid")}
                   </p>
                 </div>
               )}
@@ -244,7 +238,7 @@ export function BuyerCancelOrderActions({
                 onClick={closeAll}
                 className="mt-6 rounded-xl bg-ink px-5 py-2.5 text-[12px] font-bold uppercase tracking-[0.12em] text-paper hover:bg-ink/90"
               >
-                Close
+                {t("close")}
               </button>
             </>
           ) : null}
@@ -252,21 +246,19 @@ export function BuyerCancelOrderActions({
           {modal === "shipped" ? (
             <>
               <p className="text-sm leading-relaxed text-ink/90">
-                This order has shipped and can&apos;t be cancelled from your
-                account.
+                {t("shippedBody")}
               </p>
               <div className="mt-4 rounded-xl border border-[#ffe8d9] border-l-4 border-l-[#d97706] bg-[#fffaf5] px-4 py-3">
                 <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#b45309]">
-                  Contact
+                  {t("contactLabel")}
                 </p>
                 <p className="mt-2 text-sm leading-relaxed text-ink/90">
-                  If you need help with shipment or delivery, reach us using the
-                  options below.
+                  {t("shippedHelp")}
                 </p>
                 <ContactActionButtons
                   supportEmail={support}
                   whatsappUrl={WHATSAPP_URL}
-                  whatsappDisplay={WHATSAPP_DISPLAY}
+                  whatsappLabel={whatsappLabel}
                 />
               </div>
               <button
@@ -274,7 +266,7 @@ export function BuyerCancelOrderActions({
                 onClick={closeAll}
                 className="mt-6 rounded-xl bg-ink px-5 py-2.5 text-[12px] font-bold uppercase tracking-[0.12em] text-paper hover:bg-ink/90"
               >
-                Close
+                {t("close")}
               </button>
             </>
           ) : null}
@@ -282,19 +274,19 @@ export function BuyerCancelOrderActions({
           {modal === "error" ? (
             <>
               <p className="text-sm text-rose-800">
-                {errMsg || "Try again later."}
+                {errMsg || t("errTryLater")}
               </p>
               <div className="mt-4 rounded-xl border border-[#ffe8d9] border-l-4 border-l-[#d97706] bg-[#fffaf5] px-4 py-3">
                 <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#b45309]">
-                  Contact
+                  {t("contactLabel")}
                 </p>
                 <p className="mt-2 text-sm leading-relaxed text-ink/90">
-                  Need help? Reach us using the options below.
+                  {t("errNeedHelp")}
                 </p>
                 <ContactActionButtons
                   supportEmail={support}
                   whatsappUrl={WHATSAPP_URL}
-                  whatsappDisplay={WHATSAPP_DISPLAY}
+                  whatsappLabel={whatsappLabel}
                 />
               </div>
               <button
@@ -302,7 +294,7 @@ export function BuyerCancelOrderActions({
                 onClick={closeAll}
                 className="mt-6 rounded-xl border border-line px-5 py-2.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-ink"
               >
-                Close
+                {t("close")}
               </button>
             </>
           ) : null}

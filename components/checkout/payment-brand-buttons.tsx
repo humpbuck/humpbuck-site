@@ -1,12 +1,14 @@
 "use client";
 
-function StripeLogo() {
+import { useTranslations } from "next-intl";
+
+function StripeLogo({ subtitle }: { subtitle: string }) {
   return (
     <span className="inline-flex items-center justify-center gap-3 whitespace-nowrap">
       <span className="text-[32px] font-black leading-none tracking-[-0.12em] text-white">S</span>
       <span className="inline-flex items-baseline gap-1.5 text-white">
         <span className="text-[18px] font-semibold tracking-[-0.04em]">Stripe</span>
-        <span className="text-[14px] font-normal tracking-[-0.01em] text-white/86">- Card / Apple Pay / Google Pay</span>
+        <span className="text-[14px] font-normal tracking-[-0.01em] text-white/86">- {subtitle}</span>
       </span>
     </span>
   );
@@ -63,13 +65,14 @@ export function PaymentBrandButtons({
   onStripe: () => void;
   onPayPal: () => void;
 }) {
+  const t = useTranslations("Payment");
   const stripeDisabled = disabled || loading !== null;
   const paypalDisabled = disabled || loading !== null;
 
   return (
     <div className="space-y-3.5">
       <ButtonShell tone="stripe" disabled={stripeDisabled} onClick={onStripe}>
-        <StripeLogo />
+        <StripeLogo subtitle={t("stripeSubtitle")} />
       </ButtonShell>
 
       <ButtonShell tone="paypal" disabled={paypalDisabled} onClick={onPayPal}>

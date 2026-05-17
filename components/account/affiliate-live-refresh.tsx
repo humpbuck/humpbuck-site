@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 
 export function AffiliateLiveRefresh({ intervalMs = 30000 }: { intervalMs?: number }) {
   const router = useRouter();

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { isVariantOptionSellable, type ProductVariantOption } from "@/lib/catalog";
 import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
@@ -18,6 +19,7 @@ export function ProductStyleVariants({
   selectedIndex?: number;
   onSelectedIndexChange?: (index: number) => void;
 }) {
+  const t = useTranslations("Product");
   const [internal, setInternal] = useState(0);
   const controlled =
     controlledIndex !== undefined && onSelectedIndexChange !== undefined;
@@ -43,7 +45,7 @@ export function ProductStyleVariants({
   return (
     <div className="mt-8 w-full min-w-0">
       <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
-        Style
+        {t("style")}
       </div>
       <p className="mt-1 text-sm font-medium text-ink/90">
         {options[selected]?.label}
@@ -64,8 +66,8 @@ export function ProductStyleVariants({
               aria-pressed={selected === i}
               aria-label={
                 unavailable
-                  ? `${opt.label} for ${productName} — out of stock`
-                  : `${opt.label} for ${productName}`
+                  ? t("variantOutAria", { label: opt.label, product: productName })
+                  : t("variantAria", { label: opt.label, product: productName })
               }
             >
               {imageErrorId[opt.id] ? (

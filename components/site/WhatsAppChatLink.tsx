@@ -1,11 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useMemo } from "react";
-import { usePathname } from "next/navigation";
-import { whatsappInquiryHref } from "@/lib/whatsapp";
-
-const DEFAULT_LABEL = "Chat on WhatsApp";
+import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import { usePathname } from "@/i18n/navigation";
+import { whatsappHrefWithBody } from "@/lib/whatsapp";
 
 type WhatsAppChatLinkProps = {
   className?: string;
@@ -25,29 +24,30 @@ type WhatsAppChatLinkProps = {
  */
 export function WhatsAppChatLink({
   className,
-  children = DEFAULT_LABEL,
+  children,
   productName,
   "aria-label": ariaLabel,
 }: WhatsAppChatLinkProps) {
+  const t = useTranslations("Product");
   const pathname = usePathname();
-  const href = useMemo(() => {
-    const origin = (process.env.NEXT_PUBLIC_APP_URL || "")
-      .replace(/\/$/, "")
-      .trim();
-    if (!origin) return "#";
-    const pageUrl = `${origin}${pathname}`;
-    return whatsappInquiryHref(
-      productName
-        ? { kind: "product", productName, pageUrl }
-        : { kind: "page", pageUrl },
-    );
-  }, [pathname, productName]);
+  const [href, setHref] = useState("#");
 
+  useEffect(() => {
+    queueMicrotask(() => {
+      const pageUrl = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+      const body = productName
+        ? t("whatsappPrefillProduct", { product: productName, url: pageUrl })
+        : t("whatsappPrefillPage", { url: pageUrl });
+      setHref(whatsappHrefWithBody(body));
+    });
+  }, [pathname, productName, t]);
+
+  const defaultChildren = children ?? t("chatWhatsApp");
   const label =
     ariaLabel ??
     (productName
-      ? `Chat on WhatsApp about ${productName}`
-      : "Chat on WhatsApp");
+      ? t("chatWhatsAppAbout", { product: productName })
+      : t("chatWhatsApp"));
 
   return (
     <a
@@ -57,7 +57,7 @@ export function WhatsAppChatLink({
       aria-label={label}
       className={className}
     >
-      {children}
+      {defaultChildren}
     </a>
   );
 }

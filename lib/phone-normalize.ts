@@ -20,9 +20,16 @@ export const PHONE_COUNTRY_CODES = globalCallingCodeKeys
   });
 export const PHONE_COUNTRY_CODE_DATALIST_ID = "phone-country-codes";
 
+export type InternationalPhoneErrorCode =
+  | "international_phone_required"
+  | "international_phone_incomplete"
+  | "international_phone_country_code_length"
+  | "international_phone_local_length"
+  | "international_phone_total_digits";
+
 export type PhoneValidationResult =
   | { ok: true; normalized: string }
-  | { ok: false; error: string };
+  | { ok: false; error: string; code: InternationalPhoneErrorCode };
 
 export function normalizeCountryCodeInput(input: string): string {
   const digits = input.replace(/[^\d]/g, "").slice(0, 3);
@@ -75,7 +82,11 @@ export function validateInternationalPhone(
   const raw = String(phone ?? "").trim();
   if (!raw) {
     return required
-      ? { ok: false, error: `${label} is required.` }
+      ? {
+          ok: false,
+          error: `${label} is required.`,
+          code: "international_phone_required",
+        }
       : { ok: true, normalized: "" };
   }
   const compact = raw.replace(/\s+/g, "");
@@ -86,18 +97,21 @@ export function validateInternationalPhone(
     return {
       ok: false,
       error: `${label} must include country code and local number.`,
+      code: "international_phone_incomplete",
     };
   }
   if (ccDigits.length < 1 || ccDigits.length > 3) {
     return {
       ok: false,
       error: `${label} country code must be 1-3 digits.`,
+      code: "international_phone_country_code_length",
     };
   }
   if (localDigits.length < 4 || localDigits.length > 14) {
     return {
       ok: false,
       error: `${label} local number must be 4-14 digits.`,
+      code: "international_phone_local_length",
     };
   }
   const total = ccDigits.length + localDigits.length;
@@ -105,6 +119,7 @@ export function validateInternationalPhone(
     return {
       ok: false,
       error: `${label} total digits must be 6-15.`,
+      code: "international_phone_total_digits",
     };
   }
   return { ok: true, normalized: `+${ccDigits}${localDigits}` };

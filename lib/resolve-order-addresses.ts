@@ -1,4 +1,5 @@
 ﻿import {
+  formatCheckoutAddressValidationEnglish,
   isAddressRecordComplete,
   mergeDerivedLogisticsZone,
   validateCheckoutAddressForm,
@@ -43,11 +44,17 @@ export function resolveOrderAddressJson(body: {
       return { ok: false, error: "Shipping address is incomplete" };
     const billCheck = validateCheckoutAddressForm(checkoutFormFromRecord(b));
     if (!billCheck.ok) {
-      return { ok: false, error: `Billing: ${billCheck.error}` };
+      return {
+        ok: false,
+        error: `Billing: ${formatCheckoutAddressValidationEnglish(billCheck.errorKey)}`,
+      };
     }
     const shipCheck = validateCheckoutAddressForm(checkoutFormFromRecord(s));
     if (!shipCheck.ok) {
-      return { ok: false, error: `Shipping: ${shipCheck.error}` };
+      return {
+        ok: false,
+        error: `Shipping: ${formatCheckoutAddressValidationEnglish(shipCheck.errorKey)}`,
+      };
     }
     const ship = { ...s };
     mergeDerivedLogisticsZone(ship);
@@ -62,7 +69,10 @@ export function resolveOrderAddressJson(body: {
   if (single && isAddressRecordComplete(single)) {
     const oneCheck = validateCheckoutAddressForm(checkoutFormFromRecord(single));
     if (!oneCheck.ok) {
-      return { ok: false, error: oneCheck.error };
+      return {
+        ok: false,
+        error: formatCheckoutAddressValidationEnglish(oneCheck.errorKey),
+      };
     }
     const one = { ...single };
     mergeDerivedLogisticsZone(one);

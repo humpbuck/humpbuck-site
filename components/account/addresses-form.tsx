@@ -1,7 +1,6 @@
 "use client";
 
 import type { UserAddress } from "@prisma/client";
-import { useState } from "react";
 import {
   PHONE_COUNTRY_CODE_DATALIST_ID,
   PHONE_COUNTRY_CODES,
@@ -9,6 +8,8 @@ import {
   normalizePhone,
   splitPhoneForInput,
 } from "@/lib/phone-normalize";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
 
 type Addr = {
   line1: string;
@@ -16,6 +17,16 @@ type Addr = {
   city: string;
   state: string;
   postalCode: string;
+  country: string;
+  phone: string;
+};
+
+type AddrFieldLabels = {
+  line1: string;
+  line2: string;
+  city: string;
+  state: string;
+  postal: string;
   country: string;
   phone: string;
 };
@@ -50,11 +61,22 @@ export function AddressesForm({
   initialBilling: UserAddress | null;
   initialShipping: UserAddress | null;
 }) {
+  const t = useTranslations("Account");
   const [billing, setBilling] = useState<Addr>(() => fromRow(initialBilling));
   const [shipping, setShipping] = useState<Addr>(() => fromRow(initialShipping));
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const labels: AddrFieldLabels = {
+    line1: t("addrFieldLine1"),
+    line2: t("addrFieldLine2"),
+    city: t("addrFieldCity"),
+    state: t("addrFieldState"),
+    postal: t("addrFieldPostal"),
+    country: t("addrFieldCountry"),
+    phone: t("addrFieldPhone"),
+  };
 
   async function save() {
     setErr(null);
@@ -70,10 +92,10 @@ export function AddressesForm({
         }),
       });
       const data = (await res.json()) as { error?: string };
-      if (!res.ok) throw new Error(data.error || "Save failed");
-      setMsg("Addresses saved.");
+      if (!res.ok) throw new Error(data.error || t("addressesSaveFailed"));
+      setMsg(t("addressesSaved"));
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Error");
+      setErr(e instanceof Error ? e.message : t("profileGenericError"));
     } finally {
       setLoading(false);
     }
@@ -82,25 +104,27 @@ export function AddressesForm({
   return (
     <div>
       <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
-        Addresses
+        {t("addressesPageKicker")}
       </p>
       <h1 className="mt-2 font-serif text-3xl tracking-tight">
-        Billing & shipping
+        {t("addressesPageTitle")}
       </h1>
       <p className="mt-2 text-sm text-muted">
-        Used for invoices and delivery. You can update these any time.
+        {t("addressesPageIntro")}
       </p>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-2">
         <AddressBlock
-          title="Billing address"
+          title={t("addressesBillingBlock")}
           value={billing}
           onChange={setBilling}
+          labels={labels}
         />
         <AddressBlock
-          title="Shipping address"
+          title={t("addressesShippingBlock")}
           value={shipping}
           onChange={setShipping}
+          labels={labels}
         />
       </div>
 
@@ -121,7 +145,7 @@ export function AddressesForm({
         disabled={loading}
         className="mt-8 rounded-2xl bg-ink px-8 py-3.5 text-[12px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90 disabled:opacity-50"
       >
-        {loading ? "Saving…" : "Save addresses"}
+        {loading ? t("addressesSaving") : t("addressesSaveButton")}
       </button>
     </div>
   );
@@ -131,10 +155,12 @@ function AddressBlock({
   title,
   value,
   onChange,
+  labels,
 }: {
   title: string;
   value: Addr;
   onChange: (a: Addr) => void;
+  labels: AddrFieldLabels;
 }) {
   function patch<K extends keyof Addr>(key: K, v: Addr[K]) {
     onChange({ ...value, [key]: v });
@@ -147,37 +173,37 @@ function AddressBlock({
       </h2>
       <div className="mt-4 space-y-3">
         <Field
-          label="Address line 1"
+          label={labels.line1}
           value={value.line1}
           onChange={(v) => patch("line1", v)}
         />
         <Field
-          label="Address line 2"
+          label={labels.line2}
           value={value.line2}
           onChange={(v) => patch("line2", v)}
         />
         <Field
-          label="City"
+          label={labels.city}
           value={value.city}
           onChange={(v) => patch("city", v)}
         />
         <Field
-          label="State / province"
+          label={labels.state}
           value={value.state}
           onChange={(v) => patch("state", v)}
         />
         <Field
-          label="Postal code"
+          label={labels.postal}
           value={value.postalCode}
           onChange={(v) => patch("postalCode", v)}
         />
         <Field
-          label="Country"
+          label={labels.country}
           value={value.country}
           onChange={(v) => patch("country", v)}
         />
         <Field
-          label="Phone"
+          label={labels.phone}
           value={value.phone}
           onChange={(v) => patch("phone", v)}
           isPhone

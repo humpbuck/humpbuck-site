@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { compressReviewImageToWebP } from "@/lib/review-image-compress-webp";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { CenterModal } from "@/components/ui/center-modal";
+import { compressReviewImageToWebP } from "@/lib/review-image-compress-webp";
+import { Link, useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
 
 type Props = {
   orderId: string;
@@ -18,6 +18,7 @@ export function ProductReviewForm({
   productName,
 }: Props) {
   const router = useRouter();
+  const t = useTranslations("AccountReview");
   const [rating, setRating] = useState(5);
   const [body, setBody] = useState("");
   const [files, setFiles] = useState<File[]>([]);
@@ -53,7 +54,7 @@ export function ProductReviewForm({
         });
         if (!pre.ok) {
           const j = (await pre.json().catch(() => ({}))) as { error?: string };
-          throw new Error(j.error || "Could not prepare upload");
+          throw new Error(j.error || t("errGeneric"));
         }
         const j = (await pre.json()) as {
           uploadUrl?: string;
@@ -70,8 +71,8 @@ export function ProductReviewForm({
             credentials: "include",
           });
           if (!put.ok) {
-            const err = (await put.json().catch(() => ({}))) as { error?: string };
-            throw new Error(err.error || "Image upload failed");
+            const putErr = (await put.json().catch(() => ({}))) as { error?: string };
+            throw new Error(putErr.error || t("errGeneric"));
           }
           const data = (await put.json().catch(() => ({}))) as { publicUrl?: string };
           imageUrls.push((data.publicUrl || j.publicUrl) as string);
@@ -81,10 +82,10 @@ export function ProductReviewForm({
             body: blob,
             headers: { "Content-Type": "image/webp" },
           });
-          if (!put.ok) throw new Error("Image upload failed");
+          if (!put.ok) throw new Error(t("errGeneric"));
           imageUrls.push(j.publicUrl);
         } else {
-          throw new Error("Could not prepare upload");
+          throw new Error(t("errGeneric"));
         }
       }
 
@@ -101,12 +102,12 @@ export function ProductReviewForm({
       });
       if (!res.ok) {
         const j = (await res.json().catch(() => ({}))) as { error?: string };
-        throw new Error(j.error || "Could not save review");
+        throw new Error(j.error || t("errGeneric"));
       }
       router.refresh();
       setThanksOpen(true);
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Something went wrong");
+      setErr(e instanceof Error ? e.message : t("errGeneric"));
     } finally {
       setBusy(false);
     }
@@ -115,23 +116,21 @@ export function ProductReviewForm({
   return (
     <>
       {thanksOpen ? (
-        <CenterModal title="Thank you" onClose={closeThanksAndGoToProduct}>
+        <CenterModal title={t("thanksTitle")} onClose={closeThanksAndGoToProduct}>
           <p className="text-sm leading-relaxed text-ink/90">
-            Thanks for your review! We&apos;ll keep improving and hope to see you
-            again soon.
+            {t("thanksBody")}
           </p>
         </CenterModal>
       ) : null}
 
     <form onSubmit={submit} className="space-y-6">
       <p className="text-sm text-muted">
-        Photos are resized, compressed, and saved as WebP in your browser before
-        upload. Up to 4 images · about 0.6–1.5 MB typical each (under 2 MB cap).
+        {t("photosHint")}
       </p>
 
       <div>
         <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Rating
+          {t("ratingLabel")}
         </div>
         <div className="mt-2 flex flex-wrap gap-1">
           {[1, 2, 3, 4, 5].map((n) => (
@@ -144,7 +143,7 @@ export function ProductReviewForm({
                   ? "bg-ink text-paper"
                   : "border border-line bg-paper text-muted"
               }`}
-              aria-label={`${n} stars`}
+              aria-label={t("starsAria", { n })}
             >
               {n}★
             </button>
@@ -157,7 +156,7 @@ export function ProductReviewForm({
           htmlFor="review-body"
           className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted"
         >
-          Your review ({productName})
+          {t("bodyLabel", { productName })}
         </label>
         <textarea
           id="review-body"
@@ -167,14 +166,14 @@ export function ProductReviewForm({
           maxLength={2000}
           required
           className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3 text-sm text-ink outline-none focus:ring-2 focus:ring-ink/15"
-          placeholder="Quality, fit, shipping experience…"
+          placeholder={t("bodyPlaceholder")}
         />
         <p className="mt-1 text-xs text-muted tabular-nums">{body.length}/2000</p>
       </div>
 
       <div>
         <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          Photos (optional)
+          {t("photosOptional")}
         </div>
         <input
           type="file"
@@ -186,7 +185,7 @@ export function ProductReviewForm({
           }
         />
         {files.length > 0 ? (
-          <p className="mt-1 text-xs text-muted">{files.length} file(s) selected</p>
+          <p className="mt-1 text-xs text-muted">{t("filesSelected", { count: files.length })}</p>
         ) : null}
       </div>
 
@@ -202,13 +201,13 @@ export function ProductReviewForm({
           disabled={busy || !body.trim()}
           className="rounded-full bg-ink px-6 py-2.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-paper disabled:opacity-50"
         >
-          {busy ? "Submitting…" : "Submit review"}
+          {busy ? t("submitting") : t("submitReview")}
         </button>
         <Link
           href={`/account/orders/${orderId}`}
           className="inline-flex items-center rounded-full border border-line px-6 py-2.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink/80"
         >
-          Cancel
+          {t("cancel")}
         </Link>
       </div>
     </form>

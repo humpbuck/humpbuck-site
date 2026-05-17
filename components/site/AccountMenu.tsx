@@ -1,10 +1,12 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ChevronDown } from "lucide-react";
 import { signOut } from "next-auth/react";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { HeaderUserAvatar } from "@/components/site/HeaderUserAvatar";
+import { storefrontHomePath } from "@/lib/storefront-home-path";
 
 export function AccountMenu({
   userEmail,
@@ -15,6 +17,9 @@ export function AccountMenu({
   userImage?: string | null;
   userName?: string | null;
 }) {
+  const t = useTranslations("Navigation");
+  const locale = useLocale();
+  const signOutCallbackUrl = storefrontHomePath(locale);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -36,7 +41,7 @@ export function AccountMenu({
   const avatarLabel =
     userName?.trim() ||
     userEmail?.split("@")[0]?.trim() ||
-    "Account";
+    t("accountFallback");
 
   return (
     <div ref={rootRef} className="relative hidden md:block">
@@ -49,7 +54,7 @@ export function AccountMenu({
       >
         <HeaderUserAvatar src={userImage} label={avatarLabel} size={30} />
         <span className="truncate" title={userEmail ?? undefined}>
-          My account
+          {t("myAccount")}
         </span>
         <ChevronDown
           size={14}
@@ -62,7 +67,7 @@ export function AccountMenu({
       {open && (
         <div
           role="menu"
-          aria-label="Account menu"
+          aria-label={t("accountMenuAria")}
           className="absolute right-0 top-full z-50 mt-2 min-w-[220px] rounded-2xl border border-line bg-paper/95 py-2 shadow-card backdrop-blur-md"
         >
           <Link
@@ -71,7 +76,7 @@ export function AccountMenu({
             onClick={() => setOpen(false)}
             className="block px-4 py-2.5 text-[12px] font-medium text-ink/90 transition hover:bg-ink/[0.04]"
           >
-            Overview
+            {t("overview")}
           </Link>
           {userEmail && (
             <p className="border-t border-line px-4 py-2 text-[10px] uppercase tracking-widest text-muted">
@@ -83,11 +88,11 @@ export function AccountMenu({
             role="menuitem"
             onClick={() => {
               setOpen(false);
-              void signOut({ callbackUrl: "/" });
+              void signOut({ callbackUrl: signOutCallbackUrl });
             }}
             className="w-full border-t border-line px-4 py-2.5 text-left text-[12px] font-semibold uppercase tracking-widest text-ink/80 transition hover:bg-ink/[0.04]"
           >
-            Sign out
+            {t("signOut")}
           </button>
         </div>
       )}

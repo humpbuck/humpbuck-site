@@ -1,0 +1,152 @@
+{
+  "ProductCopy": {
+    "digitemp-2301": {
+      "categoryLabel": "DIGI-TEMP · Ana-digi · Acero",
+      "shortDescription": "HUMPBUCK DIGI-TEMP 2301 — reloj ana-digi en acero con doble LCD, alarma, temperatura exterior y cronómetro.",
+      "description": "DIGI-TEMP 2301 ofrece la experiencia ana-digi completa: campos digitales duplos para hora/fecha/12–24h, temperatura y segundos; modos TIME, DATE, ALM (alarma), OUT (temperatura exterior) y STW (cronómetro). La iluminación y el circuito de modo mantienen la lectura cómoda en el día a día, en caja de acero de 33 mm, cristal mineral y 30 m de resistencia al agua.",
+      "highlights": [
+        "Modos TIME/DATE/ALM/OUT/STW",
+        "Movimiento japonés, batería ~3 años",
+        "Caja de acero inoxidable"
+      ]
+    },
+    "digitemp-2412m": {
+      "categoryLabel": "DIGI-TEMP · Ana-digi · Acero",
+      "shortDescription": "HUMPBUCK DIGI-TEMP 2412M — reloj ana-digi en acero con doble LCD, alarma, temperatura exterior y cronómetro.",
+      "description": "DIGI-TEMP 2412M ofrece la experiencia ana-digi completa con caja de acero de 40 mm, cristal mineral y 30 m de resistencia al agua: mismos modos TIME, DATE, ALM, OUT y STW con lectura clara en uso diario.",
+      "highlights": [
+        "Modos TIME/DATE/ALM/OUT/STW",
+        "Movimiento japonés, batería ~3 años",
+        "Caja de acero inoxidable"
+      ]
+    },
+    "rd-excalibur01": {
+      "name": "RD-Excalibur01 Iced Out Astral",
+      "categoryLabel": "RD-ASTRAL · Iced out",
+      "shortDescription": "RD-Excalibur01 — pieza esqueleto “iced out” con bisel protagonista y acabado luxury.",
+      "description": "Pieza RD-ASTRAL pensada para el escaparate: arquitectura esqueleto y bisel con presencia; medios servidos desde R2 como DIGI-TEMP y RM-TONNEAU.",
+      "highlights": [
+        "Bisel con presencia tipo iced-out",
+        "Esfera esqueleto",
+        "Presencia notable en muñeca"
+      ]
+    },
+    "rm-m01": {
+      "name": "RM-M01 Tonneau ultra fino",
+      "categoryLabel": "RM-TONNEAU · Nailon",
+      "shortDescription": "RM-M01 — deportivo tonneau con caja de acero ultrafina y correa de nailon resistente y transpirable.",
+      "description": "RM-M01 combina silueta tonneau ultrafina en acero con correa de nailon robusta. Cuarzo preciso y estética esqueleto en un perfil ligero, ideal para uso activo o día a día elegante.",
+      "highlights": [
+        "Perfil tonneau ultrafino",
+        "Correa deportiva nailon",
+        "Esfera tipo esqueleto"
+      ]
+    },
+    "rm-m02": {
+      "name": "RM-M02 Tonneau ultra fino",
+      "categoryLabel": "RM-TONNEAU · Nailon",
+      "shortDescription": "RM-M02 — deportivo tonneau con caja de acero ultrafina y correa de nailon resistente y transpirable.",
+      "description": "RM-M02 comparte la propuesta deportiva tonneau ultrafina con correa nailon y lectura esqueleto; ligero y expresivo para rotación diaria.",
+      "highlights": [
+        "Perfil tonneau ultrafino",
+        "Correa deportiva nailon",
+        "Esfera tipo esqueleto"
+      ]
+    },
+    "rm-m03": {
+      "name": "RM-M03 Happy Face",
+      "categoryLabel": "RM-TONNEAU · Silicona",
+      "shortDescription": "Silueta tonneau clásica con “happy face” pop; caja de acero robusta, cuarzo preciso y correa de silicona viva para streetwear.",
+      "description": "Mezcla tonneau y un toque pop-art en la esfera; caja de acero, cuarzo y correa silicona llamativa — pieza de declaración para looks modernos.",
+      "highlights": [
+        "Personalidad tonneau “happy face”",
+        "Caja de acero y correa silicona",
+        "Claridad de cuarzo tipo esqueleto"
+      ]
+    },
+    "rm-m04": {
+      "name": "RM-M04 Skeleton Sport",
+      "categoryLabel": "RM-TONNEAU · Silicona",
+      "shortDescription": "RM-M04 — tonneau esqueleto de cuarzo con estilo sport luxury y correa de silicona.",
+      "description": "Historial deportivo luxury: esfera tonneau abierta, latido de cuarzo y correa silicona estructurada para uso diario con ADN motorsport.",
+      "highlights": [
+        "Esfera tonneau esqueleto",
+        "Proporción sport luxury",
+        "Comodidad de correa silicona"
+      ]
+    },
+    "rm-m05": {
+      "name": "RM-M05 Tonneau ultra fino",
+      "categoryLabel": "RM-TONNEAU · Silicona",
+      "shortDescription": "Cuarzo deportivo con caja tonneau blanca y correa silicona roja.",
+      "description": "Contraste caja tonneau blanca y banda roja saturada; lectura esqueleto para mantener legibilidad en movimiento.",
+      "highlights": [
+        "Caja tonneau acero blanca",
+        "Correa silicona racing roja",
+        "Movimiento cuarzo esqueleto"
+      ]
+    },
+    "rm-m06": {
+      "name": "RM-M06 Esqueleto rayado",
+      "categoryLabel": "RM-TONNEAU · Silicona",
+      "shortDescription": "Tonneau luxury con caja acero rosa y blanca a rayas y esfera esqueleto de cuarzo.",
+      "description": "Historia de acero rayado en tonos juego: caja tonneau dual-tone, esfera abierta y correa silicona suave — expresiva pero contenida para oficina o fin de semana.",
+      "highlights": [
+        "Caja acero rayada rosa y blanca",
+        "Visual tonneau esqueleto",
+        "Correa silicona premium"
+      ]
+    },
+    "rm-m07": {
+      "name": "RM-M07 Textura carbono",
+      "categoryLabel": "RM-TONNEAU · Silicona",
+      "shortDescription": "Caja tonneau con textura tipo fibra de carbono, cuarzo esqueleto deportivo y correa silicona.",
+      "description": "Capas de acabado y actitud aero-motor; dial abierto que muestra el módulo de cuarzo, con correa silicona fiable.",
+      "highlights": [
+        "Caja con textura carbono",
+        "Visual esqueleto de cuarzo",
+        "Correa deportiva silicona"
+      ]
+    },
+    "rm-m08": {
+      "name": "RM-M08 Dial mariposa",
+      "categoryLabel": "RM-TONNEAU · Silicona",
+      "shortDescription": "Esqueleto con dial “mariposa”, construcción sport luxury y correa silicona premium.",
+      "description": "Geometría abierta ornamental, postura tonneau y correa silicona que ancla el reloj entre streetwear y tailoring relajado.",
+      "highlights": [
+        "Layout esqueleto mariposa",
+        "Caja tonneau sport luxury",
+        "Correa silicona premium"
+      ]
+    },
+    "rm-m09": {
+      "name": "RM-M09 Butterfly Sport",
+      "categoryLabel": "RM-TONNEAU · Silicona",
+      "shortDescription": "Dial mariposa esqueleto con presencia tipo “boyfriend” y correa silicona premium.",
+      "description": "Carisma de muñeca amplia, puentes esqueleto detallados y silicona generosa — para capas de fin de semana o siluetas oversize.",
+      "highlights": [
+        "Estética mariposa esqueleto",
+        "Presencia amplia en muñeca",
+        "Correa silicona premium"
+      ]
+    },
+    "rm-m10": {
+      "name": "RM-M10 Transparente",
+      "categoryLabel": "RM-TONNEAU · Policarbonato",
+      "shortDescription": "Tonneau transparente esqueleto de cuarzo, caja de policarbonato y correa deportiva.",
+      "description": "Chasis de policarbonato ultraligero deja ver el módulo esqueleto; correa deportiva para llevarlo desde el día a la noche.",
+      "highlights": [
+        "Caja tonneau policarbonato transparente",
+        "Núcleo cuarzo esqueleto",
+        "Ergonomía de correa sport"
+      ]
+    },
+    "rm-mx": {
+      "name": "RM-MX Tonneau Watch",
+      "categoryLabel": "RM-TONNEAU · Nailon",
+      "shortDescription": "Solo ajuste de precio. NO pida hasta contactarnos. Pedidos no autorizados se cancelarán o no se enviarán.",
+      "description": "",
+      "highlights": []
+    }
+  }
+}

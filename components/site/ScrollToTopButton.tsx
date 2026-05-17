@@ -1,10 +1,12 @@
 "use client";
 
 import { ChevronUp } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { FAB_SHOW_AFTER_SCROLL_PX } from "@/lib/floating-actions";
 
 export function ScrollToTopButton() {
+  const t = useTranslations("Floating");
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -24,7 +26,7 @@ export function ScrollToTopButton() {
     <button
       type="button"
       onClick={scrollTop}
-      aria-label="Back to top"
+      aria-label={t("backToTop")}
       className={`fixed bottom-6 right-6 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper/95 text-ink shadow-card backdrop-blur-sm transition-all duration-200 hover:bg-white hover:shadow-lg md:bottom-8 md:right-8 ${
         visible
           ? "pointer-events-auto translate-y-0 opacity-100"

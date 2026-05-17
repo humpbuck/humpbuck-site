@@ -1,52 +1,29 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
-type GuideItem = {
-  title: string;
-  body: string;
-};
-
-const GUIDE_ITEMS: GuideItem[] = [
-  {
-    title: "How to build your affiliate link",
-    body:
-      "Use the Link generator section below. Paste any product or page URL and it will append your PID automatically. Buyers can land on one product and purchase other products; those orders still count for commission if the affiliate attribution is active.",
-  },
-  {
-    title: "Where to find your Coupon Code",
-    body:
-      "Your dedicated coupon code is created and managed by admin. If no code is shown yet, contact admin to bind one to your affiliate profile. Coupon-attributed orders also count for your commission.",
-  },
-  {
-    title: "Where to find your Partner ID (PID)",
-    body:
-      "Your Partner ID is shown in Current status as PID. This ID is used in your trackable links (?pid=...). Attribution is valid for 7 days from link visit and follows last-touch within the window (the most recent valid affiliate click gets attribution). Orders placed after 7 days are not attributed unless the buyer clicks an affiliate link again.",
-  },
-  {
-    title: "Commission payout cycle",
-    body:
-      "Commissions become pending after delivery is confirmed (buyer confirmation, or auto-confirm 30 days after shipped), then become eligible after a 30-day hold. Affiliate self-purchases are excluded from commission. Admin then marks payouts as paid in settlement ledger.",
-  },
-  {
-    title: "Payout details are required",
-    body:
-      "Please fill payout details (PayPal, bank account, or other) plus contact methods. If you cannot provide a payout account yet, keep your email or WhatsApp updated so admin can contact you for manual settlement.",
-  },
-  {
-    title: "Refunded orders and attribution",
-    body:
-      "Refunded orders do not generate commission. When an order is refunded, affiliate attribution is automatically removed from that order and settlement is reversed.",
-  },
-];
+const GUIDE_COUNT = 6;
 
 export function AffiliateQuickGuide() {
+  const t = useTranslations("AccountAffiliate");
   const [idx, setIdx] = useState(0);
   const [open, setOpen] = useState(true);
-  const item = GUIDE_ITEMS[idx];
+  const items = useMemo(
+    () =>
+      Array.from({ length: GUIDE_COUNT }, (_, i) => {
+        const n = i + 1;
+        return {
+          title: t(`guide.item${n}Title` as "guide.item1Title"),
+          body: t(`guide.item${n}Body` as "guide.item1Body"),
+        };
+      }),
+    [t],
+  );
+  const item = items[idx] ?? items[0];
   const canPrev = idx > 0;
-  const canNext = idx < GUIDE_ITEMS.length - 1;
-  const progress = useMemo(() => `${idx + 1}/${GUIDE_ITEMS.length}`, [idx]);
+  const canNext = idx < GUIDE_COUNT - 1;
+  const progress = useMemo(() => `${idx + 1}/${GUIDE_COUNT}`, [idx]);
 
   useEffect(() => {
     const hidden = window.localStorage.getItem("affiliate_quick_guide_hidden_v1");
@@ -63,7 +40,7 @@ export function AffiliateQuickGuide() {
         }}
         className="mt-4 inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
       >
-        Show affiliate guide
+        {t("guide.show")}
       </button>
     );
   }
@@ -72,7 +49,7 @@ export function AffiliateQuickGuide() {
     <section className="mt-6 rounded-2xl border border-line bg-white/60 p-5">
       <div className="flex items-center justify-between gap-2">
         <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
-        Affiliate quick guide
+          {t("guide.kicker")}
         </p>
         <button
           type="button"
@@ -82,19 +59,19 @@ export function AffiliateQuickGuide() {
           }}
           className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted hover:text-ink"
         >
-          Close
+          {t("guide.close")}
         </button>
       </div>
-      <p className="mt-2 text-sm text-ink font-medium">{item.title}</p>
+      <p className="mt-2 text-sm font-medium text-ink">{item.title}</p>
       <p className="mt-2 text-sm text-muted">{item.body}</p>
 
       <div className="mt-4 flex items-center justify-between gap-2">
         <div className="flex gap-1">
-          {GUIDE_ITEMS.map((_, i) => (
+          {items.map((_, i) => (
             <button
               key={i}
               type="button"
-              aria-label={`Go to guide ${i + 1}`}
+              aria-label={t("guide.dotAria", { n: i + 1 })}
               onClick={() => setIdx(i)}
               className={`h-2.5 w-2.5 rounded-full transition ${
                 i === idx ? "bg-ink" : "bg-ink/20 hover:bg-ink/35"
@@ -112,15 +89,15 @@ export function AffiliateQuickGuide() {
           disabled={!canPrev}
           className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-ink transition enabled:hover:border-ink/20 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Prev
+          {t("guide.prev")}
         </button>
         <button
           type="button"
-          onClick={() => setIdx((v) => Math.min(GUIDE_ITEMS.length - 1, v + 1))}
+          onClick={() => setIdx((v) => Math.min(GUIDE_COUNT - 1, v + 1))}
           disabled={!canNext}
           className="inline-flex items-center justify-center rounded-xl bg-ink px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-paper transition enabled:hover:bg-ink/90 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Next
+          {t("guide.next")}
         </button>
       </div>
     </section>

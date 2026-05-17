@@ -1,6 +1,7 @@
 "use client";
 
 import Script from "next/script";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
 type Status = "idle" | "loading" | "success" | "error";
@@ -23,6 +24,7 @@ declare global {
 }
 
 export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
+  const t = useTranslations("WholesaleForm");
   const [company, setCompany] = useState("");
   const [targetRegion, setTargetRegion] = useState("");
   const [estimatedQty, setEstimatedQty] = useState("");
@@ -62,7 +64,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
     if (status === "loading") return;
     if (!turnstileToken) {
       setStatus("error");
-      setMessage("Please complete the verification check.");
+      setMessage(t("errVerifyRequired"));
       return;
     }
     setStatus("loading");
@@ -88,12 +90,12 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
         return;
       }
       setStatus("error");
-      setMessage(data.error ?? "Failed to submit. Please try again.");
+      setMessage(data.error ?? t("errSubmitGeneric"));
       if (widgetId && window.turnstile) window.turnstile.reset(widgetId);
       setTurnstileToken("");
     } catch {
       setStatus("error");
-      setMessage("Network error. Please try again.");
+      setMessage(t("errNetwork"));
       if (widgetId && window.turnstile) window.turnstile.reset(widgetId);
       setTurnstileToken("");
     }
@@ -106,7 +108,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
           src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
           strategy="afterInteractive"
           onLoad={() => setTurnstileScriptLoaded(true)}
-          onError={() => setMessage("Verification script failed to load. Please refresh and try again.")}
+          onError={() => setMessage(t("errScriptLoad"))}
         />
       ) : null}
       <form
@@ -117,7 +119,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
       >
         <label className="sm:col-span-2">
           <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Company / project name
+            {t("labelCompany")}
           </span>
           <input
             value={company}
@@ -128,7 +130,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
         </label>
         <label>
           <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Target region
+            {t("labelRegion")}
           </span>
           <input
             value={targetRegion}
@@ -138,7 +140,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
         </label>
         <label>
           <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Estimated qty
+            {t("labelQty")}
           </span>
           <input
             value={estimatedQty}
@@ -148,7 +150,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
         </label>
         <label className="sm:col-span-2">
           <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-            Email
+            {t("labelEmail")}
           </span>
           <input
             type="email"
@@ -160,14 +162,16 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
           />
         </label>
         <label className="sm:col-span-2">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">Notes</span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+            {t("labelNotes")}
+          </span>
           <textarea
             rows={4}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             required
             className="mt-2 w-full rounded-2xl border border-stone-400/30 bg-paper px-4 py-3 text-sm text-ink shadow-sm outline-none transition placeholder:text-muted/90 focus:border-digital-dim/45 focus:ring-2 focus:ring-digital/15"
-            placeholder="Materials, references, deadline..."
+            placeholder={t("notesPlaceholder")}
           />
         </label>
         <input
@@ -181,10 +185,10 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
         <div className="sm:col-span-2">
           <div ref={widgetRef} className="min-h-[65px]" />
           {!canRenderTurnstile ? (
-            <p className="mt-2 text-xs text-red-600/90">Verification is unavailable right now.</p>
+            <p className="mt-2 text-xs text-red-600/90">{t("verifyUnavailable")}</p>
           ) : null}
           {canRenderTurnstile && !turnstileToken ? (
-            <p className="mt-2 text-xs text-muted">Please complete the verification before submitting.</p>
+            <p className="mt-2 text-xs text-muted">{t("verifyHint")}</p>
           ) : null}
         </div>
         <div className="sm:col-span-2" />
@@ -203,14 +207,12 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
             onClick={(e) => e.stopPropagation()}
           >
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700">
-              Request sent
+              {t("successKicker")}
             </p>
             <h3 id="wholesale-success-title" className="mt-3 font-serif text-2xl text-ink">
-              Email sent successfully
+              {t("successTitle")}
             </h3>
-            <p className="mt-3 text-sm text-muted">
-              We will review your request and reply soon.
-            </p>
+            <p className="mt-3 text-sm text-muted">{t("successBody")}</p>
           </div>
         </div>
       ) : null}

@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { variantOptionStockLabel, type ProductVariantOption } from "@/lib/catalog";
+import { useTranslations } from "next-intl";
+import { isVariantOptionSellable, type ProductVariantOption } from "@/lib/catalog";
 import { ProductStyleVariants } from "@/components/site/ProductStyleVariants";
 import { ProductCartSection } from "@/components/site/ProductCartSection";
 
@@ -18,14 +19,20 @@ export function ProductDetailClient({
   inStock: boolean;
   variantOptions?: ProductVariantOption[] | null;
 }) {
+  const t = useTranslations("Product");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const options = variantOptions ?? [];
   const current = options[selectedIndex];
 
-  const stockLabel = useMemo(
-    () => variantOptionStockLabel(current, inStock ? "In stock" : "Out of stock"),
-    [current, inStock],
-  );
+  const stockLabel = useMemo(() => {
+    const opt = current;
+    if (!opt) return inStock ? t("inStock") : t("outOfStock");
+    if (!isVariantOptionSellable(opt)) return t("outOfStock");
+    const qty = opt.stockQuantity;
+    if (qty != null && qty <= 10) return t("lowStock", { count: qty });
+    if (qty != null) return t("inStockCount", { count: qty });
+    return t("inStock");
+  }, [current, inStock, t]);
 
   return (
     <div>

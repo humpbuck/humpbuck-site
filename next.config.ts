@@ -1,5 +1,9 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+import { routing } from "./i18n/routing";
 import { ADMIN_PATH } from "./lib/admin-path";
+
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 /**
  * R2: allow `next/image` for the default r2.dev host and for any
@@ -26,6 +30,36 @@ function r2PublicImagePatterns(): { protocol: "https"; hostname: string; pathnam
   }));
 }
 
+const legacySeriesAstralRedirects = routing.locales.map((locale) =>
+  locale === routing.defaultLocale
+    ? {
+        source: "/series/astral",
+        destination: "/series/rd-astral",
+        permanent: true as const,
+      }
+    : {
+        source: `/${locale}/series/astral`,
+        destination: `/${locale}/series/rd-astral`,
+        permanent: true as const,
+      },
+);
+
+const legacyShopAstralQueryRedirects = routing.locales.map((locale) =>
+  locale === routing.defaultLocale
+    ? {
+        source: "/shop",
+        has: [{ type: "query" as const, key: "series", value: "astral" }],
+        destination: "/shop?series=rd-astral",
+        permanent: true as const,
+      }
+    : {
+        source: `/${locale}/shop`,
+        has: [{ type: "query" as const, key: "series", value: "astral" }],
+        destination: `/${locale}/shop?series=rd-astral`,
+        permanent: true as const,
+      },
+);
+
 const nextConfig: NextConfig = {
   async redirects() {
     return [
@@ -45,13 +79,8 @@ const nextConfig: NextConfig = {
         destination: `${ADMIN_PATH}/:path*`,
         permanent: true,
       },
-      { source: "/series/astral", destination: "/series/rd-astral", permanent: true },
-      {
-        source: "/shop",
-        has: [{ type: "query", key: "series", value: "astral" }],
-        destination: "/shop?series=rd-astral",
-        permanent: true,
-      },
+      ...legacySeriesAstralRedirects,
+      ...legacyShopAstralQueryRedirects,
     ];
   },
   images: {
@@ -97,4 +126,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);
