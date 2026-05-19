@@ -1,9 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const TURNSTILE_SCRIPT_SRC =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+
+const SCRIPT_TAG_ID = "cf-turnstile-sdk-explicit-storefront";
 
 declare global {
   interface Window {
@@ -24,71 +26,124 @@ declare global {
   }
 }
 
+/** Single-flight script inject (avoids `next/script` quirks with dynamic + hard refresh). */
+let scriptInjectPromise: Promise<void> | null = null;
+
+function waitForTurnstileApi(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const api = window.turnstile;
+    if (!api) {
+      reject(new Error("Turnstile API missing"));
+      return;
+    }
+    if (typeof api.ready === "function") {
+      api.ready(() => resolve());
+      return;
+    }
+    resolve();
+  });
+}
+
+export function injectTurnstileScriptOnce(): Promise<void> {
+  if (typeof window === "undefined") return Promise.resolve();
+
+  if (window.turnstile) {
+    return waitForTurnstileApi();
+  }
+
+  if (scriptInjectPromise) return scriptInjectPromise;
+
+  scriptInjectPromise = new Promise<void>((resolve, reject) => {
+    const finalize = () => {
+      waitForTurnstileApi().then(resolve).catch(reject);
+    };
+
+    const existingById = document.getElementById(SCRIPT_TAG_ID);
+    const existingSdk =
+      existingById instanceof HTMLScriptElement
+        ? existingById
+        : (document.querySelector(
+            `script[src^="https://challenges.cloudflare.com/turnstile"]`,
+          ) as HTMLScriptElement | null);
+
+    if (existingSdk) {
+      if (window.turnstile) {
+        finalize();
+        return;
+      }
+      existingSdk.addEventListener("load", () => finalize(), { once: true });
+      existingSdk.addEventListener(
+        "error",
+        () => {
+          reject(new Error("Turnstile script load failed"));
+        },
+        { once: true },
+      );
+      return;
+    }
+
+    const s = document.createElement("script");
+    s.id = SCRIPT_TAG_ID;
+    s.src = TURNSTILE_SCRIPT_SRC;
+    s.async = true;
+    s.addEventListener("load", () => finalize(), { once: true });
+    s.addEventListener(
+      "error",
+      () => {
+        reject(new Error("Turnstile script load failed"));
+      },
+      { once: true },
+    );
+    document.head.appendChild(s);
+  }).catch((err) => {
+    scriptInjectPromise = null;
+    throw err;
+  });
+
+  return scriptInjectPromise;
+}
+
 function clearTurnstileContainer(el: HTMLElement | null) {
   if (!el) return;
   el.replaceChildren();
 }
 
-/**
- * Tracks Turnstile script readiness. Handles the case where `next/script` onLoad
- * never runs because the script was already injected earlier on the page.
- */
-export function useTurnstileScriptLoaded(enabled: boolean): [boolean, () => void] {
-  const [loaded, setLoaded] = useState(false);
-  const markLoaded = useCallback(() => setLoaded(true), []);
-
-  useEffect(() => {
-    if (!enabled) {
-      setLoaded(false);
-      return;
-    }
-
-    let cancelled = false;
-    let timer: ReturnType<typeof setInterval> | null = null;
-
-    const tryMark = () => {
-      const api = window.turnstile;
-      if (!api) return false;
-      if (typeof api.ready === "function") {
-        api.ready(() => {
-          if (!cancelled) markLoaded();
-        });
-      } else {
-        markLoaded();
-      }
-      return true;
-    };
-
-    if (tryMark()) {
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    let attempts = 0;
-    timer = setInterval(() => {
-      if (cancelled) return;
-      if (tryMark() || attempts++ > 200) {
-        if (timer) clearInterval(timer);
-      }
-    }, 50);
-
-    return () => {
-      cancelled = true;
-      if (timer) clearInterval(timer);
-    };
-  }, [enabled, markLoaded]);
-
-  return [loaded, markLoaded];
-}
-
 export function useTurnstileWidget(siteKey: string) {
   const canRender = Boolean(siteKey.trim());
-  const [turnstileScriptLoaded, markScriptLoaded] = useTurnstileScriptLoaded(canRender);
+  const [turnstileScriptLoaded, setTurnstileScriptLoaded] = useState(false);
+  const [turnstileScriptError, setTurnstileScriptError] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [widgetId, setWidgetId] = useState<string | null>(null);
   const widgetRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!canRender) {
+      setTurnstileScriptLoaded(false);
+      setTurnstileScriptError(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    injectTurnstileScriptOnce()
+      .then(() => {
+        if (!cancelled) {
+          setTurnstileScriptLoaded(true);
+          setTurnstileScriptError(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setTurnstileScriptLoaded(false);
+          setTurnstileScriptError(true);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [canRender]);
 
   useEffect(() => {
     widgetIdRef.current = widgetId;
@@ -168,7 +223,7 @@ export function useTurnstileWidget(siteKey: string) {
     widgetRef,
     turnstileToken,
     turnstileScriptLoaded,
-    markScriptLoaded,
+    turnstileScriptError,
     resetWidget,
   };
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { usePathname } from "@/i18n/navigation";
 
 const WholesaleBriefForm = dynamic(
   () =>
@@ -17,8 +16,6 @@ const WholesaleBriefForm = dynamic(
   },
 );
 
-/** Remount the form per route so Turnstile never reuses a torn-down widget host. */
 export function WholesaleBriefFormShell({ siteKey }: { siteKey: string }) {
-  const pathname = usePathname();
-  return <WholesaleBriefForm key={pathname} siteKey={siteKey} />;
+  return <WholesaleBriefForm siteKey={siteKey} />;
 }

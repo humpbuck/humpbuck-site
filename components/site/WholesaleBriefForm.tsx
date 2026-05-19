@@ -1,9 +1,8 @@
 "use client";
 
-import Script from "next/script";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { TURNSTILE_SCRIPT_SRC, useTurnstileWidget } from "@/lib/turnstile-client";
+import { useTurnstileWidget } from "@/lib/turnstile-client";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -23,10 +22,9 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
     canRender: canRenderTurnstile,
     widgetRef,
     turnstileToken,
-    markScriptLoaded,
+    turnstileScriptError,
     resetWidget,
   } = useTurnstileWidget(siteKey);
-  const [scriptError, setScriptError] = useState("");
 
   useEffect(() => {
     if (!showSuccessModal) return;
@@ -48,7 +46,15 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
       const res = await fetch("/api/wholesale/mockup-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ company, targetRegion, estimatedQty, email, notes, website, turnstileToken }),
+        body: JSON.stringify({
+          company,
+          targetRegion,
+          estimatedQty,
+          email,
+          notes,
+          website,
+          turnstileToken,
+        }),
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
       if (res.ok && data.ok) {
@@ -75,15 +81,6 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
 
   return (
     <>
-      {canRenderTurnstile ? (
-        <Script
-          src={TURNSTILE_SCRIPT_SRC}
-          strategy="afterInteractive"
-          onLoad={markScriptLoaded}
-          onError={() => setScriptError(t("errScriptLoad"))}
-        />
-      ) : null}
-
       <form
         id="wholesale-brief-form"
         className="mt-6 grid gap-3 sm:grid-cols-2"
@@ -160,10 +157,10 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
           {!canRenderTurnstile ? (
             <p className="mt-2 text-xs text-red-600/90">{t("verifyUnavailable")}</p>
           ) : null}
-          {scriptError ? (
-            <p className="mt-2 text-xs text-red-600/90">{scriptError}</p>
+          {turnstileScriptError ? (
+            <p className="mt-2 text-xs text-red-600/90">{t("errScriptLoad")}</p>
           ) : null}
-          {canRenderTurnstile && !turnstileToken && !scriptError ? (
+          {canRenderTurnstile && !turnstileToken && !turnstileScriptError ? (
             <p className="mt-2 text-xs text-muted">{t("verifyHint")}</p>
           ) : null}
         </div>
