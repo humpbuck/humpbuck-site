@@ -1,9 +1,8 @@
 "use client";
 
-import Script from "next/script";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { useTurnstileWidget } from "@/lib/turnstile-client";
+import { TurnstileWidget } from "@/components/site/turnstile-widget";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -19,14 +18,9 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
   const [, setMessage] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const {
-    canRender: canRenderTurnstile,
-    widgetRef,
-    turnstileToken,
-    markScriptLoaded,
-    resetWidget,
-  } = useTurnstileWidget(siteKey);
-  const [scriptError, setScriptError] = useState("");
+  const canRenderTurnstile = Boolean(siteKey?.trim());
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileKey, setTurnstileKey] = useState(0);
 
   useEffect(() => {
     if (!showSuccessModal) return;
@@ -60,30 +54,24 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
         setEmail("");
         setNotes("");
         setWebsite("");
-        resetWidget();
+        setTurnstileToken("");
+        setTurnstileKey((k) => k + 1);
         return;
       }
       setStatus("error");
       setMessage(data.error ?? t("errSubmitGeneric"));
-      resetWidget();
+      setTurnstileToken("");
+      setTurnstileKey((k) => k + 1);
     } catch {
       setStatus("error");
       setMessage(t("errNetwork"));
-      resetWidget();
+      setTurnstileToken("");
+      setTurnstileKey((k) => k + 1);
     }
   }
 
   return (
     <>
-      {canRenderTurnstile ? (
-        <Script
-          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-          strategy="afterInteractive"
-          onLoad={markScriptLoaded}
-          onError={() => setScriptError(t("errScriptLoad"))}
-        />
-      ) : null}
-
       <form
         id="wholesale-brief-form"
         className="mt-6 grid gap-3 sm:grid-cols-2"
@@ -156,14 +144,14 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
           aria-hidden="true"
         />
         <div className="sm:col-span-2">
-          <div ref={widgetRef} className="min-h-[65px]" />
-          {!canRenderTurnstile ? (
-            <p className="mt-2 text-xs text-red-600/90">{t("verifyUnavailable")}</p>
-          ) : null}
-          {scriptError ? (
-            <p className="mt-2 text-xs text-red-600/90">{scriptError}</p>
-          ) : null}
-          {canRenderTurnstile && !turnstileToken && !scriptError ? (
+          <TurnstileWidget
+            key={turnstileKey}
+            siteKey={siteKey}
+            onTokenChange={setTurnstileToken}
+            unavailableMessage={t("verifyUnavailable")}
+            loadErrorMessage={t("errScriptLoad")}
+          />
+          {canRenderTurnstile && !turnstileToken ? (
             <p className="mt-2 text-xs text-muted">{t("verifyHint")}</p>
           ) : null}
         </div>

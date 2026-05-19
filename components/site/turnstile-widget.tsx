@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  loadTurnstileScript,
-  resetTurnstileScriptLoader,
-} from "@/lib/turnstile-context";
+import { loadTurnstileScript } from "@/lib/turnstile-context";
 import { useEffect, useRef, useState } from "react";
 
 type TurnstileWidgetProps = {
@@ -30,7 +27,6 @@ export function TurnstileWidget({
   const onTokenChangeRef = useRef(onTokenChange);
   const [scriptReady, setScriptReady] = useState(false);
   const [mountError, setMountError] = useState(false);
-  const [loadAttempt, setLoadAttempt] = useState(0);
 
   onTokenChangeRef.current = onTokenChange;
 
@@ -44,15 +40,12 @@ export function TurnstileWidget({
         if (!cancelled) setScriptReady(true);
       })
       .catch(() => {
-        if (!cancelled) {
-          resetTurnstileScriptLoader();
-          setMountError(true);
-        }
+        if (!cancelled) setMountError(true);
       });
     return () => {
       cancelled = true;
     };
-  }, [siteKey, loadAttempt]);
+  }, [siteKey]);
 
   useEffect(() => {
     if (!siteKey || !scriptReady || !containerRef.current || !window.turnstile?.render) {
@@ -104,37 +97,8 @@ export function TurnstileWidget({
     <>
       <div ref={containerRef} className={className} />
       {mountError ? (
-        <TurnstileLoadError
-          loadErrorMessage={loadErrorMessage}
-          onRetry={() => {
-            resetTurnstileScriptLoader();
-            setMountError(false);
-            setScriptReady(false);
-            setLoadAttempt((n) => n + 1);
-          }}
-        />
+        <p className="mt-2 text-xs text-red-600/90">{loadErrorMessage}</p>
       ) : null}
     </>
-  );
-}
-
-function TurnstileLoadError({
-  loadErrorMessage,
-  onRetry,
-}: {
-  loadErrorMessage: string;
-  onRetry: () => void;
-}) {
-  return (
-    <div className="mt-2">
-      <p className="text-xs text-red-600/90">{loadErrorMessage}</p>
-      <button
-        type="button"
-        onClick={onRetry}
-        className="mt-2 text-xs font-medium text-ink underline underline-offset-2"
-      >
-        Retry verification
-      </button>
-    </div>
   );
 }

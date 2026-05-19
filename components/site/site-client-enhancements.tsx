@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import { preloadTurnstileScript } from "@/lib/turnstile-context";
 const SiteAnalyticsConsent = dynamic(
   () =>
     import("@/components/analytics/site-analytics-consent").then(
@@ -79,6 +80,10 @@ export function SiteClientEnhancements() {
       if (timeoutId != null) window.clearTimeout(timeoutId);
     };
   }, []);
+
+  useEffect(() => {
+    if (ready) preloadTurnstileScript();
+  }, [ready]);
 
   if (!ready) return null;
 
