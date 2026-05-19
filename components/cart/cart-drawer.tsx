@@ -1,14 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { StorefrontImage } from "@/components/site/storefront-image";
 import { Link } from "@/i18n/navigation";
 import { Minus, Plus, X } from "lucide-react";
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import { formatPrice, getCartLineImage } from "@/lib/catalog";
-import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
-
 const CART_QTY_MAX = 9999;
 
 export function CartDrawer() {
@@ -115,13 +113,13 @@ export function CartDrawer() {
                   >
                     <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-paper">
                       {lineImage ? (
-                        <Image
+                        <StorefrontImage
                           src={lineImage}
                           alt={line.variantLabel || line.productName || line.slug}
                           fill
                           className="object-cover"
                           sizes="80px"
-                          unoptimized={isR2PublicObjectUrl(lineImage)}
+                          unoptimized
                         />
                       ) : null}
                     </div>

@@ -1,7 +1,7 @@
 /**
  * Heuristic: URLs served from R2 public dev / custom public base.
- * Use with `next/image` `unoptimized` so the browser fetches the object URL directly
- * instead of `/_next/image?url=...`, which can intermittently 5xx on some webp and
+ * Used by `StorefrontImage` (and avatar helpers) so the browser fetches the object URL
+ * directly instead of `/_next/image?url=...`, which can intermittently 5xx on some webp and
  * previously fired our `onError` handlers, shrinking the gallery to one slide.
  */
 export function isR2PublicObjectUrl(url: string): boolean {

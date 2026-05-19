@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
+import { StorefrontImage } from "@/components/site/storefront-image";
 
 export function ProductDetailImageStrip({
   productName,
@@ -19,14 +18,13 @@ export function ProductDetailImageStrip({
           key={`${i}-${src}`}
           className="relative overflow-hidden rounded-2xl border border-line bg-paper shadow-sm"
         >
-          <Image
+          <StorefrontImage
             src={src}
             alt={`${productName} — detail ${i + 1}`}
             width={1200}
             height={1600}
             className="h-auto w-full object-cover"
             sizes="(max-width:1024px) 100vw, 896px"
-            unoptimized={isR2PublicObjectUrl(src)}
           />
         </div>
       ))}

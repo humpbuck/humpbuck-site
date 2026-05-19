@@ -1,9 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
+import { StorefrontImage } from "@/components/site/storefront-image";
 
 export function ProductImageCarousel({
   alt,
@@ -70,14 +69,13 @@ export function ProductImageCarousel({
                 key={`${i}-${src}`}
                 className="relative aspect-square w-full min-w-full shrink-0 snap-center"
               >
-                <Image
+                <StorefrontImage
                   src={src}
                   alt={`${alt} — ${i + 1}`}
                   fill
                   className="object-cover object-center"
                   sizes="(max-width:1024px) 100vw, 50vw"
                   priority={i === 0}
-                  unoptimized={isR2PublicObjectUrl(src)}
                 />
               </div>
             ))}
@@ -120,13 +118,12 @@ export function ProductImageCarousel({
                 }`}
                 aria-label={`View image ${i + 1}`}
               >
-                <Image
+                <StorefrontImage
                   src={src}
                   alt=""
                   fill
                   className="object-cover object-center"
                   sizes="64px"
-                  unoptimized={isR2PublicObjectUrl(src)}
                 />
               </button>
             ))}

@@ -1,9 +1,8 @@
-import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { StorefrontImage } from "@/components/site/storefront-image";
 import type { Product } from "@/lib/catalog";
 import { formatPrice } from "@/lib/catalog";
-import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
 
 export async function ProductCard({
   product,
@@ -26,7 +25,6 @@ export async function ProductCard({
 }) {
   const t = await getTranslations("Product");
   const imgSrc = cardImageUrl?.trim() || product.image;
-  const r2Unopt = isR2PublicObjectUrl(imgSrc) && !optimizeR2Image;
   return (
     <Link
       href={`/product/${product.slug}`}
@@ -36,7 +34,7 @@ export async function ProductCard({
         <div className="absolute left-3 top-3 z-10 rounded-full bg-ink px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-paper">
           {t("sale")}
         </div>
-        <Image
+        <StorefrontImage
           src={imgSrc}
           alt={product.name}
           fill
@@ -44,7 +42,7 @@ export async function ProductCard({
           fetchPriority={imagePriority ? "high" : undefined}
           sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
           quality={imageQuality}
-          unoptimized={r2Unopt}
+          optimizeR2={optimizeR2Image}
           className="object-cover object-center transition duration-500 group-hover:scale-[1.03]"
         />
       </div>

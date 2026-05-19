@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { StorefrontImage } from "@/components/site/storefront-image";
 import { notFound } from "next/navigation";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { ProductCard } from "@/components/site/ProductCard";
@@ -86,7 +86,7 @@ export default async function SeriesPage({
     <div>
       <section className={`relative overflow-hidden border-b border-white/10 ${heroClass}`}>
         <div className="pointer-events-none absolute inset-0 opacity-35">
-          <Image
+          <StorefrontImage
             src={series.heroImage}
             alt=""
             fill

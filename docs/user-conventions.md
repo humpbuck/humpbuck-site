@@ -23,6 +23,7 @@
 - **商品媒体以管理后台为准**：`gallery` / `detail` / `variants` / `promoVideo` 里填的 R2（或 HTTPS）链接即为前台展示来源（见 `resolveStorefrontProductMedia` in `lib/r2-pdp-media.ts`）。仅当某块在后台**留空**时，才按 `R2_GALLERY_SPECS_BY_SLUG` 对桶做 ListObjects / HEAD 发现补全。
 - 桶内文件命名约定仍适用于「自动发现」兜底；在配置了 R2 S3 API 凭据时，用 **ListObjects** 列出（凭据同评论上传，见 `.env.example`）。  
 - 部署 **Vercel** 时需在项目环境变量中配置 `DATABASE_URL`、R2 相关变量及（若与默认不同）`NEXT_PUBLIC_R2_PUBLIC_BASE`；公网 R2 若用自有域名，需在 `next.config.ts` 的 `images.remotePatterns` 中允许该 `hostname`，否则 `next/image` 可能不显示。  
+- **前台图片**：凡展示 R2 公网 URL 的模块，应使用 `components/site/storefront-image.tsx` 的 **`StorefrontImage`**（不要用裸 `next/image` + 手写 `unoptimized`）。它会自动对 `isR2PublicObjectUrl` 为真的地址直连 R2，避免部分手机经 `/_next/image` 代理烂图。头像仍用 `ReviewerAvatar` / `HeaderUserAvatar` 等既有逻辑。  
 - 目录里的 **`slug` 与商品 URL 一致**（如 `digitemp-2301`），与 R2 控制台文件夹名一致即可。
 
 ## 3. 评论与头像
@@ -42,6 +43,7 @@
 |------|------|
 | 2026-04-23 | 建立本文件；约定：评论以 DB 为准、R2 评论图按 slug 分文件夹、PDP 媒体在具备 R2 API 时按桶内列表动态同步；Vercel 需配置环境变量。 |
 | 2026-04-23 | 增加「非请求不随改、最小 diff」的协作原则；添加 `.cursor/rules/humpbuck-stability.mdc` 以稳定站点、减少无关改动。 |
+| 2026-05-19 | 前台统一 `StorefrontImage`：R2 图直连 CDN，不经 `/_next/image`（修复部分手机主页/系列 hero 烂图）。 |
 
 ## 6. 附：你希望追加的个人要求（可编辑）
 

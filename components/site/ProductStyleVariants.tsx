@@ -1,10 +1,9 @@
 "use client";
 
-import Image from "next/image";
+import { StorefrontImage } from "@/components/site/storefront-image";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { isVariantOptionSellable, type ProductVariantOption } from "@/lib/catalog";
-import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
 import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 
 export function ProductStyleVariants({
@@ -75,13 +74,12 @@ export function ProductStyleVariants({
                   {opt.label}
                 </div>
               ) : (
-                <Image
+                <StorefrontImage
                   src={opt.image}
                   alt=""
                   fill
                   className="object-cover object-center"
                   sizes="(max-width:640px) 22vw, 96px"
-                  unoptimized={isR2PublicObjectUrl(opt.image)}
                   onError={() =>
                     setImageErrorId((m) => ({ ...m, [opt.id]: true }))
                   }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { StorefrontImage } from "@/components/site/storefront-image";
 import { getTranslations, getMessages, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { ArrowRight, Factory, Globe2, ShieldCheck, Sparkles } from "lucide-react";
@@ -150,7 +150,7 @@ export default async function HomePage({
                 href={(heroFeatured ?? heroFallback).slug === "digitemp" ? "/shop?series=digitemp" : `/product/${(heroFeatured ?? heroFallback).slug}`}
                 className="group relative block aspect-square overflow-hidden rounded-[24px] border border-white/10 bg-linear-to-b from-white/10 to-white/0 shadow-glow-digital transition outline-offset-4 focus-visible:outline-2 focus-visible:outline-cyan-400/80 sm:rounded-[28px]"
               >
-                <Image
+                <StorefrontImage
                   src={R2.home.digitemp2301Webp}
                   alt={t("heroFeaturedAlt")}
                   fill
@@ -208,7 +208,7 @@ export default async function HomePage({
             className="group relative overflow-hidden rounded-3xl border border-line bg-[#141210] p-8 text-white shadow-card"
           >
             <div className="pointer-events-none absolute inset-0 opacity-40">
-              <Image
+              <StorefrontImage
                 src={tonneau.heroImage}
                 alt=""
                 fill
@@ -250,7 +250,7 @@ export default async function HomePage({
             className="group relative overflow-hidden rounded-3xl border border-line bg-[#1a1224] p-8 text-white shadow-card"
           >
             <div className="pointer-events-none absolute inset-0 opacity-45">
-              <Image
+              <StorefrontImage
                 src={rdAstral.heroImage}
                 alt=""
                 fill

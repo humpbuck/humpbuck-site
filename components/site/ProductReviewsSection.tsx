@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { StorefrontImage } from "@/components/site/storefront-image";
 import { auth } from "@/auth";
 import type { Session } from "next-auth";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -113,7 +113,7 @@ export async function ProductReviewsSection({
                             rel="noopener noreferrer"
                             className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl ring-1 ring-[color:var(--color-line)]"
                           >
-                            <Image
+                            <StorefrontImage
                               src={src}
                               alt={t("reviewPhotoAlt", { name: productName })}
                               fill
@@ -171,7 +171,7 @@ export async function ProductReviewsSection({
                                   rel="noopener noreferrer"
                                   className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg ring-1 ring-[color:var(--color-line)]"
                                 >
-                                  <Image
+                                  <StorefrontImage
                                     src={src}
                                     alt={t("followUpPhotoAlt", { name: productName })}
                                     fill

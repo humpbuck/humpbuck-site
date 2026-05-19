@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { StorefrontImage } from "@/components/site/storefront-image";
 import { Minus, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/components/cart/cart-context";
 import { formatPrice } from "@/lib/catalog";
-import { isR2PublicObjectUrl } from "@/lib/r2-public-image";
 import {
   captureAffiliatePidAttribution,
   captureTrafficAttribution,
@@ -57,13 +56,13 @@ export default function CartPage() {
                 >
                   <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-paper">
                     {imageSrc ? (
-                      <Image
+                      <StorefrontImage
                         src={imageSrc}
                         alt={line.variantLabel || line.productName || line.slug}
                         fill
                         className="object-cover"
                         sizes="96px"
-                        unoptimized={isR2PublicObjectUrl(imageSrc)}
+                        unoptimized
                       />
                     ) : null}
                   </div>

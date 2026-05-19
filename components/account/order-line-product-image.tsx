@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
+import { StorefrontImage } from "@/components/site/storefront-image";
 
 type Props = {
   src: string;
@@ -45,7 +45,7 @@ export function OrderLineProductImage({
     );
   }
   return (
-    <Image
+    <StorefrontImage
       src={src}
       alt={alt}
       fill
