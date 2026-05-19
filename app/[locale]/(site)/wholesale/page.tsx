@@ -1,26 +1,12 @@
-import dynamic from "next/dynamic";
 import { Link } from "@/i18n/navigation";
 import { Mail, MessageCircle, Package, PenTool, Truck } from "lucide-react";
+import { WholesaleBriefFormShell } from "@/components/site/wholesale-brief-form-shell";
 import { publicSupportEmail } from "@/lib/support-contact";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import type { LucideIcon } from "lucide-react";
-
-const WholesaleBriefForm = dynamic(
-  () =>
-    import("@/components/site/WholesaleBriefForm").then((m) => m.WholesaleBriefForm),
-  {
-    ssr: false,
-    loading: () => (
-      <div
-        className="mt-6 min-h-[280px] animate-pulse rounded-2xl bg-ink/[0.04]"
-        aria-hidden
-      />
-    ),
-  },
-);
 
 export async function generateMetadata({
   params,
@@ -121,7 +107,9 @@ export default async function WholesalePage({
             <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">{t("nextKicker")}</p>
             <h2 className="mt-3 font-serif text-2xl text-ink">{t("nextTitle")}</h2>
             <p className="mt-3 text-sm text-muted">{t("nextLead")}</p>
-            <WholesaleBriefForm siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ""} />
+            <WholesaleBriefFormShell
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ""}
+            />
           </div>
           <div className="flex flex-col gap-3">
             <a
