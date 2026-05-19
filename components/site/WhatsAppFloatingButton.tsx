@@ -4,7 +4,7 @@ import { Mail, MessageCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ContactSupportForm } from "@/components/site/ContactSupportForm";
+import { ContactSupportModal } from "@/components/site/contact-support-modal";
 import { CenterModal } from "@/components/ui/center-modal";
 import {
   WHATSAPP_DISPLAY,
@@ -22,7 +22,6 @@ const STACK_BTN =
 export function WhatsAppFloatingButton() {
   const tWa = useTranslations("WhatsAppFab");
   const tFloat = useTranslations("Floating");
-  const tContact = useTranslations("ContactForm");
   const tProduct = useTranslations("Product");
   const pathname = usePathname();
   const [href, setHref] = useState(WHATSAPP_URL);
@@ -147,15 +146,7 @@ export function WhatsAppFloatingButton() {
         </div>
       </div>
 
-      {emailModalOpen ? (
-        <CenterModal title={tContact("modalTitle")} onClose={closeEmailModal} size="wide">
-          <ContactSupportForm
-            key="contact-fab-form"
-            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ""}
-            onClose={closeEmailModal}
-          />
-        </CenterModal>
-      ) : null}
+      {emailModalOpen ? <ContactSupportModal onClose={closeEmailModal} /> : null}
 
       {confirmOpen ? (
         <CenterModal

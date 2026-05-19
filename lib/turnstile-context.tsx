@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from "react";
 
-type TurnstileScriptContextValue = {
+export type TurnstileScriptContextValue = {
   siteKey: string;
   ready: boolean;
   markReady: () => void;
@@ -27,8 +27,8 @@ export function useTurnstileScriptContext() {
   return useContext(TurnstileScriptContext);
 }
 
-/** One shared Turnstile script for the storefront (contact modal + wholesale form). */
-export function TurnstileScriptProvider({ children }: { children?: ReactNode }) {
+/** One shared Turnstile script + context for contact modal and wholesale form. */
+export function TurnstileScriptProvider({ children }: { children: ReactNode }) {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
   const [ready, setReady] = useState(false);
   const markReady = useCallback(() => setReady(true), []);
@@ -55,7 +55,7 @@ export function TurnstileScriptProvider({ children }: { children?: ReactNode }) 
         <Script
           id="cf-turnstile"
           src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           onLoad={markReady}
         />
       ) : null}

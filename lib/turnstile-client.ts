@@ -1,6 +1,6 @@
 "use client";
 
-import { useTurnstileScriptContext } from "@/components/site/turnstile-script-provider";
+import { useTurnstileScriptContext } from "@/lib/turnstile-context";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 declare global {
@@ -26,10 +26,6 @@ function clearTurnstileContainer(el: HTMLElement | null) {
   el.replaceChildren();
 }
 
-/**
- * Tracks Turnstile script readiness. Prefers the shared provider; falls back to
- * detecting `window.turnstile` when the script was already on the page.
- */
 export function useTurnstileScriptLoaded(enabled: boolean): [boolean, () => void] {
   const shared = useTurnstileScriptContext();
   const [localReady, setLocalReady] = useState(false);
@@ -103,15 +99,13 @@ export function useTurnstileWidget(siteKey: string) {
       }
     };
 
-    const run = () => {
+    const frame = requestAnimationFrame(() => {
       if (typeof window.turnstile?.ready === "function") {
         window.turnstile.ready(mount);
       } else {
         mount();
       }
-    };
-
-    const frame = requestAnimationFrame(run);
+    });
 
     return () => {
       cancelled = true;
