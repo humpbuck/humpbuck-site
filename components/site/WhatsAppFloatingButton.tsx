@@ -95,6 +95,7 @@ export function WhatsAppFloatingButton() {
     setEmailModalOpen(false);
     setConfirmOpen(false);
     setStackOpen(false);
+    document.body.style.overflow = "";
   }, [locale, pathname]);
 
   return (

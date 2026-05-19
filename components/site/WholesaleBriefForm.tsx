@@ -3,7 +3,7 @@
 import Script from "next/script";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { useTurnstileWidget } from "@/lib/turnstile-client";
+import { TURNSTILE_SCRIPT_SRC, useTurnstileWidget } from "@/lib/turnstile-client";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -77,7 +77,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
     <>
       {canRenderTurnstile ? (
         <Script
-          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+          src={TURNSTILE_SCRIPT_SRC}
           strategy="afterInteractive"
           onLoad={markScriptLoaded}
           onError={() => setScriptError(t("errScriptLoad"))}
