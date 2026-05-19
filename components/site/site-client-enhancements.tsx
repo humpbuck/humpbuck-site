@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { preloadTurnstileScript } from "@/lib/turnstile-context";
 import { useEffect, useState } from "react";
 const SiteAnalyticsConsent = dynamic(
   () =>
@@ -65,7 +64,6 @@ export function SiteClientEnhancements() {
     };
 
     const onIdle = () => {
-      preloadTurnstileScript();
       markReady();
     };
     if (typeof win.requestIdleCallback === "function") {

@@ -1,7 +1,11 @@
 "use client";
 
 import Script from "next/script";
-import { TURNSTILE_SCRIPT_SRC } from "@/lib/turnstile-context";
+import {
+  markTurnstileSdkFailed,
+  markTurnstileSdkLoaded,
+  TURNSTILE_SCRIPT_SRC,
+} from "@/lib/turnstile-context";
 
 /** Load Cloudflare Turnstile once for the whole storefront (contact + wholesale). */
 export function TurnstileSdkScript() {
@@ -13,6 +17,8 @@ export function TurnstileSdkScript() {
       id="cf-turnstile-sdk"
       src={TURNSTILE_SCRIPT_SRC}
       strategy="afterInteractive"
+      onLoad={markTurnstileSdkLoaded}
+      onError={markTurnstileSdkFailed}
     />
   );
 }

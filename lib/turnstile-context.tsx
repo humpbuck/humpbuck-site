@@ -10,8 +10,12 @@ import {
   type ReactNode,
 } from "react";
 
-export const TURNSTILE_SCRIPT_SRC =
-  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+export const TURNSTILE_SCRIPT_BASE =
+  "https://challenges.cloudflare.com/turnstile/v0/api.js";
+
+const TURNSTILE_ONLOAD_CALLBACK = "__humpbuckTurnstileSdkOnload";
+
+export const TURNSTILE_SCRIPT_SRC = `${TURNSTILE_SCRIPT_BASE}?render=explicit`;
 
 type TurnstileApi = {
   ready?: (cb: () => void) => void;
@@ -40,7 +44,7 @@ function removeStaleTurnstileScripts() {
 }
 
 /** Resolves when `window.turnstile.render` is available. */
-export function waitForTurnstileApi(timeoutMs = 30_000): Promise<void> {
+export function waitForTurnstileApi(timeoutMs = 20_000): Promise<void> {
   return new Promise((resolve, reject) => {
     const finish = () => {
       if (getTurnstileApi()?.render) resolve();
@@ -77,27 +81,45 @@ export function waitForTurnstileApi(timeoutMs = 30_000): Promise<void> {
 }
 
 let scriptLoadPromise: Promise<void> | null = null;
+let layoutScriptWait: Promise<void> | null = null;
+let layoutScriptFailed = false;
+
+/** Called from layout `<Script onLoad>` when Cloudflare SDK is ready. */
+export function markTurnstileSdkLoaded() {
+  layoutScriptFailed = false;
+  void waitForTurnstileApi(5_000).catch(() => {});
+}
+
+/** Called from layout `<Script onError>` so forms can fall back without a long wait. */
+export function markTurnstileSdkFailed() {
+  layoutScriptFailed = true;
+  layoutScriptWait = null;
+}
 
 /** Clear fallback loader state after a failed load so the user can retry. */
 export function resetTurnstileScriptLoader() {
   scriptLoadPromise = null;
+  layoutScriptWait = null;
+  layoutScriptFailed = false;
   removeStaleTurnstileScripts();
 }
 
-/**
- * Wait for the layout `TurnstileSdkScript`, or inject a one-off fallback if it never loaded.
- */
-export function loadTurnstileScript(): Promise<void> {
-  if (typeof window === "undefined") return Promise.resolve();
-  if (getTurnstileApi()?.render) return waitForTurnstileApi();
-
-  if (document.getElementById("cf-turnstile-sdk")) {
-    return waitForTurnstileApi();
+function waitForLayoutScript(timeoutMs = 8_000): Promise<void> {
+  if (layoutScriptFailed) {
+    return Promise.reject(new Error("Turnstile layout script failed"));
   }
+  if (getTurnstileApi()?.render) return waitForTurnstileApi(2_000);
 
-  if (scriptLoadPromise) return scriptLoadPromise;
+  if (!layoutScriptWait) {
+    layoutScriptWait = waitForTurnstileApi(timeoutMs).finally(() => {
+      layoutScriptWait = null;
+    });
+  }
+  return layoutScriptWait;
+}
 
-  scriptLoadPromise = new Promise((resolve, reject) => {
+function injectTurnstileScript(): Promise<void> {
+  return new Promise((resolve, reject) => {
     const settle = () => {
       waitForTurnstileApi()
         .then(resolve)
@@ -116,13 +138,40 @@ export function loadTurnstileScript(): Promise<void> {
 
     removeStaleTurnstileScripts();
 
+    (window as unknown as Record<string, () => void>)[TURNSTILE_ONLOAD_CALLBACK] =
+      () => settle();
+
+    const src = `${TURNSTILE_SCRIPT_BASE}?render=explicit&onload=${TURNSTILE_ONLOAD_CALLBACK}`;
     const script = document.createElement("script");
     script.id = "cf-turnstile-sdk-fallback";
-    script.src = TURNSTILE_SCRIPT_SRC;
+    script.src = src;
     script.defer = true;
-    script.onload = () => settle();
     script.onerror = () => fail();
     document.head.appendChild(script);
+  });
+}
+
+/**
+ * Wait for layout `TurnstileSdkScript` (onLoad), then fall back to a one-off inject.
+ */
+export function loadTurnstileScript(): Promise<void> {
+  if (typeof window === "undefined") return Promise.resolve();
+  if (getTurnstileApi()?.render) return waitForTurnstileApi(2_000);
+
+  if (scriptLoadPromise) return scriptLoadPromise;
+
+  scriptLoadPromise = (async () => {
+    if (document.getElementById("cf-turnstile-sdk")) {
+      try {
+        await waitForLayoutScript(8_000);
+        return;
+      } catch {
+        /* layout script present but API never became ready — try fallback */
+      }
+    }
+    await injectTurnstileScript();
+  })().finally(() => {
+    scriptLoadPromise = null;
   });
 
   return scriptLoadPromise;
@@ -163,15 +212,9 @@ export function TurnstileScriptProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     setReady(false);
 
-    waitForTurnstileApi()
-      .then(() => {
-        if (!cancelled) markReady();
-      })
-      .catch(() => {
-        void loadTurnstileScript().then(() => {
-          if (!cancelled) markReady();
-        });
-      });
+    void loadTurnstileScript().then(() => {
+      if (!cancelled) markReady();
+    });
 
     return () => {
       cancelled = true;
