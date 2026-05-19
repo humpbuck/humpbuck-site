@@ -16,7 +16,6 @@ declare global {
         },
       ) => string;
       reset: (widgetId?: string) => void;
-      remove?: (widgetId: string) => void;
     };
   }
 }
@@ -44,37 +43,76 @@ export function useTurnstileScriptLoaded(enabled: boolean): [boolean, () => void
   return [loaded, markLoaded];
 }
 
+function clearTurnstileContainer(el: HTMLElement | null) {
+  if (!el) return;
+  el.replaceChildren();
+}
+
 export function useTurnstileWidget(siteKey: string) {
   const canRender = Boolean(siteKey.trim());
   const [turnstileScriptLoaded, markScriptLoaded] = useTurnstileScriptLoaded(canRender);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [widgetId, setWidgetId] = useState<string | null>(null);
   const widgetRef = useRef<HTMLDivElement | null>(null);
+  const widgetIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    widgetIdRef.current = widgetId;
+  }, [widgetId]);
 
   useEffect(() => {
     if (!canRender || !turnstileScriptLoaded || !widgetRef.current || !window.turnstile) {
       return;
     }
     if (widgetId) return;
-    const rendered = window.turnstile.render(widgetRef.current, {
-      sitekey: siteKey,
-      callback: (token) => setTurnstileToken(token),
-      "expired-callback": () => setTurnstileToken(""),
-      "error-callback": () => setTurnstileToken(""),
-    });
-    setWidgetId(rendered);
+
+    const container = widgetRef.current;
+    clearTurnstileContainer(container);
+
+    const mount = () => {
+      if (!window.turnstile || !widgetRef.current) return;
+      clearTurnstileContainer(widgetRef.current);
+      const rendered = window.turnstile.render(widgetRef.current, {
+        sitekey: siteKey,
+        callback: (token) => setTurnstileToken(token),
+        "expired-callback": () => setTurnstileToken(""),
+        "error-callback": () => setTurnstileToken(""),
+      });
+      widgetIdRef.current = rendered;
+      setWidgetId(rendered);
+    };
+
+    if (typeof window.turnstile.ready === "function") {
+      window.turnstile.ready(mount);
+    } else {
+      mount();
+    }
   }, [canRender, siteKey, turnstileScriptLoaded, widgetId]);
 
   useEffect(() => {
     return () => {
-      if (widgetId && window.turnstile?.remove) {
-        window.turnstile.remove(widgetId);
+      const id = widgetIdRef.current;
+      const el = widgetRef.current;
+      if (id && window.turnstile) {
+        try {
+          window.turnstile.reset(id);
+        } catch {
+          /* widget may already be gone */
+        }
       }
+      widgetIdRef.current = null;
+      clearTurnstileContainer(el);
     };
-  }, [widgetId]);
+  }, []);
 
   function resetWidget() {
-    if (widgetId && window.turnstile) window.turnstile.reset(widgetId);
+    if (widgetId && window.turnstile) {
+      try {
+        window.turnstile.reset(widgetId);
+      } catch {
+        /* ignore */
+      }
+    }
     setTurnstileToken("");
   }
 
