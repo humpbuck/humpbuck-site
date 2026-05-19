@@ -109,6 +109,14 @@ async function markCategoryReadAction(formData: FormData) {
       })
       .catch(() => null);
   }
+  if (category === "all" || category === ADMIN_INBOX_CATEGORY.contactSupport) {
+    await prisma.adminInboxMessage
+      .updateMany({
+        where: { status: "pending", category: ADMIN_INBOX_CATEGORY.contactSupport },
+        data: { status: "handled", handledAt: now },
+      })
+      .catch(() => null);
+  }
 
   revalidatePath(adminPath("/messages"));
   revalidatePath(adminPath("/orders"));
@@ -276,6 +284,13 @@ function messagePrimaryText(input: {
     const company = companyName ? ` for ${companyName}` : "";
     return asText(payload.message) || `${email} submitted an email mockup request${company}.`;
   }
+  if (category === ADMIN_INBOX_CATEGORY.contactSupport) {
+    const subj = asText(payload.subject);
+    const preview = asText(payload.message).slice(0, 80);
+    const subjectPart = subj ? ` — ${subj}` : "";
+    const bodyPart = preview ? `: ${preview}${preview.length >= 80 ? "…" : ""}` : "";
+    return `${email} sent a storefront contact message${subjectPart}${bodyPart}`;
+  }
   return asText(payload.message) || `${email} sent a new message.`;
 }
 
@@ -301,6 +316,7 @@ export default async function AdminMessagesPage({
     ADMIN_INBOX_CATEGORY.affiliates,
     ADMIN_INBOX_CATEGORY.subscribe,
     ADMIN_INBOX_CATEGORY.emailMockupRequest,
+    ADMIN_INBOX_CATEGORY.contactSupport,
   ]);
   const selectedCategory = allowedCategories.has(normalizedCategory) ? normalizedCategory : "all";
   const [
@@ -308,6 +324,7 @@ export default async function AdminMessagesPage({
     pendingAffiliateCount,
     pendingSubscribeCount,
     pendingMockupRequestCount,
+    pendingContactCount,
     allAffiliateRequests,
     allInboxMessages,
   ] = await Promise.all([
@@ -332,6 +349,11 @@ export default async function AdminMessagesPage({
     prisma.adminInboxMessage
       .count({
         where: { category: ADMIN_INBOX_CATEGORY.emailMockupRequest, status: "pending" },
+      })
+      .catch(() => 0),
+    prisma.adminInboxMessage
+      .count({
+        where: { category: ADMIN_INBOX_CATEGORY.contactSupport, status: "pending" },
       })
       .catch(() => 0),
     prisma.affiliateCouponRequest
@@ -370,7 +392,8 @@ export default async function AdminMessagesPage({
     pendingOrderCount +
     pendingAffiliateCount +
     pendingSubscribeCount +
-    pendingMockupRequestCount;
+    pendingMockupRequestCount +
+    pendingContactCount;
   const showAffiliateRows = selectedCategory === "all" || selectedCategory === ADMIN_INBOX_CATEGORY.affiliates;
   const allMessages = allInboxMessages;
   const visibleRows = allMessages.length + (showAffiliateRows ? allAffiliateRequests.length : 0);
@@ -397,7 +420,7 @@ export default async function AdminMessagesPage({
             {error}
           </p>
         ) : null}
-        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <Link
             href={adminPath("/messages?category=order")}
             className={cardClass(pendingOrderCount, ADMIN_INBOX_CATEGORY.order)}
@@ -428,6 +451,15 @@ export default async function AdminMessagesPage({
             </p>
             <p className="mt-1 text-xl font-semibold text-ink">{pendingMockupRequestCount}</p>
           </Link>
+          <Link
+            href={adminPath("/messages?category=contact_support")}
+            className={cardClass(pendingContactCount, ADMIN_INBOX_CATEGORY.contactSupport)}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+              Contact form
+            </p>
+            <p className="mt-1 text-xl font-semibold text-ink">{pendingContactCount}</p>
+          </Link>
         </div>
       </section>
 
@@ -443,6 +475,7 @@ export default async function AdminMessagesPage({
               { key: ADMIN_INBOX_CATEGORY.affiliates, label: "Affiliates" },
               { key: ADMIN_INBOX_CATEGORY.subscribe, label: "Subscribe" },
               { key: ADMIN_INBOX_CATEGORY.emailMockupRequest, label: "Email mockup request" },
+              { key: ADMIN_INBOX_CATEGORY.contactSupport, label: "Contact form" },
             ].map((item) => (
               <Link
                 key={item.key}
@@ -597,6 +630,7 @@ export default async function AdminMessagesPage({
                       {asText(payload.company) ? ` · Company: ${asText(payload.company)}` : ""}
                       {asText(payload.targetRegion) ? ` · Region: ${asText(payload.targetRegion)}` : ""}
                       {asText(payload.estimatedQty) ? ` · Qty: ${asText(payload.estimatedQty)}` : ""}
+                      {asText(payload.subject) ? ` · Subject: ${asText(payload.subject)}` : ""}
                     </p>
                     </div>
                   </div>

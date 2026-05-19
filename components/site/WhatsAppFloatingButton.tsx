@@ -3,14 +3,10 @@
 import { Mail, MessageCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ContactSupportForm } from "@/components/site/ContactSupportForm";
 import { CenterModal } from "@/components/ui/center-modal";
 import { FAB_SHOW_AFTER_SCROLL_PX } from "@/lib/floating-actions";
-import {
-  SUPPORT_EMAIL,
-  supportGmailComposeHref,
-  supportMailtoHref,
-} from "@/lib/support-email";
 import {
   WHATSAPP_DISPLAY,
   WHATSAPP_URL,
@@ -25,13 +21,14 @@ const STACK_BTN =
   "flex h-14 w-14 shrink-0 items-center justify-center rounded-full border shadow-lg shadow-ink/8 backdrop-blur-md transition duration-200 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2";
 
 /**
- * Fixed bottom-right — WhatsApp + support email stacked; email expands upward on
- * hover/focus. Email opens a chooser (desktop mail app or Gmail web). Homepage:
+ * Fixed bottom-right ??WhatsApp + support email stacked; email expands upward on
+ * hover/focus and opens an in-site contact form (Brevo + Turnstile). Homepage:
  * hidden until scroll past `FAB_SHOW_AFTER_SCROLL_PX`.
  */
 export function WhatsAppFloatingButton() {
   const tWa = useTranslations("WhatsAppFab");
   const tFloat = useTranslations("Floating");
+  const tContact = useTranslations("ContactForm");
   const tProduct = useTranslations("Product");
   const pathname = usePathname();
   const isHome = isHomePathname(pathname);
@@ -41,13 +38,33 @@ export function WhatsAppFloatingButton() {
   const [homeFabRevealed, setHomeFabRevealed] = useState(false);
   const [stackOpen, setStackOpen] = useState(false);
   const [coarsePointer, setCoarsePointer] = useState(false);
-  const [emailSubject, setEmailSubject] = useState<string | undefined>();
+  const closeStackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fabVisible = !isHome || homeFabRevealed;
-  const emailExpanded = stackOpen || coarsePointer;
+  const emailExpanded = stackOpen || coarsePointer || emailModalOpen;
 
-  const openStack = useCallback(() => setStackOpen(true), []);
-  const closeStack = useCallback(() => setStackOpen(false), []);
+  const openStack = useCallback(() => {
+    if (closeStackTimer.current) {
+      clearTimeout(closeStackTimer.current);
+      closeStackTimer.current = null;
+    }
+    setStackOpen(true);
+  }, []);
+
+  const closeStack = useCallback(() => {
+    if (emailModalOpen) return;
+    if (closeStackTimer.current) clearTimeout(closeStackTimer.current);
+    closeStackTimer.current = setTimeout(() => {
+      setStackOpen(false);
+      closeStackTimer.current = null;
+    }, 280);
+  }, [emailModalOpen]);
+
+  useEffect(() => {
+    return () => {
+      if (closeStackTimer.current) clearTimeout(closeStackTimer.current);
+    };
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia("(hover: none), (pointer: coarse)");
@@ -60,7 +77,6 @@ export function WhatsAppFloatingButton() {
   useEffect(() => {
     queueMicrotask(() => {
       const pageUrl = `${window.location.origin}${window.location.pathname}${window.location.search}`;
-      setEmailSubject(`HUMPBUCK — question about ${pageUrl}`);
       setHref(
         whatsappHrefWithBody(
           tProduct("whatsappPrefillPage", { url: pageUrl }),
@@ -88,19 +104,15 @@ export function WhatsAppFloatingButton() {
     window.open(href, "_blank", "noopener,noreferrer");
   }, [href]);
 
-  const openDesktopMail = useCallback(() => {
-    setEmailModalOpen(false);
-    window.location.href = supportMailtoHref(emailSubject);
-  }, [emailSubject]);
+  const openEmailModal = useCallback(() => {
+    openStack();
+    setEmailModalOpen(true);
+  }, [openStack]);
 
-  const openGmailWeb = useCallback(() => {
+  const closeEmailModal = useCallback(() => {
     setEmailModalOpen(false);
-    window.open(
-      supportGmailComposeHref(emailSubject),
-      "_blank",
-      "noopener,noreferrer",
-    );
-  }, [emailSubject]);
+    setStackOpen(false);
+  }, []);
 
   return (
     <>
@@ -120,18 +132,22 @@ export function WhatsAppFloatingButton() {
           }
         }}
       >
-        <div className="relative flex flex-col items-center">
+        <div
+          className={[
+            "flex flex-col items-center transition-[gap] duration-200 ease-out",
+            emailExpanded ? "gap-3" : "gap-0",
+          ].join(" ")}
+        >
           <button
             type="button"
-            onClick={() => setEmailModalOpen(true)}
+            onClick={openEmailModal}
             className={[
               STACK_BTN,
-              "absolute bottom-full left-1/2 mb-3 -translate-x-1/2",
               "border-line bg-paper/95 text-ink hover:bg-white hover:shadow-xl focus-visible:outline-ink/25",
-              "transition duration-200 ease-out",
+              "transition-all duration-200 ease-out",
               emailExpanded
-                ? "pointer-events-auto scale-100 opacity-100"
-                : "pointer-events-none scale-90 opacity-0",
+                ? "pointer-events-auto h-14 scale-100 opacity-100"
+                : "pointer-events-none h-0 scale-90 overflow-hidden border-0 opacity-0 shadow-none",
             ].join(" ")}
             aria-label={tFloat("ariaEmail")}
             tabIndex={fabVisible && emailExpanded ? 0 : -1}
@@ -160,41 +176,13 @@ export function WhatsAppFloatingButton() {
         </div>
       </div>
 
-      {emailModalOpen && (
-        <CenterModal
-          title={tFloat("emailModalTitle")}
-          onClose={() => setEmailModalOpen(false)}
-        >
-          <p className="text-sm leading-relaxed text-ink/85">
-            {tFloat("emailModalBody", { email: SUPPORT_EMAIL })}
-          </p>
-          <div className="mt-6 flex flex-col gap-2.5">
-            <button
-              type="button"
-              onClick={openDesktopMail}
-              className="w-full rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-ink/90"
-            >
-              {tFloat("emailOpenApp")}
-            </button>
-            <button
-              type="button"
-              onClick={openGmailWeb}
-              className="w-full rounded-full border border-line bg-paper px-5 py-2.5 text-sm font-semibold text-ink/85 transition hover:bg-ink/4"
-            >
-              {tFloat("emailOpenGmail")}
-            </button>
-            <button
-              type="button"
-              onClick={() => setEmailModalOpen(false)}
-              className="w-full rounded-full px-5 py-2.5 text-sm font-semibold text-muted transition hover:text-ink"
-            >
-              {tFloat("emailCancel")}
-            </button>
-          </div>
+      {emailModalOpen ? (
+        <CenterModal title={tContact("modalTitle")} onClose={closeEmailModal} size="wide">
+          <ContactSupportForm key="contact-fab-form" onClose={closeEmailModal} />
         </CenterModal>
-      )}
+      ) : null}
 
-      {confirmOpen && (
+      {confirmOpen ? (
         <CenterModal
           title={tWa("modalTitle")}
           onClose={() => setConfirmOpen(false)}
@@ -219,7 +207,7 @@ export function WhatsAppFloatingButton() {
             </button>
           </div>
         </CenterModal>
-      )}
+      ) : null}
     </>
   );
 }

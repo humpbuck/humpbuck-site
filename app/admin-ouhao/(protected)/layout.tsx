@@ -41,6 +41,7 @@ export default async function AdminProtectedLayout({
     pendingOrderCount,
     pendingSubscribeCount,
     pendingMockupRequestCount,
+    pendingContactCount,
   ] = await Promise.all([
     prisma.affiliateCouponRequest.count({ where: { status: "pending" } }).catch(() => 0),
     prisma.adminInboxMessage.count({
@@ -52,9 +53,16 @@ export default async function AdminProtectedLayout({
     prisma.adminInboxMessage.count({
       where: { category: ADMIN_INBOX_CATEGORY.emailMockupRequest, status: "pending" },
     }).catch(() => 0),
+    prisma.adminInboxMessage.count({
+      where: { category: ADMIN_INBOX_CATEGORY.contactSupport, status: "pending" },
+    }).catch(() => 0),
   ]);
   const totalPendingInboxCount =
-    pendingOrderCount + pendingCouponRequestCount + pendingSubscribeCount + pendingMockupRequestCount;
+    pendingOrderCount +
+    pendingCouponRequestCount +
+    pendingSubscribeCount +
+    pendingMockupRequestCount +
+    pendingContactCount;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
@@ -128,6 +136,9 @@ export default async function AdminProtectedLayout({
                 <li>{adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.subscribe)}: {pendingSubscribeCount}</li>
                 <li>
                   {adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.emailMockupRequest)}: {pendingMockupRequestCount}
+                </li>
+                <li>
+                  {adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.contactSupport)}: {pendingContactCount}
                 </li>
               </ul>
             </div>

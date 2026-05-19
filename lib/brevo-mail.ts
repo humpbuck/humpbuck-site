@@ -13,6 +13,7 @@ export async function sendTransactionalEmail(params: {
   subject: string;
   htmlContent: string;
   textContent?: string;
+  replyTo?: { email: string; name?: string };
 }): Promise<{ ok: true } | { ok: false; error: string }> {
   const key = process.env.BREVO_API_KEY?.trim();
   const senderEmail = process.env.BREVO_SENDER_EMAIL?.trim();
@@ -31,6 +32,14 @@ export async function sendTransactionalEmail(params: {
   const payload = JSON.stringify({
     sender: { name: senderName, email: senderEmail },
     to: [{ email: params.to }],
+    ...(params.replyTo
+      ? {
+          replyTo: {
+            email: params.replyTo.email,
+            ...(params.replyTo.name ? { name: params.replyTo.name } : {}),
+          },
+        }
+      : {}),
     subject: params.subject,
     htmlContent: params.htmlContent,
     textContent: params.textContent,

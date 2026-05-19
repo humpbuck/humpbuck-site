@@ -11,10 +11,13 @@ export function CenterModal({
   title,
   onClose,
   children,
+  size = "default",
 }: {
   title: string;
   onClose: () => void;
   children: ReactNode;
+  /** `wide` for landscape forms (e.g. contact). */
+  size?: "default" | "wide";
 }) {
   const titleId = useId();
 
@@ -43,7 +46,9 @@ export function CenterModal({
       onClick={onClose}
     >
       <div
-        className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-line bg-paper p-6 shadow-xl"
+        className={`relative max-h-[90vh] w-full overflow-y-auto rounded-2xl border border-line bg-paper p-6 shadow-xl ${
+          size === "wide" ? "max-w-3xl" : "max-w-md"
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3">

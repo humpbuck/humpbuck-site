@@ -136,12 +136,28 @@
   },
   "Floating": {
     "backToTop": "Back to top",
-    "ariaEmail": "Email HUMPBUCK support",
-    "emailModalTitle": "Email HUMPBUCK?",
-    "emailModalBody": "Choose how to write to {email}. If “Open email app” does nothing on your PC, use Gmail (web).",
-    "emailOpenApp": "Open email app",
-    "emailOpenGmail": "Gmail (web)",
-    "emailCancel": "Cancel"
+    "ariaEmail": "Email HUMPBUCK support"
+  },
+  "ContactForm": {
+    "modalTitle": "Email support",
+    "intro": "Send us a message — we will reply to the email you provide.",
+    "labelFromEmail": "Your email",
+    "labelTo": "To",
+    "labelSubject": "Subject",
+    "optional": "optional",
+    "labelMessage": "Message",
+    "messagePlaceholder": "How can we help?",
+    "submit": "Send message",
+    "submitting": "Sending…",
+    "errVerifyRequired": "Please complete the verification check.",
+    "errSubmitGeneric": "Failed to send. Please try again.",
+    "errNetwork": "Network error. Please try again.",
+    "errScriptLoad": "Verification script failed to load. Please refresh and try again.",
+    "verifyUnavailable": "Verification is not configured. Add NEXT_PUBLIC_TURNSTILE_SITE_KEY and TURNSTILE_SECRET_KEY to .env.local (or your host’s env), then restart the dev server.",
+    "verifyHint": "Please complete the verification before submitting.",
+    "successKicker": "Message received",
+    "successBody": "Thank you — we received your message and will reply as soon as we can.",
+    "successClose": "Close"
   },
   "Shop": {
     "metaTitle": "Shop — DIGI-TEMP & full catalog",
