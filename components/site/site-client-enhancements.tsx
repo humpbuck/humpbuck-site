@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import { preloadTurnstileScript } from "@/lib/turnstile-context";
 
 const SiteAnalyticsConsent = dynamic(
   () =>
@@ -64,10 +65,14 @@ export function SiteClientEnhancements() {
       cancelIdleCallback?: (id: number) => void;
     };
 
+    const onIdle = () => {
+      markReady();
+      preloadTurnstileScript();
+    };
     if (typeof win.requestIdleCallback === "function") {
-      idleId = win.requestIdleCallback(() => markReady(), { timeout: 1200 });
+      idleId = win.requestIdleCallback(() => onIdle(), { timeout: 1200 });
     } else {
-      timeoutId = window.setTimeout(markReady, 800);
+      timeoutId = window.setTimeout(onIdle, 800);
     }
 
     return () => {

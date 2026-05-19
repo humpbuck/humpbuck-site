@@ -95,10 +95,7 @@ export function useTurnstileWidget(siteKey: string) {
   }, [widgetId]);
 
   useEffect(() => {
-    if (!canRender || !turnstileScriptLoaded || !widgetRef.current || !window.turnstile) {
-      return;
-    }
-    if (widgetId) return;
+    if (!canRender || !turnstileScriptLoaded || widgetId) return;
 
     let cancelled = false;
 
@@ -126,17 +123,37 @@ export function useTurnstileWidget(siteKey: string) {
       }
     };
 
-    const frame = requestAnimationFrame(() => {
+    const scheduleMount = () => {
       if (typeof window.turnstile?.ready === "function") {
         window.turnstile.ready(mount);
       } else {
         mount();
       }
-    });
+    };
+
+    if (window.turnstile && widgetRef.current) {
+      const frame = requestAnimationFrame(scheduleMount);
+      return () => {
+        cancelled = true;
+        cancelAnimationFrame(frame);
+      };
+    }
+
+    let attempts = 0;
+    const poll = window.setInterval(() => {
+      if (cancelled) return;
+      if (window.turnstile && widgetRef.current) {
+        window.clearInterval(poll);
+        scheduleMount();
+      } else if (attempts++ > 120) {
+        window.clearInterval(poll);
+        if (!cancelled) setMountError(true);
+      }
+    }, 50);
 
     return () => {
       cancelled = true;
-      cancelAnimationFrame(frame);
+      window.clearInterval(poll);
     };
   }, [canRender, resolvedKey, turnstileScriptLoaded, widgetId]);
 
