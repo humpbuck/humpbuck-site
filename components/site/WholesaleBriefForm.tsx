@@ -1,6 +1,5 @@
 "use client";
 
-import Script from "next/script";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useTurnstileWidget } from "@/lib/turnstile-client";
@@ -23,10 +22,8 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
     canRender: canRenderTurnstile,
     widgetRef,
     turnstileToken,
-    markScriptLoaded,
     resetWidget,
   } = useTurnstileWidget(siteKey);
-  const [scriptError, setScriptError] = useState("");
 
   useEffect(() => {
     if (!showSuccessModal) return;
@@ -75,16 +72,6 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
 
   return (
     <>
-      {canRenderTurnstile ? (
-        <Script
-          id="cf-turnstile-sdk"
-          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-          strategy="afterInteractive"
-          onLoad={markScriptLoaded}
-          onError={() => setScriptError(t("errScriptLoad"))}
-        />
-      ) : null}
-
       <form
         id="wholesale-brief-form"
         className="mt-6 grid gap-3 sm:grid-cols-2"
@@ -161,10 +148,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
           {!canRenderTurnstile ? (
             <p className="mt-2 text-xs text-red-600/90">{t("verifyUnavailable")}</p>
           ) : null}
-          {scriptError ? (
-            <p className="mt-2 text-xs text-red-600/90">{scriptError}</p>
-          ) : null}
-          {canRenderTurnstile && !turnstileToken && !scriptError ? (
+          {canRenderTurnstile && !turnstileToken ? (
             <p className="mt-2 text-xs text-muted">{t("verifyHint")}</p>
           ) : null}
         </div>

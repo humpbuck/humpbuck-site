@@ -1,6 +1,5 @@
 "use client";
 
-import Script from "next/script";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { useEffect, useState, type ReactNode } from "react";
@@ -56,7 +55,6 @@ export function ContactSupportForm({
     canRender: canRenderTurnstile,
     widgetRef,
     turnstileToken,
-    markScriptLoaded,
     resetWidget,
   } = useTurnstileWidget(siteKey);
 
@@ -145,16 +143,6 @@ export function ContactSupportForm({
 
   return (
     <>
-      {canRenderTurnstile ? (
-        <Script
-          id="cf-turnstile-sdk"
-          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-          strategy="afterInteractive"
-          onLoad={markScriptLoaded}
-          onError={() => setErrorMessage(t("errScriptLoad"))}
-        />
-      ) : null}
-
       <p className="text-sm leading-relaxed text-muted">{t("intro")}</p>
 
       <form

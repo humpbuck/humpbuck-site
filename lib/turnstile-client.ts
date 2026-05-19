@@ -26,32 +26,57 @@ function clearTurnstileContainer(el: HTMLElement | null) {
   el.replaceChildren();
 }
 
-/**
- * Tracks Turnstile script readiness. Handles the case where `next/script` onLoad
- * never runs because the script was already injected by another form on the page.
- */
-export function useTurnstileScriptLoaded(enabled: boolean): [boolean, () => void] {
+/** Waits for the shared layout script to expose `window.turnstile`. */
+export function useTurnstileScriptLoaded(enabled: boolean): boolean {
   const [loaded, setLoaded] = useState(false);
+
   const markLoaded = useCallback(() => setLoaded(true), []);
 
   useEffect(() => {
-    if (!enabled || loaded) return;
-    if (typeof window === "undefined") return;
-    const api = window.turnstile;
-    if (!api) return;
-    if (typeof api.ready === "function") {
-      api.ready(markLoaded);
-    } else {
-      markLoaded();
-    }
-  }, [enabled, loaded, markLoaded]);
+    if (!enabled) return;
 
-  return [loaded, markLoaded];
+    let cancelled = false;
+    let timer: number | null = null;
+
+    const tryMark = () => {
+      const api = window.turnstile;
+      if (!api) return false;
+      if (typeof api.ready === "function") {
+        api.ready(() => {
+          if (!cancelled) markLoaded();
+        });
+      } else {
+        markLoaded();
+      }
+      return true;
+    };
+
+    if (tryMark()) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    let attempts = 0;
+    timer = window.setInterval(() => {
+      if (cancelled) return;
+      if (tryMark() || attempts++ > 200) {
+        if (timer) window.clearInterval(timer);
+      }
+    }, 50);
+
+    return () => {
+      cancelled = true;
+      if (timer) window.clearInterval(timer);
+    };
+  }, [enabled, markLoaded]);
+
+  return loaded;
 }
 
 export function useTurnstileWidget(siteKey: string) {
   const canRender = Boolean(siteKey.trim());
-  const [turnstileScriptLoaded, markScriptLoaded] = useTurnstileScriptLoaded(canRender);
+  const turnstileScriptLoaded = useTurnstileScriptLoaded(canRender);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [widgetId, setWidgetId] = useState<string | null>(null);
   const widgetRef = useRef<HTMLDivElement | null>(null);
@@ -90,27 +115,28 @@ export function useTurnstileWidget(siteKey: string) {
         widgetIdRef.current = rendered;
         setWidgetId(rendered);
       } catch {
-        /* Avoid taking down the route if Cloudflare is mid-teardown */
+        /* keep the route alive if the SDK is mid-navigation */
       }
     };
 
-    if (typeof window.turnstile.ready === "function") {
-      window.turnstile.ready(mount);
-    } else {
+    try {
+      if (typeof window.turnstile.ready === "function") {
+        window.turnstile.ready(mount);
+      } else {
+        mount();
+      }
+    } catch {
       mount();
     }
 
     return () => {
       cancelled = true;
     };
-  }, [canRender, siteKey, turnstileScriptLoaded, widgetId]);
+  }, [canRender, siteKey, turnstileScriptLoaded]);
 
   useEffect(() => {
     return () => {
-      /**
-       * Do not call turnstile.remove() here — it breaks the shared SDK for the
-       * next client navigation (e.g. contact modal → /wholesale).
-       */
+      /** Do not call turnstile.remove() — breaks the next client navigation. */
       widgetIdRef.current = null;
       clearTurnstileContainer(widgetRef.current);
     };
@@ -135,7 +161,6 @@ export function useTurnstileWidget(siteKey: string) {
     widgetRef,
     turnstileToken,
     turnstileScriptLoaded,
-    markScriptLoaded,
     resetWidget,
   };
 }
