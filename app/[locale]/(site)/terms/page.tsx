@@ -2,6 +2,7 @@ import { Link } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { TermsBodyEn } from "@/components/site/terms-body-en";
 import { TermsBodyEs } from "@/components/site/terms-body-es";
+import { TermsBodyPt } from "@/components/site/terms-body-pt";
 import { routing } from "@/i18n/routing";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
@@ -42,7 +43,13 @@ export default async function TermsPage({
         {t("lastUpdated", { date: t("termsLastUpdatedDate") })}
       </p>
 
-      {locale === routing.defaultLocale ? <TermsBodyEn /> : <TermsBodyEs />}
+      {locale === routing.defaultLocale ? (
+        <TermsBodyEn />
+      ) : locale === "pt" ? (
+        <TermsBodyPt />
+      ) : (
+        <TermsBodyEs />
+      )}
 
       <p className="mt-12 border-t border-line pt-8 text-sm text-muted">
         {t("relatedLabel")}{" "}

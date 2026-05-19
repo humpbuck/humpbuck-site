@@ -17,13 +17,15 @@ export function storefrontHreflangLanguages(pathWithoutLocale: string): Record<s
 
   const enHref = norm === "/" ? `${base}/` : `${base}${norm}`;
   const esHref = norm === "/" ? `${base}/es` : `${base}/es${norm}`;
+  const ptHref = norm === "/" ? `${base}/pt` : `${base}/pt${norm}`;
 
   const xDefault =
-    routing.defaultLocale === "es" ? esHref : enHref;
+    routing.defaultLocale === "es" ? esHref : routing.defaultLocale === "pt" ? ptHref : enHref;
 
   return {
     "x-default": xDefault,
     en: enHref,
     es: esHref,
+    pt: ptHref,
   };
 }

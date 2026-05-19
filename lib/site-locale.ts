@@ -7,5 +7,7 @@ export const SITE_LOCALE = "en-US" as const;
 
 /** BCP 47 tag for `Intl` formatters from the storefront `[locale]` segment. */
 export function intlLocaleFromAppLocale(appLocale: string): string {
-  return appLocale === "es" ? "es-ES" : "en-US";
+  if (appLocale === "es") return "es-ES";
+  if (appLocale === "pt") return "pt-BR";
+  return "en-US";
 }

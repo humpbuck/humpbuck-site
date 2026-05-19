@@ -64,6 +64,23 @@ export function FlagUnitedStates({ className, ...props }: SvgProps) {
   );
 }
 
+/** Brazil — simplified green field, yellow rhombus, blue circle. */
+export function FlagBrazil({ className, ...props }: SvgProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 30 20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      {...props}
+    >
+      <rect width="30" height="20" fill="#009B3A" />
+      <polygon points="15,1.5 28.5,10 15,18.5 1.5,10" fill="#FEDF00" />
+      <circle cx="15" cy="10" r="4.2" fill="#002776" />
+    </svg>
+  );
+}
+
 /** Spain — national flag bands (1:2:1 red / yellow / red); escutcheon omitted for clarity at small sizes. */
 export function FlagSpain({ className, ...props }: SvgProps) {
   return (
@@ -84,6 +101,7 @@ export function FlagSpain({ className, ...props }: SvgProps) {
 const LOCALE_FLAGS = {
   en: FlagUnitedStates,
   es: FlagSpain,
+  pt: FlagBrazil,
 } as const;
 
 export function LocaleFlagIcon({

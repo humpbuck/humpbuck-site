@@ -523,7 +523,8 @@ export default async function AccountAffiliatePage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("AccountAffiliate");
-  const dateLocale = locale === "es" ? "es" : "en-US";
+  const dateLocale =
+    locale === "es" ? "es" : locale === "pt" ? "pt-BR" : "en-US";
 
   function payoutMethodLabel(method: string | null | undefined): string {
     if (!method) return "-";

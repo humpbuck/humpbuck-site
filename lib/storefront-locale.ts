@@ -17,33 +17,58 @@ type SeriesCopyBlock = {
   description?: string;
 };
 
-const ES_SPEC_LABELS: Record<string, string> = {
-  "Case diameter": "Diámetro de la caja",
-  "Case thickness": "Grosor de la caja",
-  "Band width": "Ancho de la correa",
-  "Weight": "Peso",
-  Crystal: "Cristal",
-  "Case material": "Material de la caja",
-  Clasp: "Cierre",
-  "Water resistance": "Resistencia al agua",
+const SPEC_LABELS: Record<string, Record<string, string>> = {
+  es: {
+    "Case diameter": "Diámetro de la caja",
+    "Case thickness": "Grosor de la caja",
+    "Band width": "Ancho de la correa",
+    Weight: "Peso",
+    Crystal: "Cristal",
+    "Case material": "Material de la caja",
+    Clasp: "Cierre",
+    "Water resistance": "Resistencia al agua",
+  },
+  pt: {
+    "Case diameter": "Diâmetro da caixa",
+    "Case thickness": "Espessura da caixa",
+    "Band width": "Largura da pulseira",
+    Weight: "Peso",
+    Crystal: "Cristal",
+    "Case material": "Material da caixa",
+    Clasp: "Fecho",
+    "Water resistance": "Resistência à água",
+  },
 };
 
-const ES_SPEC_VALUES: Record<string, string> = {
-  "Mineral glass": "Cristal mineral",
-  "Stainless steel": "Acero inoxidable",
-  Polycarbonate: "Policarbonato",
-  Alloy: "Aleación",
-  "Hook buckle": "Hebilla gancho",
-  "Pin buckle": "Hebilla de pin",
-  "Butterfly clasp": "Cierre mariposa",
-  "Hook & Loop": "Cierre de contacto",
-  "30 m": "30 m",
+const SPEC_VALUES: Record<string, Record<string, string>> = {
+  es: {
+    "Mineral glass": "Cristal mineral",
+    "Stainless steel": "Acero inoxidable",
+    Polycarbonate: "Policarbonato",
+    Alloy: "Aleación",
+    "Hook buckle": "Hebilla gancho",
+    "Pin buckle": "Hebilla de pin",
+    "Butterfly clasp": "Cierre mariposa",
+    "Hook & Loop": "Cierre de contacto",
+    "30 m": "30 m",
+  },
+  pt: {
+    "Mineral glass": "Vidro mineral",
+    "Stainless steel": "Aço inoxidável",
+    Polycarbonate: "Policarbonato",
+    Alloy: "Liga",
+    "Hook buckle": "Fivela gancho",
+    "Pin buckle": "Fivela de pino",
+    "Butterfly clasp": "Fecho borboleta",
+    "Hook & Loop": "Fecho de contato",
+    "30 m": "30 m",
+  },
 };
 
-function localizeVariantLabelEs(label: string): string {
+function localizeVariantLabel(label: string, locale: string): string {
   const m = /^Style\s+(\d{1,2})$/i.exec(label.trim());
-  if (m) return `Estilo ${Number(m[1])}`;
-  return label;
+  if (!m || (locale !== "es" && locale !== "pt")) return label;
+  return `Estilo ${Number(m[1])}`;
 }
 
 function readProductCopy(
@@ -122,17 +147,19 @@ export function applyStorefrontProductLocale(
         value: String(s.value ?? "").trim(),
       }));
   } else {
+    const specLabels = SPEC_LABELS[locale] ?? {};
+    const specValues = SPEC_VALUES[locale] ?? {};
     next.specs = next.specs.map((row) => ({
       ...row,
-      label: row.label ? (ES_SPEC_LABELS[row.label] ?? row.label) : row.label,
-      value: row.value ? (ES_SPEC_VALUES[row.value] ?? row.value) : row.value,
+      label: row.label ? (specLabels[row.label] ?? row.label) : row.label,
+      value: row.value ? (specValues[row.value] ?? row.value) : row.value,
     }));
   }
 
   if (next.variantOptions?.length) {
     next.variantOptions = next.variantOptions.map((v) => ({
       ...v,
-      label: localizeVariantLabelEs(v.label),
+      label: localizeVariantLabel(v.label, locale),
     }));
   }
 
