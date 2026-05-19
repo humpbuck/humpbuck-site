@@ -2,26 +2,10 @@
 
 import Script from "next/script";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useTurnstileWidget } from "@/lib/turnstile-client";
 
 type Status = "idle" | "loading" | "success" | "error";
-
-declare global {
-  interface Window {
-    turnstile?: {
-      render: (
-        container: string | HTMLElement,
-        options: {
-          sitekey: string;
-          callback: (token: string) => void;
-          "expired-callback"?: () => void;
-          "error-callback"?: () => void;
-        }
-      ) => string;
-      reset: (widgetId?: string) => void;
-    };
-  }
-}
 
 export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
   const t = useTranslations("WholesaleForm");
@@ -34,24 +18,14 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
   const [status, setStatus] = useState<Status>("idle");
   const [, setMessage] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState("");
-  const [turnstileScriptLoaded, setTurnstileScriptLoaded] = useState(false);
-  const [widgetId, setWidgetId] = useState<string | null>(null);
-  const widgetRef = useRef<HTMLDivElement | null>(null);
 
-  const canRenderTurnstile = Boolean(siteKey);
-
-  useEffect(() => {
-    if (!canRenderTurnstile || !turnstileScriptLoaded || !widgetRef.current || !window.turnstile) return;
-    if (widgetId) return;
-    const rendered = window.turnstile.render(widgetRef.current, {
-      sitekey: siteKey,
-      callback: (token) => setTurnstileToken(token),
-      "expired-callback": () => setTurnstileToken(""),
-      "error-callback": () => setTurnstileToken(""),
-    });
-    setWidgetId(rendered);
-  }, [canRenderTurnstile, siteKey, turnstileScriptLoaded, widgetId]);
+  const {
+    canRender: canRenderTurnstile,
+    widgetRef,
+    turnstileToken,
+    markScriptLoaded,
+    resetWidget,
+  } = useTurnstileWidget(siteKey);
 
   useEffect(() => {
     if (!showSuccessModal) return;
@@ -85,19 +59,16 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
         setEmail("");
         setNotes("");
         setWebsite("");
-        setTurnstileToken("");
-        if (widgetId && window.turnstile) window.turnstile.reset(widgetId);
+        resetWidget();
         return;
       }
       setStatus("error");
       setMessage(data.error ?? t("errSubmitGeneric"));
-      if (widgetId && window.turnstile) window.turnstile.reset(widgetId);
-      setTurnstileToken("");
+      resetWidget();
     } catch {
       setStatus("error");
       setMessage(t("errNetwork"));
-      if (widgetId && window.turnstile) window.turnstile.reset(widgetId);
-      setTurnstileToken("");
+      resetWidget();
     }
   }
 
@@ -107,7 +78,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
         <Script
           src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
           strategy="afterInteractive"
-          onLoad={() => setTurnstileScriptLoaded(true)}
+          onLoad={markScriptLoaded}
           onError={() => setMessage(t("errScriptLoad"))}
         />
       ) : null}

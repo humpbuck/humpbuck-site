@@ -178,7 +178,11 @@ export function WhatsAppFloatingButton() {
 
       {emailModalOpen ? (
         <CenterModal title={tContact("modalTitle")} onClose={closeEmailModal} size="wide">
-          <ContactSupportForm key="contact-fab-form" onClose={closeEmailModal} />
+          <ContactSupportForm
+            key="contact-fab-form"
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ""}
+            onClose={closeEmailModal}
+          />
         </CenterModal>
       ) : null}
 

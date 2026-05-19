@@ -3,27 +3,11 @@
 import Script from "next/script";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { publicSupportEmail } from "@/lib/support-contact";
+import { useTurnstileWidget } from "@/lib/turnstile-client";
 
 type Status = "idle" | "loading" | "success" | "error";
-
-declare global {
-  interface Window {
-    turnstile?: {
-      render: (
-        container: string | HTMLElement,
-        options: {
-          sitekey: string;
-          callback: (token: string) => void;
-          "expired-callback"?: () => void;
-          "error-callback"?: () => void;
-        },
-      ) => string;
-      reset: (widgetId?: string) => void;
-    };
-  }
-}
 
 const FIELD =
   "mt-1.5 w-full rounded-2xl border border-stone-400/30 bg-paper px-4 py-2.5 text-sm text-ink shadow-sm outline-none transition placeholder:text-muted/90 focus:border-digital-dim/45 focus:ring-2 focus:ring-digital/15";
@@ -51,12 +35,30 @@ function FieldLabel({
   );
 }
 
-export function ContactSupportForm({ onClose }: { onClose?: () => void }) {
+export function ContactSupportForm({
+  siteKey: siteKeyProp,
+  onClose,
+}: {
+  /** Pass from server/parent when possible; falls back to build-time public env. */
+  siteKey?: string;
+  onClose?: () => void;
+}) {
   const t = useTranslations("ContactForm");
   const locale = useLocale();
   const pathname = usePathname();
   const supportEmail = publicSupportEmail();
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
+  const siteKey =
+    siteKeyProp?.trim() ||
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ||
+    "";
+
+  const {
+    canRender: canRenderTurnstile,
+    widgetRef,
+    turnstileToken,
+    markScriptLoaded,
+    resetWidget,
+  } = useTurnstileWidget(siteKey);
 
   const [fromEmail, setFromEmail] = useState("");
   const [subject, setSubject] = useState("");
@@ -65,12 +67,6 @@ export function ContactSupportForm({ onClose }: { onClose?: () => void }) {
   const [pageUrl, setPageUrl] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const [turnstileToken, setTurnstileToken] = useState("");
-  const [turnstileScriptLoaded, setTurnstileScriptLoaded] = useState(false);
-  const [widgetId, setWidgetId] = useState<string | null>(null);
-  const widgetRef = useRef<HTMLDivElement | null>(null);
-
-  const canRenderTurnstile = Boolean(siteKey);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -79,25 +75,6 @@ export function ContactSupportForm({ onClose }: { onClose?: () => void }) {
       );
     });
   }, [pathname]);
-
-  useEffect(() => {
-    if (!canRenderTurnstile || !turnstileScriptLoaded || !widgetRef.current || !window.turnstile) {
-      return;
-    }
-    if (widgetId) return;
-    const rendered = window.turnstile.render(widgetRef.current, {
-      sitekey: siteKey,
-      callback: (token) => setTurnstileToken(token),
-      "expired-callback": () => setTurnstileToken(""),
-      "error-callback": () => setTurnstileToken(""),
-    });
-    setWidgetId(rendered);
-  }, [canRenderTurnstile, siteKey, turnstileScriptLoaded, widgetId]);
-
-  function resetTurnstile() {
-    if (widgetId && window.turnstile) window.turnstile.reset(widgetId);
-    setTurnstileToken("");
-  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -138,11 +115,11 @@ export function ContactSupportForm({ onClose }: { onClose?: () => void }) {
       }
       setStatus("error");
       setErrorMessage(data.error ?? t("errSubmitGeneric"));
-      resetTurnstile();
+      resetWidget();
     } catch {
       setStatus("error");
       setErrorMessage(t("errNetwork"));
-      resetTurnstile();
+      resetWidget();
     }
   }
 
@@ -172,7 +149,7 @@ export function ContactSupportForm({ onClose }: { onClose?: () => void }) {
         <Script
           src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
           strategy="afterInteractive"
-          onLoad={() => setTurnstileScriptLoaded(true)}
+          onLoad={markScriptLoaded}
           onError={() => setErrorMessage(t("errScriptLoad"))}
         />
       ) : null}
