@@ -49,7 +49,7 @@ function whenTurnstileApiReady(): Promise<void> {
 
 let scriptLoadPromise: Promise<void> | null = null;
 
-function loadTurnstileScript(): Promise<void> {
+export function loadTurnstileScript(): Promise<void> {
   if (typeof window === "undefined") return Promise.resolve();
   if (getTurnstileApi()) return whenTurnstileApiReady();
 
