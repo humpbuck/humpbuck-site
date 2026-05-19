@@ -136,7 +136,12 @@
   },
   "Floating": {
     "backToTop": "Back to top",
-    "ariaEmail": "Email HUMPBUCK support"
+    "ariaEmail": "Email HUMPBUCK support",
+    "emailModalTitle": "Email HUMPBUCK?",
+    "emailModalBody": "Choose how to write to {email}. If “Open email app” does nothing on your PC, use Gmail (web).",
+    "emailOpenApp": "Open email app",
+    "emailOpenGmail": "Gmail (web)",
+    "emailCancel": "Cancel"
   },
   "Shop": {
     "metaTitle": "Shop — DIGI-TEMP & full catalog",
