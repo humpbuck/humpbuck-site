@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { TurnstileScriptProvider } from "@/lib/turnstile-context";
 
 const SiteAnalyticsConsent = dynamic(
   () =>
@@ -79,18 +78,16 @@ export function SiteClientEnhancements() {
     };
   }, []);
 
+  if (!ready) return null;
+
   return (
-    <TurnstileScriptProvider>
-      {ready ? (
-        <>
-          <SiteAnalyticsConsent />
-          <GoogleAnalyticsPageviews />
-          <TrackPageView />
-          <AttributionCapture />
-          <LocaleSwitcherFab />
-          <SiteFloatingActions />
-        </>
-      ) : null}
-    </TurnstileScriptProvider>
+    <>
+      <SiteAnalyticsConsent />
+      <GoogleAnalyticsPageviews />
+      <TrackPageView />
+      <AttributionCapture />
+      <LocaleSwitcherFab />
+      <SiteFloatingActions />
+    </>
   );
 }

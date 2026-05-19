@@ -1,12 +1,26 @@
+import dynamic from "next/dynamic";
 import { Link } from "@/i18n/navigation";
 import { Mail, MessageCircle, Package, PenTool, Truck } from "lucide-react";
-import { WholesaleBriefForm } from "@/components/site/WholesaleBriefForm";
 import { publicSupportEmail } from "@/lib/support-contact";
 import { WHATSAPP_URL } from "@/lib/whatsapp";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import type { LucideIcon } from "lucide-react";
+
+const WholesaleBriefForm = dynamic(
+  () =>
+    import("@/components/site/WholesaleBriefForm").then((m) => m.WholesaleBriefForm),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="mt-6 min-h-[280px] animate-pulse rounded-2xl bg-ink/[0.04]"
+        aria-hidden
+      />
+    ),
+  },
+);
 
 export async function generateMetadata({
   params,

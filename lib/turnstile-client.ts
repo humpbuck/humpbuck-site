@@ -17,7 +17,25 @@ declare global {
         },
       ) => string;
       reset: (widgetId?: string) => void;
+      remove?: (widgetId: string) => void;
     };
+  }
+}
+
+function destroyTurnstileWidget(widgetId: string | null) {
+  if (!widgetId || !window.turnstile) return;
+  if (typeof window.turnstile.remove === "function") {
+    try {
+      window.turnstile.remove(widgetId);
+      return;
+    } catch {
+      /* fall through */
+    }
+  }
+  try {
+    window.turnstile.reset(widgetId);
+  } catch {
+    /* widget may already be gone */
   }
 }
 
@@ -117,26 +135,15 @@ export function useTurnstileWidget(siteKey: string) {
     return () => {
       const id = widgetIdRef.current;
       const el = widgetRef.current;
-      if (id && window.turnstile) {
-        try {
-          window.turnstile.reset(id);
-        } catch {
-          /* widget may already be gone */
-        }
-      }
+      destroyTurnstileWidget(id);
       widgetIdRef.current = null;
       clearTurnstileContainer(el);
     };
   }, []);
 
   function resetWidget() {
-    if (widgetId && window.turnstile) {
-      try {
-        window.turnstile.reset(widgetId);
-      } catch {
-        /* ignore */
-      }
-    }
+    destroyTurnstileWidget(widgetId);
+    setWidgetId(null);
     setTurnstileToken("");
   }
 
