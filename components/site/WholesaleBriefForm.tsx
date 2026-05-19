@@ -77,6 +77,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
     <>
       {canRenderTurnstile ? (
         <Script
+          id="cf-turnstile-sdk"
           src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
           strategy="afterInteractive"
           onLoad={markScriptLoaded}
