@@ -1,0 +1,19 @@
+{
+  "SeriesCopy": {
+    "digitemp": {
+      "name": "DIGI-TEMP",
+      "tagline": "Cœur ana-digi multifonction : double LCD et jeu complet de modes.",
+      "description": "HUMPBUCK DIGI-TEMP est notre ligne ana-digi phare : double LCD pour TIME, DATE, alarme (ALM), température extérieure (OUT) et chronomètre (STW), dans des boîtiers acier compacts avec verre minéral pour une lecture claire au quotidien."
+    },
+    "tonneau": {
+      "name": "RM-TONNEAU",
+      "tagline": "Rythme de course, esprit cockpit et matériaux à la hauteur.",
+      "description": "Certaines montres rappellent l’heure. RM-TONNEAU nous rappelle que le courage n’est pas du bruit — c’est la décision d’avancer. Le boîtier tonneau porte cette tension : courbe comme une vitesse figée, assez ouvert pour laisser voir le travail intérieur. Automobile, aérospatial et finitions haut de gamme ne sont pas de la décoration ; c’est le vocabulaire de ceux qui ne s’arrêtent pas."
+    },
+    "rd-astral": {
+      "name": "RD-ASTRAL",
+      "tagline": "Inspiré des nuits d’enfance sous les étoiles.",
+      "description": "RD-ASTRAL part du fondateur enfant — levant les yeux, traçant les constellations, cherchant le bord du cosmos. Les montres nous rappellent de ne pas laisser la routine vous user : gardez le courage de poursuivre ce que vous aimez et une passion sincère en vous. L’architecture squelette et le cadran dramatique portent cet esprit d’observation des étoiles."
+    }
+  }
+}

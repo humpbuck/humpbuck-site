@@ -1,8 +1,8 @@
 import { defineRouting } from "next-intl/routing";
 
-/** Supported storefront locales. Default `en` keeps existing unprefixed URLs; `es` → `/es/...`, `pt` → `/pt/...`. */
+/** Supported storefront locales. Default `en` keeps existing unprefixed URLs; others use `/{locale}/...`. */
 export const routing = defineRouting({
-  locales: ["en", "es", "pt"],
+  locales: ["en", "es", "pt", "ru", "fr", "it"],
   defaultLocale: "en",
   localePrefix: "as-needed",
 });

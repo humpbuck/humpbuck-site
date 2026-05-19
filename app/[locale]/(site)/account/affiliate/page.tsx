@@ -524,7 +524,17 @@ export default async function AccountAffiliatePage({
   setRequestLocale(locale);
   const t = await getTranslations("AccountAffiliate");
   const dateLocale =
-    locale === "es" ? "es" : locale === "pt" ? "pt-BR" : "en-US";
+    locale === "es"
+      ? "es"
+      : locale === "pt"
+        ? "pt-BR"
+        : locale === "ru"
+          ? "ru-RU"
+          : locale === "fr"
+            ? "fr-FR"
+            : locale === "it"
+              ? "it-IT"
+              : "en-US";
 
   function payoutMethodLabel(method: string | null | undefined): string {
     if (!method) return "-";

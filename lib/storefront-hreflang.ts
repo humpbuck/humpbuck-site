@@ -18,14 +18,26 @@ export function storefrontHreflangLanguages(pathWithoutLocale: string): Record<s
   const enHref = norm === "/" ? `${base}/` : `${base}${norm}`;
   const esHref = norm === "/" ? `${base}/es` : `${base}/es${norm}`;
   const ptHref = norm === "/" ? `${base}/pt` : `${base}/pt${norm}`;
+  const ruHref = norm === "/" ? `${base}/ru` : `${base}/ru${norm}`;
+  const frHref = norm === "/" ? `${base}/fr` : `${base}/fr${norm}`;
+  const itHref = norm === "/" ? `${base}/it` : `${base}/it${norm}`;
 
-  const xDefault =
-    routing.defaultLocale === "es" ? esHref : routing.defaultLocale === "pt" ? ptHref : enHref;
+  const localizedDefault: Record<string, string> = {
+    es: esHref,
+    pt: ptHref,
+    ru: ruHref,
+    fr: frHref,
+    it: itHref,
+  };
+  const xDefault = localizedDefault[routing.defaultLocale] ?? enHref;
 
   return {
     "x-default": xDefault,
     en: enHref,
     es: esHref,
     pt: ptHref,
+    ru: ruHref,
+    fr: frHref,
+    it: itHref,
   };
 }

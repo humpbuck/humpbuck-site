@@ -25,7 +25,17 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   const t = await getTranslations({ locale, namespace: "SiteMetadata" });
   const ogLocale =
-    locale === "es" ? "es_ES" : locale === "pt" ? "pt_BR" : "en_US";
+    locale === "es"
+      ? "es_ES"
+      : locale === "pt"
+        ? "pt_BR"
+        : locale === "ru"
+          ? "ru_RU"
+          : locale === "fr"
+            ? "fr_FR"
+            : locale === "it"
+              ? "it_IT"
+              : "en_US";
 
   return {
     metadataBase: new URL(siteUrl),

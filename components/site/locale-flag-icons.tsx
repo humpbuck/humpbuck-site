@@ -81,6 +81,57 @@ export function FlagBrazil({ className, ...props }: SvgProps) {
   );
 }
 
+/** Italy — vertical tricolor (green / white / red). */
+export function FlagItaly({ className, ...props }: SvgProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 30 20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      {...props}
+    >
+      <rect width="10" height="20" fill="#009246" />
+      <rect x="10" width="10" height="20" fill="#FFFFFF" />
+      <rect x="20" width="10" height="20" fill="#CE2B37" />
+    </svg>
+  );
+}
+
+/** France — vertical tricolor (blue / white / red). */
+export function FlagFrance({ className, ...props }: SvgProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 30 20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      {...props}
+    >
+      <rect width="10" height="20" fill="#002395" />
+      <rect x="10" width="10" height="20" fill="#FFFFFF" />
+      <rect x="20" width="10" height="20" fill="#ED2939" />
+    </svg>
+  );
+}
+
+/** Russia — simplified tricolor (white / blue / red). */
+export function FlagRussia({ className, ...props }: SvgProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 30 20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      {...props}
+    >
+      <rect width="30" height="6.67" fill="#FFFFFF" />
+      <rect y="6.67" width="30" height="6.66" fill="#0039A6" />
+      <rect y="13.33" width="30" height="6.67" fill="#D52B1E" />
+    </svg>
+  );
+}
+
 /** Spain — national flag bands (1:2:1 red / yellow / red); escutcheon omitted for clarity at small sizes. */
 export function FlagSpain({ className, ...props }: SvgProps) {
   return (
@@ -102,6 +153,9 @@ const LOCALE_FLAGS = {
   en: FlagUnitedStates,
   es: FlagSpain,
   pt: FlagBrazil,
+  ru: FlagRussia,
+  fr: FlagFrance,
+  it: FlagItaly,
 } as const;
 
 export function LocaleFlagIcon({

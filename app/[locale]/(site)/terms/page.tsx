@@ -2,7 +2,10 @@ import { Link } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { TermsBodyEn } from "@/components/site/terms-body-en";
 import { TermsBodyEs } from "@/components/site/terms-body-es";
+import { TermsBodyFr } from "@/components/site/terms-body-fr";
+import { TermsBodyIt } from "@/components/site/terms-body-it";
 import { TermsBodyPt } from "@/components/site/terms-body-pt";
+import { TermsBodyRu } from "@/components/site/terms-body-ru";
 import { routing } from "@/i18n/routing";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
@@ -47,8 +50,16 @@ export default async function TermsPage({
         <TermsBodyEn />
       ) : locale === "pt" ? (
         <TermsBodyPt />
-      ) : (
+      ) : locale === "ru" ? (
+        <TermsBodyRu />
+      ) : locale === "fr" ? (
+        <TermsBodyFr />
+      ) : locale === "it" ? (
+        <TermsBodyIt />
+      ) : locale === "es" ? (
         <TermsBodyEs />
+      ) : (
+        <TermsBodyEn />
       )}
 
       <p className="mt-12 border-t border-line pt-8 text-sm text-muted">

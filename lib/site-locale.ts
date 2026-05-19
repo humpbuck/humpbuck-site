@@ -9,5 +9,8 @@ export const SITE_LOCALE = "en-US" as const;
 export function intlLocaleFromAppLocale(appLocale: string): string {
   if (appLocale === "es") return "es-ES";
   if (appLocale === "pt") return "pt-BR";
+  if (appLocale === "ru") return "ru-RU";
+  if (appLocale === "fr") return "fr-FR";
+  if (appLocale === "it") return "it-IT";
   return "en-US";
 }

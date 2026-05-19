@@ -38,6 +38,36 @@ const SPEC_LABELS: Record<string, Record<string, string>> = {
     Clasp: "Fecho",
     "Water resistance": "Resistência à água",
   },
+  ru: {
+    "Case diameter": "Диаметр корпуса",
+    "Case thickness": "Толщина корпуса",
+    "Band width": "Ширина ремешка",
+    Weight: "Вес",
+    Crystal: "Стекло",
+    "Case material": "Материал корпуса",
+    Clasp: "Застёжка",
+    "Water resistance": "Водозащита",
+  },
+  fr: {
+    "Case diameter": "Diamètre du boîtier",
+    "Case thickness": "Épaisseur du boîtier",
+    "Band width": "Largeur du bracelet",
+    Weight: "Poids",
+    Crystal: "Verre",
+    "Case material": "Matière du boîtier",
+    Clasp: "Fermoir",
+    "Water resistance": "Étanchéité",
+  },
+  it: {
+    "Case diameter": "Diametro cassa",
+    "Case thickness": "Spessore cassa",
+    "Band width": "Larghezza cinturino",
+    Weight: "Peso",
+    Crystal: "Vetro",
+    "Case material": "Materiale cassa",
+    Clasp: "Chiusura",
+    "Water resistance": "Impermeabilità",
+  },
 };
 
 const SPEC_VALUES: Record<string, Record<string, string>> = {
@@ -63,12 +93,54 @@ const SPEC_VALUES: Record<string, Record<string, string>> = {
     "Hook & Loop": "Fecho de contato",
     "30 m": "30 m",
   },
+  ru: {
+    "Mineral glass": "Минеральное стекло",
+    "Stainless steel": "Нержавеющая сталь",
+    Polycarbonate: "Поликарбонат",
+    Alloy: "Сплав",
+    "Hook buckle": "Крючковая застёжка",
+    "Pin buckle": "Пряжка с штифтом",
+    "Butterfly clasp": "Застёжка-бабочка",
+    "Hook & Loop": "Липучка",
+    "30 m": "30 м",
+  },
+  fr: {
+    "Mineral glass": "Verre minéral",
+    "Stainless steel": "Acier inoxydable",
+    Polycarbonate: "Polycarbonate",
+    Alloy: "Alliage",
+    "Hook buckle": "Boucle crochet",
+    "Pin buckle": "Boucle ardillon",
+    "Butterfly clasp": "Fermoir papillon",
+    "Hook & Loop": "Fermoir auto-agrippant",
+    "30 m": "30 m",
+  },
+  it: {
+    "Mineral glass": "Vetro minerale",
+    "Stainless steel": "Acciaio inossidabile",
+    Polycarbonate: "Policarbonato",
+    Alloy: "Lega",
+    "Hook buckle": "Fibbia a gancio",
+    "Pin buckle": "Fibbia a spillo",
+    "Butterfly clasp": "Chiusura a farfalla",
+    "Hook & Loop": "Chiusura a strappo",
+    "30 m": "30 m",
+  },
+};
+
+const VARIANT_STYLE_PREFIX: Record<string, string> = {
+  es: "Estilo",
+  pt: "Estilo",
+  ru: "Стиль",
+  fr: "Style",
+  it: "Stile",
 };
 
 function localizeVariantLabel(label: string, locale: string): string {
   const m = /^Style\s+(\d{1,2})$/i.exec(label.trim());
-  if (!m || (locale !== "es" && locale !== "pt")) return label;
-  return `Estilo ${Number(m[1])}`;
+  const prefix = VARIANT_STYLE_PREFIX[locale];
+  if (!m || !prefix) return label;
+  return `${prefix} ${Number(m[1])}`;
 }
 
 function readProductCopy(
