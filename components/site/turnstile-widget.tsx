@@ -3,6 +3,7 @@
 import {
   loadTurnstileScript,
   resetTurnstileScriptLoader,
+  waitForTurnstileApi,
 } from "@/lib/turnstile-context";
 import { useEffect, useRef, useState } from "react";
 
@@ -28,25 +29,31 @@ export function TurnstileWidget({
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
   const onTokenChangeRef = useRef(onTokenChange);
-  const [scriptReady, setScriptReady] = useState(false);
+  const [sdkReady, setSdkReady] = useState(false);
   const [mountError, setMountError] = useState(false);
   const [loadAttempt, setLoadAttempt] = useState(0);
 
   onTokenChangeRef.current = onTokenChange;
 
   useEffect(() => {
-    let cancelled = false;
     if (!siteKey) return;
 
-    setScriptReady(false);
+    let cancelled = false;
+    setSdkReady(false);
     setMountError(false);
-    void loadTurnstileScript()
-      .then(() => {
-        if (!cancelled) setScriptReady(true);
-      })
-      .catch(() => {
+
+    void (async () => {
+      try {
+        if (window.turnstile?.render) {
+          await waitForTurnstileApi();
+        } else {
+          await waitForTurnstileApi(8_000).catch(() => loadTurnstileScript());
+        }
+        if (!cancelled) setSdkReady(true);
+      } catch {
         if (!cancelled) setMountError(true);
-      });
+      }
+    })();
 
     return () => {
       cancelled = true;
@@ -54,7 +61,7 @@ export function TurnstileWidget({
   }, [siteKey, loadAttempt]);
 
   useEffect(() => {
-    if (!siteKey || !scriptReady || !containerRef.current) return;
+    if (!siteKey || !sdkReady || !containerRef.current) return;
 
     let cancelled = false;
 
@@ -106,7 +113,7 @@ export function TurnstileWidget({
       }
       if (containerRef.current) containerRef.current.replaceChildren();
     };
-  }, [siteKey, scriptReady]);
+  }, [siteKey, sdkReady]);
 
   if (!siteKey) {
     return (

@@ -10,10 +10,8 @@ import {
   type ReactNode,
 } from "react";
 
-export const TURNSTILE_SCRIPT_BASE =
-  "https://challenges.cloudflare.com/turnstile/v0/api.js";
-
-const TURNSTILE_ONLOAD_CALLBACK = "__humpbuckTurnstileSdkOnload";
+export const TURNSTILE_SCRIPT_SRC =
+  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
 type TurnstileApi = {
   ready?: (cb: () => void) => void;
@@ -34,11 +32,14 @@ function removeStaleTurnstileScripts() {
   if (typeof document === "undefined" || getTurnstileApi()) return;
   document
     .querySelectorAll<HTMLScriptElement>('script[src*="turnstile/v0/api.js"]')
-    .forEach((el) => el.remove());
+    .forEach((el) => {
+      if (el.id === "cf-turnstile-sdk") return;
+      el.remove();
+    });
 }
 
 /** Resolves when `window.turnstile.render` is available. */
-function whenTurnstileApiReady(timeoutMs = 15_000): Promise<void> {
+export function waitForTurnstileApi(timeoutMs = 30_000): Promise<void> {
   return new Promise((resolve, reject) => {
     const finish = () => {
       if (getTurnstileApi()?.render) resolve();
@@ -65,7 +66,7 @@ function whenTurnstileApiReady(timeoutMs = 15_000): Promise<void> {
         window.clearTimeout(deadline);
         if (typeof live.ready === "function") live.ready(finish);
         else finish();
-      } else if (attempts++ > 200) {
+      } else if (attempts++ > 400) {
         window.clearInterval(timer);
         window.clearTimeout(deadline);
         reject(new Error("Turnstile API timeout"));
@@ -76,21 +77,26 @@ function whenTurnstileApiReady(timeoutMs = 15_000): Promise<void> {
 
 let scriptLoadPromise: Promise<void> | null = null;
 
-/** Clear loader state after a failed load so the user can retry. */
+/** Clear fallback loader state after a failed load so the user can retry. */
 export function resetTurnstileScriptLoader() {
   scriptLoadPromise = null;
   removeStaleTurnstileScripts();
 }
 
+/** Fallback if the layout Script tag did not load (adblock, slow network). */
 export function loadTurnstileScript(): Promise<void> {
   if (typeof window === "undefined") return Promise.resolve();
-  if (getTurnstileApi()?.render) return whenTurnstileApiReady();
+  if (getTurnstileApi()?.render) return waitForTurnstileApi();
+
+  if (document.getElementById("cf-turnstile-sdk")) {
+    return waitForTurnstileApi();
+  }
 
   if (scriptLoadPromise) return scriptLoadPromise;
 
   scriptLoadPromise = new Promise((resolve, reject) => {
     const settle = () => {
-      whenTurnstileApiReady()
+      waitForTurnstileApi()
         .then(resolve)
         .catch((err) => {
           scriptLoadPromise = null;
@@ -107,26 +113,16 @@ export function loadTurnstileScript(): Promise<void> {
 
     removeStaleTurnstileScripts();
 
-    (window as unknown as Record<string, () => void>)[TURNSTILE_ONLOAD_CALLBACK] =
-      () => settle();
-
-    const src = `${TURNSTILE_SCRIPT_BASE}?render=explicit&onload=${TURNSTILE_ONLOAD_CALLBACK}`;
     const script = document.createElement("script");
-    script.id = "cf-turnstile-sdk";
-    script.src = src;
+    script.id = "cf-turnstile-sdk-fallback";
+    script.src = TURNSTILE_SCRIPT_SRC;
     script.defer = true;
+    script.onload = () => settle();
     script.onerror = () => fail();
     document.head.appendChild(script);
   });
 
   return scriptLoadPromise;
-}
-
-/** Optional warm-up; failures are ignored and stale tags are cleared on the next form load. */
-export function preloadTurnstileScript() {
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
-  if (!siteKey) return;
-  void loadTurnstileScript().catch(() => {});
 }
 
 export type TurnstileScriptContextValue = {
@@ -145,7 +141,7 @@ export function useTurnstileScriptContext() {
   return useContext(TurnstileScriptContext);
 }
 
-/** Load Turnstile only under forms that need it (contact modal, wholesale). */
+/** @deprecated Prefer layout `TurnstileSdkScript` + `TurnstileWidget`. */
 export function TurnstileScriptProvider({ children }: { children: ReactNode }) {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
   const [ready, setReady] = useState(false);
@@ -157,12 +153,14 @@ export function TurnstileScriptProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     setReady(false);
 
-    loadTurnstileScript()
+    waitForTurnstileApi()
       .then(() => {
         if (!cancelled) markReady();
       })
       .catch(() => {
-        /* form shows mountError / verifyUnavailable */
+        void loadTurnstileScript().then(() => {
+          if (!cancelled) markReady();
+        });
       });
 
     return () => {
