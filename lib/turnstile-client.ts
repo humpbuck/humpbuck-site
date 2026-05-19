@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
@@ -26,10 +26,12 @@ function clearTurnstileContainer(el: HTMLElement | null) {
   el.replaceChildren();
 }
 
-/** Waits for the shared layout script (`TurnstileSdkScript`) to expose `window.turnstile`. */
-function useTurnstileScriptLoaded(enabled: boolean): boolean {
+/**
+ * Tracks Turnstile script readiness. Polls when the SDK was already injected
+ * (e.g. after visiting wholesale, then opening the contact modal).
+ */
+export function useTurnstileScriptLoaded(enabled: boolean): [boolean, () => void] {
   const [loaded, setLoaded] = useState(false);
-
   const markLoaded = useCallback(() => setLoaded(true), []);
 
   useEffect(() => {
@@ -74,15 +76,12 @@ function useTurnstileScriptLoaded(enabled: boolean): boolean {
     };
   }, [enabled, markLoaded]);
 
-  return loaded;
+  return [loaded, markLoaded];
 }
 
-/**
- * @param mountKey Bump when the form is shown again (e.g. each email modal open) so Turnstile remounts cleanly.
- */
-export function useTurnstileWidget(siteKey: string, mountKey = 0) {
+export function useTurnstileWidget(siteKey: string) {
   const canRender = Boolean(siteKey.trim());
-  const turnstileScriptLoaded = useTurnstileScriptLoaded(canRender);
+  const [turnstileScriptLoaded, markScriptLoaded] = useTurnstileScriptLoaded(canRender);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [widgetId, setWidgetId] = useState<string | null>(null);
   const widgetRef = useRef<HTMLDivElement | null>(null);
@@ -93,13 +92,6 @@ export function useTurnstileWidget(siteKey: string, mountKey = 0) {
   }, [widgetId]);
 
   useEffect(() => {
-    widgetIdRef.current = null;
-    setWidgetId(null);
-    setTurnstileToken("");
-    clearTurnstileContainer(widgetRef.current);
-  }, [mountKey]);
-
-  useLayoutEffect(() => {
     if (!canRender || !turnstileScriptLoaded || !widgetRef.current || !window.turnstile) {
       return;
     }
@@ -128,28 +120,24 @@ export function useTurnstileWidget(siteKey: string, mountKey = 0) {
         widgetIdRef.current = rendered;
         setWidgetId(rendered);
       } catch {
-        /* keep navigation alive if the SDK is between widgets */
+        /* Avoid taking down the route if Cloudflare is mid-teardown */
       }
     };
 
-    try {
-      if (typeof window.turnstile.ready === "function") {
-        window.turnstile.ready(mount);
-      } else {
-        mount();
-      }
-    } catch {
+    if (typeof window.turnstile.ready === "function") {
+      window.turnstile.ready(mount);
+    } else {
       mount();
     }
 
     return () => {
       cancelled = true;
     };
-  }, [canRender, siteKey, turnstileScriptLoaded, mountKey]);
+  }, [canRender, siteKey, turnstileScriptLoaded, widgetId]);
 
   useEffect(() => {
     return () => {
-      /** Never call turnstile.remove() here — it breaks the next client route. */
+      /** Never call turnstile.remove() — breaks client navigation to /wholesale. */
       widgetIdRef.current = null;
       clearTurnstileContainer(widgetRef.current);
     };
@@ -174,6 +162,7 @@ export function useTurnstileWidget(siteKey: string, mountKey = 0) {
     widgetRef,
     turnstileToken,
     turnstileScriptLoaded,
+    markScriptLoaded,
     resetWidget,
   };
 }
