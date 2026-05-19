@@ -3,6 +3,7 @@ import { NavigationProgress } from "@/components/site/navigation-progress";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteClientEnhancements } from "@/components/site/site-client-enhancements";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { TurnstileSdkScript } from "@/components/site/turnstile-sdk-script";
 export default function SiteLayout({
   children,
 }: {
@@ -10,6 +11,7 @@ export default function SiteLayout({
 }) {
   return (
     <>
+      <TurnstileSdkScript />
       <Suspense fallback={null}>
         <NavigationProgress />
       </Suspense>

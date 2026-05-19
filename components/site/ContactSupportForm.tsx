@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { publicSupportEmail } from "@/lib/support-contact";
-import { useTurnstileWidget } from "@/lib/turnstile-client";
+import { TurnstileWidget } from "@/components/site/turnstile-widget";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -36,13 +36,10 @@ function FieldLabel({
 
 export function ContactSupportForm({
   siteKey: siteKeyProp,
-  mountKey = 0,
   onClose,
 }: {
   /** Pass from server/parent when possible; falls back to build-time public env. */
   siteKey?: string;
-  /** Increment when the modal opens so Turnstile remounts after a previous close. */
-  mountKey?: number;
   onClose?: () => void;
 }) {
   const t = useTranslations("ContactForm");
@@ -54,12 +51,9 @@ export function ContactSupportForm({
     process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ||
     "";
 
-  const {
-    canRender: canRenderTurnstile,
-    widgetRef,
-    turnstileToken,
-    resetWidget,
-  } = useTurnstileWidget(siteKey, mountKey);
+  const canRenderTurnstile = Boolean(siteKey);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileKey, setTurnstileKey] = useState(0);
 
   const [fromEmail, setFromEmail] = useState("");
   const [subject, setSubject] = useState("");
@@ -116,11 +110,13 @@ export function ContactSupportForm({
       }
       setStatus("error");
       setErrorMessage(data.error ?? t("errSubmitGeneric"));
-      resetWidget();
+      setTurnstileToken("");
+      setTurnstileKey((k) => k + 1);
     } catch {
       setStatus("error");
       setErrorMessage(t("errNetwork"));
-      resetWidget();
+      setTurnstileToken("");
+      setTurnstileKey((k) => k + 1);
     }
   }
 
@@ -216,12 +212,13 @@ export function ContactSupportForm({
 
         <div className="sm:col-span-2 flex flex-col gap-3 border-t border-line/70 pt-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="min-w-0 flex-1">
-            <div ref={widgetRef} className="min-h-[65px]" />
-            {!canRenderTurnstile ? (
-              <p className="mt-2 text-xs leading-relaxed text-red-600/90">
-                {t("verifyUnavailable")}
-              </p>
-            ) : null}
+            <TurnstileWidget
+              key={turnstileKey}
+              siteKey={siteKey}
+              onTokenChange={setTurnstileToken}
+              unavailableMessage={t("verifyUnavailable")}
+              loadErrorMessage={t("errScriptLoad")}
+            />
             {canRenderTurnstile && !turnstileToken ? (
               <p className="mt-2 text-xs text-muted">{t("verifyHint")}</p>
             ) : null}

@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { useTurnstileWidget } from "@/lib/turnstile-client";
+import { TurnstileWidget } from "@/components/site/turnstile-widget";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -18,12 +18,9 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
   const [, setMessage] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const {
-    canRender: canRenderTurnstile,
-    widgetRef,
-    turnstileToken,
-    resetWidget,
-  } = useTurnstileWidget(siteKey);
+  const canRenderTurnstile = Boolean(siteKey?.trim());
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileKey, setTurnstileKey] = useState(0);
 
   useEffect(() => {
     if (!showSuccessModal) return;
@@ -57,16 +54,19 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
         setEmail("");
         setNotes("");
         setWebsite("");
-        resetWidget();
+        setTurnstileToken("");
+        setTurnstileKey((k) => k + 1);
         return;
       }
       setStatus("error");
       setMessage(data.error ?? t("errSubmitGeneric"));
-      resetWidget();
+      setTurnstileToken("");
+      setTurnstileKey((k) => k + 1);
     } catch {
       setStatus("error");
       setMessage(t("errNetwork"));
-      resetWidget();
+      setTurnstileToken("");
+      setTurnstileKey((k) => k + 1);
     }
   }
 
@@ -144,10 +144,13 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
           aria-hidden="true"
         />
         <div className="sm:col-span-2">
-          <div ref={widgetRef} className="min-h-[65px]" />
-          {!canRenderTurnstile ? (
-            <p className="mt-2 text-xs text-red-600/90">{t("verifyUnavailable")}</p>
-          ) : null}
+          <TurnstileWidget
+            key={turnstileKey}
+            siteKey={siteKey}
+            onTokenChange={setTurnstileToken}
+            unavailableMessage={t("verifyUnavailable")}
+            loadErrorMessage={t("errScriptLoad")}
+          />
           {canRenderTurnstile && !turnstileToken ? (
             <p className="mt-2 text-xs text-muted">{t("verifyHint")}</p>
           ) : null}

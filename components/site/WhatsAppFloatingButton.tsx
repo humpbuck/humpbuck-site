@@ -158,7 +158,6 @@ export function WhatsAppFloatingButton() {
       {emailModalOpen ? (
         <ContactSupportModal
           key={emailModalSession}
-          mountKey={emailModalSession}
           onClose={closeEmailModal}
         />
       ) : null}

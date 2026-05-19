@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useLocale } from "next-intl";
 
 const WholesaleBriefForm = dynamic(
   () =>
@@ -18,6 +17,5 @@ const WholesaleBriefForm = dynamic(
 );
 
 export function WholesaleBriefFormShell({ siteKey }: { siteKey: string }) {
-  const locale = useLocale();
-  return <WholesaleBriefForm key={locale} siteKey={siteKey} />;
+  return <WholesaleBriefForm siteKey={siteKey} />;
 }

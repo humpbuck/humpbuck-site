@@ -1,7 +1,7 @@
 "use client";
 
 import { Component, type ErrorInfo, type ReactNode } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { CenterModal } from "@/components/ui/center-modal";
 const ContactSupportForm = dynamic(
@@ -45,20 +45,19 @@ class ContactModalErrorBoundary extends Component<
   }
 }
 
-export function ContactSupportModal({
-  mountKey,
-  onClose,
-}: {
-  mountKey: number;
-  onClose: () => void;
-}) {
+export function ContactSupportModal({ onClose }: { onClose: () => void }) {
+  const locale = useLocale();
   const t = useTranslations("ContactForm");
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
   return (
     <ContactModalErrorBoundary onClose={onClose}>
       <CenterModal title={t("modalTitle")} onClose={onClose} size="wide">
-        <ContactSupportForm mountKey={mountKey} siteKey={siteKey} onClose={onClose} />
+        <ContactSupportForm
+          key={`contact-fab-${locale}`}
+          siteKey={siteKey}
+          onClose={onClose}
+        />
       </CenterModal>
     </ContactModalErrorBoundary>
   );
