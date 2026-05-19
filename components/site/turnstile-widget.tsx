@@ -1,6 +1,9 @@
 "use client";
 
-import { loadTurnstileScript } from "@/lib/turnstile-context";
+import {
+  loadTurnstileScript,
+  resetTurnstileScriptLoader,
+} from "@/lib/turnstile-context";
 import { useEffect, useRef, useState } from "react";
 
 type TurnstileWidgetProps = {
@@ -40,7 +43,10 @@ export function TurnstileWidget({
         if (!cancelled) setScriptReady(true);
       })
       .catch(() => {
-        if (!cancelled) setMountError(true);
+        if (!cancelled) {
+          resetTurnstileScriptLoader();
+          setMountError(true);
+        }
       });
     return () => {
       cancelled = true;
@@ -48,14 +54,14 @@ export function TurnstileWidget({
   }, [siteKey]);
 
   useEffect(() => {
-    if (!siteKey || !scriptReady || !containerRef.current || !window.turnstile) {
+    if (!siteKey || !scriptReady || !containerRef.current || !window.turnstile?.render) {
       return;
     }
 
     let cancelled = false;
 
     const mount = () => {
-      if (cancelled || !containerRef.current || !window.turnstile) return;
+      if (cancelled || !containerRef.current || !window.turnstile?.render) return;
       if (widgetIdRef.current) return;
 
       containerRef.current.replaceChildren();
@@ -102,4 +108,3 @@ export function TurnstileWidget({
     </>
   );
 }
-
