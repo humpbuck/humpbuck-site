@@ -135,7 +135,8 @@
     "confirm": "Open WhatsApp"
   },
   "Floating": {
-    "backToTop": "Back to top"
+    "backToTop": "Back to top",
+    "ariaEmail": "Email HUMPBUCK support"
   },
   "Shop": {
     "metaTitle": "Shop — DIGI-TEMP & full catalog",

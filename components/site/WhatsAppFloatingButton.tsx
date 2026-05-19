@@ -1,11 +1,12 @@
 "use client";
 
-import { MessageCircle } from "lucide-react";
+import { Mail, MessageCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { CenterModal } from "@/components/ui/center-modal";
 import { FAB_SHOW_AFTER_SCROLL_PX } from "@/lib/floating-actions";
+import { supportMailtoHref } from "@/lib/support-email";
 import {
   WHATSAPP_DISPLAY,
   WHATSAPP_URL,
@@ -16,15 +17,16 @@ function isHomePathname(pathname: string | null): boolean {
   return pathname === "/";
 }
 
+const STACK_BTN =
+  "flex h-14 w-14 shrink-0 items-center justify-center rounded-full border shadow-lg shadow-ink/8 backdrop-blur-md transition duration-200 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2";
+
 /**
- * Fixed bottom-right — classic green round + outline chat icon; frosted
- * semi-transparent. On the homepage only, hidden on first paint; after the
- * user has scrolled past `FAB_SHOW_AFTER_SCROLL_PX` once, the button stays
- * visible (including if they scroll back to the top). Other routes: always
- * show.
+ * Fixed bottom-right — WhatsApp + support email stacked; email expands upward on
+ * hover/focus. Homepage: hidden until scroll past `FAB_SHOW_AFTER_SCROLL_PX`.
  */
 export function WhatsAppFloatingButton() {
-  const t = useTranslations("WhatsAppFab");
+  const tWa = useTranslations("WhatsAppFab");
+  const tFloat = useTranslations("Floating");
   const tProduct = useTranslations("Product");
   const pathname = usePathname();
   const isHome = isHomePathname(pathname);
@@ -66,33 +68,62 @@ export function WhatsAppFloatingButton() {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setConfirmOpen(true)}
-        className={`fixed bottom-28 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full border border-white/35 bg-[#25D366]/50 text-white shadow-lg shadow-ink/8 backdrop-blur-md transition duration-200 hover:border-white/50 hover:bg-[#25D366]/68 hover:shadow-xl active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500/80 md:bottom-32 md:right-8 ${
+      <div
+        className={`group/contact-fab fixed bottom-28 right-6 z-40 flex flex-col items-center md:bottom-32 md:right-8 ${
           fabVisible
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none translate-y-2 opacity-0"
         }`}
-        aria-label={t("ariaContact")}
-        aria-haspopup="dialog"
-        aria-expanded={confirmOpen}
         aria-hidden={!fabVisible}
       >
-        <MessageCircle
-          className="h-7 w-7 shrink-0"
-          strokeWidth={2}
-          aria-hidden
-        />
-      </button>
+        <a
+          href={supportMailtoHref()}
+          className={[
+            STACK_BTN,
+            "border-line bg-paper/95 text-ink hover:bg-white hover:shadow-xl focus-visible:outline-ink/25",
+            "mb-0 max-h-0 scale-90 overflow-hidden opacity-0",
+            "pointer-events-none translate-y-3",
+            "transition-all duration-200 ease-out",
+            "group-hover/contact-fab:mb-3 group-hover/contact-fab:max-h-14 group-hover/contact-fab:scale-100 group-hover/contact-fab:opacity-100",
+            "group-hover/contact-fab:pointer-events-auto group-hover/contact-fab:translate-y-0",
+            "group-focus-within/contact-fab:mb-3 group-focus-within/contact-fab:max-h-14 group-focus-within/contact-fab:scale-100 group-focus-within/contact-fab:opacity-100",
+            "group-focus-within/contact-fab:pointer-events-auto group-focus-within/contact-fab:translate-y-0",
+            "[@media(hover:none)]:mb-3 [@media(hover:none)]:max-h-14 [@media(hover:none)]:scale-100 [@media(hover:none)]:opacity-100",
+            "[@media(hover:none)]:pointer-events-auto [@media(hover:none)]:translate-y-0",
+          ].join(" ")}
+          aria-label={tFloat("ariaEmail")}
+          tabIndex={fabVisible ? 0 : -1}
+        >
+          <Mail className="h-6 w-6 shrink-0" strokeWidth={2} aria-hidden />
+        </a>
+
+        <button
+          type="button"
+          onClick={() => setConfirmOpen(true)}
+          className={[
+            STACK_BTN,
+            "border-white/35 bg-[#25D366]/50 text-white hover:border-white/50 hover:bg-[#25D366]/68 hover:shadow-xl focus-visible:outline-emerald-500/80",
+          ].join(" ")}
+          aria-label={tWa("ariaContact")}
+          aria-haspopup="dialog"
+          aria-expanded={confirmOpen}
+          tabIndex={fabVisible ? 0 : -1}
+        >
+          <MessageCircle
+            className="h-7 w-7 shrink-0"
+            strokeWidth={2}
+            aria-hidden
+          />
+        </button>
+      </div>
 
       {confirmOpen && (
         <CenterModal
-          title={t("modalTitle")}
+          title={tWa("modalTitle")}
           onClose={() => setConfirmOpen(false)}
         >
           <p className="text-sm leading-relaxed text-ink/85">
-            {t("modalBody", { phone: WHATSAPP_DISPLAY })}
+            {tWa("modalBody", { phone: WHATSAPP_DISPLAY })}
           </p>
           <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end sm:gap-3">
             <button
@@ -100,14 +131,14 @@ export function WhatsAppFloatingButton() {
               onClick={() => setConfirmOpen(false)}
               className="rounded-full border border-line bg-paper px-5 py-2.5 text-sm font-semibold text-ink/85 transition hover:bg-ink/4"
             >
-              {t("cancel")}
+              {tWa("cancel")}
             </button>
             <button
               type="button"
               onClick={openWhatsapp}
               className="rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#20bd5a]"
             >
-              {t("confirm")}
+              {tWa("confirm")}
             </button>
           </div>
         </CenterModal>
