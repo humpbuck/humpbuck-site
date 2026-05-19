@@ -20,7 +20,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
 
   const {
     canRender: canRenderTurnstile,
-    widgetRef,
+    widgetContainerRef,
     turnstileToken,
     turnstileScriptError,
     resetWidget,
@@ -153,7 +153,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
           aria-hidden="true"
         />
         <div className="sm:col-span-2">
-          <div ref={widgetRef} className="min-h-[65px]" />
+          <div ref={widgetContainerRef} className="min-h-[65px]" />
           {!canRenderTurnstile ? (
             <p className="mt-2 text-xs text-red-600/90">{t("verifyUnavailable")}</p>
           ) : null}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export const TURNSTILE_SCRIPT_SRC =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
@@ -69,7 +69,6 @@ export function injectTurnstileScriptOnce(): Promise<void> {
       reject(err);
     }
 
-    /** One poll wait shared by load + fallback (do not spawn multiple ticker loops). */
     let globalsWait: Promise<void> | null = null;
     function startGlobalsWait(): void {
       if (aborted) return;
@@ -90,13 +89,7 @@ export function injectTurnstileScriptOnce(): Promise<void> {
         () => abort(new Error("Turnstile script load failed")),
         { once: true },
       );
-      existingSdk.addEventListener(
-        "load",
-        () => {
-          startGlobalsWait();
-        },
-        { once: true },
-      );
+      existingSdk.addEventListener("load", () => startGlobalsWait(), { once: true });
       queueMicrotask(() => startGlobalsWait());
       return;
     }
@@ -105,18 +98,10 @@ export function injectTurnstileScriptOnce(): Promise<void> {
     s.id = SCRIPT_TAG_ID;
     s.src = TURNSTILE_SCRIPT_SRC;
     s.async = true;
-    s.addEventListener(
-      "error",
-      () => abort(new Error("Turnstile script load failed")),
-      { once: true },
-    );
-    s.addEventListener(
-      "load",
-      () => {
-        startGlobalsWait();
-      },
-      { once: true },
-    );
+    s.addEventListener("error", () => abort(new Error("Turnstile script load failed")), {
+      once: true,
+    });
+    s.addEventListener("load", () => startGlobalsWait(), { once: true });
     document.head.appendChild(s);
     queueMicrotask(() => startGlobalsWait());
   }).catch((err) => {
@@ -137,9 +122,14 @@ export function useTurnstileWidget(siteKey: string) {
   const [turnstileScriptLoaded, setTurnstileScriptLoaded] = useState(false);
   const [turnstileScriptError, setTurnstileScriptError] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
-  const [widgetId, setWidgetId] = useState<string | null>(null);
+  const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null);
   const widgetRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
+
+  const widgetContainerRef = useCallback((node: HTMLDivElement | null) => {
+    widgetRef.current = node;
+    setContainerEl(node);
+  }, []);
 
   useEffect(() => {
     if (!canRender) {
@@ -170,11 +160,7 @@ export function useTurnstileWidget(siteKey: string) {
   }, [canRender]);
 
   useEffect(() => {
-    widgetIdRef.current = widgetId;
-  }, [widgetId]);
-
-  useEffect(() => {
-    if (!canRender || !turnstileScriptLoaded || !widgetRef.current || !window.turnstile) {
+    if (!canRender || !turnstileScriptLoaded || !containerEl || !window.turnstile) {
       return;
     }
     if (widgetIdRef.current) return;
@@ -200,7 +186,6 @@ export function useTurnstileWidget(siteKey: string) {
           },
         });
         widgetIdRef.current = rendered;
-        setWidgetId(rendered);
       } catch {
         /* Avoid taking down the route if Cloudflare is mid-teardown */
       }
@@ -214,15 +199,12 @@ export function useTurnstileWidget(siteKey: string) {
 
     return () => {
       cancelled = true;
+      widgetIdRef.current = null;
     };
-  }, [canRender, siteKey, turnstileScriptLoaded]);
+  }, [canRender, siteKey, turnstileScriptLoaded, containerEl]);
 
   useEffect(() => {
     return () => {
-      /**
-       * Do not call turnstile.remove() or setState here — both break client
-       * navigation and hard refresh (Strict Mode runs cleanup while remounting).
-       */
       widgetIdRef.current = null;
       clearTurnstileContainer(widgetRef.current);
     };
@@ -235,7 +217,6 @@ export function useTurnstileWidget(siteKey: string) {
         window.turnstile.reset(id);
       } catch {
         widgetIdRef.current = null;
-        setWidgetId(null);
         clearTurnstileContainer(widgetRef.current);
       }
     }
@@ -244,7 +225,7 @@ export function useTurnstileWidget(siteKey: string) {
 
   return {
     canRender,
-    widgetRef,
+    widgetContainerRef,
     turnstileToken,
     turnstileScriptLoaded,
     turnstileScriptError,
