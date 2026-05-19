@@ -7,7 +7,10 @@ export const TURNSTILE_SCRIPT_SRC =
 
 const SCRIPT_TAG_ID = "cf-turnstile-sdk-explicit-storefront";
 
-/** `window.turnstile` may appear ticks after `<script>` `load`; reused tags do not replay `load`. */
+/**
+ * Explicit render: do NOT set async/defer on the script tag, and do NOT call
+ * turnstile.ready() (Cloudflare throws TurnstileError if async/defer + ready).
+ */
 const WAIT_TURNSTILE_MS = 20_000;
 const POLL_MS = 50;
 
@@ -30,20 +33,17 @@ declare global {
   }
 }
 
-/** Single-flight script inject (avoids `next/script` quirks with dynamic + hard refresh). */
-let scriptInjectPromise: Promise<void> | null = null;
+function turnstileRenderReady(): boolean {
+  return typeof window.turnstile?.render === "function";
+}
 
-function waitUntilTurnstileGlobalsReady(): Promise<void> {
+/** Poll until `turnstile.render` exists — never call `turnstile.ready()`. */
+function waitUntilTurnstileRenderReady(): Promise<void> {
   const start = Date.now();
   return new Promise((resolve, reject) => {
     function tick(): void {
-      const api = window.turnstile;
-      if (api) {
-        if (typeof api.ready === "function") {
-          api.ready(() => resolve());
-        } else {
-          resolve();
-        }
+      if (turnstileRenderReady()) {
+        resolve();
         return;
       }
       if (Date.now() - start >= WAIT_TURNSTILE_MS) {
@@ -56,8 +56,23 @@ function waitUntilTurnstileGlobalsReady(): Promise<void> {
   });
 }
 
+function removeBrokenTurnstileScriptTags(): void {
+  document
+    .querySelectorAll<HTMLScriptElement>(
+      'script[src^="https://challenges.cloudflare.com/turnstile"]',
+    )
+    .forEach((tag) => {
+      if (tag.async || tag.defer) tag.remove();
+    });
+}
+
+/** Single-flight script inject (no async/defer; explicit render only). */
+let scriptInjectPromise: Promise<void> | null = null;
+
 export function injectTurnstileScriptOnce(): Promise<void> {
   if (typeof window === "undefined") return Promise.resolve();
+
+  if (turnstileRenderReady()) return Promise.resolve();
 
   if (scriptInjectPromise) return scriptInjectPromise;
 
@@ -72,32 +87,36 @@ export function injectTurnstileScriptOnce(): Promise<void> {
     let globalsWait: Promise<void> | null = null;
     function startGlobalsWait(): void {
       if (aborted) return;
-      if (!globalsWait) globalsWait = waitUntilTurnstileGlobalsReady();
+      if (!globalsWait) globalsWait = waitUntilTurnstileRenderReady();
       globalsWait.then(resolve, reject);
     }
 
-    const existingSdk =
-      (document.getElementById(SCRIPT_TAG_ID) instanceof HTMLScriptElement &&
-        document.getElementById(SCRIPT_TAG_ID)) ||
-      (document.querySelector(
-        `script[src^="https://challenges.cloudflare.com/turnstile"]`,
-      ) as HTMLScriptElement | null);
+    removeBrokenTurnstileScriptTags();
 
-    if (existingSdk) {
-      existingSdk.addEventListener(
-        "error",
-        () => abort(new Error("Turnstile script load failed")),
-        { once: true },
-      );
-      existingSdk.addEventListener("load", () => startGlobalsWait(), { once: true });
-      queueMicrotask(() => startGlobalsWait());
-      return;
+    const existingById = document.getElementById(SCRIPT_TAG_ID);
+    if (existingById instanceof HTMLScriptElement) {
+      if (existingById.async || existingById.defer) {
+        existingById.remove();
+      } else {
+        existingById.addEventListener(
+          "error",
+          () => abort(new Error("Turnstile script load failed")),
+          { once: true },
+        );
+        existingById.addEventListener("load", () => startGlobalsWait(), { once: true });
+        if (turnstileRenderReady()) {
+          resolve();
+          return;
+        }
+        queueMicrotask(() => startGlobalsWait());
+        return;
+      }
     }
 
     const s = document.createElement("script");
     s.id = SCRIPT_TAG_ID;
     s.src = TURNSTILE_SCRIPT_SRC;
-    s.async = true;
+    /* explicit render: no async, no defer */
     s.addEventListener("error", () => abort(new Error("Turnstile script load failed")), {
       once: true,
     });
@@ -160,7 +179,7 @@ export function useTurnstileWidget(siteKey: string) {
   }, [canRender]);
 
   useEffect(() => {
-    if (!canRender || !turnstileScriptLoaded || !containerEl || !window.turnstile) {
+    if (!canRender || !turnstileScriptLoaded || !containerEl || !turnstileRenderReady()) {
       return;
     }
     if (widgetIdRef.current) return;
@@ -168,12 +187,12 @@ export function useTurnstileWidget(siteKey: string) {
     let cancelled = false;
 
     const mount = () => {
-      if (cancelled || !widgetRef.current || !window.turnstile || widgetIdRef.current) {
+      if (cancelled || !widgetRef.current || !turnstileRenderReady() || widgetIdRef.current) {
         return;
       }
       clearTurnstileContainer(widgetRef.current);
       try {
-        const rendered = window.turnstile.render(widgetRef.current, {
+        const rendered = window.turnstile!.render(widgetRef.current, {
           sitekey: siteKey,
           callback: (token) => {
             if (!cancelled) setTurnstileToken(token);
@@ -191,11 +210,7 @@ export function useTurnstileWidget(siteKey: string) {
       }
     };
 
-    if (typeof window.turnstile.ready === "function") {
-      window.turnstile.ready(mount);
-    } else {
-      mount();
-    }
+    mount();
 
     return () => {
       cancelled = true;
