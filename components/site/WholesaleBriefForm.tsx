@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { TurnstileWidget } from "@/components/site/turnstile-widget";
+import { useTurnstileWidget } from "@/lib/turnstile-client";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -15,12 +15,16 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
   const [notes, setNotes] = useState("");
   const [website, setWebsite] = useState("");
   const [status, setStatus] = useState<Status>("idle");
-  const [, setMessage] = useState("");
+  const [formError, setFormError] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const canRenderTurnstile = Boolean(siteKey?.trim());
-  const [turnstileToken, setTurnstileToken] = useState("");
-  const [turnstileKey, setTurnstileKey] = useState(0);
+  const {
+    canRender: canRenderTurnstile,
+    widgetRef,
+    turnstileToken,
+    scriptError,
+    resetWidget,
+  } = useTurnstileWidget(siteKey, 0, t("errScriptLoad"));
 
   useEffect(() => {
     if (!showSuccessModal) return;
@@ -31,18 +35,31 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (status === "loading") return;
+    if (scriptError) {
+      setStatus("error");
+      setFormError(scriptError);
+      return;
+    }
     if (!turnstileToken) {
       setStatus("error");
-      setMessage(t("errVerifyRequired"));
+      setFormError(t("errVerifyRequired"));
       return;
     }
     setStatus("loading");
-    setMessage("");
+    setFormError("");
     try {
       const res = await fetch("/api/wholesale/mockup-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ company, targetRegion, estimatedQty, email, notes, website, turnstileToken }),
+        body: JSON.stringify({
+          company,
+          targetRegion,
+          estimatedQty,
+          email,
+          notes,
+          website,
+          turnstileToken,
+        }),
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
       if (res.ok && data.ok) {
@@ -54,19 +71,16 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
         setEmail("");
         setNotes("");
         setWebsite("");
-        setTurnstileToken("");
-        setTurnstileKey((k) => k + 1);
+        resetWidget();
         return;
       }
       setStatus("error");
-      setMessage(data.error ?? t("errSubmitGeneric"));
-      setTurnstileToken("");
-      setTurnstileKey((k) => k + 1);
+      setFormError(data.error ?? t("errSubmitGeneric"));
+      resetWidget();
     } catch {
       setStatus("error");
-      setMessage(t("errNetwork"));
-      setTurnstileToken("");
-      setTurnstileKey((k) => k + 1);
+      setFormError(t("errNetwork"));
+      resetWidget();
     }
   }
 
@@ -144,14 +158,19 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
           aria-hidden="true"
         />
         <div className="sm:col-span-2">
-          <TurnstileWidget
-            key={turnstileKey}
-            siteKey={siteKey}
-            onTokenChange={setTurnstileToken}
-            unavailableMessage={t("verifyUnavailable")}
-            loadErrorMessage={t("errScriptLoad")}
-          />
-          {canRenderTurnstile && !turnstileToken ? (
+          <div ref={widgetRef} className="min-h-[65px]" />
+          {!canRenderTurnstile ? (
+            <p className="mt-2 text-xs text-red-600/90">{t("verifyUnavailable")}</p>
+          ) : null}
+          {scriptError ? (
+            <p className="mt-2 text-xs text-red-600/90">{scriptError}</p>
+          ) : null}
+          {formError ? (
+            <p className="mt-2 text-xs text-red-600/90" role="alert">
+              {formError}
+            </p>
+          ) : null}
+          {canRenderTurnstile && !turnstileToken && !scriptError && !formError ? (
             <p className="mt-2 text-xs text-muted">{t("verifyHint")}</p>
           ) : null}
         </div>

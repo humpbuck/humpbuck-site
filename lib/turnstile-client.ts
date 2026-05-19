@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+export const TURNSTILE_SCRIPT_SRC =
+  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+
 declare global {
   interface Window {
     turnstile?: {
@@ -27,16 +30,20 @@ function clearTurnstileContainer(el: HTMLElement | null) {
 }
 
 /**
- * Tracks Turnstile script readiness. Polls when the SDK was already injected
- * (e.g. after visiting wholesale, then opening the contact modal).
+ * Waits for `window.turnstile` from the site-wide `TurnstileSiteScript`.
+ * Times out with an error message when the SDK never becomes ready.
  */
-export function useTurnstileScriptLoaded(enabled: boolean): [boolean, () => void] {
+export function useTurnstileScriptLoaded(
+  enabled: boolean,
+  errScriptLoad: string,
+): { loaded: boolean; scriptError: string | null } {
   const [loaded, setLoaded] = useState(false);
-  const markLoaded = useCallback(() => setLoaded(true), []);
+  const [scriptError, setScriptError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!enabled) {
       setLoaded(false);
+      setScriptError(null);
       return;
     }
 
@@ -45,13 +52,17 @@ export function useTurnstileScriptLoaded(enabled: boolean): [boolean, () => void
 
     const tryMark = () => {
       const api = window.turnstile;
-      if (!api) return false;
+      if (!api?.render) return false;
       if (typeof api.ready === "function") {
         api.ready(() => {
-          if (!cancelled) markLoaded();
+          if (!cancelled) {
+            setLoaded(true);
+            setScriptError(null);
+          }
         });
-      } else {
-        markLoaded();
+      } else if (!cancelled) {
+        setLoaded(true);
+        setScriptError(null);
       }
       return true;
     };
@@ -62,37 +73,54 @@ export function useTurnstileScriptLoaded(enabled: boolean): [boolean, () => void
       };
     }
 
+    const deadline = window.setTimeout(() => {
+      if (!cancelled && !window.turnstile?.render) {
+        setScriptError(errScriptLoad);
+      }
+    }, 25_000);
+
     let attempts = 0;
     timer = setInterval(() => {
       if (cancelled) return;
-      if (tryMark() || attempts++ > 200) {
+      if (tryMark() || attempts++ > 500) {
         if (timer) clearInterval(timer);
+        if (!cancelled && attempts > 500 && !window.turnstile?.render) {
+          setScriptError(errScriptLoad);
+        }
       }
     }, 50);
 
     return () => {
       cancelled = true;
+      window.clearTimeout(deadline);
       if (timer) clearInterval(timer);
     };
-  }, [enabled, markLoaded]);
+  }, [enabled, errScriptLoad]);
 
-  return [loaded, markLoaded];
+  return { loaded, scriptError };
 }
 
-export function useTurnstileWidget(siteKey: string) {
+/**
+ * @param mountKey Bump when the form is shown again (e.g. each email modal open).
+ */
+export function useTurnstileWidget(siteKey: string, mountKey = 0, errScriptLoad = "") {
   const canRender = Boolean(siteKey.trim());
-  const [turnstileScriptLoaded, markScriptLoaded] = useTurnstileScriptLoaded(canRender);
+  const { loaded: turnstileScriptLoaded, scriptError } = useTurnstileScriptLoaded(
+    canRender,
+    errScriptLoad,
+  );
   const [turnstileToken, setTurnstileToken] = useState("");
-  const [widgetId, setWidgetId] = useState<string | null>(null);
   const widgetRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    widgetIdRef.current = widgetId;
-  }, [widgetId]);
+    widgetIdRef.current = null;
+    setTurnstileToken("");
+    clearTurnstileContainer(widgetRef.current);
+  }, [mountKey, siteKey]);
 
   useEffect(() => {
-    if (!canRender || !turnstileScriptLoaded || !widgetRef.current || !window.turnstile) {
+    if (!canRender || !turnstileScriptLoaded || !widgetRef.current || !window.turnstile?.render) {
       return;
     }
     if (widgetIdRef.current) return;
@@ -100,7 +128,7 @@ export function useTurnstileWidget(siteKey: string) {
     let cancelled = false;
 
     const mount = () => {
-      if (cancelled || !widgetRef.current || !window.turnstile || widgetIdRef.current) {
+      if (cancelled || !widgetRef.current || !window.turnstile?.render || widgetIdRef.current) {
         return;
       }
       clearTurnstileContainer(widgetRef.current);
@@ -118,7 +146,6 @@ export function useTurnstileWidget(siteKey: string) {
           },
         });
         widgetIdRef.current = rendered;
-        setWidgetId(rendered);
       } catch {
         /* Avoid taking down the route if Cloudflare is mid-teardown */
       }
@@ -133,7 +160,7 @@ export function useTurnstileWidget(siteKey: string) {
     return () => {
       cancelled = true;
     };
-  }, [canRender, siteKey, turnstileScriptLoaded, widgetId]);
+  }, [canRender, siteKey, turnstileScriptLoaded, mountKey]);
 
   useEffect(() => {
     return () => {
@@ -143,26 +170,27 @@ export function useTurnstileWidget(siteKey: string) {
     };
   }, []);
 
-  function resetWidget() {
+  const resetWidget = useCallback(() => {
     const id = widgetIdRef.current;
     if (id && window.turnstile) {
       try {
         window.turnstile.reset(id);
       } catch {
         widgetIdRef.current = null;
-        setWidgetId(null);
         clearTurnstileContainer(widgetRef.current);
       }
+    } else {
+      widgetIdRef.current = null;
+      clearTurnstileContainer(widgetRef.current);
     }
     setTurnstileToken("");
-  }
+  }, []);
 
   return {
     canRender,
     widgetRef,
     turnstileToken,
-    turnstileScriptLoaded,
-    markScriptLoaded,
+    scriptError,
     resetWidget,
   };
 }

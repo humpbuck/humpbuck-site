@@ -45,7 +45,13 @@ class ContactModalErrorBoundary extends Component<
   }
 }
 
-export function ContactSupportModal({ onClose }: { onClose: () => void }) {
+export function ContactSupportModal({
+  onClose,
+  mountKey = 0,
+}: {
+  onClose: () => void;
+  mountKey?: number;
+}) {
   const locale = useLocale();
   const t = useTranslations("ContactForm");
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
@@ -54,9 +60,10 @@ export function ContactSupportModal({ onClose }: { onClose: () => void }) {
     <ContactModalErrorBoundary onClose={onClose}>
       <CenterModal title={t("modalTitle")} onClose={onClose} size="wide">
         <ContactSupportForm
-          key={`contact-fab-${locale}`}
+          key={`contact-fab-${locale}-${mountKey}`}
           siteKey={siteKey}
           onClose={onClose}
+          mountKey={mountKey}
         />
       </CenterModal>
     </ContactModalErrorBoundary>
