@@ -155,6 +155,7 @@
     "errScriptLoad": "Verification script failed to load. Please refresh and try again.",
     "verifyUnavailable": "Verification is unavailable right now.",
     "verifyHint": "Please complete the verification before submitting.",
+    "verifyCooldown": "Verification will appear in {seconds}s…",
     "successKicker": "Message received",
     "successBody": "Thank you — we received your message and will reply as soon as we can.",
     "successClose": "Close"
@@ -828,6 +829,7 @@
     "errScriptLoad": "Verification script failed to load. Please refresh and try again.",
     "verifyUnavailable": "Verification is unavailable right now.",
     "verifyHint": "Please complete the verification before submitting.",
+    "verifyCooldown": "Verification will appear in {seconds}s…",
     "successKicker": "Request sent",
     "successTitle": "Email sent successfully",
     "successBody": "We will review your request and reply soon."

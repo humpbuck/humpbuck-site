@@ -55,10 +55,13 @@ export function ContactSupportForm({
 
   const {
     canRender: canRenderTurnstile,
+    slotReady,
+    cooldownSec,
+    mountError,
     widgetRef,
     turnstileToken,
     resetWidget,
-  } = useTurnstileWidget(siteKey, mountKey);
+  } = useTurnstileWidget(siteKey, mountKey, "contact");
 
   const [fromEmail, setFromEmail] = useState("");
   const [subject, setSubject] = useState("");
@@ -229,13 +232,23 @@ export function ContactSupportForm({
                 {t("verifyUnavailable")}
               </p>
             ) : null}
-            {canRenderTurnstile && !turnstileToken ? (
+            {!slotReady && cooldownSec > 0 ? (
+              <p className="mt-2 text-xs text-muted">
+                {t("verifyCooldown", { seconds: cooldownSec })}
+              </p>
+            ) : null}
+            {mountError ? (
+              <p className="mt-2 text-xs text-red-600/90" role="alert">
+                {t("errScriptLoad")}
+              </p>
+            ) : null}
+            {canRenderTurnstile && slotReady && !turnstileToken && !mountError ? (
               <p className="mt-2 text-xs text-muted">{t("verifyHint")}</p>
             ) : null}
           </div>
           <button
             type="submit"
-            disabled={status === "loading" || !canRenderTurnstile}
+            disabled={status === "loading" || !canRenderTurnstile || !slotReady || !turnstileToken}
             className="shrink-0 rounded-full bg-ink px-8 py-2.5 text-sm font-semibold text-white transition hover:bg-ink/90 disabled:opacity-60 sm:min-w-[9.5rem]"
           >
             {status === "loading" ? t("submitting") : t("submit")}

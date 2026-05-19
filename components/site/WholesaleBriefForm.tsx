@@ -20,10 +20,13 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
 
   const {
     canRender: canRenderTurnstile,
+    slotReady,
+    cooldownSec,
+    mountError,
     widgetRef,
     turnstileToken,
     resetWidget,
-  } = useTurnstileWidget(siteKey);
+  } = useTurnstileWidget(siteKey, 0, "wholesale");
   const [scriptError, setScriptError] = useState("");
 
   useEffect(() => {
@@ -163,7 +166,22 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
           {scriptError ? (
             <p className="mt-2 text-xs text-red-600/90">{scriptError}</p>
           ) : null}
-          {canRenderTurnstile && !turnstileToken && !scriptError && !formError ? (
+          {!slotReady && cooldownSec > 0 ? (
+            <p className="mt-2 text-xs text-muted">
+              {t("verifyCooldown", { seconds: cooldownSec })}
+            </p>
+          ) : null}
+          {mountError ? (
+            <p className="mt-2 text-xs text-red-600/90" role="alert">
+              {t("errScriptLoad")}
+            </p>
+          ) : null}
+          {canRenderTurnstile &&
+          slotReady &&
+          !turnstileToken &&
+          !scriptError &&
+          !formError &&
+          !mountError ? (
             <p className="mt-2 text-xs text-muted">{t("verifyHint")}</p>
           ) : null}
         </div>
