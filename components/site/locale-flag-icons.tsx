@@ -1,4 +1,4 @@
-import type { ComponentProps } from "react";
+import type { ComponentProps, ComponentType } from "react";
 
 type SvgProps = ComponentProps<"svg">;
 
@@ -166,20 +166,26 @@ export function FlagHungary({ className, ...props }: SvgProps) {
   );
 }
 
-/** South Korea — simplified Taegeuk (no trigrams). */
-export function FlagSouthKorea({ className, ...props }: SvgProps) {
+/** South Korea — Taegeukgi PNG (320×240, from flagcdn.com); scales cleanly in Chrome at ~16px. */
+export function FlagSouthKorea({
+  className,
+  ...props
+}: ComponentProps<"img">) {
   return (
-    <svg
-      className={className}
-      viewBox="0 0 30 20"
-      xmlns="http://www.w3.org/2000/svg"
+    // eslint-disable-next-line @next/next/no-img-element -- raster flag; SVG paths fail below ~20px in Chrome
+    <img
+      src="/flags/kr.png"
+      alt=""
+      width={320}
+      height={240}
+      decoding="async"
       aria-hidden
+      className={
+        className ??
+        "h-[1rem] w-[1.4rem] shrink-0 rounded-[1px] border border-line/50 object-cover object-center shadow-[0_0_0_0.5px_rgba(0,0,0,0.04)]"
+      }
       {...props}
-    >
-      <rect width="30" height="20" fill="#FFFFFF" />
-      <circle cx="15" cy="10" r="5.5" fill="#CD2E3A" />
-      <path d="M15 4.5a5.5 5.5 0 0 1 0 11 5.5 5.5 0 0 0 0-11z" fill="#0047A0" />
-    </svg>
+    />
   );
 }
 
@@ -249,7 +255,9 @@ export function FlagSpain({ className, ...props }: SvgProps) {
   );
 }
 
-const LOCALE_FLAGS = {
+type LocaleFlagComponent = ComponentType<{ className?: string }>;
+
+const LOCALE_FLAGS: Record<string, LocaleFlagComponent> = {
   en: FlagUnitedStates,
   es: FlagSpain,
   pt: FlagBrazil,
@@ -264,6 +272,9 @@ const LOCALE_FLAGS = {
   he: FlagIsrael,
 } as const;
 
+const FLAG_ICON_CLASS =
+  "shrink-0 rounded-[1px] border border-line/50 shadow-[0_0_0_0.5px_rgba(0,0,0,0.04)]";
+
 export function LocaleFlagIcon({
   locale,
   className,
@@ -273,11 +284,14 @@ export function LocaleFlagIcon({
 }) {
   const Cmp = LOCALE_FLAGS[locale as keyof typeof LOCALE_FLAGS];
   if (!Cmp) return null;
+  const sizeClass =
+    locale === "ko"
+      ? "h-[1rem] w-[1.4rem]"
+      : "h-[0.9rem] w-[1.26rem]";
   return (
     <Cmp
       className={
-        className ??
-        "h-[0.9rem] w-[1.26rem] shrink-0 rounded-[1px] border border-line/50 shadow-[0_0_0_0.5px_rgba(0,0,0,0.04)]"
+        className ?? `${sizeClass} ${FLAG_ICON_CLASS}`
       }
     />
   );

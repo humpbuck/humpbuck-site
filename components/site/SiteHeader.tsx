@@ -126,19 +126,19 @@ export function SiteHeader() {
             </Link>
           </div>
 
-          <nav className="hidden items-center gap-7 lg:flex">
+          <nav className="hidden shrink-0 items-center gap-4 lg:flex xl:gap-6">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-[12px] font-medium uppercase tracking-[0.14em] text-ink/75 transition hover:text-ink"
+                className="whitespace-nowrap text-[11px] font-medium uppercase tracking-[0.1em] text-ink/75 transition hover:text-ink xl:text-[12px] xl:tracking-[0.14em]"
               >
                 {t(item.labelKey)}
               </Link>
             ))}
           </nav>
 
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
             {status === "authenticated" ? (
               <AccountMenu
                 userEmail={session?.user?.email}

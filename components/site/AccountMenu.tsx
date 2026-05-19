@@ -50,10 +50,10 @@ export function AccountMenu({
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="inline-flex max-w-[220px] items-center gap-2 rounded-full py-1.5 pl-1.5 pr-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/75 transition hover:bg-ink/[0.04] hover:text-ink"
+        className="inline-flex max-w-[220px] items-center gap-2 rounded-full py-1.5 pl-1.5 pr-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 transition hover:bg-ink/[0.04] hover:text-ink xl:tracking-[0.12em]"
       >
         <HeaderUserAvatar src={userImage} label={avatarLabel} size={30} />
-        <span className="truncate" title={userEmail ?? undefined}>
+        <span className="truncate whitespace-nowrap" title={userEmail ?? undefined}>
           {t("myAccount")}
         </span>
         <ChevronDown
