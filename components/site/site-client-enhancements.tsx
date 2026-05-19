@@ -82,17 +82,19 @@ export function SiteClientEnhancements() {
     };
   }, []);
 
-  if (!ready) return null;
-
   return (
     <>
       <TurnstileSdkScript />
-      <SiteAnalyticsConsent />
-      <GoogleAnalyticsPageviews />
-      <TrackPageView />
-      <AttributionCapture />
-      <LocaleSwitcherFab />
-      <SiteFloatingActions />
+      {ready ? (
+        <>
+          <SiteAnalyticsConsent />
+          <GoogleAnalyticsPageviews />
+          <TrackPageView />
+          <AttributionCapture />
+          <LocaleSwitcherFab />
+          <SiteFloatingActions />
+        </>
+      ) : null}
     </>
   );
 }

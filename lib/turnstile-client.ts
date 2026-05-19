@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
@@ -26,17 +26,20 @@ function clearTurnstileContainer(el: HTMLElement | null) {
   el.replaceChildren();
 }
 
-/** Waits for the shared layout script to expose `window.turnstile`. */
-export function useTurnstileScriptLoaded(enabled: boolean): boolean {
+/** Waits for the shared layout script (`TurnstileSdkScript`) to expose `window.turnstile`. */
+function useTurnstileScriptLoaded(enabled: boolean): boolean {
   const [loaded, setLoaded] = useState(false);
 
   const markLoaded = useCallback(() => setLoaded(true), []);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      setLoaded(false);
+      return;
+    }
 
     let cancelled = false;
-    let timer: number | null = null;
+    let timer: ReturnType<typeof setInterval> | null = null;
 
     const tryMark = () => {
       const api = window.turnstile;
@@ -58,23 +61,26 @@ export function useTurnstileScriptLoaded(enabled: boolean): boolean {
     }
 
     let attempts = 0;
-    timer = window.setInterval(() => {
+    timer = setInterval(() => {
       if (cancelled) return;
       if (tryMark() || attempts++ > 200) {
-        if (timer) window.clearInterval(timer);
+        if (timer) clearInterval(timer);
       }
     }, 50);
 
     return () => {
       cancelled = true;
-      if (timer) window.clearInterval(timer);
+      if (timer) clearInterval(timer);
     };
   }, [enabled, markLoaded]);
 
   return loaded;
 }
 
-export function useTurnstileWidget(siteKey: string) {
+/**
+ * @param mountKey Bump when the form is shown again (e.g. each email modal open) so Turnstile remounts cleanly.
+ */
+export function useTurnstileWidget(siteKey: string, mountKey = 0) {
   const canRender = Boolean(siteKey.trim());
   const turnstileScriptLoaded = useTurnstileScriptLoaded(canRender);
   const [turnstileToken, setTurnstileToken] = useState("");
@@ -87,6 +93,13 @@ export function useTurnstileWidget(siteKey: string) {
   }, [widgetId]);
 
   useEffect(() => {
+    widgetIdRef.current = null;
+    setWidgetId(null);
+    setTurnstileToken("");
+    clearTurnstileContainer(widgetRef.current);
+  }, [mountKey]);
+
+  useLayoutEffect(() => {
     if (!canRender || !turnstileScriptLoaded || !widgetRef.current || !window.turnstile) {
       return;
     }
@@ -115,7 +128,7 @@ export function useTurnstileWidget(siteKey: string) {
         widgetIdRef.current = rendered;
         setWidgetId(rendered);
       } catch {
-        /* keep the route alive if the SDK is mid-navigation */
+        /* keep navigation alive if the SDK is between widgets */
       }
     };
 
@@ -132,11 +145,11 @@ export function useTurnstileWidget(siteKey: string) {
     return () => {
       cancelled = true;
     };
-  }, [canRender, siteKey, turnstileScriptLoaded]);
+  }, [canRender, siteKey, turnstileScriptLoaded, mountKey]);
 
   useEffect(() => {
     return () => {
-      /** Do not call turnstile.remove() — breaks the next client navigation. */
+      /** Never call turnstile.remove() here — it breaks the next client route. */
       widgetIdRef.current = null;
       clearTurnstileContainer(widgetRef.current);
     };

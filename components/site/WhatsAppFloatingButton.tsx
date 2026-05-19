@@ -28,6 +28,7 @@ export function WhatsAppFloatingButton() {
   const [href, setHref] = useState(WHATSAPP_URL);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [emailModalSession, setEmailModalSession] = useState(0);
   const [stackOpen, setStackOpen] = useState(false);
   const [coarsePointer, setCoarsePointer] = useState(false);
   const closeStackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -83,6 +84,7 @@ export function WhatsAppFloatingButton() {
 
   const openEmailModal = useCallback(() => {
     openStack();
+    setEmailModalSession((n) => n + 1);
     setEmailModalOpen(true);
   }, [openStack]);
 
@@ -153,7 +155,13 @@ export function WhatsAppFloatingButton() {
         </div>
       </div>
 
-      {emailModalOpen ? <ContactSupportModal onClose={closeEmailModal} /> : null}
+      {emailModalOpen ? (
+        <ContactSupportModal
+          key={emailModalSession}
+          mountKey={emailModalSession}
+          onClose={closeEmailModal}
+        />
+      ) : null}
 
       {confirmOpen ? (
         <CenterModal

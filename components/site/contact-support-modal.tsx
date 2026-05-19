@@ -45,14 +45,20 @@ class ContactModalErrorBoundary extends Component<
   }
 }
 
-export function ContactSupportModal({ onClose }: { onClose: () => void }) {
+export function ContactSupportModal({
+  mountKey,
+  onClose,
+}: {
+  mountKey: number;
+  onClose: () => void;
+}) {
   const t = useTranslations("ContactForm");
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
   return (
-    <ContactModalErrorBoundary key="contact-modal-boundary" onClose={onClose}>
+    <ContactModalErrorBoundary onClose={onClose}>
       <CenterModal title={t("modalTitle")} onClose={onClose} size="wide">
-        <ContactSupportForm siteKey={siteKey} onClose={onClose} />
+        <ContactSupportForm mountKey={mountKey} siteKey={siteKey} onClose={onClose} />
       </CenterModal>
     </ContactModalErrorBoundary>
   );

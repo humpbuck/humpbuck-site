@@ -36,10 +36,13 @@ function FieldLabel({
 
 export function ContactSupportForm({
   siteKey: siteKeyProp,
+  mountKey = 0,
   onClose,
 }: {
   /** Pass from server/parent when possible; falls back to build-time public env. */
   siteKey?: string;
+  /** Increment when the modal opens so Turnstile remounts after a previous close. */
+  mountKey?: number;
   onClose?: () => void;
 }) {
   const t = useTranslations("ContactForm");
@@ -56,7 +59,7 @@ export function ContactSupportForm({
     widgetRef,
     turnstileToken,
     resetWidget,
-  } = useTurnstileWidget(siteKey);
+  } = useTurnstileWidget(siteKey, mountKey);
 
   const [fromEmail, setFromEmail] = useState("");
   const [subject, setSubject] = useState("");
