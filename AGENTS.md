@@ -20,3 +20,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## Storefront images (R2)
 
 - Customer-facing photos from R2: use **`StorefrontImage`** (`components/site/storefront-image.tsx`), not raw `next/image` with manual `unoptimized`. R2 URLs load directly from the CDN (`lib/r2-public-image.ts`). Avatars keep `HeaderUserAvatar` / `ReviewerAvatar`.
+
+## Storefront locale `ar` (Arabic)
+
+- Locale code **`ar`** in `i18n/routing.ts`; RTL with Hebrew (`dir` on `<html>`). Messages: `messages/ar.json`, `messages/policies.ar.json`, `messages/storefront-extra.ar.json`, `messages/product-copy.ar.json`. Rebuild: `node scripts/build-ar-locale.mjs` after editing `scripts/ar-batch*.json`. Fill untranslated strings: `node scripts/fill-ar-missing.mjs`.

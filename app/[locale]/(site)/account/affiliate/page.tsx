@@ -546,7 +546,9 @@ export default async function AccountAffiliatePage({
                         ? "ja-JP"
                         : locale === "he"
                           ? "he-IL"
-                          : "en-US";
+                          : locale === "ar"
+                            ? "ar-SA"
+                            : "en-US";
 
   function payoutMethodLabel(method: string | null | undefined): string {
     if (!method) return "-";

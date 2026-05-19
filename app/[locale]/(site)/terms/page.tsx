@@ -12,6 +12,7 @@ import { TermsBodyKo } from "@/components/site/terms-body-ko";
 import { TermsBodyDe } from "@/components/site/terms-body-de";
 import { TermsBodyJa } from "@/components/site/terms-body-ja";
 import { TermsBodyHe } from "@/components/site/terms-body-he";
+import { TermsBodyAr } from "@/components/site/terms-body-ar";
 import { routing } from "@/i18n/routing";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
@@ -76,6 +77,8 @@ export default async function TermsPage({
         <TermsBodyJa />
       ) : locale === "he" ? (
         <TermsBodyHe />
+      ) : locale === "ar" ? (
+        <TermsBodyAr />
       ) : (
         <TermsBodyEn />
       )}

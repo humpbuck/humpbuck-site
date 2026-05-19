@@ -222,6 +222,26 @@ export function FlagJapan({ className, ...props }: SvgProps) {
   );
 }
 
+/** Saudi Arabia — green field with simplified white emblem (readable at small sizes). */
+export function FlagSaudiArabia({ className, ...props }: SvgProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 30 20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      {...props}
+    >
+      <rect width="30" height="20" fill="#006C35" />
+      <path
+        fill="#FFFFFF"
+        d="M8.5 14.2c2.8-3.1 5.6-6.2 8.4-9.3.4-.4 1-.1 1 .5v1.2c-2.5 2.8-5 5.6-7.5 8.4-.3.3-.8.3-1.1 0-.3-.3-.3-.6-.1-.9.7-.8 1.4-1.6 2.1-2.4.5-.6 1.5-.3 1.5.5v.6c-.6.7-1.2 1.4-1.8 2.1-.2.3-.6.3-.8 0z"
+      />
+      <rect x="17.5" y="12.8" width="7.5" height="1.1" rx="0.4" fill="#FFFFFF" />
+    </svg>
+  );
+}
+
 /** Israel — blue stripes with white band (Star of David omitted at small size). */
 export function FlagIsrael({ className, ...props }: SvgProps) {
   return (
@@ -270,6 +290,7 @@ const LOCALE_FLAGS: Record<string, LocaleFlagComponent> = {
   de: FlagGermany,
   ja: FlagJapan,
   he: FlagIsrael,
+  ar: FlagSaudiArabia,
 } as const;
 
 const FLAG_ICON_CLASS =

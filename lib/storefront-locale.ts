@@ -128,6 +128,16 @@ const SPEC_LABELS: Record<string, Record<string, string>> = {
     Clasp: "סוגר",
     "Water resistance": "עמידות במים",
   },
+  ar: {
+    "Case diameter": "قطر الهيكل",
+    "Case thickness": "سُمك الهيكل",
+    "Band width": "عرض السوار",
+    Weight: "الوزن",
+    Crystal: "الزجاج",
+    "Case material": "مادة الهيكل",
+    Clasp: "الإبزيم",
+    "Water resistance": "مقاومة الماء",
+  },
 };
 
 const SPEC_VALUES: Record<string, Record<string, string>> = {
@@ -252,6 +262,17 @@ const SPEC_VALUES: Record<string, Record<string, string>> = {
     "Hook & Loop": "סגירת וולקרו",
     "30 m": "30 מ'",
   },
+  ar: {
+    "Mineral glass": "زجاج معدني",
+    "Stainless steel": "فولاذ مقاوم للصدأ",
+    Polycarbonate: "بولي كربونات",
+    Alloy: "سبيكة",
+    "Hook buckle": "إبزيم خطاف",
+    "Pin buckle": "إبزيم دبوس",
+    "Butterfly clasp": "مشبك فراشة",
+    "Hook & Loop": "لصق ولف",
+    "30 m": "30 م",
+  },
 };
 
 const VARIANT_STYLE_PREFIX: Record<string, string> = {
@@ -266,6 +287,7 @@ const VARIANT_STYLE_PREFIX: Record<string, string> = {
   de: "Stil",
   ja: "スタイル",
   he: "סגנון",
+  ar: "النمط",
 };
 
 function localizeVariantLabel(label: string, locale: string): string {

@@ -26,6 +26,10 @@
     "AccountSubscribe.emailPlaceholder": "email@example.com",
     "AccountAffiliate.linkGen.placeholderExample": "{base}/product/מזהה-מוצר"
   },
+  "ar": {
+    "AccountSubscribe.emailPlaceholder": "email@example.com",
+    "AccountAffiliate.linkGen.placeholderExample": "{base}/product/معرّف-المنتج"
+  },
   "es": {
     "AccountAffiliate.linkGen.placeholderExample": "{base}/product/su-slug",
     "Account.ordersRefPart": "· Ref. {suffix}"

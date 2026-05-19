@@ -50,7 +50,6 @@
     "Footer.supportTitle": "Kundenservice",
     "Home.newsletterKicker": "Neuigkeiten",
     "Home.wholesaleBadge": "HUMPBUCK Uhrenfabrik",
-    "Checkout.kicker": "Kasse",
     "Product.sale": "Angebot",
     "Product.detailsHeading": "Details",
     "Auth.nameOptional": "Name (optional)",
@@ -86,6 +85,16 @@
     "AccountAffiliate.whatsapp": "WhatsApp:",
     "AccountAffiliate.payoutSupportWhatsapp": "WhatsApp:",
     "AccountAffiliate.linkGen.placeholderExample": "{base}/product/your-slug",
+    "AccountAffiliate.payoutForm.whatsappLabel": "WhatsApp:"
+  },
+  "ar": {
+    "Home.wholesaleBadge": "مصنع ساعات HUMPBUCK",
+    "PolicyContact.whatsappLabel": "WhatsApp:",
+    "AccountAffiliate.pidPrefix": "المعرّف:",
+    "AccountSubscribe.emailPlaceholder": "email@example.com",
+    "AccountAffiliate.whatsapp": "WhatsApp:",
+    "AccountAffiliate.payoutSupportWhatsapp": "WhatsApp:",
+    "AccountAffiliate.linkGen.placeholderExample": "{base}/product/معرّف-المنتج",
     "AccountAffiliate.payoutForm.whatsappLabel": "WhatsApp:"
   },
   "es": {
