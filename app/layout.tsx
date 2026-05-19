@@ -100,6 +100,8 @@ export default async function RootLayout({
       <head>
         <link rel="preconnect" href={R2_PUBLIC_BASE} crossOrigin="anonymous" />
         <link rel="dns-prefetch" href={R2_PUBLIC_BASE} />
+        <link rel="preconnect" href="https://challenges.cloudflare.com" />
+        <link rel="dns-prefetch" href="https://challenges.cloudflare.com" />
       </head>
       <body className="flex min-h-full flex-col font-sans">
         <OrganizationJsonLd />

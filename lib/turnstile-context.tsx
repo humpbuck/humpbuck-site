@@ -10,38 +10,65 @@ import {
   type ReactNode,
 } from "react";
 
-const TURNSTILE_SRC =
-  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+export const TURNSTILE_SCRIPT_BASE =
+  "https://challenges.cloudflare.com/turnstile/v0/api.js";
+
+const TURNSTILE_ONLOAD_CALLBACK = "__humpbuckTurnstileSdkOnload";
 
 type TurnstileApi = {
   ready?: (cb: () => void) => void;
+  render?: (
+    container: HTMLElement,
+    options: {
+      sitekey: string;
+      callback: (token: string) => void;
+    },
+  ) => string;
 };
 
 function getTurnstileApi(): TurnstileApi | undefined {
   return (window as Window & { turnstile?: TurnstileApi }).turnstile;
 }
 
-/** Resolves when `window.turnstile` is callable (not only when the script tag loaded). */
-function whenTurnstileApiReady(): Promise<void> {
-  return new Promise((resolve) => {
-    const finish = () => resolve();
+function removeStaleTurnstileScripts() {
+  if (typeof document === "undefined" || getTurnstileApi()) return;
+  document
+    .querySelectorAll<HTMLScriptElement>('script[src*="turnstile/v0/api.js"]')
+    .forEach((el) => el.remove());
+}
+
+/** Resolves when `window.turnstile.render` is available. */
+function whenTurnstileApiReady(timeoutMs = 15_000): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const finish = () => {
+      if (getTurnstileApi()?.render) resolve();
+      else reject(new Error("Turnstile API missing"));
+    };
+
     const api = getTurnstileApi();
-    if (api) {
+    if (api?.render) {
       if (typeof api.ready === "function") api.ready(finish);
       else finish();
       return;
     }
 
+    const deadline = window.setTimeout(() => {
+      window.clearInterval(timer);
+      reject(new Error("Turnstile API timeout"));
+    }, timeoutMs);
+
     let attempts = 0;
     const timer = window.setInterval(() => {
       const live = getTurnstileApi();
-      if (live) {
+      if (live?.render) {
         window.clearInterval(timer);
+        window.clearTimeout(deadline);
         if (typeof live.ready === "function") live.ready(finish);
         else finish();
-      } else if (attempts++ > 120) {
+      } else if (attempts++ > 200) {
         window.clearInterval(timer);
-        finish();
+        window.clearTimeout(deadline);
+        reject(new Error("Turnstile API timeout"));
       }
     }, 50);
   });
@@ -49,33 +76,45 @@ function whenTurnstileApiReady(): Promise<void> {
 
 let scriptLoadPromise: Promise<void> | null = null;
 
+/** Clear loader state after a failed load so the user can retry. */
+export function resetTurnstileScriptLoader() {
+  scriptLoadPromise = null;
+  removeStaleTurnstileScripts();
+}
+
 export function loadTurnstileScript(): Promise<void> {
   if (typeof window === "undefined") return Promise.resolve();
-  if (getTurnstileApi()) return whenTurnstileApiReady();
+  if (getTurnstileApi()?.render) return whenTurnstileApiReady();
 
   if (scriptLoadPromise) return scriptLoadPromise;
 
   scriptLoadPromise = new Promise((resolve, reject) => {
-    const finish = () => whenTurnstileApiReady().then(resolve).catch(reject);
+    const settle = () => {
+      whenTurnstileApiReady()
+        .then(resolve)
+        .catch((err) => {
+          scriptLoadPromise = null;
+          removeStaleTurnstileScripts();
+          reject(err);
+        });
+    };
+
     const fail = () => {
       scriptLoadPromise = null;
+      removeStaleTurnstileScripts();
       reject(new Error("Turnstile script failed to load"));
     };
 
-    const existing = document.querySelector<HTMLScriptElement>(
-      `script[src="${TURNSTILE_SRC}"]`,
-    );
-    if (existing) {
-      existing.addEventListener("error", () => fail(), { once: true });
-      void whenTurnstileApiReady().then(resolve).catch(reject);
-      return;
-    }
+    removeStaleTurnstileScripts();
 
+    (window as unknown as Record<string, () => void>)[TURNSTILE_ONLOAD_CALLBACK] =
+      () => settle();
+
+    const src = `${TURNSTILE_SCRIPT_BASE}?render=explicit&onload=${TURNSTILE_ONLOAD_CALLBACK}`;
     const script = document.createElement("script");
-    script.src = TURNSTILE_SRC;
-    script.async = true;
+    script.id = "cf-turnstile-sdk";
+    script.src = src;
     script.defer = true;
-    script.onload = () => finish();
     script.onerror = () => fail();
     document.head.appendChild(script);
   });
@@ -83,7 +122,7 @@ export function loadTurnstileScript(): Promise<void> {
   return scriptLoadPromise;
 }
 
-/** Warm the script after idle so modals open faster (does not wrap the layout tree). */
+/** Optional warm-up; failures are ignored and stale tags are cleared on the next form load. */
 export function preloadTurnstileScript() {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
   if (!siteKey) return;
