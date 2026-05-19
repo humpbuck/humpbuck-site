@@ -7,6 +7,10 @@ export const TURNSTILE_SCRIPT_SRC =
 
 const SCRIPT_TAG_ID = "cf-turnstile-sdk-explicit-storefront";
 
+/** `window.turnstile` may appear ticks after `<script>` `load`; reused tags do not replay `load`. */
+const WAIT_TURNSTILE_MS = 20_000;
+const POLL_MS = 50;
+
 declare global {
   interface Window {
     turnstile?: {
@@ -29,56 +33,71 @@ declare global {
 /** Single-flight script inject (avoids `next/script` quirks with dynamic + hard refresh). */
 let scriptInjectPromise: Promise<void> | null = null;
 
-function waitForTurnstileApi(): Promise<void> {
+function waitUntilTurnstileGlobalsReady(): Promise<void> {
+  const start = Date.now();
   return new Promise((resolve, reject) => {
-    const api = window.turnstile;
-    if (!api) {
-      reject(new Error("Turnstile API missing"));
-      return;
+    function tick(): void {
+      const api = window.turnstile;
+      if (api) {
+        if (typeof api.ready === "function") {
+          api.ready(() => resolve());
+        } else {
+          resolve();
+        }
+        return;
+      }
+      if (Date.now() - start >= WAIT_TURNSTILE_MS) {
+        reject(new Error("Turnstile API timeout"));
+        return;
+      }
+      window.setTimeout(tick, POLL_MS);
     }
-    if (typeof api.ready === "function") {
-      api.ready(() => resolve());
-      return;
-    }
-    resolve();
+    tick();
   });
 }
 
 export function injectTurnstileScriptOnce(): Promise<void> {
   if (typeof window === "undefined") return Promise.resolve();
 
-  if (window.turnstile) {
-    return waitForTurnstileApi();
-  }
-
   if (scriptInjectPromise) return scriptInjectPromise;
 
   scriptInjectPromise = new Promise<void>((resolve, reject) => {
-    const finalize = () => {
-      waitForTurnstileApi().then(resolve).catch(reject);
-    };
+    let aborted = false;
+    function abort(err: Error) {
+      if (aborted) return;
+      aborted = true;
+      reject(err);
+    }
 
-    const existingById = document.getElementById(SCRIPT_TAG_ID);
+    /** One poll wait shared by load + fallback (do not spawn multiple ticker loops). */
+    let globalsWait: Promise<void> | null = null;
+    function startGlobalsWait(): void {
+      if (aborted) return;
+      if (!globalsWait) globalsWait = waitUntilTurnstileGlobalsReady();
+      globalsWait.then(resolve, reject);
+    }
+
     const existingSdk =
-      existingById instanceof HTMLScriptElement
-        ? existingById
-        : (document.querySelector(
-            `script[src^="https://challenges.cloudflare.com/turnstile"]`,
-          ) as HTMLScriptElement | null);
+      (document.getElementById(SCRIPT_TAG_ID) instanceof HTMLScriptElement &&
+        document.getElementById(SCRIPT_TAG_ID)) ||
+      (document.querySelector(
+        `script[src^="https://challenges.cloudflare.com/turnstile"]`,
+      ) as HTMLScriptElement | null);
 
     if (existingSdk) {
-      if (window.turnstile) {
-        finalize();
-        return;
-      }
-      existingSdk.addEventListener("load", () => finalize(), { once: true });
       existingSdk.addEventListener(
         "error",
+        () => abort(new Error("Turnstile script load failed")),
+        { once: true },
+      );
+      existingSdk.addEventListener(
+        "load",
         () => {
-          reject(new Error("Turnstile script load failed"));
+          startGlobalsWait();
         },
         { once: true },
       );
+      queueMicrotask(() => startGlobalsWait());
       return;
     }
 
@@ -86,15 +105,20 @@ export function injectTurnstileScriptOnce(): Promise<void> {
     s.id = SCRIPT_TAG_ID;
     s.src = TURNSTILE_SCRIPT_SRC;
     s.async = true;
-    s.addEventListener("load", () => finalize(), { once: true });
     s.addEventListener(
       "error",
+      () => abort(new Error("Turnstile script load failed")),
+      { once: true },
+    );
+    s.addEventListener(
+      "load",
       () => {
-        reject(new Error("Turnstile script load failed"));
+        startGlobalsWait();
       },
       { once: true },
     );
     document.head.appendChild(s);
+    queueMicrotask(() => startGlobalsWait());
   }).catch((err) => {
     scriptInjectPromise = null;
     throw err;
