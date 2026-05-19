@@ -38,16 +38,46 @@ export function useTurnstileScriptLoaded(enabled: boolean): [boolean, () => void
   const markLoaded = useCallback(() => setLoaded(true), []);
 
   useEffect(() => {
-    if (!enabled || loaded) return;
-    if (typeof window === "undefined") return;
-    const api = window.turnstile;
-    if (!api) return;
-    if (typeof api.ready === "function") {
-      api.ready(markLoaded);
-    } else {
-      markLoaded();
+    if (!enabled) {
+      setLoaded(false);
+      return;
     }
-  }, [enabled, loaded, markLoaded]);
+
+    let cancelled = false;
+    let timer: ReturnType<typeof setInterval> | null = null;
+
+    const tryMark = () => {
+      const api = window.turnstile;
+      if (!api) return false;
+      if (typeof api.ready === "function") {
+        api.ready(() => {
+          if (!cancelled) markLoaded();
+        });
+      } else {
+        markLoaded();
+      }
+      return true;
+    };
+
+    if (tryMark()) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    let attempts = 0;
+    timer = setInterval(() => {
+      if (cancelled) return;
+      if (tryMark() || attempts++ > 200) {
+        if (timer) clearInterval(timer);
+      }
+    }, 50);
+
+    return () => {
+      cancelled = true;
+      if (timer) clearInterval(timer);
+    };
+  }, [enabled, markLoaded]);
 
   return [loaded, markLoaded];
 }
@@ -111,12 +141,10 @@ export function useTurnstileWidget(siteKey: string) {
   useEffect(() => {
     return () => {
       /**
-       * Do not call turnstile.remove() here — it breaks the shared SDK for the
-       * next client navigation (e.g. contact modal → /wholesale).
+       * Do not call turnstile.remove() or setState here — both break client
+       * navigation and hard refresh (Strict Mode runs cleanup while remounting).
        */
       widgetIdRef.current = null;
-      setWidgetId(null);
-      setTurnstileToken("");
       clearTurnstileContainer(widgetRef.current);
     };
   }, []);
