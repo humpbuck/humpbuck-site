@@ -153,7 +153,7 @@
     "errSubmitGeneric": "Failed to send. Please try again.",
     "errNetwork": "Network error. Please try again.",
     "errScriptLoad": "Verification script failed to load. Please refresh and try again.",
-    "verifyUnavailable": "Verification is not configured. Add NEXT_PUBLIC_TURNSTILE_SITE_KEY and TURNSTILE_SECRET_KEY to .env.local (or your host’s env), then restart the dev server.",
+    "verifyUnavailable": "Verification is unavailable right now.",
     "verifyHint": "Please complete the verification before submitting.",
     "successKicker": "Message received",
     "successBody": "Thank you — we received your message and will reply as soon as we can.",

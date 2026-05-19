@@ -135,7 +135,29 @@
     "confirm": "WhatsApp を開く"
   },
   "Floating": {
-    "backToTop": "ページ上部へ"
+    "backToTop": "ページ上部へ",
+    "ariaEmail": "HUMPBUCK サポートにメール"
+  },
+  "ContactForm": {
+    "modalTitle": "メールサポート",
+    "intro": "メッセージをお送りください。ご入力のメールアドレスに返信いたします。",
+    "labelFromEmail": "あなたのメール",
+    "labelTo": "宛先",
+    "labelSubject": "件名",
+    "optional": "任意",
+    "labelMessage": "メッセージ",
+    "messagePlaceholder": "お困りの内容をお聞かせください",
+    "submit": "メッセージを送信",
+    "submitting": "送信中…",
+    "errVerifyRequired": "送信前に認証を完了してください。",
+    "errSubmitGeneric": "送信に失敗しました。もう一度お試しください。",
+    "errNetwork": "ネットワークエラー。もう一度お試しください。",
+    "errScriptLoad": "認証スクリプトの読み込みに失敗しました。ページを更新して再試行してください。",
+    "verifyUnavailable": "認証は現在利用できません。",
+    "verifyHint": "送信前に認証を完了してください。",
+    "successKicker": "メッセージを受信しました",
+    "successBody": "ありがとうございます。メッセージを受け取りました。できるだけ早く返信いたします。",
+    "successClose": "閉じる"
   },
   "Shop": {
     "metaTitle": "ショップ — DIGI-TEMP & 全カタログ",

@@ -135,7 +135,29 @@
     "confirm": "Открыть WhatsApp"
   },
   "Floating": {
-    "backToTop": "Наверх"
+    "backToTop": "Наверх",
+    "ariaEmail": "Написать в поддержку HUMPBUCK по e-mail"
+  },
+  "ContactForm": {
+    "modalTitle": "Поддержка по e-mail",
+    "intro": "Отправьте нам сообщение — мы ответим на указанный вами адрес e-mail.",
+    "labelFromEmail": "Ваш e-mail",
+    "labelTo": "Кому",
+    "labelSubject": "Тема",
+    "optional": "необязательно",
+    "labelMessage": "Сообщение",
+    "messagePlaceholder": "Чем мы можем помочь?",
+    "submit": "Отправить сообщение",
+    "submitting": "Отправка…",
+    "errVerifyRequired": "Пройдите проверку перед отправкой.",
+    "errSubmitGeneric": "Не удалось отправить. Попробуйте снова.",
+    "errNetwork": "Ошибка сети. Попробуйте снова.",
+    "errScriptLoad": "Не удалось загрузить скрипт проверки. Обновите страницу и попробуйте снова.",
+    "verifyUnavailable": "Проверка сейчас недоступна.",
+    "verifyHint": "Пройдите проверку перед отправкой.",
+    "successKicker": "Сообщение получено",
+    "successBody": "Спасибо — мы получили ваше сообщение и ответим как можно скорее.",
+    "successClose": "Закрыть"
   },
   "Shop": {
     "metaTitle": "Магазин — DIGI-TEMP и полный каталог",

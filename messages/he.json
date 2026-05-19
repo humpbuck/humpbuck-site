@@ -135,7 +135,29 @@
     "confirm": "פתיחת WhatsApp"
   },
   "Floating": {
-    "backToTop": "חזרה למעלה"
+    "backToTop": "חזרה למעלה",
+    "ariaEmail": "שליחת אימייל לתמיכת HUMPBUCK"
+  },
+  "ContactForm": {
+    "modalTitle": "תמיכה בדוא\"ל",
+    "intro": "שלחו לנו הודעה — נשיב לכתובת האימייל שתספקו.",
+    "labelFromEmail": "האימייל שלכם",
+    "labelTo": "אל",
+    "labelSubject": "נושא",
+    "optional": "אופציונלי",
+    "labelMessage": "הודעה",
+    "messagePlaceholder": "איך נוכל לעזור?",
+    "submit": "שליחת הודעה",
+    "submitting": "שולח…",
+    "errVerifyRequired": "השלימו את האימות לפני השליחה.",
+    "errSubmitGeneric": "השליחה נכשלה. נסו שוב.",
+    "errNetwork": "שגיאת רשת. נסו שוב.",
+    "errScriptLoad": "טעינת סקריפט האימות נכשלה. רעננו את הדף ונסו שוב.",
+    "verifyUnavailable": "האימות אינו זמין כרגע.",
+    "verifyHint": "השלימו את האימות לפני השליחה.",
+    "successKicker": "ההודעה התקבלה",
+    "successBody": "תודה — קיבלנו את ההודעה ונשיב בהקדם האפשרי.",
+    "successClose": "סגירה"
   },
   "Shop": {
     "metaTitle": "חנות — DIGI-TEMP והקטלוג המלא",

@@ -135,7 +135,29 @@
     "confirm": "WhatsApp 열기"
   },
   "Floating": {
-    "backToTop": "맨 위로"
+    "backToTop": "맨 위로",
+    "ariaEmail": "HUMPBUCK 지원팀에 이메일 보내기"
+  },
+  "ContactForm": {
+    "modalTitle": "이메일 지원",
+    "intro": "메시지를 보내 주세요 — 입력하신 이메일로 답변드립니다.",
+    "labelFromEmail": "이메일",
+    "labelTo": "받는 사람",
+    "labelSubject": "제목",
+    "optional": "선택",
+    "labelMessage": "메시지",
+    "messagePlaceholder": "무엇을 도와드릴까요?",
+    "submit": "메시지 보내기",
+    "submitting": "보내는 중…",
+    "errVerifyRequired": "제출 전 인증을 완료해 주세요.",
+    "errSubmitGeneric": "전송에 실패했습니다. 다시 시도해 주세요.",
+    "errNetwork": "네트워크 오류. 다시 시도해 주세요.",
+    "errScriptLoad": "인증 스크립트를 불러오지 못했습니다. 페이지를 새로고침한 후 다시 시도해 주세요.",
+    "verifyUnavailable": "현재 인증을 사용할 수 없습니다.",
+    "verifyHint": "제출 전 인증을 완료해 주세요.",
+    "successKicker": "메시지가 접수되었습니다",
+    "successBody": "감사합니다 — 메시지를 받았으며 가능한 한 빨리 답변드리겠습니다.",
+    "successClose": "닫기"
   },
   "Shop": {
     "metaTitle": "쇼핑 — DIGI-TEMP & 전체 카탈로그",

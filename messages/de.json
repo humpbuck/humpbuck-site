@@ -135,7 +135,29 @@
     "confirm": "WhatsApp öffnen"
   },
   "Floating": {
-    "backToTop": "Nach oben"
+    "backToTop": "Nach oben",
+    "ariaEmail": "HUMPBUCK Support per E-Mail"
+  },
+  "ContactForm": {
+    "modalTitle": "E-Mail-Support",
+    "intro": "Senden Sie uns eine Nachricht — wir antworten an die von Ihnen angegebene E-Mail-Adresse.",
+    "labelFromEmail": "Ihre E-Mail",
+    "labelTo": "An",
+    "labelSubject": "Betreff",
+    "optional": "optional",
+    "labelMessage": "Nachricht",
+    "messagePlaceholder": "Wie können wir helfen?",
+    "submit": "Nachricht senden",
+    "submitting": "Wird gesendet…",
+    "errVerifyRequired": "Bitte schließen Sie die Verifizierung ab.",
+    "errSubmitGeneric": "Senden fehlgeschlagen. Bitte erneut versuchen.",
+    "errNetwork": "Netzwerkfehler. Bitte erneut versuchen.",
+    "errScriptLoad": "Verifizierungsskript konnte nicht geladen werden. Seite aktualisieren und erneut versuchen.",
+    "verifyUnavailable": "Verifizierung ist derzeit nicht verfügbar.",
+    "verifyHint": "Bitte schließen Sie die Verifizierung vor dem Senden ab.",
+    "successKicker": "Nachricht erhalten",
+    "successBody": "Vielen Dank — wir haben Ihre Nachricht erhalten und melden uns so schnell wie möglich.",
+    "successClose": "Schließen"
   },
   "Shop": {
     "metaTitle": "Shop — DIGI-TEMP & gesamter Katalog",

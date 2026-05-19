@@ -10,6 +10,10 @@ export default getRequestConfig(async ({ requestLocale }) => {
   const extra = (await import(`../messages/storefront-extra.${locale}.json`)).default;
   const productCopy = (await import(`../messages/product-copy.${locale}.json`)).default;
   const policies = (await import(`../messages/policies.${locale}.json`)).default;
+  const enBase =
+    locale === "en"
+      ? base
+      : (await import("../messages/en.json")).default;
 
   return {
     locale,
@@ -18,6 +22,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       ...extra,
       ...productCopy,
       ...policies,
+      ContactForm: base.ContactForm ?? enBase.ContactForm,
     },
   };
 });

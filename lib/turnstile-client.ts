@@ -1,5 +1,6 @@
 "use client";
 
+import { useTurnstileScriptContext } from "@/components/site/turnstile-script-provider";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 declare global {
@@ -20,39 +21,49 @@ declare global {
   }
 }
 
-/**
- * Tracks Turnstile script readiness. Handles the case where `next/script` onLoad
- * never runs because the script was already injected by another form on the page.
- */
-export function useTurnstileScriptLoaded(enabled: boolean): [boolean, () => void] {
-  const [loaded, setLoaded] = useState(false);
-  const markLoaded = useCallback(() => setLoaded(true), []);
-
-  useEffect(() => {
-    if (!enabled || loaded) return;
-    if (typeof window === "undefined") return;
-    const api = window.turnstile;
-    if (!api) return;
-    if (typeof api.ready === "function") {
-      api.ready(markLoaded);
-    } else {
-      markLoaded();
-    }
-  }, [enabled, loaded, markLoaded]);
-
-  return [loaded, markLoaded];
-}
-
 function clearTurnstileContainer(el: HTMLElement | null) {
   if (!el) return;
   el.replaceChildren();
 }
 
+/**
+ * Tracks Turnstile script readiness. Prefers the shared provider; falls back to
+ * detecting `window.turnstile` when the script was already on the page.
+ */
+export function useTurnstileScriptLoaded(enabled: boolean): [boolean, () => void] {
+  const shared = useTurnstileScriptContext();
+  const [localReady, setLocalReady] = useState(false);
+  const markLocalReady = useCallback(() => setLocalReady(true), []);
+
+  const useShared = Boolean(shared.siteKey) && enabled;
+
+  useEffect(() => {
+    if (!enabled || useShared || localReady) return;
+    if (typeof window === "undefined") return;
+    const api = window.turnstile;
+    if (!api) return;
+    if (typeof api.ready === "function") {
+      api.ready(markLocalReady);
+    } else {
+      markLocalReady();
+    }
+  }, [enabled, useShared, localReady, markLocalReady]);
+
+  if (useShared) {
+    return [shared.ready, shared.markReady];
+  }
+
+  return [localReady, markLocalReady];
+}
+
 export function useTurnstileWidget(siteKey: string) {
-  const canRender = Boolean(siteKey.trim());
+  const shared = useTurnstileScriptContext();
+  const resolvedKey = siteKey.trim() || shared.siteKey;
+  const canRender = Boolean(resolvedKey);
   const [turnstileScriptLoaded, markScriptLoaded] = useTurnstileScriptLoaded(canRender);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [widgetId, setWidgetId] = useState<string | null>(null);
+  const [mountError, setMountError] = useState(false);
   const widgetRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
 
@@ -66,28 +77,47 @@ export function useTurnstileWidget(siteKey: string) {
     }
     if (widgetId) return;
 
-    const container = widgetRef.current;
-    clearTurnstileContainer(container);
+    let cancelled = false;
 
     const mount = () => {
-      if (!window.turnstile || !widgetRef.current) return;
+      if (cancelled || !window.turnstile || !widgetRef.current) return;
       clearTurnstileContainer(widgetRef.current);
-      const rendered = window.turnstile.render(widgetRef.current, {
-        sitekey: siteKey,
-        callback: (token) => setTurnstileToken(token),
-        "expired-callback": () => setTurnstileToken(""),
-        "error-callback": () => setTurnstileToken(""),
-      });
-      widgetIdRef.current = rendered;
-      setWidgetId(rendered);
+      try {
+        const rendered = window.turnstile.render(widgetRef.current, {
+          sitekey: resolvedKey,
+          callback: (token) => {
+            if (!cancelled) setTurnstileToken(token);
+          },
+          "expired-callback": () => {
+            if (!cancelled) setTurnstileToken("");
+          },
+          "error-callback": () => {
+            if (!cancelled) setTurnstileToken("");
+          },
+        });
+        widgetIdRef.current = rendered;
+        setWidgetId(rendered);
+        setMountError(false);
+      } catch {
+        if (!cancelled) setMountError(true);
+      }
     };
 
-    if (typeof window.turnstile.ready === "function") {
-      window.turnstile.ready(mount);
-    } else {
-      mount();
-    }
-  }, [canRender, siteKey, turnstileScriptLoaded, widgetId]);
+    const run = () => {
+      if (typeof window.turnstile?.ready === "function") {
+        window.turnstile.ready(mount);
+      } else {
+        mount();
+      }
+    };
+
+    const frame = requestAnimationFrame(run);
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+    };
+  }, [canRender, resolvedKey, turnstileScriptLoaded, widgetId]);
 
   useEffect(() => {
     return () => {
@@ -123,5 +153,6 @@ export function useTurnstileWidget(siteKey: string) {
     turnstileScriptLoaded,
     markScriptLoaded,
     resetWidget,
+    mountError,
   };
 }

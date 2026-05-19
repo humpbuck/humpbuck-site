@@ -135,7 +135,29 @@
     "confirm": "WhatsApp openen"
   },
   "Floating": {
-    "backToTop": "Terug naar boven"
+    "backToTop": "Terug naar boven",
+    "ariaEmail": "E-mail naar HUMPBUCK-support"
+  },
+  "ContactForm": {
+    "modalTitle": "E-mailondersteuning",
+    "intro": "Stuur ons een bericht — we antwoorden op het e-mailadres dat u opgeeft.",
+    "labelFromEmail": "Uw e-mail",
+    "labelTo": "Aan",
+    "labelSubject": "Onderwerp",
+    "optional": "optioneel",
+    "labelMessage": "Bericht",
+    "messagePlaceholder": "Hoe kunnen we helpen?",
+    "submit": "Bericht verzenden",
+    "submitting": "Verzenden…",
+    "errVerifyRequired": "Voltooi de verificatie voordat u verzendt.",
+    "errSubmitGeneric": "Verzenden mislukt. Probeer het opnieuw.",
+    "errNetwork": "Netwerkfout. Probeer het opnieuw.",
+    "errScriptLoad": "Verificatiescript laden mislukt. Vernieuw de pagina en probeer opnieuw.",
+    "verifyUnavailable": "Verificatie is momenteel niet beschikbaar.",
+    "verifyHint": "Voltooi de verificatie voordat u verzendt.",
+    "successKicker": "Bericht ontvangen",
+    "successBody": "Bedankt — we hebben uw bericht ontvangen en reageren zo snel mogelijk.",
+    "successClose": "Sluiten"
   },
   "Shop": {
     "metaTitle": "Winkel — DIGI-TEMP & volledige catalogus",

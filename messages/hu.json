@@ -135,7 +135,29 @@
     "confirm": "WhatsApp megnyitása"
   },
   "Floating": {
-    "backToTop": "Vissza felülre"
+    "backToTop": "Vissza felülre",
+    "ariaEmail": "E-mail a HUMPBUCK ügyfélszolgálatnak"
+  },
+  "ContactForm": {
+    "modalTitle": "E-mailes ügyfélszolgálat",
+    "intro": "Küldjön üzenetet — a megadott e-mail címre válaszolunk.",
+    "labelFromEmail": "Az Ön e-mailje",
+    "labelTo": "Címzett",
+    "labelSubject": "Tárgy",
+    "optional": "opcionális",
+    "labelMessage": "Üzenet",
+    "messagePlaceholder": "Miben segíthetünk?",
+    "submit": "Üzenet küldése",
+    "submitting": "Küldés…",
+    "errVerifyRequired": "Küldés előtt fejezze be az ellenőrzést.",
+    "errSubmitGeneric": "A küldés sikertelen. Próbálja újra.",
+    "errNetwork": "Hálózati hiba. Próbálja újra.",
+    "errScriptLoad": "Az ellenőrző szkript betöltése sikertelen. Frissítse az oldalt, majd próbálja újra.",
+    "verifyUnavailable": "Az ellenőrzés jelenleg nem elérhető.",
+    "verifyHint": "Küldés előtt fejezze be az ellenőrzést.",
+    "successKicker": "Üzenet megérkezett",
+    "successBody": "Köszönjük — megkaptuk üzenetét, és amint tudunk, válaszolunk.",
+    "successClose": "Bezárás"
   },
   "Shop": {
     "metaTitle": "Webshop — DIGI-TEMP és teljes katalógus",

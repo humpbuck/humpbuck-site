@@ -35,6 +35,14 @@ const TrackPageView = dynamic(
   { ssr: false },
 );
 
+const TurnstileScriptProvider = dynamic(
+  () =>
+    import("@/components/site/turnstile-script-provider").then(
+      (m) => m.TurnstileScriptProvider,
+    ),
+  { ssr: false },
+);
+
 const SiteFloatingActions = dynamic(
   () =>
     import("@/components/site/SiteFloatingActions").then(
@@ -78,16 +86,19 @@ export function SiteClientEnhancements() {
     };
   }, []);
 
-  if (!ready) return null;
-
   return (
     <>
+      <TurnstileScriptProvider />
+      {!ready ? null : (
+        <>
       <SiteAnalyticsConsent />
       <GoogleAnalyticsPageviews />
       <TrackPageView />
       <AttributionCapture />
       <LocaleSwitcherFab />
       <SiteFloatingActions />
+        </>
+      )}
     </>
   );
 }

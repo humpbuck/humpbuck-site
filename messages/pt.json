@@ -135,7 +135,29 @@
     "confirm": "Abrir WhatsApp"
   },
   "Floating": {
-    "backToTop": "Voltar ao topo"
+    "backToTop": "Voltar ao topo",
+    "ariaEmail": "Enviar e-mail ao suporte HUMPBUCK"
+  },
+  "ContactForm": {
+    "modalTitle": "Suporte por e-mail",
+    "intro": "Envie-nos uma mensagem — responderemos ao e-mail que você informar.",
+    "labelFromEmail": "Seu e-mail",
+    "labelTo": "Para",
+    "labelSubject": "Assunto",
+    "optional": "opcional",
+    "labelMessage": "Mensagem",
+    "messagePlaceholder": "Como podemos ajudar?",
+    "submit": "Enviar mensagem",
+    "submitting": "Enviando…",
+    "errVerifyRequired": "Conclua a verificação antes de enviar.",
+    "errSubmitGeneric": "Falha no envio. Tente novamente.",
+    "errNetwork": "Erro de rede. Tente novamente.",
+    "errScriptLoad": "Falha ao carregar o script de verificação. Atualize a página e tente novamente.",
+    "verifyUnavailable": "A verificação não está disponível agora.",
+    "verifyHint": "Conclua a verificação antes de enviar.",
+    "successKicker": "Mensagem recebida",
+    "successBody": "Obrigado — recebemos sua mensagem e responderemos o mais rápido possível.",
+    "successClose": "Fechar"
   },
   "Shop": {
     "metaTitle": "Loja — DIGI-TEMP e catálogo completo",

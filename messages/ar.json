@@ -135,7 +135,29 @@
     "confirm": "فتح WhatsApp"
   },
   "Floating": {
-    "backToTop": "رجوع إلى أعلى الصفحة"
+    "backToTop": "رجوع إلى أعلى الصفحة",
+    "ariaEmail": "مراسلة دعم HUMPBUCK عبر البريد"
+  },
+  "ContactForm": {
+    "modalTitle": "الدعم عبر البريد",
+    "intro": "أرسل لنا رسالة — سنرد على البريد الإلكتروني الذي تقدمه.",
+    "labelFromEmail": "بريدك الإلكتروني",
+    "labelTo": "إلى",
+    "labelSubject": "الموضوع",
+    "optional": "اختياري",
+    "labelMessage": "الرسالة",
+    "messagePlaceholder": "كيف يمكننا مساعدتك؟",
+    "submit": "إرسال الرسالة",
+    "submitting": "جارٍ الإرسال…",
+    "errVerifyRequired": "يرجى إكمال التحقق قبل الإرسال.",
+    "errSubmitGeneric": "تعذّر الإرسال. يرجى المحاولة مرة أخرى.",
+    "errNetwork": "خطأ في الشبكة. يرجى المحاولة مرة أخرى.",
+    "errScriptLoad": "تعذّر تحميل سكربت التحقق. حدّث الصفحة وحاول مرة أخرى.",
+    "verifyUnavailable": "التحقق غير متاح حاليًا.",
+    "verifyHint": "يرجى إكمال التحقق قبل الإرسال.",
+    "successKicker": "تم استلام الرسالة",
+    "successBody": "شكرًا — استلمنا رسالتك وسنرد في أقرب وقت ممكن.",
+    "successClose": "إغلاق"
   },
   "Shop": {
     "metaTitle": "المتجر — درجة الحرارة الرقمية والكتالوج الكامل",
