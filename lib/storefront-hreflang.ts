@@ -1,12 +1,24 @@
 import { routing } from "@/i18n/routing";
 import { getSiteUrl } from "@/lib/seo";
 
+/** Path rules for `localePrefix: as-needed` (default locale unprefixed). */
+export function storefrontLocalizedPath(
+  path: string,
+  locale: (typeof routing.locales)[number],
+): string {
+  if (locale === routing.defaultLocale) return path;
+  if (path === "/") return `/${locale}`;
+  return `/${locale}${path}`;
+}
+
 /**
  * Absolute URLs for `metadata.alternates.languages` (hreflang).
  * `pathWithoutLocale` must match the URL path with no locale segment, e.g. `/`, `/shop`,
  * `/product/digitemp-2301` (use the same encoding as canonical paths).
  */
-export function storefrontHreflangLanguages(pathWithoutLocale: string): Record<string, string> {
+export function storefrontHreflangLanguages(
+  pathWithoutLocale: string,
+): Record<string, string> {
   const base = getSiteUrl().replace(/\/$/, "");
   const norm =
     !pathWithoutLocale || pathWithoutLocale === "/"
@@ -15,29 +27,15 @@ export function storefrontHreflangLanguages(pathWithoutLocale: string): Record<s
         ? pathWithoutLocale
         : `/${pathWithoutLocale}`;
 
-  const enHref = norm === "/" ? `${base}/` : `${base}${norm}`;
-  const esHref = norm === "/" ? `${base}/es` : `${base}/es${norm}`;
-  const ptHref = norm === "/" ? `${base}/pt` : `${base}/pt${norm}`;
-  const ruHref = norm === "/" ? `${base}/ru` : `${base}/ru${norm}`;
-  const frHref = norm === "/" ? `${base}/fr` : `${base}/fr${norm}`;
-  const itHref = norm === "/" ? `${base}/it` : `${base}/it${norm}`;
+  const languages: Record<string, string> = {};
 
-  const localizedDefault: Record<string, string> = {
-    es: esHref,
-    pt: ptHref,
-    ru: ruHref,
-    fr: frHref,
-    it: itHref,
-  };
-  const xDefault = localizedDefault[routing.defaultLocale] ?? enHref;
+  for (const locale of routing.locales) {
+    const path = storefrontLocalizedPath(norm, locale);
+    languages[locale] = path === "/" ? `${base}/` : `${base}${path}`;
+  }
 
-  return {
-    "x-default": xDefault,
-    en: enHref,
-    es: esHref,
-    pt: ptHref,
-    ru: ruHref,
-    fr: frHref,
-    it: itHref,
-  };
+  languages["x-default"] =
+    languages[routing.defaultLocale] ?? languages.en ?? `${base}/`;
+
+  return languages;
 }
