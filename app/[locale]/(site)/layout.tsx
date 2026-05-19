@@ -3,15 +3,13 @@ import { NavigationProgress } from "@/components/site/navigation-progress";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteClientEnhancements } from "@/components/site/site-client-enhancements";
 import { SiteHeader } from "@/components/site/SiteHeader";
-import { SiteTurnstileShell } from "@/components/site/site-turnstile-shell";
-
 export default function SiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <SiteTurnstileShell>
+    <>
       <Suspense fallback={null}>
         <NavigationProgress />
       </Suspense>
@@ -25,6 +23,6 @@ export default function SiteLayout({
       <Suspense fallback={null}>
         <SiteFooter />
       </Suspense>
-    </SiteTurnstileShell>
+    </>
   );
 }

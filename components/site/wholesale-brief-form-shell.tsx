@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { TurnstileScriptProvider } from "@/lib/turnstile-context";
 
 const WholesaleBriefForm = dynamic(
   () =>
@@ -17,5 +18,9 @@ const WholesaleBriefForm = dynamic(
 );
 
 export function WholesaleBriefFormShell({ siteKey }: { siteKey: string }) {
-  return <WholesaleBriefForm siteKey={siteKey} />;
+  return (
+    <TurnstileScriptProvider>
+      <WholesaleBriefForm siteKey={siteKey} />
+    </TurnstileScriptProvider>
+  );
 }

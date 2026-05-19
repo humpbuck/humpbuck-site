@@ -4,6 +4,7 @@ import { Component, type ErrorInfo, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { CenterModal } from "@/components/ui/center-modal";
+import { TurnstileScriptProvider } from "@/lib/turnstile-context";
 
 const ContactSupportForm = dynamic(
   () =>
@@ -53,13 +54,15 @@ export function ContactSupportModal({ onClose }: { onClose: () => void }) {
 
   return (
     <ContactModalErrorBoundary onClose={onClose}>
-      <CenterModal title={t("modalTitle")} onClose={onClose} size="wide">
-        <ContactSupportForm
-          key={`contact-fab-${locale}`}
-          siteKey={siteKey}
-          onClose={onClose}
-        />
-      </CenterModal>
+      <TurnstileScriptProvider>
+        <CenterModal title={t("modalTitle")} onClose={onClose} size="wide">
+          <ContactSupportForm
+            key={`contact-fab-${locale}`}
+            siteKey={siteKey}
+            onClose={onClose}
+          />
+        </CenterModal>
+      </TurnstileScriptProvider>
     </ContactModalErrorBoundary>
   );
 }
