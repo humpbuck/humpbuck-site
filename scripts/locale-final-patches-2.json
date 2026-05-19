@@ -1,0 +1,43 @@
+{
+  "nl": {
+    "Account.detailTracking": "Traceren",
+    "Account.ordersRefPart": "· Ref.-nr. {suffix}",
+    "Account.navAriaLabel": "Mijn account",
+    "AccountAffiliate.partnerFallback": "Partner",
+    "AccountAffiliate.statusPrefix": "Status:",
+    "AccountAffiliate.linksPrefix": "Links:"
+  },
+  "hu": {
+    "AccountAffiliate.partnerFallback": "Partner"
+  },
+  "ko": {
+    "AccountSubscribe.emailPlaceholder": "name@example.com",
+    "AccountAffiliate.linkGen.placeholderExample": "{base}/product/상품-슬러그"
+  },
+  "de": {
+    "AccountAffiliate.linkGen.placeholderExample": "{base}/product/ihr-slug",
+    "AccountAffiliate.partnerFallback": "Partner"
+  },
+  "ja": {
+    "AccountSubscribe.emailPlaceholder": "email@example.jp",
+    "AccountAffiliate.linkGen.placeholderExample": "{base}/product/商品スラッグ"
+  },
+  "he": {
+    "AccountSubscribe.emailPlaceholder": "email@example.com",
+    "AccountAffiliate.linkGen.placeholderExample": "{base}/product/מזהה-מוצר"
+  },
+  "es": {
+    "AccountAffiliate.linkGen.placeholderExample": "{base}/product/su-slug",
+    "Account.ordersRefPart": "· Ref. {suffix}"
+  },
+  "pt": {
+    "AccountAffiliate.linkGen.placeholderExample": "{base}/product/seu-slug"
+  },
+  "ru": {
+    "AccountAffiliate.linkGen.placeholderExample": "{base}/product/vash-slug"
+  },
+  "it": {
+    "AccountAffiliate.linkGen.placeholderExample": "{base}/product/tuo-slug",
+    "AccountAffiliate.pidPrefix": "PID:"
+  }
+}

@@ -35,7 +35,19 @@ export async function generateMetadata(): Promise<Metadata> {
             ? "fr_FR"
             : locale === "it"
               ? "it_IT"
-              : "en_US";
+              : locale === "nl"
+                ? "nl_NL"
+                : locale === "hu"
+                  ? "hu_HU"
+                  : locale === "ko"
+                    ? "ko_KR"
+                    : locale === "de"
+                      ? "de_DE"
+                      : locale === "ja"
+                        ? "ja_JP"
+                        : locale === "he"
+                          ? "he_IL"
+                          : "en_US";
 
   return {
     metadataBase: new URL(siteUrl),
@@ -79,6 +91,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
+      dir={locale === "he" ? "rtl" : "ltr"}
       data-scroll-behavior="smooth"
       className={`${fontBody.variable} ${fontDisplay.variable} h-full`}
     >

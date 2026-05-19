@@ -12,6 +12,12 @@
     "ru": "Русский",
     "fr": "Français",
     "it": "Italiano",
+    "nl": "Nederlands",
+    "hu": "Magyar",
+    "ko": "한국어",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "he": "עברית",
     "label": "Язык"
   },
   "Navigation": {
@@ -307,7 +313,7 @@
   },
   "TaxId": {
     "fallback": {
-      "label": "Tax ID",
+      "label": "ИНН / налоговый номер",
       "placeholder": "Введите Tax ID"
     },
     "BR": {
@@ -319,7 +325,7 @@
       "placeholder": "Формат: P + 12 цифр"
     },
     "MX": {
-      "label": "RFC or CURP",
+      "label": "RFC или CURP",
       "placeholder": "RFC (13 символов) или CURP (18 символов)"
     },
     "NO": {
@@ -887,13 +893,13 @@
     "edit": "Изменить",
     "savedSuccessfully": "Сохранено.",
     "payoutSupportTitle": "Контакты по выплатам",
-    "payoutSupportEmail": "Email:",
+    "payoutSupportEmail": "E-mail:",
     "payoutSupportWhatsapp": "WhatsApp:",
     "updatePartnerSection": "Обновить данные партнёра",
     "placeholderSocial": "Ссылки на соцсети (по одной в строке): https://instagram.com/..., https://tiktok.com/@...",
     "placeholderFollowers": "Число подписчиков (напр. 12000)",
     "placeholderPromo": "Как вы планируете продвигать Humpbuck? (минимум 20 символов)",
-    "labelContactEmail": "Email",
+    "labelContactEmail": "E-mail",
     "placeholderSettlementEmail": "Контактный email для расчётов (необязательно)",
     "labelWhatsapp": "WhatsApp",
     "placeholderCountryCode": "+1",
@@ -957,7 +963,7 @@
       "item6Body": "По возвращённым заказам комиссия не начисляется. При возврате партнёрская атрибуция снимается автоматически, расчёт отменяется."
     },
     "linkGen": {
-      "placeholderExample": "{base}/product/your-slug",
+      "placeholderExample": "{base}/product/vash-slug",
       "generateCopy": "Создать и скопировать",
       "placeholderResult": "Здесь появится ссылка с отслеживанием (PID: {pid})",
       "copyTitleAttr": "Копировать созданную ссылку",

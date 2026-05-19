@@ -12,6 +12,12 @@
     "ru": "Русский",
     "fr": "Français",
     "it": "Italiano",
+    "nl": "Nederlands",
+    "hu": "Magyar",
+    "ko": "한국어",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "he": "עברית",
     "label": "Idioma"
   },
   "Navigation": {
@@ -652,7 +658,7 @@
     "alreadyMessage": "Este correo ya está suscrito.",
     "subscribedSuccess": "Está suscrito. Gracias.",
     "unsubscribedSuccess": "Se ha dado de baja de los correos de marketing.",
-    "emailPlaceholder": "correo@ejemplo.com"
+    "emailPlaceholder": "email@ejemplo.com"
   },
   "NewsletterConfirmed": {
     "metaTitle": "Boletín · HUMPBUCK",
@@ -770,7 +776,7 @@
     "custom3": "Agujas, índices y lumen",
     "custom4": "Material y color de correa · herrajes",
     "custom5": "Caja · funda · tarjeta de garantía",
-    "stepBriefTitle": "Brief",
+    "stepBriefTitle": "Resumen del encargo",
     "stepBriefBody": "Comparta mercado, rango de precio y calendario.",
     "stepMockTitle": "Maquetas",
     "stepMockBody": "Marcas en dial, colores de correa, packaging.",
@@ -841,7 +847,7 @@
     "dashboardActive": "Panel de afiliado",
     "dashboardApply": "Solicitud de afiliado",
     "greeting": "Hola, {name}.",
-    "partnerFallback": "Partner",
+    "partnerFallback": "Socio",
     "intro": "Mantenga al día sus herramientas de afiliado y los datos de pago.",
     "earnedThisMonth": "Ganado este mes",
     "totalEarned": "Total ganado",

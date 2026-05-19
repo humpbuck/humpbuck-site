@@ -132,6 +132,106 @@ export function FlagRussia({ className, ...props }: SvgProps) {
   );
 }
 
+/** Netherlands — horizontal tricolor. */
+export function FlagNetherlands({ className, ...props }: SvgProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 30 20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      {...props}
+    >
+      <rect width="30" height="6.67" fill="#AE1C28" />
+      <rect y="6.67" width="30" height="6.66" fill="#FFFFFF" />
+      <rect y="13.33" width="30" height="6.67" fill="#21468B" />
+    </svg>
+  );
+}
+
+/** Hungary — horizontal tricolor. */
+export function FlagHungary({ className, ...props }: SvgProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 30 20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      {...props}
+    >
+      <rect width="30" height="6.67" fill="#CE2939" />
+      <rect y="6.67" width="30" height="6.66" fill="#FFFFFF" />
+      <rect y="13.33" width="30" height="6.67" fill="#477050" />
+    </svg>
+  );
+}
+
+/** South Korea — simplified Taegeuk (no trigrams). */
+export function FlagSouthKorea({ className, ...props }: SvgProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 30 20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      {...props}
+    >
+      <rect width="30" height="20" fill="#FFFFFF" />
+      <circle cx="15" cy="10" r="5.5" fill="#CD2E3A" />
+      <path d="M15 4.5a5.5 5.5 0 0 1 0 11 5.5 5.5 0 0 0 0-11z" fill="#0047A0" />
+    </svg>
+  );
+}
+
+/** Germany — horizontal tricolor. */
+export function FlagGermany({ className, ...props }: SvgProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 30 20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      {...props}
+    >
+      <rect width="30" height="6.67" fill="#000000" />
+      <rect y="6.67" width="30" height="6.66" fill="#DD0000" />
+      <rect y="13.33" width="30" height="6.67" fill="#FFCE00" />
+    </svg>
+  );
+}
+
+/** Japan — white field with red disc. */
+export function FlagJapan({ className, ...props }: SvgProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 30 20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      {...props}
+    >
+      <rect width="30" height="20" fill="#FFFFFF" />
+      <circle cx="15" cy="10" r="5" fill="#BC002D" />
+    </svg>
+  );
+}
+
+/** Israel — blue stripes with white band (Star of David omitted at small size). */
+export function FlagIsrael({ className, ...props }: SvgProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 30 20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+      {...props}
+    >
+      <rect width="30" height="20" fill="#0038B8" />
+      <rect y="3" width="30" height="14" fill="#FFFFFF" />
+    </svg>
+  );
+}
+
 /** Spain — national flag bands (1:2:1 red / yellow / red); escutcheon omitted for clarity at small sizes. */
 export function FlagSpain({ className, ...props }: SvgProps) {
   return (
@@ -156,6 +256,12 @@ const LOCALE_FLAGS = {
   ru: FlagRussia,
   fr: FlagFrance,
   it: FlagItaly,
+  nl: FlagNetherlands,
+  hu: FlagHungary,
+  ko: FlagSouthKorea,
+  de: FlagGermany,
+  ja: FlagJapan,
+  he: FlagIsrael,
 } as const;
 
 export function LocaleFlagIcon({

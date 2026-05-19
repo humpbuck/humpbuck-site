@@ -534,7 +534,19 @@ export default async function AccountAffiliatePage({
             ? "fr-FR"
             : locale === "it"
               ? "it-IT"
-              : "en-US";
+              : locale === "nl"
+                ? "nl-NL"
+                : locale === "hu"
+                  ? "hu-HU"
+                  : locale === "ko"
+                    ? "ko-KR"
+                    : locale === "de"
+                      ? "de-DE"
+                      : locale === "ja"
+                        ? "ja-JP"
+                        : locale === "he"
+                          ? "he-IL"
+                          : "en-US";
 
   function payoutMethodLabel(method: string | null | undefined): string {
     if (!method) return "-";

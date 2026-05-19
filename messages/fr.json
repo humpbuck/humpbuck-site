@@ -12,6 +12,12 @@
     "ru": "Русский",
     "fr": "Français",
     "it": "Italiano",
+    "nl": "Nederlands",
+    "hu": "Magyar",
+    "ko": "한국어",
+    "de": "Deutsch",
+    "ja": "日本語",
+    "he": "עברית",
     "label": "Langue"
   },
   "Navigation": {
@@ -319,7 +325,7 @@
       "placeholder": "Format : P + 12 chiffres"
     },
     "MX": {
-      "label": "RFC or CURP",
+      "label": "RFC ou CURP",
       "placeholder": "RFC (13 caractères) ou CURP (18 caractères)"
     },
     "NO": {
@@ -526,7 +532,7 @@
     "profilePasswordUpdated": "Mot de passe mis à jour.",
     "profilePasswordUpdating": "Mise à jour…",
     "profilePasswordSubmit": "Mettre à jour le mot de passe",
-    "profileSectionSession": "Session",
+    "profileSectionSession": "Connexion",
     "profileSignOut": "Se déconnecter",
     "avatarTitle": "Photo de profil",
     "avatarIntro": "Sans photo personnalisée, nous affichons votre <gravatar>Gravatar</gravatar> pour cet e-mail (en-tête et avis). Choisissez l’un des 30 avatars intégrés (hébergés sur notre CDN) ou téléversez le vôtre. Les fichiers sont compressés en WebP dans le navigateur, puis stockés dans R2 sous <code>Avatar/</code>.",
@@ -776,7 +782,7 @@
     "stepMockBody": "Marquages cadran, couleurs de bracelet, packaging.",
     "stepSampleTitle": "Échantillonnage",
     "stepSampleBody": "Lot prototype avant série.",
-    "stepProdTitle": "Production",
+    "stepProdTitle": "Fabrication",
     "stepProdBody": "Contrôle qualité, emballage et expédition suivie.",
     "nextKicker": "Étape suivante",
     "nextTitle": "Commencez par un brief structuré",
@@ -791,7 +797,7 @@
     "labelRegion": "Région cible",
     "labelQty": "Quantité estimée",
     "labelEmail": "E-mail",
-    "labelNotes": "Notes",
+    "labelNotes": "Remarques",
     "notesPlaceholder": "Matériaux, références, délai...",
     "errVerifyRequired": "Veuillez compléter la vérification.",
     "errSubmitGeneric": "Échec de l’envoi. Veuillez réessayer.",
@@ -919,7 +925,7 @@
     "paginationAria": "Pagination des règlements",
     "prev": "Préc.",
     "next": "Suiv.",
-    "pageOf": "Page {page} / {total}",
+    "pageOf": "Page {page} sur {total}",
     "statusAutoApproved": "Approuvé automatiquement",
     "statusApproved": "Approuvé",
     "statusRejected": "Refusé",

@@ -6,6 +6,12 @@ import { TermsBodyFr } from "@/components/site/terms-body-fr";
 import { TermsBodyIt } from "@/components/site/terms-body-it";
 import { TermsBodyPt } from "@/components/site/terms-body-pt";
 import { TermsBodyRu } from "@/components/site/terms-body-ru";
+import { TermsBodyNl } from "@/components/site/terms-body-nl";
+import { TermsBodyHu } from "@/components/site/terms-body-hu";
+import { TermsBodyKo } from "@/components/site/terms-body-ko";
+import { TermsBodyDe } from "@/components/site/terms-body-de";
+import { TermsBodyJa } from "@/components/site/terms-body-ja";
+import { TermsBodyHe } from "@/components/site/terms-body-he";
 import { routing } from "@/i18n/routing";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
@@ -58,6 +64,18 @@ export default async function TermsPage({
         <TermsBodyIt />
       ) : locale === "es" ? (
         <TermsBodyEs />
+      ) : locale === "nl" ? (
+        <TermsBodyNl />
+      ) : locale === "hu" ? (
+        <TermsBodyHu />
+      ) : locale === "ko" ? (
+        <TermsBodyKo />
+      ) : locale === "de" ? (
+        <TermsBodyDe />
+      ) : locale === "ja" ? (
+        <TermsBodyJa />
+      ) : locale === "he" ? (
+        <TermsBodyHe />
       ) : (
         <TermsBodyEn />
       )}
