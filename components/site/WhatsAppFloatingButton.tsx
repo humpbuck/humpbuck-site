@@ -33,8 +33,23 @@ export function WhatsAppFloatingButton() {
   const [href, setHref] = useState(WHATSAPP_URL);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [homeFabRevealed, setHomeFabRevealed] = useState(false);
+  const [stackOpen, setStackOpen] = useState(false);
+  const [coarsePointer, setCoarsePointer] = useState(false);
 
   const fabVisible = !isHome || homeFabRevealed;
+  const mailto = supportMailtoHref();
+  const emailExpanded = stackOpen || coarsePointer;
+
+  const openStack = useCallback(() => setStackOpen(true), []);
+  const closeStack = useCallback(() => setStackOpen(false), []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: none), (pointer: coarse)");
+    const apply = () => setCoarsePointer(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -69,30 +84,34 @@ export function WhatsAppFloatingButton() {
   return (
     <>
       <div
-        className={`group/contact-fab fixed bottom-28 right-6 z-40 flex flex-col items-center md:bottom-32 md:right-8 ${
+        className={`fixed bottom-28 right-6 z-40 flex flex-col items-center gap-3 md:bottom-32 md:right-8 ${
           fabVisible
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none translate-y-2 opacity-0"
         }`}
         aria-hidden={!fabVisible}
+        onMouseEnter={openStack}
+        onMouseLeave={closeStack}
+        onFocusCapture={openStack}
+        onBlurCapture={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+            closeStack();
+          }
+        }}
       >
         <a
-          href={supportMailtoHref()}
+          href={mailto}
           className={[
             STACK_BTN,
             "border-line bg-paper/95 text-ink hover:bg-white hover:shadow-xl focus-visible:outline-ink/25",
-            "mb-0 max-h-0 scale-90 overflow-hidden opacity-0",
-            "pointer-events-none translate-y-3",
             "transition-all duration-200 ease-out",
-            "group-hover/contact-fab:mb-3 group-hover/contact-fab:max-h-14 group-hover/contact-fab:scale-100 group-hover/contact-fab:opacity-100",
-            "group-hover/contact-fab:pointer-events-auto group-hover/contact-fab:translate-y-0",
-            "group-focus-within/contact-fab:mb-3 group-focus-within/contact-fab:max-h-14 group-focus-within/contact-fab:scale-100 group-focus-within/contact-fab:opacity-100",
-            "group-focus-within/contact-fab:pointer-events-auto group-focus-within/contact-fab:translate-y-0",
-            "[@media(hover:none)]:mb-3 [@media(hover:none)]:max-h-14 [@media(hover:none)]:scale-100 [@media(hover:none)]:opacity-100",
-            "[@media(hover:none)]:pointer-events-auto [@media(hover:none)]:translate-y-0",
+            emailExpanded
+              ? "pointer-events-auto max-h-14 scale-100 opacity-100"
+              : "pointer-events-none max-h-0 scale-90 overflow-hidden opacity-0",
           ].join(" ")}
           aria-label={tFloat("ariaEmail")}
-          tabIndex={fabVisible ? 0 : -1}
+          aria-hidden={!emailExpanded}
+          tabIndex={fabVisible && emailExpanded ? 0 : -1}
         >
           <Mail className="h-6 w-6 shrink-0" strokeWidth={2} aria-hidden />
         </a>
