@@ -3,7 +3,6 @@ import { ADMIN_INBOX_CATEGORY, createAdminInboxMessage } from "@/lib/admin-inbox
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { checkFormRateLimit, formRateLimitKey } from "@/lib/form-rate-limit";
 import { publicSupportEmail } from "@/lib/support-contact";
-import { verifyTurnstileToken } from "@/lib/turnstile-verify";
 
 const RATE_WINDOW_MS = 10 * 60 * 1000;
 const RATE_MAX_REQUESTS = 5;
@@ -41,8 +40,6 @@ export async function POST(req: Request) {
   const pageUrl = text(body.pageUrl).slice(0, 500);
   const locale = text(body.locale).slice(0, 16);
   const website = text(body.website);
-  const turnstileToken = text(body.turnstileToken);
-
   if (website) {
     return NextResponse.json({ error: "Request rejected." }, { status: 400 });
   }
@@ -52,10 +49,6 @@ export async function POST(req: Request) {
   if (!message) {
     return NextResponse.json({ error: "Please enter your message." }, { status: 400 });
   }
-  if (!turnstileToken) {
-    return NextResponse.json({ error: "Verification is required." }, { status: 400 });
-  }
-
   const forwardedFor = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
   const rateLimit = checkFormRateLimit(
     formRateLimitKey(forwardedFor, email),
@@ -73,14 +66,6 @@ export async function POST(req: Request) {
           ),
         },
       },
-    );
-  }
-
-  const verified = await verifyTurnstileToken(turnstileToken, forwardedFor);
-  if (!verified) {
-    return NextResponse.json(
-      { error: "Verification failed. Please try again." },
-      { status: 400 },
     );
   }
 

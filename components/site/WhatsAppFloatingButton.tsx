@@ -17,7 +17,7 @@ const STACK_BTN =
 
 /**
  * Fixed bottom-right: WhatsApp visible by default; email folds above on hover/focus.
- * Email opens an in-site contact form (Brevo + Turnstile).
+ * Email opens an in-site contact form (Brevo).
  */
 export function WhatsAppFloatingButton() {
   const tWa = useTranslations("WhatsAppFab");
@@ -28,7 +28,6 @@ export function WhatsAppFloatingButton() {
   const [href, setHref] = useState(WHATSAPP_URL);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
-  const [emailModalSession, setEmailModalSession] = useState(0);
   const [stackOpen, setStackOpen] = useState(false);
   const [coarsePointer, setCoarsePointer] = useState(false);
   const closeStackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -84,7 +83,6 @@ export function WhatsAppFloatingButton() {
 
   const openEmailModal = useCallback(() => {
     openStack();
-    setEmailModalSession((n) => n + 1);
     setEmailModalOpen(true);
   }, [openStack]);
 
@@ -156,11 +154,7 @@ export function WhatsAppFloatingButton() {
       </div>
 
       {emailModalOpen ? (
-        <ContactSupportModal
-          key={emailModalSession}
-          mountKey={emailModalSession}
-          onClose={closeEmailModal}
-        />
+        <ContactSupportModal onClose={closeEmailModal} />
       ) : null}
 
       {confirmOpen ? (

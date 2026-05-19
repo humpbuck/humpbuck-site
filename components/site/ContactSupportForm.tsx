@@ -4,7 +4,6 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { publicSupportEmail } from "@/lib/support-contact";
-import { useTurnstileWidget } from "@/lib/turnstile-client";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -34,34 +33,11 @@ function FieldLabel({
   );
 }
 
-export function ContactSupportForm({
-  siteKey: siteKeyProp,
-  onClose,
-  mountKey = 0,
-}: {
-  /** Pass from server/parent when possible; falls back to build-time public env. */
-  siteKey?: string;
-  onClose?: () => void;
-  mountKey?: number;
-}) {
+export function ContactSupportForm({ onClose }: { onClose?: () => void }) {
   const t = useTranslations("ContactForm");
   const locale = useLocale();
   const pathname = usePathname();
   const supportEmail = publicSupportEmail();
-  const siteKey =
-    siteKeyProp?.trim() ||
-    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ||
-    "";
-
-  const {
-    canRender: canRenderTurnstile,
-    slotReady,
-    cooldownSec,
-    mountError,
-    widgetRef,
-    turnstileToken,
-    resetWidget,
-  } = useTurnstileWidget(siteKey, mountKey, "contact");
 
   const [fromEmail, setFromEmail] = useState("");
   const [subject, setSubject] = useState("");
@@ -82,16 +58,7 @@ export function ContactSupportForm({
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (status === "loading") return;
-    if (!canRenderTurnstile) {
-      setStatus("error");
-      setErrorMessage(t("verifyUnavailable"));
-      return;
-    }
-    if (!turnstileToken) {
-      setStatus("error");
-      setErrorMessage(t("errVerifyRequired"));
-      return;
-    }
+
     setStatus("loading");
     setErrorMessage("");
     try {
@@ -105,7 +72,6 @@ export function ContactSupportForm({
           pageUrl,
           locale,
           website,
-          turnstileToken,
         }),
       });
       const data = (await res.json().catch(() => ({}))) as {
@@ -118,21 +84,11 @@ export function ContactSupportForm({
       }
       setStatus("error");
       setErrorMessage(data.error ?? t("errSubmitGeneric"));
-      resetWidget();
     } catch {
       setStatus("error");
       setErrorMessage(t("errNetwork"));
-      resetWidget();
     }
   }
-
-  useEffect(() => {
-    if (!canRenderTurnstile) return;
-    const timer = window.setTimeout(() => {
-      if (!window.turnstile?.render) setErrorMessage(t("errScriptLoad"));
-    }, 25_000);
-    return () => window.clearTimeout(timer);
-  }, [canRenderTurnstile, t]);
 
   if (status === "success") {
     return (
@@ -224,31 +180,10 @@ export function ContactSupportForm({
           aria-hidden="true"
         />
 
-        <div className="sm:col-span-2 flex flex-col gap-3 border-t border-line/70 pt-4 sm:flex-row sm:items-end sm:justify-between">
-          <div className="min-w-0 flex-1">
-            <div ref={widgetRef} className="min-h-[65px]" />
-            {!canRenderTurnstile ? (
-              <p className="mt-2 text-xs leading-relaxed text-red-600/90">
-                {t("verifyUnavailable")}
-              </p>
-            ) : null}
-            {!slotReady && cooldownSec > 0 ? (
-              <p className="mt-2 text-xs text-muted">
-                {t("verifyCooldown", { seconds: cooldownSec })}
-              </p>
-            ) : null}
-            {mountError ? (
-              <p className="mt-2 text-xs text-red-600/90" role="alert">
-                {t("errScriptLoad")}
-              </p>
-            ) : null}
-            {canRenderTurnstile && slotReady && !turnstileToken && !mountError ? (
-              <p className="mt-2 text-xs text-muted">{t("verifyHint")}</p>
-            ) : null}
-          </div>
+        <div className="sm:col-span-2 flex justify-end border-t border-line/70 pt-4">
           <button
             type="submit"
-            disabled={status === "loading" || !canRenderTurnstile || !slotReady || !turnstileToken}
+            disabled={status === "loading"}
             className="shrink-0 rounded-full bg-ink px-8 py-2.5 text-sm font-semibold text-white transition hover:bg-ink/90 disabled:opacity-60 sm:min-w-[9.5rem]"
           >
             {status === "loading" ? t("submitting") : t("submit")}

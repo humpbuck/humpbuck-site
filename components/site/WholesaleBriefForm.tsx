@@ -1,5 +1,6 @@
 "use client";
 
+import Script from "next/script";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useTurnstileWidget } from "@/lib/turnstile-client";
@@ -15,27 +16,17 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
   const [notes, setNotes] = useState("");
   const [website, setWebsite] = useState("");
   const [status, setStatus] = useState<Status>("idle");
-  const [formError, setFormError] = useState("");
+  const [, setMessage] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const {
     canRender: canRenderTurnstile,
-    slotReady,
-    cooldownSec,
-    mountError,
     widgetRef,
     turnstileToken,
+    markScriptLoaded,
     resetWidget,
-  } = useTurnstileWidget(siteKey, 0, "wholesale");
+  } = useTurnstileWidget(siteKey);
   const [scriptError, setScriptError] = useState("");
-
-  useEffect(() => {
-    if (!canRenderTurnstile) return;
-    const timer = window.setTimeout(() => {
-      if (!window.turnstile?.render) setScriptError(t("errScriptLoad"));
-    }, 25_000);
-    return () => window.clearTimeout(timer);
-  }, [canRenderTurnstile, t]);
 
   useEffect(() => {
     if (!showSuccessModal) return;
@@ -48,11 +39,11 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
     if (status === "loading") return;
     if (!turnstileToken) {
       setStatus("error");
-      setFormError(t("errVerifyRequired"));
+      setMessage(t("errVerifyRequired"));
       return;
     }
     setStatus("loading");
-    setFormError("");
+    setMessage("");
     try {
       const res = await fetch("/api/wholesale/mockup-request", {
         method: "POST",
@@ -73,17 +64,26 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
         return;
       }
       setStatus("error");
-      setFormError(data.error ?? t("errSubmitGeneric"));
+      setMessage(data.error ?? t("errSubmitGeneric"));
       resetWidget();
     } catch {
       setStatus("error");
-      setFormError(t("errNetwork"));
+      setMessage(t("errNetwork"));
       resetWidget();
     }
   }
 
   return (
     <>
+      {canRenderTurnstile ? (
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+          strategy="afterInteractive"
+          onLoad={markScriptLoaded}
+          onError={() => setScriptError(t("errScriptLoad"))}
+        />
+      ) : null}
+
       <form
         id="wholesale-brief-form"
         className="mt-6 grid gap-3 sm:grid-cols-2"
@@ -160,28 +160,10 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
           {!canRenderTurnstile ? (
             <p className="mt-2 text-xs text-red-600/90">{t("verifyUnavailable")}</p>
           ) : null}
-          {formError && !scriptError ? (
-            <p className="mt-2 text-xs text-red-600/90" role="alert">{formError}</p>
-          ) : null}
           {scriptError ? (
             <p className="mt-2 text-xs text-red-600/90">{scriptError}</p>
           ) : null}
-          {!slotReady && cooldownSec > 0 ? (
-            <p className="mt-2 text-xs text-muted">
-              {t("verifyCooldown", { seconds: cooldownSec })}
-            </p>
-          ) : null}
-          {mountError ? (
-            <p className="mt-2 text-xs text-red-600/90" role="alert">
-              {t("errScriptLoad")}
-            </p>
-          ) : null}
-          {canRenderTurnstile &&
-          slotReady &&
-          !turnstileToken &&
-          !scriptError &&
-          !formError &&
-          !mountError ? (
+          {canRenderTurnstile && !turnstileToken && !scriptError ? (
             <p className="mt-2 text-xs text-muted">{t("verifyHint")}</p>
           ) : null}
         </div>
