@@ -145,11 +145,12 @@ export function resolveCatalogVariantId(product: Product, variantId?: string): s
 export function getCartLineImage(product: Product, variantId?: string): string {
   if (!product.variantOptions?.length) return product.image;
   const id = resolveCatalogVariantId(product, variantId);
-  const r2 = getR2VariantLineImageUrl(product.slug, id ?? variantId);
-  if (r2) return r2;
   if (!id) return product.image;
   const match = product.variantOptions.find((v) => v.id === id);
-  return match?.image ?? product.image;
+  if (match?.image?.trim()) return match.image.trim();
+  const r2 = getR2VariantLineImageUrl(product.slug, id ?? variantId);
+  if (r2) return r2;
+  return product.image;
 }
 
 /**

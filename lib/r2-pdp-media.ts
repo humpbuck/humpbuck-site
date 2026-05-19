@@ -1,6 +1,7 @@
 import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 import { unstable_cache } from "next/cache";
-import { R2_PUBLIC_BASE, type R2GallerySpec } from "@/lib/r2";
+import type { ProductVariantOption } from "@/lib/catalog";
+import { R2_GALLERY_SPECS_BY_SLUG, R2_PUBLIC_BASE, type R2GallerySpec } from "@/lib/r2";
 import { isR2ReviewUploadConfigured } from "@/lib/r2-review-upload";
 import {
   getDiscoveredDetailUrls,
@@ -85,6 +86,24 @@ function canListR2(): boolean {
   return isR2ReviewUploadConfigured();
 }
 
+/** Loose uploads directly under `products/{slugFolder}/*.webp` (not in `gallery/`). */
+async function listRootProductWebpUrls(spec: R2GallerySpec): Promise<string[]> {
+  if (!canListR2()) return [];
+  try {
+    const client = r2S3Client();
+    const bucket = process.env.R2_BUCKET_NAME!.trim();
+    const prefix = `products/${spec.slugFolder}/`;
+    const raw = await listObjectKeys(client, bucket, prefix);
+    const rootWebp = filterWebp(raw).filter((k) => {
+      const rel = k.slice(prefix.length);
+      return rel.length > 0 && !rel.includes("/");
+    });
+    return sortKeysByFileName(rootWebp).map(keyToPublicUrl);
+  } catch {
+    return [];
+  }
+}
+
 async function listWebpFolderUrls(
   spec: R2GallerySpec,
   sub: "gallery" | "detail" | "variants",
@@ -145,8 +164,12 @@ async function getPdpR2MediaImpl(spec: R2GallerySpec): Promise<PdpR2Media> {
       ])
     : [[], [], [], []];
 
-  const gallery =
+  let gallery: string[] | null =
     listGallery.length > 0 ? listGallery : await getDiscoveredGalleryUrls(spec);
+  if (!gallery?.length) {
+    const root = await listRootProductWebpUrls(spec);
+    if (root.length > 0) gallery = root;
+  }
   const detail =
     listDetail.length > 0 ? listDetail : await getDiscoveredDetailUrls(spec);
   const variants =
@@ -155,6 +178,78 @@ async function getPdpR2MediaImpl(spec: R2GallerySpec): Promise<PdpR2Media> {
     listVideos.length > 0 ? listVideos : await discoverVideosByHead(spec);
 
   return { gallery, detail, variants, videos };
+}
+
+export type CatalogProductMediaInput = {
+  slug: string;
+  image?: string;
+  gallery?: string[];
+  detail?: string[];
+  variants?: ProductVariantOption[];
+  promoVideo?: { src?: string; poster?: string } | null;
+};
+
+export type ResolvedStorefrontProductMedia = {
+  gallery: string[];
+  detail: string[];
+  variantOptions: ProductVariantOption[];
+  promoVideos: { src: string; poster?: string }[] | null;
+};
+
+function trimUrls(urls: string[] | undefined): string[] {
+  if (!urls?.length) return [];
+  return urls.map((u) => u.trim()).filter(Boolean);
+}
+
+/**
+ * Storefront PDP media: **admin URLs win** (`galleryJson`, `detailJson`, `variantsJson`,
+ * `promoVideoJson`). R2 bucket discovery only fills sections left empty in the catalog.
+ */
+export async function resolveStorefrontProductMedia(
+  catalog: CatalogProductMediaInput,
+): Promise<ResolvedStorefrontProductMedia> {
+  const galleryAdmin = trimUrls(catalog.gallery);
+  const detailAdmin = trimUrls(catalog.detail);
+  const catalogVariants = catalog.variants ?? [];
+
+  const spec = R2_GALLERY_SPECS_BY_SLUG[catalog.slug];
+  const r2 = spec ? await getPdpR2Media(spec) : null;
+
+  const gallery =
+    galleryAdmin.length > 0
+      ? galleryAdmin
+      : r2?.gallery?.length
+        ? r2.gallery
+        : catalog.image?.trim()
+          ? [catalog.image.trim()]
+          : [];
+
+  const detail =
+    detailAdmin.length > 0 ? detailAdmin : r2?.detail?.length ? r2.detail : [];
+
+  let variantOptions = catalogVariants;
+  if (catalogVariants.length > 0 && r2?.variants?.length) {
+    variantOptions = catalogVariants.map((v, i) => ({
+      ...v,
+      image: v.image?.trim() || r2.variants![i] || v.image,
+    }));
+  }
+
+  const poster = gallery[0] ?? catalog.image?.trim();
+  const promoSrc = catalog.promoVideo?.src?.trim();
+  let promoVideos: { src: string; poster?: string }[] | null = null;
+  if (promoSrc) {
+    promoVideos = [
+      {
+        src: promoSrc,
+        poster: catalog.promoVideo?.poster?.trim() || poster,
+      },
+    ];
+  } else if (r2?.videos?.length) {
+    promoVideos = r2.videos.map((src) => ({ src, poster }));
+  }
+
+  return { gallery, detail, variantOptions, promoVideos };
 }
 
 export async function getPdpR2Media(spec: R2GallerySpec): Promise<PdpR2Media> {

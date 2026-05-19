@@ -59,7 +59,9 @@ export default async function ShopPage({
   ).map((p) => applyStorefrontProductLocale(p, locale, messages));
 
   const cardImages = await Promise.all(
-    list.map((p) => getShopCardR2GalleryImage(p.slug)),
+    list.map((p) =>
+      getShopCardR2GalleryImage(p.slug, p.image, p.galleryImages ?? p.images),
+    ),
   );
 
   return (

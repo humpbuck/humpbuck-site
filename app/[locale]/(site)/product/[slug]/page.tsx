@@ -17,6 +17,7 @@ import { ProductPdpMediaColumn } from "@/components/site/ProductPdpMediaColumn";
 import { ProductReviewsSection } from "@/components/site/ProductReviewsSection";
 import { TrackProductView } from "@/components/analytics/track-product-view";
 import { ProductDetailClient } from "@/components/site/ProductDetailClient";
+import { resolveStorefrontProductMedia } from "@/lib/r2-pdp-media";
 
 /** Fresh buyer reviews + R2 gallery discovery on each request (avoid stale static PDP). */
 export const dynamic = "force-dynamic";
@@ -89,23 +90,16 @@ export default async function ProductPage({
     .map((p) => applyStorefrontProductLocale(p, locale, messages))
     .slice(0, 3);
 
-  const gallerySlides = product.galleryImages ?? product.images ?? (product.image ? [product.image] : []);
-  const detailImages = product.detailImages ?? [];
-  const firstSlide =
-    gallerySlides[0] ??
-    product.galleryImages?.[0] ??
-    product.images[0] ??
-    product.promoVideo?.poster;
-  const preferredPromoVideo = product.promoVideo;
-  const promoVideosForMedia: { src: string; poster?: string }[] | null =
-    preferredPromoVideo
-      ? [
-          {
-            src: preferredPromoVideo.src,
-            poster: firstSlide ?? preferredPromoVideo.poster,
-          },
-        ]
-      : null;
+  const media = await resolveStorefrontProductMedia({
+    slug: product.slug,
+    image: product.image,
+    gallery: product.galleryImages ?? product.images,
+    detail: product.detailImages,
+    variants: product.variantOptions,
+    promoVideo: product.promoVideo,
+  });
+  const { gallery: gallerySlides, detail: detailImages, variantOptions, promoVideos } =
+    media;
 
   return (
     <div>
@@ -130,7 +124,7 @@ export default async function ProductPage({
                   ? "from-[color:var(--color-luxe)]/15 to-transparent"
                   : "from-violet-500/10 to-transparent"
             }
-            promoVideos={promoVideosForMedia ?? undefined}
+            promoVideos={promoVideos ?? undefined}
           />
 
           <div className="flex min-h-0 min-w-0 flex-col lg:h-full lg:min-h-0">
@@ -168,7 +162,7 @@ export default async function ProductPage({
               name={product.name}
               price={product.price}
               inStock={product.inStock}
-              variantOptions={product.variantOptions ?? []}
+              variantOptions={variantOptions}
             />
 
             {product.highlights.length > 0 && (

@@ -70,7 +70,9 @@ export default async function SeriesPage({
     .map((p) => applyStorefrontProductLocale(p, locale, messages));
 
   const cardImages = await Promise.all(
-    items.map((p) => getShopCardR2GalleryImage(p.slug)),
+    items.map((p) =>
+      getShopCardR2GalleryImage(p.slug, p.image, p.galleryImages ?? p.images),
+    ),
   );
 
   const heroClass =

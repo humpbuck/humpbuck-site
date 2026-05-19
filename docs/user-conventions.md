@@ -20,7 +20,8 @@
 
 ## 2. 商品 PDP 与 R2 媒体
 
-- 商品主图/变体/细节/视频应与 **Cloudflare R2** 中 `products/{slug}/` 下实际文件**一致**；在配置了 R2 S3 API 凭据时，用 **ListObjects** 动态列出，数量与桶内一致（见 `lib/r2-pdp-media.ts`；凭据同评论上传，见 `.env.example`）。  
+- **商品媒体以管理后台为准**：`gallery` / `detail` / `variants` / `promoVideo` 里填的 R2（或 HTTPS）链接即为前台展示来源（见 `resolveStorefrontProductMedia` in `lib/r2-pdp-media.ts`）。仅当某块在后台**留空**时，才按 `R2_GALLERY_SPECS_BY_SLUG` 对桶做 ListObjects / HEAD 发现补全。
+- 桶内文件命名约定仍适用于「自动发现」兜底；在配置了 R2 S3 API 凭据时，用 **ListObjects** 列出（凭据同评论上传，见 `.env.example`）。  
 - 部署 **Vercel** 时需在项目环境变量中配置 `DATABASE_URL`、R2 相关变量及（若与默认不同）`NEXT_PUBLIC_R2_PUBLIC_BASE`；公网 R2 若用自有域名，需在 `next.config.ts` 的 `images.remotePatterns` 中允许该 `hostname`，否则 `next/image` 可能不显示。  
 - 目录里的 **`slug` 与商品 URL 一致**（如 `digitemp-2301`），与 R2 控制台文件夹名一致即可。
 
