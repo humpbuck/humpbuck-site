@@ -1,6 +1,5 @@
 "use client";
 
-import { useTurnstileScriptContext } from "@/lib/turnstile-context";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 declare global {
@@ -22,153 +21,64 @@ declare global {
   }
 }
 
-function clearTurnstileContainer(el: HTMLElement | null) {
-  if (!el) return;
-  el.replaceChildren();
-}
-
-/** While mounted: reset or remove so a fresh widget can render. */
-function resetTurnstileWidget(widgetId: string | null, el: HTMLElement | null) {
-  if (widgetId && window.turnstile?.remove) {
-    try {
-      window.turnstile.remove(widgetId);
-    } catch {
-      /* ignore */
-    }
-  } else if (widgetId && window.turnstile) {
-    try {
-      window.turnstile.reset(widgetId);
-    } catch {
-      /* ignore */
-    }
-  }
-  clearTurnstileContainer(el);
-}
-
 /**
- * On unmount / route change: only clear the container.
- * Calling remove() here breaks Turnstile for the next page in client navigations.
+ * Tracks Turnstile script readiness. Handles the case where `next/script` onLoad
+ * never runs because the script was already injected by another form on the page.
  */
-function detachTurnstileContainer(el: HTMLElement | null) {
-  clearTurnstileContainer(el);
-}
-
 export function useTurnstileScriptLoaded(enabled: boolean): [boolean, () => void] {
-  const shared = useTurnstileScriptContext();
-  const [localReady, setLocalReady] = useState(false);
-  const markLocalReady = useCallback(() => setLocalReady(true), []);
-
-  const useShared = Boolean(shared.siteKey) && enabled;
+  const [loaded, setLoaded] = useState(false);
+  const markLoaded = useCallback(() => setLoaded(true), []);
 
   useEffect(() => {
-    if (!enabled || useShared || localReady) return;
+    if (!enabled || loaded) return;
     if (typeof window === "undefined") return;
     const api = window.turnstile;
     if (!api) return;
     if (typeof api.ready === "function") {
-      api.ready(markLocalReady);
+      api.ready(markLoaded);
     } else {
-      markLocalReady();
+      markLoaded();
     }
-  }, [enabled, useShared, localReady, markLocalReady]);
+  }, [enabled, loaded, markLoaded]);
 
-  if (useShared) {
-    return [shared.ready, shared.markReady];
-  }
-
-  return [localReady, markLocalReady];
+  return [loaded, markLoaded];
 }
 
 export function useTurnstileWidget(siteKey: string) {
-  const shared = useTurnstileScriptContext();
-  const resolvedKey = siteKey.trim() || shared.siteKey;
-  const canRender = Boolean(resolvedKey);
+  const canRender = Boolean(siteKey.trim());
   const [turnstileScriptLoaded, markScriptLoaded] = useTurnstileScriptLoaded(canRender);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [widgetId, setWidgetId] = useState<string | null>(null);
-  const [mountError, setMountError] = useState(false);
   const widgetRef = useRef<HTMLDivElement | null>(null);
-  const widgetIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    widgetIdRef.current = widgetId;
+    if (!canRender || !turnstileScriptLoaded || !widgetRef.current || !window.turnstile) {
+      return;
+    }
+    if (widgetId) return;
+    const rendered = window.turnstile.render(widgetRef.current, {
+      sitekey: siteKey,
+      callback: (token) => setTurnstileToken(token),
+      "expired-callback": () => setTurnstileToken(""),
+      "error-callback": () => setTurnstileToken(""),
+    });
+    setWidgetId(rendered);
+  }, [canRender, siteKey, turnstileScriptLoaded, widgetId]);
+
+  useEffect(() => {
+    return () => {
+      if (widgetId && window.turnstile?.remove) {
+        try {
+          window.turnstile.remove(widgetId);
+        } catch {
+          /* ignore */
+        }
+      }
+    };
   }, [widgetId]);
 
-  useEffect(() => {
-    if (!canRender || !turnstileScriptLoaded || widgetId) return;
-
-    let cancelled = false;
-
-    const mount = () => {
-      if (cancelled || !window.turnstile || !widgetRef.current) return;
-      clearTurnstileContainer(widgetRef.current);
-      try {
-        const rendered = window.turnstile.render(widgetRef.current, {
-          sitekey: resolvedKey,
-          callback: (token) => {
-            if (!cancelled) setTurnstileToken(token);
-          },
-          "expired-callback": () => {
-            if (!cancelled) setTurnstileToken("");
-          },
-          "error-callback": () => {
-            if (!cancelled) setTurnstileToken("");
-          },
-        });
-        widgetIdRef.current = rendered;
-        setWidgetId(rendered);
-        setMountError(false);
-      } catch {
-        if (!cancelled) setMountError(true);
-      }
-    };
-
-    const scheduleMount = () => {
-      if (typeof window.turnstile?.ready === "function") {
-        window.turnstile.ready(mount);
-      } else {
-        mount();
-      }
-    };
-
-    if (window.turnstile && widgetRef.current) {
-      const frame = requestAnimationFrame(scheduleMount);
-      return () => {
-        cancelled = true;
-        cancelAnimationFrame(frame);
-      };
-    }
-
-    let attempts = 0;
-    const poll = window.setInterval(() => {
-      if (cancelled) return;
-      if (window.turnstile && widgetRef.current) {
-        window.clearInterval(poll);
-        scheduleMount();
-      } else if (attempts++ > 120) {
-        window.clearInterval(poll);
-        if (!cancelled) setMountError(true);
-      }
-    }, 50);
-
-    return () => {
-      cancelled = true;
-      window.clearInterval(poll);
-    };
-  }, [canRender, resolvedKey, turnstileScriptLoaded, widgetId]);
-
-  useEffect(() => {
-    return () => {
-      widgetIdRef.current = null;
-      detachTurnstileContainer(widgetRef.current);
-    };
-  }, []);
-
   function resetWidget() {
-    const id = widgetIdRef.current;
-    resetTurnstileWidget(id, widgetRef.current);
-    widgetIdRef.current = null;
-    setWidgetId(null);
+    if (widgetId && window.turnstile) window.turnstile.reset(widgetId);
     setTurnstileToken("");
   }
 
@@ -179,6 +89,5 @@ export function useTurnstileWidget(siteKey: string) {
     turnstileScriptLoaded,
     markScriptLoaded,
     resetWidget,
-    mountError,
   };
 }
