@@ -1,12 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 export const TURNSTILE_SCRIPT_SRC =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
+export const TURNSTILE_READY_EVENT = "humpbuck-turnstile-ready";
+
 declare global {
   interface Window {
+    __humpbuckTurnstileReady?: boolean;
     turnstile?: {
       ready?: (cb: () => void) => void;
       render: (
@@ -29,86 +32,80 @@ function clearTurnstileContainer(el: HTMLElement | null) {
   el.replaceChildren();
 }
 
+function safeResetWidget(widgetId: string | null) {
+  if (!widgetId || !window.turnstile) return;
+  try {
+    window.turnstile.reset(widgetId);
+  } catch {
+    /* shared SDK may be between widgets */
+  }
+}
+
+/** Marks the Cloudflare SDK as ready (called from `TurnstileSiteScript` onLoad). */
+export function markTurnstileSdkReady() {
+  if (typeof window === "undefined") return;
+  window.__humpbuckTurnstileReady = true;
+  window.dispatchEvent(new Event(TURNSTILE_READY_EVENT));
+}
+
 /**
- * Waits for `window.turnstile` from the site-wide `TurnstileSiteScript`.
- * Times out with an error message when the SDK never becomes ready.
+ * Tracks Turnstile script readiness from the site-wide script tag.
+ * `markScriptLoaded` can also be passed to a per-form `<Script onLoad>` if needed.
  */
-export function useTurnstileScriptLoaded(
-  enabled: boolean,
-  errScriptLoad: string,
-): { loaded: boolean; scriptError: string | null } {
+export function useTurnstileScriptLoaded(enabled: boolean): [boolean, () => void] {
   const [loaded, setLoaded] = useState(false);
-  const [scriptError, setScriptError] = useState<string | null>(null);
+  const markLoaded = useCallback(() => setLoaded(true), []);
 
   useEffect(() => {
     if (!enabled) {
       setLoaded(false);
-      setScriptError(null);
       return;
     }
 
-    let cancelled = false;
-    let timer: ReturnType<typeof setInterval> | null = null;
+    if (typeof window === "undefined") return;
 
     const tryMark = () => {
       const api = window.turnstile;
       if (!api?.render) return false;
       if (typeof api.ready === "function") {
-        api.ready(() => {
-          if (!cancelled) {
-            setLoaded(true);
-            setScriptError(null);
-          }
-        });
-      } else if (!cancelled) {
-        setLoaded(true);
-        setScriptError(null);
+        api.ready(markLoaded);
+      } else {
+        markLoaded();
       }
       return true;
     };
 
-    if (tryMark()) {
-      return () => {
-        cancelled = true;
-      };
+    if (window.__humpbuckTurnstileReady || tryMark()) {
+      return;
     }
 
-    const deadline = window.setTimeout(() => {
-      if (!cancelled && !window.turnstile?.render) {
-        setScriptError(errScriptLoad);
-      }
-    }, 25_000);
+    const onReady = () => {
+      tryMark();
+    };
+    window.addEventListener(TURNSTILE_READY_EVENT, onReady);
 
     let attempts = 0;
-    timer = setInterval(() => {
-      if (cancelled) return;
-      if (tryMark() || attempts++ > 500) {
-        if (timer) clearInterval(timer);
-        if (!cancelled && attempts > 500 && !window.turnstile?.render) {
-          setScriptError(errScriptLoad);
-        }
+    const timer = window.setInterval(() => {
+      if (tryMark() || attempts++ > 400) {
+        window.clearInterval(timer);
       }
     }, 50);
 
     return () => {
-      cancelled = true;
-      window.clearTimeout(deadline);
-      if (timer) clearInterval(timer);
+      window.removeEventListener(TURNSTILE_READY_EVENT, onReady);
+      window.clearInterval(timer);
     };
-  }, [enabled, errScriptLoad]);
+  }, [enabled, markLoaded]);
 
-  return { loaded, scriptError };
+  return [loaded, markLoaded];
 }
 
 /**
  * @param mountKey Bump when the form is shown again (e.g. each email modal open).
  */
-export function useTurnstileWidget(siteKey: string, mountKey = 0, errScriptLoad = "") {
+export function useTurnstileWidget(siteKey: string, mountKey = 0) {
   const canRender = Boolean(siteKey.trim());
-  const { loaded: turnstileScriptLoaded, scriptError } = useTurnstileScriptLoaded(
-    canRender,
-    errScriptLoad,
-  );
+  const [turnstileScriptLoaded, markScriptLoaded] = useTurnstileScriptLoaded(canRender);
   const [turnstileToken, setTurnstileToken] = useState("");
   const widgetRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
@@ -119,7 +116,7 @@ export function useTurnstileWidget(siteKey: string, mountKey = 0, errScriptLoad 
     clearTurnstileContainer(widgetRef.current);
   }, [mountKey, siteKey]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!canRender || !turnstileScriptLoaded || !widgetRef.current || !window.turnstile?.render) {
       return;
     }
@@ -147,42 +144,33 @@ export function useTurnstileWidget(siteKey: string, mountKey = 0, errScriptLoad 
         });
         widgetIdRef.current = rendered;
       } catch {
-        /* Avoid taking down the route if Cloudflare is mid-teardown */
+        widgetIdRef.current = null;
+        clearTurnstileContainer(widgetRef.current);
       }
     };
 
-    if (typeof window.turnstile.ready === "function") {
-      window.turnstile.ready(mount);
-    } else {
+    try {
+      if (typeof window.turnstile.ready === "function") {
+        window.turnstile.ready(mount);
+      } else {
+        mount();
+      }
+    } catch {
       mount();
     }
 
     return () => {
       cancelled = true;
+      safeResetWidget(widgetIdRef.current);
+      widgetIdRef.current = null;
+      clearTurnstileContainer(widgetRef.current);
     };
   }, [canRender, siteKey, turnstileScriptLoaded, mountKey]);
 
-  useEffect(() => {
-    return () => {
-      /** Never call turnstile.remove() — breaks client navigation to /wholesale. */
-      widgetIdRef.current = null;
-      clearTurnstileContainer(widgetRef.current);
-    };
-  }, []);
-
   const resetWidget = useCallback(() => {
-    const id = widgetIdRef.current;
-    if (id && window.turnstile) {
-      try {
-        window.turnstile.reset(id);
-      } catch {
-        widgetIdRef.current = null;
-        clearTurnstileContainer(widgetRef.current);
-      }
-    } else {
-      widgetIdRef.current = null;
-      clearTurnstileContainer(widgetRef.current);
-    }
+    safeResetWidget(widgetIdRef.current);
+    widgetIdRef.current = null;
+    clearTurnstileContainer(widgetRef.current);
     setTurnstileToken("");
   }, []);
 
@@ -190,7 +178,8 @@ export function useTurnstileWidget(siteKey: string, mountKey = 0, errScriptLoad 
     canRender,
     widgetRef,
     turnstileToken,
-    scriptError,
+    turnstileScriptLoaded,
+    markScriptLoaded,
     resetWidget,
   };
 }

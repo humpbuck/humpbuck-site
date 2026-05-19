@@ -22,9 +22,17 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
     canRender: canRenderTurnstile,
     widgetRef,
     turnstileToken,
-    scriptError,
     resetWidget,
-  } = useTurnstileWidget(siteKey, 0, t("errScriptLoad"));
+  } = useTurnstileWidget(siteKey);
+  const [scriptError, setScriptError] = useState("");
+
+  useEffect(() => {
+    if (!canRenderTurnstile) return;
+    const timer = window.setTimeout(() => {
+      if (!window.turnstile?.render) setScriptError(t("errScriptLoad"));
+    }, 25_000);
+    return () => window.clearTimeout(timer);
+  }, [canRenderTurnstile, t]);
 
   useEffect(() => {
     if (!showSuccessModal) return;
@@ -35,11 +43,6 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (status === "loading") return;
-    if (scriptError) {
-      setStatus("error");
-      setFormError(scriptError);
-      return;
-    }
     if (!turnstileToken) {
       setStatus("error");
       setFormError(t("errVerifyRequired"));
@@ -51,15 +54,7 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
       const res = await fetch("/api/wholesale/mockup-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          company,
-          targetRegion,
-          estimatedQty,
-          email,
-          notes,
-          website,
-          turnstileToken,
-        }),
+        body: JSON.stringify({ company, targetRegion, estimatedQty, email, notes, website, turnstileToken }),
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
       if (res.ok && data.ok) {
@@ -162,13 +157,11 @@ export function WholesaleBriefForm({ siteKey }: { siteKey: string }) {
           {!canRenderTurnstile ? (
             <p className="mt-2 text-xs text-red-600/90">{t("verifyUnavailable")}</p>
           ) : null}
+          {formError && !scriptError ? (
+            <p className="mt-2 text-xs text-red-600/90" role="alert">{formError}</p>
+          ) : null}
           {scriptError ? (
             <p className="mt-2 text-xs text-red-600/90">{scriptError}</p>
-          ) : null}
-          {formError ? (
-            <p className="mt-2 text-xs text-red-600/90" role="alert">
-              {formError}
-            </p>
           ) : null}
           {canRenderTurnstile && !turnstileToken && !scriptError && !formError ? (
             <p className="mt-2 text-xs text-muted">{t("verifyHint")}</p>

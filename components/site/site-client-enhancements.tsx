@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { TurnstileSiteScript } from "@/components/site/turnstile-site-script";
 const SiteAnalyticsConsent = dynamic(
   () =>
     import("@/components/analytics/site-analytics-consent").then(
@@ -83,7 +82,6 @@ export function SiteClientEnhancements() {
 
   return (
     <>
-      <TurnstileSiteScript />
       {ready ? (
         <>
           <SiteAnalyticsConsent />

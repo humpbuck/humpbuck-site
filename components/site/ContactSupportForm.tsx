@@ -39,6 +39,7 @@ export function ContactSupportForm({
   onClose,
   mountKey = 0,
 }: {
+  /** Pass from server/parent when possible; falls back to build-time public env. */
   siteKey?: string;
   onClose?: () => void;
   mountKey?: number;
@@ -56,9 +57,8 @@ export function ContactSupportForm({
     canRender: canRenderTurnstile,
     widgetRef,
     turnstileToken,
-    scriptError,
     resetWidget,
-  } = useTurnstileWidget(siteKey, mountKey, t("errScriptLoad"));
+  } = useTurnstileWidget(siteKey, mountKey);
 
   const [fromEmail, setFromEmail] = useState("");
   const [subject, setSubject] = useState("");
@@ -82,11 +82,6 @@ export function ContactSupportForm({
     if (!canRenderTurnstile) {
       setStatus("error");
       setErrorMessage(t("verifyUnavailable"));
-      return;
-    }
-    if (scriptError) {
-      setStatus("error");
-      setErrorMessage(scriptError);
       return;
     }
     if (!turnstileToken) {
@@ -128,9 +123,31 @@ export function ContactSupportForm({
     }
   }
 
+  useEffect(() => {
+    if (!canRenderTurnstile) return;
+    const timer = window.setTimeout(() => {
+      if (!window.turnstile?.render) setErrorMessage(t("errScriptLoad"));
+    }, 25_000);
+    return () => window.clearTimeout(timer);
+  }, [canRenderTurnstile, t]);
+
   if (status === "success") {
     return (
-      <ContactFormSuccess onClose={onClose} t={t} />
+      <div className="py-2 text-center">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700">
+          {t("successKicker")}
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-ink/85">{t("successBody")}</p>
+        {onClose ? (
+          <button
+            type="button"
+            onClick={onClose}
+            className="mt-6 rounded-full bg-ink px-8 py-2.5 text-sm font-semibold text-white transition hover:bg-ink/90"
+          >
+            {t("successClose")}
+          </button>
+        ) : null}
+      </div>
     );
   }
 
@@ -212,10 +229,7 @@ export function ContactSupportForm({
                 {t("verifyUnavailable")}
               </p>
             ) : null}
-            {scriptError ? (
-              <p className="mt-2 text-xs text-red-600/90">{scriptError}</p>
-            ) : null}
-            {canRenderTurnstile && !turnstileToken && !scriptError ? (
+            {canRenderTurnstile && !turnstileToken ? (
               <p className="mt-2 text-xs text-muted">{t("verifyHint")}</p>
             ) : null}
           </div>
@@ -235,31 +249,5 @@ export function ContactSupportForm({
         ) : null}
       </form>
     </>
-  );
-}
-
-function ContactFormSuccess({
-  onClose,
-  t,
-}: {
-  onClose?: () => void;
-  t: ReturnType<typeof useTranslations<"ContactForm">>;
-}) {
-  return (
-    <div className="py-2 text-center">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700">
-        {t("successKicker")}
-      </p>
-      <p className="mt-3 text-sm leading-relaxed text-ink/85">{t("successBody")}</p>
-      {onClose ? (
-        <button
-          type="button"
-          onClick={onClose}
-          className="mt-6 rounded-full bg-ink px-8 py-2.5 text-sm font-semibold text-white transition hover:bg-ink/90"
-        >
-          {t("successClose")}
-        </button>
-      ) : null}
-    </div>
   );
 }

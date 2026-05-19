@@ -1,11 +1,9 @@
 "use client";
 
 import Script from "next/script";
+import { markTurnstileSdkReady, TURNSTILE_SCRIPT_SRC } from "@/lib/turnstile-client";
 
-export const TURNSTILE_SCRIPT_SRC =
-  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-
-/** Load Cloudflare Turnstile once for contact + wholesale (outside modals / error boundaries). */
+/** Load Cloudflare Turnstile once for the storefront (outside modals / error boundaries). */
 export function TurnstileSiteScript() {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? "";
   if (!siteKey) return null;
@@ -15,6 +13,7 @@ export function TurnstileSiteScript() {
       id="cf-turnstile-sdk"
       src={TURNSTILE_SCRIPT_SRC}
       strategy="afterInteractive"
+      onLoad={markTurnstileSdkReady}
     />
   );
 }
