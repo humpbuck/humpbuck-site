@@ -1,7 +1,7 @@
 "use client";
 
 import { Mail, MessageCircle } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ContactSupportModal } from "@/components/site/contact-support-modal";
@@ -23,6 +23,7 @@ export function WhatsAppFloatingButton() {
   const tWa = useTranslations("WhatsAppFab");
   const tFloat = useTranslations("Floating");
   const tProduct = useTranslations("Product");
+  const locale = useLocale();
   const pathname = usePathname();
   const [href, setHref] = useState(WHATSAPP_URL);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -89,6 +90,12 @@ export function WhatsAppFloatingButton() {
     setEmailModalOpen(false);
     setStackOpen(false);
   }, []);
+
+  useEffect(() => {
+    setEmailModalOpen(false);
+    setConfirmOpen(false);
+    setStackOpen(false);
+  }, [locale]);
 
   return (
     <>

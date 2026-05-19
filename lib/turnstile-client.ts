@@ -22,26 +22,35 @@ declare global {
   }
 }
 
-function destroyTurnstileWidget(widgetId: string | null) {
-  if (!widgetId || !window.turnstile) return;
-  if (typeof window.turnstile.remove === "function") {
-    try {
-      window.turnstile.remove(widgetId);
-      return;
-    } catch {
-      /* fall through */
-    }
-  }
-  try {
-    window.turnstile.reset(widgetId);
-  } catch {
-    /* widget may already be gone */
-  }
-}
-
 function clearTurnstileContainer(el: HTMLElement | null) {
   if (!el) return;
   el.replaceChildren();
+}
+
+/** While mounted: reset or remove so a fresh widget can render. */
+function resetTurnstileWidget(widgetId: string | null, el: HTMLElement | null) {
+  if (widgetId && window.turnstile?.remove) {
+    try {
+      window.turnstile.remove(widgetId);
+    } catch {
+      /* ignore */
+    }
+  } else if (widgetId && window.turnstile) {
+    try {
+      window.turnstile.reset(widgetId);
+    } catch {
+      /* ignore */
+    }
+  }
+  clearTurnstileContainer(el);
+}
+
+/**
+ * On unmount / route change: only clear the container.
+ * Calling remove() here breaks Turnstile for the next page in client navigations.
+ */
+function detachTurnstileContainer(el: HTMLElement | null) {
+  clearTurnstileContainer(el);
 }
 
 export function useTurnstileScriptLoaded(enabled: boolean): [boolean, () => void] {
@@ -133,16 +142,15 @@ export function useTurnstileWidget(siteKey: string) {
 
   useEffect(() => {
     return () => {
-      const id = widgetIdRef.current;
-      const el = widgetRef.current;
-      destroyTurnstileWidget(id);
       widgetIdRef.current = null;
-      clearTurnstileContainer(el);
+      detachTurnstileContainer(widgetRef.current);
     };
   }, []);
 
   function resetWidget() {
-    destroyTurnstileWidget(widgetId);
+    const id = widgetIdRef.current;
+    resetTurnstileWidget(id, widgetRef.current);
+    widgetIdRef.current = null;
     setWidgetId(null);
     setTurnstileToken("");
   }

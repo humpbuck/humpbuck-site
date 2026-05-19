@@ -34,7 +34,8 @@ export function TurnstileScriptProvider({ children }: { children: ReactNode }) {
   const markReady = useCallback(() => setReady(true), []);
 
   useEffect(() => {
-    if (!siteKey || ready) return;
+    if (!siteKey) return;
+    if (ready) return;
     const api = window.turnstile;
     if (!api) return;
     if (typeof api.ready === "function") {
@@ -42,6 +43,15 @@ export function TurnstileScriptProvider({ children }: { children: ReactNode }) {
     } else {
       markReady();
     }
+  }, [siteKey, ready, markReady]);
+
+  useEffect(() => {
+    if (!siteKey) return;
+    if (ready) return;
+    const timer = window.setTimeout(() => {
+      if (window.turnstile) markReady();
+    }, 100);
+    return () => window.clearTimeout(timer);
   }, [siteKey, ready, markReady]);
 
   const value = useMemo(
