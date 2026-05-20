@@ -1,5 +1,6 @@
-import type { Order } from "@prisma/client";
+import type { Order, OrderItemSnapshot, Prisma } from "@prisma/client";
 import {
+  adminStatusMeta,
   formatAddressLines,
   formatPhoneInternational,
   orderDisplayCode,
@@ -97,6 +98,36 @@ async function buildCustomerPaymentConfirmedEmailPayload(order: Order): Promise<
 
 const DEFAULT_MERCHANT_EMAIL = "humpbuck@outlook.com";
 
+/** Merchant inbox template: checkout placed vs payment confirmed. */
+type MerchantOrderEmailKind = "placed" | "paid";
+
+type OrderWithItemSnapshots = Order & { items: OrderItemSnapshot[] };
+
+const orderWithItemsInclude = {
+  items: { orderBy: { id: "asc" as const } },
+} satisfies Prisma.OrderInclude;
+
+async function loadOrderWithItemSnapshots(
+  orderId: string,
+): Promise<OrderWithItemSnapshots | null> {
+  return prisma.order.findUnique({
+    where: { id: orderId },
+    include: orderWithItemsInclude,
+  });
+}
+
+function merchantEmailPaymentSummary(
+  order: Order,
+  kind: MerchantOrderEmailKind,
+): string {
+  if (kind === "placed") return adminStatusMeta(order.status).label;
+  const provider = order.provider?.trim().toLowerCase();
+  if (provider && provider !== "pending") {
+    return paymentProviderLabel(order.provider);
+  }
+  return adminStatusMeta(order.status).label;
+}
+
 /** USD for transactional email (avoid de-DE rounding quirks in formatPrice). */
 function formatUsdEmail(amount: number): string {
   return new Intl.NumberFormat(SITE_LOCALE, {
@@ -191,7 +222,11 @@ function absoluteImageUrl(href: string): string {
   return `${base}${path}`;
 }
 
-async function buildPlainText(order: Order, lines: Awaited<ReturnType<typeof orderItemsFromOrder>>): Promise<string> {
+async function buildPlainText(
+  order: Order,
+  lines: Awaited<ReturnType<typeof orderItemsFromOrder>>,
+  kind: MerchantOrderEmailKind,
+): Promise<string> {
   const oid = orderDisplayCode(order);
   const rows = lines
     .map(
@@ -205,11 +240,15 @@ async function buildPlainText(order: Order, lines: Awaited<ReturnType<typeof ord
   const ship = parseShippingRecord(order.shippingJson);
   const billLines = formatAddressLines(bill);
   const shipLines = formatAddressLines(ship);
+  const headline =
+    kind === "placed"
+      ? `New order #${oid} (awaiting payment)`
+      : `Payment received for order #${oid}`;
   const parts = [
-    `New paid order #${oid}`,
+    headline,
     `Customer email: ${order.email}`,
     `Total: ${formatUsdEmail(order.totalCents / 100)}`,
-    `Payment: ${paymentProviderLabel(order.provider)}`,
+    `Payment: ${merchantEmailPaymentSummary(order, kind)}`,
     "",
     "Items:",
     rows,
@@ -228,7 +267,11 @@ async function buildPlainText(order: Order, lines: Awaited<ReturnType<typeof ord
   return parts.join("\n");
 }
 
-async function buildHtml(order: Order, lines: Awaited<ReturnType<typeof orderItemsFromOrder>>): Promise<string> {
+async function buildHtml(
+  order: Order,
+  lines: Awaited<ReturnType<typeof orderItemsFromOrder>>,
+  kind: MerchantOrderEmailKind,
+): Promise<string> {
   const oid = orderDisplayCode(order);
   const placed = new Date(order.createdAt).toLocaleString(SITE_LOCALE, {
     dateStyle: "medium",
@@ -242,6 +285,15 @@ async function buildHtml(order: Order, lines: Awaited<ReturnType<typeof orderIte
   const brand = "#5b4dcb";
   const ink = "#14120f";
   const muted = "#5c5a57";
+  const headerTitle =
+    kind === "placed" ? "New order received" : "Payment received";
+  const introHtml =
+    kind === "placed"
+      ? `<a href="mailto:${escapeHtml(order.email)}" style="color:${brand};font-weight:600;text-decoration:none;">${escapeHtml(order.email)}</a>
+          <span style="color:${muted};"> placed an order. Payment is not confirmed yet — wait for the payment confirmation email before shipping.</span>`
+      : `<a href="mailto:${escapeHtml(order.email)}" style="color:${brand};font-weight:600;text-decoration:none;">${escapeHtml(order.email)}</a>
+          <span style="color:${muted};"> has paid. Ship when ready.</span>`;
+  const paymentSummary = merchantEmailPaymentSummary(order, kind);
 
   const billAddrHtml = emailAddressFieldsTable(
     order.email,
@@ -258,7 +310,8 @@ async function buildHtml(order: Order, lines: Awaited<ReturnType<typeof orderIte
     ink,
   );
 
-  const lineRows = lines
+  const lineRows = lines.length
+    ? lines
     .map((l) => {
       const imgSrc = l.variantImage || getR2VariantLineImageUrl(l.slug, l.variantId) || "";
       const img = imgSrc
@@ -275,7 +328,10 @@ async function buildHtml(order: Order, lines: Awaited<ReturnType<typeof orderIte
         <td style="padding:12px 12px 12px 8px;vertical-align:middle;border-bottom:1px solid #ece9e4;text-align:right;white-space:nowrap;font-weight:600;color:#14120f;font-variant-numeric:tabular-nums;">${formatUsdEmail(l.lineTotalCents / 100)}</td>
       </tr>`;
     })
-    .join("");
+    .join("")
+    : `<tr>
+        <td colspan="4" style="padding:16px 12px;text-align:center;color:#8a8680;font-size:14px;">No line items on file for this order.</td>
+      </tr>`;
 
   const orderNotesHtml = order.orderNotes?.trim()
     ? `<tr><td style="padding:0 24px 20px 24px;">
@@ -297,13 +353,12 @@ async function buildHtml(order: Order, lines: Awaited<ReturnType<typeof orderIte
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e0ddd6;box-shadow:0 4px 24px rgba(20,18,15,0.06);">
       <tr><td bgcolor="#5b4dcb" style="background:linear-gradient(135deg,#5b4dcb 0%,#4338a8 100%);padding:22px 24px 20px 24px;">
         <p style="margin:0 0 4px 0;font-size:11px;font-weight:700;letter-spacing:0.2em;color:rgba(255,255,255,0.85);">HUMPBUCK</p>
-        <p style="margin:0;font-size:20px;font-weight:700;line-height:1.25;color:#ffffff;">Payment received</p>
+        <p style="margin:0;font-size:20px;font-weight:700;line-height:1.25;color:#ffffff;">${escapeHtml(headerTitle)}</p>
         <p style="margin:8px 0 0 0;font-size:14px;color:rgba(255,255,255,0.92);">Order <span style="font-weight:600;">#${escapeHtml(oid)}</span></p>
       </td></tr>
       <tr><td style="padding:22px 24px 8px 24px;">
         <p style="margin:0 0 12px 0;font-size:15px;line-height:1.55;color:${ink};">
-          <a href="mailto:${escapeHtml(order.email)}" style="color:${brand};font-weight:600;text-decoration:none;">${escapeHtml(order.email)}</a>
-          <span style="color:${muted};"> has paid. Ship when ready.</span>
+          ${introHtml}
         </p>
         <p style="margin:0;padding:10px 14px;background:#f7f6f3;border-radius:10px;font-size:13px;color:${muted};">
           <span style="color:${ink};font-weight:600;">${escapeHtml(oid)}</span>
@@ -336,7 +391,7 @@ async function buildHtml(order: Order, lines: Awaited<ReturnType<typeof orderIte
               </tr>
               <tr>
                 <td align="left" style="padding:6px 0 0 0;color:${muted};font-size:13px;">Payment</td>
-                <td align="right" style="padding:6px 0 0 0;font-size:13px;font-weight:600;">${escapeHtml(paymentProviderLabel(order.provider))}</td>
+                <td align="right" style="padding:6px 0 0 0;font-size:13px;font-weight:600;">${escapeHtml(paymentSummary)}</td>
               </tr>
               <tr>
                 <td align="left" style="padding:6px 0 0 0;color:${muted};font-size:13px;">Traffic</td>
@@ -393,12 +448,12 @@ export async function notifyMerchantOrderPlaced(orderId: string): Promise<void> 
   const to =
     process.env.MERCHANT_NOTIFY_EMAIL?.trim() || DEFAULT_MERCHANT_EMAIL;
 
-  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  const order = await loadOrderWithItemSnapshots(orderId);
   if (!order || order.status !== "pending_payment") return;
 
   const lines = orderItemsFromOrder(order);
-  const html = await buildHtml(order, lines);
-  const text = await buildPlainText(order, lines);
+  const html = await buildHtml(order, lines, "placed");
+  const text = await buildPlainText(order, lines, "placed");
   const subject = `New order received #${orderDisplayCode(order)} · HUMPBUCK`;
 
   const result = await sendTransactionalEmail({
@@ -417,13 +472,13 @@ export async function notifyMerchantOrderPaid(orderId: string): Promise<void> {
   const to =
     process.env.MERCHANT_NOTIFY_EMAIL?.trim() || DEFAULT_MERCHANT_EMAIL;
 
-  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  const order = await loadOrderWithItemSnapshots(orderId);
   if (!order || order.status !== "paid") return;
   if (order.merchantNotifySentAt) return;
 
   const lines = orderItemsFromOrder(order);
-  const html = await buildHtml(order, lines);
-  const text = await buildPlainText(order, lines);
+  const html = await buildHtml(order, lines, "paid");
+  const text = await buildPlainText(order, lines, "paid");
   const subject = `Payment received for order #${orderDisplayCode(order)} · HUMPBUCK`;
 
   const result = await sendTransactionalEmail({
@@ -444,7 +499,7 @@ export async function notifyMerchantOrderPaid(orderId: string): Promise<void> {
 }
 
 export async function notifyCustomerOrderPaid(orderId: string): Promise<void> {
-  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  const order = await loadOrderWithItemSnapshots(orderId);
   if (!order || order.status !== "paid") return;
 
   const payload = await buildCustomerPaymentConfirmedEmailPayload(order);

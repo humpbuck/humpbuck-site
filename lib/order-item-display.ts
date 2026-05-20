@@ -24,7 +24,7 @@ export function orderItemsFromSnapshotRows(
     lineTotalCents: Math.max(0, Math.round(row.lineTotalCents || 0)),
     variantId: row.variantId ?? undefined,
     variantLabel: row.variantLabel ?? undefined,
-    variantImage: row.variantImage ?? undefined,
+    variantImage: row.variantImage ?? row.productImage ?? undefined,
   }));
 }
 
