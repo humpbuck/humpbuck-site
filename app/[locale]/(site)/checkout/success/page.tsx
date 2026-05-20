@@ -57,6 +57,13 @@ export default async function CheckoutSuccessPage({
   });
 
   const purchaseAllowed = order.status === "paid" || order.status === "processing" || order.status === "shipped";
+  const returnedFromPayment = Boolean(sp.session_id?.trim() || paypalToken);
+  const syncCartFromPaidOrder = purchaseAllowed || returnedFromPayment;
+  const paidOrderLines = lines.map((line) => ({
+    slug: line.slug,
+    variantId: line.variantId ?? null,
+    qty: line.qty,
+  }));
   const providerLabel =
     order.provider === "stripe"
       ? "Stripe"
@@ -66,14 +73,15 @@ export default async function CheckoutSuccessPage({
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-      {purchaseAllowed ? (
-        <CheckoutSuccessClient
-          orderId={order.id}
-          totalUsd={order.totalCents / 100}
-          provider={order.provider}
-          documentTitle={t("documentTitle")}
-        />
-      ) : null}
+      <CheckoutSuccessClient
+        orderId={order.id}
+        totalUsd={order.totalCents / 100}
+        provider={order.provider}
+        documentTitle={t("documentTitle")}
+        syncCartFromPaidOrder={syncCartFromPaidOrder}
+        paidOrderLines={paidOrderLines}
+        trackPurchase={purchaseAllowed}
+      />
       <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6 sm:p-8">
         <div className="flex items-start gap-4">
           <CheckCircle2 className="mt-0.5 text-emerald-600" size={30} />

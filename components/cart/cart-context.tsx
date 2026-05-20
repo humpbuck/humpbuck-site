@@ -45,12 +45,20 @@ function normalizeCartLine(line: CartLine): CartLine | null {
   return { ...line, slug: rawSlug };
 }
 
+export type PaidOrderCartLine = {
+  slug: string;
+  variantId?: string | null;
+  qty: number;
+};
+
 type CartContextValue = {
   items: CartLine[];
   itemCount: number;
   addItem: (line: CartLine) => void;
   setQty: (slug: string, qty: number, variantId?: string) => void;
   removeItem: (slug: string, variantId?: string) => void;
+  /** Subtract paid order quantities; other cart lines stay. */
+  removePaidOrderLines: (orderLines: PaidOrderCartLine[]) => void;
   clear: () => void;
   cartDrawerOpen: boolean;
   openCartDrawer: () => void;
@@ -193,6 +201,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  const removePaidOrderLines = useCallback((orderLines: PaidOrderCartLine[]) => {
+    if (!orderLines.length) return;
+    setItems((prev) => {
+      let next = [...prev];
+      for (const ol of orderLines) {
+        const variantKey = ol.variantId ?? "";
+        const idx = next.findIndex(
+          (p) => p.slug === ol.slug && (p.variantId ?? "") === variantKey,
+        );
+        if (idx === -1) continue;
+        const paidQty = Math.max(1, Math.floor(ol.qty || 1));
+        const remaining = next[idx].qty - paidQty;
+        if (remaining <= 0) {
+          next = next.filter((_, i) => i !== idx);
+        } else {
+          const updated = [...next];
+          updated[idx] = { ...updated[idx], qty: remaining };
+          next = updated;
+        }
+      }
+      return next;
+    });
+  }, []);
+
   const clear = useCallback(() => setItems([]), []);
 
   const value = useMemo(
@@ -202,6 +234,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       addItem,
       setQty,
       removeItem,
+      removePaidOrderLines,
       clear,
       cartDrawerOpen,
       openCartDrawer,
@@ -213,6 +246,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       addItem,
       setQty,
       removeItem,
+      removePaidOrderLines,
       clear,
       cartDrawerOpen,
       openCartDrawer,
