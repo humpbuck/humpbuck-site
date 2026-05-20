@@ -75,6 +75,33 @@ export async function paypalCreateOrder(
   return { id: data.id, approvalUrl };
 }
 
+type PayPalOrderPayload = {
+  id?: string;
+  status?: string;
+  payer?: { email_address?: string };
+  message?: string;
+};
+
+export async function paypalGetOrder(
+  paypalOrderId: string,
+): Promise<PayPalOrderPayload> {
+  const token = await paypalAccessToken();
+  const res = await fetch(
+    `${apiBase()}/v2/checkout/orders/${encodeURIComponent(paypalOrderId)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  const data = (await res.json()) as PayPalOrderPayload;
+  if (!res.ok) {
+    throw new Error(data.message || "PayPal order lookup failed");
+  }
+  return data;
+}
+
 export async function paypalCaptureOrder(orderId: string): Promise<unknown> {
   const token = await paypalAccessToken();
   const res = await fetch(`${apiBase()}/v2/checkout/orders/${orderId}/capture`, {
@@ -97,27 +124,13 @@ export async function paypalCaptureOrder(orderId: string): Promise<unknown> {
 export async function paypalGetCaptureIdFromOrder(
   paypalOrderId: string,
 ): Promise<string | null> {
-  const token = await paypalAccessToken();
-  const res = await fetch(
-    `${apiBase()}/v2/checkout/orders/${encodeURIComponent(paypalOrderId)}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    },
-  );
-  const data = (await res.json()) as {
-    purchase_units?: {
-      payments?: { captures?: { id?: string }[] };
-    }[];
-    message?: string;
-  };
-  if (!res.ok) {
-    throw new Error(data.message || "PayPal order lookup failed");
-  }
+  const data = await paypalGetOrder(paypalOrderId);
   const cap =
-    data.purchase_units?.[0]?.payments?.captures?.[0]?.id ?? null;
+    (
+      data as {
+        purchase_units?: { payments?: { captures?: { id?: string }[] } }[];
+      }
+    ).purchase_units?.[0]?.payments?.captures?.[0]?.id ?? null;
   return cap && typeof cap === "string" ? cap : null;
 }
 

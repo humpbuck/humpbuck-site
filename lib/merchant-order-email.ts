@@ -14,6 +14,7 @@ import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
+import { buyerTransactionalEmail } from "@/lib/order-buyer-email";
 import { prisma } from "@/lib/prisma";
 import { SITE_LOCALE } from "@/lib/site-locale";
 import { adminPath } from "@/lib/admin-path";
@@ -502,9 +503,18 @@ export async function notifyCustomerOrderPaid(orderId: string): Promise<void> {
   const order = await loadOrderWithItemSnapshots(orderId);
   if (!order || order.status !== "paid") return;
 
+  const buyerTo = buyerTransactionalEmail(order.email);
+  if (!buyerTo) {
+    console.info(
+      "[customer-payment-confirmation-email] skipped: buyer email matches merchant notify inbox or is empty",
+      { orderId },
+    );
+    return;
+  }
+
   const payload = await buildCustomerPaymentConfirmedEmailPayload(order);
   const result = await sendTransactionalEmail({
-    to: order.email,
+    to: buyerTo,
     subject: payload.subject,
     htmlContent: payload.htmlContent,
     textContent: payload.textContent,

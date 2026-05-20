@@ -34,8 +34,20 @@ export async function loadCheckoutSuccessOrder(params: {
   orderId: string;
   sessionUserId?: string;
   stripeSessionId?: string;
+  paypalOrderId?: string;
 }): Promise<CheckoutSuccessOrder | null> {
-  const { orderId, sessionUserId, stripeSessionId } = params;
+  const { orderId, sessionUserId, stripeSessionId, paypalOrderId } = params;
+
+  if (paypalOrderId) {
+    return prisma.order.findFirst({
+      where: {
+        id: orderId,
+        providerRef: paypalOrderId,
+        deletedAt: null,
+      },
+      include: orderInclude,
+    });
+  }
 
   if (stripeSessionId) {
     const ok = await verifyStripeCheckoutSession(stripeSessionId, orderId);

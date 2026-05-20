@@ -8,6 +8,7 @@ import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
 import { reverseAffiliateCommissionLedgerForOrder } from "@/lib/affiliate-commission-ledger";
 import { syncAffiliateGrowthTierByOrderCount } from "@/lib/affiliate-tier-growth";
+import { stripeSessionBuyerEmail } from "@/lib/order-buyer-email";
 import { getStripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 
@@ -37,16 +38,20 @@ export async function POST(req: Request) {
       id: string;
       client_reference_id?: string | null;
       metadata?: { orderId?: string };
+      customer_email?: string | null;
+      customer_details?: { email?: string | null } | null;
     };
     const orderId =
       session.client_reference_id ?? session.metadata?.orderId ?? null;
     if (orderId) {
+      const stripeBuyerEmail = stripeSessionBuyerEmail(session);
       const { count } = await prisma.order.updateMany({
         where: { id: orderId, status: "pending_payment" },
         data: {
           status: "paid",
           provider: "stripe",
           providerRef: session.id,
+          ...(stripeBuyerEmail ? { email: stripeBuyerEmail } : {}),
         },
       });
       if (count > 0) {

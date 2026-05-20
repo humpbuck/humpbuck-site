@@ -7,6 +7,7 @@ import { formatPrice } from "@/lib/catalog";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { buyerOrderStatusForLocale } from "@/lib/account-buyer-order";
 import { loadCheckoutSuccessOrder } from "@/lib/checkout-success-order";
+import { finalizePaidPayPalOrder } from "@/lib/paypal-checkout-finalize";
 import { intlLocaleFromAppLocale } from "@/lib/site-locale";
 import { CheckoutSuccessClient } from "@/app/[locale]/(site)/checkout/success/CheckoutSuccessClient";
 
@@ -15,17 +16,33 @@ export const dynamic = "force-dynamic";
 export default async function CheckoutSuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ orderId?: string; provider?: string; session_id?: string }>;
+  searchParams: Promise<{
+    orderId?: string;
+    provider?: string;
+    session_id?: string;
+    token?: string;
+  }>;
 }) {
   const sp = await searchParams;
   const orderId = sp.orderId?.trim();
   if (!orderId) notFound();
+
+  const paypalToken =
+    sp.provider === "paypal" ? sp.token?.trim() : undefined;
+  if (paypalToken) {
+    try {
+      await finalizePaidPayPalOrder(orderId, paypalToken);
+    } catch (e) {
+      console.error("[checkout/success] PayPal finalize failed:", e);
+    }
+  }
 
   const session = await auth();
   const order = await loadCheckoutSuccessOrder({
     orderId,
     sessionUserId: session?.user?.id,
     stripeSessionId: sp.session_id?.trim(),
+    paypalOrderId: paypalToken,
   });
   if (!order) notFound();
 

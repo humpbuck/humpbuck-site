@@ -33,7 +33,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (session?.user?.email) {
-      setCustomerEmail(session.user.email);
+      setCustomerEmail((prev) => (prev.trim() ? prev : session.user!.email!));
     }
   }, [session?.user?.email]);
   const [billing, setBilling] = useState(emptyCheckoutAddress);

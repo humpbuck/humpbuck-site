@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { notifyCustomerOrderPaid, notifyMerchantOrderPaid } from "@/lib/merchant-order-email";
-import { paypalCaptureOrder, paypalCreateOrder } from "@/lib/paypal";
+import { finalizePaidPayPalOrder } from "@/lib/paypal-checkout-finalize";
+import { paypalCreateOrder } from "@/lib/paypal";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
@@ -36,6 +36,10 @@ export async function POST(req: Request) {
     cancelUrl.searchParams.set("orderId", body.orderId);
 
     const created = await paypalCreateOrder(body.totalUsd, successUrl.toString(), cancelUrl.toString());
+    await prisma.order.updateMany({
+      where: { id: body.orderId, status: "pending_payment" },
+      data: { provider: "paypal", providerRef: created.id },
+    });
     return NextResponse.json({ ok: true, paypalOrderId: created.id, approvalUrl: created.approvalUrl });
   }
 
@@ -44,26 +48,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const result = await paypalCaptureOrder(body.paypalOrderId);
-    const order = await prisma.order.findUnique({ where: { id: body.orderId } });
-    if (!order) {
-      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    try {
+      await finalizePaidPayPalOrder(body.orderId, body.paypalOrderId);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      return NextResponse.json({ error: message }, { status: 502 });
     }
 
-    if (order.status === "pending_payment") {
-      await prisma.order.update({
-        where: { id: order.id },
-        data: {
-          status: "paid",
-          provider: "paypal",
-          providerRef: body.paypalOrderId,
-        },
-      });
-      await notifyCustomerOrderPaid(order.id);
-      await notifyMerchantOrderPaid(order.id);
-    }
-
-    return NextResponse.json({ ok: true, capture: result });
+    return NextResponse.json({ ok: true });
   }
 
   return NextResponse.json({ error: "Unsupported action" }, { status: 400 });
