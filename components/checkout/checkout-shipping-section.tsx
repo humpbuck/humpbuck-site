@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { quoteCheckoutShipping, type ShippingMethodId } from "@/lib/checkout-shipping-quote";
 
@@ -34,22 +34,22 @@ export function CheckoutShippingSection({
   shippingPostalCode,
 }: Props) {
   const t = useTranslations("CheckoutShipping");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    queueMicrotask(() => setMounted(true));
-  }, []);
+  const deferredCountry = useDeferredValue(countryLabel);
+  const deferredState = useDeferredValue(shippingState);
+  const deferredPostal = useDeferredValue(shippingPostalCode);
+  const deferredUnits = useDeferredValue(totalUnits);
+  const weightKg = deferredUnits * 0.2;
 
   const quotes = useMemo(
     () => ({
-      cainiao: quoteCheckoutShipping({ countryLabel, totalUnits, method: "cainiao", state: shippingState, postalCode: shippingPostalCode, weightKg: totalUnits * 0.2 }),
-      yanwen: quoteCheckoutShipping({ countryLabel, totalUnits, method: "yanwen", state: shippingState, postalCode: shippingPostalCode, weightKg: totalUnits * 0.2 }),
-      dhl: quoteCheckoutShipping({ countryLabel, totalUnits, method: "dhl", state: shippingState, postalCode: shippingPostalCode, weightKg: totalUnits * 0.2 }),
-      fedex: quoteCheckoutShipping({ countryLabel, totalUnits, method: "fedex", state: shippingState, postalCode: shippingPostalCode, weightKg: totalUnits * 0.2 }),
-      ups: quoteCheckoutShipping({ countryLabel, totalUnits, method: "ups", state: shippingState, postalCode: shippingPostalCode, weightKg: totalUnits * 0.2 }),
-      usps: quoteCheckoutShipping({ countryLabel, totalUnits, method: "usps", state: shippingState, postalCode: shippingPostalCode, weightKg: totalUnits * 0.2 }),
+      cainiao: quoteCheckoutShipping({ countryLabel: deferredCountry, totalUnits: deferredUnits, method: "cainiao", state: deferredState, postalCode: deferredPostal, weightKg }),
+      yanwen: quoteCheckoutShipping({ countryLabel: deferredCountry, totalUnits: deferredUnits, method: "yanwen", state: deferredState, postalCode: deferredPostal, weightKg }),
+      dhl: quoteCheckoutShipping({ countryLabel: deferredCountry, totalUnits: deferredUnits, method: "dhl", state: deferredState, postalCode: deferredPostal, weightKg }),
+      fedex: quoteCheckoutShipping({ countryLabel: deferredCountry, totalUnits: deferredUnits, method: "fedex", state: deferredState, postalCode: deferredPostal, weightKg }),
+      ups: quoteCheckoutShipping({ countryLabel: deferredCountry, totalUnits: deferredUnits, method: "ups", state: deferredState, postalCode: deferredPostal, weightKg }),
+      usps: quoteCheckoutShipping({ countryLabel: deferredCountry, totalUnits: deferredUnits, method: "usps", state: deferredState, postalCode: deferredPostal, weightKg }),
     }),
-    [countryLabel, shippingPostalCode, shippingState, totalUnits],
+    [deferredCountry, deferredPostal, deferredState, deferredUnits, weightKg],
   );
 
   const quoteFor = (id: ShippingMethodId) => quotes[id as keyof typeof quotes];
@@ -72,19 +72,6 @@ export function CheckoutShippingSection({
         return id;
     }
   };
-
-  if (!mounted) {
-    return (
-      <div className="rounded-2xl border border-line bg-white/60 p-5">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2 className="text-sm font-semibold text-ink">{t("feeTitle")}</h2>
-            <p className="mt-1 text-xs text-muted">{t("loadingOptions")}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="rounded-2xl border border-line bg-white/60 p-5">

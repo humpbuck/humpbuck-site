@@ -7,6 +7,7 @@ import { Minus, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/components/cart/cart-context";
 import { formatPrice } from "@/lib/catalog";
+import { runWhenIdle } from "@/lib/defer-non-critical";
 import {
   captureAffiliatePidAttribution,
   captureTrafficAttribution,
@@ -19,8 +20,10 @@ export default function CartPage() {
   const { items, setQty, removeItem } = useCart();
 
   useEffect(() => {
-    captureTrafficAttribution();
-    captureAffiliatePidAttribution();
+    runWhenIdle(() => {
+      captureTrafficAttribution();
+      captureAffiliatePidAttribution();
+    });
   }, []);
 
   const subtotal = items.reduce((sum, line) => {

@@ -1,34 +1,50 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 import { useSession } from "next-auth/react";
 import { useCart } from "@/components/cart/cart-context";
 import { emptyCheckoutAddress, validateCheckoutAddressForm } from "@/lib/checkout-address";
 import { CheckoutAddressForm } from "@/components/checkout/checkout-address-form";
-import { CheckoutShippingSection } from "@/components/checkout/checkout-shipping-section";
+import { CheckoutShippingLoading } from "@/components/checkout/checkout-shipping-loading";
 import { PaymentBrandButtons } from "@/components/checkout/payment-brand-buttons";
 import { getTaxIdRequirement, quoteCheckoutShipping, type ShippingMethodId } from "@/lib/checkout-shipping-quote";
+import { runWhenIdle } from "@/lib/defer-non-critical";
 import { captureAffiliatePidAttribution, captureTrafficAttribution, getAffiliatePidForCheckout, getAffiliatePidForCheckoutFromUrl, getTrafficSourceForCheckout } from "@/lib/traffic-attribution";
+
+const CheckoutShippingSection = dynamic(
+  () =>
+    import("@/components/checkout/checkout-shipping-section").then(
+      (m) => m.CheckoutShippingSection,
+    ),
+  { loading: () => <CheckoutShippingLoading /> },
+);
 
 export default function CheckoutPage() {
   const t = useTranslations("Checkout");
-  const [mounted, setMounted] = useState(false);
+  const [cartReady, setCartReady] = useState(false);
   const { data: session } = useSession();
   const { items, itemCount } = useCart();
 
   useEffect(() => {
-    setMounted(true);
-    // Capture attribution again on checkout so direct visits, cart transitions,
-    // and URL-based affiliate links all preserve the same pid.
-    captureTrafficAttribution();
-    captureAffiliatePidAttribution();
-    trackVisitorEvent({
-      type: "checkout_start",
-      source: "checkout_page",
-      meta: { stage: "begin_checkout" },
-    }, { dedupeKey: "checkout_start:page" });
+    setCartReady(true);
+  }, []);
+
+  useEffect(() => {
+    runWhenIdle(() => {
+      captureTrafficAttribution();
+      captureAffiliatePidAttribution();
+      trackVisitorEvent(
+        {
+          type: "checkout_start",
+          source: "checkout_page",
+          meta: { stage: "begin_checkout" },
+        },
+        { dedupeKey: "checkout_start:page" },
+      );
+    });
   }, []);
 
   useEffect(() => {
@@ -64,23 +80,33 @@ export default function CheckoutPage() {
   );
 
   const shipAddress = shipSameAsBilling ? billing : shipping;
+  const deferredShipCountry = useDeferredValue(shipAddress.country);
+  const deferredShipState = useDeferredValue(shipAddress.state);
+  const deferredShipPostal = useDeferredValue(shipAddress.postalCode);
+  const deferredTotalUnits = useDeferredValue(totalUnits);
   const shippingQuote = useMemo(
     () =>
       quoteCheckoutShipping({
-        countryLabel: shipAddress.country,
-        totalUnits,
+        countryLabel: deferredShipCountry,
+        totalUnits: deferredTotalUnits,
         method: shippingMethod,
-        state: shipAddress.state,
-        postalCode: shipAddress.postalCode,
-        weightKg: totalUnits * 0.2,
+        state: deferredShipState,
+        postalCode: deferredShipPostal,
+        weightKg: deferredTotalUnits * 0.2,
       }),
-    [shipAddress.country, shipAddress.postalCode, shipAddress.state, shippingMethod, totalUnits],
+    [
+      deferredShipCountry,
+      deferredShipPostal,
+      deferredShipState,
+      deferredTotalUnits,
+      shippingMethod,
+    ],
   );
 
   const addressReady = validateCheckoutAddressForm(shipAddress).ok;
   const emailReady = customerEmail.trim().length > 0;
-  const canPay = mounted && itemCount > 0 && emailReady && addressReady && shippingQuote.ok;
-  const shippingPrice = mounted && shippingQuote.ok ? shippingQuote.shippingUsdCents / 100 : 0;
+  const canPay = cartReady && itemCount > 0 && emailReady && addressReady && shippingQuote.ok;
+  const shippingPrice = cartReady && shippingQuote.ok ? shippingQuote.shippingUsdCents / 100 : 0;
   const couponDiscount = appliedCoupon ? appliedCoupon.discountAmount : 0;
   const total = Math.max(0, subtotal + shippingPrice - couponDiscount);
 
@@ -225,14 +251,6 @@ export default function CheckoutPage() {
     }
   }
 
-  if (!mounted) {
-    return (
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-2xl border border-line bg-white/60 p-6 text-sm text-muted">{t("loading")}</div>
-      </div>
-    );
-  }
-
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-8">
@@ -333,8 +351,10 @@ export default function CheckoutPage() {
 
         <aside className="sticky top-[88px] space-y-4 self-start rounded-2xl border border-line bg-white/60 p-5">
           <h2 className="text-sm font-semibold text-ink">{t("orderSummary")}</h2>
-          <div className="space-y-2 text-sm">
-            {items.length === 0 ? (
+          <div className="space-y-2 text-sm" suppressHydrationWarning>
+            {!cartReady ? (
+              <p className="text-muted">{t("loading")}</p>
+            ) : items.length === 0 ? (
               <p className="text-muted">{t("cartEmpty")}</p>
             ) : (
               items.map((line) => {
@@ -357,7 +377,7 @@ export default function CheckoutPage() {
             </div>
             <div className="mt-2 flex items-center justify-between">
               <span className="text-muted">{t("shipping")}</span>
-              <span className="font-medium">{mounted && shippingQuote.ok ? `$${shippingPrice.toFixed(2)}` : t("shippingDash")}</span>
+              <span className="font-medium">{cartReady && shippingQuote.ok ? `$${shippingPrice.toFixed(2)}` : t("shippingDash")}</span>
             </div>
             {appliedCoupon ? (
               <div className="mt-2 flex items-center justify-between">

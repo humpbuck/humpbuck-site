@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 const SiteAnalyticsConsent = dynamic(
   () =>
@@ -50,6 +51,10 @@ const LocaleSwitcherFab = dynamic(
 
 export function SiteClientEnhancements() {
   const [ready, setReady] = useState(false);
+  const pathname = usePathname();
+  const isHeavyCheckout =
+    pathname != null &&
+    (pathname.includes("/checkout") || pathname.includes("/cart"));
 
   useEffect(() => {
     let timeoutId: number | null = null;
@@ -66,10 +71,12 @@ export function SiteClientEnhancements() {
     const onIdle = () => {
       markReady();
     };
+    const idleTimeoutMs = isHeavyCheckout ? 2200 : 1200;
+    const fallbackMs = isHeavyCheckout ? 1200 : 800;
     if (typeof win.requestIdleCallback === "function") {
-      idleId = win.requestIdleCallback(() => onIdle(), { timeout: 1200 });
+      idleId = win.requestIdleCallback(() => onIdle(), { timeout: idleTimeoutMs });
     } else {
-      timeoutId = window.setTimeout(onIdle, 800);
+      timeoutId = window.setTimeout(onIdle, fallbackMs);
     }
 
     return () => {
@@ -78,7 +85,7 @@ export function SiteClientEnhancements() {
       }
       if (timeoutId != null) window.clearTimeout(timeoutId);
     };
-  }, []);
+  }, [isHeavyCheckout]);
 
   return (
     <>
