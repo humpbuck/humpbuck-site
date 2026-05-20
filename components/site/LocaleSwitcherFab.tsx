@@ -15,14 +15,23 @@ export function LocaleSwitcherFab() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState(false);
   const [pinned, setPinned] = useState(false);
+  const [canHoverOpen, setCanHoverOpen] = useState(false);
 
-  const open = hover || pinned;
+  const open = pinned || (canHoverOpen && hover);
   const otherLocales = routing.locales.filter((l) => l !== locale);
 
   const closeMenu = () => {
     setPinned(false);
     setHover(false);
   };
+
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const apply = () => setCanHoverOpen(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
 
   useEffect(() => {
     if (!pinned) return;
@@ -35,13 +44,22 @@ export function LocaleSwitcherFab() {
     return () => document.removeEventListener("pointerdown", onPointerDown, true);
   }, [pinned]);
 
+  useEffect(() => {
+    if (!open) return;
+    const onScroll = () => closeMenu();
+    window.addEventListener("scroll", onScroll, { passive: true, capture: true });
+    return () => window.removeEventListener("scroll", onScroll, { capture: true });
+  }, [open]);
+
   return (
     <div
       ref={rootRef}
       className="fixed bottom-6 left-6 z-40 md:bottom-8 md:left-8"
       role="navigation"
       aria-label={t("label")}
-      onMouseEnter={() => setHover(true)}
+      onMouseEnter={() => {
+        if (canHoverOpen) setHover(true);
+      }}
       onMouseLeave={() => setHover(false)}
     >
       <div className="relative inline-block">
