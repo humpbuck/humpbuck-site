@@ -5,8 +5,8 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
 import { formatPrice } from "@/lib/catalog";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
-import { prisma } from "@/lib/prisma";
 import { buyerOrderStatusForLocale } from "@/lib/account-buyer-order";
+import { loadCheckoutSuccessOrder } from "@/lib/checkout-success-order";
 import { intlLocaleFromAppLocale } from "@/lib/site-locale";
 import { CheckoutSuccessClient } from "@/app/[locale]/(site)/checkout/success/CheckoutSuccessClient";
 
@@ -15,17 +15,17 @@ export const dynamic = "force-dynamic";
 export default async function CheckoutSuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ orderId?: string; provider?: string }>;
+  searchParams: Promise<{ orderId?: string; provider?: string; session_id?: string }>;
 }) {
-  const session = await auth();
-  if (!session?.user?.id) notFound();
   const sp = await searchParams;
   const orderId = sp.orderId?.trim();
   if (!orderId) notFound();
 
-  const order = await prisma.order.findFirst({
-    where: { id: orderId, userId: session.user.id, deletedAt: null },
-    include: { items: true },
+  const session = await auth();
+  const order = await loadCheckoutSuccessOrder({
+    orderId,
+    sessionUserId: session?.user?.id,
+    stripeSessionId: sp.session_id?.trim(),
   });
   if (!order) notFound();
 
