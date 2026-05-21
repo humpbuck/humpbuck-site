@@ -142,7 +142,7 @@ export default async function ProductPage({
             <h1 className="mt-4 font-serif text-4xl tracking-tight sm:text-5xl">
               {product.name}
             </h1>
-            <p className="mt-4 text-lg leading-relaxed text-muted">
+            <p className="mt-4 whitespace-pre-line text-lg leading-relaxed text-muted">
               {product.shortDescription}
             </p>
 
@@ -184,7 +184,7 @@ export default async function ProductPage({
               <div className="mt-10 rounded-2xl border border-line bg-white/60 p-6">
                 <h2 className="font-serif text-xl">{t("detailsHeading")}</h2>
                 {product.description && (
-                  <p className="mt-3 text-sm leading-relaxed text-muted">
+                  <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted">
                     {product.description}
                   </p>
                 )}
