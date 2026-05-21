@@ -147,6 +147,16 @@
       "shortDescription": "Somente ajuste de preço. NÃO peça até nos contatar. Pedidos não autorizados serão cancelados ou não enviados.",
       "description": "",
       "highlights": []
+    },
+    "wholesale-price": {
+      "name": "Link de pagamento para pedido em atacado",
+      "categoryLabel": "ATACADO · Link de pagamento",
+      "shortDescription": "Como concluir seu pagamento:\n\n• Fórmula de preço:\nValor total = valor de todos os produtos + frete (envio internacional OU envio doméstico ao seu agente na China, conforme acordado).\n\n• Preço unitário:\nEste link está definido em 1 USD por unidade.\n\n• Como pedir:\nAjuste a «Quantidade» para que o total final corresponda ao valor acordado (frete incluído).\nExemplo: total acordado 50 USD → ajuste a quantidade até o checkout mostrar 50 USD.\n\n• Nota importante:\nIgnore a divisão de frete ou produto no checkout. Se o total final (valor pago) corresponder ao preço acordado, o pagamento está correto e seu pedido será processado manualmente.\n\nObrigado pela preferência!"
+    },
+    "custom-logo-fee": {
+      "name": "Link de pagamento para personalização de marca",
+      "categoryLabel": "Link de pagamento personalizado",
+      "shortDescription": "Como pagar sua taxa de logo personalizado:\n\n• Fórmula de preço:\nValor total = valor de todos os produtos + frete (preço final tudo incluído acordado em nossa conversa).\n\n• Preço unitário:\nEste link está definido em 1 USD por unidade.\n\n• Como pedir:\nAjuste a «Quantidade» para que o total final corresponda à taxa de personalização acordada.\nExemplo: taxa de logo 50 USD → ajuste a quantidade até o checkout mostrar 50 USD.\n\n• Nota importante:\nIgnore taxas de frete ou cálculos automáticos no checkout. Se o total final corresponder à taxa de logo acordada, o pagamento está correto e seu pedido personalizado será processado manualmente.\n\nObrigado pela preferência!"
     }
   }
 }

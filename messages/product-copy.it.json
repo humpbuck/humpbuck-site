@@ -147,6 +147,16 @@
       "shortDescription": "Solo regolazione prezzo. NON ordini finché non ci contatta. Gli ordini non autorizzati saranno annullati o non spediti.",
       "description": "",
       "highlights": []
+    },
+    "wholesale-price": {
+      "name": "Link di pagamento ordine all'ingrosso",
+      "categoryLabel": "INGROSSO · Link di pagamento",
+      "shortDescription": "Come completare il pagamento:\n\n• Formula prezzo:\nImporto totale = valore di tutti i prodotti + spese di spedizione (internazionale O spedizione nazionale al Suo agente in Cina, secondo accordo).\n\n• Prezzo unitario:\nQuesto link è impostato a 1 USD per unità.\n\n• Come ordinare:\nRegoli la «Quantità» affinché il totale finale corrisponda all'importo concordato (spedizione inclusa).\nEsempio: totale concordato 50 USD → regoli la quantità finché il checkout mostra 50 USD.\n\n• Nota importante:\nIgnori la ripartizione di spedizione o prodotto al checkout. Se il totale finale (importo pagato) corrisponde al prezzo concordato, il pagamento è corretto e l'ordine sarà elaborato manualmente.\n\nGrazie per la Sua fiducia!"
+    },
+    "custom-logo-fee": {
+      "name": "Link di pagamento personalizzazione brand",
+      "categoryLabel": "Link di pagamento personalizzato",
+      "shortDescription": "Come pagare la tariffa logo personalizzato:\n\n• Formula prezzo:\nImporto totale = valore di tutti i prodotti + spese di spedizione (prezzo finale tutto incluso concordato nella nostra conversazione).\n\n• Prezzo unitario:\nQuesto link è impostato a 1 USD per unità.\n\n• Come ordinare:\nRegoli la «Quantità» affinché il totale finale corrisponda alla tariffa di personalizzazione concordata.\nEsempio: tariffa logo 50 USD → regoli la quantità finché il checkout mostra 50 USD.\n\n• Nota importante:\nIgnori spese di spedizione o calcoli automatici al checkout. Se il totale finale corrisponde alla tariffa logo concordata, il pagamento è corretto e l'ordine personalizzato sarà elaborato manualmente.\n\nGrazie per la Sua fiducia!"
     }
   }
 }

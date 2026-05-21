@@ -147,6 +147,16 @@
       "shortDescription": "Solo ajuste de precio. NO pida hasta contactarnos. Pedidos no autorizados se cancelarán o no se enviarán.",
       "description": "",
       "highlights": []
+    },
+    "wholesale-price": {
+      "name": "Enlace de pago para pedidos al por mayor",
+      "categoryLabel": "MAYORISTA · Enlace de pago",
+      "shortDescription": "Cómo completar su pago:\n\n• Fórmula de precio:\nImporte total = valor de todos los productos + gastos de envío (envío internacional O envío nacional a su agente en China, según acuerdo).\n\n• Precio unitario:\nEste enlace está fijado en 1 USD por unidad.\n\n• Cómo pedir:\nAjuste la «Cantidad» para que el total final coincida con el importe acordado (incluido el envío).\nEjemplo: total acordado 50 USD → ajuste la cantidad hasta que el checkout muestre 50 USD.\n\n• Nota importante:\nIgnore el desglose de envío o producto en el checkout. Si el total final (importe pagado) coincide con nuestro precio acordado, el pago es correcto y procesaremos su pedido manualmente.\n\n¡Gracias por su confianza!"
+    },
+    "custom-logo-fee": {
+      "name": "Enlace de pago para personalización de marca",
+      "categoryLabel": "Enlace de pago personalizado",
+      "shortDescription": "Cómo pagar su tarifa de logo personalizado:\n\n• Fórmula de precio:\nImporte total = valor de todos los productos + gastos de envío (precio final todo incluido acordado en nuestra conversación).\n\n• Precio unitario:\nEste enlace está fijado en 1 USD por unidad.\n\n• Cómo pedir:\nAjuste la «Cantidad» para que el total final coincida con la tarifa de personalización acordada.\nEjemplo: tarifa de logo 50 USD → ajuste la cantidad hasta que el checkout muestre 50 USD.\n\n• Nota importante:\nIgnore gastos de envío o cálculos automáticos en el checkout. Si el total final coincide con la tarifa de logo acordada, el pago es correcto y procesaremos su pedido personalizado manualmente.\n\n¡Gracias por su confianza!"
     }
   }
 }

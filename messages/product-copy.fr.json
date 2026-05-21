@@ -147,6 +147,16 @@
       "shortDescription": "Ajustement de prix uniquement. NE commandez PAS avant de nous contacter. Les commandes non autorisées seront annulées ou non expédiées.",
       "description": "",
       "highlights": []
+    },
+    "wholesale-price": {
+      "name": "Lien de paiement commande en gros",
+      "categoryLabel": "GROS · Lien de paiement",
+      "shortDescription": "Comment finaliser votre paiement :\n\n• Formule de prix :\nMontant total = valeur de tous les produits + frais d'expédition (international OU livraison nationale vers votre agent en Chine, selon accord).\n\n• Prix unitaire :\nCe lien est fixé à 1 USD par unité.\n\n• Comment commander :\nAjustez la « Quantité » pour que le total final corresponde au montant convenu (expédition incluse).\nExemple : total convenu 50 USD → ajustez la quantité jusqu'à ce que le checkout affiche 50 USD.\n\n• Note importante :\nIgnorez la ventilation des frais d'expédition ou produit au checkout. Tant que votre total final (montant payé) correspond au prix convenu, le paiement est correct et votre commande sera traitée manuellement.\n\nMerci pour votre confiance !"
+    },
+    "custom-logo-fee": {
+      "name": "Lien de paiement personnalisation de marque",
+      "categoryLabel": "Lien de paiement sur mesure",
+      "shortDescription": "Comment payer vos frais de logo personnalisé :\n\n• Formule de prix :\nMontant total = valeur de tous les produits + frais d'expédition (prix final tout compris convenu lors de notre échange).\n\n• Prix unitaire :\nCe lien est fixé à 1 USD par unité.\n\n• Comment commander :\nAjustez la « Quantité » pour que le total final corresponde aux frais de personnalisation convenus.\nExemple : frais de logo 50 USD → ajustez la quantité jusqu'à ce que le checkout affiche 50 USD.\n\n• Note importante :\nIgnorez les frais d'expédition ou calculs automatiques au checkout. Tant que votre total final correspond aux frais de logo convenus, le paiement est correct et votre commande personnalisée sera traitée manuellement.\n\nMerci pour votre confiance !"
     }
   }
 }

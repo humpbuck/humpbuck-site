@@ -147,6 +147,16 @@
       "shortDescription": "Alleen prijsaanpassing. Bestel NIET vóór contact met ons. Ongeautoriseerde bestellingen worden geannuleerd of niet verzonden.",
       "description": "",
       "highlights": []
+    },
+    "wholesale-price": {
+      "name": "Betaallink groothandelsbestelling",
+      "categoryLabel": "GROOTHANDEL · Betaallink",
+      "shortDescription": "Zo rondt u uw betaling af:\n\n• Prijsformule:\nTotaalbedrag = waarde van alle producten + verzendkosten (internationale verzending OF binnenlandse verzending naar uw agent in China, volgens afspraak).\n\n• Stukprijs:\nDeze link staat op 1 USD per eenheid.\n\n• Bestellen:\nPas de «Aantal» aan zodat het eindtotaal overeenkomt met ons afgesproken bedrag (inclusief verzending).\nVoorbeeld: afgesproken totaal 50 USD → pas het aantal aan tot de checkout 50 USD toont.\n\n• Belangrijke opmerking:\nNegeer de uitsplitsing van verzend- of productkosten bij het afrekenen. Zolang uw eindtotaal (betaald bedrag) overeenkomt met onze afgesproken prijs, is de betaling correct en wordt uw bestelling handmatig verwerkt.\n\nBedankt voor uw vertrouwen!"
+    },
+    "custom-logo-fee": {
+      "name": "Betaallink merkpersonalisatie",
+      "categoryLabel": "Aangepaste betaallink",
+      "shortDescription": "Zo betaalt u uw custom logo-kosten:\n\n• Prijsformule:\nTotaalbedrag = waarde van alle producten + verzendkosten (definitieve all-in prijs zoals afgesproken in ons gesprek).\n\n• Stukprijs:\nDeze link staat op 1 USD per eenheid.\n\n• Bestellen:\nPas de «Aantal» aan zodat het eindtotaal overeenkomt met onze afgesproken personalisatiekosten.\nVoorbeeld: logo-kosten 50 USD → pas het aantal aan tot de checkout 50 USD toont.\n\n• Belangrijke opmerking:\nNegeer verzendkosten of automatische berekeningen bij het afrekenen. Zolang uw eindtotaal overeenkomt met onze afgesproken logo-kosten, is de betaling correct en wordt uw maatwerkbestelling handmatig verwerkt.\n\nBedankt voor uw vertrouwen!"
     }
   }
 }

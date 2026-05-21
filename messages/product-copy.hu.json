@@ -147,6 +147,16 @@
       "shortDescription": "Csak árkorrekcióhoz. NE rendeljen, amíg fel nem vette velünk a kapcsolatot. Jogosulatlan rendelések törlésre kerülnek vagy nem kerülnek feladásra.",
       "description": "",
       "highlights": []
+    },
+    "wholesale-price": {
+      "name": "Nagykereskedelmi tömeges rendelés fizetési link",
+      "categoryLabel": "NAGYKER · Fizetési link",
+      "shortDescription": "Hogyan fejezze be a fizetést:\n\n• Árképlet:\nVégösszeg = az összes termék értéke + szállítási díj (nemzetközi szállítás VAGY belföldi szállítás kínai ügynökéhez, megállapodás szerint).\n\n• Egységár:\nEz a link 1 USD / egység.\n\n• Rendelés:\nÁllítsa a «Mennyiség» értékét úgy, hogy a végösszeg megegyezzen a megállapodott összeggel (szállítással együtt).\nPélda: megállapodott összeg 50 USD → állítsa a mennyiséget, amíg a pénztár 50 USD-ot mutat.\n\n• Fontos:\nHagyja figyelmen kívül a szállítási vagy termékdíj bontást a pénztárnál. Ha a végösszeg (ténylegesen fizetett összeg) megegyezik a megállapodott árral, a fizetés helyes, és a rendelést manuálisan dolgozzuk fel.\n\nKöszönjük a bizalmát!"
+    },
+    "custom-logo-fee": {
+      "name": "Márkapersonalizálás fizetési link",
+      "categoryLabel": "Egyedi fizetési link",
+      "shortDescription": "Hogyan fizesse ki az egyedi logó díját:\n\n• Árképlet:\nVégösszeg = az összes termék értéke + szállítási díj (a beszélgetésben megállapodott végleges, mindent tartalmazó ár).\n\n• Egységár:\nEz a link 1 USD / egység.\n\n• Rendelés:\nÁllítsa a «Mennyiség» értékét úgy, hogy a végösszeg megegyezzen a megállapodott testreszabási díjjal.\nPélda: logó díj 50 USD → állítsa a mennyiséget, amíg a pénztár 50 USD-ot mutat.\n\n• Fontos:\nHagyja figyelmen kívül a szállítási díjakat vagy automatikus számításokat a pénztárnál. Ha a végösszeg megegyezik a megállapodott logó díjjal, a fizetés helyes, és az egyedi rendelést manuálisan dolgozzuk fel.\n\nKöszönjük a bizalmát!"
     }
   }
 }

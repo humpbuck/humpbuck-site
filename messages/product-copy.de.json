@@ -147,6 +147,16 @@
       "shortDescription": "Nur Preisanpassung. Bitte NICHT bestellen, bevor Sie uns kontaktiert haben. Unbefugte Bestellungen werden storniert oder nicht versendet.",
       "description": "",
       "highlights": []
+    },
+    "wholesale-price": {
+      "name": "Großhandels-Sammelbestellung Zahlungslink",
+      "categoryLabel": "GROSSHANDEL · Zahlungslink",
+      "shortDescription": "So schließen Sie Ihre Zahlung ab:\n\n• Preisformel:\nGesamtbetrag = Warenwert aller Produkte + Versandkosten (internationaler Versand ODER Inlandsversand zu Ihrem China-Agenten, gemäß Vereinbarung).\n\n• Stückpreis:\nDieser Link ist auf 1 USD pro Einheit festgelegt.\n\n• Bestellung:\nBitte passen Sie die „Menge“ so an, dass der Endpreis unserem vereinbarten Gesamtbetrag (inkl. Versand) entspricht.\nBeispiel: Vereinbarter Gesamtbetrag 50 USD → Menge wählen, bis die Kasse 50 USD anzeigt.\n\n• Wichtiger Hinweis:\nBitte ignorieren Sie die Aufschlüsselung von Versand- oder Produktgebühren an der Kasse. Solange Ihr Gesamtbetrag (final bezahlt) unserem vereinbarten Preis entspricht, ist die Zahlung korrekt und Ihre Bestellung wird manuell bearbeitet.\n\nVielen Dank für Ihr Vertrauen!"
+    },
+    "custom-logo-fee": {
+      "name": "Markenanpassung Zahlungslink",
+      "categoryLabel": "Individueller Zahlungslink",
+      "shortDescription": "So zahlen Sie Ihre Custom-Logo-Gebühr:\n\n• Preisformel:\nGesamtbetrag = Warenwert aller Produkte + Versandkosten (Endpreis inklusive, wie in unserem Gespräch vereinbart).\n\n• Stückpreis:\nDieser Link ist auf 1 USD pro Einheit festgelegt.\n\n• Bestellung:\nBitte passen Sie die „Menge“ so an, dass der Endpreis unserer vereinbarten Anpassungsgebühr entspricht.\nBeispiel: Logo-Gebühr 50 USD → Menge wählen, bis die Kasse 50 USD anzeigt.\n\n• Wichtiger Hinweis:\nBitte ignorieren Sie Versandgebühren oder automatische Berechnungen an der Kasse. Solange Ihr Gesamtbetrag (final bezahlt) unserer vereinbarten Logo-Gebühr entspricht, ist die Zahlung korrekt und Ihre Sonderbestellung wird manuell bearbeitet.\n\nVielen Dank für Ihr Vertrauen!"
     }
   }
 }
