@@ -2,7 +2,7 @@ import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowLeft, Check } from "lucide-react";
-import { formatPrice, getSeriesBySlug } from "@/lib/catalog";
+import { formatPrice, normalizeSeriesSlug, resolveSeriesInfo } from "@/lib/catalog";
 import {
   getMergedCatalogProductBySlug,
   getMergedCatalogProducts,
@@ -80,13 +80,19 @@ export default async function ProductPage({
   if (!productRaw) notFound();
   const product = applyStorefrontProductLocale(productRaw, locale, messages);
 
-  const series = getSeriesBySlug(product.seriesSlug);
+  const series = product.seriesSlug.trim()
+    ? resolveSeriesInfo(product.seriesSlug, { heroImage: product.image })
+    : null;
   const localizedSeries = series
     ? getLocalizedSeriesFields(series, locale, messages)
     : null;
   const all = await getMergedCatalogProducts();
   const related = all
-    .filter((p) => p.slug !== product.slug && p.seriesSlug === product.seriesSlug)
+    .filter(
+      (p) =>
+        p.slug !== product.slug &&
+        normalizeSeriesSlug(p.seriesSlug) === normalizeSeriesSlug(product.seriesSlug),
+    )
     .map((p) => applyStorefrontProductLocale(p, locale, messages))
     .slice(0, 3);
 
@@ -128,9 +134,11 @@ export default async function ProductPage({
           />
 
           <div className="flex min-h-0 min-w-0 flex-col lg:h-full lg:min-h-0">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
-              {product.categoryLabel}
-            </div>
+            {product.categoryLabel.trim() && (
+              <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
+                {product.categoryLabel}
+              </div>
+            )}
             {series && localizedSeries && (
               <Link
                 href={`/series/${series.slug}`}

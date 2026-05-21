@@ -175,6 +175,7 @@ export const R2_GALLERY_SPECS_BY_SLUG: Record<string, R2GallerySpec> = {
   "rm-mx": { slugFolder: "RM-MX", filePrefix: "HUMPBUCK-RM-MX" },
   /** Same R2 folder as `rm-mx`; catalog slug is `rm-mx01`. */
   "rm-mx01": { slugFolder: "RM-MX", filePrefix: "HUMPBUCK-RM-MX" },
+  "wholesale-price": { slugFolder: "RM-MX", filePrefix: "HUMPBUCK-RM-MX" },
   "rd-excalibur01": {
     slugFolder: "RD-Excalibur01",
     filePrefix: "HUMPBUCK-RD-Excalibur01",

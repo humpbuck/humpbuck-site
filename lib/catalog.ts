@@ -2,10 +2,12 @@ import { R2 } from "@/lib/r2";
 import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
 import { SITE_LOCALE } from "@/lib/site-locale";
 
-export type SeriesSlug = "digitemp" | "tonneau" | "rd-astral";
+export type KnownSeriesSlug = "digitemp" | "tonneau" | "rd-astral";
+/** @deprecated Prefer plain `string`; kept for legacy call sites. */
+export type SeriesSlug = KnownSeriesSlug;
 
 export interface SeriesInfo {
-  slug: SeriesSlug;
+  slug: string;
   /** Display + SEO — use hyphenated series tokens consistently (e.g. DIGI-TEMP). */
   name: string;
   tagline: string;
@@ -27,7 +29,7 @@ export interface ProductVariantOption {
 export interface Product {
   slug: string;
   name: string;
-  seriesSlug: SeriesSlug;
+  seriesSlug: string;
   categoryLabel: string;
   shortDescription: string;
   description: string;
@@ -42,6 +44,25 @@ export interface Product {
   highlights: string[];
   specs: { label: string; value: string }[];
   inStock: boolean;
+}
+
+export function normalizeSeriesSlug(s: string): string {
+  return (
+    s
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+  );
+}
+
+export function humanizeSeriesSlug(slug: string): string {
+  return slug
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 /**
@@ -82,7 +103,49 @@ export const seriesList: SeriesInfo[] = [
  * Catalog product helper types remain for compatibility with database-mapped products.
  */
 export function getSeriesBySlug(slug: string): SeriesInfo | undefined {
-  return seriesList.find((s) => s.slug === slug);
+  const normalized = normalizeSeriesSlug(slug);
+  return seriesList.find((s) => s.slug === normalized);
+}
+
+/** Known series copy when present; otherwise a minimal storefront-safe fallback. */
+export function resolveSeriesInfo(
+  slug: string,
+  opts?: { heroImage?: string },
+): SeriesInfo {
+  const normalized = normalizeSeriesSlug(slug);
+  const known = getSeriesBySlug(normalized);
+  if (known) return known;
+  return {
+    slug: normalized,
+    name: humanizeSeriesSlug(normalized),
+    tagline: "",
+    description: "",
+    theme: "mixed",
+    heroImage: opts?.heroImage ?? R2.home.spaceshipWebp,
+  };
+}
+
+export function getShopSeriesFilters(
+  products: Product[],
+): Array<{ slug: string; name: string }> {
+  const slugs = new Set(
+    products.map((p) => normalizeSeriesSlug(p.seriesSlug)).filter(Boolean),
+  );
+  const out: Array<{ slug: string; name: string }> = [];
+  for (const series of seriesList) {
+    if (slugs.has(series.slug)) {
+      out.push({ slug: series.slug, name: series.name });
+      slugs.delete(series.slug);
+    }
+  }
+  for (const slug of [...slugs].sort((a, b) => a.localeCompare(b))) {
+    out.push({ slug, name: humanizeSeriesSlug(slug) });
+  }
+  return out;
+}
+
+export function isKnownSeriesSlug(slug: string): slug is KnownSeriesSlug {
+  return slug === "digitemp" || slug === "tonneau" || slug === "rd-astral";
 }
 
 /**
@@ -122,9 +185,12 @@ export async function getProductBySlug(slug: string): Promise<Product | undefine
   return getMergedCatalogProductBySlug(slug);
 }
 
-export async function getProductsBySeries(seriesSlug: SeriesSlug): Promise<Product[]> {
+export async function getProductsBySeries(seriesSlug: string): Promise<Product[]> {
+  const normalized = normalizeSeriesSlug(seriesSlug);
   const { getMergedCatalogProducts } = await import("@/lib/catalog-db");
-  return (await getMergedCatalogProducts()).filter((p) => p.seriesSlug === seriesSlug);
+  return (await getMergedCatalogProducts()).filter(
+    (p) => normalizeSeriesSlug(p.seriesSlug) === normalized,
+  );
 }
 
 export function resolveCatalogVariantId(product: Product, variantId?: string): string | undefined {

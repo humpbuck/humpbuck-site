@@ -16,7 +16,7 @@ import path from "node:path";
 import { loadEnvConfig } from "@next/env";
 import type { CatalogProduct } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
-import { type Product, type ProductVariantOption, type SeriesSlug } from "@/lib/catalog";
+import { type Product, type ProductVariantOption, normalizeSeriesSlug } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 
 loadEnvConfig(process.cwd());
@@ -24,11 +24,6 @@ loadEnvConfig(process.cwd());
 const prisma = new PrismaClient();
 
 type CatalogProductSnapshot = Omit<CatalogProduct, "id" | "createdAt" | "updatedAt">;
-
-function asSeriesSlug(value: string): SeriesSlug {
-  if (value === "digitemp" || value === "tonneau" || value === "rd-astral") return value;
-  return "digitemp";
-}
 
 function toJson<T>(value: T): string {
   return JSON.stringify(value);
@@ -55,7 +50,7 @@ async function upsertProduct(product: Product) {
   const data = {
     slug: product.slug,
     name: product.name,
-    seriesSlug: asSeriesSlug(product.seriesSlug),
+    seriesSlug: normalizeSeriesSlug(product.seriesSlug) || "digitemp",
     categoryLabel: product.categoryLabel,
     shortDescription: product.shortDescription,
     description: product.description,

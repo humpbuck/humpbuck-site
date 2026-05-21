@@ -417,20 +417,32 @@ export function ProductManager({
           body: JSON.stringify(payload),
         },
       );
-      const data = (await res.json()) as { ok?: boolean; id?: string; error?: string };
+      const data = (await res.json()) as {
+        ok?: boolean;
+        id?: string;
+        slug?: string;
+        error?: string;
+      };
       if (!res.ok) {
         setFlashMessage(data.error || "Save failed.", "error");
         return;
       }
+      const savedSlug = data.slug?.trim() || current.slug.trim();
       if (!current.id && data.id) {
         setProducts((prev) =>
           prev.map((p) => {
             if ((p.id ?? "__new__") !== "__new__") return p;
-            if (p.slug !== current.slug) return p;
-            return { ...p, id: data.id! };
+            if (p.slug !== current.slug && p.slug !== savedSlug) return p;
+            return { ...p, id: data.id!, slug: savedSlug };
           }),
         );
         setSelected(data.id);
+      } else if (current.id) {
+        setProducts((prev) =>
+          prev.map((p) =>
+            p.id === current.id ? { ...p, slug: savedSlug } : p,
+          ),
+        );
       }
       setFlashMessage("✅ Saved successfully.", "success");
       startTransition(() => router.refresh());
@@ -565,26 +577,44 @@ export function ProductManager({
               </p>
             )}
             <div className="grid gap-4 sm:grid-cols-2">
-              <LabeledInput
-                label="Slug"
-                value={current.slug}
-                onChange={(v) => updateCurrent((p) => ({ ...p, slug: v }))}
-              />
+              <div>
+                <LabeledInput
+                  label="Slug"
+                  value={current.slug}
+                  onChange={(v) => updateCurrent((p) => ({ ...p, slug: v }))}
+                />
+                <p className="mt-1 text-[11px] leading-relaxed text-muted">
+                  URL id for /product/your-slug. Lowercase letters, numbers, and hyphens only.
+                  Saving a new slug updates inventory and reviews; old order links keep the previous slug.
+                </p>
+              </div>
               <LabeledInput
                 label="Name"
                 value={current.name}
                 onChange={(v) => updateCurrent((p) => ({ ...p, name: v }))}
               />
-              <LabeledInput
-                label="Series slug"
-                value={current.seriesSlug}
-                onChange={(v) => updateCurrent((p) => ({ ...p, seriesSlug: v }))}
-              />
-              <LabeledInput
-                label="Category label"
-                value={current.categoryLabel}
-                onChange={(v) => updateCurrent((p) => ({ ...p, categoryLabel: v }))}
-              />
+              <div>
+                <LabeledInput
+                  label="Series slug"
+                  value={current.seriesSlug}
+                  onChange={(v) => updateCurrent((p) => ({ ...p, seriesSlug: v }))}
+                />
+                <p className="mt-1 text-[11px] leading-relaxed text-muted">
+                  Groups products in Shop filters and /series/your-series. Lowercase letters,
+                  numbers, and hyphens only.
+                </p>
+              </div>
+              <div>
+                <LabeledInput
+                  label="Category label"
+                  value={current.categoryLabel}
+                  onChange={(v) => updateCurrent((p) => ({ ...p, categoryLabel: v }))}
+                />
+                <p className="mt-1 text-[11px] leading-relaxed text-muted">
+                  Short line above the product title on the storefront (for example DIGI-TEMP ·
+                  Wholesale).
+                </p>
+              </div>
               <LabeledInput
                 label="Price (USD)"
                 value={current.price}

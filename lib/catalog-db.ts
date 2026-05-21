@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import type { Product, SeriesSlug } from "@/lib/catalog";
+import type { Product } from "@/lib/catalog";
+import { normalizeSeriesSlug } from "@/lib/catalog";
 
 type CatalogProductRow = {
   slug: string;
@@ -35,11 +36,6 @@ function parseArray<T>(raw: string | null | undefined, fallback: T[]): T[] {
   } catch {
     return fallback;
   }
-}
-
-function asSeriesSlug(v: string): SeriesSlug {
-  if (v === "digitemp" || v === "tonneau" || v === "rd-astral") return v;
-  return "digitemp";
 }
 
 /** Storefront has no bundled catalog; empty DB or failed query yields an empty list. */
@@ -84,8 +80,8 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
   return {
     slug: row.slug,
     name: row.name,
-    seriesSlug: asSeriesSlug(row.seriesSlug),
-    categoryLabel: row.categoryLabel,
+    seriesSlug: normalizeSeriesSlug(row.seriesSlug) || "digitemp",
+    categoryLabel: row.categoryLabel ?? "",
     shortDescription: row.shortDescription,
     description: row.description,
     price: Number.isFinite(row.price) ? row.price : 0,

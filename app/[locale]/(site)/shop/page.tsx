@@ -4,17 +4,14 @@ import { Link } from "@/i18n/navigation";
 import { ProductCard } from "@/components/site/ProductCard";
 import {
   getSeriesBySlug,
-  seriesList,
-  type SeriesSlug,
+  getShopSeriesFilters,
+  normalizeSeriesSlug,
 } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { routing } from "@/i18n/routing";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
-
-const slugOk = (s: string | undefined): s is SeriesSlug =>
-  s === "digitemp" || s === "tonneau" || s === "rd-astral";
 
 export async function generateMetadata({
   params,
@@ -51,11 +48,14 @@ export default async function ShopPage({
   const t = await getTranslations("Shop");
 
   const { series: seriesParam } = await searchParams;
-  const active = slugOk(seriesParam) ? seriesParam : null;
   const all = await getMergedCatalogProducts();
+  const seriesFilters = getShopSeriesFilters(all);
+  const filterSlugs = new Set(seriesFilters.map((s) => s.slug));
+  const requested = normalizeSeriesSlug(seriesParam ?? "");
+  const active = requested && filterSlugs.has(requested) ? requested : null;
   const messages = await getMessages({ locale });
   const list = (
-    active ? all.filter((p) => p.seriesSlug === active) : all
+    active ? all.filter((p) => normalizeSeriesSlug(p.seriesSlug) === active) : all
   ).map((p) => applyStorefrontProductLocale(p, locale, messages));
 
   const cardImages = await Promise.all(
@@ -63,6 +63,13 @@ export default async function ShopPage({
       getShopCardR2GalleryImage(p.slug, p.image, p.galleryImages ?? p.images),
     ),
   );
+
+  const activeSeriesLabel =
+    active != null
+      ? getSeriesBySlug(active)
+        ? getLocalizedSeriesFields(getSeriesBySlug(active)!, locale, messages).name
+        : seriesFilters.find((s) => s.slug === active)?.name ?? active
+      : null;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
@@ -78,8 +85,10 @@ export default async function ShopPage({
 
       <div className="mt-10 flex flex-wrap gap-2">
         <FilterPill href="/shop" active={active === null} label={t("filterAll")} />
-        {seriesList.map((s) => {
-          const label = getLocalizedSeriesFields(s, locale, messages).name;
+        {seriesFilters.map((s) => {
+          const label = getSeriesBySlug(s.slug)
+            ? getLocalizedSeriesFields(getSeriesBySlug(s.slug)!, locale, messages).name
+            : s.name;
           return (
             <FilterPill
               key={s.slug}
@@ -91,10 +100,10 @@ export default async function ShopPage({
         })}
       </div>
 
-      {active != null && (
+      {active != null && activeSeriesLabel && (
         <p className="mt-6 text-sm text-muted">
           {t("showingSeries", {
-            series: getLocalizedSeriesFields(getSeriesBySlug(active)!, locale, messages).name,
+            series: activeSeriesLabel,
             count: list.length,
           })}
         </p>

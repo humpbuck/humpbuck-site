@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
+import { isPrismaUniqueViolation, normalizeProductSlug } from "@/lib/admin-product-slug";
+import { normalizeSeriesSlug } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
 
 type ProductSpec = { label: string; value: string };
@@ -15,14 +17,7 @@ function asString(v: unknown, fallback = ""): string {
 }
 
 function normalizeSlug(s: string): string {
-  return (
-    s
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9-]/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/^-|-$/g, "") || "product"
-  );
+  return normalizeProductSlug(s);
 }
 
 function parseJsonArray<T>(raw: string | null | undefined, fallback: T[]): T[] {
@@ -104,12 +99,20 @@ export async function POST(req: Request) {
     : [];
 
   try {
+    const taken = await prisma.catalogProduct.findUnique({ where: { slug } });
+    if (taken) {
+      return NextResponse.json(
+        { error: `Slug "${slug}" is already used by another product.` },
+        { status: 409 },
+      );
+    }
+
     const created = await prisma.catalogProduct.create({
       data: {
         slug,
         name,
-        seriesSlug: asString(body.seriesSlug, "digitemp") || "digitemp",
-        categoryLabel: asString(body.categoryLabel, "Catalog"),
+        seriesSlug: normalizeSeriesSlug(asString(body.seriesSlug)) || "digitemp",
+        categoryLabel: asString(body.categoryLabel).trim(),
         shortDescription: asString(body.shortDescription),
         description: asString(body.description),
         price: Number(body.price) || 0,
@@ -178,8 +181,14 @@ export async function POST(req: Request) {
       await prisma.productInventory.delete({ where: { id: orphan.id } }).catch(() => null);
     }
 
-    return NextResponse.json({ ok: true, id: created.id });
+    return NextResponse.json({ ok: true, id: created.id, slug });
   } catch (e) {
+    if (isPrismaUniqueViolation(e)) {
+      return NextResponse.json(
+        { error: `Slug "${slug}" is already used by another product.` },
+        { status: 409 },
+      );
+    }
     const msg = e instanceof Error ? e.message : String(e);
     return NextResponse.json(
       { error: `Failed to save product: ${msg}` },

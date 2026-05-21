@@ -3,7 +3,7 @@ import { StorefrontImage } from "@/components/site/storefront-image";
 import { notFound } from "next/navigation";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { ProductCard } from "@/components/site/ProductCard";
-import { getSeriesBySlug, seriesList } from "@/lib/catalog";
+import { getSeriesBySlug, normalizeSeriesSlug, resolveSeriesInfo, seriesList } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { routing } from "@/i18n/routing";
@@ -27,8 +27,8 @@ export async function generateMetadata({
 }) {
   const { locale, slug } = await params;
   const t = await getTranslations({ locale, namespace: "Series" });
-  const s = getSeriesBySlug(slug);
-  if (!s) return { title: t("metaFallbackTitle") };
+  const s = resolveSeriesInfo(slug);
+  if (!normalizeSeriesSlug(slug)) return { title: t("metaFallbackTitle") };
   const messages = await getMessages({ locale });
   const localized = getLocalizedSeriesFields(s, locale, messages);
   const pathPrefix = locale === routing.defaultLocale ? "" : `/${locale}`;
@@ -58,16 +58,17 @@ export default async function SeriesPage({
   const { locale, slug } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("Series");
-  const series = getSeriesBySlug(slug);
-  if (!series) notFound();
-
   const messages = await getMessages({ locale });
-  const localizedSeries = getLocalizedSeriesFields(series, locale, messages);
+  const seriesKey = normalizeSeriesSlug(slug);
+  if (!seriesKey) notFound();
 
   const all = await getMergedCatalogProducts();
   const items = all
-    .filter((p) => p.seriesSlug === series.slug)
+    .filter((p) => normalizeSeriesSlug(p.seriesSlug) === seriesKey)
     .map((p) => applyStorefrontProductLocale(p, locale, messages));
+
+  const series = resolveSeriesInfo(seriesKey, { heroImage: items[0]?.image });
+  const localizedSeries = getLocalizedSeriesFields(series, locale, messages);
 
   const cardImages = await Promise.all(
     items.map((p) =>
@@ -104,10 +105,14 @@ export default async function SeriesPage({
           <h1 className="mt-4 max-w-3xl font-serif text-4xl tracking-tight sm:text-6xl">
             {localizedSeries.name}
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-white/75">{localizedSeries.tagline}</p>
-          <p className="mt-6 max-w-2xl text-sm leading-relaxed text-white/70">
-            {localizedSeries.description}
-          </p>
+          {localizedSeries.tagline ? (
+            <p className="mt-4 max-w-2xl text-lg text-white/75">{localizedSeries.tagline}</p>
+          ) : null}
+          {localizedSeries.description ? (
+            <p className="mt-6 max-w-2xl text-sm leading-relaxed text-white/70">
+              {localizedSeries.description}
+            </p>
+          ) : null}
           <div className="mt-10 flex flex-wrap gap-3">
             <Link
               href={`/shop?series=${series.slug}`}
