@@ -10,8 +10,8 @@ export default async function AdminWholesalePage() {
       <AdminBackLink href={adminPath()} label="Overview" />
       <h1 className="mt-4 font-serif text-3xl tracking-tight">Wholesale listings</h1>
       <p className="mt-2 max-w-2xl text-sm text-muted">
-        Manage products shown on the public wholesale page. Paste R2 links for images or videos
-        (one per line). Model number appears on the top-left of each card.
+        Manage products shown on the public wholesale page. Add one R2 link per field (image or
+        video). Model number appears on the top-left of each card. Five listings per page.
       </p>
       <div className="mt-6">
         <WholesaleListingManager initialRows={listings} />
