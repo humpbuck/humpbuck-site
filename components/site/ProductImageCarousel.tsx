@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ImageLightbox } from "@/components/site/image-lightbox";
 import { StorefrontImage } from "@/components/site/storefront-image";
 
 export function ProductImageCarousel({
@@ -15,6 +16,7 @@ export function ProductImageCarousel({
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const scrollTo = useCallback(
     (index: number) => {
@@ -65,9 +67,15 @@ export function ProductImageCarousel({
             className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {images.map((src, i) => (
-              <div
+              <button
                 key={`${i}-${src}`}
-                className="relative aspect-square w-full min-w-full shrink-0 snap-center"
+                type="button"
+                onClick={() => {
+                  setActive(i);
+                  setLightboxOpen(true);
+                }}
+                className="relative aspect-square w-full min-w-full shrink-0 cursor-zoom-in snap-center"
+                aria-label={`${alt} — view full size`}
               >
                 <StorefrontImage
                   src={src}
@@ -77,7 +85,7 @@ export function ProductImageCarousel({
                   sizes="(max-width:1024px) 100vw, 50vw"
                   priority={i === 0}
                 />
-              </div>
+              </button>
             ))}
           </div>
           {images.length > 1 && (
@@ -143,6 +151,13 @@ export function ProductImageCarousel({
           </div>
         </>
       )}
+
+      <ImageLightbox
+        src={images[active] ?? ""}
+        alt={`${alt} — ${active + 1}`}
+        open={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+      />
     </div>
   );
 }

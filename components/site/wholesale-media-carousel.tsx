@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ImageLightbox } from "@/components/site/image-lightbox";
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { WholesaleVideoPosterThumb } from "@/components/site/wholesale-video-poster-thumb";
 import {
@@ -13,10 +14,12 @@ function WholesaleMediaSlide({
   url,
   alt,
   priority,
+  onZoom,
 }: {
   url: string;
   alt: string;
   priority?: boolean;
+  onZoom?: () => void;
 }) {
   if (isWholesaleVideoUrl(url)) {
     return (
@@ -35,7 +38,12 @@ function WholesaleMediaSlide({
   }
 
   return (
-    <div className="relative aspect-square w-full min-w-full shrink-0 snap-center">
+    <button
+      type="button"
+      onClick={onZoom}
+      className="relative aspect-square w-full min-w-full shrink-0 cursor-zoom-in snap-center"
+      aria-label={`${alt} — view full size`}
+    >
       <StorefrontImage
         src={url}
         alt={alt}
@@ -44,7 +52,7 @@ function WholesaleMediaSlide({
         className="object-cover object-center"
         sizes="(max-width:1024px) 100vw, 560px"
       />
-    </div>
+    </button>
   );
 }
 
@@ -57,6 +65,7 @@ export function WholesaleMediaCarousel({
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const urls = useMemo(
     () => mediaUrls.map((x) => x.trim()).filter(Boolean),
     [mediaUrls],
@@ -110,6 +119,14 @@ export function WholesaleMediaCarousel({
                 url={src}
                 alt={`${alt} — ${i + 1}`}
                 priority={i === 0}
+                onZoom={
+                  isWholesaleVideoUrl(src)
+                    ? undefined
+                    : () => {
+                        setActive(i);
+                        setLightboxOpen(true);
+                      }
+                }
               />
             ))}
           </div>
@@ -181,6 +198,15 @@ export function WholesaleMediaCarousel({
             ))}
           </div>
         </>
+      ) : null}
+
+      {!isWholesaleVideoUrl(urls[active] ?? "") ? (
+        <ImageLightbox
+          src={urls[active] ?? ""}
+          alt={`${alt} — ${active + 1}`}
+          open={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+        />
       ) : null}
     </div>
   );
