@@ -19,7 +19,7 @@ const MIN_SCALE = 1;
 const MAX_SCALE = 4;
 const LIGHTBOX_HISTORY_KEY = "humpbuckLightbox";
 const TAP_CLOSE_DELAY_MS = 420;
-const INTERACTION_LOCK_MS = 700;
+const SCROLL_NAV_THRESHOLD_PX = 4;
 
 function clampPan(x: number, y: number, scale: number, width: number, height: number) {
   if (scale <= 1) return { x: 0, y: 0 };
@@ -35,8 +35,9 @@ function LightboxZoomSlide({
   src,
   alt,
   isActive,
-  allowTapCloseRef,
+  canTapCloseRef,
   suppressGhostClickRef,
+  onSlideTouchMoved,
   onTapAtBaseZoom,
   onTapResetPinchZoom,
   onZoomChange,
@@ -44,8 +45,9 @@ function LightboxZoomSlide({
   src: string;
   alt: string;
   isActive: boolean;
-  allowTapCloseRef: RefObject<boolean>;
+  canTapCloseRef: RefObject<() => boolean>;
   suppressGhostClickRef: RefObject<boolean>;
+  onSlideTouchMoved: () => void;
   onTapAtBaseZoom: () => void;
   onTapResetPinchZoom: () => void;
   onZoomChange: (zoomed: boolean) => void;
@@ -132,6 +134,7 @@ function LightboxZoomSlide({
         const t = e.touches[0];
         if (Math.hypot(t.clientX - touchRef.current.x, t.clientY - touchRef.current.y) > 8) {
           touchRef.current.moved = true;
+          onSlideTouchMoved();
         }
       }
     };
@@ -140,17 +143,8 @@ function LightboxZoomSlide({
     return () => el.removeEventListener("touchmove", onTouchMove);
   }, [applyTransform, isActive]);
 
-  const blockGhostClick = useCallback(() => {
-    suppressClickRef.current = true;
-    suppressGhostClickRef.current = true;
-    window.setTimeout(() => {
-      suppressClickRef.current = false;
-      suppressGhostClickRef.current = false;
-    }, INTERACTION_LOCK_MS);
-  }, [suppressGhostClickRef]);
-
   const handleTap = useCallback(() => {
-    if (!allowTapCloseRef.current || suppressGhostClickRef.current) return;
+    if (suppressGhostClickRef.current || !canTapCloseRef.current()) return;
     if (scaleRef.current > 1.02) {
       resetZoom();
       onTapResetPinchZoom();
@@ -158,7 +152,7 @@ function LightboxZoomSlide({
     }
     onTapAtBaseZoom();
   }, [
-    allowTapCloseRef,
+    canTapCloseRef,
     suppressGhostClickRef,
     onTapAtBaseZoom,
     onTapResetPinchZoom,
@@ -199,13 +193,13 @@ function LightboxZoomSlide({
     if (e.touches.length === 0) {
       const touch = touchRef.current;
       if (touch?.moved) {
-        blockGhostClick();
+        onSlideTouchMoved();
+        suppressClickRef.current = true;
+      } else if (touch && canTapCloseRef.current()) {
+        suppressClickRef.current = true;
+        handleTap();
       } else if (touch) {
         suppressClickRef.current = true;
-        window.setTimeout(() => {
-          suppressClickRef.current = false;
-        }, INTERACTION_LOCK_MS);
-        handleTap();
       }
       touchRef.current = null;
       if (scaleRef.current < 1.05) resetZoom();
@@ -264,17 +258,15 @@ export function ImageLightbox({
   onClose: () => void;
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const allowTapCloseRef = useRef(true);
   const suppressGhostClickRef = useRef(false);
-  const interactionLockRef = useRef(false);
-  const interactionLockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tapCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const gestureRef = useRef<{
+  const touchSessionRef = useRef<{
+    startScrollLeft: number;
     startX: number;
     startY: number;
-    startScrollLeft: number;
-    isSwipe: boolean;
+    navigated: boolean;
   } | null>(null);
+  const canTapCloseRef = useRef<() => boolean>(() => true);
   const suppressScrollRef = useRef(false);
   const prevOpenRef = useRef(false);
   const closedByPopRef = useRef(false);
@@ -314,47 +306,71 @@ export function ImageLightbox({
     }
   }, []);
 
-  const lockInteraction = useCallback(() => {
-    interactionLockRef.current = true;
-    allowTapCloseRef.current = false;
-    suppressGhostClickRef.current = true;
-    cancelTapClose();
-    if (gestureRef.current) gestureRef.current.isSwipe = true;
-    if (interactionLockTimerRef.current) clearTimeout(interactionLockTimerRef.current);
-    interactionLockTimerRef.current = setTimeout(() => {
-      interactionLockRef.current = false;
-      allowTapCloseRef.current = true;
+  const didNavigateThisSession = useCallback(() => {
+    const session = touchSessionRef.current;
+    const el = scrollerRef.current;
+    if (!session) return false;
+    if (session.navigated) return true;
+    if (el && Math.abs(el.scrollLeft - session.startScrollLeft) > SCROLL_NAV_THRESHOLD_PX) {
+      return true;
+    }
+    return false;
+  }, []);
+
+  canTapCloseRef.current = () => !slideZoomed && !didNavigateThisSession();
+
+  const beginTouchSession = useCallback(
+    (startScrollLeft: number, startX: number, startY: number) => {
+      touchSessionRef.current = { startScrollLeft, startX, startY, navigated: false };
       suppressGhostClickRef.current = false;
-      if (gestureRef.current) gestureRef.current.isSwipe = false;
-      interactionLockTimerRef.current = null;
-    }, INTERACTION_LOCK_MS);
+      cancelTapClose();
+    },
+    [cancelTapClose],
+  );
+
+  const endTouchSession = useCallback(() => {
+    const session = touchSessionRef.current;
+    if (session?.navigated) {
+      suppressGhostClickRef.current = true;
+    }
+    touchSessionRef.current = null;
+  }, []);
+
+  const markNavigated = useCallback(() => {
+    const el = scrollerRef.current;
+    if (touchSessionRef.current) {
+      touchSessionRef.current.navigated = true;
+    } else {
+      touchSessionRef.current = {
+        startScrollLeft: el?.scrollLeft ?? 0,
+        startX: 0,
+        startY: 0,
+        navigated: true,
+      };
+    }
+    cancelTapClose();
+    suppressGhostClickRef.current = true;
   }, [cancelTapClose]);
 
   const requestTapCloseAtBaseZoom = useCallback(() => {
-    if (!allowTapCloseRef.current || interactionLockRef.current) return;
+    if (!canTapCloseRef.current()) return;
     cancelTapClose();
+    const startScrollLeft =
+      touchSessionRef.current?.startScrollLeft ?? scrollerRef.current?.scrollLeft ?? 0;
     tapCloseTimerRef.current = setTimeout(() => {
       tapCloseTimerRef.current = null;
-      if (
-        !allowTapCloseRef.current ||
-        interactionLockRef.current ||
-        suppressGhostClickRef.current ||
-        slideZoomed
-      ) {
-        return;
-      }
+      if (slideZoomed || suppressGhostClickRef.current) return;
+      if (didNavigateThisSession()) return;
       const el = scrollerRef.current;
-      const g = gestureRef.current;
-      if (g?.isSwipe) return;
-      if (g && el && Math.abs(el.scrollLeft - g.startScrollLeft) > 4) return;
+      if (el && Math.abs(el.scrollLeft - startScrollLeft) > SCROLL_NAV_THRESHOLD_PX) return;
       onClose();
     }, TAP_CLOSE_DELAY_MS);
-  }, [cancelTapClose, onClose, slideZoomed]);
+  }, [cancelTapClose, onClose, slideZoomed, didNavigateThisSession]);
 
   const navigateTo = useCallback(
     (index: number, behavior: ScrollBehavior = "smooth") => {
       if (slideZoomed) return;
-      lockInteraction();
+      markNavigated();
       const el = scrollerRef.current;
       const n = images.length;
       if (!el || n === 0) return;
@@ -367,17 +383,16 @@ export function ImageLightbox({
         bumpControls();
       });
     },
-    [images.length, onIndexChange, bumpControls, lockInteraction, slideZoomed],
+    [images.length, onIndexChange, bumpControls, markNavigated, slideZoomed],
   );
 
   const onScroll = useCallback(() => {
     if (suppressScrollRef.current || slideZoomed) return;
     const el = scrollerRef.current;
     if (!el || images.length === 0) return;
-    const g = gestureRef.current;
-    if (g && Math.abs(el.scrollLeft - g.startScrollLeft) > 4) {
-      g.isSwipe = true;
-      lockInteraction();
+    const session = touchSessionRef.current;
+    if (session && Math.abs(el.scrollLeft - session.startScrollLeft) > SCROLL_NAV_THRESHOLD_PX) {
+      markNavigated();
     }
     cancelTapClose();
     const w = Math.max(el.clientWidth, 1);
@@ -386,7 +401,7 @@ export function ImageLightbox({
     setActive(next);
     onIndexChange?.(next);
     bumpControls();
-  }, [images.length, onIndexChange, bumpControls, slideZoomed, lockInteraction, cancelTapClose]);
+  }, [images.length, onIndexChange, bumpControls, slideZoomed, markNavigated, cancelTapClose]);
 
   useLayoutEffect(() => {
     if (!open) {
@@ -397,10 +412,8 @@ export function ImageLightbox({
       setActive(initialIndex);
       setControlsVisible(false);
       setSlideZoomed(false);
-      allowTapCloseRef.current = true;
       suppressGhostClickRef.current = false;
-      interactionLockRef.current = false;
-      gestureRef.current = null;
+      touchSessionRef.current = null;
       clearHideControlsTimer();
       cancelTapClose();
       const el = scrollerRef.current;
@@ -424,20 +437,16 @@ export function ImageLightbox({
     if (open) return;
     setControlsVisible(false);
     setSlideZoomed(false);
-    allowTapCloseRef.current = true;
     suppressGhostClickRef.current = false;
-    interactionLockRef.current = false;
-    gestureRef.current = null;
+    touchSessionRef.current = null;
     clearHideControlsTimer();
     cancelTapClose();
-    if (interactionLockTimerRef.current) clearTimeout(interactionLockTimerRef.current);
   }, [open, clearHideControlsTimer, cancelTapClose]);
 
   useEffect(
     () => () => {
       clearHideControlsTimer();
       cancelTapClose();
-      if (interactionLockTimerRef.current) clearTimeout(interactionLockTimerRef.current);
     },
     [clearHideControlsTimer, cancelTapClose],
   );
@@ -456,7 +465,6 @@ export function ImageLightbox({
     closedByPopRef.current = false;
     history.pushState({ [LIGHTBOX_HISTORY_KEY]: true }, "");
     const onPop = () => {
-      if (interactionLockRef.current) return;
       closedByPopRef.current = true;
       onClose();
     };
@@ -480,22 +488,24 @@ export function ImageLightbox({
       const target = e.target as HTMLElement;
       if (target.closest("[data-lightbox-nav]")) return;
       const t = e.touches[0];
-      gestureRef.current = {
-        startX: t.clientX,
-        startY: t.clientY,
-        startScrollLeft: el.scrollLeft,
-        isSwipe: false,
-      };
+      beginTouchSession(el.scrollLeft, t.clientX, t.clientY);
     };
 
     const onGestureMove = (e: TouchEvent) => {
-      const g = gestureRef.current;
-      if (!g || e.touches.length !== 1 || slideZoomed) return;
+      const session = touchSessionRef.current;
+      if (!session || e.touches.length !== 1 || slideZoomed) return;
       const t = e.touches[0];
-      if (Math.hypot(t.clientX - g.startX, t.clientY - g.startY) > 10) {
-        g.isSwipe = true;
-        lockInteraction();
+      if (Math.abs(el.scrollLeft - session.startScrollLeft) > SCROLL_NAV_THRESHOLD_PX) {
+        markNavigated();
+        return;
       }
+      if (Math.hypot(t.clientX - session.startX, t.clientY - session.startY) > 10) {
+        markNavigated();
+      }
+    };
+
+    const onGestureEnd = () => {
+      endTouchSession();
     };
 
     const onScrollEnd = () => {
@@ -504,15 +514,19 @@ export function ImageLightbox({
 
     el.addEventListener("touchstart", onGestureStart, { capture: true, passive: true });
     el.addEventListener("touchmove", onGestureMove, { capture: true, passive: true });
+    el.addEventListener("touchend", onGestureEnd, { capture: true, passive: true });
+    el.addEventListener("touchcancel", onGestureEnd, { capture: true, passive: true });
     el.addEventListener("scroll", onScroll, { passive: true });
     el.addEventListener("scrollend", onScrollEnd);
     return () => {
       el.removeEventListener("touchstart", onGestureStart, true);
       el.removeEventListener("touchmove", onGestureMove, true);
+      el.removeEventListener("touchend", onGestureEnd, true);
+      el.removeEventListener("touchcancel", onGestureEnd, true);
       el.removeEventListener("scroll", onScroll);
       el.removeEventListener("scrollend", onScrollEnd);
     };
-  }, [open, onScroll, scheduleHideControls, slideZoomed, lockInteraction]);
+  }, [open, onScroll, scheduleHideControls, slideZoomed, beginTouchSession, markNavigated, endTouchSession]);
 
   useEffect(() => {
     if (!open) return;
@@ -540,10 +554,9 @@ export function ImageLightbox({
     (e: ReactTouchEvent | ReactPointerEvent | ReactMouseEvent, index: number) => {
       e.preventDefault();
       e.stopPropagation();
-      lockInteraction();
       navigateTo(index);
     },
-    [lockInteraction, navigateTo],
+    [navigateTo],
   );
 
   const arrowClass = (side: "left" | "right") =>
@@ -579,8 +592,9 @@ export function ImageLightbox({
               src={src}
               alt={`${alt} — ${i + 1}`}
               isActive={active === i}
-              allowTapCloseRef={allowTapCloseRef}
+              canTapCloseRef={canTapCloseRef}
               suppressGhostClickRef={suppressGhostClickRef}
+              onSlideTouchMoved={markNavigated}
               onTapAtBaseZoom={requestTapCloseAtBaseZoom}
               onTapResetPinchZoom={() => setSlideZoomed(false)}
               onZoomChange={(zoomed) => {
