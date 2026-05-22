@@ -20,6 +20,8 @@ const MAX_SCALE = 4;
 const LIGHTBOX_HISTORY_KEY = "humpbuckLightbox";
 const TAP_CLOSE_DELAY_MS = 420;
 const SCROLL_NAV_THRESHOLD_PX = 4;
+const NAV_STRIP_MIN_PX = 56;
+const NAV_STRIP_WIDTH_RATIO = 0.15;
 
 function clampPan(x: number, y: number, scale: number, width: number, height: number) {
   if (scale <= 1) return { x: 0, y: 0 };
@@ -258,6 +260,7 @@ export function ImageLightbox({
   onClose: () => void;
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const suppressGhostClickRef = useRef(false);
   const tapCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const touchSessionRef = useRef<{
@@ -266,6 +269,7 @@ export function ImageLightbox({
     startY: number;
     navigated: boolean;
   } | null>(null);
+  const corridorTapRef = useRef<"left" | "right" | null>(null);
   const canTapCloseRef = useRef<() => boolean>(() => true);
   const suppressScrollRef = useRef(false);
   const prevOpenRef = useRef(false);
@@ -318,6 +322,24 @@ export function ImageLightbox({
   }, []);
 
   canTapCloseRef.current = () => !slideZoomed && !didNavigateThisSession();
+
+  const navStripWidth = useCallback(() => {
+    const width = containerRef.current?.clientWidth ?? 0;
+    return Math.max(NAV_STRIP_MIN_PX, width * NAV_STRIP_WIDTH_RATIO);
+  }, []);
+
+  const navSideAt = useCallback(
+    (clientX: number) => {
+      const box = containerRef.current?.getBoundingClientRect();
+      if (!box) return null;
+      const edge = navStripWidth();
+      const x = clientX - box.left;
+      if (x < edge) return "left";
+      if (x > box.width - edge) return "right";
+      return null;
+    },
+    [navStripWidth],
+  );
 
   const beginTouchSession = useCallback(
     (startScrollLeft: number, startX: number, startY: number) => {
@@ -414,6 +436,7 @@ export function ImageLightbox({
       setSlideZoomed(false);
       suppressGhostClickRef.current = false;
       touchSessionRef.current = null;
+      corridorTapRef.current = null;
       clearHideControlsTimer();
       cancelTapClose();
       const el = scrollerRef.current;
@@ -439,6 +462,7 @@ export function ImageLightbox({
     setSlideZoomed(false);
     suppressGhostClickRef.current = false;
     touchSessionRef.current = null;
+    corridorTapRef.current = null;
     clearHideControlsTimer();
     cancelTapClose();
   }, [open, clearHideControlsTimer, cancelTapClose]);
@@ -489,6 +513,13 @@ export function ImageLightbox({
       if (target.closest("[data-lightbox-nav]")) return;
       const t = e.touches[0];
       beginTouchSession(el.scrollLeft, t.clientX, t.clientY);
+      const side = navSideAt(t.clientX);
+      if (side) {
+        corridorTapRef.current = side;
+        markNavigated();
+      } else {
+        corridorTapRef.current = null;
+      }
     };
 
     const onGestureMove = (e: TouchEvent) => {
@@ -496,15 +527,26 @@ export function ImageLightbox({
       if (!session || e.touches.length !== 1 || slideZoomed) return;
       const t = e.touches[0];
       if (Math.abs(el.scrollLeft - session.startScrollLeft) > SCROLL_NAV_THRESHOLD_PX) {
+        corridorTapRef.current = null;
         markNavigated();
         return;
       }
       if (Math.hypot(t.clientX - session.startX, t.clientY - session.startY) > 10) {
+        corridorTapRef.current = null;
         markNavigated();
       }
     };
 
     const onGestureEnd = () => {
+      const side = corridorTapRef.current;
+      corridorTapRef.current = null;
+      const session = touchSessionRef.current;
+      const scrolled =
+        !!session &&
+        Math.abs(el.scrollLeft - session.startScrollLeft) > SCROLL_NAV_THRESHOLD_PX;
+      if (side && !slideZoomed && !scrolled) {
+        navigateTo(active + (side === "right" ? 1 : -1));
+      }
       endTouchSession();
     };
 
@@ -526,7 +568,18 @@ export function ImageLightbox({
       el.removeEventListener("scroll", onScroll);
       el.removeEventListener("scrollend", onScrollEnd);
     };
-  }, [open, onScroll, scheduleHideControls, slideZoomed, beginTouchSession, markNavigated, endTouchSession]);
+  }, [
+    open,
+    onScroll,
+    scheduleHideControls,
+    slideZoomed,
+    active,
+    beginTouchSession,
+    markNavigated,
+    endTouchSession,
+    navSideAt,
+    navigateTo,
+  ]);
 
   useEffect(() => {
     if (!open) return;
@@ -550,20 +603,29 @@ export function ImageLightbox({
     return () => window.removeEventListener("keydown", onKey, true);
   }, [open, onClose, active, images.length, navigateTo, slideZoomed]);
 
+  const onNavPointerDown = useCallback(
+    (e: ReactTouchEvent | ReactPointerEvent | ReactMouseEvent) => {
+      e.stopPropagation();
+      markNavigated();
+    },
+    [markNavigated],
+  );
+
   const onArrowActivate = useCallback(
     (e: ReactTouchEvent | ReactPointerEvent | ReactMouseEvent, index: number) => {
       e.preventDefault();
       e.stopPropagation();
+      corridorTapRef.current = null;
       navigateTo(index);
     },
     [navigateTo],
   );
 
+  const navStripWidthPx = navStripWidth();
+
   const arrowClass = (side: "left" | "right") =>
-    `absolute ${side === "left" ? "left-0" : "right-0"} top-1/2 z-30 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-ink/50 text-paper shadow-sm backdrop-blur-sm transition-opacity duration-300 hover:bg-ink/70 ${
-      controlsVisible
-        ? "pointer-events-auto opacity-100"
-        : "pointer-events-none opacity-0 [@media(hover:hover)]:group-hover/lightbox:pointer-events-auto [@media(hover:hover)]:group-hover/lightbox:opacity-100"
+    `absolute ${side === "left" ? "left-0" : "right-0"} top-0 z-30 flex h-full items-center justify-center text-paper transition-opacity duration-300 ${
+      controlsVisible ? "opacity-100" : "opacity-0 [@media(hover:hover)]:group-hover/lightbox:opacity-100"
     }`;
 
   if (!open || typeof document === "undefined" || images.length === 0) return null;
@@ -574,9 +636,16 @@ export function ImageLightbox({
       role="dialog"
       aria-modal="true"
       aria-label={alt}
-      onClick={onClose}
+      onClick={(e) => {
+        if (suppressGhostClickRef.current) {
+          e.stopPropagation();
+          return;
+        }
+        onClose();
+      }}
     >
       <div
+        ref={containerRef}
         className="group/lightbox relative h-[min(92vh,1200px)] w-[min(96vw,1200px)] max-w-full touch-auto overscroll-none"
         onClick={(e) => e.stopPropagation()}
       >
@@ -609,28 +678,40 @@ export function ImageLightbox({
             <button
               type="button"
               data-lightbox-nav=""
+              style={{ width: navStripWidthPx }}
+              onTouchStart={onNavPointerDown}
               onTouchEnd={(e) => onArrowActivate(e, active - 1)}
+              onPointerDown={onNavPointerDown}
               onPointerUp={(e) => {
                 if (e.pointerType === "touch") return;
                 onArrowActivate(e, active - 1);
               }}
+              onClick={(e) => onArrowActivate(e, active - 1)}
               className={arrowClass("left")}
               aria-label="Previous image"
             >
-              <ChevronLeft size={24} strokeWidth={2} />
+              <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-ink/50 shadow-sm backdrop-blur-sm">
+                <ChevronLeft size={24} strokeWidth={2} />
+              </span>
             </button>
             <button
               type="button"
               data-lightbox-nav=""
+              style={{ width: navStripWidthPx }}
+              onTouchStart={onNavPointerDown}
               onTouchEnd={(e) => onArrowActivate(e, active + 1)}
+              onPointerDown={onNavPointerDown}
               onPointerUp={(e) => {
                 if (e.pointerType === "touch") return;
                 onArrowActivate(e, active + 1);
               }}
+              onClick={(e) => onArrowActivate(e, active + 1)}
               className={arrowClass("right")}
               aria-label="Next image"
             >
-              <ChevronRight size={24} strokeWidth={2} />
+              <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-ink/50 shadow-sm backdrop-blur-sm">
+                <ChevronRight size={24} strokeWidth={2} />
+              </span>
             </button>
             <div
               className="pointer-events-none absolute bottom-0 left-0 right-0 flex justify-center gap-1.5 pb-1"
