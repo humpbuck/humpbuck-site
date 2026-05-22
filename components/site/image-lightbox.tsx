@@ -30,21 +30,32 @@ function LightboxZoomSlide({
   src,
   alt,
   isActive,
-  onTapClose,
+  onTapAtBaseZoom,
+  onTapResetPinchZoom,
   onZoomChange,
 }: {
   src: string;
   alt: string;
   isActive: boolean;
-  onTapClose: () => void;
+  /** Single tap at 1x — may close lightbox if the gesture was not a swipe. */
+  onTapAtBaseZoom: () => void;
+  /** Single tap while pinch-zoomed — reset to 1x and stay in lightbox. */
+  onTapResetPinchZoom: () => void;
   onZoomChange: (zoomed: boolean) => void;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const scaleRef = useRef(1);
   const translateRef = useRef({ x: 0, y: 0 });
   const pinchRef = useRef<{ dist: number; scale: number } | null>(null);
-  const panRef = useRef<{ x: number; y: number; tx: number; ty: number } | null>(null);
-  const tapRef = useRef<{ x: number; y: number; moved: boolean } | null>(null);
+  const touchRef = useRef<{
+    x: number;
+    y: number;
+    moved: boolean;
+    panning: boolean;
+    tx: number;
+    ty: number;
+  } | null>(null);
+  const suppressClickRef = useRef(false);
   const [transform, setTransform] = useState({ scale: 1, x: 0, y: 0 });
   const [isZoomed, setIsZoomed] = useState(false);
 
@@ -92,21 +103,28 @@ function LightboxZoomSlide({
         return;
       }
 
-      if (e.touches.length === 1 && panRef.current && scaleRef.current > 1) {
-        e.preventDefault();
+      if (e.touches.length === 1 && touchRef.current && scaleRef.current > 1) {
         const t = e.touches[0];
-        applyTransform(
-          scaleRef.current,
-          panRef.current.tx + (t.clientX - panRef.current.x),
-          panRef.current.ty + (t.clientY - panRef.current.y),
-        );
+        const touch = touchRef.current;
+        if (Math.hypot(t.clientX - touch.x, t.clientY - touch.y) > 8) {
+          touch.moved = true;
+          touch.panning = true;
+        }
+        if (touch.panning) {
+          e.preventDefault();
+          applyTransform(
+            scaleRef.current,
+            touch.tx + (t.clientX - touch.x),
+            touch.ty + (t.clientY - touch.y),
+          );
+        }
         return;
       }
 
-      if (e.touches.length === 1 && tapRef.current) {
+      if (e.touches.length === 1 && touchRef.current && scaleRef.current <= 1) {
         const t = e.touches[0];
-        if (Math.hypot(t.clientX - tapRef.current.x, t.clientY - tapRef.current.y) > 8) {
-          tapRef.current.moved = true;
+        if (Math.hypot(t.clientX - touchRef.current.x, t.clientY - touchRef.current.y) > 8) {
+          touchRef.current.moved = true;
         }
       }
     };
@@ -122,36 +140,52 @@ function LightboxZoomSlide({
         e.touches[0].clientY - e.touches[1].clientY,
       );
       pinchRef.current = { dist, scale: scaleRef.current };
-      panRef.current = null;
-      tapRef.current = null;
+      touchRef.current = null;
       return;
     }
 
     if (e.touches.length === 1) {
       const t = e.touches[0];
-      if (scaleRef.current > 1) {
-        panRef.current = {
-          x: t.clientX,
-          y: t.clientY,
-          tx: translateRef.current.x,
-          ty: translateRef.current.y,
-        };
-      } else {
-        tapRef.current = { x: t.clientX, y: t.clientY, moved: false };
-      }
+      touchRef.current = {
+        x: t.clientX,
+        y: t.clientY,
+        moved: false,
+        panning: false,
+        tx: translateRef.current.x,
+        ty: translateRef.current.y,
+      };
     }
   };
 
   const onTouchEnd = (e: ReactTouchEvent) => {
     if (e.touches.length < 2) pinchRef.current = null;
     if (e.touches.length === 0) {
-      panRef.current = null;
-      if (tapRef.current && !tapRef.current.moved && scaleRef.current <= 1.02) {
-        onTapClose();
+      const touch = touchRef.current;
+      if (touch && !touch.moved) {
+        suppressClickRef.current = true;
+        window.setTimeout(() => {
+          suppressClickRef.current = false;
+        }, 400);
+        if (scaleRef.current > 1.02) {
+          resetZoom();
+          onTapResetPinchZoom();
+        } else {
+          onTapAtBaseZoom();
+        }
       }
-      tapRef.current = null;
+      touchRef.current = null;
       if (scaleRef.current < 1.05) resetZoom();
     }
+  };
+
+  const onClick = () => {
+    if (suppressClickRef.current) return;
+    if (scaleRef.current > 1.02) {
+      resetZoom();
+      onTapResetPinchZoom();
+      return;
+    }
+    onTapAtBaseZoom();
   };
 
   return (
@@ -162,9 +196,7 @@ function LightboxZoomSlide({
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
       onTouchCancel={onTouchEnd}
-      onClick={() => {
-        if (scaleRef.current <= 1.02) onTapClose();
-      }}
+      onClick={onClick}
     >
       <div
         className="relative h-full w-full will-change-transform"
@@ -212,6 +244,7 @@ export function ImageLightbox({
   const prevOpenRef = useRef(false);
   const closedByPopRef = useRef(false);
   const hideControlsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tapCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [active, setActive] = useState(initialIndex);
   const [controlsVisible, setControlsVisible] = useState(false);
   const [slideZoomed, setSlideZoomed] = useState(false);
@@ -239,6 +272,14 @@ export function ImageLightbox({
     revealControls();
     scheduleHideControls();
   }, [revealControls, scheduleHideControls]);
+
+  const requestTapCloseAtBaseZoom = useCallback(() => {
+    if (tapCloseTimerRef.current) clearTimeout(tapCloseTimerRef.current);
+    tapCloseTimerRef.current = setTimeout(() => {
+      tapCloseTimerRef.current = null;
+      if (!draggingRef.current && !slideZoomed) onClose();
+    }, 150);
+  }, [onClose, slideZoomed]);
 
   const scrollTo = useCallback(
     (index: number, behavior: ScrollBehavior = "smooth") => {
@@ -304,7 +345,10 @@ export function ImageLightbox({
     clearHideControlsTimer();
   }, [open, clearHideControlsTimer]);
 
-  useEffect(() => () => clearHideControlsTimer(), [clearHideControlsTimer]);
+  useEffect(() => () => {
+    clearHideControlsTimer();
+    if (tapCloseTimerRef.current) clearTimeout(tapCloseTimerRef.current);
+  }, [clearHideControlsTimer]);
 
   useEffect(() => {
     if (!open) return;
@@ -337,21 +381,54 @@ export function ImageLightbox({
     if (!open) return;
     const el = scrollerRef.current;
     if (!el) return;
+
+    const markSwipe = () => {
+      draggingRef.current = true;
+      if (tapCloseTimerRef.current) {
+        clearTimeout(tapCloseTimerRef.current);
+        tapCloseTimerRef.current = null;
+      }
+    };
+
+    const onScrollerTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1 || slideZoomed) return;
+      const t = e.touches[0];
+      const start = { x: t.clientX, y: t.clientY };
+      const onMove = (moveEvent: TouchEvent) => {
+        if (moveEvent.touches.length !== 1) return;
+        const moved = Math.hypot(
+          moveEvent.touches[0].clientX - start.x,
+          moveEvent.touches[0].clientY - start.y,
+        );
+        if (moved > 8) markSwipe();
+      };
+      const onDone = () => {
+        el.removeEventListener("touchmove", onMove);
+        el.removeEventListener("touchend", onDone);
+        el.removeEventListener("touchcancel", onDone);
+      };
+      el.addEventListener("touchmove", onMove, { passive: true });
+      el.addEventListener("touchend", onDone);
+      el.addEventListener("touchcancel", onDone);
+    };
+
     const onScrollEnd = () => {
       window.setTimeout(() => {
         draggingRef.current = false;
-      }, 80);
+      }, 120);
       scheduleHideControls();
     };
     el.addEventListener("scroll", onScroll, { passive: true });
     el.addEventListener("scrollend", onScrollEnd);
     el.addEventListener("touchend", onScrollEnd);
+    el.addEventListener("touchstart", onScrollerTouchStart, { passive: true });
     return () => {
       el.removeEventListener("scroll", onScroll);
       el.removeEventListener("scrollend", onScrollEnd);
       el.removeEventListener("touchend", onScrollEnd);
+      el.removeEventListener("touchstart", onScrollerTouchStart);
     };
-  }, [open, onScroll, scheduleHideControls]);
+  }, [open, onScroll, scheduleHideControls, slideZoomed]);
 
   useEffect(() => {
     if (!open) return;
@@ -401,9 +478,8 @@ export function ImageLightbox({
               src={src}
               alt={`${alt} — ${i + 1}`}
               isActive={active === i}
-              onTapClose={() => {
-                if (!draggingRef.current && !slideZoomed) onClose();
-              }}
+              onTapAtBaseZoom={requestTapCloseAtBaseZoom}
+              onTapResetPinchZoom={() => setSlideZoomed(false)}
               onZoomChange={(zoomed) => {
                 if (active === i) setSlideZoomed(zoomed);
               }}
