@@ -37,7 +37,7 @@ function LightboxZoomSlide({
   src: string;
   alt: string;
   isActive: boolean;
-  /** Single tap at 1x — may close lightbox if the gesture was not a swipe. */
+  /** Single tap at 1x — close lightbox when not swiping. */
   onTapAtBaseZoom: () => void;
   /** Single tap while pinch-zoomed — reset to 1x and stay in lightbox. */
   onTapResetPinchZoom: () => void;
@@ -240,11 +240,11 @@ export function ImageLightbox({
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
+  const navigatingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const suppressScrollRef = useRef(false);
   const prevOpenRef = useRef(false);
   const closedByPopRef = useRef(false);
   const hideControlsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const tapCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [active, setActive] = useState(initialIndex);
   const [controlsVisible, setControlsVisible] = useState(false);
   const [slideZoomed, setSlideZoomed] = useState(false);
@@ -273,17 +273,25 @@ export function ImageLightbox({
     scheduleHideControls();
   }, [revealControls, scheduleHideControls]);
 
+  const markNavigating = useCallback(() => {
+    draggingRef.current = true;
+    if (navigatingTimerRef.current) clearTimeout(navigatingTimerRef.current);
+    navigatingTimerRef.current = setTimeout(() => {
+      draggingRef.current = false;
+      navigatingTimerRef.current = null;
+    }, 320);
+  }, []);
+
   const requestTapCloseAtBaseZoom = useCallback(() => {
-    if (tapCloseTimerRef.current) clearTimeout(tapCloseTimerRef.current);
-    tapCloseTimerRef.current = setTimeout(() => {
-      tapCloseTimerRef.current = null;
+    window.setTimeout(() => {
       if (!draggingRef.current && !slideZoomed) onClose();
-    }, 150);
+    }, 200);
   }, [onClose, slideZoomed]);
 
   const scrollTo = useCallback(
     (index: number, behavior: ScrollBehavior = "smooth") => {
       if (slideZoomed) return;
+      markNavigating();
       const el = scrollerRef.current;
       const n = images.length;
       if (!el || n === 0) return;
@@ -294,21 +302,22 @@ export function ImageLightbox({
       onIndexChange?.(i);
       bumpControls();
     },
-    [images.length, onIndexChange, bumpControls, slideZoomed],
+    [images.length, onIndexChange, bumpControls, slideZoomed, markNavigating],
   );
 
   const onScroll = useCallback(() => {
     if (suppressScrollRef.current || slideZoomed) return;
+    markNavigating();
     const el = scrollerRef.current;
     if (!el || images.length === 0) return;
-    draggingRef.current = true;
+    markNavigating();
     const w = Math.max(el.clientWidth, 1);
     const i = Math.round(el.scrollLeft / w);
     const next = Math.min(i, images.length - 1);
     setActive(next);
     onIndexChange?.(next);
     bumpControls();
-  }, [images.length, onIndexChange, bumpControls, slideZoomed]);
+  }, [images.length, onIndexChange, bumpControls, slideZoomed, markNavigating]);
 
   useLayoutEffect(() => {
     if (!open) {
@@ -347,7 +356,7 @@ export function ImageLightbox({
 
   useEffect(() => () => {
     clearHideControlsTimer();
-    if (tapCloseTimerRef.current) clearTimeout(tapCloseTimerRef.current);
+    if (navigatingTimerRef.current) clearTimeout(navigatingTimerRef.current);
   }, [clearHideControlsTimer]);
 
   useEffect(() => {
@@ -383,11 +392,7 @@ export function ImageLightbox({
     if (!el) return;
 
     const markSwipe = () => {
-      draggingRef.current = true;
-      if (tapCloseTimerRef.current) {
-        clearTimeout(tapCloseTimerRef.current);
-        tapCloseTimerRef.current = null;
-      }
+      markNavigating();
     };
 
     const onScrollerTouchStart = (e: TouchEvent) => {
@@ -413,9 +418,6 @@ export function ImageLightbox({
     };
 
     const onScrollEnd = () => {
-      window.setTimeout(() => {
-        draggingRef.current = false;
-      }, 120);
       scheduleHideControls();
     };
     el.addEventListener("scroll", onScroll, { passive: true });
@@ -428,7 +430,7 @@ export function ImageLightbox({
       el.removeEventListener("touchend", onScrollEnd);
       el.removeEventListener("touchstart", onScrollerTouchStart);
     };
-  }, [open, onScroll, scheduleHideControls, slideZoomed]);
+  }, [open, onScroll, scheduleHideControls, slideZoomed, markNavigating]);
 
   useEffect(() => {
     if (!open) return;
@@ -491,7 +493,11 @@ export function ImageLightbox({
           <>
             <button
               type="button"
-              onClick={() => scrollTo(active - 1)}
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                scrollTo(active - 1);
+              }}
               className={`absolute left-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-ink/50 text-paper shadow-sm backdrop-blur-sm transition-opacity duration-300 hover:bg-ink/70 ${
                 controlsVisible
                   ? "pointer-events-auto opacity-100"
@@ -503,7 +509,11 @@ export function ImageLightbox({
             </button>
             <button
               type="button"
-              onClick={() => scrollTo(active + 1)}
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                scrollTo(active + 1);
+              }}
               className={`absolute right-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-ink/50 text-paper shadow-sm backdrop-blur-sm transition-opacity duration-300 hover:bg-ink/70 ${
                 controlsVisible
                   ? "pointer-events-auto opacity-100"
