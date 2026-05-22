@@ -815,7 +815,9 @@
     "listingsPrev": "Previous",
     "listingsNext": "Next",
     "listingsPage": "Page {page} of {total}",
-    "listingsModalFallbackTitle": "Wholesale model"
+    "listingsModalFallbackTitle": "Wholesale model",
+    "listingMetaTitle": "{model} · Wholesale | HUMPBUCK",
+    "listingWhatsappPrefill": "Hi, I'm interested in this wholesale item:\n\nModel: {model}\nPrice: {price}\n\n{description}\n\nPage: {url}"
   },
   "WholesaleForm": {
     "labelCompany": "Company / project name",

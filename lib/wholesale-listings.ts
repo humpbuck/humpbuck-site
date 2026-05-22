@@ -1,15 +1,24 @@
 import { prisma } from "@/lib/prisma";
 import {
+  isWholesaleListingSlugValid,
+  normalizeWholesaleListingSlug,
   parseMediaJson,
   type WholesaleListingInput,
   type WholesaleListingRow,
 } from "@/lib/wholesale-listing-shared";
 
 export type { WholesaleListingInput, WholesaleListingRow } from "@/lib/wholesale-listing-shared";
-export { isWholesaleVideoUrl, parseMediaJson } from "@/lib/wholesale-listing-shared";
+export {
+  isWholesaleListingSlugValid,
+  isWholesaleVideoUrl,
+  normalizeWholesaleListingSlug,
+  parseMediaJson,
+  wholesaleListingPublicPath,
+} from "@/lib/wholesale-listing-shared";
 
 function rowFromDb(row: {
   id: string;
+  slug: string;
   modelNumber: string;
   description: string;
   priceUsd: number;
@@ -21,6 +30,7 @@ function rowFromDb(row: {
 }): WholesaleListingRow {
   return {
     id: row.id,
+    slug: row.slug,
     modelNumber: row.modelNumber,
     description: row.description,
     priceUsd: row.priceUsd,
@@ -32,12 +42,29 @@ function rowFromDb(row: {
   };
 }
 
+export function cleanWholesaleListingSlug(input: string): string | null {
+  const slug = normalizeWholesaleListingSlug(input);
+  if (!isWholesaleListingSlugValid(slug)) return null;
+  return slug;
+}
+
 export async function listActiveWholesaleListings(): Promise<WholesaleListingRow[]> {
   const rows = await prisma.wholesaleListing.findMany({
     where: { status: "active" },
     orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }],
   });
   return rows.map(rowFromDb);
+}
+
+export async function getActiveWholesaleListingBySlug(
+  slug: string,
+): Promise<WholesaleListingRow | null> {
+  const cleaned = cleanWholesaleListingSlug(slug);
+  if (!cleaned) return null;
+  const row = await prisma.wholesaleListing.findFirst({
+    where: { slug: cleaned, status: "active" },
+  });
+  return row ? rowFromDb(row) : null;
 }
 
 export async function listWholesaleListingsAdmin(): Promise<WholesaleListingRow[]> {
@@ -60,15 +87,36 @@ function cleanMediaUrls(urls: string[]): string[] {
   return out.slice(0, 24);
 }
 
-export async function createWholesaleListing(input: WholesaleListingInput): Promise<WholesaleListingRow> {
+function prepareInput(input: WholesaleListingInput): WholesaleListingInput | null {
+  const slug = cleanWholesaleListingSlug(input.slug);
+  if (!slug) return null;
+  return {
+    slug,
+    modelNumber: input.modelNumber.trim().slice(0, 96),
+    description: input.description.trim().slice(0, 4000),
+    priceUsd: Number.isFinite(input.priceUsd) ? Math.max(0, input.priceUsd) : 0,
+    mediaUrls: cleanMediaUrls(input.mediaUrls),
+    status: input.status === "archived" ? "archived" : "active",
+    sortOrder: Number.isFinite(input.sortOrder) ? Math.round(input.sortOrder) : 0,
+  };
+}
+
+export async function createWholesaleListing(
+  input: WholesaleListingInput,
+): Promise<WholesaleListingRow> {
+  const data = prepareInput(input);
+  if (!data || data.mediaUrls.length === 0) {
+    throw new Error("INVALID_WHOLESALE_LISTING");
+  }
   const row = await prisma.wholesaleListing.create({
     data: {
-      modelNumber: input.modelNumber.trim().slice(0, 96),
-      description: input.description.trim().slice(0, 4000),
-      priceUsd: Number.isFinite(input.priceUsd) ? Math.max(0, input.priceUsd) : 0,
-      mediaJson: JSON.stringify(cleanMediaUrls(input.mediaUrls)),
-      status: input.status === "archived" ? "archived" : "active",
-      sortOrder: Number.isFinite(input.sortOrder) ? Math.round(input.sortOrder) : 0,
+      slug: data.slug,
+      modelNumber: data.modelNumber,
+      description: data.description,
+      priceUsd: data.priceUsd,
+      mediaJson: JSON.stringify(data.mediaUrls),
+      status: data.status,
+      sortOrder: data.sortOrder,
     },
   });
   return rowFromDb(row);
@@ -80,15 +128,20 @@ export async function updateWholesaleListing(
 ): Promise<WholesaleListingRow | null> {
   const existing = await prisma.wholesaleListing.findUnique({ where: { id } });
   if (!existing) return null;
+  const data = prepareInput(input);
+  if (!data || data.mediaUrls.length === 0) {
+    throw new Error("INVALID_WHOLESALE_LISTING");
+  }
   const row = await prisma.wholesaleListing.update({
     where: { id },
     data: {
-      modelNumber: input.modelNumber.trim().slice(0, 96),
-      description: input.description.trim().slice(0, 4000),
-      priceUsd: Number.isFinite(input.priceUsd) ? Math.max(0, input.priceUsd) : 0,
-      mediaJson: JSON.stringify(cleanMediaUrls(input.mediaUrls)),
-      status: input.status === "archived" ? "archived" : "active",
-      sortOrder: Number.isFinite(input.sortOrder) ? Math.round(input.sortOrder) : 0,
+      slug: data.slug,
+      modelNumber: data.modelNumber,
+      description: data.description,
+      priceUsd: data.priceUsd,
+      mediaJson: JSON.stringify(data.mediaUrls),
+      status: data.status,
+      sortOrder: data.sortOrder,
     },
   });
   return rowFromDb(row);

@@ -1,13 +1,18 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { CenterModal } from "@/components/ui/center-modal";
 import { formatPrice } from "@/lib/catalog";
 import type { WholesaleListingRow } from "@/lib/wholesale-listing-shared";
-import { isWholesaleVideoUrl } from "@/lib/wholesale-listing-shared";
+import {
+  isWholesaleVideoUrl,
+  wholesaleListingPosterUrl,
+} from "@/lib/wholesale-listing-shared";
 import { WholesaleMediaCarousel } from "@/components/site/wholesale-media-carousel";
+import { WholesaleListingInquiryActions } from "@/components/site/wholesale-listing-inquiry-actions";
+import { WholesaleVideoPosterThumb } from "@/components/site/wholesale-video-poster-thumb";
 
 const DESKTOP_PAGE_SIZE = 10;
 const MOBILE_PAGE_SIZE = 5;
@@ -26,22 +31,24 @@ function useWholesalePageSize(): number {
   return pageSize;
 }
 
-function ListingMediaThumb({ url, alt }: { url: string; alt: string }) {
+function ListingMediaThumb({
+  url,
+  alt,
+  posterUrl,
+}: {
+  url: string;
+  alt: string;
+  posterUrl: string | null;
+}) {
   if (isWholesaleVideoUrl(url)) {
     return (
-      <div className="relative aspect-square w-full overflow-hidden bg-ink/5">
-        <video
-          className="absolute inset-0 block h-full w-full object-cover"
-          muted
-          playsInline
-          preload="metadata"
-          aria-hidden
-        >
-          <source src={url} />
-        </video>
-        <span className="absolute bottom-2 right-2 rounded-full bg-ink/70 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-widest text-paper">
-          Video
-        </span>
+      <div className="relative aspect-square w-full overflow-hidden">
+        <WholesaleVideoPosterThumb
+          posterUrl={posterUrl}
+          videoUrl={url}
+          alt={alt}
+          sizes="(max-width:1023px) 100vw, 50vw"
+        />
       </div>
     );
   }
@@ -67,6 +74,7 @@ function WholesaleListingCard({
   onOpen: () => void;
 }) {
   const thumb = listing.mediaUrls[0] ?? "";
+  const posterUrl = wholesaleListingPosterUrl(listing.mediaUrls);
   const label = listing.modelNumber.trim() || "—";
 
   return (
@@ -82,7 +90,7 @@ function WholesaleListingCard({
           </div>
         ) : null}
         {thumb ? (
-          <ListingMediaThumb url={thumb} alt={label} />
+          <ListingMediaThumb url={thumb} alt={label} posterUrl={posterUrl} />
         ) : (
           <div className="aspect-square w-full bg-paper" />
         )}
@@ -106,19 +114,34 @@ function WholesaleListingCard({
 
 export function WholesaleListingsSection({
   listings,
+  initialOpenSlug,
 }: {
   listings: WholesaleListingRow[];
+  initialOpenSlug?: string;
 }) {
   const t = useTranslations("WholesalePage");
   const pageSize = useWholesalePageSize();
   const [page, setPage] = useState(1);
   const [activeListing, setActiveListing] = useState<WholesaleListingRow | null>(null);
+  const openedFromLinkRef = useRef(false);
 
   const totalPages = Math.max(1, Math.ceil(listings.length / pageSize));
 
   useEffect(() => {
     setPage((current) => Math.min(current, totalPages));
   }, [totalPages, pageSize]);
+
+  useEffect(() => {
+    if (!initialOpenSlug?.trim() || openedFromLinkRef.current) return;
+    const listing = listings.find((item) => item.slug === initialOpenSlug.trim());
+    if (!listing) return;
+    openedFromLinkRef.current = true;
+    const index = listings.findIndex((item) => item.id === listing.id);
+    if (index >= 0) {
+      setPage(Math.floor(index / pageSize) + 1);
+    }
+    setActiveListing(listing);
+  }, [initialOpenSlug, listings, pageSize]);
 
   const pageItems = useMemo(() => {
     const start = (page - 1) * pageSize;
@@ -202,6 +225,7 @@ export function WholesaleListingsSection({
               <p className="mt-5 text-2xl font-semibold tabular-nums text-ink">
                 {formatPrice(activeListing.priceUsd)}
               </p>
+              <WholesaleListingInquiryActions listing={activeListing} />
             </div>
           </div>
         </CenterModal>

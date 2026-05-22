@@ -2,6 +2,7 @@
 
 export type WholesaleListingRow = {
   id: string;
+  slug: string;
   modelNumber: string;
   description: string;
   priceUsd: number;
@@ -13,6 +14,7 @@ export type WholesaleListingRow = {
 };
 
 export type WholesaleListingInput = {
+  slug: string;
   modelNumber: string;
   description: string;
   priceUsd: number;
@@ -33,6 +35,36 @@ export function isWholesaleVideoUrl(url: string): boolean {
   } catch {
     return false;
   }
+}
+
+/** First image URL in a listing — used as the video slide / thumb poster. */
+export function wholesaleListingPosterUrl(mediaUrls: string[]): string | null {
+  for (const raw of mediaUrls) {
+    const url = raw.trim();
+    if (url && !isWholesaleVideoUrl(url)) return url;
+  }
+  return null;
+}
+
+/** Canonical wholesale listing slug: lowercase letters, digits, hyphens. */
+export function normalizeWholesaleListingSlug(s: string): string {
+  return (
+    s
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+  );
+}
+
+export function isWholesaleListingSlugValid(slug: string): boolean {
+  return /^[a-z0-9][a-z0-9-]{0,95}$/.test(slug);
+}
+
+export function wholesaleListingPublicPath(slug: string): string {
+  const s = slug.trim();
+  return `/wholesale/${encodeURIComponent(s)}`;
 }
 
 export function parseMediaJson(raw: string | null | undefined): string[] {

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { WholesaleListingRow } from "@/lib/wholesale-listing-shared";
+import { wholesaleListingPublicPath } from "@/lib/wholesale-listing-shared";
 
 const ADMIN_PAGE_SIZE = 5;
 
@@ -18,6 +19,7 @@ function mediaDraftSeed(urls: string[]): string[] {
 function emptyRow(sortOrder: number): DraftRow {
   return {
     id: `new-${Date.now()}`,
+    slug: "",
     modelNumber: "",
     description: "",
     priceUsd: 0,
@@ -98,6 +100,7 @@ export function WholesaleListingManager({
     setBusyId(row.id);
     setMessage("");
     const payload = {
+      slug: row.slug,
       modelNumber: row.modelNumber,
       description: row.description,
       priceUsd: row.priceUsd,
@@ -270,6 +273,21 @@ export function WholesaleListingManager({
                   </label>
                 </div>
               </div>
+              <label className="mt-4 block text-xs">
+                <span className="font-semibold uppercase tracking-widest text-muted">
+                  Slug (share link)
+                </span>
+                <input
+                  value={row.slug}
+                  onChange={(e) => patchRow(row.id, { slug: e.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-line px-3 py-2 font-mono text-sm"
+                  placeholder="model-001"
+                />
+                <p className="mt-1.5 break-all text-[11px] text-muted">
+                  https://www.humpbuck.com
+                  {wholesaleListingPublicPath(row.slug.trim() || "model-001")}
+                </p>
+              </label>
               <div className="mt-4 grid gap-4 lg:grid-cols-2">
                 <label className="block text-xs">
                   <span className="font-semibold uppercase tracking-widest text-muted">

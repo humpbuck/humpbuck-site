@@ -3,7 +3,11 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StorefrontImage } from "@/components/site/storefront-image";
-import { isWholesaleVideoUrl } from "@/lib/wholesale-listing-shared";
+import { WholesaleVideoPosterThumb } from "@/components/site/wholesale-video-poster-thumb";
+import {
+  isWholesaleVideoUrl,
+  wholesaleListingPosterUrl,
+} from "@/lib/wholesale-listing-shared";
 
 function WholesaleMediaSlide({
   url,
@@ -57,6 +61,7 @@ export function WholesaleMediaCarousel({
     () => mediaUrls.map((x) => x.trim()).filter(Boolean),
     [mediaUrls],
   );
+  const posterUrl = useMemo(() => wholesaleListingPosterUrl(urls), [urls]);
 
   const scrollTo = useCallback(
     (index: number) => {
@@ -147,9 +152,12 @@ export function WholesaleMediaCarousel({
                 aria-label={`View media ${i + 1}`}
               >
                 {isWholesaleVideoUrl(src) ? (
-                  <span className="flex h-full w-full items-center justify-center bg-ink/5 text-[10px] font-semibold uppercase tracking-widest text-muted">
-                    Video
-                  </span>
+                  <WholesaleVideoPosterThumb
+                    posterUrl={posterUrl}
+                    videoUrl={src}
+                    alt={`${alt} video`}
+                    sizes="64px"
+                  />
                 ) : (
                   <StorefrontImage
                     src={src}

@@ -33,15 +33,23 @@ function FieldLabel({
   );
 }
 
-export function ContactSupportForm({ onClose }: { onClose?: () => void }) {
+export function ContactSupportForm({
+  onClose,
+  defaultSubject = "",
+  defaultMessage = "",
+}: {
+  onClose?: () => void;
+  defaultSubject?: string;
+  defaultMessage?: string;
+}) {
   const t = useTranslations("ContactForm");
   const locale = useLocale();
   const pathname = usePathname();
   const supportEmail = publicSupportEmail();
 
   const [fromEmail, setFromEmail] = useState("");
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
+  const [subject, setSubject] = useState(defaultSubject);
+  const [message, setMessage] = useState(defaultMessage);
   const [website, setWebsite] = useState("");
   const [pageUrl, setPageUrl] = useState("");
   const [status, setStatus] = useState<Status>("idle");

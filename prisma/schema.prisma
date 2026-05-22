@@ -437,6 +437,7 @@ model VideoTutorial {
 
 model WholesaleListing {
   id          String   @id @default(cuid())
+  slug        String   @unique
   modelNumber String   @default("")
   description String   @default("")
   priceUsd    Float    @default(0)

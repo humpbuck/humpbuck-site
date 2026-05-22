@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { isPrismaUniqueViolation } from "@/lib/admin-product-slug";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import {
   deleteWholesaleListing,
   updateWholesaleListing,
+  type WholesaleListingInput,
 } from "@/lib/wholesale-listings";
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -14,6 +16,7 @@ export async function PATCH(req: Request, context: RouteContext) {
   }
   const { id } = await context.params;
   const body = (await req.json()) as {
+    slug?: string;
     modelNumber?: string;
     description?: string;
     priceUsd?: number;
@@ -24,10 +27,8 @@ export async function PATCH(req: Request, context: RouteContext) {
   const mediaUrls = Array.isArray(body.mediaUrls)
     ? body.mediaUrls.filter((x): x is string => typeof x === "string")
     : [];
-  if (mediaUrls.length === 0) {
-    return NextResponse.json({ error: "At least one media URL is required" }, { status: 400 });
-  }
-  const listing = await updateWholesaleListing(id, {
+  const payload: WholesaleListingInput = {
+    slug: (body.slug ?? "").trim(),
     modelNumber: (body.modelNumber ?? "").trim(),
     description: (body.description ?? "").trim(),
     priceUsd:
@@ -40,11 +41,31 @@ export async function PATCH(req: Request, context: RouteContext) {
       typeof body.sortOrder === "number" && Number.isFinite(body.sortOrder)
         ? body.sortOrder
         : 0,
-  });
-  if (!listing) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  };
+  try {
+    const listing = await updateWholesaleListing(id, payload);
+    if (!listing) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    return NextResponse.json({ listing });
+  } catch (error) {
+    if (error instanceof Error && error.message === "INVALID_WHOLESALE_LISTING") {
+      return NextResponse.json(
+        {
+          error:
+            "Slug must use lowercase letters, numbers, and hyphens (e.g. model-001). At least one media URL is required.",
+        },
+        { status: 400 },
+      );
+    }
+    if (isPrismaUniqueViolation(error)) {
+      return NextResponse.json(
+        { error: "This slug is already used by another listing." },
+        { status: 409 },
+      );
+    }
+    return NextResponse.json({ error: "Save failed" }, { status: 500 });
   }
-  return NextResponse.json({ listing });
 }
 
 export async function DELETE(_req: Request, context: RouteContext) {

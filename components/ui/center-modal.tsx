@@ -12,12 +12,15 @@ export function CenterModal({
   onClose,
   children,
   size = "default",
+  layer = "default",
 }: {
   title: string;
   onClose: () => void;
   children: ReactNode;
   /** `wide` for landscape forms (e.g. contact). */
   size?: "default" | "wide";
+  /** Stack above another open modal (e.g. contact from wholesale listing). */
+  layer?: "default" | "elevated";
 }) {
   const titleId = useId();
 
@@ -39,7 +42,9 @@ export function CenterModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/40 p-4"
+      className={`fixed inset-0 z-[100] flex items-center justify-center bg-ink/40 p-4 ${
+        layer === "elevated" ? "!z-[110]" : ""
+      }`.trim()}
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
