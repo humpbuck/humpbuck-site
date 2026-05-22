@@ -28,7 +28,33 @@ export function ImageLightbox({
   const draggingRef = useRef(false);
   const suppressScrollRef = useRef(false);
   const prevOpenRef = useRef(false);
+  const hideControlsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [active, setActive] = useState(initialIndex);
+  const [controlsVisible, setControlsVisible] = useState(false);
+
+  const clearHideControlsTimer = useCallback(() => {
+    if (hideControlsTimerRef.current) {
+      clearTimeout(hideControlsTimerRef.current);
+      hideControlsTimerRef.current = null;
+    }
+  }, []);
+
+  const scheduleHideControls = useCallback(() => {
+    clearHideControlsTimer();
+    hideControlsTimerRef.current = setTimeout(() => {
+      setControlsVisible(false);
+      hideControlsTimerRef.current = null;
+    }, 850);
+  }, [clearHideControlsTimer]);
+
+  const revealControls = useCallback(() => {
+    setControlsVisible(true);
+  }, []);
+
+  const bumpControls = useCallback(() => {
+    revealControls();
+    scheduleHideControls();
+  }, [revealControls, scheduleHideControls]);
 
   const scrollTo = useCallback(
     (index: number, behavior: ScrollBehavior = "smooth") => {
@@ -40,8 +66,9 @@ export function ImageLightbox({
       el.scrollTo({ left: i * w, behavior });
       setActive(i);
       onIndexChange?.(i);
+      bumpControls();
     },
-    [images.length, onIndexChange],
+    [images.length, onIndexChange, bumpControls],
   );
 
   const onScroll = useCallback(() => {
@@ -54,7 +81,8 @@ export function ImageLightbox({
     const next = Math.min(i, images.length - 1);
     setActive(next);
     onIndexChange?.(next);
-  }, [images.length, onIndexChange]);
+    bumpControls();
+  }, [images.length, onIndexChange, bumpControls]);
 
   useLayoutEffect(() => {
     if (!open) {
@@ -63,6 +91,8 @@ export function ImageLightbox({
     }
     if (!prevOpenRef.current) {
       setActive(initialIndex);
+      setControlsVisible(false);
+      clearHideControlsTimer();
       const el = scrollerRef.current;
       if (el) {
         suppressScrollRef.current = true;
@@ -75,18 +105,27 @@ export function ImageLightbox({
       }
     }
     prevOpenRef.current = open;
-  }, [open, initialIndex]);
+  }, [open, initialIndex, clearHideControlsTimer]);
+
+  useEffect(() => {
+    if (open) return;
+    setControlsVisible(false);
+    clearHideControlsTimer();
+  }, [open, clearHideControlsTimer]);
+
+  useEffect(() => () => clearHideControlsTimer(), [clearHideControlsTimer]);
 
   useEffect(() => {
     if (!open) return;
     const el = scrollerRef.current;
     if (!el) return;
-    el.addEventListener("scroll", onScroll, { passive: true });
     const onScrollEnd = () => {
       window.setTimeout(() => {
         draggingRef.current = false;
       }, 80);
+      scheduleHideControls();
     };
+    el.addEventListener("scroll", onScroll, { passive: true });
     el.addEventListener("scrollend", onScrollEnd);
     el.addEventListener("touchend", onScrollEnd);
     return () => {
@@ -94,7 +133,7 @@ export function ImageLightbox({
       el.removeEventListener("scrollend", onScrollEnd);
       el.removeEventListener("touchend", onScrollEnd);
     };
-  }, [open, onScroll]);
+  }, [open, onScroll, scheduleHideControls]);
 
   useEffect(() => {
     if (!open) return;
@@ -129,7 +168,7 @@ export function ImageLightbox({
       onClick={onClose}
     >
       <div
-        className="relative h-[min(92vh,1200px)] w-[min(96vw,1200px)] max-w-full"
+        className="group/lightbox relative h-[min(92vh,1200px)] w-[min(96vw,1200px)] max-w-full"
         onClick={(e) => e.stopPropagation()}
       >
         <div
@@ -161,7 +200,11 @@ export function ImageLightbox({
             <button
               type="button"
               onClick={() => scrollTo(active - 1)}
-              className="absolute left-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-ink/50 text-paper shadow-sm backdrop-blur-sm transition hover:bg-ink/70"
+              className={`absolute left-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-ink/50 text-paper shadow-sm backdrop-blur-sm transition-opacity duration-300 hover:bg-ink/70 ${
+                controlsVisible
+                  ? "pointer-events-auto opacity-100"
+                  : "pointer-events-none opacity-0 [@media(hover:hover)]:group-hover/lightbox:pointer-events-auto [@media(hover:hover)]:group-hover/lightbox:opacity-100"
+              }`}
               aria-label="Previous image"
             >
               <ChevronLeft size={24} strokeWidth={2} />
@@ -169,7 +212,11 @@ export function ImageLightbox({
             <button
               type="button"
               onClick={() => scrollTo(active + 1)}
-              className="absolute right-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-ink/50 text-paper shadow-sm backdrop-blur-sm transition hover:bg-ink/70"
+              className={`absolute right-0 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-ink/50 text-paper shadow-sm backdrop-blur-sm transition-opacity duration-300 hover:bg-ink/70 ${
+                controlsVisible
+                  ? "pointer-events-auto opacity-100"
+                  : "pointer-events-none opacity-0 [@media(hover:hover)]:group-hover/lightbox:pointer-events-auto [@media(hover:hover)]:group-hover/lightbox:opacity-100"
+              }`}
               aria-label="Next image"
             >
               <ChevronRight size={24} strokeWidth={2} />
