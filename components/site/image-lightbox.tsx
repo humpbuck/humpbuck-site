@@ -241,6 +241,12 @@ export function ImageLightbox({
   const scrollerRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
   const navigatingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const gestureRef = useRef<{
+    startX: number;
+    startY: number;
+    startScrollLeft: number;
+    isSwipe: boolean;
+  } | null>(null);
   const suppressScrollRef = useRef(false);
   const prevOpenRef = useRef(false);
   const closedByPopRef = useRef(false);
@@ -279,13 +285,29 @@ export function ImageLightbox({
     navigatingTimerRef.current = setTimeout(() => {
       draggingRef.current = false;
       navigatingTimerRef.current = null;
-    }, 320);
+    }, 450);
   }, []);
+
+  const markGestureAsSwipe = useCallback(() => {
+    markNavigating();
+    if (gestureRef.current) {
+      gestureRef.current.isSwipe = true;
+      return;
+    }
+    gestureRef.current = {
+      startX: 0,
+      startY: 0,
+      startScrollLeft: scrollerRef.current?.scrollLeft ?? 0,
+      isSwipe: true,
+    };
+  }, [markNavigating]);
 
   const requestTapCloseAtBaseZoom = useCallback(() => {
     window.setTimeout(() => {
-      if (!draggingRef.current && !slideZoomed) onClose();
-    }, 200);
+      if (slideZoomed || draggingRef.current) return;
+      if (gestureRef.current?.isSwipe) return;
+      onClose();
+    }, 350);
   }, [onClose, slideZoomed]);
 
   const scrollTo = useCallback(
@@ -307,9 +329,12 @@ export function ImageLightbox({
 
   const onScroll = useCallback(() => {
     if (suppressScrollRef.current || slideZoomed) return;
-    markNavigating();
     const el = scrollerRef.current;
     if (!el || images.length === 0) return;
+    const g = gestureRef.current;
+    if (g && Math.abs(el.scrollLeft - g.startScrollLeft) > 4) {
+      g.isSwipe = true;
+    }
     markNavigating();
     const w = Math.max(el.clientWidth, 1);
     const i = Math.round(el.scrollLeft / w);
@@ -391,44 +416,42 @@ export function ImageLightbox({
     const el = scrollerRef.current;
     if (!el) return;
 
-    const markSwipe = () => {
-      markNavigating();
-    };
-
-    const onScrollerTouchStart = (e: TouchEvent) => {
+    const onGestureStart = (e: TouchEvent) => {
       if (e.touches.length !== 1 || slideZoomed) return;
       const t = e.touches[0];
-      const start = { x: t.clientX, y: t.clientY };
-      const onMove = (moveEvent: TouchEvent) => {
-        if (moveEvent.touches.length !== 1) return;
-        const moved = Math.hypot(
-          moveEvent.touches[0].clientX - start.x,
-          moveEvent.touches[0].clientY - start.y,
-        );
-        if (moved > 8) markSwipe();
+      gestureRef.current = {
+        startX: t.clientX,
+        startY: t.clientY,
+        startScrollLeft: el.scrollLeft,
+        isSwipe: false,
       };
-      const onDone = () => {
-        el.removeEventListener("touchmove", onMove);
-        el.removeEventListener("touchend", onDone);
-        el.removeEventListener("touchcancel", onDone);
-      };
-      el.addEventListener("touchmove", onMove, { passive: true });
-      el.addEventListener("touchend", onDone);
-      el.addEventListener("touchcancel", onDone);
+    };
+
+    const onGestureMove = (e: TouchEvent) => {
+      const g = gestureRef.current;
+      if (!g || e.touches.length !== 1 || slideZoomed) return;
+      const t = e.touches[0];
+      if (Math.hypot(t.clientX - g.startX, t.clientY - g.startY) > 10) {
+        g.isSwipe = true;
+        markNavigating();
+      }
     };
 
     const onScrollEnd = () => {
       scheduleHideControls();
     };
+
+    el.addEventListener("touchstart", onGestureStart, { capture: true, passive: true });
+    el.addEventListener("touchmove", onGestureMove, { capture: true, passive: true });
     el.addEventListener("scroll", onScroll, { passive: true });
     el.addEventListener("scrollend", onScrollEnd);
     el.addEventListener("touchend", onScrollEnd);
-    el.addEventListener("touchstart", onScrollerTouchStart, { passive: true });
     return () => {
+      el.removeEventListener("touchstart", onGestureStart, true);
+      el.removeEventListener("touchmove", onGestureMove, true);
       el.removeEventListener("scroll", onScroll);
       el.removeEventListener("scrollend", onScrollEnd);
       el.removeEventListener("touchend", onScrollEnd);
-      el.removeEventListener("touchstart", onScrollerTouchStart);
     };
   }, [open, onScroll, scheduleHideControls, slideZoomed, markNavigating]);
 
@@ -493,7 +516,10 @@ export function ImageLightbox({
           <>
             <button
               type="button"
-              onPointerDown={(e) => e.stopPropagation()}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                markGestureAsSwipe();
+              }}
               onClick={(e) => {
                 e.stopPropagation();
                 scrollTo(active - 1);
@@ -509,7 +535,10 @@ export function ImageLightbox({
             </button>
             <button
               type="button"
-              onPointerDown={(e) => e.stopPropagation()}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                markGestureAsSwipe();
+              }}
               onClick={(e) => {
                 e.stopPropagation();
                 scrollTo(active + 1);
