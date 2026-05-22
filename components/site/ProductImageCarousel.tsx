@@ -153,9 +153,17 @@ export function ProductImageCarousel({
       )}
 
       <ImageLightbox
-        src={images[active] ?? ""}
-        alt={`${alt} — ${active + 1}`}
+        images={images}
+        alt={alt}
+        initialIndex={active}
         open={lightboxOpen}
+        onIndexChange={(i) => {
+          setActive(i);
+          const el = scrollerRef.current;
+          if (!el) return;
+          const w = el.clientWidth;
+          el.scrollTo({ left: i * w, behavior: "auto" });
+        }}
         onClose={() => setLightboxOpen(false)}
       />
     </div>

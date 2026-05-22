@@ -71,6 +71,18 @@ export function WholesaleMediaCarousel({
     [mediaUrls],
   );
   const posterUrl = useMemo(() => wholesaleListingPosterUrl(urls), [urls]);
+  const imageSlideIndices = useMemo(
+    () =>
+      urls
+        .map((url, i) => (isWholesaleVideoUrl(url) ? -1 : i))
+        .filter((i) => i >= 0),
+    [urls],
+  );
+  const lightboxImages = useMemo(
+    () => imageSlideIndices.map((i) => urls[i]!),
+    [imageSlideIndices, urls],
+  );
+  const lightboxInitialIndex = Math.max(0, imageSlideIndices.indexOf(active));
 
   const scrollTo = useCallback(
     (index: number) => {
@@ -200,11 +212,21 @@ export function WholesaleMediaCarousel({
         </>
       ) : null}
 
-      {!isWholesaleVideoUrl(urls[active] ?? "") ? (
+      {lightboxOpen && lightboxImages.length > 0 ? (
         <ImageLightbox
-          src={urls[active] ?? ""}
-          alt={`${alt} — ${active + 1}`}
+          images={lightboxImages}
+          alt={alt}
+          initialIndex={lightboxInitialIndex}
           open={lightboxOpen}
+          onIndexChange={(i) => {
+            const carouselIndex = imageSlideIndices[i];
+            if (carouselIndex === undefined) return;
+            setActive(carouselIndex);
+            const el = scrollerRef.current;
+            if (!el) return;
+            const w = el.clientWidth;
+            el.scrollTo({ left: carouselIndex * w, behavior: "auto" });
+          }}
           onClose={() => setLightboxOpen(false)}
         />
       ) : null}
