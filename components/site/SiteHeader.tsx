@@ -19,6 +19,7 @@ const NAV_ITEMS = [
   { labelKey: "seriesTonneau", href: "/series/tonneau" },
   { labelKey: "seriesRdAstral", href: "/series/rd-astral" },
   { labelKey: "affiliates", href: "/affiliates" },
+  { labelKey: "wholesale", href: "/wholesale" },
   { labelKey: "videoTutorial", href: "/video-tutorial" },
   { labelKey: "about", href: "/about" },
 ] as const;

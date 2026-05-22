@@ -84,6 +84,9 @@ export default async function AdminProtectedLayout({
           <Link href={adminPath("/inventory")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
             PRODUCTS &amp; INVENTORY
           </Link>
+          <Link href={adminPath("/wholesale")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
+            WHOLESALE
+          </Link>
           <Link href={adminPath("/customers")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
             CUSTOMERS
           </Link>
@@ -99,6 +102,9 @@ export default async function AdminProtectedLayout({
               <ChevronDown className="h-3 w-3" />
             </button>
             <div className="pointer-events-none absolute right-0 top-6 z-20 hidden min-w-44 rounded-xl border border-line bg-white p-2 text-xs text-ink shadow-md group-hover:pointer-events-auto group-hover:block">
+              <Link href={adminPath("/wholesale")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
+                WHOLESALE
+              </Link>
               <Link href={adminPath("/affiliate")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
                 AFFILIATE
               </Link>
