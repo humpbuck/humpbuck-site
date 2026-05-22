@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { StorefrontImage } from "@/components/site/storefront-image";
 
@@ -26,6 +26,7 @@ export function ImageLightbox({
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
+  const suppressScrollRef = useRef(false);
   const prevOpenRef = useRef(false);
   const [active, setActive] = useState(initialIndex);
 
@@ -44,6 +45,7 @@ export function ImageLightbox({
   );
 
   const onScroll = useCallback(() => {
+    if (suppressScrollRef.current) return;
     const el = scrollerRef.current;
     if (!el || images.length === 0) return;
     draggingRef.current = true;
@@ -54,15 +56,23 @@ export function ImageLightbox({
     onIndexChange?.(next);
   }, [images.length, onIndexChange]);
 
-  useEffect(() => {
-    if (open && !prevOpenRef.current) {
+  useLayoutEffect(() => {
+    if (!open) {
+      prevOpenRef.current = false;
+      return;
+    }
+    if (!prevOpenRef.current) {
       setActive(initialIndex);
-      requestAnimationFrame(() => {
-        const el = scrollerRef.current;
-        if (!el) return;
+      const el = scrollerRef.current;
+      if (el) {
+        suppressScrollRef.current = true;
         const w = Math.max(el.clientWidth, 1);
-        el.scrollTo({ left: initialIndex * w, behavior: "auto" });
-      });
+        el.scrollLeft = initialIndex * w;
+        draggingRef.current = false;
+        requestAnimationFrame(() => {
+          suppressScrollRef.current = false;
+        });
+      }
     }
     prevOpenRef.current = open;
   }, [open, initialIndex]);
@@ -124,7 +134,7 @@ export function ImageLightbox({
       >
         <div
           ref={scrollerRef}
-          className="flex h-full w-full overflow-x-auto scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex h-full w-full overflow-x-auto snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {images.map((src, i) => (
             <div

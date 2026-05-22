@@ -4,6 +4,41 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ImageLightbox } from "@/components/site/image-lightbox";
 import { StorefrontImage } from "@/components/site/storefront-image";
+import { useTapWithoutDrag } from "@/components/site/use-tap-without-drag";
+
+function ProductImageZoomSlide({
+  src,
+  alt,
+  label,
+  priority,
+  onOpen,
+}: {
+  src: string;
+  alt: string;
+  label: string;
+  priority?: boolean;
+  onOpen: () => void;
+}) {
+  const tap = useTapWithoutDrag(onOpen);
+
+  return (
+    <button
+      type="button"
+      {...tap}
+      className="relative aspect-square w-full min-w-full shrink-0 cursor-zoom-in snap-center touch-pan-x"
+      aria-label={label}
+    >
+      <StorefrontImage
+        src={src}
+        alt={alt}
+        fill
+        className="pointer-events-none object-cover object-center"
+        sizes="(max-width:1024px) 100vw, 50vw"
+        priority={priority}
+      />
+    </button>
+  );
+}
 
 export function ProductImageCarousel({
   alt,
@@ -17,6 +52,7 @@ export function ProductImageCarousel({
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxStartIndex, setLightboxStartIndex] = useState(0);
 
   const scrollTo = useCallback(
     (index: number) => {
@@ -67,25 +103,18 @@ export function ProductImageCarousel({
             className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {images.map((src, i) => (
-              <button
+              <ProductImageZoomSlide
                 key={`${i}-${src}`}
-                type="button"
-                onClick={() => {
+                src={src}
+                alt={`${alt} — ${i + 1}`}
+                label={`${alt} — view full size`}
+                priority={i === 0}
+                onOpen={() => {
                   setActive(i);
+                  setLightboxStartIndex(i);
                   setLightboxOpen(true);
                 }}
-                className="relative aspect-square w-full min-w-full shrink-0 cursor-zoom-in snap-center"
-                aria-label={`${alt} — view full size`}
-              >
-                <StorefrontImage
-                  src={src}
-                  alt={`${alt} — ${i + 1}`}
-                  fill
-                  className="object-cover object-center"
-                  sizes="(max-width:1024px) 100vw, 50vw"
-                  priority={i === 0}
-                />
-              </button>
+              />
             ))}
           </div>
           {images.length > 1 && (
@@ -155,7 +184,7 @@ export function ProductImageCarousel({
       <ImageLightbox
         images={images}
         alt={alt}
-        initialIndex={active}
+        initialIndex={lightboxStartIndex}
         open={lightboxOpen}
         onIndexChange={(i) => {
           setActive(i);

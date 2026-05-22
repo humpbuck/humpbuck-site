@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ImageLightbox } from "@/components/site/image-lightbox";
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { WholesaleVideoPosterThumb } from "@/components/site/wholesale-video-poster-thumb";
+import { useTapWithoutDrag } from "@/components/site/use-tap-without-drag";
 import {
   isWholesaleVideoUrl,
   wholesaleListingPosterUrl,
@@ -38,10 +39,28 @@ function WholesaleMediaSlide({
   }
 
   return (
+    <ZoomImageSlide url={url} alt={alt} priority={priority} onZoom={onZoom} />
+  );
+}
+
+function ZoomImageSlide({
+  url,
+  alt,
+  priority,
+  onZoom,
+}: {
+  url: string;
+  alt: string;
+  priority?: boolean;
+  onZoom?: () => void;
+}) {
+  const tap = useTapWithoutDrag(() => onZoom?.());
+
+  return (
     <button
       type="button"
-      onClick={onZoom}
-      className="relative aspect-square w-full min-w-full shrink-0 cursor-zoom-in snap-center"
+      {...tap}
+      className="relative aspect-square w-full min-w-full shrink-0 cursor-zoom-in snap-center touch-pan-x"
       aria-label={`${alt} — view full size`}
     >
       <StorefrontImage
@@ -49,7 +68,7 @@ function WholesaleMediaSlide({
         alt={alt}
         fill
         priority={priority}
-        className="object-cover object-center"
+        className="pointer-events-none object-cover object-center"
         sizes="(max-width:1024px) 100vw, 560px"
       />
     </button>
@@ -66,6 +85,7 @@ export function WholesaleMediaCarousel({
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxStartIndex, setLightboxStartIndex] = useState(0);
   const urls = useMemo(
     () => mediaUrls.map((x) => x.trim()).filter(Boolean),
     [mediaUrls],
@@ -82,7 +102,17 @@ export function WholesaleMediaCarousel({
     () => imageSlideIndices.map((i) => urls[i]!),
     [imageSlideIndices, urls],
   );
-  const lightboxInitialIndex = Math.max(0, imageSlideIndices.indexOf(active));
+
+  const openLightboxAt = useCallback(
+    (carouselIndex: number) => {
+      const lightboxIndex = imageSlideIndices.indexOf(carouselIndex);
+      if (lightboxIndex < 0) return;
+      setActive(carouselIndex);
+      setLightboxStartIndex(lightboxIndex);
+      setLightboxOpen(true);
+    },
+    [imageSlideIndices],
+  );
 
   const scrollTo = useCallback(
     (index: number) => {
@@ -134,10 +164,7 @@ export function WholesaleMediaCarousel({
                 onZoom={
                   isWholesaleVideoUrl(src)
                     ? undefined
-                    : () => {
-                        setActive(i);
-                        setLightboxOpen(true);
-                      }
+                    : () => openLightboxAt(i)
                 }
               />
             ))}
@@ -216,7 +243,7 @@ export function WholesaleMediaCarousel({
         <ImageLightbox
           images={lightboxImages}
           alt={alt}
-          initialIndex={lightboxInitialIndex}
+          initialIndex={lightboxStartIndex}
           open={lightboxOpen}
           onIndexChange={(i) => {
             const carouselIndex = imageSlideIndices[i];
