@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { ArrowRight, Factory, Globe2, ShieldCheck, Sparkles } from "lucide-react";
 import { HeroSpaceVideo } from "@/components/site/HeroSpaceVideo";
 import { HomeFeaturedProductCard } from "@/components/site/home-featured-product-card";
+import { PreloadHomeSeriesImages } from "@/components/site/preload-home-series-images";
 import { NewsletterSubscribe } from "@/components/site/NewsletterSubscribe";
 import { ProductCard } from "@/components/site/ProductCard";
 import { routing } from "@/i18n/routing";
@@ -94,6 +95,7 @@ export default async function HomePage({
 
   return (
     <div>
+      {(tonneauFeatured || rdFeatured) ? <PreloadHomeSeriesImages /> : null}
       {/* Hero — HUMPBUCK DIGI-TEMP (SEO + conversion) */}
       <section className="relative border-b border-white/10 bg-[#070a10] text-white">
         <HeroSpaceVideo />
@@ -206,10 +208,7 @@ export default async function HomePage({
 
       {/* RM-TONNEAU & RD-ASTRAL — series hero cards (R2 series backgrounds) */}
       {(tonneauFeatured || rdFeatured) && (
-        <section
-          className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20"
-          style={deferredSectionStyle}
-        >
+        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20">
           <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
             {tonneauFeatured ? (
               <HomeFeaturedProductCard
@@ -223,6 +222,7 @@ export default async function HomePage({
                 compareAtPrice={tonneauFeatured.compareAtPrice}
                 ctaLabel={t("heroViewProduct")}
                 theme="luxe"
+                imageEager
               />
             ) : null}
             {rdFeatured ? (
@@ -237,6 +237,7 @@ export default async function HomePage({
                 compareAtPrice={rdFeatured.compareAtPrice}
                 ctaLabel={t("heroViewProduct")}
                 theme="mixed"
+                imageEager
               />
             ) : null}
           </div>

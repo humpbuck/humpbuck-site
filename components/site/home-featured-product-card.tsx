@@ -8,6 +8,7 @@ const themeStyles: Record<
   HomeFeaturedCardTheme,
   {
     card: string;
+    imageBackdrop: string;
     gradient: string;
     cta: string;
     focusOutline: string;
@@ -16,6 +17,7 @@ const themeStyles: Record<
 > = {
   digital: {
     card: "border-white/10 bg-[#070a10] shadow-glow-digital",
+    imageBackdrop: "bg-[#070a10]",
     gradient: "from-[#070a10] via-transparent to-transparent",
     cta: "bg-cyan-400/90 text-[#06252d] group-hover:bg-cyan-300",
     focusOutline: "focus-visible:outline-cyan-400/80",
@@ -23,6 +25,7 @@ const themeStyles: Record<
   },
   luxe: {
     card: "border-white/10 bg-[#141210] shadow-card",
+    imageBackdrop: "bg-[#141210]",
     gradient: "from-[#141210] via-black/25 to-transparent",
     cta: "bg-[color:var(--color-luxe)]/95 text-[#1a1306] group-hover:bg-[color:var(--color-luxe)]",
     focusOutline: "focus-visible:outline-[color:var(--color-luxe)]/80",
@@ -30,6 +33,7 @@ const themeStyles: Record<
   },
   mixed: {
     card: "border-white/10 bg-[#1a1224] shadow-card",
+    imageBackdrop: "bg-[#1a1224]",
     gradient: "from-[#1a1224] via-violet-950/35 to-transparent",
     cta: "bg-violet-400/90 text-[#1a0a2e] group-hover:bg-violet-300",
     focusOutline: "focus-visible:outline-violet-400/80",
@@ -49,6 +53,7 @@ export function HomeFeaturedProductCard({
   ctaLabel,
   theme = "digital",
   imagePriority = false,
+  imageEager = false,
 }: {
   href: string;
   imageSrc: string;
@@ -62,6 +67,8 @@ export function HomeFeaturedProductCard({
   ctaLabel: string;
   theme?: HomeFeaturedCardTheme;
   imagePriority?: boolean;
+  /** Eager decode when preloaded below the hero — avoids lazy wait on scroll. */
+  imageEager?: boolean;
 }) {
   const s = themeStyles[theme];
 
@@ -70,15 +77,17 @@ export function HomeFeaturedProductCard({
       href={href}
       className={`group relative block aspect-square overflow-hidden rounded-[24px] border transition outline-offset-4 focus-visible:outline-2 sm:rounded-[28px] ${s.card} ${s.focusOutline}`}
     >
+      <div className={`absolute inset-0 ${s.imageBackdrop}`} aria-hidden />
       <StorefrontImage
         src={imageSrc}
         alt={imageAlt}
         fill
         priority={imagePriority}
-        fetchPriority={imagePriority ? "high" : undefined}
+        loading={imagePriority || imageEager ? "eager" : undefined}
+        fetchPriority={imagePriority ? "high" : imageEager ? "low" : undefined}
         quality={72}
         className="object-cover object-center opacity-95 transition group-hover:opacity-100"
-        sizes="(max-width:1023px) 92vw, 50vw"
+        sizes="(max-width:640px) 100vw, (max-width:1023px) 92vw, 50vw"
       />
       <div className={`absolute inset-0 bg-linear-to-t ${s.gradient} opacity-55`} />
       <div className="pointer-events-none absolute left-5 top-5 z-10 max-w-[70%]">
