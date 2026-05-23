@@ -251,9 +251,9 @@
       "stateRequired": "O estado / província é obrigatório",
       "postalRequired": "O CEP / código postal é obrigatório",
       "countryRequired": "O país / região é obrigatório",
-      "postalInvalidFormat": "Enter a valid postcode / ZIP for the selected country",
-      "postalNotFound": "This US ZIP code was not found — check for typos",
-      "postalStateMismatch": "This ZIP code does not match the selected state / province"
+      "postalInvalidFormat": "Introduza um CEP / código postal válido para o país selecionado",
+      "postalNotFound": "CEP / código postal não encontrado — verifique erros de digitação",
+      "postalStateMismatch": "O CEP / código postal não corresponde ao estado / província selecionado"
     }
   },
   "CheckoutShipping": {

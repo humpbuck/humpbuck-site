@@ -251,9 +251,9 @@
       "stateRequired": "Укажите область / край",
       "postalRequired": "Укажите почтовый индекс",
       "countryRequired": "Укажите страну / регион",
-      "postalInvalidFormat": "Enter a valid postcode / ZIP for the selected country",
-      "postalNotFound": "This US ZIP code was not found — check for typos",
-      "postalStateMismatch": "This ZIP code does not match the selected state / province"
+      "postalInvalidFormat": "Введите действительный почтовый индекс для выбранной страны",
+      "postalNotFound": "Почтовый индекс не найден — проверьте опечатки",
+      "postalStateMismatch": "Почтовый индекс не соответствует выбранной области / провинции"
     }
   },
   "CheckoutShipping": {

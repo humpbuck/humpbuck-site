@@ -251,9 +251,9 @@
       "stateRequired": "מחוז / מדינה נדרשים",
       "postalRequired": "מיקוד נדרש",
       "countryRequired": "מדינה / אזור נדרשים",
-      "postalInvalidFormat": "Enter a valid postcode / ZIP for the selected country",
-      "postalNotFound": "This US ZIP code was not found — check for typos",
-      "postalStateMismatch": "This ZIP code does not match the selected state / province"
+      "postalInvalidFormat": "הזינו מיקוד תקין עבור המדינה / האזור שנבחר",
+      "postalNotFound": "מיקוד זה לא נמצא — בדקו שגיאות הקלדה",
+      "postalStateMismatch": "המיקוד אינו תואם למחוז / המדינה שנבחרו"
     }
   },
   "CheckoutShipping": {

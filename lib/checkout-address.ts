@@ -42,8 +42,8 @@ const CHECKOUT_ADDRESS_VALIDATION_EN: Record<
   postalRequired: "Postcode / ZIP is required",
   countryRequired: "Country / Region is required",
   postalInvalidFormat: "Enter a valid postcode / ZIP for the selected country",
-  postalNotFound: "This US ZIP code was not found — check for typos",
-  postalStateMismatch: "This ZIP code does not match the selected state / province",
+  postalNotFound: "This postcode / ZIP was not found — check for typos",
+  postalStateMismatch: "This postcode / ZIP does not match the selected state / province",
 };
 
 /** English message for API / server logs (storefront UI should use next-intl keys under `CheckoutAddress.validation`). */
