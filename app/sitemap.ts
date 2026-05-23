@@ -4,6 +4,8 @@ import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { routing } from "@/i18n/routing";
 import { storefrontLocalizedPath } from "@/lib/storefront-hreflang";
 import { getSiteUrl } from "@/lib/seo";
+import { listActiveWholesaleListings } from "@/lib/wholesale-listings";
+import { wholesaleListingPublicPath } from "@/lib/wholesale-listing-shared";
 
 /** Regenerate periodically so new PDP URLs appear without a full redeploy. */
 export const revalidate = 3600;
@@ -19,7 +21,7 @@ const STATIC_PATHS: {
     { path: "/about", changeFrequency: "monthly", priority: 0.7 },
     { path: "/affiliates", changeFrequency: "monthly", priority: 0.65 },
     { path: "/video-tutorial", changeFrequency: "monthly", priority: 0.65 },
-    { path: "/wholesale", changeFrequency: "monthly", priority: 0.65 },
+    { path: "/wholesale", changeFrequency: "daily", priority: 0.88 },
     { path: "/shipping", changeFrequency: "yearly", priority: 0.5 },
     { path: "/refund", changeFrequency: "yearly", priority: 0.5 },
     { path: "/terms", changeFrequency: "yearly", priority: 0.4 },
@@ -58,5 +60,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   );
 
-  return [...staticEntries, ...seriesEntries, ...productEntries];
+  const wholesaleListings = await listActiveWholesaleListings();
+  const wholesaleListingEntries: MetadataRoute.Sitemap = routing.locales.flatMap((locale) =>
+    wholesaleListings.map((listing) => ({
+      url: `${base}${storefrontLocalizedPath(wholesaleListingPublicPath(listing.slug), locale)}`,
+      lastModified: listing.updatedAt,
+      changeFrequency: "daily" as const,
+      priority: 0.82,
+    })),
+  );
+
+  return [...staticEntries, ...seriesEntries, ...productEntries, ...wholesaleListingEntries];
 }

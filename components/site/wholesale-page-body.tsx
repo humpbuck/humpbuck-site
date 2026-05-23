@@ -6,6 +6,7 @@ import {
   RefreshCw,
   Truck,
 } from "lucide-react";
+import { WholesaleIndexJsonLd } from "@/components/seo/wholesale-json-ld";
 import { WholesaleContactActions } from "@/components/site/wholesale-contact-actions";
 import { WholesaleListingsSection } from "@/components/site/wholesale-listings-section";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -46,7 +47,14 @@ export async function WholesalePageBody({
   ];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
+    <>
+      <WholesaleIndexJsonLd
+        locale={locale}
+        pageName={t("title")}
+        pageDescription={t("metaDescription")}
+        listings={listings}
+      />
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
       <div className="max-w-3xl">
         <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
           {t("kicker")}
@@ -95,5 +103,6 @@ export async function WholesalePageBody({
 
       <WholesaleListingsSection listings={listings} initialOpenSlug={initialOpenSlug} />
     </div>
+    </>
   );
 }
