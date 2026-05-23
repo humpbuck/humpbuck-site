@@ -1,67 +1,82 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ImageLightbox } from "@/components/site/image-lightbox";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+  type TouchEvent as ReactTouchEvent,
+} from "react";
+import { createPortal } from "react-dom";
 import { StorefrontImage } from "@/components/site/storefront-image";
-import { WholesaleVideoPosterThumb } from "@/components/site/wholesale-video-poster-thumb";
 import { useTapWithoutDrag } from "@/components/site/use-tap-without-drag";
+import { WholesaleVideoPosterThumb } from "@/components/site/wholesale-video-poster-thumb";
 import {
   isWholesaleVideoUrl,
   wholesaleListingPosterUrl,
 } from "@/lib/wholesale-listing-shared";
 
-function WholesaleMediaSlide({
-  url,
-  alt,
-  priority,
-  onZoom,
-}: {
-  url: string;
-  alt: string;
-  priority?: boolean;
-  onZoom?: () => void;
-}) {
-  if (isWholesaleVideoUrl(url)) {
-    return (
-      <div className="relative aspect-square w-full min-w-full shrink-0 snap-center bg-paper">
-        <video
-          className="absolute inset-0 block h-full w-full object-cover"
-          controls
-          playsInline
-          preload="metadata"
-          aria-label={alt}
-        >
-          <source src={url} />
-        </video>
-      </div>
-    );
-  }
+const BASE_SCALE = 1;
+const MAGNIFY_SCALE = 2;
+const MAX_PINCH_SCALE = 4;
+const PINCH_RATIO = 1.02;
+const SCROLL_NAV_THRESHOLD_PX = 4;
 
+/** cover = carousel | full = whole image + grey backdrop | magnify = 1x zoom | pinch = pinch beyond 1x */
+type ViewMode = "cover" | "full" | "magnify" | "pinch";
+
+function isPinchBeyondMagnify(scale: number) {
+  return scale > MAGNIFY_SCALE * PINCH_RATIO;
+}
+
+function clampPan(x: number, y: number, scale: number, width: number, height: number) {
+  if (scale <= 1) return { x: 0, y: 0 };
+  const maxX = ((scale - 1) * width) / 2;
+  const maxY = ((scale - 1) * height) / 2;
+  return {
+    x: Math.min(Math.max(x, -maxX), maxX),
+    y: Math.min(Math.max(y, -maxY), maxY),
+  };
+}
+
+function WholesaleVideoSlide({ url, alt }: { url: string; alt: string }) {
   return (
-    <ZoomImageSlide url={url} alt={alt} priority={priority} onZoom={onZoom} />
+    <div className="relative h-full w-full bg-paper">
+      <video
+        className="absolute inset-0 block h-full w-full object-cover"
+        controls
+        playsInline
+        preload="metadata"
+        aria-label={alt}
+      >
+        <source src={url} />
+      </video>
+    </div>
   );
 }
 
-function ZoomImageSlide({
+function WholesaleCoverImageSlide({
   url,
   alt,
   priority,
-  onZoom,
+  onOpenFull,
 }: {
   url: string;
   alt: string;
   priority?: boolean;
-  onZoom?: () => void;
+  onOpenFull: () => void;
 }) {
-  const tap = useTapWithoutDrag(() => onZoom?.());
+  const tap = useTapWithoutDrag(onOpenFull);
 
   return (
     <button
       type="button"
       {...tap}
-      className="relative aspect-square w-full min-w-full shrink-0 cursor-zoom-in snap-center touch-pan-x"
-      aria-label={`${alt} — view full size`}
+      className="relative h-full w-full cursor-zoom-in touch-pan-x"
+      aria-label={`${alt} — view full image`}
     >
       <StorefrontImage
         src={url}
@@ -75,6 +90,297 @@ function ZoomImageSlide({
   );
 }
 
+function WholesaleCenterLightbox({
+  images,
+  alt,
+  activeIndex,
+  mode,
+  onModeChange,
+  onIndexChange,
+  onClose,
+  suppressTapRef,
+  onInteraction,
+}: {
+  images: string[];
+  alt: string;
+  activeIndex: number;
+  mode: ViewMode;
+  onModeChange: (mode: ViewMode) => void;
+  onIndexChange: (index: number) => void;
+  onClose: () => void;
+  suppressTapRef: RefObject<boolean>;
+  onInteraction: () => void;
+}) {
+  const stageRef = useRef<HTMLDivElement>(null);
+  const scaleRef = useRef(BASE_SCALE);
+  const translateRef = useRef({ x: 0, y: 0 });
+  const pinchRef = useRef<{ dist: number; scale: number } | null>(null);
+  const touchRef = useRef<{
+    x: number;
+    y: number;
+    moved: boolean;
+    panning: boolean;
+    tx: number;
+    ty: number;
+  } | null>(null);
+  const suppressClickRef = useRef(false);
+  const steppedBackToFullRef = useRef(false);
+  const [transform, setTransform] = useState({ scale: BASE_SCALE, x: 0, y: 0 });
+
+  const url = images[activeIndex] ?? "";
+
+  const applyTransform = useCallback(
+    (scale: number, x: number, y: number) => {
+      const el = stageRef.current;
+      const width = el?.clientWidth ?? 0;
+      const height = el?.clientHeight ?? 0;
+      const minScale = mode === "full" ? BASE_SCALE : MAGNIFY_SCALE;
+      const nextScale = Math.min(Math.max(scale, minScale), MAX_PINCH_SCALE);
+      const pan = clampPan(x, y, nextScale, width, height);
+      scaleRef.current = nextScale;
+      translateRef.current = pan;
+      setTransform({ scale: nextScale, x: pan.x, y: pan.y });
+
+      if (isPinchBeyondMagnify(nextScale)) {
+        onModeChange("pinch");
+      } else if (nextScale >= MAGNIFY_SCALE * 0.98) {
+        onModeChange("magnify");
+      } else {
+        onModeChange("full");
+      }
+    },
+    [mode, onModeChange],
+  );
+
+  const resetTransformForMode = useCallback(
+    (nextMode: ViewMode) => {
+      if (nextMode === "full") {
+        scaleRef.current = BASE_SCALE;
+        translateRef.current = { x: 0, y: 0 };
+        setTransform({ scale: BASE_SCALE, x: 0, y: 0 });
+        return;
+      }
+      scaleRef.current = MAGNIFY_SCALE;
+      translateRef.current = { x: 0, y: 0 };
+      setTransform({ scale: MAGNIFY_SCALE, x: 0, y: 0 });
+    },
+    [],
+  );
+
+  useEffect(() => {
+    steppedBackToFullRef.current = false;
+    if (mode === "full") resetTransformForMode("full");
+    else if (mode === "magnify" || mode === "pinch") resetTransformForMode("magnify");
+  }, [activeIndex, mode, resetTransformForMode, url]);
+
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 2 && pinchRef.current) {
+        e.preventDefault();
+        onInteraction();
+        const dist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY,
+        );
+        applyTransform(
+          pinchRef.current.scale * (dist / pinchRef.current.dist),
+          translateRef.current.x,
+          translateRef.current.y,
+        );
+        return;
+      }
+
+      if (e.touches.length === 1 && touchRef.current && isPinchBeyondMagnify(scaleRef.current)) {
+        const t = e.touches[0];
+        const touch = touchRef.current;
+        if (Math.hypot(t.clientX - touch.x, t.clientY - touch.y) > 8) {
+          touch.moved = true;
+          touch.panning = true;
+          onInteraction();
+        }
+        if (touch.panning) {
+          e.preventDefault();
+          applyTransform(
+            scaleRef.current,
+            touch.tx + (t.clientX - touch.x),
+            touch.ty + (t.clientY - touch.y),
+          );
+        }
+      }
+    };
+
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    return () => el.removeEventListener("touchmove", onTouchMove);
+  }, [applyTransform, onInteraction]);
+
+  const handleImageTap = useCallback(() => {
+    if (suppressTapRef.current) return;
+    if (mode === "pinch" || isPinchBeyondMagnify(scaleRef.current)) {
+      resetTransformForMode("magnify");
+      onModeChange("magnify");
+      return;
+    }
+    if (mode === "magnify") {
+      resetTransformForMode("full");
+      steppedBackToFullRef.current = true;
+      onModeChange("full");
+      return;
+    }
+    if (mode === "full") {
+      if (steppedBackToFullRef.current) {
+        steppedBackToFullRef.current = false;
+        onClose();
+        return;
+      }
+      resetTransformForMode("magnify");
+      onModeChange("magnify");
+    }
+  }, [mode, onClose, onModeChange, resetTransformForMode, suppressTapRef]);
+
+  const onTouchStart = (e: ReactTouchEvent) => {
+    if (e.touches.length === 2) {
+      if (mode === "full") {
+        resetTransformForMode("magnify");
+        onModeChange("magnify");
+      }
+      onInteraction();
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY,
+      );
+      pinchRef.current = { dist, scale: scaleRef.current };
+      touchRef.current = null;
+      return;
+    }
+
+    if (e.touches.length === 1) {
+      const t = e.touches[0];
+      touchRef.current = {
+        x: t.clientX,
+        y: t.clientY,
+        moved: false,
+        panning: false,
+        tx: translateRef.current.x,
+        ty: translateRef.current.y,
+      };
+    }
+  };
+
+  const onTouchEnd = (e: ReactTouchEvent) => {
+    if (e.touches.length < 2) pinchRef.current = null;
+    if (e.touches.length === 0) {
+      const touch = touchRef.current;
+      if (touch?.moved) {
+        suppressClickRef.current = true;
+      } else if (touch) {
+        suppressClickRef.current = true;
+        handleImageTap();
+      }
+      touchRef.current = null;
+    }
+  };
+
+  const onImageClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (suppressClickRef.current || suppressTapRef.current) {
+      suppressClickRef.current = false;
+      return;
+    }
+    handleImageTap();
+  };
+
+  const onBackdropClick = () => {
+    if (suppressTapRef.current) return;
+    onClose();
+  };
+
+  const navigate = (index: number) => {
+    if (mode === "pinch") return;
+    steppedBackToFullRef.current = false;
+    onInteraction();
+    const n = images.length;
+    if (n === 0) return;
+    const i = ((index % n) + n) % n;
+    onIndexChange(i);
+    onModeChange("full");
+  };
+
+  const canNavigate = mode !== "pinch" && images.length > 1;
+  const isPinching = mode === "pinch" || isPinchBeyondMagnify(transform.scale);
+
+  if (mode === "cover" || !url || typeof document === "undefined") return null;
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[105] flex items-center justify-center bg-ink/72 p-4 backdrop-blur-[2px]"
+      role="dialog"
+      aria-modal="true"
+      aria-label={alt}
+      onClick={onBackdropClick}
+    >
+      <div
+        className="relative flex h-[min(88vh,900px)] w-[min(96vw,900px)] max-w-full items-center justify-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {canNavigate ? (
+          <>
+            <button
+              type="button"
+              onClick={() => navigate(activeIndex - 1)}
+              className="absolute left-0 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-ink/45 text-paper shadow-sm backdrop-blur-sm transition hover:bg-ink/60"
+              aria-label="Previous image"
+            >
+              <ChevronLeft size={24} strokeWidth={2} />
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(activeIndex + 1)}
+              className="absolute right-0 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-ink/45 text-paper shadow-sm backdrop-blur-sm transition hover:bg-ink/60"
+              aria-label="Next image"
+            >
+              <ChevronRight size={24} strokeWidth={2} />
+            </button>
+          </>
+        ) : null}
+
+        <div
+          ref={stageRef}
+          className={`relative h-full w-full max-h-full max-w-full ${
+            mode === "full" ? "cursor-zoom-in" : "cursor-zoom-out"
+          }`}
+          style={{ touchAction: isPinching ? "none" : "auto" }}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+          onTouchCancel={onTouchEnd}
+          onClick={onImageClick}
+        >
+          <div
+            className="relative mx-auto h-full w-full will-change-transform"
+            style={{
+              transform: `translate3d(${transform.x}px, ${transform.y}px, 0) scale(${transform.scale})`,
+              transformOrigin: "center center",
+            }}
+          >
+            <StorefrontImage
+              src={url}
+              alt={`${alt} — ${activeIndex + 1}`}
+              fill
+              draggable={false}
+              priority
+              className="pointer-events-none object-contain object-center select-none"
+              sizes="96vw"
+            />
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
 export function WholesaleMediaCarousel({
   alt,
   mediaUrls,
@@ -83,56 +389,130 @@ export function WholesaleMediaCarousel({
   mediaUrls: string[];
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const suppressTapRef = useRef(false);
+  const touchSessionRef = useRef<{ startScrollLeft: number } | null>(null);
+  const skipViewResetRef = useRef(false);
   const [active, setActive] = useState(0);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxStartIndex, setLightboxStartIndex] = useState(0);
+  const [viewMode, setViewMode] = useState<ViewMode>("cover");
+
   const urls = useMemo(
     () => mediaUrls.map((x) => x.trim()).filter(Boolean),
     [mediaUrls],
   );
-  const posterUrl = useMemo(() => wholesaleListingPosterUrl(urls), [urls]);
-  const imageSlideIndices = useMemo(
+  const imageUrls = useMemo(
+    () => urls.filter((url) => !isWholesaleVideoUrl(url)),
+    [urls],
+  );
+  const imageIndices = useMemo(
     () =>
       urls
         .map((url, i) => (isWholesaleVideoUrl(url) ? -1 : i))
         .filter((i) => i >= 0),
     [urls],
   );
-  const lightboxImages = useMemo(
-    () => imageSlideIndices.map((i) => urls[i]!),
-    [imageSlideIndices, urls],
+  const posterUrl = useMemo(() => wholesaleListingPosterUrl(urls), [urls]);
+  const urlsKey = useMemo(() => urls.join("\0"), [urls]);
+
+  const isLightboxOpen = viewMode !== "cover";
+  const canSwipeCarousel = viewMode === "cover";
+
+  const openFullAt = useCallback(
+    (index: number) => {
+      if (isWholesaleVideoUrl(urls[index] ?? "")) return;
+      setViewMode("full");
+      if (index !== active) {
+        skipViewResetRef.current = true;
+        setActive(index);
+        slideRefs.current[index]?.scrollIntoView({
+          behavior: "auto",
+          inline: "start",
+          block: "nearest",
+        });
+      }
+    },
+    [active, urls],
   );
 
-  const openLightboxAt = useCallback(
-    (carouselIndex: number) => {
-      const lightboxIndex = imageSlideIndices.indexOf(carouselIndex);
-      if (lightboxIndex < 0) return;
-      setActive(carouselIndex);
-      setLightboxStartIndex(lightboxIndex);
-      setLightboxOpen(true);
-    },
-    [imageSlideIndices],
-  );
+  const closeLightbox = useCallback(() => {
+    setViewMode("cover");
+  }, []);
 
   const scrollTo = useCallback(
-    (index: number) => {
-      const el = scrollerRef.current;
-      if (!el || urls.length === 0) return;
+    (index: number, behavior: ScrollBehavior = "smooth") => {
+      if (!canSwipeCarousel) return;
+      if (urls.length === 0) return;
       const i = ((index % urls.length) + urls.length) % urls.length;
-      const w = el.clientWidth;
-      el.scrollTo({ left: i * w, behavior: "smooth" });
+      slideRefs.current[i]?.scrollIntoView({
+        behavior,
+        inline: "start",
+        block: "nearest",
+      });
       setActive(i);
     },
-    [urls.length],
+    [canSwipeCarousel, urls.length],
   );
 
   const onScroll = useCallback(() => {
+    if (!canSwipeCarousel) return;
     const el = scrollerRef.current;
     if (!el || urls.length === 0) return;
+    const session = touchSessionRef.current;
+    if (session && Math.abs(el.scrollLeft - session.startScrollLeft) > SCROLL_NAV_THRESHOLD_PX) {
+      suppressTapRef.current = true;
+    }
     const w = Math.max(el.clientWidth, 1);
     const i = Math.round(el.scrollLeft / w);
-    setActive(Math.min(i, urls.length - 1));
-  }, [urls.length]);
+    const next = Math.min(Math.max(i, 0), urls.length - 1);
+    setActive((current) => (current === next ? current : next));
+  }, [canSwipeCarousel, urls.length]);
+
+  const onLightboxIndexChange = useCallback(
+    (imageIndex: number) => {
+      const carouselIndex = imageIndices[imageIndex];
+      if (carouselIndex === undefined) return;
+      skipViewResetRef.current = true;
+      setActive(carouselIndex);
+      slideRefs.current[carouselIndex]?.scrollIntoView({
+        behavior: "auto",
+        inline: "start",
+        block: "nearest",
+      });
+    },
+    [imageIndices],
+  );
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      setActive(0);
+      setViewMode("cover");
+      slideRefs.current[0]?.scrollIntoView({
+        behavior: "auto",
+        inline: "start",
+        block: "nearest",
+      });
+    });
+  }, [urlsKey]);
+
+  useEffect(() => {
+    if (skipViewResetRef.current) {
+      skipViewResetRef.current = false;
+      return;
+    }
+    if (viewMode === "pinch") setViewMode("magnify");
+  }, [active, viewMode]);
+
+  useEffect(() => {
+    if (!isLightboxOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        closeLightbox();
+      }
+    };
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [closeLightbox, isLightboxOpen]);
 
   useEffect(() => {
     const el = scrollerRef.current;
@@ -142,10 +522,36 @@ export function WholesaleMediaCarousel({
   }, [onScroll]);
 
   useEffect(() => {
-    queueMicrotask(() => setActive(0));
-  }, [urls.join("\0")]);
+    const el = scrollerRef.current;
+    if (!el || !canSwipeCarousel) return;
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      suppressTapRef.current = false;
+      touchSessionRef.current = { startScrollLeft: el.scrollLeft };
+    };
+
+    const onTouchEnd = () => {
+      touchSessionRef.current = null;
+      requestAnimationFrame(() => {
+        suppressTapRef.current = false;
+      });
+    };
+
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    el.addEventListener("touchcancel", onTouchEnd, { passive: true });
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchend", onTouchEnd);
+      el.removeEventListener("touchcancel", onTouchEnd);
+    };
+  }, [canSwipeCarousel]);
 
   if (urls.length === 0) return null;
+
+  const activeImageIndex = imageIndices.indexOf(active);
+  const lightboxImageIndex = activeImageIndex >= 0 ? activeImageIndex : 0;
 
   return (
     <div className="relative min-w-0 max-w-full">
@@ -153,36 +559,52 @@ export function WholesaleMediaCarousel({
         <div className="relative">
           <div
             ref={scrollerRef}
-            className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className={`flex scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+              canSwipeCarousel ? "overflow-x-auto" : "overflow-x-hidden"
+            }`}
           >
             {urls.map((src, i) => (
-              <WholesaleMediaSlide
+              <div
                 key={`${i}-${src}`}
-                url={src}
-                alt={`${alt} — ${i + 1}`}
-                priority={i === 0}
-                onZoom={
-                  isWholesaleVideoUrl(src)
-                    ? undefined
-                    : () => openLightboxAt(i)
-                }
-              />
+                ref={(node) => {
+                  slideRefs.current[i] = node;
+                }}
+                className="relative aspect-square w-full shrink-0 basis-full snap-start snap-always"
+              >
+                {isWholesaleVideoUrl(src) ? (
+                  <WholesaleVideoSlide url={src} alt={`${alt} — ${i + 1}`} />
+                ) : (
+                  <WholesaleCoverImageSlide
+                    url={src}
+                    alt={`${alt} — ${i + 1}`}
+                    priority={i === 0}
+                    onOpenFull={() => openFullAt(i)}
+                  />
+                )}
+              </div>
             ))}
           </div>
-          {urls.length > 1 ? (
+
+          {urls.length > 1 && viewMode === "cover" ? (
             <>
               <button
                 type="button"
-                onClick={() => scrollTo(active - 1)}
-                className="absolute left-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white/90 text-ink shadow-sm backdrop-blur-sm transition hover:bg-white"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  scrollTo(active - 1);
+                }}
+                className="absolute left-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white/90 text-ink shadow-sm backdrop-blur-sm transition hover:bg-white"
                 aria-label="Previous"
               >
                 <ChevronLeft size={22} strokeWidth={2} />
               </button>
               <button
                 type="button"
-                onClick={() => scrollTo(active + 1)}
-                className="absolute right-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white/90 text-ink shadow-sm backdrop-blur-sm transition hover:bg-white"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  scrollTo(active + 1);
+                }}
+                className="absolute right-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-white/90 text-ink shadow-sm backdrop-blur-sm transition hover:bg-white"
                 aria-label="Next"
               >
                 <ChevronRight size={22} strokeWidth={2} />
@@ -191,6 +613,18 @@ export function WholesaleMediaCarousel({
           ) : null}
         </div>
       </div>
+
+      <WholesaleCenterLightbox
+        images={imageUrls}
+        alt={alt}
+        activeIndex={lightboxImageIndex}
+        mode={viewMode}
+        onModeChange={setViewMode}
+        onIndexChange={onLightboxIndexChange}
+        onClose={closeLightbox}
+        suppressTapRef={suppressTapRef}
+        onInteraction={() => {}}
+      />
 
       {urls.length > 1 ? (
         <>
@@ -237,25 +671,6 @@ export function WholesaleMediaCarousel({
             ))}
           </div>
         </>
-      ) : null}
-
-      {lightboxOpen && lightboxImages.length > 0 ? (
-        <ImageLightbox
-          images={lightboxImages}
-          alt={alt}
-          initialIndex={lightboxStartIndex}
-          open={lightboxOpen}
-          onIndexChange={(i) => {
-            const carouselIndex = imageSlideIndices[i];
-            if (carouselIndex === undefined) return;
-            setActive(carouselIndex);
-            const el = scrollerRef.current;
-            if (!el) return;
-            const w = el.clientWidth;
-            el.scrollTo({ left: carouselIndex * w, behavior: "auto" });
-          }}
-          onClose={() => setLightboxOpen(false)}
-        />
       ) : null}
     </div>
   );
