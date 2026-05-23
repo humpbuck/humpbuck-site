@@ -4,6 +4,7 @@ import { getTranslations, getMessages, setRequestLocale } from "next-intl/server
 import { Link } from "@/i18n/navigation";
 import { ArrowRight, Factory, Globe2, ShieldCheck, Sparkles } from "lucide-react";
 import { HeroSpaceVideo } from "@/components/site/HeroSpaceVideo";
+import { HomeFeaturedProductCard } from "@/components/site/home-featured-product-card";
 import { NewsletterSubscribe } from "@/components/site/NewsletterSubscribe";
 import { ProductCard } from "@/components/site/ProductCard";
 import { routing } from "@/i18n/routing";
@@ -65,8 +66,16 @@ export default async function HomePage({
   const all = await getMergedCatalogProducts();
   const messages = await getMessages({ locale });
   const featured = [...all].slice(0, 12).map((p) => applyStorefrontProductLocale(p, locale, messages));
-  const tonneau = seriesList.find((s) => s.slug === "tonneau")!;
-  const rdAstral = seriesList.find((s) => s.slug === "rd-astral")!;
+  const tonneauFeaturedRaw = all.find((p) => p.seriesSlug === "tonneau") ?? null;
+  const rdFeaturedRaw = all.find((p) => p.seriesSlug === "rd-astral") ?? null;
+  const tonneauFeatured = tonneauFeaturedRaw
+    ? applyStorefrontProductLocale(tonneauFeaturedRaw, locale, messages)
+    : null;
+  const rdFeatured = rdFeaturedRaw
+    ? applyStorefrontProductLocale(rdFeaturedRaw, locale, messages)
+    : null;
+  const tonneauSeries = seriesList.find((s) => s.slug === "tonneau");
+  const rdAstralSeries = seriesList.find((s) => s.slug === "rd-astral");
   const heroFeaturedRaw =
     all.find((p) => p.slug === "digitemp-2301") ?? [...all].slice(0, 12)[0] ?? null;
   const heroFeatured = heroFeaturedRaw
@@ -78,8 +87,6 @@ export default async function HomePage({
     price: 0,
     compareAtPrice: undefined,
   };
-  const tonneauCount = all.filter((p) => p.seriesSlug === "tonneau").length;
-  const rdAstralCount = all.filter((p) => p.seriesSlug === "rd-astral").length;
   const deferredSectionStyle = {
     contentVisibility: "auto",
     containIntrinsicSize: "1000px",
@@ -197,97 +204,44 @@ export default async function HomePage({
         </div>
       </section>
 
-      {/* Series split */}
-      <section
-        className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20"
-        style={deferredSectionStyle}
-      >
-        <div className="grid gap-5 lg:grid-cols-2 lg:gap-7">
-          <Link
-            href="/series/tonneau"
-            className="group relative overflow-hidden rounded-3xl border border-line bg-[#141210] p-8 text-white shadow-card"
-          >
-            <div className="pointer-events-none absolute inset-0 opacity-40">
-              <StorefrontImage
-                src={tonneau.heroImage}
-                alt=""
-                fill
-                quality={66}
-                className="object-cover"
-                sizes="(max-width:1024px) 100vw, (max-width:1536px) 50vw, 720px"
+      {/* RM-TONNEAU & RD-ASTRAL — series hero cards (R2 series backgrounds) */}
+      {(tonneauFeatured || rdFeatured) && (
+        <section
+          className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20"
+          style={deferredSectionStyle}
+        >
+          <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+            {tonneauFeatured ? (
+              <HomeFeaturedProductCard
+                href="/series/tonneau"
+                imageSrc={R2.home.rmTonneauSeriesBackgroundWebp}
+                imageAlt={tonneauSeries?.name ?? "RM-TONNEAU"}
+                badge={tonneauSeries?.name ?? "RM-TONNEAU"}
+                seriesShopLabel={t("seriesShopLabel")}
+                name={tonneauFeatured.name}
+                price={tonneauFeatured.price}
+                compareAtPrice={tonneauFeatured.compareAtPrice}
+                ctaLabel={t("heroViewProduct")}
+                theme="luxe"
               />
-            </div>
-            <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-black/70 via-black/45 to-[#141210]/20" />
-            <div className="relative">
-              <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[color:var(--color-luxe)]">
-                RM-TONNEAU
-              </div>
-              <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/55">
-                {t("seriesShopCount", { count: tonneauCount })}
-              </p>
-              <h2 className="mt-4 max-w-md font-serif text-3xl leading-tight sm:text-4xl">
-                {t("tonneauHeadline")}
-                <span className="mt-2 block text-lg font-normal text-white/75">
-                  {t("tonneauTagline")}
-                </span>
-              </h2>
-              <p className="mt-4 max-w-md text-sm leading-relaxed text-white/72">
-                {t("tonneauDescription")}
-              </p>
-              <span className="mt-8 inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/90 underline-offset-8 group-hover:underline">
-                {t("exploreSeries")}
-                <span className="font-normal text-white/45" aria-hidden>
-                  ·
-                </span>
-                <span>{t("viewWatches")}</span>
-                <ArrowRight size={16} className="shrink-0" />
-              </span>
-            </div>
-          </Link>
-
-          <Link
-            href="/series/rd-astral"
-            className="group relative overflow-hidden rounded-3xl border border-line bg-[#1a1224] p-8 text-white shadow-card"
-          >
-            <div className="pointer-events-none absolute inset-0 opacity-45">
-              <StorefrontImage
-                src={rdAstral.heroImage}
-                alt=""
-                fill
-                quality={62}
-                className="object-cover"
-                sizes="(max-width:1024px) 100vw, (max-width:1536px) 50vw, 720px"
+            ) : null}
+            {rdFeatured ? (
+              <HomeFeaturedProductCard
+                href="/series/rd-astral"
+                imageSrc={R2.home.rdAstralSeriesBackgroundWebp}
+                imageAlt={rdAstralSeries?.name ?? "RD-ASTRAL"}
+                badge={rdAstralSeries?.name ?? "RD-ASTRAL"}
+                seriesShopLabel={t("seriesShopLabel")}
+                name={rdFeatured.name}
+                price={rdFeatured.price}
+                compareAtPrice={rdFeatured.compareAtPrice}
+                ctaLabel={t("heroViewProduct")}
+                theme="mixed"
               />
-            </div>
-            <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-violet-950/80 via-black/50 to-[#1a1224]/25" />
-            <div className="relative">
-              <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-violet-200/90">
-                RD-ASTRAL
-              </div>
-              <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/55">
-                {t("seriesShopCount", { count: rdAstralCount })}
-              </p>
-              <h2 className="mt-4 max-w-md font-serif text-3xl leading-tight sm:text-4xl">
-                {t("rdAstralHeadline")}
-                <span className="mt-2 block text-lg font-normal text-white/75">
-                  {t("rdAstralTagline")}
-                </span>
-              </h2>
-              <p className="mt-4 max-w-md text-sm leading-relaxed text-white/72">
-                {t("rdAstralDescription")}
-              </p>
-              <span className="mt-8 inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/90 underline-offset-8 group-hover:underline">
-                {t("exploreSeries")}
-                <span className="font-normal text-white/45" aria-hidden>
-                  ·
-                </span>
-                <span>{t("viewWatches")}</span>
-                <ArrowRight size={16} className="shrink-0" />
-              </span>
-            </div>
-          </Link>
-        </div>
-      </section>
+            ) : null}
+          </div>
+        </section>
+      )}
 
       {/* Featured */}
       <section

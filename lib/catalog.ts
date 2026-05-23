@@ -86,7 +86,7 @@ export const seriesList: SeriesInfo[] = [
     description:
       "Some watches remind you of the time. RM-TONNEAU is our reminder that bravery isn’t loud—it’s the decision to move again. The barrel case carries that tension: curved like velocity made solid, open enough to show the work inside. Motorsport, aerospace, and cutting-edge finishing aren’t decoration here; they’re the vocabulary of people who refuse to stall.",
     theme: "luxe",
-    heroImage: R2.home.racingCarWebp,
+    heroImage: R2.home.rmTonneauSeriesBackgroundWebp,
   },
   {
     slug: "rd-astral",
@@ -95,7 +95,7 @@ export const seriesList: SeriesInfo[] = [
     description:
       "RD-ASTRAL draws on the founder as a child—looking up, tracing constellations, trying to glimpse the edge of the cosmos. The watches are our nudge not to let ordinary life wear you down: keep the courage to pursue what you love, and hold onto a sincere passion deep inside. Skeleton architecture and bold dial drama carry that stargazing spirit.",
     theme: "mixed",
-    heroImage: R2.home.rdStarWebp,
+    heroImage: R2.home.rdAstralSeriesBackgroundWebp,
   },
 ];
 

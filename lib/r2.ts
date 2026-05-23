@@ -26,6 +26,22 @@ function rdStarWebpUrl(): string {
   return `${path}?v=${encodeURIComponent(rev)}`;
 }
 
+/** Homepage + series hero — `home/RM-TONNEAU series background 01.webp` */
+function rmTonneauSeriesBackgroundWebpUrl(): string {
+  const rev =
+    process.env.NEXT_PUBLIC_R2_RM_TONNEAU_SERIES_BG_REV?.trim() || "1";
+  const path = `${R2_PUBLIC_BASE}/home/${encodeURIComponent("RM-TONNEAU series background 01.webp")}`;
+  return `${path}?v=${encodeURIComponent(rev)}`;
+}
+
+/** Homepage + series hero — `home/RD-ASTRAL series background 01.webp` */
+function rdAstralSeriesBackgroundWebpUrl(): string {
+  const rev =
+    process.env.NEXT_PUBLIC_R2_RD_ASTRAL_SERIES_BG_REV?.trim() || "1";
+  const path = `${R2_PUBLIC_BASE}/home/${encodeURIComponent("RD-ASTRAL series background 01.webp")}`;
+  return `${path}?v=${encodeURIComponent(rev)}`;
+}
+
 /**
  * DIGI-TEMP homepage / series card — `home/Spaceship.webp` on R2.
  * Bump `NEXT_PUBLIC_R2_SPACESHIP_REV` after same-name overwrites.
@@ -313,6 +329,8 @@ export const R2 = {
     racingCarWebp: racingCarWebpUrl(),
     /** RD-ASTRAL — `home/RD Star.webp` (URL includes `?v=` cache bust) */
     rdStarWebp: rdStarWebpUrl(),
+    rmTonneauSeriesBackgroundWebp: rmTonneauSeriesBackgroundWebpUrl(),
+    rdAstralSeriesBackgroundWebp: rdAstralSeriesBackgroundWebpUrl(),
     /** DIGI-TEMP — `home/Spaceship.webp` (URL includes `?v=` cache bust) */
     spaceshipWebp: spaceshipWebpUrl(),
     /** Homepage hero background — `home/digitemp-background.webp` (`?v=` cache bust). */

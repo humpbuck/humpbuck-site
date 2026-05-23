@@ -7,7 +7,7 @@ import { getSeriesBySlug, normalizeSeriesSlug, resolveSeriesInfo, seriesList } f
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { routing } from "@/i18n/routing";
-import { getSiteUrl } from "@/lib/seo";
+import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
 
@@ -34,6 +34,8 @@ export async function generateMetadata({
   const pathPrefix = locale === routing.defaultLocale ? "" : `/${locale}`;
   const path = `${pathPrefix}/series/${encodeURIComponent(slug)}`;
   const ogSuffix = t("ogTitleSuffix");
+  const ogTitle = `${localized.name} ${ogSuffix}`;
+  const ogImageUrl = absoluteOgImageUrl(s.heroImage);
   return {
     title: localized.name,
     description: localized.description,
@@ -44,8 +46,15 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       url: `${getSiteUrl()}${path}`,
-      title: `${localized.name} ${ogSuffix}`,
+      title: ogTitle,
       description: localized.description,
+      images: [{ url: ogImageUrl, alt: localized.name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: ogTitle,
+      description: localized.description,
+      images: [ogImageUrl],
     },
   };
 }
