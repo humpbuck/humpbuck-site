@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Country, State, City } from "country-state-city";
 import type { CheckoutAddressForm as CheckoutAddressFormValue } from "@/lib/checkout-address";
+import { validateCheckoutPostalCode } from "@/lib/checkout-postal-validation";
 import { SPECIAL_CITY_OPTIONS } from "@/lib/special-city-options";
 import { getTaxIdRule } from "@/lib/tax-id-rules";
 
@@ -213,6 +214,13 @@ export function CheckoutAddressForm({
       })
     : [];
 
+  const postalValidation = useMemo(
+    () => validateCheckoutPostalCode(value),
+    [value.country, value.state, value.city, value.postalCode],
+  );
+  const postalErrorKey = postalValidation.ok ? null : postalValidation.errorKey;
+  const postalError = postalErrorKey ? t(`validation.${postalErrorKey}`) : null;
+
   return (
     <div className="rounded-2xl border border-line bg-white/60 p-5">
       <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">{title}</h2>
@@ -395,7 +403,14 @@ export function CheckoutAddressForm({
           </label>
         </div>
 
-        <Field id={`${idPrefix}-postalCode`} label={t("postalCode")} required value={value.postalCode} onChange={(v) => onChange({ ...value, postalCode: v })} />
+        <Field
+          id={`${idPrefix}-postalCode`}
+          label={t("postalCode")}
+          required
+          value={value.postalCode}
+          onChange={(v) => onChange({ ...value, postalCode: v })}
+          error={postalError}
+        />
         <Field
           id={`${idPrefix}-taxId`}
           label={tTax(`${taxIdRule.ruleKey}.label` as "fallback.label" | "BR.label" | "KR.label" | "MX.label" | "NO.label" | "AR.label" | "CL.label")}
@@ -481,6 +496,7 @@ function Field({
   required,
   className = "",
   placeholder,
+  error,
 }: {
   id: string;
   label: string;
@@ -489,6 +505,7 @@ function Field({
   required?: boolean;
   className?: string;
   placeholder?: string;
+  error?: string | null;
 }) {
   return (
     <div className={className}>
@@ -501,10 +518,18 @@ function Field({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="mt-1.5 w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm outline-none ring-ink/20 focus:ring-2"
+          aria-invalid={error ? true : undefined}
+          className={`mt-1.5 w-full rounded-xl border bg-paper px-3 py-2.5 text-sm outline-none ring-ink/20 focus:ring-2 ${
+            error ? "border-rose-400 focus:ring-rose-200" : "border-line"
+          }`}
           placeholder={placeholder}
         />
       </label>
+      {error ? (
+        <p className="mt-1.5 text-xs text-rose-700" role="alert">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

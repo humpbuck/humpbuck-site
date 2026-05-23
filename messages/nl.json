@@ -250,7 +250,10 @@
       "cityRequired": "Plaats is verplicht",
       "stateRequired": "Provincie / staat is verplicht",
       "postalRequired": "Postcode is verplicht",
-      "countryRequired": "Land / regio is verplicht"
+      "countryRequired": "Land / regio is verplicht",
+      "postalInvalidFormat": "Enter a valid postcode / ZIP for the selected country",
+      "postalNotFound": "This US ZIP code was not found — check for typos",
+      "postalStateMismatch": "This ZIP code does not match the selected state / province"
     }
   },
   "CheckoutShipping": {

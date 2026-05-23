@@ -250,7 +250,10 @@
       "cityRequired": "A cidade é obrigatória",
       "stateRequired": "O estado / província é obrigatório",
       "postalRequired": "O CEP / código postal é obrigatório",
-      "countryRequired": "O país / região é obrigatório"
+      "countryRequired": "O país / região é obrigatório",
+      "postalInvalidFormat": "Enter a valid postcode / ZIP for the selected country",
+      "postalNotFound": "This US ZIP code was not found — check for typos",
+      "postalStateMismatch": "This ZIP code does not match the selected state / province"
     }
   },
   "CheckoutShipping": {

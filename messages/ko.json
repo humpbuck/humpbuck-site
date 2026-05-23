@@ -250,7 +250,10 @@
       "cityRequired": "시/군/구를 입력해 주세요",
       "stateRequired": "시/도를 입력해 주세요",
       "postalRequired": "우편번호를 입력해 주세요",
-      "countryRequired": "국가/지역을 선택해 주세요"
+      "countryRequired": "국가/지역을 선택해 주세요",
+      "postalInvalidFormat": "Enter a valid postcode / ZIP for the selected country",
+      "postalNotFound": "This US ZIP code was not found — check for typos",
+      "postalStateMismatch": "This ZIP code does not match the selected state / province"
     }
   },
   "CheckoutShipping": {

@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { resolveAffiliateAttribution } from "@/lib/affiliate-attribution";
+import {
+  checkoutFormFromSavedAddress,
+  formatCheckoutAddressValidationEnglish,
+  validateCheckoutAddressForm,
+} from "@/lib/checkout-address";
 import { notifyMerchantOrderPlaced } from "@/lib/merchant-order-email";
 import { prisma } from "@/lib/prisma";
 
@@ -40,6 +45,18 @@ function pickNumber(...values: Array<unknown>): number | null {
   return null;
 }
 
+function validateCheckoutAddressRecord(
+  record: Record<string, string> | undefined,
+  label: "Billing" | "Shipping",
+): string | null {
+  if (!record) return null;
+  const form = checkoutFormFromSavedAddress(record);
+  if (!form) return null;
+  const result = validateCheckoutAddressForm(form);
+  if (result.ok) return null;
+  return `${label}: ${formatCheckoutAddressValidationEnglish(result.errorKey)}`;
+}
+
 export async function POST(req: Request) {
   let body: {
     email?: string;
@@ -69,6 +86,13 @@ export async function POST(req: Request) {
     body.items.length === 0
   ) {
     return NextResponse.json({ ok: false, error: "Missing required fields" }, { status: 400 });
+  }
+
+  const addressError =
+    validateCheckoutAddressRecord(body.shipping, "Shipping") ??
+    validateCheckoutAddressRecord(body.billing, "Billing");
+  if (addressError) {
+    return NextResponse.json({ ok: false, error: addressError }, { status: 400 });
   }
 
   const session = await auth().catch(() => null);

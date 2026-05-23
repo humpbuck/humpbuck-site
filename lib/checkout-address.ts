@@ -1,3 +1,8 @@
+import {
+  validateCheckoutPostalCode,
+  type CheckoutPostalValidationErrorKey,
+} from "@/lib/checkout-postal-validation";
+
 export type CheckoutAddressForm = {
   firstName: string;
   lastName: string;
@@ -22,7 +27,8 @@ export type CheckoutAddressValidationErrorKey =
   | "cityRequired"
   | "stateRequired"
   | "postalRequired"
-  | "countryRequired";
+  | "countryRequired"
+  | CheckoutPostalValidationErrorKey;
 
 const CHECKOUT_ADDRESS_VALIDATION_EN: Record<
   CheckoutAddressValidationErrorKey,
@@ -35,6 +41,9 @@ const CHECKOUT_ADDRESS_VALIDATION_EN: Record<
   stateRequired: "State / Province is required",
   postalRequired: "Postcode / ZIP is required",
   countryRequired: "Country / Region is required",
+  postalInvalidFormat: "Enter a valid postcode / ZIP for the selected country",
+  postalNotFound: "This US ZIP code was not found — check for typos",
+  postalStateMismatch: "This ZIP code does not match the selected state / province",
 };
 
 /** English message for API / server logs (storefront UI should use next-intl keys under `CheckoutAddress.validation`). */
@@ -76,6 +85,10 @@ export function validateCheckoutAddressForm(
   if (!form.state.trim()) return { ok: false, errorKey: "stateRequired" };
   if (!form.postalCode.trim()) return { ok: false, errorKey: "postalRequired" };
   if (!form.country.trim()) return { ok: false, errorKey: "countryRequired" };
+
+  const postal = validateCheckoutPostalCode(form);
+  if (!postal.ok) return postal;
+
   return { ok: true };
 }
 
