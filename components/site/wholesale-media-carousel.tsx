@@ -220,29 +220,40 @@ function WholesaleCenterLightbox({
     return () => el.removeEventListener("touchmove", onTouchMove);
   }, [applyTransform, onInteraction]);
 
-  const handleImageTap = useCallback(() => {
-    if (suppressTapRef.current) return;
-    if (mode === "pinch" || isPinchBeyondMagnify(scaleRef.current)) {
-      resetTransformForMode("magnify");
-      onModeChange("magnify");
-      return;
-    }
-    if (mode === "magnify") {
-      resetTransformForMode("full");
-      steppedBackToFullRef.current = true;
-      onModeChange("full");
-      return;
-    }
-    if (mode === "full") {
-      if (steppedBackToFullRef.current) {
-        steppedBackToFullRef.current = false;
-        onClose();
+  const stepBack = useCallback(
+    (fromBackdrop: boolean) => {
+      if (suppressTapRef.current) return;
+      if (mode === "pinch" || isPinchBeyondMagnify(scaleRef.current)) {
+        resetTransformForMode("magnify");
+        onModeChange("magnify");
         return;
       }
-      resetTransformForMode("magnify");
-      onModeChange("magnify");
-    }
-  }, [mode, onClose, onModeChange, resetTransformForMode, suppressTapRef]);
+      if (mode === "magnify") {
+        resetTransformForMode("full");
+        steppedBackToFullRef.current = true;
+        onModeChange("full");
+        return;
+      }
+      if (mode === "full") {
+        if (fromBackdrop || steppedBackToFullRef.current) {
+          steppedBackToFullRef.current = false;
+          onClose();
+          return;
+        }
+        resetTransformForMode("magnify");
+        onModeChange("magnify");
+      }
+    },
+    [mode, onClose, onModeChange, resetTransformForMode, suppressTapRef],
+  );
+
+  const handleImageTap = useCallback(() => {
+    stepBack(false);
+  }, [stepBack]);
+
+  const onBackdropClick = useCallback(() => {
+    stepBack(true);
+  }, [stepBack]);
 
   const onTouchStart = (e: ReactTouchEvent) => {
     if (e.touches.length === 2) {
@@ -296,13 +307,8 @@ function WholesaleCenterLightbox({
     handleImageTap();
   };
 
-  const onBackdropClick = () => {
-    if (suppressTapRef.current) return;
-    onClose();
-  };
-
   const navigate = (index: number) => {
-    if (mode === "pinch") return;
+    if (mode !== "full") return;
     steppedBackToFullRef.current = false;
     onInteraction();
     const n = images.length;
@@ -312,71 +318,77 @@ function WholesaleCenterLightbox({
     onModeChange("full");
   };
 
-  const canNavigate = mode !== "pinch" && images.length > 1;
+  const canNavigate = mode === "full" && images.length > 1;
   const allowsTouchPan = mode === "magnify" || mode === "pinch";
 
   if (mode === "cover" || !url || typeof document === "undefined") return null;
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[105] flex items-center justify-center bg-ink/72 p-4 backdrop-blur-[2px]"
+      className="fixed inset-0 z-[105]"
       role="dialog"
       aria-modal="true"
       aria-label={alt}
       onClick={onBackdropClick}
     >
-      <div
-        className="relative flex h-[min(88vh,900px)] w-[min(96vw,900px)] max-w-full items-center justify-center"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {canNavigate ? (
-          <>
-            <button
-              type="button"
-              onClick={() => navigate(activeIndex - 1)}
-              className="absolute left-0 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-ink/45 text-paper shadow-sm backdrop-blur-sm transition hover:bg-ink/60"
-              aria-label="Previous image"
-            >
-              <ChevronLeft size={24} strokeWidth={2} />
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate(activeIndex + 1)}
-              className="absolute right-0 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-ink/45 text-paper shadow-sm backdrop-blur-sm transition hover:bg-ink/60"
-              aria-label="Next image"
-            >
-              <ChevronRight size={24} strokeWidth={2} />
-            </button>
-          </>
-        ) : null}
+      <div className="absolute inset-0 bg-ink/72 backdrop-blur-[2px]" aria-hidden />
+      <div className="relative flex h-full w-full items-center justify-center p-4 pointer-events-none">
+        <div className="relative flex h-[min(88vh,900px)] w-[min(96vw,900px)] max-w-full items-center justify-center">
+          {canNavigate ? (
+            <>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(activeIndex - 1);
+                }}
+                className="pointer-events-auto absolute left-0 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-ink/45 text-paper shadow-sm backdrop-blur-sm transition hover:bg-ink/60"
+                aria-label="Previous image"
+              >
+                <ChevronLeft size={24} strokeWidth={2} />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(activeIndex + 1);
+                }}
+                className="pointer-events-auto absolute right-0 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-ink/45 text-paper shadow-sm backdrop-blur-sm transition hover:bg-ink/60"
+                aria-label="Next image"
+              >
+                <ChevronRight size={24} strokeWidth={2} />
+              </button>
+            </>
+          ) : null}
 
-        <div
-          ref={stageRef}
-          className={`relative h-full w-full max-h-full max-w-full ${
-            mode === "full" ? "cursor-zoom-in" : "cursor-zoom-out"
-          }`}
-          style={{ touchAction: allowsTouchPan ? "none" : "auto" }}
-          onTouchStart={onTouchStart}
-          onTouchEnd={onTouchEnd}
-          onTouchCancel={onTouchEnd}
-          onClick={onImageClick}
-        >
           <div
-            className="relative mx-auto h-full w-full will-change-transform"
-            style={{
-              transform: `translate3d(${transform.x}px, ${transform.y}px, 0) scale(${transform.scale})`,
-              transformOrigin: "center center",
-            }}
+            ref={stageRef}
+            className={`pointer-events-auto relative h-full w-full max-h-full max-w-full ${
+              mode === "full" ? "cursor-zoom-in" : "cursor-zoom-out"
+            }`}
+            style={{ touchAction: allowsTouchPan ? "none" : "auto" }}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+            onTouchCancel={onTouchEnd}
+            onClick={onImageClick}
           >
-            <StorefrontImage
-              src={url}
-              alt={`${alt} — ${activeIndex + 1}`}
-              fill
-              draggable={false}
-              priority
-              className="pointer-events-none object-contain object-center select-none"
-              sizes="96vw"
-            />
+            <div
+              className="relative mx-auto h-full w-full will-change-transform"
+              style={{
+                transform: `translate3d(${transform.x}px, ${transform.y}px, 0) scale(${transform.scale})`,
+                transformOrigin: "center center",
+              }}
+            >
+              <StorefrontImage
+                src={url}
+                alt={`${alt} — ${activeIndex + 1}`}
+                fill
+                draggable={false}
+                priority
+                className="pointer-events-none object-contain object-center select-none"
+                sizes="96vw"
+              />
+            </div>
           </div>
         </div>
       </div>
