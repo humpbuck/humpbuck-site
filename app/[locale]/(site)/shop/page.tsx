@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { ProductCard } from "@/components/site/ProductCard";
+import { PreloadProductGridImages } from "@/components/site/preload-product-grid-images";
 import {
   getSeriesBySlug,
   getShopSeriesFilters,
@@ -63,6 +64,7 @@ export default async function ShopPage({
       getShopCardR2GalleryImage(p.slug, p.image, p.galleryImages ?? p.images),
     ),
   );
+  const gridImageUrls = list.map((p, i) => cardImages[i]?.trim() || p.image);
 
   const activeSeriesLabel =
     active != null
@@ -73,6 +75,7 @@ export default async function ShopPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
+      {list.length > 0 ? <PreloadProductGridImages urls={gridImageUrls} /> : null}
       <div className="max-w-2xl">
         <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
           {t("kicker")}
@@ -116,6 +119,7 @@ export default async function ShopPage({
             product={p}
             cardImageUrl={cardImages[i] ?? undefined}
             imagePriority={i < 2}
+            imageEager={i < 4}
           />
         ))}
       </div>

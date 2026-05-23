@@ -7,6 +7,7 @@ import { formatPrice } from "@/lib/catalog";
 export async function ProductCard({
   product,
   imagePriority = false,
+  imageEager = false,
   optimizeR2Image = false,
   imageQuality = 60,
   /** When set (e.g. R2-resolved), overrides `product.image` for cards. */
@@ -15,6 +16,8 @@ export async function ProductCard({
   product: Product;
   /** First viewport row(s) of grids — LCP + avoid lazy for above-the-fold. */
   imagePriority?: boolean;
+  /** Eager load when preloaded below the hero — avoids lazy wait on scroll. */
+  imageEager?: boolean;
   /**
    * Keep false by default because some R2 WebP objects can intermittently fail through
    * `/_next/image` in certain flows; allow selective opt-in for performance testing pages.
@@ -39,7 +42,8 @@ export async function ProductCard({
           alt={product.name}
           fill
           priority={imagePriority}
-          fetchPriority={imagePriority ? "high" : undefined}
+          loading={imagePriority || imageEager ? "eager" : undefined}
+          fetchPriority={imagePriority ? "high" : imageEager ? "low" : undefined}
           sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
           quality={imageQuality}
           optimizeR2={optimizeR2Image}

@@ -18,6 +18,7 @@ import {
   isWholesaleVideoUrl,
   wholesaleListingPosterUrl,
 } from "@/lib/wholesale-listing-shared";
+import { preloadImageUrls } from "@/lib/preload-images-client";
 
 const BASE_SCALE = 1;
 const MAGNIFY_SCALE = 2;
@@ -103,11 +104,13 @@ function WholesaleCoverImageSlide({
   url,
   alt,
   priority,
+  eager,
   onOpenFull,
 }: {
   url: string;
   alt: string;
   priority?: boolean;
+  eager?: boolean;
   onOpenFull: () => void;
 }) {
   const tap = useTapWithoutDrag(onOpenFull);
@@ -124,6 +127,8 @@ function WholesaleCoverImageSlide({
         alt={alt}
         fill
         priority={priority}
+        loading={priority || eager ? "eager" : undefined}
+        fetchPriority={priority ? "high" : eager ? "low" : undefined}
         className="pointer-events-none object-cover object-center"
         sizes="(max-width:1024px) 100vw, 560px"
       />
@@ -609,6 +614,10 @@ export function WholesaleMediaCarousel({
   }, [urlsKey]);
 
   useEffect(() => {
+    preloadImageUrls(imageUrls);
+  }, [imageUrls]);
+
+  useEffect(() => {
     if (skipViewResetRef.current) {
       skipViewResetRef.current = false;
       return;
@@ -692,6 +701,7 @@ export function WholesaleMediaCarousel({
                     url={src}
                     alt={`${alt} — ${i + 1}`}
                     priority={i === 0}
+                    eager={i > 0 && i < 4}
                     onOpenFull={() => openFullAt(i)}
                   />
                 )}
@@ -748,7 +758,7 @@ export function WholesaleMediaCarousel({
                 key={`thumb-${i}-${src}`}
                 type="button"
                 onClick={() => scrollTo(i)}
-                className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition ${
+                className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-paper transition ${
                   active === i
                     ? "border-ink ring-2 ring-ink/10"
                     : "border-line hover:border-ink/25"
@@ -761,12 +771,15 @@ export function WholesaleMediaCarousel({
                     videoUrl={src}
                     alt={`${alt} video`}
                     sizes="64px"
+                    imageEager
                   />
                 ) : (
                   <StorefrontImage
                     src={src}
                     alt=""
                     fill
+                    loading="eager"
+                    fetchPriority="low"
                     className="object-cover object-center"
                     sizes="64px"
                   />

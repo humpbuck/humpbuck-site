@@ -5,18 +5,21 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ImageLightbox } from "@/components/site/image-lightbox";
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { useTapWithoutDrag } from "@/components/site/use-tap-without-drag";
+import { preloadImageUrls } from "@/lib/preload-images-client";
 
 function ProductImageZoomSlide({
   src,
   alt,
   label,
   priority,
+  eager,
   onOpen,
 }: {
   src: string;
   alt: string;
   label: string;
   priority?: boolean;
+  eager?: boolean;
   onOpen: () => void;
 }) {
   const tap = useTapWithoutDrag(onOpen);
@@ -32,9 +35,11 @@ function ProductImageZoomSlide({
         src={src}
         alt={alt}
         fill
+        priority={priority}
+        loading={priority || eager ? "eager" : undefined}
+        fetchPriority={priority ? "high" : eager ? "low" : undefined}
         className="pointer-events-none object-cover object-center"
         sizes="(max-width:1024px) 100vw, 50vw"
-        priority={priority}
       />
     </button>
   );
@@ -89,6 +94,10 @@ export function ProductImageCarousel({
     queueMicrotask(() => setActive(0));
   }, [imagesKey]);
 
+  useEffect(() => {
+    preloadImageUrls(images);
+  }, [imagesKey]);
+
   if (images.length === 0) return null;
 
   return (
@@ -109,6 +118,7 @@ export function ProductImageCarousel({
                 alt={`${alt} — ${i + 1}`}
                 label={`${alt} — view full size`}
                 priority={i === 0}
+                eager={i > 0 && i < 4}
                 onOpen={() => {
                   setActive(i);
                   setLightboxStartIndex(i);
@@ -148,7 +158,7 @@ export function ProductImageCarousel({
                 key={`thumb-${i}-${src}`}
                 type="button"
                 onClick={() => scrollTo(i)}
-                className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 transition ${
+                className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-paper transition ${
                   active === i
                     ? "border-ink ring-2 ring-ink/10"
                     : "border-line hover:border-ink/25"
@@ -159,6 +169,8 @@ export function ProductImageCarousel({
                   src={src}
                   alt=""
                   fill
+                  loading="eager"
+                  fetchPriority="low"
                   className="object-cover object-center"
                   sizes="64px"
                 />

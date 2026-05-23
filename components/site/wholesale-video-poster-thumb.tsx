@@ -10,12 +10,14 @@ export function WholesaleVideoPosterThumb({
   alt,
   sizes = "64px",
   className = "",
+  imageEager = false,
 }: {
   posterUrl: string | null;
   videoUrl?: string;
   alt: string;
   sizes?: string;
   className?: string;
+  imageEager?: boolean;
 }) {
   const showVideoFrame = !posterUrl && videoUrl && isWholesaleVideoUrl(videoUrl);
 
@@ -26,6 +28,8 @@ export function WholesaleVideoPosterThumb({
           src={posterUrl}
           alt={alt}
           fill
+          loading={imageEager ? "eager" : undefined}
+          fetchPriority={imageEager ? "low" : undefined}
           className="object-cover object-center"
           sizes={sizes}
         />

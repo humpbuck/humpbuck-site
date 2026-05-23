@@ -5,12 +5,14 @@ import { Link } from "@/i18n/navigation";
 import { ArrowRight, Factory, Globe2, ShieldCheck, Sparkles } from "lucide-react";
 import { HeroSpaceVideo } from "@/components/site/HeroSpaceVideo";
 import { HomeFeaturedProductCard } from "@/components/site/home-featured-product-card";
+import { PreloadHomeFeaturedImages } from "@/components/site/preload-home-featured-images";
 import { PreloadHomeSeriesImages } from "@/components/site/preload-home-series-images";
 import { NewsletterSubscribe } from "@/components/site/NewsletterSubscribe";
 import { ProductCard } from "@/components/site/ProductCard";
 import { routing } from "@/i18n/routing";
 import { formatPrice, seriesList } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
+import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { R2 } from "@/lib/r2";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
@@ -67,6 +69,14 @@ export default async function HomePage({
   const all = await getMergedCatalogProducts();
   const messages = await getMessages({ locale });
   const featured = [...all].slice(0, 12).map((p) => applyStorefrontProductLocale(p, locale, messages));
+  const featuredCardImages = await Promise.all(
+    featured.map((p) =>
+      getShopCardR2GalleryImage(p.slug, p.image, p.galleryImages ?? p.images),
+    ),
+  );
+  const featuredImageUrls = featured.map(
+    (p, i) => featuredCardImages[i]?.trim() || p.image,
+  );
   const tonneauFeaturedRaw = all.find((p) => p.seriesSlug === "tonneau") ?? null;
   const rdFeaturedRaw = all.find((p) => p.seriesSlug === "rd-astral") ?? null;
   const tonneauFeatured = tonneauFeaturedRaw
@@ -96,6 +106,7 @@ export default async function HomePage({
   return (
     <div>
       {(tonneauFeatured || rdFeatured) ? <PreloadHomeSeriesImages /> : null}
+      {featured.length > 0 ? <PreloadHomeFeaturedImages urls={featuredImageUrls} /> : null}
       {/* Hero — HUMPBUCK DIGI-TEMP (SEO + conversion) */}
       <section className="relative border-b border-white/10 bg-[#070a10] text-white">
         <HeroSpaceVideo />
@@ -245,10 +256,7 @@ export default async function HomePage({
       )}
 
       {/* Featured */}
-      <section
-        className="border-t border-line bg-paper py-16 sm:py-20"
-        style={deferredSectionStyle}
-      >
+      <section className="border-t border-line bg-paper py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted">
@@ -262,11 +270,13 @@ export default async function HomePage({
             </Link>
           </div>
           <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
-            {featured.map((p) => (
+            {featured.map((p, i) => (
               <ProductCard
                 key={p.slug}
                 product={p}
-                imagePriority={false}
+                cardImageUrl={featuredCardImages[i] ?? undefined}
+                imagePriority={i < 2}
+                imageEager={i < 4}
               />
             ))}
           </div>

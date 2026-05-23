@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { CenterModal } from "@/components/ui/center-modal";
 import { formatPrice } from "@/lib/catalog";
+import { preloadImageUrls } from "@/lib/preload-images-client";
 import type { WholesaleListingRow } from "@/lib/wholesale-listing-shared";
 import {
   isWholesaleVideoUrl,
@@ -80,7 +81,10 @@ function WholesaleListingCard({
   return (
     <button
       type="button"
-      onClick={onOpen}
+      onClick={() => {
+        preloadImageUrls(listing.mediaUrls);
+        onOpen();
+      }}
       className="group flex w-full flex-col overflow-hidden rounded-2xl border border-line bg-white/60 text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-lg lg:flex-row lg:items-stretch"
     >
       <div className="relative w-full shrink-0 overflow-hidden bg-paper lg:w-[42%] xl:w-[40%]">
@@ -136,6 +140,7 @@ export function WholesaleListingsSection({
     const listing = listings.find((item) => item.slug === initialOpenSlug.trim());
     if (!listing) return;
     openedFromLinkRef.current = true;
+    preloadImageUrls(listing.mediaUrls);
     const index = listings.findIndex((item) => item.id === listing.id);
     if (index >= 0) {
       setPage(Math.floor(index / pageSize) + 1);

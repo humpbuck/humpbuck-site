@@ -3,6 +3,7 @@ import { StorefrontImage } from "@/components/site/storefront-image";
 import { notFound } from "next/navigation";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { ProductCard } from "@/components/site/ProductCard";
+import { PreloadProductGridImages } from "@/components/site/preload-product-grid-images";
 import { getSeriesBySlug, normalizeSeriesSlug, resolveSeriesInfo, seriesList } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
@@ -84,6 +85,7 @@ export default async function SeriesPage({
       getShopCardR2GalleryImage(p.slug, p.image, p.galleryImages ?? p.images),
     ),
   );
+  const gridImageUrls = items.map((p, i) => cardImages[i]?.trim() || p.image);
 
   const heroClass =
     series.theme === "digital"
@@ -94,6 +96,7 @@ export default async function SeriesPage({
 
   return (
     <div>
+      {items.length > 0 ? <PreloadProductGridImages urls={gridImageUrls} /> : null}
       <section className={`relative overflow-hidden border-b border-white/10 ${heroClass}`}>
         <div className="pointer-events-none absolute inset-0 opacity-35">
           <StorefrontImage
@@ -150,6 +153,8 @@ export default async function SeriesPage({
               key={p.slug}
               product={p}
               cardImageUrl={cardImages[i] ?? undefined}
+              imagePriority={i < 2}
+              imageEager={i < 4}
             />
           ))}
         </div>

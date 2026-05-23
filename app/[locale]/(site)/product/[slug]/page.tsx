@@ -13,6 +13,7 @@ import { routing } from "@/i18n/routing";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
 import { ProductCard } from "@/components/site/ProductCard";
 import { ProductDetailImageStrip } from "@/components/site/ProductDetailImageStrip";
+import { PreloadPdpGalleryImages } from "@/components/site/preload-pdp-gallery-images";
 import { ProductPdpMediaColumn } from "@/components/site/ProductPdpMediaColumn";
 import { ProductReviewsSection } from "@/components/site/ProductReviewsSection";
 import { TrackProductView } from "@/components/analytics/track-product-view";
@@ -109,6 +110,7 @@ export default async function ProductPage({
 
   return (
     <div>
+      {gallerySlides.length > 0 ? <PreloadPdpGalleryImages urls={gallerySlides} /> : null}
       <TrackProductView slug={product.slug} />
       <div className="mx-auto min-w-0 max-w-7xl py-10 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:pl-[max(1.5rem,env(safe-area-inset-left))] sm:pr-[max(1.5rem,env(safe-area-inset-right))] lg:py-14">
         <Link
