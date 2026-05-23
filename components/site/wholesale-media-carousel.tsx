@@ -32,6 +32,10 @@ function isPinchBeyondMagnify(scale: number) {
   return scale > MAGNIFY_SCALE * PINCH_RATIO;
 }
 
+function canSingleFingerPan(scale: number) {
+  return scale > BASE_SCALE * PINCH_RATIO;
+}
+
 function clampPan(x: number, y: number, scale: number, width: number, height: number) {
   if (scale <= 1) return { x: 0, y: 0 };
   const maxX = ((scale - 1) * width) / 2;
@@ -193,7 +197,7 @@ function WholesaleCenterLightbox({
         return;
       }
 
-      if (e.touches.length === 1 && touchRef.current && isPinchBeyondMagnify(scaleRef.current)) {
+      if (e.touches.length === 1 && touchRef.current && canSingleFingerPan(scaleRef.current)) {
         const t = e.touches[0];
         const touch = touchRef.current;
         if (Math.hypot(t.clientX - touch.x, t.clientY - touch.y) > 8) {
@@ -309,7 +313,7 @@ function WholesaleCenterLightbox({
   };
 
   const canNavigate = mode !== "pinch" && images.length > 1;
-  const isPinching = mode === "pinch" || isPinchBeyondMagnify(transform.scale);
+  const allowsTouchPan = mode === "magnify" || mode === "pinch";
 
   if (mode === "cover" || !url || typeof document === "undefined") return null;
 
@@ -351,7 +355,7 @@ function WholesaleCenterLightbox({
           className={`relative h-full w-full max-h-full max-w-full ${
             mode === "full" ? "cursor-zoom-in" : "cursor-zoom-out"
           }`}
-          style={{ touchAction: isPinching ? "none" : "auto" }}
+          style={{ touchAction: allowsTouchPan ? "none" : "auto" }}
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
           onTouchCancel={onTouchEnd}
