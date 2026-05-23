@@ -36,6 +36,43 @@ function canSingleFingerPan(scale: number) {
   return scale > BASE_SCALE * PINCH_RATIO;
 }
 
+function getContainedImageRect(
+  containerW: number,
+  containerH: number,
+  imgW: number,
+  imgH: number,
+) {
+  if (imgW <= 0 || imgH <= 0 || containerW <= 0 || containerH <= 0) return null;
+  const scale = Math.min(containerW / imgW, containerH / imgH);
+  const width = imgW * scale;
+  const height = imgH * scale;
+  return {
+    left: (containerW - width) / 2,
+    top: (containerH - height) / 2,
+    width,
+    height,
+  };
+}
+
+function isPointOnVisibleImage(
+  clientX: number,
+  clientY: number,
+  stageEl: HTMLDivElement,
+  natural: { w: number; h: number },
+) {
+  const bounds = stageEl.getBoundingClientRect();
+  const localX = clientX - bounds.left;
+  const localY = clientY - bounds.top;
+  const imageRect = getContainedImageRect(bounds.width, bounds.height, natural.w, natural.h);
+  if (!imageRect) return true;
+  return (
+    localX >= imageRect.left &&
+    localX <= imageRect.left + imageRect.width &&
+    localY >= imageRect.top &&
+    localY <= imageRect.top + imageRect.height
+  );
+}
+
 function clampPan(x: number, y: number, scale: number, width: number, height: number) {
   if (scale <= 1) return { x: 0, y: 0 };
   const maxX = ((scale - 1) * width) / 2;
@@ -130,8 +167,15 @@ function WholesaleCenterLightbox({
   const suppressClickRef = useRef(false);
   const steppedBackToFullRef = useRef(false);
   const [transform, setTransform] = useState({ scale: BASE_SCALE, x: 0, y: 0 });
+  const [imageNaturalSize, setImageNaturalSize] = useState<{ w: number; h: number } | null>(
+    null,
+  );
 
   const url = images[activeIndex] ?? "";
+
+  useEffect(() => {
+    setImageNaturalSize(null);
+  }, [url]);
 
   const applyTransform = useCallback(
     (scale: number, x: number, y: number) => {
@@ -292,19 +336,35 @@ function WholesaleCenterLightbox({
         suppressClickRef.current = true;
       } else if (touch) {
         suppressClickRef.current = true;
-        handleImageTap();
+        onStageActivate(touch.x, touch.y);
       }
       touchRef.current = null;
     }
   };
 
+  const onStageActivate = useCallback(
+    (clientX: number, clientY: number) => {
+      if (suppressClickRef.current || suppressTapRef.current) {
+        suppressClickRef.current = false;
+        return;
+      }
+      if (
+        mode === "full" &&
+        stageRef.current &&
+        imageNaturalSize &&
+        !isPointOnVisibleImage(clientX, clientY, stageRef.current, imageNaturalSize)
+      ) {
+        onBackdropClick();
+        return;
+      }
+      handleImageTap();
+    },
+    [handleImageTap, imageNaturalSize, mode, onBackdropClick],
+  );
+
   const onImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (suppressClickRef.current || suppressTapRef.current) {
-      suppressClickRef.current = false;
-      return;
-    }
-    handleImageTap();
+    onStageActivate(e.clientX, e.clientY);
   };
 
   const navigate = (index: number) => {
@@ -321,6 +381,49 @@ function WholesaleCenterLightbox({
   const canNavigate = mode === "full" && images.length > 1;
   const allowsTouchPan = mode === "magnify" || mode === "pinch";
 
+  const dismissZoneClass =
+    "pointer-events-auto min-h-0 flex-1 w-full cursor-default border-0 bg-transparent p-0";
+
+  const onDismissZoneActivate = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    onBackdropClick();
+  };
+
+  const stageBlock = (
+    <div
+      ref={stageRef}
+      className={`pointer-events-auto relative w-full max-w-full ${
+        mode === "full" ? "h-[min(58vh,900px)] cursor-zoom-in" : "h-full cursor-zoom-out"
+      }`}
+      style={{ touchAction: allowsTouchPan ? "none" : "auto" }}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+      onTouchCancel={onTouchEnd}
+      onClick={onImageClick}
+    >
+      <div
+        className="relative mx-auto h-full w-full will-change-transform"
+        style={{
+          transform: `translate3d(${transform.x}px, ${transform.y}px, 0) scale(${transform.scale})`,
+          transformOrigin: "center center",
+        }}
+      >
+        <StorefrontImage
+          src={url}
+          alt={`${alt} — ${activeIndex + 1}`}
+          fill
+          draggable={false}
+          priority
+          className="pointer-events-none object-contain object-center select-none"
+          sizes="96vw"
+          onLoadingComplete={(img) => {
+            setImageNaturalSize({ w: img.naturalWidth, h: img.naturalHeight });
+          }}
+        />
+      </div>
+    </div>
+  );
+
   if (mode === "cover" || !url || typeof document === "undefined") return null;
 
   return createPortal(
@@ -332,64 +435,59 @@ function WholesaleCenterLightbox({
       onClick={onBackdropClick}
     >
       <div className="absolute inset-0 bg-ink/72 backdrop-blur-[2px]" aria-hidden />
-      <div className="relative flex h-full w-full items-center justify-center p-4 pointer-events-none">
-        <div className="relative flex h-[min(88vh,900px)] w-[min(96vw,900px)] max-w-full items-center justify-center">
-          {canNavigate ? (
+      <div className="relative flex h-full w-full items-stretch justify-center p-4 pointer-events-none">
+        <div
+          className={`relative flex w-[min(96vw,900px)] max-w-full ${
+            mode === "full" ? "h-full flex-col" : "h-[min(88vh,900px)] items-center justify-center"
+          }`}
+        >
+          {mode === "full" ? (
             <>
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(activeIndex - 1);
-                }}
-                className="pointer-events-auto absolute left-0 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-ink/45 text-paper shadow-sm backdrop-blur-sm transition hover:bg-ink/60"
-                aria-label="Previous image"
-              >
-                <ChevronLeft size={24} strokeWidth={2} />
-              </button>
+                className={dismissZoneClass}
+                aria-label="Back"
+                onClick={onDismissZoneActivate}
+              />
+              <div className="relative w-full shrink-0">
+                {canNavigate ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(activeIndex - 1);
+                      }}
+                      className="pointer-events-auto absolute left-0 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-ink/45 text-paper shadow-sm backdrop-blur-sm transition hover:bg-ink/60"
+                      aria-label="Previous image"
+                    >
+                      <ChevronLeft size={24} strokeWidth={2} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(activeIndex + 1);
+                      }}
+                      className="pointer-events-auto absolute right-0 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-ink/45 text-paper shadow-sm backdrop-blur-sm transition hover:bg-ink/60"
+                      aria-label="Next image"
+                    >
+                      <ChevronRight size={24} strokeWidth={2} />
+                    </button>
+                  </>
+                ) : null}
+                {stageBlock}
+              </div>
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(activeIndex + 1);
-                }}
-                className="pointer-events-auto absolute right-0 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-ink/45 text-paper shadow-sm backdrop-blur-sm transition hover:bg-ink/60"
-                aria-label="Next image"
-              >
-                <ChevronRight size={24} strokeWidth={2} />
-              </button>
-            </>
-          ) : null}
-
-          <div
-            ref={stageRef}
-            className={`pointer-events-auto relative h-full w-full max-h-full max-w-full ${
-              mode === "full" ? "cursor-zoom-in" : "cursor-zoom-out"
-            }`}
-            style={{ touchAction: allowsTouchPan ? "none" : "auto" }}
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-            onTouchCancel={onTouchEnd}
-            onClick={onImageClick}
-          >
-            <div
-              className="relative mx-auto h-full w-full will-change-transform"
-              style={{
-                transform: `translate3d(${transform.x}px, ${transform.y}px, 0) scale(${transform.scale})`,
-                transformOrigin: "center center",
-              }}
-            >
-              <StorefrontImage
-                src={url}
-                alt={`${alt} — ${activeIndex + 1}`}
-                fill
-                draggable={false}
-                priority
-                className="pointer-events-none object-contain object-center select-none"
-                sizes="96vw"
+                className={dismissZoneClass}
+                aria-label="Back"
+                onClick={onDismissZoneActivate}
               />
-            </div>
-          </div>
+            </>
+          ) : (
+            stageBlock
+          )}
         </div>
       </div>
     </div>,
