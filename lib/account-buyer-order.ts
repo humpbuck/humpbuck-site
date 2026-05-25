@@ -1,9 +1,11 @@
 /** Buyer-facing account order list + detail (not admin). */
 
 import {
+  countryLabelToIso2,
   expandStateFullName,
   formatPhoneInternational,
 } from "@/lib/admin/order-ui";
+import { getTaxIdRule, taxIdFieldLabel } from "@/lib/tax-id-rules";
 
 export type BuyerAddressFieldRow = {
   label: string;
@@ -60,6 +62,9 @@ export function buyerOrderAddressFieldRows(
     stateRaw.length > 0 ? expandStateFullName(stateRaw) : "—";
   const zip = (rec.postalCode || rec.zip || "").trim() || "—";
   const country = rec.country?.trim() || "—";
+  const taxIdRaw = rec.taxId?.trim() ?? "";
+  const countryIso2 = countryLabelToIso2(country !== "—" ? country : "");
+  const showTaxId = Boolean(taxIdRaw) || getTaxIdRule(countryIso2).required;
 
   const phoneFmt = formatPhoneInternational(rec.phone, rec.country);
   const email = orderEmail.trim();
@@ -73,6 +78,13 @@ export function buyerOrderAddressFieldRows(
     { label: labels.zip, value: zip },
     { label: labels.country, value: country },
   ];
+
+  if (showTaxId) {
+    rows.push({
+      label: taxIdFieldLabel(countryIso2),
+      value: taxIdRaw || "—",
+    });
+  }
 
   if (phoneFmt) {
     rows.push({

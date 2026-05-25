@@ -69,6 +69,7 @@ function OrderAddressFieldTable({
     ["State (Full Name)", s?.stateFullName ?? "—"],
     ["ZIP Code", s?.zip ?? "—"],
     ["Country", s?.country ?? "—"],
+    ...(s?.showTaxId ? ([[s.taxIdLabel, s.taxId]] as const) : []),
     ...(includeYanwenZoneRow
       ? ([
           [

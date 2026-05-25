@@ -1,3 +1,5 @@
+import { getTaxIdRule, taxIdFieldLabel } from "@/lib/tax-id-rules";
+
 /** Admin order list & detail display helpers (no secrets). */
 
 export function orderDisplayId(id: string): string {
@@ -165,7 +167,19 @@ export type StructuredShippingAddress = {
   stateFullName: string;
   zip: string;
   country: string;
+  taxIdLabel: string;
+  taxId: string;
+  showTaxId: boolean;
 };
+
+export function countryLabelToIso2(countryLabel: string): string {
+  const trimmed = countryLabel.trim();
+  const match = trimmed.match(/\(([A-Za-z]{2})\)\s*$/);
+  if (match) return match[1].toUpperCase();
+  const direct = trimmed.toUpperCase();
+  if (/^[A-Z]{2}$/.test(direct)) return direct;
+  return direct;
+}
 
 export function parseStructuredShipping(
   s: Record<string, string> | null,
@@ -185,6 +199,10 @@ export function parseStructuredShipping(
   const zip = (s.postalCode || s.zip || "").trim();
   const country = s.country?.trim() ?? "";
   const stateFullName = expandStateFullName(rawState);
+  const taxIdRaw = s.taxId?.trim() ?? "";
+  const countryIso2 = countryLabelToIso2(country);
+  const taxRule = getTaxIdRule(countryIso2);
+  const showTaxId = Boolean(taxIdRaw) || taxRule.required;
   if (
     !name &&
     !company &&
@@ -192,7 +210,8 @@ export function parseStructuredShipping(
     !city &&
     !rawState &&
     !zip &&
-    !country
+    !country &&
+    !taxIdRaw
   ) {
     return null;
   }
@@ -204,6 +223,9 @@ export function parseStructuredShipping(
     stateFullName,
     zip: zip || "—",
     country: country || "—",
+    taxIdLabel: taxIdFieldLabel(countryIso2),
+    taxId: taxIdRaw || "—",
+    showTaxId,
   };
 }
 
@@ -275,6 +297,10 @@ export function formatAddressLines(
     .join(", ");
   if (cityLine) lines.push(cityLine);
   if (s.country) lines.push(s.country);
+  const taxId = s.taxId?.trim();
+  if (taxId) {
+    lines.push(`${taxIdFieldLabel(countryLabelToIso2(s.country ?? ""))}: ${taxId}`);
+  }
   return lines;
 }
 

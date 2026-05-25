@@ -206,6 +206,7 @@ function emailAddressFieldsTable(
     ${row("State (full name)", cell(structured.stateFullName))}
     ${row("ZIP code", cell(structured.zip))}
     ${row("Country", cell(structured.country))}
+    ${structured.showTaxId ? row(structured.taxIdLabel, cell(structured.taxId)) : ""}
     ${row("Phone number", valPhone)}
     ${row("Email", valEmail)}
   </tbody>`;

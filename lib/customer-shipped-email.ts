@@ -124,6 +124,7 @@ export function buildAddressFieldTableHtml(opts: {
     ${row("State (full name)", structured.stateFullName)}
     ${row("ZIP code", structured.zip)}
     ${row("Country", structured.country)}
+    ${structured.showTaxId ? row(structured.taxIdLabel, structured.taxId) : ""}
     ${row("Phone number", phoneDisplay)}
     ${row("Email", opts.email, true)}
   </table>`;
@@ -150,6 +151,9 @@ function buildAddressFieldTablePlainText(opts: {
     `State (full name): ${structured.stateFullName}`,
     `ZIP code: ${structured.zip}`,
     `Country: ${structured.country}`,
+    ...(structured.showTaxId
+      ? [`${structured.taxIdLabel}: ${structured.taxId}`]
+      : []),
     `Phone: ${phoneDisplay}`,
     `Email: ${opts.email}`,
   ].join("\n");
