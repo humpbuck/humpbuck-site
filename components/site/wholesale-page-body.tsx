@@ -1,10 +1,8 @@
 import {
   CreditCard,
   Mail,
-  MessageCircle,
   Package,
   Play,
-  RefreshCw,
   Truck,
 } from "lucide-react";
 import { WholesaleIndexJsonLd } from "@/components/seo/wholesale-json-ld";
@@ -13,8 +11,12 @@ import { WholesaleContactActions } from "@/components/site/wholesale-contact-act
 import { WholesaleStoryCollapsible } from "@/components/site/wholesale-story-collapsible";
 import { WholesaleListingsSection } from "@/components/site/wholesale-listings-section";
 import { R2 } from "@/lib/r2";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { listActiveWholesaleListings } from "@/lib/wholesale-listings";
+import {
+  toWholesaleListingClientRow,
+  type WholesaleListingsLabels,
+} from "@/lib/wholesale-listing-shared";
 import type { LucideIcon } from "lucide-react";
 
 const TRUST_CHIP_KEYS = [
@@ -64,18 +66,20 @@ export async function WholesalePageBody({
 }) {
   setRequestLocale(locale);
   const t = await getTranslations("WholesalePage");
+  const messages = await getMessages();
+  const wholesaleMessages = messages.WholesalePage as Record<string, string | undefined>;
   const listings = await listActiveWholesaleListings();
-
-  const infoCards: {
-    icon: LucideIcon;
-    headingKey: "inventoryHeading" | "beforeOrderHeading" | "shippingHeading" | "paymentHeading";
-    bodyKey: "inventoryBody" | "beforeOrderBody" | "shippingBody" | "paymentBody";
-  }[] = [
-    { icon: RefreshCw, headingKey: "inventoryHeading", bodyKey: "inventoryBody" },
-    { icon: MessageCircle, headingKey: "beforeOrderHeading", bodyKey: "beforeOrderBody" },
-    { icon: Truck, headingKey: "shippingHeading", bodyKey: "shippingBody" },
-    { icon: CreditCard, headingKey: "paymentHeading", bodyKey: "paymentBody" },
-  ];
+  const listingRows = listings.map(toWholesaleListingClientRow);
+  const listingsLabels: WholesaleListingsLabels = {
+    listingsKicker: t("listingsKicker"),
+    listingsTitle: t("listingsTitle"),
+    listingsLead: t("listingsLead"),
+    listingsPrev: t("listingsPrev"),
+    listingsNext: t("listingsNext"),
+    listingsPageTemplate:
+      wholesaleMessages.listingsPage ?? "Page {page} of {total}",
+    listingsModalFallbackTitle: t("listingsModalFallbackTitle"),
+  };
 
   const steps: {
     icon: LucideIcon;
@@ -97,7 +101,7 @@ export async function WholesalePageBody({
         listings={listings}
       />
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
-        <header className="border-b border-line pb-12 lg:pb-14">
+        <header className="pb-0">
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
             {t("kicker")}
           </p>
@@ -124,22 +128,13 @@ export async function WholesalePageBody({
           </ul>
         </header>
 
-        <div className="mt-12 grid gap-5 lg:grid-cols-2">
-          {infoCards.map(({ icon: Icon, headingKey, bodyKey }) => (
-            <div
-              key={headingKey}
-              className="rounded-3xl border border-line bg-white/70 p-6 shadow-card"
-            >
-              <Icon className="text-luxe-dim" size={22} strokeWidth={1.75} />
-              <div className="mt-4 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
-                {t(headingKey)}
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-ink/85">{t(bodyKey)}</p>
-            </div>
-          ))}
-        </div>
+        <WholesaleListingsSection
+          listings={listingRows}
+          labels={listingsLabels}
+          initialOpenSlug={initialOpenSlug}
+        />
 
-        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {steps.map(({ icon: Icon, titleKey, bodyKey }) => (
             <div key={titleKey} className="rounded-3xl border border-line bg-paper p-6">
               <Icon className="text-luxe-dim" size={22} strokeWidth={1.75} />
@@ -262,8 +257,6 @@ export async function WholesalePageBody({
           </WholesaleStoryCollapsible>
           </div>
         </section>
-
-        <WholesaleListingsSection listings={listings} initialOpenSlug={initialOpenSlug} />
       </div>
     </>
   );

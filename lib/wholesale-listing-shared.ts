@@ -13,6 +13,32 @@ export type WholesaleListingRow = {
   updatedAt: Date;
 };
 
+export type WholesaleListingClientRow = Pick<
+  WholesaleListingRow,
+  "id" | "slug" | "modelNumber" | "description" | "priceUsd" | "mediaUrls"
+>;
+
+export function toWholesaleListingClientRow(row: WholesaleListingRow): WholesaleListingClientRow {
+  return {
+    id: row.id,
+    slug: row.slug,
+    modelNumber: row.modelNumber,
+    description: row.description,
+    priceUsd: row.priceUsd,
+    mediaUrls: row.mediaUrls,
+  };
+}
+
+export type WholesaleListingsLabels = {
+  listingsKicker: string;
+  listingsTitle: string;
+  listingsLead: string;
+  listingsPrev: string;
+  listingsNext: string;
+  listingsPageTemplate: string;
+  listingsModalFallbackTitle: string;
+};
+
 export type WholesaleListingInput = {
   slug: string;
   modelNumber: string;

@@ -1,12 +1,14 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { CenterModal } from "@/components/ui/center-modal";
 import { formatPrice } from "@/lib/catalog";
 import { preloadImageUrls } from "@/lib/preload-images-client";
-import type { WholesaleListingRow } from "@/lib/wholesale-listing-shared";
+import type {
+  WholesaleListingClientRow,
+  WholesaleListingsLabels,
+} from "@/lib/wholesale-listing-shared";
 import {
   isWholesaleVideoUrl,
   wholesaleListingPosterUrl,
@@ -14,6 +16,12 @@ import {
 import { WholesaleMediaCarousel } from "@/components/site/wholesale-media-carousel";
 import { WholesaleListingInquiryActions } from "@/components/site/wholesale-listing-inquiry-actions";
 import { WholesaleVideoPosterThumb } from "@/components/site/wholesale-video-poster-thumb";
+
+function formatListingsPage(template: string, page: number, total: number): string {
+  return template
+    .replace(/\{page\}/g, String(page))
+    .replace(/\{total\}/g, String(total));
+}
 
 const DESKTOP_PAGE_SIZE = 10;
 const MOBILE_PAGE_SIZE = 5;
@@ -71,7 +79,7 @@ function WholesaleListingCard({
   listing,
   onOpen,
 }: {
-  listing: WholesaleListingRow;
+  listing: WholesaleListingClientRow;
   onOpen: () => void;
 }) {
   const thumb = listing.mediaUrls[0] ?? "";
@@ -118,15 +126,16 @@ function WholesaleListingCard({
 
 export function WholesaleListingsSection({
   listings,
+  labels,
   initialOpenSlug,
 }: {
-  listings: WholesaleListingRow[];
+  listings: WholesaleListingClientRow[];
+  labels: WholesaleListingsLabels;
   initialOpenSlug?: string;
 }) {
-  const t = useTranslations("WholesalePage");
   const pageSize = useWholesalePageSize();
   const [page, setPage] = useState(1);
-  const [activeListing, setActiveListing] = useState<WholesaleListingRow | null>(null);
+  const [activeListing, setActiveListing] = useState<WholesaleListingClientRow | null>(null);
   const openedFromLinkRef = useRef(false);
 
   const totalPages = Math.max(1, Math.ceil(listings.length / pageSize));
@@ -161,15 +170,15 @@ export function WholesaleListingsSection({
 
   return (
     <>
-      <section className="mt-16 border-t border-line pt-16">
+      <section className="mt-10 lg:mt-12">
         <div className="max-w-3xl">
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
-            {t("listingsKicker")}
+            {labels.listingsKicker}
           </p>
           <h2 className="mt-3 font-serif text-3xl tracking-tight sm:text-4xl">
-            {t("listingsTitle")}
+            {labels.listingsTitle}
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted">{t("listingsLead")}</p>
+          <p className="mt-3 text-sm leading-relaxed text-muted">{labels.listingsLead}</p>
         </div>
 
         <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
@@ -190,10 +199,10 @@ export function WholesaleListingsSection({
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               className="rounded-full border border-line bg-paper px-5 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/85 disabled:opacity-40"
             >
-              {t("listingsPrev")}
+              {labels.listingsPrev}
             </button>
             <span className="text-sm tabular-nums text-muted">
-              {t("listingsPage", { page, total: totalPages })}
+              {formatListingsPage(labels.listingsPageTemplate, page, totalPages)}
             </span>
             <button
               type="button"
@@ -201,7 +210,7 @@ export function WholesaleListingsSection({
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               className="rounded-full border border-line bg-paper px-5 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/85 disabled:opacity-40"
             >
-              {t("listingsNext")}
+              {labels.listingsNext}
             </button>
           </div>
         ) : null}
@@ -209,7 +218,7 @@ export function WholesaleListingsSection({
 
       {activeListing ? (
         <CenterModal
-          title={activeListing.modelNumber.trim() || t("listingsModalFallbackTitle")}
+          title={activeListing.modelNumber.trim() || labels.listingsModalFallbackTitle}
           onClose={closeModal}
           size="wide"
         >

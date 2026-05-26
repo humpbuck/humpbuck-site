@@ -7,7 +7,7 @@ import { ContactSupportModal } from "@/components/site/contact-support-modal";
 import { CenterModal } from "@/components/ui/center-modal";
 import { formatPrice } from "@/lib/catalog";
 import { routing } from "@/i18n/routing";
-import type { WholesaleListingRow } from "@/lib/wholesale-listing-shared";
+import type { WholesaleListingClientRow } from "@/lib/wholesale-listing-shared";
 import { wholesaleListingPublicPath } from "@/lib/wholesale-listing-shared";
 import {
   WHATSAPP_DISPLAY,
@@ -21,7 +21,7 @@ const inquiryBtn =
 export function WholesaleListingInquiryActions({
   listing,
 }: {
-  listing: WholesaleListingRow;
+  listing: WholesaleListingClientRow;
 }) {
   const t = useTranslations("WholesalePage");
   const tWa = useTranslations("WhatsAppFab");
