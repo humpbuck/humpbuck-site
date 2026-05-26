@@ -1,7 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { CookieSettingsLink } from "@/components/analytics/cookie-settings-link";
+import { HumpbuckSocialLinks } from "@/components/site/humpbuck-social-links";
+import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { publicSupportEmail } from "@/lib/support-contact";
 
 export async function SiteFooter() {
@@ -50,6 +51,16 @@ export async function SiteFooter() {
             <p className="mt-4 text-[11px] uppercase leading-snug tracking-[0.14em] text-muted sm:mt-6 sm:text-xs sm:tracking-[0.16em]">
               {t("highlights")}
             </p>
+            <div className="mt-5 sm:mt-6">
+              <HumpbuckSocialLinks
+                labels={{
+                  facebook: t("socialFacebookAria"),
+                  instagram: t("socialInstagramAria"),
+                  youtube: t("socialYoutubeAria"),
+                  tiktok: t("socialTiktokAria"),
+                }}
+              />
+            </div>
           </div>
           <div className="flex w-full min-w-0 justify-center">
             <div className="grid w-full min-w-0 max-w-2xl grid-cols-3 gap-x-3 sm:gap-x-8">

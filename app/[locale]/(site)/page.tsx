@@ -4,6 +4,7 @@ import { getTranslations, getMessages, setRequestLocale } from "next-intl/server
 import { Link } from "@/i18n/navigation";
 import { ArrowRight, Factory, Globe2, ShieldCheck, Sparkles } from "lucide-react";
 import { HeroSpaceVideo } from "@/components/site/HeroSpaceVideo";
+import { HumpbuckSocialLinks } from "@/components/site/humpbuck-social-links";
 import { HomeFeaturedProductCard } from "@/components/site/home-featured-product-card";
 import { PreloadHomeFeaturedImages } from "@/components/site/preload-home-featured-images";
 import { PreloadHomeSeriesImages } from "@/components/site/preload-home-series-images";
@@ -161,6 +162,22 @@ export default async function HomePage({
                 {t("heroSeriesStory")}
                 <ArrowRight size={16} />
               </Link>
+            </div>
+            <div className="mt-8">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/55">
+                {t("heroSocialLabel")}
+              </p>
+              <div className="mt-3">
+                <HumpbuckSocialLinks
+                  variant="hero"
+                  labels={{
+                    facebook: t("socialFacebookAria"),
+                    instagram: t("socialInstagramAria"),
+                    youtube: t("socialYoutubeAria"),
+                    tiktok: t("socialTiktokAria"),
+                  }}
+                />
+              </div>
             </div>
           </div>
 

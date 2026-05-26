@@ -23,6 +23,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
       ...productCopy,
       ...policies,
       ContactForm: base.ContactForm ?? enBase.ContactForm,
+      Footer: { ...enBase.Footer, ...base.Footer },
+      Home: { ...enBase.Home, ...base.Home },
       WholesalePage: { ...enBase.WholesalePage, ...base.WholesalePage },
     },
   };
