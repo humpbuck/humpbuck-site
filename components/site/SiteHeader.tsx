@@ -15,20 +15,29 @@ import { storefrontHomePath } from "@/lib/storefront-home-path";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
 import { R2 } from "@/lib/r2";
 
-const SHOP_SERIES_LINKS = [
+const SHOP_DROPDOWN_LINKS = [
   {
-    labelKey: "seriesDigitemp",
+    href: "/shop",
+    labelKey: "allProducts",
+    labelNamespace: "Footer",
+    image: R2.shop.allProductsThumbWebp,
+  },
+  {
     href: "/series/digitemp",
+    labelKey: "seriesDigitemp",
+    labelNamespace: "Navigation",
     image: R2.products.digitemp2301.gallery[1],
   },
   {
-    labelKey: "seriesTonneau",
     href: "/series/tonneau",
+    labelKey: "seriesTonneau",
+    labelNamespace: "Navigation",
     image: R2.products.rmM01.gallery[0],
   },
   {
-    labelKey: "seriesRdAstral",
     href: "/series/rd-astral",
+    labelKey: "seriesRdAstral",
+    labelNamespace: "Navigation",
     image: R2.products.rdExcalibur01.gallery[0],
   },
 ] as const;
@@ -48,7 +57,7 @@ function ShopSeriesLink({
   imageClassName,
   onNavigate,
 }: {
-  href: (typeof SHOP_SERIES_LINKS)[number]["href"];
+  href: (typeof SHOP_DROPDOWN_LINKS)[number]["href"];
   label: string;
   image: string;
   className: string;
@@ -71,29 +80,39 @@ function ShopSeriesLink({
   );
 }
 
-function DesktopShopNav({ t }: { t: ReturnType<typeof useTranslations<"Navigation">> }) {
+function DesktopShopNav({
+  tNav,
+  tFooter,
+}: {
+  tNav: ReturnType<typeof useTranslations<"Navigation">>;
+  tFooter: ReturnType<typeof useTranslations<"Footer">>;
+}) {
   return (
     <div className="group relative">
-      <Link href="/shop" className={`inline-flex items-center gap-1 ${NAV_LINK_CLASS}`}>
-        {t("shop")}
+      <button
+        type="button"
+        aria-haspopup="menu"
+        className={`inline-flex cursor-default items-center gap-1 ${NAV_LINK_CLASS}`}
+      >
+        {tNav("shop")}
         <ChevronDown
           size={12}
           strokeWidth={2}
           className="opacity-60 transition group-hover:rotate-180"
           aria-hidden
         />
-      </Link>
+      </button>
       <div className="pointer-events-none absolute left-0 top-full z-50 pt-3 opacity-0 transition group-hover:pointer-events-auto group-hover:opacity-100">
         <div
           role="menu"
-          aria-label={t("shop")}
+          aria-label={tNav("shop")}
           className="min-w-[240px] rounded-2xl border border-line bg-paper/95 py-2 shadow-card backdrop-blur-md"
         >
-          {SHOP_SERIES_LINKS.map(({ labelKey, href, image }) => (
+          {SHOP_DROPDOWN_LINKS.map(({ labelKey, labelNamespace, href, image }) => (
             <ShopSeriesLink
               key={href}
               href={href}
-              label={t(labelKey)}
+              label={labelNamespace === "Footer" ? tFooter(labelKey) : tNav(labelKey)}
               image={image}
               className="flex items-center gap-3 px-3 py-2.5 text-[12px] font-medium uppercase tracking-[0.08em] text-ink/90 transition hover:bg-ink/[0.04]"
               imageClassName="h-11 w-11"
@@ -106,27 +125,25 @@ function DesktopShopNav({ t }: { t: ReturnType<typeof useTranslations<"Navigatio
 }
 
 function MobileShopNav({
-  t,
+  tNav,
+  tFooter,
   onNavigate,
 }: {
-  t: ReturnType<typeof useTranslations<"Navigation">>;
+  tNav: ReturnType<typeof useTranslations<"Navigation">>;
+  tFooter: ReturnType<typeof useTranslations<"Footer">>;
   onNavigate: () => void;
 }) {
   return (
     <div className="rounded-xl">
-      <Link
-        href="/shop"
-        onClick={onNavigate}
-        className="block px-4 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-ink/85 hover:bg-ink/[0.04]"
-      >
-        {t("shop")}
-      </Link>
+      <p className="px-4 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-ink/85">
+        {tNav("shop")}
+      </p>
       <div className="flex flex-col gap-1 pb-1 pl-2">
-        {SHOP_SERIES_LINKS.map(({ labelKey, href, image }) => (
+        {SHOP_DROPDOWN_LINKS.map(({ labelKey, labelNamespace, href, image }) => (
           <ShopSeriesLink
             key={href}
             href={href}
-            label={t(labelKey)}
+            label={labelNamespace === "Footer" ? tFooter(labelKey) : tNav(labelKey)}
             image={image}
             onNavigate={onNavigate}
             className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-ink/[0.04]"
@@ -164,6 +181,7 @@ function HeaderLoginLink({
 
 export function SiteHeader() {
   const t = useTranslations("Navigation");
+  const tFooter = useTranslations("Footer");
   const locale = useLocale();
   const signOutCallbackUrl = storefrontHomePath(locale);
   const [open, setOpen] = useState(false);
@@ -245,7 +263,7 @@ export function SiteHeader() {
           </div>
 
           <nav className="hidden shrink-0 items-center gap-4 lg:flex xl:gap-6">
-            <DesktopShopNav t={t} />
+            <DesktopShopNav tNav={t} tFooter={tFooter} />
             {navItems.map((item) => (
               <Link key={item.href} href={item.href} className={NAV_LINK_CLASS}>
                 {t(item.labelKey)}
@@ -328,7 +346,7 @@ export function SiteHeader() {
           </button>
         </div>
         <nav className="flex flex-col p-2">
-          <MobileShopNav t={t} onNavigate={() => setOpen(false)} />
+          <MobileShopNav tNav={t} tFooter={tFooter} onNavigate={() => setOpen(false)} />
           {navItems.map((item) => (
             <Link
               key={item.href}

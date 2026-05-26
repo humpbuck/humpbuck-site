@@ -466,6 +466,10 @@ export const R2 = {
       { detail: 25, variants: 10 },
     ),
   },
+  shop: {
+    /** Header SHOP dropdown — `products/CK-2413M/variants/HUMPBUCK-CK2413M-style-01.webp` */
+    allProductsThumbWebp: `${R2_PUBLIC_BASE}/products/CK-2413M/variants/HUMPBUCK-CK2413M-style-01.webp`,
+  },
   wholesale: {
     /** `/wholesale` Open Graph — `wholesale/wholesale SEO/wholesale SEO 01.webp` */
     seoOgWebp: wholesaleSeoOgWebpUrl(),
