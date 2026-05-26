@@ -1,7 +1,7 @@
 "use client";
 
 import { Link, usePathname } from "@/i18n/navigation";
-import { Menu, ShoppingBag, X } from "lucide-react";
+import { ChevronDown, Menu, ShoppingBag, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
@@ -9,20 +9,137 @@ import { Suspense, useEffect, useMemo, useState, useSyncExternalStore } from "re
 import { useCart } from "@/components/cart/cart-context";
 import { AccountMenu } from "@/components/site/AccountMenu";
 import { HeaderUserAvatar } from "@/components/site/HeaderUserAvatar";
+import { StorefrontImage } from "@/components/site/storefront-image";
 import { buildLoginHref } from "@/lib/auth-callback-url";
 import { storefrontHomePath } from "@/lib/storefront-home-path";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
+import { R2 } from "@/lib/r2";
+
+const SHOP_SERIES_LINKS = [
+  {
+    labelKey: "seriesDigitemp",
+    href: "/series/digitemp",
+    image: R2.products.digitemp2301.gallery[1],
+  },
+  {
+    labelKey: "seriesTonneau",
+    href: "/series/tonneau",
+    image: R2.products.rmM01.gallery[0],
+  },
+  {
+    labelKey: "seriesRdAstral",
+    href: "/series/rd-astral",
+    image: R2.products.rdExcalibur01.gallery[0],
+  },
+] as const;
 
 const NAV_ITEMS = [
-  { labelKey: "shop", href: "/shop" },
-  { labelKey: "seriesDigitemp", href: "/series/digitemp" },
-  { labelKey: "seriesTonneau", href: "/series/tonneau" },
-  { labelKey: "seriesRdAstral", href: "/series/rd-astral" },
   { labelKey: "affiliates", href: "/affiliates" },
   { labelKey: "wholesale", href: "/wholesale" },
   { labelKey: "videoTutorial", href: "/video-tutorial" },
   { labelKey: "about", href: "/about" },
 ] as const;
+
+function ShopSeriesLink({
+  href,
+  label,
+  image,
+  className,
+  imageClassName,
+  onNavigate,
+}: {
+  href: (typeof SHOP_SERIES_LINKS)[number]["href"];
+  label: string;
+  image: string;
+  className: string;
+  imageClassName: string;
+  onNavigate?: () => void;
+}) {
+  return (
+    <Link href={href} onClick={onNavigate} className={className}>
+      <span className={`relative shrink-0 overflow-hidden rounded-lg border border-line bg-white ${imageClassName}`}>
+        <StorefrontImage
+          src={image}
+          alt=""
+          fill
+          sizes="56px"
+          className="object-cover"
+        />
+      </span>
+      <span className="min-w-0 truncate">{label}</span>
+    </Link>
+  );
+}
+
+function DesktopShopNav({ t }: { t: ReturnType<typeof useTranslations<"Navigation">> }) {
+  return (
+    <div className="group relative">
+      <Link href="/shop" className={`inline-flex items-center gap-1 ${NAV_LINK_CLASS}`}>
+        {t("shop")}
+        <ChevronDown
+          size={12}
+          strokeWidth={2}
+          className="opacity-60 transition group-hover:rotate-180"
+          aria-hidden
+        />
+      </Link>
+      <div className="pointer-events-none absolute left-0 top-full z-50 pt-3 opacity-0 transition group-hover:pointer-events-auto group-hover:opacity-100">
+        <div
+          role="menu"
+          aria-label={t("shop")}
+          className="min-w-[240px] rounded-2xl border border-line bg-paper/95 py-2 shadow-card backdrop-blur-md"
+        >
+          {SHOP_SERIES_LINKS.map(({ labelKey, href, image }) => (
+            <ShopSeriesLink
+              key={href}
+              href={href}
+              label={t(labelKey)}
+              image={image}
+              className="flex items-center gap-3 px-3 py-2.5 text-[12px] font-medium uppercase tracking-[0.08em] text-ink/90 transition hover:bg-ink/[0.04]"
+              imageClassName="h-11 w-11"
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MobileShopNav({
+  t,
+  onNavigate,
+}: {
+  t: ReturnType<typeof useTranslations<"Navigation">>;
+  onNavigate: () => void;
+}) {
+  return (
+    <div className="rounded-xl">
+      <Link
+        href="/shop"
+        onClick={onNavigate}
+        className="block px-4 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-ink/85 hover:bg-ink/[0.04]"
+      >
+        {t("shop")}
+      </Link>
+      <div className="flex flex-col gap-1 pb-1 pl-2">
+        {SHOP_SERIES_LINKS.map(({ labelKey, href, image }) => (
+          <ShopSeriesLink
+            key={href}
+            href={href}
+            label={t(labelKey)}
+            image={image}
+            onNavigate={onNavigate}
+            className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-ink/[0.04]"
+            imageClassName="h-10 w-10"
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const NAV_LINK_CLASS =
+  "whitespace-nowrap text-[11px] font-medium uppercase tracking-[0.1em] text-ink/75 transition hover:text-ink xl:text-[12px] xl:tracking-[0.14em]";
 
 function HeaderLoginLink({
   className,
@@ -128,12 +245,9 @@ export function SiteHeader() {
           </div>
 
           <nav className="hidden shrink-0 items-center gap-4 lg:flex xl:gap-6">
+            <DesktopShopNav t={t} />
             {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="whitespace-nowrap text-[11px] font-medium uppercase tracking-[0.1em] text-ink/75 transition hover:text-ink xl:text-[12px] xl:tracking-[0.14em]"
-              >
+              <Link key={item.href} href={item.href} className={NAV_LINK_CLASS}>
                 {t(item.labelKey)}
               </Link>
             ))}
@@ -214,6 +328,7 @@ export function SiteHeader() {
           </button>
         </div>
         <nav className="flex flex-col p-2">
+          <MobileShopNav t={t} onNavigate={() => setOpen(false)} />
           {navItems.map((item) => (
             <Link
               key={item.href}
