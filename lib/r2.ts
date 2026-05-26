@@ -94,6 +94,16 @@ function aboutPromotionalVideoUrl(): string {
   return `${path}?v=${encodeURIComponent(rev)}`;
 }
 
+/**
+ * Wholesale index OG / Facebook share — `wholesale/wholesale SEO/wholesale SEO 01.webp` on R2.
+ * Bump `NEXT_PUBLIC_R2_WHOLESALE_SEO_OG_REV` after same-name overwrites.
+ */
+function wholesaleSeoOgWebpUrl(): string {
+  const rev = process.env.NEXT_PUBLIC_R2_WHOLESALE_SEO_OG_REV?.trim() || "1";
+  const path = `${R2_PUBLIC_BASE}/wholesale/${encodeURIComponent("wholesale SEO")}/${encodeURIComponent("wholesale SEO 01.webp")}`;
+  return `${path}?v=${encodeURIComponent(rev)}`;
+}
+
 function pad2(n: number): string {
   return String(n).padStart(2, "0");
 }
@@ -455,5 +465,9 @@ export const R2 = {
       "HUMPBUCK-RD-Excalibur01",
       { detail: 25, variants: 10 },
     ),
+  },
+  wholesale: {
+    /** `/wholesale` Open Graph — `wholesale/wholesale SEO/wholesale SEO 01.webp` */
+    seoOgWebp: wholesaleSeoOgWebpUrl(),
   },
 } as const;

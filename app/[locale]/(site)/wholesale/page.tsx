@@ -3,8 +3,7 @@ import { getMessages, getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { WholesalePageBody } from "@/components/site/wholesale-page-body";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
-import { listActiveWholesaleListings } from "@/lib/wholesale-listings";
-import { resolveWholesaleOgImage, wholesaleIndexPageUrl } from "@/lib/wholesale-seo";
+import { wholesaleIndexOgImage, wholesaleIndexPageUrl } from "@/lib/wholesale-seo";
 
 /** Listings and OG image should reflect daily stock updates. */
 export const dynamic = "force-dynamic";
@@ -21,9 +20,9 @@ export async function generateMetadata({
   const pathPrefix = locale === routing.defaultLocale ? "" : `/${locale}`;
   const path = `${pathPrefix}/wholesale`;
   const pageUrl = wholesaleIndexPageUrl(locale);
-  const listings = await listActiveWholesaleListings();
-  const ogImage = resolveWholesaleOgImage(listings);
+  const ogImage = wholesaleIndexOgImage();
   const ogTitle = wholesaleMessages.ogTitle ?? t("metaTitle");
+  const ogDescription = wholesaleMessages.ogDescription ?? t("metaDescription");
 
   return {
     title: { absolute: t("metaTitle") },
@@ -36,14 +35,14 @@ export async function generateMetadata({
       type: "website",
       url: pageUrl,
       title: ogTitle,
-      description: t("metaDescription"),
+      description: ogDescription,
       siteName: "HUMPBUCK",
-      images: [{ url: ogImage, width: 1200, height: 630, alt: ogTitle }],
+      images: [{ url: ogImage, alt: ogTitle }],
     },
     twitter: {
       card: "summary_large_image",
       title: ogTitle,
-      description: t("metaDescription"),
+      description: ogDescription,
       images: [ogImage],
     },
   };

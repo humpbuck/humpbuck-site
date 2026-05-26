@@ -10,6 +10,7 @@ import {
 import { WholesaleIndexJsonLd } from "@/components/seo/wholesale-json-ld";
 import { HumpbuckSocialLinks } from "@/components/site/humpbuck-social-links";
 import { WholesaleContactActions } from "@/components/site/wholesale-contact-actions";
+import { WholesaleStoryCollapsible } from "@/components/site/wholesale-story-collapsible";
 import { WholesaleListingsSection } from "@/components/site/wholesale-listings-section";
 import { R2 } from "@/lib/r2";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -39,7 +40,6 @@ type StorySection = {
   paragraphKeys: readonly string[];
   fullWidth?: boolean;
   includeSocialLinks?: boolean;
-  includeVideo?: boolean;
 };
 
 const STORY_BODY_CLASS = "w-full text-base leading-relaxed text-muted sm:text-lg";
@@ -52,23 +52,6 @@ const STORY_SECTIONS: StorySection[] = [
     paragraphKeys: ["storyJourneyP1", "storyJourneyP2", "storyJourneyP3"],
     fullWidth: true,
     includeSocialLinks: true,
-  },
-  {
-    kickerKey: "storySourcesKicker",
-    titleKey: "storySourcesTitle",
-    paragraphKeys: ["storySourcesP1", "storySourcesP2"],
-    fullWidth: true,
-  },
-  {
-    kickerKey: "storyRootsKicker",
-    titleKey: "storyRootsTitle",
-    paragraphKeys: ["storyRootsP1"],
-    includeVideo: true,
-  },
-  {
-    kickerKey: "storyWhyKicker",
-    titleKey: "storyWhyTitle",
-    paragraphKeys: ["storyWhyP1", "storyWhyP2"],
   },
 ];
 
@@ -118,7 +101,7 @@ export async function WholesalePageBody({
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
             {t("kicker")}
           </p>
-          <h1 className="mt-3 font-serif text-4xl tracking-tight text-balance sm:text-5xl lg:text-6xl">
+          <h1 className="mt-3 min-w-0 font-serif text-2xl leading-tight tracking-tight sm:text-3xl lg:text-[2rem] lg:whitespace-nowrap xl:text-[2.125rem]">
             {t("heroTitle")}
           </h1>
           <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
@@ -187,13 +170,16 @@ export async function WholesalePageBody({
             {t("storyKicker")}
           </h2>
 
-          <div className="mt-8 flex flex-col gap-5">
-            {STORY_SECTIONS.filter(({ fullWidth }) => fullWidth).map(
+          <div className="mt-8">
+          <WholesaleStoryCollapsible
+            teaser={t("storyJourneyTitle")}
+            teaserLead={t("storyTeaserLead")}
+            expandLabel={t("storyExpandLabel")}
+            collapseLabel={t("storyCollapseLabel")}
+          >
+            {STORY_SECTIONS.filter(({ titleKey }) => titleKey === "storyJourneyTitle").map(
               ({ kickerKey, titleKey, paragraphKeys, includeSocialLinks }) => (
-                <article
-                  key={kickerKey}
-                  className="w-full rounded-3xl border border-line bg-white/70 p-6 shadow-card sm:p-7 lg:p-8"
-                >
+                <article key={kickerKey} className="w-full">
                   <h3 className="font-serif text-xl text-ink sm:text-2xl">{t(titleKey)}</h3>
                   <div className="mt-5 space-y-5 sm:space-y-6">
                     {paragraphKeys.map((paragraphKey) => (
@@ -223,57 +209,57 @@ export async function WholesalePageBody({
               ),
             )}
 
-            <div className="grid gap-5 lg:grid-cols-2">
-              {STORY_SECTIONS.filter(({ fullWidth }) => !fullWidth).map(
-                ({ kickerKey, titleKey, paragraphKeys, includeVideo }) => (
-                  <article
-                    key={kickerKey}
-                    className={
-                      includeVideo
-                        ? "w-full rounded-3xl border border-line bg-white/70 p-6 shadow-card sm:p-7 lg:col-span-2"
-                        : "w-full rounded-3xl border border-line bg-white/70 p-6 shadow-card sm:p-7"
-                    }
-                  >
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
-                      {t(kickerKey)}
-                    </p>
-                    <h3 className="mt-3 font-serif text-xl text-ink sm:text-2xl">{t(titleKey)}</h3>
-                    <div className="mt-4 space-y-3">
-                      {paragraphKeys.map((paragraphKey) => (
-                        <p key={paragraphKey} className={STORY_BODY_COMPACT_CLASS}>
-                          {t(paragraphKey)}
-                        </p>
-                      ))}
-                    </div>
+            <div className="grid gap-5 lg:grid-cols-2 lg:items-start">
+              <article className="h-full">
+                <h3 className="font-serif text-xl text-ink sm:text-2xl">{t("storySourcesTitle")}</h3>
+                <div className="mt-5 space-y-5 sm:space-y-6">
+                  <p className={STORY_BODY_CLASS}>{t("storySourcesP1")}</p>
+                  <p className={STORY_BODY_CLASS}>{t("storySourcesP2")}</p>
+                </div>
 
-                    {includeVideo ? (
-                      <div className="mt-6 w-full">
-                        <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-line bg-ink shadow-(--shadow-card)">
-                          <video
-                            className="h-full w-full object-contain"
-                            controls
-                            playsInline
-                            preload="metadata"
-                            aria-label={t("videoAriaLabel")}
-                          >
-                            <source src={R2.about.promotionalVideoMp4} type="video/mp4" />
-                          </video>
-                        </div>
-                        <p className="mt-3 flex items-center gap-2 text-xs text-muted">
-                          <Play
-                            size={14}
-                            strokeWidth={1.75}
-                            className="shrink-0 text-luxe-dim"
-                            aria-hidden
-                          />
-                          <span>{t("videoCaption")}</span>
-                        </p>
-                      </div>
-                    ) : null}
-                  </article>
-                ),
-              )}
+                <div className="mt-8 border-t border-line pt-8">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
+                    {t("storyWhyKicker")}
+                  </p>
+                  <h3 className="mt-3 font-serif text-xl text-ink sm:text-2xl">{t("storyWhyTitle")}</h3>
+                  <div className="mt-5 space-y-5 sm:space-y-6">
+                    <p className={STORY_BODY_CLASS}>{t("storyWhyP1")}</p>
+                    <p className={STORY_BODY_CLASS}>{t("storyWhyP2")}</p>
+                  </div>
+                </div>
+              </article>
+
+              <article className="h-full">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
+                  {t("storyRootsKicker")}
+                </p>
+                <h3 className="mt-3 font-serif text-xl text-ink sm:text-2xl">{t("storyRootsTitle")}</h3>
+                <p className={`mt-4 ${STORY_BODY_COMPACT_CLASS}`}>{t("storyRootsP1")}</p>
+                <div className="mt-6 w-full">
+                  <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-line bg-ink shadow-(--shadow-card)">
+                    <video
+                      className="h-full w-full object-contain"
+                      controls
+                      playsInline
+                      preload="metadata"
+                      aria-label={t("videoAriaLabel")}
+                    >
+                      <source src={R2.about.promotionalVideoMp4} type="video/mp4" />
+                    </video>
+                  </div>
+                  <p className="mt-3 flex items-center gap-2 text-xs text-muted">
+                    <Play
+                      size={14}
+                      strokeWidth={1.75}
+                      className="shrink-0 text-luxe-dim"
+                      aria-hidden
+                    />
+                    <span>{t("videoCaption")}</span>
+                  </p>
+                </div>
+              </article>
             </div>
+          </WholesaleStoryCollapsible>
           </div>
         </section>
 

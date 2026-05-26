@@ -1,4 +1,5 @@
 import { defaultOgImage, absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
+import { R2 } from "@/lib/r2";
 import { storefrontLocalizedPath } from "@/lib/storefront-hreflang";
 import { routing } from "@/i18n/routing";
 import {
@@ -7,12 +8,13 @@ import {
   type WholesaleListingRow,
 } from "@/lib/wholesale-listing-shared";
 
-export function resolveWholesaleOgImage(listings: WholesaleListingRow[]): string {
-  for (const listing of listings) {
-    const poster = wholesaleListingPosterUrl(listing.mediaUrls);
-    if (poster) return absoluteOgImageUrl(poster);
-  }
-  return defaultOgImage.url;
+/** Primary share image for `/wholesale` (Facebook, Twitter, iMessage previews). */
+export function wholesaleIndexOgImage(): string {
+  return R2.wholesale.seoOgWebp;
+}
+
+export function resolveWholesaleOgImage(_listings: WholesaleListingRow[]): string {
+  return wholesaleIndexOgImage();
 }
 
 export function resolveWholesaleListingOgImage(listing: WholesaleListingRow): string {
