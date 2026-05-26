@@ -158,6 +158,9 @@ function MobileShopNav({
 const NAV_LINK_CLASS =
   "whitespace-nowrap text-[11px] font-medium uppercase tracking-[0.1em] text-ink/75 transition hover:text-ink xl:text-[12px] xl:tracking-[0.14em]";
 
+const WHOLESALE_NAV_LINK_CLASS =
+  "whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.1em] text-red-700 transition hover:text-red-800 xl:text-[12px] xl:tracking-[0.14em]";
+
 function HeaderLoginLink({
   className,
   onNavigate,
@@ -265,7 +268,11 @@ export function SiteHeader() {
           <nav className="hidden shrink-0 items-center gap-4 lg:flex xl:gap-6">
             <DesktopShopNav tNav={t} tFooter={tFooter} />
             {navItems.map((item) => (
-              <Link key={item.href} href={item.href} className={NAV_LINK_CLASS}>
+              <Link
+                key={item.href}
+                href={item.href}
+                className={item.labelKey === "wholesale" ? WHOLESALE_NAV_LINK_CLASS : NAV_LINK_CLASS}
+              >
                 {t(item.labelKey)}
               </Link>
             ))}
@@ -352,7 +359,11 @@ export function SiteHeader() {
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="rounded-xl px-4 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-ink/85 hover:bg-ink/[0.04]"
+              className={`rounded-xl px-4 py-3 text-sm uppercase tracking-[0.12em] hover:bg-ink/[0.04] ${
+                item.labelKey === "wholesale"
+                  ? "font-bold text-red-700"
+                  : "font-semibold text-ink/85"
+              }`}
             >
               {t(item.labelKey)}
             </Link>

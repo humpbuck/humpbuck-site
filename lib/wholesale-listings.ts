@@ -51,7 +51,8 @@ export function cleanWholesaleListingSlug(input: string): string | null {
 export async function listActiveWholesaleListings(): Promise<WholesaleListingRow[]> {
   const rows = await prisma.wholesaleListing.findMany({
     where: { status: "active" },
-    orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }],
+    /** Newest daily stock first — `updatedAt` bumps on each admin save. */
+    orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
   });
   return rows.map(rowFromDb);
 }
