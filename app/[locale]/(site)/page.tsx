@@ -272,34 +272,6 @@ export default async function HomePage({
         </section>
       )}
 
-      {/* Featured */}
-      <section className="border-t border-line bg-paper py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted">
-              {t("featuredHeading")}
-            </div>
-            <Link
-              href="/shop"
-              className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ink/75 underline-offset-8 hover:text-ink hover:underline"
-            >
-              {t("viewAllProducts")}
-            </Link>
-          </div>
-          <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
-            {featured.map((p, i) => (
-              <ProductCard
-                key={p.slug}
-                product={p}
-                cardImageUrl={featuredCardImages[i] ?? undefined}
-                imagePriority={i < 2}
-                imageEager={i < 4}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Wholesale */}
       <section
         className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20"
@@ -336,6 +308,34 @@ export default async function HomePage({
                 {t("wholesaleWhatsApp")}
               </a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured */}
+      <section className="border-t border-line bg-paper py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted">
+              {t("featuredHeading")}
+            </div>
+            <Link
+              href="/shop"
+              className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ink/75 underline-offset-8 hover:text-ink hover:underline"
+            >
+              {t("viewAllProducts")}
+            </Link>
+          </div>
+          <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
+            {featured.map((p, i) => (
+              <ProductCard
+                key={p.slug}
+                product={p}
+                cardImageUrl={featuredCardImages[i] ?? undefined}
+                imagePriority={i < 2}
+                imageEager={i < 4}
+              />
+            ))}
           </div>
         </div>
       </section>
