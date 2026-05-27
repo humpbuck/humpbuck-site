@@ -21,6 +21,7 @@ import { AffiliateLiveRefresh } from "@/components/account/affiliate-live-refres
 import { AffiliateSettlementSelector } from "@/components/account/affiliate-settlement-selector";
 import { RestoreScrollOnce } from "@/components/account/restore-scroll-once";
 import { ClearQueryParam } from "@/components/admin/clear-query-param";
+import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/whatsapp";
 import {
   sanitizeAffiliatePayoutWhatsappContact,
   stripEmbeddedWhatsAppFromPayoutAccount,
@@ -1076,9 +1077,9 @@ export default async function AccountAffiliatePage({
               {t("payoutSupportWhatsapp")}{" "}
               <a
                 className="font-medium text-ink underline underline-offset-2"
-                href="https://wa.me/8618928160416"
+                href={WHATSAPP_URL}
               >
-                +86 189 2816 0416
+                {WHATSAPP_DISPLAY}
               </a>
             </p>
           </div>

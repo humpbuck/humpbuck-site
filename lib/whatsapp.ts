@@ -1,11 +1,11 @@
 /** E.164 digits only (no +) — used in `wa.me` links site-wide. */
-export const WHATSAPP_E164 = "8618928160416";
+export const WHATSAPP_E164 = "8618024290526";
 
 /** WhatsApp chat link — same number across checkout, homepage, policies, etc. */
 export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_E164}`;
 
 /** Human-readable number for buyer-facing copy. */
-export const WHATSAPP_DISPLAY = "+86 189 2816 0416";
+export const WHATSAPP_DISPLAY = "+86 180 2429 0526";
 
 /** E.164 for `wa.me` — env override matches checkout / email (`NEXT_PUBLIC_WHATSAPP_E164`). */
 export function publicWhatsAppE164(): string {
