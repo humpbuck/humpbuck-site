@@ -95,12 +95,12 @@ function aboutPromotionalVideoUrl(): string {
 }
 
 /**
- * Wholesale index OG / Facebook share — `wholesale/wholesale SEO/wholesale SEO 01.webp` on R2.
+ * Wholesale index OG / Facebook share — `wholesale/wholesale SEO/wholesale SEO.webp` on R2.
  * Bump `NEXT_PUBLIC_R2_WHOLESALE_SEO_OG_REV` after same-name overwrites.
  */
 function wholesaleSeoOgWebpUrl(): string {
   const rev = process.env.NEXT_PUBLIC_R2_WHOLESALE_SEO_OG_REV?.trim() || "1";
-  const path = `${R2_PUBLIC_BASE}/wholesale/${encodeURIComponent("wholesale SEO")}/${encodeURIComponent("wholesale SEO 01.webp")}`;
+  const path = `${R2_PUBLIC_BASE}/wholesale/${encodeURIComponent("wholesale SEO")}/${encodeURIComponent("wholesale SEO.webp")}`;
   return `${path}?v=${encodeURIComponent(rev)}`;
 }
 
@@ -471,7 +471,7 @@ export const R2 = {
     allProductsThumbWebp: `${R2_PUBLIC_BASE}/products/CK-2413M/variants/HUMPBUCK-CK2413M-style-01.webp`,
   },
   wholesale: {
-    /** `/wholesale` Open Graph — `wholesale/wholesale SEO/wholesale SEO 01.webp` */
+    /** `/wholesale` Open Graph — `wholesale/wholesale SEO/wholesale SEO.webp` */
     seoOgWebp: wholesaleSeoOgWebpUrl(),
   },
 } as const;
