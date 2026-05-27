@@ -10,6 +10,7 @@ import type {
   WholesaleListingsLabels,
 } from "@/lib/wholesale-listing-shared";
 import {
+  formatWholesaleDescriptionForDisplay,
   isWholesaleVideoUrl,
   wholesaleListingPosterUrl,
 } from "@/lib/wholesale-listing-shared";
@@ -85,6 +86,7 @@ function WholesaleListingCard({
   const thumb = listing.mediaUrls[0] ?? "";
   const posterUrl = wholesaleListingPosterUrl(listing.mediaUrls);
   const label = listing.modelNumber.trim() || "—";
+  const description = formatWholesaleDescriptionForDisplay(listing.description);
 
   return (
     <button
@@ -113,8 +115,8 @@ function WholesaleListingCard({
             {label}
           </div>
         ) : null}
-        <p className="mt-2 line-clamp-4 flex-1 text-sm leading-relaxed text-ink/85 lg:mt-0 lg:line-clamp-6">
-          {listing.description}
+        <p className="mt-2 line-clamp-4 flex-1 whitespace-pre-wrap text-sm leading-relaxed text-ink/85 lg:mt-0 lg:line-clamp-6">
+          {description}
         </p>
         <div className="mt-4 text-lg font-semibold tabular-nums text-ink">
           {formatPrice(listing.priceUsd)}
@@ -234,7 +236,7 @@ export function WholesaleListingsSection({
                 </p>
               ) : null}
               <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-ink/85">
-                {activeListing.description}
+                {formatWholesaleDescriptionForDisplay(activeListing.description)}
               </p>
               <p className="mt-5 text-2xl font-semibold tabular-nums text-ink">
                 {formatPrice(activeListing.priceUsd)}

@@ -106,3 +106,14 @@ export function parseMediaJson(raw: string | null | undefined): string[] {
     return [];
   }
 }
+
+/** Preserve textarea newlines; also break single-line numbered lists (1. … 2. …) onto separate lines. */
+export function formatWholesaleDescriptionForDisplay(text: string): string {
+  const trimmed = text.trim();
+  if (!trimmed || trimmed.includes("\n")) return trimmed;
+  if (!/^\d+\./.test(trimmed)) return trimmed;
+
+  const parts = trimmed.split(/\s+(?=\d+\.)/);
+  if (parts.length <= 1) return trimmed;
+  return parts.join("\n");
+}
