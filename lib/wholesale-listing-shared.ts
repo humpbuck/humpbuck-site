@@ -93,6 +93,16 @@ export function wholesaleListingPublicPath(slug: string): string {
   return `/wholesale/${encodeURIComponent(s)}`;
 }
 
+/** Numeric key from labels like "MODEL 006" — used for storefront sort (highest first). */
+export function wholesaleModelNumberSortKey(modelNumber: string): number {
+  const trimmed = modelNumber.trim();
+  if (!trimmed) return -1;
+  const matches = trimmed.match(/\d+/g);
+  if (!matches?.length) return -1;
+  const n = parseInt(matches[matches.length - 1]!, 10);
+  return Number.isFinite(n) ? n : -1;
+}
+
 export function parseMediaJson(raw: string | null | undefined): string[] {
   if (!raw?.trim()) return [];
   try {

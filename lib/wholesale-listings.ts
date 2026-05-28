@@ -3,6 +3,7 @@ import {
   isWholesaleListingSlugValid,
   normalizeWholesaleListingSlug,
   parseMediaJson,
+  wholesaleModelNumberSortKey,
   type WholesaleListingInput,
   type WholesaleListingRow,
 } from "@/lib/wholesale-listing-shared";
@@ -51,10 +52,15 @@ export function cleanWholesaleListingSlug(input: string): string | null {
 export async function listActiveWholesaleListings(): Promise<WholesaleListingRow[]> {
   const rows = await prisma.wholesaleListing.findMany({
     where: { status: "active" },
-    /** Newest daily stock first — `updatedAt` bumps on each admin save. */
-    orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
   });
-  return rows.map(rowFromDb);
+  return rows
+    .map(rowFromDb)
+    .sort((a, b) => {
+      const ka = wholesaleModelNumberSortKey(a.modelNumber);
+      const kb = wholesaleModelNumberSortKey(b.modelNumber);
+      if (kb !== ka) return kb - ka;
+      return b.createdAt.getTime() - a.createdAt.getTime();
+    });
 }
 
 export async function getActiveWholesaleListingBySlug(
