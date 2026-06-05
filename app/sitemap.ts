@@ -4,8 +4,6 @@ import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { routing } from "@/i18n/routing";
 import { storefrontLocalizedPath } from "@/lib/storefront-hreflang";
 import { getSiteUrl } from "@/lib/seo";
-import { listActiveWholesaleListings } from "@/lib/wholesale-listings";
-import { wholesaleListingPublicPath } from "@/lib/wholesale-listing-shared";
 
 /** Regenerate periodically so new PDP URLs appear without a full redeploy. */
 export const revalidate = 3600;
@@ -60,15 +58,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   );
 
-  const wholesaleListings = await listActiveWholesaleListings();
-  const wholesaleListingEntries: MetadataRoute.Sitemap = routing.locales.flatMap((locale) =>
-    wholesaleListings.map((listing) => ({
-      url: `${base}${storefrontLocalizedPath(wholesaleListingPublicPath(listing.slug), locale)}`,
-      lastModified: listing.updatedAt,
-      changeFrequency: "daily" as const,
-      priority: 0.82,
-    })),
-  );
-
-  return [...staticEntries, ...seriesEntries, ...productEntries, ...wholesaleListingEntries];
+  return [...staticEntries, ...seriesEntries, ...productEntries];
 }

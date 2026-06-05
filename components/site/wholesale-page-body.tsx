@@ -8,39 +8,13 @@ import {
 import { WholesaleIndexJsonLd } from "@/components/seo/wholesale-json-ld";
 import { HumpbuckSocialLinks } from "@/components/site/humpbuck-social-links";
 import { WholesaleContactActions } from "@/components/site/wholesale-contact-actions";
-import { WholesaleListingsSection } from "@/components/site/wholesale-listings-section";
 import { R2 } from "@/lib/r2";
-import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
-import { listActiveWholesaleListings } from "@/lib/wholesale-listings";
-import {
-  toWholesaleListingClientRow,
-  type WholesaleListingsLabels,
-} from "@/lib/wholesale-listing-shared";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { LucideIcon } from "lucide-react";
 
-export async function WholesalePageBody({
-  locale,
-  initialOpenSlug,
-}: {
-  locale: string;
-  initialOpenSlug?: string;
-}) {
+export async function WholesalePageBody({ locale }: { locale: string }) {
   setRequestLocale(locale);
   const t = await getTranslations("WholesalePage");
-  const messages = await getMessages();
-  const wholesaleMessages = messages.WholesalePage as Record<string, string | undefined>;
-  const listings = await listActiveWholesaleListings();
-  const listingRows = listings.map(toWholesaleListingClientRow);
-  const listingsLabels: WholesaleListingsLabels = {
-    listingsKicker: t("listingsKicker"),
-    listingsTitle: t("listingsTitle"),
-    listingsLead: t("listingsLead"),
-    listingsPrev: t("listingsPrev"),
-    listingsNext: t("listingsNext"),
-    listingsPageTemplate:
-      wholesaleMessages.listingsPage ?? "Page {page} of {total}",
-    listingsModalFallbackTitle: t("listingsModalFallbackTitle"),
-  };
 
   const steps: {
     icon: LucideIcon;
@@ -66,7 +40,7 @@ export async function WholesalePageBody({
         locale={locale}
         pageName={t("metaTitle")}
         pageDescription={t("metaDescription")}
-        listings={listings}
+        listings={[]}
       />
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
         <header className="pb-0">
@@ -138,12 +112,6 @@ export async function WholesalePageBody({
             <WholesaleContactActions />
           </div>
         </div>
-
-        <WholesaleListingsSection
-          listings={listingRows}
-          labels={listingsLabels}
-          initialOpenSlug={initialOpenSlug}
-        />
       </div>
     </>
   );

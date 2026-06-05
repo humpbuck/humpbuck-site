@@ -5,7 +5,7 @@ import { WholesalePageBody } from "@/components/site/wholesale-page-body";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { wholesaleIndexOgImage, wholesaleIndexPageUrl } from "@/lib/wholesale-seo";
 
-/** Listings and OG image should reflect daily stock updates. */
+/** Page content may change; avoid stale static cache. */
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
