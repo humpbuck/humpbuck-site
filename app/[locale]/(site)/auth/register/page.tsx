@@ -16,7 +16,7 @@ function RegisterForm() {
   const t = useTranslations("Auth");
   const returnTo = sanitizeCallbackUrl(
     searchParams.get("callbackUrl"),
-    "/shop",
+    "/product",
   );
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

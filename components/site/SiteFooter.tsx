@@ -14,9 +14,9 @@ export async function SiteFooter() {
     {
       title: t("shopTitle"),
       links: [
-        { label: t("allProducts"), href: "/shop" },
-        { label: t("linkMechanical"), href: "/shop?movement=mechanical" },
-        { label: t("linkQuartz"), href: "/shop?movement=quartz" },
+        { label: t("allProducts"), href: "/product" },
+        { label: t("linkMechanical"), href: "/product?movement=mechanical" },
+        { label: t("linkQuartz"), href: "/product?movement=quartz" },
       ],
     },
     {

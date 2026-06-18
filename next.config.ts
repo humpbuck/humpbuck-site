@@ -49,13 +49,27 @@ const legacyShopAstralQueryRedirects = routing.locales.map((locale) =>
     ? {
         source: "/shop",
         has: [{ type: "query" as const, key: "series", value: "astral" }],
-        destination: "/shop?series=rd-astral",
+        destination: "/product?series=rd-astral",
         permanent: true as const,
       }
     : {
         source: `/${locale}/shop`,
         has: [{ type: "query" as const, key: "series", value: "astral" }],
-        destination: `/${locale}/shop?series=rd-astral`,
+        destination: `/${locale}/product?series=rd-astral`,
+        permanent: true as const,
+      },
+);
+
+const legacyShopToProductRedirects = routing.locales.map((locale) =>
+  locale === routing.defaultLocale
+    ? {
+        source: "/shop",
+        destination: "/product",
+        permanent: true as const,
+      }
+    : {
+        source: `/${locale}/shop`,
+        destination: `/${locale}/product`,
         permanent: true as const,
       },
 );
@@ -84,6 +98,7 @@ const nextConfig: NextConfig = {
       },
       ...legacySeriesAstralRedirects,
       ...legacyShopAstralQueryRedirects,
+      ...legacyShopToProductRedirects,
     ];
   },
   images: {

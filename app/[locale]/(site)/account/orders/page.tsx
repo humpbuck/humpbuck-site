@@ -134,7 +134,7 @@ export default async function AccountOrdersPage({
         <div className="mt-10 rounded-2xl border border-line bg-white/60 p-8 text-center text-sm text-muted">
           <p>{t("ordersEmpty")}</p>
           <Link
-            href="/shop"
+            href="/product"
             className="mt-4 inline-block text-[12px] font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4 hover:underline"
           >
             {t("ordersBrowseShop")}

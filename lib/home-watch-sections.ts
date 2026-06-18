@@ -195,11 +195,11 @@ export function resolveHomeWatchSectionProducts<T extends Product & HomeWatchPla
 export function homeWatchSectionShopHref(section: HomeWatchSectionSlug): string {
   switch (section) {
     case "mechanical":
-      return "/shop?movement=mechanical";
+      return "/product?movement=mechanical";
     case "quartz":
-      return "/shop?movement=quartz";
+      return "/product?movement=quartz";
     case "ultra-thin":
-      return "/shop?profile=ultra-thin";
+      return "/product?profile=ultra-thin";
   }
 }
 

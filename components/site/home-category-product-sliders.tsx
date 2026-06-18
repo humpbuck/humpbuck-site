@@ -26,7 +26,7 @@ export async function HomeCategoryProductSliders({
         headingId="home-mechanical-watches-heading"
         kicker={kicker}
         title={t("mechanicalWatchesTitle")}
-        viewAllHref="/shop?movement=mechanical"
+        viewAllHref="/product?movement=mechanical"
         viewAllLabel={t("mechanicalWatchesShop")}
         products={mechanicalProducts}
         cardImages={mechanicalCardImages}
@@ -36,7 +36,7 @@ export async function HomeCategoryProductSliders({
         headingId="home-quartz-watches-heading"
         kicker={kicker}
         title={t("quartzWatchesTitle")}
-        viewAllHref="/shop?movement=quartz"
+        viewAllHref="/product?movement=quartz"
         viewAllLabel={t("quartzWatchesShop")}
         products={quartzProducts}
         cardImages={quartzCardImages}
@@ -46,7 +46,7 @@ export async function HomeCategoryProductSliders({
         headingId="home-ultra-thin-watches-heading"
         kicker={kicker}
         title={t("ultraThinWatchesTitle")}
-        viewAllHref="/shop?profile=ultra-thin"
+        viewAllHref="/product?profile=ultra-thin"
         viewAllLabel={t("ultraThinWatchesShop")}
         products={ultraThinProducts}
         cardImages={ultraThinCardImages}

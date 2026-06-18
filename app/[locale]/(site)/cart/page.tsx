@@ -40,7 +40,7 @@ export default function CartPage() {
         <div className="mt-10 rounded-2xl border border-line bg-white/60 p-10 text-center text-muted">
           <p>{t("empty")}</p>
           <Link
-            href="/shop"
+            href="/product"
             className="mt-4 inline-block text-sm font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4 hover:underline"
           >
             {t("continueShopping")}

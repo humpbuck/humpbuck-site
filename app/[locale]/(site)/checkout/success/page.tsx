@@ -129,7 +129,7 @@ export default async function CheckoutSuccessPage({
           <Link href="/account/orders" className="rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-paper transition hover:bg-ink/90">
             {t("viewOrders")}
           </Link>
-          <Link href="/shop" className="rounded-xl border border-line bg-white px-4 py-2.5 text-sm font-medium text-ink transition hover:border-ink/20">
+          <Link href="/product" className="rounded-xl border border-line bg-white px-4 py-2.5 text-sm font-medium text-ink transition hover:border-ink/20">
             {t("continueShopping")}
           </Link>
         </div>

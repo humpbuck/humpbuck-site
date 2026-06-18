@@ -158,7 +158,7 @@ export default async function HomePage({
           <div className="relative mx-auto w-full max-w-sm min-w-0 shrink-0 md:mx-0 md:max-w-[340px] lg:max-w-[400px]">
             {(heroFeatured ?? heroFallback) ? (
               <Link
-                href={(heroFeatured ?? heroFallback).slug === "digitemp" ? "/shop?series=digitemp" : `/product/${(heroFeatured ?? heroFallback).slug}`}
+                href={(heroFeatured ?? heroFallback).slug === "digitemp" ? "/product?series=digitemp" : `/product/${(heroFeatured ?? heroFallback).slug}`}
                 className="group relative block aspect-square overflow-hidden rounded-[24px] border border-line/70 bg-white shadow-sm transition outline-offset-4 hover:-translate-y-0.5 hover:border-line hover:shadow-md focus-visible:outline-2 focus-visible:outline-ink/30 sm:rounded-[28px]"
               >
                 <StorefrontImage

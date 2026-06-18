@@ -127,7 +127,7 @@ export default async function SeriesPage({
           ) : null}
           <div className="mt-10 flex flex-wrap gap-3">
             <Link
-              href={`/shop?series=${series.slug}`}
+              href={`/product?series=${series.slug}`}
               className="inline-flex rounded-full bg-white px-7 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-[#0f1114] transition hover:bg-white/90"
             >
               {t("shopThisSeries")}

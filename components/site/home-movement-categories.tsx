@@ -90,13 +90,13 @@ export async function HomeMovementCategories() {
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-9 lg:py-11">
         <div className="mx-auto flex w-full max-w-sm flex-col items-center gap-5 md:max-w-none md:flex-row md:justify-center md:gap-14 lg:gap-20">
           <CategoryImage
-            href="/shop?movement=mechanical"
+            href="/product?movement=mechanical"
             imageSrc={mechanicalImage}
             imageAlt={t("categoryMechanicalImageAlt")}
             imagePriority
           />
           <CategoryCopy
-            href="/shop?movement=mechanical"
+            href="/product?movement=mechanical"
             kicker={t("categoryMechanicalKicker")}
             title={t("categoryMechanicalTitle")}
             cta={t("categoryMechanicalCta")}

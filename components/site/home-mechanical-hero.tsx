@@ -62,7 +62,7 @@ export async function HomeMechanicalHero() {
           </div>
           <div className="mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
             <Link
-              href="/shop"
+              href="/product"
               className="inline-flex items-center justify-center rounded-full bg-white px-8 py-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#080808] transition hover:bg-white/90"
             >
               {t("mechanicalHeroCtaShop")}

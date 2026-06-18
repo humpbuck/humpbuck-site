@@ -14,7 +14,7 @@ function LoginForm() {
   const t = useTranslations("Auth");
   const callbackUrl = sanitizeCallbackUrl(
     searchParams.get("callbackUrl"),
-    "/shop",
+    "/product",
   );
   const resetOk = searchParams.get("reset") === "1";
   const [email, setEmail] = useState("");

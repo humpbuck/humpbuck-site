@@ -5,7 +5,7 @@ import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
 export function revalidateCatalogStorefront(opts?: { slug?: string; oldSlug?: string }): void {
   revalidateTag("catalog", "seconds");
   revalidateStorefrontPath("/");
-  revalidateStorefrontPath("/shop");
+  revalidateStorefrontPath("/product");
 
   const slugs = new Set<string>();
   if (opts?.slug?.trim()) slugs.add(opts.slug.trim());

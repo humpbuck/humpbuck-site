@@ -112,7 +112,7 @@ export default async function ProductPage({
       <TrackProductView slug={product.slug} />
       <div className="mx-auto min-w-0 max-w-7xl py-10 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:pl-[max(1.5rem,env(safe-area-inset-left))] sm:pr-[max(1.5rem,env(safe-area-inset-right))] lg:py-14">
         <Link
-          href="/shop"
+          href="/product"
           className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted hover:text-ink"
         >
           <ArrowLeft size={16} />

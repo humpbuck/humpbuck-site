@@ -22,7 +22,7 @@
     "ar": "العربية"
   },
   "Navigation": {
-    "shop": "Shop",
+    "shop": "Products",
     "shopAllProducts": "All Products",
     "shopMechanical": "Mechanical",
     "shopQuartz": "Quartz",
@@ -58,7 +58,7 @@
     "socialTiktokAria": "HUMPBUCK on TikTok",
     "copyright": "© {year} HUMPBUCK. All rights reserved.",
     "disclaimer": "Prices, taxes, and shipping are confirmed at checkout. For shipping, refunds, privacy, and terms, see Support above. Questions:",
-    "shopTitle": "Shop",
+    "shopTitle": "Products",
     "allProducts": "All products",
     "linkMechanical": "Mechanical",
     "linkQuartz": "Quartz",

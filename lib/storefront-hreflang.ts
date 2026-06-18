@@ -13,7 +13,7 @@ export function storefrontLocalizedPath(
 
 /**
  * Absolute URLs for `metadata.alternates.languages` (hreflang).
- * `pathWithoutLocale` must match the URL path with no locale segment, e.g. `/`, `/shop`,
+ * `pathWithoutLocale` must match the URL path with no locale segment, e.g. `/`, `/product`,
  * `/product/digitemp-2301` (use the same encoding as canonical paths).
  */
 export function storefrontHreflangLanguages(

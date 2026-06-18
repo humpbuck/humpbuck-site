@@ -14,7 +14,7 @@ import { storefrontHomePath } from "@/lib/storefront-home-path";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
 
 const SHOP_DROPDOWN_LINKS = [
-  { type: "link" as const, href: "/shop", labelKey: "shopAllProducts" },
+  { type: "link" as const, href: "/product", labelKey: "shopAllProducts" },
   { type: "flyout" as const, movement: "mechanical" as const, labelKey: "shopMechanical" },
   { type: "flyout" as const, movement: "quartz" as const, labelKey: "shopQuartz" },
 ];
@@ -62,7 +62,7 @@ function ShopDropdownFlyout({
   return (
     <div className="group/item relative">
       <Link
-        href={`/shop?movement=${movement}`}
+        href={`/product?movement=${movement}`}
         className={`${SHOP_LINK_CLASS} flex items-center justify-between gap-3 pr-3`}
       >
         <span>{label}</span>
@@ -75,13 +75,13 @@ function ShopDropdownFlyout({
           className="min-w-[132px] rounded-2xl border border-line bg-paper/95 py-2 shadow-card backdrop-blur-md"
         >
           <Link
-            href={`/shop?movement=${movement}&audience=men`}
+            href={`/product?movement=${movement}&audience=men`}
             className={SHOP_FLYOUT_LINK_CLASS}
           >
             {menLabel}
           </Link>
           <Link
-            href={`/shop?movement=${movement}&audience=women`}
+            href={`/product?movement=${movement}&audience=women`}
             className={SHOP_FLYOUT_LINK_CLASS}
           >
             {womenLabel}
@@ -167,19 +167,19 @@ function MobileShopNav({
           ) : (
             <div key={item.movement} className="flex flex-col">
               <ShopDropdownLink
-                href={`/shop?movement=${item.movement}`}
+                href={`/product?movement=${item.movement}`}
                 label={tNav(item.labelKey)}
                 onNavigate={onNavigate}
                 className="block rounded-xl px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-ink/[0.04]"
               />
               <ShopDropdownLink
-                href={`/shop?movement=${item.movement}&audience=men`}
+                href={`/product?movement=${item.movement}&audience=men`}
                 label={tNav("shopMen")}
                 onNavigate={onNavigate}
                 className="block rounded-xl py-2 pl-8 pr-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-ink/60 hover:bg-ink/[0.04]"
               />
               <ShopDropdownLink
-                href={`/shop?movement=${item.movement}&audience=women`}
+                href={`/product?movement=${item.movement}&audience=women`}
                 label={tNav("shopWomen")}
                 onNavigate={onNavigate}
                 className="block rounded-xl py-2 pl-8 pr-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-ink/60 hover:bg-ink/[0.04]"

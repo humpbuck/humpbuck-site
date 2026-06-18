@@ -33,8 +33,8 @@ export async function generateMetadata({
     title: t("metaTitle"),
     description: t("metaDescription"),
     alternates: {
-      canonical: `${pathPrefix}/shop`,
-      languages: storefrontHreflangLanguages("/shop"),
+      canonical: `${pathPrefix}/product`,
+      languages: storefrontHreflangLanguages("/product"),
     },
     openGraph: {
       title: t("ogTitle"),
@@ -43,7 +43,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function ShopPage({
+export default async function ProductCatalogPage({
   params,
   searchParams,
 }: {
@@ -120,7 +120,7 @@ export default async function ShopPage({
 
       <div className="mt-10 flex flex-wrap gap-2">
         <FilterPill
-          href="/shop"
+          href="/product"
           active={
             active === null &&
             activeMovement === null &&
@@ -136,7 +136,7 @@ export default async function ShopPage({
           return (
             <FilterPill
               key={s.slug}
-              href={`/shop?series=${s.slug}`}
+              href={`/product?series=${s.slug}`}
               active={active === s.slug}
               label={label}
             />
@@ -204,7 +204,7 @@ export default async function ShopPage({
       {list.length === 0 && (
         <p className="mt-10 text-sm text-muted">
           {t("emptyCategory")}{" "}
-          <Link href="/shop" className="underline underline-offset-4">
+          <Link href="/product" className="underline underline-offset-4">
             {t("clearFilter")}
           </Link>
         </p>
