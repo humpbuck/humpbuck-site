@@ -127,6 +127,18 @@ function hasDbPlacements<T extends HomeWatchPlacementFields>(all: T[]): boolean 
   return all.some((p) => normalizeStorefrontCategoryInput(p.storefrontCategory) != null);
 }
 
+/** True when admin assigned optional Ultra-thin series under Men/Women. */
+export function productHasStorefrontUltraThinSeries(
+  product: HomeWatchPlacementFields,
+): boolean {
+  const placement = coalesceStorefrontPlacementFields(product);
+  return normalizeStorefrontSeriesInput(placement.storefrontSeries) === "ultra-thin";
+}
+
+export function hasStorefrontDbPlacements(all: HomeWatchPlacementFields[]): boolean {
+  return hasDbPlacements(all);
+}
+
 function getDbHomeWatchSectionProducts<T extends Product & HomeWatchPlacementFields>(
   all: T[],
   section: HomeWatchSectionSlug,
@@ -180,14 +192,13 @@ function fallbackHomeWatchSectionProducts<T extends Product>(
   }
 }
 
-/** DB-assigned products for a home row; falls back to movement/profile rules when none assigned. */
+/** DB-assigned products for a home row; legacy keyword fallback only when no DB placements exist. */
 export function resolveHomeWatchSectionProducts<T extends Product & HomeWatchPlacementFields>(
   all: T[],
   section: HomeWatchSectionSlug,
 ): T[] {
   if (hasDbPlacements(all)) {
-    const assigned = getDbHomeWatchSectionProducts(all, section);
-    if (assigned.length > 0) return assigned;
+    return getDbHomeWatchSectionProducts(all, section);
   }
   return fallbackHomeWatchSectionProducts(all, section);
 }
@@ -224,11 +235,7 @@ export function productMatchesStorefrontSeries(
   series: StorefrontSeriesSlug,
 ): boolean {
   if (series === "ultra-thin") {
-    const placement = coalesceStorefrontPlacementFields(product);
-    if (normalizeStorefrontSeriesInput(placement.storefrontSeries) === "ultra-thin") {
-      return true;
-    }
-    return productMatchesUltraThin(product);
+    return productHasStorefrontUltraThinSeries(product);
   }
   return false;
 }

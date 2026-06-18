@@ -15,6 +15,10 @@ import {
   productMatchesUltraThin,
 } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
+import {
+  hasStorefrontDbPlacements,
+  productHasStorefrontUltraThinSeries,
+} from "@/lib/home-watch-sections";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { routing } from "@/i18n/routing";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
@@ -57,6 +61,7 @@ export default async function ProductCatalogPage({
   const { series: seriesParam, movement: movementParam, audience: audienceParam, profile: profileParam } =
     await searchParams;
   const all = await getMergedCatalogProducts();
+  const useStorefrontPlacements = hasStorefrontDbPlacements(all);
   const seriesFilters = getShopSeriesFilters(all);
   const filterSlugs = new Set(seriesFilters.map((s) => s.slug));
   const requested = normalizeSeriesSlug(seriesParam ?? "");
@@ -71,7 +76,12 @@ export default async function ProductCatalogPage({
           if (active && normalizeSeriesSlug(p.seriesSlug) !== active) return false;
           if (activeMovement && getProductMovement(p) !== activeMovement) return false;
           if (activeAudience && !productMatchesAudience(p, activeAudience)) return false;
-          if (activeProfile === "ultra-thin" && !productMatchesUltraThin(p)) return false;
+          if (activeProfile === "ultra-thin") {
+            const matchesUltraThin = useStorefrontPlacements
+              ? productHasStorefrontUltraThinSeries(p)
+              : productMatchesUltraThin(p);
+            if (!matchesUltraThin) return false;
+          }
           return true;
         })
       : all
