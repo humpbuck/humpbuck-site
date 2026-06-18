@@ -12,6 +12,7 @@ import {
   applyStorefrontSeriesChange,
   applyStorefrontSubcategoryChange,
 } from "@/components/admin/storefront-placement-fields";
+import { inferSeriesSlugFromProductSlug } from "@/lib/catalog";
 import {
   categoryHasSubcategories,
   coalesceStorefrontPlacementFields,
@@ -471,7 +472,7 @@ export function ProductManager({
     const payload = {
       slug: current.slug.trim(),
       name: current.name.trim(),
-      seriesSlug: current.seriesSlug.trim(),
+      seriesSlug: inferSeriesSlugFromProductSlug(current.slug.trim()),
       storefrontCategory: current.storefrontCategory.trim(),
       storefrontSubcategory: current.storefrontSubcategory.trim(),
       storefrontSeries: current.storefrontSeries.trim(),
@@ -673,17 +674,6 @@ export function ProductManager({
                 value={current.name}
                 onChange={(v) => updateCurrent((p) => ({ ...p, name: v }))}
               />
-              <div>
-                <LabeledInput
-                  label="Series slug"
-                  value={current.seriesSlug}
-                  onChange={(v) => updateCurrent((p) => ({ ...p, seriesSlug: v }))}
-                />
-                <p className="mt-1 text-[11px] leading-relaxed text-muted">
-                  Groups products in Shop filters and /series/your-series. Lowercase letters,
-                  numbers, and hyphens only.
-                </p>
-              </div>
               <StorefrontPlacementFields
                 category={current.storefrontCategory}
                 subcategory={current.storefrontSubcategory}

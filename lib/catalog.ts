@@ -75,11 +75,24 @@ export function normalizeShopMovementParam(
   return null;
 }
 
-/** Catalog grouping for shop nav — DIGI-TEMP is quartz; other series default to mechanical. */
+/** Catalog grouping for shop nav — prefers admin storefront category, else legacy series slug. */
 export function getProductMovement(
-  product: Pick<Product, "seriesSlug">,
+  product: Pick<Product, "seriesSlug" | "storefrontCategory">,
 ): ShopMovementFilter {
+  const fromPlacement = product.storefrontCategory?.trim().toLowerCase();
+  if (fromPlacement === "mechanical" || fromPlacement === "quartz") {
+    return fromPlacement;
+  }
   return normalizeSeriesSlug(product.seriesSlug) === "digitemp" ? "quartz" : "mechanical";
+}
+
+/** Infer product-line series from URL slug (admin sets placement, not series slug). */
+export function inferSeriesSlugFromProductSlug(slug: string): string {
+  const s = normalizeSeriesSlug(slug);
+  if (s.startsWith("digitemp") || s.startsWith("digi-")) return "digitemp";
+  if (s.startsWith("rm-") || s.startsWith("rm")) return "tonneau";
+  if (s.startsWith("rd-")) return "rd-astral";
+  return "digitemp";
 }
 
 export function normalizeShopProfileParam(
