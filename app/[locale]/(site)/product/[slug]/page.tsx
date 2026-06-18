@@ -10,7 +10,7 @@ import {
 import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { routing } from "@/i18n/routing";
-import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
+import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
 import { ProductCard } from "@/components/site/ProductCard";
 import { ProductCloserLookSection } from "@/components/site/product-closer-look-section";
 import { PreloadPdpGalleryImages } from "@/components/site/preload-pdp-gallery-images";
@@ -84,9 +84,6 @@ export default async function ProductPage({
   const series = product.seriesSlug.trim()
     ? resolveSeriesInfo(product.seriesSlug, { heroImage: product.image })
     : null;
-  const localizedSeries = series
-    ? getLocalizedSeriesFields(series, locale, messages)
-    : null;
   const all = await getMergedCatalogProducts();
   const related = all
     .filter(
@@ -141,14 +138,6 @@ export default async function ProductPage({
               <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
                 {product.categoryLabel}
               </div>
-            )}
-            {series && localizedSeries && (
-              <Link
-                href={`/series/${series.slug}`}
-                className="mt-2 inline-block text-[12px] font-semibold uppercase tracking-[0.14em] text-ink/65 hover:text-ink hover:underline"
-              >
-                {localizedSeries.name}
-              </Link>
             )}
             <h1 className="mt-4 font-serif text-4xl tracking-tight sm:text-5xl">
               {product.name}
