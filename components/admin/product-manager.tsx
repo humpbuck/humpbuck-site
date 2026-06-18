@@ -46,6 +46,7 @@ type CatalogProductRecord = {
   compareAtPrice: number | null;
   image: string;
   inStock: boolean;
+  status: string;
   highlightsJson: string;
   specsJson: string;
   galleryJson: string;
@@ -73,6 +74,7 @@ type EditableProduct = {
   compareAtPrice: string;
   image: string;
   inStock: boolean;
+  status: string;
   highlights: string[];
   specs: SpecRow[];
   gallery: string[];
@@ -141,6 +143,7 @@ function buildEditableProduct(
     compareAtPrice: p.compareAtPrice == null ? "" : String(p.compareAtPrice),
     image: p.image,
     inStock: p.inStock,
+    status: p.status === "archived" ? "archived" : "active",
     highlights: parseArray<string>(p.highlightsJson, []),
     specs: parseArray<SpecRow>(p.specsJson, []),
     gallery: parseArray<string>(p.galleryJson, []),
@@ -153,6 +156,28 @@ function buildEditableProduct(
     storefrontSeries: placement.storefrontSeries ?? "",
     inventory: map,
   };
+}
+
+function resolveProductMainImage(
+  product: Pick<EditableProduct, "gallery" | "variants" | "image">,
+): string {
+  const fromGallery = product.gallery.map((url) => url.trim()).find(Boolean);
+  if (fromGallery) return fromGallery;
+  const fromVariant = product.variants.map((variant) => variant.image.trim()).find(Boolean);
+  if (fromVariant) return fromVariant;
+  return product.image.trim();
+}
+
+function resolveProductInStock(product: Pick<EditableProduct, "variants" | "inventory">): boolean {
+  if (product.variants.length === 0) return false;
+  return product.variants.some((variant) => {
+    if (variant.inStock === false) return false;
+    const quantity = Math.max(
+      0,
+      Math.floor(Number(product.inventory[variant.id]?.quantity) || 0),
+    );
+    return quantity > 0;
+  });
 }
 
 function newProductDraft(): EditableProduct {
@@ -168,6 +193,7 @@ function newProductDraft(): EditableProduct {
     compareAtPrice: "",
     image: "",
     inStock: true,
+    status: "active",
     highlights: [""],
     specs: [{ label: "", value: "" }],
     gallery: [],
@@ -400,13 +426,15 @@ export function ProductManager({
 
       updateCurrent((p) => {
         if (section === "gallery") {
+          const gallery = upsertByIndex(
+            p.gallery,
+            sortIndex ?? p.gallery.length + 1,
+            payload.publicUrl!,
+          );
           return {
             ...p,
-            gallery: upsertByIndex(
-              p.gallery,
-              sortIndex ?? p.gallery.length + 1,
-              payload.publicUrl!,
-            ),
+            gallery,
+            image: gallery.map((url) => url.trim()).find(Boolean) || p.image,
           };
         }
         if (section === "detail") {
@@ -469,6 +497,8 @@ export function ProductManager({
     }
     setBusy(true);
     setFlashMessage("");
+    const mainImage = resolveProductMainImage(current);
+    const inStock = resolveProductInStock(current);
     const payload = {
       slug: current.slug.trim(),
       name: current.name.trim(),
@@ -484,8 +514,8 @@ export function ProductManager({
         current.compareAtPrice.trim() === ""
           ? null
           : Number(current.compareAtPrice) || null,
-      image: current.image.trim(),
-      inStock: current.inStock,
+      image: mainImage,
+      inStock,
       highlights: current.highlights.filter((s) => s.trim()),
       specs: current.specs.filter((s) => s.label.trim() || s.value.trim()),
       gallery: current.gallery.filter((u) => u.trim()),
@@ -535,14 +565,14 @@ export function ProductManager({
         setProducts((prev) =>
           prev.map((p, index) => {
             if (index !== selectedIndex || p.id) return p;
-            return { ...p, id: data.id!, slug: savedSlug };
+            return { ...p, id: data.id!, slug: savedSlug, image: mainImage, inStock };
           }),
         );
         setSelected(data.id);
       } else if (current.id) {
         setProducts((prev) =>
           prev.map((p) =>
-            p.id === current.id ? { ...p, slug: savedSlug } : p,
+            p.id === current.id ? { ...p, slug: savedSlug, image: mainImage, inStock } : p,
           ),
         );
       }
@@ -574,7 +604,9 @@ export function ProductManager({
         return;
       }
       setProducts((prev) =>
-        prev.map((p) => (p.id === current.id ? { ...p, inStock: false } : p)),
+        prev.map((p) =>
+          p.id === current.id ? { ...p, inStock: false, status: "archived" } : p,
+        ),
       );
       setFlashMessage("Archived.", "success");
       startTransition(() => router.refresh());
@@ -587,9 +619,7 @@ export function ProductManager({
 
   async function purgeCurrent() {
     if (!current?.id) return;
-    if ((products.find((p) => p.id === current.id)?.inStock ?? true) && current.inStock) {
-      // ignore, UI shows a confirm anyway
-    }
+    if (current.status !== "archived") return;
     if (!window.confirm(`Permanently delete archived product ${current.slug}? This cannot be undone.`)) return;
     setBusy(true);
     setFlashMessage("");
@@ -713,21 +743,6 @@ export function ProductManager({
                   updateCurrent((p) => ({ ...p, compareAtPrice: v }))
                 }
               />
-              <LabeledInput
-                label="Main image URL"
-                value={current.image}
-                onChange={(v) => updateCurrent((p) => ({ ...p, image: v }))}
-              />
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={current.inStock}
-                  onChange={(e) =>
-                    updateCurrent((p) => ({ ...p, inStock: e.target.checked }))
-                  }
-                />
-                In stock
-              </label>
             </div>
 
             <LabeledTextarea
@@ -763,6 +778,7 @@ export function ProductManager({
             />
 
             <DetailBlockListEditor
+              key={`${current.id ?? current.slug}-detail-blocks`}
               values={current.detailBlocks}
               onChange={(detailBlocks) =>
                 updateCurrent((p) => ({
@@ -995,7 +1011,7 @@ export function ProductManager({
               </button>
               <button
                 type="button"
-                disabled={busy || isPending || current.inStock}
+                disabled={busy || isPending || current.status !== "archived"}
                 onClick={() => void purgeCurrent()}
                 className="rounded-xl border border-red-200 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-red-700 hover:bg-red-50 disabled:opacity-50"
               >

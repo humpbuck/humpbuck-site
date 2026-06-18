@@ -34,6 +34,7 @@ export default async function AdminInventoryPage() {
             compareAtPrice: p.compareAtPrice,
             image: p.image,
             inStock: p.inStock,
+            status: p.status,
             highlightsJson: p.highlightsJson ?? EMPTY_JSON,
             specsJson: p.specsJson ?? EMPTY_JSON,
             galleryJson: p.galleryJson ?? EMPTY_JSON,
