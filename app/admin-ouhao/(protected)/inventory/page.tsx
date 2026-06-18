@@ -40,6 +40,10 @@ export default async function AdminInventoryPage() {
             detailJson: p.detailJson ?? EMPTY_JSON,
             variantsJson: p.variantsJson ?? EMPTY_JSON,
             promoVideoJson: p.promoVideoJson,
+            storefrontCategory: (p as { storefrontCategory?: string | null }).storefrontCategory ?? "",
+            storefrontSubcategory:
+              (p as { storefrontSubcategory?: string | null }).storefrontSubcategory ?? "",
+            storefrontSeries: (p as { storefrontSeries?: string | null }).storefrontSeries ?? "",
           }))}
           initialInventory={inventory}
         />

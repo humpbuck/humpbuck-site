@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { seriesList } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
+import { listPublishedBlogPosts } from "@/lib/blog-posts";
 import { routing } from "@/i18n/routing";
 import { storefrontLocalizedPath } from "@/lib/storefront-hreflang";
 import { getSiteUrl } from "@/lib/seo";
@@ -18,8 +19,8 @@ const STATIC_PATHS: {
     { path: "/cart", changeFrequency: "weekly", priority: 0.4 },
     { path: "/about", changeFrequency: "monthly", priority: 0.7 },
     { path: "/affiliates", changeFrequency: "monthly", priority: 0.65 },
+    { path: "/blog", changeFrequency: "weekly", priority: 0.75 },
     { path: "/video-tutorial", changeFrequency: "monthly", priority: 0.65 },
-    { path: "/wholesale", changeFrequency: "daily", priority: 0.88 },
     { path: "/shipping", changeFrequency: "yearly", priority: 0.5 },
     { path: "/refund", changeFrequency: "yearly", priority: 0.5 },
     { path: "/terms", changeFrequency: "yearly", priority: 0.4 },
@@ -58,5 +59,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   );
 
-  return [...staticEntries, ...seriesEntries, ...productEntries];
+  const blogPosts = await listPublishedBlogPosts();
+  const blogEntries: MetadataRoute.Sitemap = routing.locales.flatMap((locale) =>
+    blogPosts.map((post) => ({
+      url: `${base}${storefrontLocalizedPath(`/blog/${encodeURIComponent(post.slug)}`, locale)}`,
+      lastModified: post.updatedAt,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+  );
+
+  return [...staticEntries, ...seriesEntries, ...productEntries, ...blogEntries];
 }

@@ -6,10 +6,7 @@ import { ProductPromoVideo } from "@/components/site/ProductPromoVideo";
  *
  * **Canonical layout (reference: DIGI-TEMP 2301):** full-width carousel on top;
  * when `promoVideo` is set, the “Product showcase” MP4 block sits directly
- * beneath it in the same column (`embedded` promo video, **9:16** player shell).
- *
- * Use this for every catalog **product** that ships an R2 (or HTTPS) showcase video
- * so placement stays consistent site-wide. Product videos are **720×1280** (9:16); see `lib/r2.ts`.
+ * beneath it in the same column (`embedded` promo video; aspect ratio follows the file).
  * On the PDP, set each video `poster` to the first resolved gallery URL so the cover matches the main slide (RM-M01-style).
  * Multiple R2 `video/*.mp4` files render as a stacked “Product showcase” section.
  */

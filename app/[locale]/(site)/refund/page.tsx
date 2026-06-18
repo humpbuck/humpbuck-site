@@ -122,13 +122,6 @@ export default async function RefundPage({
         >
           {tPolicy("relatedShipping")}
         </Link>
-        {" · "}
-        <Link
-          href="/wholesale"
-          className="font-medium text-ink underline-offset-4 hover:underline"
-        >
-          {tPolicy("relatedWholesale")}
-        </Link>
       </p>
     </div>
   );

@@ -12,7 +12,7 @@ import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { routing } from "@/i18n/routing";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
 import { ProductCard } from "@/components/site/ProductCard";
-import { ProductDetailImageStrip } from "@/components/site/ProductDetailImageStrip";
+import { ProductCloserLookSection } from "@/components/site/product-closer-look-section";
 import { PreloadPdpGalleryImages } from "@/components/site/preload-pdp-gallery-images";
 import { ProductPdpMediaColumn } from "@/components/site/ProductPdpMediaColumn";
 import { ProductReviewsSection } from "@/components/site/ProductReviewsSection";
@@ -20,8 +20,8 @@ import { TrackProductView } from "@/components/analytics/track-product-view";
 import { ProductDetailClient } from "@/components/site/ProductDetailClient";
 import { resolveStorefrontProductMedia } from "@/lib/r2-pdp-media";
 
-/** Fresh buyer reviews + R2 gallery discovery on each request (avoid stale static PDP). */
-export const dynamic = "force-dynamic";
+/** Regenerate from DB periodically; admin saves also revalidate catalog tags. */
+export const revalidate = 60;
 
 export async function generateStaticParams() {
   const products = await getMergedCatalogProducts();
@@ -102,10 +102,11 @@ export default async function ProductPage({
     image: product.image,
     gallery: product.galleryImages ?? product.images,
     detail: product.detailImages,
+    detailBlocks: product.detailBlocks,
     variants: product.variantOptions,
     promoVideo: product.promoVideo,
   });
-  const { gallery: gallerySlides, detail: detailImages, variantOptions, promoVideos } =
+  const { gallery: gallerySlides, detailBlocks, variantOptions, promoVideos } =
     media;
 
   return (
@@ -232,18 +233,12 @@ export default async function ProductPage({
           </div>
         </div>
 
-        {detailImages.length > 0 && (
-          <section className="mt-16 border-t border-line pt-14">
-            <h2 className="font-serif text-2xl tracking-tight">{t("closerLookTitle")}</h2>
-            <p className="mt-2 max-w-2xl text-sm text-muted">
-              {t("closerLookBody", { name: product.name })}
-            </p>
-            <ProductDetailImageStrip
-              productName={product.name}
-              imageUrls={detailImages}
-            />
-          </section>
-        )}
+        <ProductCloserLookSection
+          productName={product.name}
+          sectionTitle={t("closerLookTitle")}
+          sectionIntro={t("closerLookBody", { name: product.name })}
+          blocks={detailBlocks}
+        />
 
         <ProductReviewsSection
           productSlug={product.slug}

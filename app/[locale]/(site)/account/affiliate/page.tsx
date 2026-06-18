@@ -889,14 +889,6 @@ export default async function AccountAffiliatePage({
               )}
             </div>
           </div>
-          <div className="mt-3">
-            <a
-              href={`${process.env.NEXT_PUBLIC_APP_URL?.trim() || "https://humpbuck.com"}/wholesale`}
-              className="inline-flex items-center justify-center rounded-xl bg-ink px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90"
-            >
-              {t("downloadBrandAssets")}
-            </a>
-          </div>
         </section>
       ) : null}
 

@@ -1,6 +1,8 @@
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import type { Product } from "@/lib/catalog";
 import { normalizeSeriesSlug } from "@/lib/catalog";
+import { parseDetailBlocksJson } from "@/lib/product-detail-blocks";
 
 type CatalogProductRow = {
   slug: string;
@@ -19,6 +21,9 @@ type CatalogProductRow = {
   detailJson: string;
   variantsJson: string;
   promoVideoJson: string | null;
+  storefrontCategory: string | null;
+  storefrontSubcategory: string | null;
+  storefrontSeries: string | null;
 };
 
 type InventoryRow = {
@@ -46,6 +51,7 @@ function emptyStorefrontCatalog(): Promise<Product[]> {
 function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
   const gallery = parseArray<string>(row.galleryJson, []);
   const detail = parseArray<string>(row.detailJson, []);
+  const detailBlocks = parseDetailBlocksJson(row.detailJson);
   const variants = parseArray<
     { id?: string; label?: string; image?: string; inStock?: boolean }
   >(row.variantsJson, []);
@@ -89,7 +95,8 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
     image: row.image || gallery[0] || "",
     images: gallery,
     galleryImages: gallery,
-    detailImages: detail,
+    detailImages: detailBlocks.length > 0 ? detailBlocks.map((block) => block.image) : detail,
+    detailBlocks,
     promoVideo: promo,
     variantOptions: variantStock.filter((v) => v.id && v.label && v.image).map((v) => ({
       id: v.id,
@@ -106,38 +113,59 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
         value: String(s.value ?? "").trim(),
       })),
     inStock: computedInStock,
+    storefrontCategory: row.storefrontCategory?.trim() || undefined,
+    storefrontSubcategory: row.storefrontSubcategory?.trim() || undefined,
+    storefrontSeries: row.storefrontSeries?.trim() || undefined,
   };
 }
 
-/**
- * Frontend catalog source: admin-managed `CatalogProduct` + inventory.
- * If the table is empty or the query fails, returns [] (no in-repo static fallback).
- */
-export async function getMergedCatalogProducts(): Promise<Product[]> {
+async function fetchMergedCatalogProducts(): Promise<Product[]> {
   try {
     const [dbRows, inventory] = await Promise.all([
       prisma.catalogProduct.findMany(),
       prisma.productInventory.findMany(),
     ]);
     if (dbRows.length === 0) return emptyStorefrontCatalog();
-    return dbRows.map((row) => toProduct(row, inventory));
+    return dbRows.map((row) => toProduct(row as unknown as CatalogProductRow, inventory));
   } catch (e) {
     console.error("[catalog-db] Failed to load CatalogProduct; returning empty storefront catalog.", e);
     return emptyStorefrontCatalog();
   }
 }
 
-export async function getMergedCatalogProductBySlug(
-  slug: string,
-): Promise<Product | undefined> {
+async function fetchMergedCatalogProductBySlug(slug: string): Promise<Product | undefined> {
   try {
     const [row, inventory] = await Promise.all([
       prisma.catalogProduct.findUnique({ where: { slug } }),
       prisma.productInventory.findMany({ where: { productSlug: slug } }),
     ]);
-    if (row) return toProduct(row, inventory);
+    if (row) return toProduct(row as unknown as CatalogProductRow, inventory);
   } catch (e) {
     console.error("[catalog-db] Failed to load CatalogProduct by slug:", slug, e);
   }
   return undefined;
+}
+
+/**
+ * Frontend catalog source: admin-managed `CatalogProduct` + inventory.
+ * Cached ~60s; admin saves call `revalidateCatalogStorefront`.
+ */
+export async function getMergedCatalogProducts(): Promise<Product[]> {
+  return unstable_cache(fetchMergedCatalogProducts, ["merged-catalog-products"], {
+    revalidate: 60,
+    tags: ["catalog"],
+  })();
+}
+
+export async function getMergedCatalogProductBySlug(
+  slug: string,
+): Promise<Product | undefined> {
+  return unstable_cache(
+    () => fetchMergedCatalogProductBySlug(slug),
+    ["merged-catalog-product", slug],
+    {
+      revalidate: 60,
+      tags: ["catalog", `catalog-product-${slug}`],
+    },
+  )();
 }

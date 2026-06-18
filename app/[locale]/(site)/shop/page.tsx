@@ -6,7 +6,13 @@ import { PreloadProductGridImages } from "@/components/site/preload-product-grid
 import {
   getSeriesBySlug,
   getShopSeriesFilters,
+  getProductMovement,
   normalizeSeriesSlug,
+  normalizeShopMovementParam,
+  normalizeShopAudienceParam,
+  normalizeShopProfileParam,
+  productMatchesAudience,
+  productMatchesUltraThin,
 } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
@@ -32,7 +38,7 @@ export async function generateMetadata({
     },
     openGraph: {
       title: t("ogTitle"),
-      description: t("metaDescription"),
+      description: t("ogDescription"),
     },
   };
 }
@@ -42,21 +48,33 @@ export default async function ShopPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ series?: string }>;
+  searchParams: Promise<{ series?: string; movement?: string; audience?: string; profile?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("Shop");
 
-  const { series: seriesParam } = await searchParams;
+  const { series: seriesParam, movement: movementParam, audience: audienceParam, profile: profileParam } =
+    await searchParams;
   const all = await getMergedCatalogProducts();
   const seriesFilters = getShopSeriesFilters(all);
   const filterSlugs = new Set(seriesFilters.map((s) => s.slug));
   const requested = normalizeSeriesSlug(seriesParam ?? "");
   const active = requested && filterSlugs.has(requested) ? requested : null;
+  const activeMovement = normalizeShopMovementParam(movementParam);
+  const activeAudience = normalizeShopAudienceParam(audienceParam);
+  const activeProfile = normalizeShopProfileParam(profileParam);
   const messages = await getMessages({ locale });
   const list = (
-    active ? all.filter((p) => normalizeSeriesSlug(p.seriesSlug) === active) : all
+    active || activeMovement || activeAudience || activeProfile
+      ? all.filter((p) => {
+          if (active && normalizeSeriesSlug(p.seriesSlug) !== active) return false;
+          if (activeMovement && getProductMovement(p) !== activeMovement) return false;
+          if (activeAudience && !productMatchesAudience(p, activeAudience)) return false;
+          if (activeProfile === "ultra-thin" && !productMatchesUltraThin(p)) return false;
+          return true;
+        })
+      : all
   ).map((p) => applyStorefrontProductLocale(p, locale, messages));
 
   const cardImages = await Promise.all(
@@ -72,6 +90,20 @@ export default async function ShopPage({
         ? getLocalizedSeriesFields(getSeriesBySlug(active)!, locale, messages).name
         : seriesFilters.find((s) => s.slug === active)?.name ?? active
       : null;
+  const activeMovementLabel =
+    activeMovement === "mechanical"
+      ? t("filterMechanical")
+      : activeMovement === "quartz"
+        ? t("filterQuartz")
+        : null;
+  const activeProfileLabel =
+    activeProfile === "ultra-thin" ? t("filterUltraThin") : null;
+  const activeAudienceLabel =
+    activeAudience === "men"
+      ? t("filterMen")
+      : activeAudience === "women"
+        ? t("filterWomen")
+        : null;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
@@ -87,7 +119,16 @@ export default async function ShopPage({
       </div>
 
       <div className="mt-10 flex flex-wrap gap-2">
-        <FilterPill href="/shop" active={active === null} label={t("filterAll")} />
+        <FilterPill
+          href="/shop"
+          active={
+            active === null &&
+            activeMovement === null &&
+            activeAudience === null &&
+            activeProfile === null
+          }
+          label={t("filterAll")}
+        />
         {seriesFilters.map((s) => {
           const label = getSeriesBySlug(s.slug)
             ? getLocalizedSeriesFields(getSeriesBySlug(s.slug)!, locale, messages).name
@@ -111,6 +152,42 @@ export default async function ShopPage({
           })}
         </p>
       )}
+
+      {active == null && activeProfileLabel && !activeMovementLabel && !activeAudienceLabel && (
+        <p className="mt-6 text-sm text-muted">
+          {t("showingProfile", {
+            profile: activeProfileLabel,
+            count: list.length,
+          })}
+        </p>
+      )}
+
+      {active == null && activeMovementLabel && !activeAudienceLabel && !activeProfileLabel && (
+        <p className="mt-6 text-sm text-muted">
+          {t("showingMovement", {
+            movement: activeMovementLabel,
+            count: list.length,
+          })}
+        </p>
+      )}
+
+      {(activeMovementLabel || activeAudienceLabel) &&
+        (activeMovementLabel && activeAudienceLabel ? (
+          <p className="mt-6 text-sm text-muted">
+            {t("showingMovementAudience", {
+              movement: activeMovementLabel,
+              audience: activeAudienceLabel,
+              count: list.length,
+            })}
+          </p>
+        ) : activeAudienceLabel ? (
+          <p className="mt-6 text-sm text-muted">
+            {t("showingAudience", {
+              audience: activeAudienceLabel,
+              count: list.length,
+            })}
+          </p>
+        ) : null)}
 
       <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
         {list.map((p, i) => (

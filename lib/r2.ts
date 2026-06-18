@@ -5,6 +5,50 @@
 export const R2_PUBLIC_BASE =
   "https://pub-c8982b0d0821469baad86145989f3f64.r2.dev" as const;
 
+function r2PublicBaseUrl(): string {
+  const fromEnv = process.env.NEXT_PUBLIC_R2_PUBLIC_BASE?.trim();
+  if (fromEnv) return fromEnv.replace(/\/$/, "");
+  return R2_PUBLIC_BASE.replace(/\/$/, "");
+}
+
+/** Production CDN for `humpbuck-site` bucket (custom domain). */
+export const R2_ASSETS_PUBLIC_BASE = "https://assets.humpbuck.com" as const;
+
+/**
+ * Homepage mechanical hero — `Home/humpbuck-hero-Image.webp` on R2 (case-sensitive path).
+ * Lives on the production bucket/CDN; falls back to `R2_ASSETS_PUBLIC_BASE` when env still points at legacy `r2.dev`.
+ * Bump `NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV` after same-name overwrites.
+ */
+export function mechanicalHeroWebpUrl(): string {
+  const rev = process.env.NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV?.trim() || "1";
+  const base = r2PublicBaseUrl();
+  const heroBase = base.includes(".r2.dev") ? R2_ASSETS_PUBLIC_BASE : base;
+  return `${heroBase}/Home/humpbuck-hero-Image.webp?v=${encodeURIComponent(rev)}`;
+}
+
+/**
+ * Homepage founder story — `Home/humpbuck-home-pool.webp` on R2.
+ * Bump `NEXT_PUBLIC_R2_HUMPBUCK_HOME_POOL_REV` after same-name overwrites.
+ */
+export function founderStoryHomePoolWebpUrl(): string {
+  const rev = process.env.NEXT_PUBLIC_R2_HUMPBUCK_HOME_POOL_REV?.trim() || "1";
+  const base = r2PublicBaseUrl();
+  const heroBase = base.includes(".r2.dev") ? R2_ASSETS_PUBLIC_BASE : base;
+  return `${heroBase}/Home/humpbuck-home-pool.webp?v=${encodeURIComponent(rev)}`;
+}
+
+/**
+ * Homepage flagship category section background — `Home/humpbuck-home-hero-01.webp`.
+ * Bump `NEXT_PUBLIC_R2_HUMPBUCK_HOME_HERO_01_REV` after same-name overwrites.
+ */
+export function flagshipCategoryBackgroundWebpUrl(): string {
+  const rev =
+    process.env.NEXT_PUBLIC_R2_HUMPBUCK_HOME_HERO_01_REV?.trim() || "1";
+  const base = r2PublicBaseUrl();
+  const heroBase = base.includes(".r2.dev") ? R2_ASSETS_PUBLIC_BASE : base;
+  return `${heroBase}/Home/humpbuck-home-hero-01.webp?v=${encodeURIComponent(rev)}`;
+}
+
 /**
  * Same filename on R2 keeps the same URL — browsers/CDN cache the old bytes.
  * Bump `NEXT_PUBLIC_R2_RACING_CAR_REV` in `.env.local` (or the default below) after each replace.
@@ -91,16 +135,6 @@ function digitempBackgroundWebpUrl(): string {
 function aboutPromotionalVideoUrl(): string {
   const rev = process.env.NEXT_PUBLIC_R2_ABOUT_PROMO_REV?.trim() || "1";
   const path = `${R2_PUBLIC_BASE}/About/${encodeURIComponent("HUMPBUCK Promotional Video.mp4")}`;
-  return `${path}?v=${encodeURIComponent(rev)}`;
-}
-
-/**
- * Wholesale index OG / Facebook share — `wholesale/wholesale SEO/wholesale SEO.webp` on R2.
- * Bump `NEXT_PUBLIC_R2_WHOLESALE_SEO_OG_REV` after same-name overwrites.
- */
-function wholesaleSeoOgWebpUrl(): string {
-  const rev = process.env.NEXT_PUBLIC_R2_WHOLESALE_SEO_OG_REV?.trim() || "1";
-  const path = `${R2_PUBLIC_BASE}/wholesale/${encodeURIComponent("wholesale SEO")}/${encodeURIComponent("wholesale SEO.webp")}`;
   return `${path}?v=${encodeURIComponent(rev)}`;
 }
 
@@ -346,6 +380,8 @@ export const R2 = {
     /** Homepage hero background — `home/digitemp-background.webp` (`?v=` cache bust). */
     digitempBackgroundWebp: digitempBackgroundWebpUrl(),
     digitempSpaceMp4: digitempSpaceMp4Url(),
+    /** Founder story — `Home/humpbuck-home-pool.webp` (`?v=` cache bust). */
+    founderStoryPoolWebp: founderStoryHomePoolWebpUrl(),
   },
   products: {
     digitemp2301: {
@@ -469,9 +505,5 @@ export const R2 = {
   shop: {
     /** Header SHOP dropdown — `products/CK-2413M/variants/HUMPBUCK-CK2413M-style-01.webp` */
     allProductsThumbWebp: `${R2_PUBLIC_BASE}/products/CK-2413M/variants/HUMPBUCK-CK2413M-style-01.webp`,
-  },
-  wholesale: {
-    /** `/wholesale` Open Graph — `wholesale/wholesale SEO/wholesale SEO.webp` */
-    seoOgWebp: wholesaleSeoOgWebpUrl(),
   },
 } as const;

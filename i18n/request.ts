@@ -25,7 +25,11 @@ export default getRequestConfig(async ({ requestLocale }) => {
       ContactForm: base.ContactForm ?? enBase.ContactForm,
       Footer: { ...enBase.Footer, ...base.Footer },
       Home: { ...enBase.Home, ...base.Home },
-      WholesalePage: { ...enBase.WholesalePage, ...base.WholesalePage },
+      Navigation: { ...enBase.Navigation, ...base.Navigation },
+      SiteMetadata: { ...enBase.SiteMetadata, ...base.SiteMetadata },
+      Shop: { ...enBase.Shop, ...base.Shop },
+      AboutPage: { ...enBase.AboutPage, ...base.AboutPage },
+      BlogPage: { ...enBase.BlogPage, ...base.BlogPage },
     },
   };
 });

@@ -13,7 +13,7 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
  */
 function r2PublicImagePatterns(): { protocol: "https"; hostname: string; pathname: string }[] {
   const defaultHost = "pub-c8982b0d0821469baad86145989f3f64.r2.dev";
-  const hosts = new Set<string>([defaultHost]);
+  const hosts = new Set<string>([defaultHost, "assets.humpbuck.com"]);
   const base = process.env.NEXT_PUBLIC_R2_PUBLIC_BASE?.trim();
   if (base) {
     try {
@@ -61,6 +61,9 @@ const legacyShopAstralQueryRedirects = routing.locales.map((locale) =>
 );
 
 const nextConfig: NextConfig = {
+  experimental: {
+    optimizePackageImports: ["lucide-react"],
+  },
   async redirects() {
     return [
       {

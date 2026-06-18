@@ -1,6 +1,7 @@
 import { R2 } from "@/lib/r2";
 import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
 import { SITE_LOCALE } from "@/lib/site-locale";
+import type { ProductDetailBlock } from "@/lib/product-detail-blocks";
 
 export type KnownSeriesSlug = "digitemp" | "tonneau" | "rd-astral";
 /** @deprecated Prefer plain `string`; kept for legacy call sites. */
@@ -39,11 +40,16 @@ export interface Product {
   images: string[];
   galleryImages?: string[];
   detailImages?: string[];
+  detailBlocks?: ProductDetailBlock[];
   promoVideo?: { src: string; poster?: string };
   variantOptions?: ProductVariantOption[];
   highlights: string[];
   specs: { label: string; value: string }[];
   inStock: boolean;
+  /** Home “Search by” row (mechanical | quartz | ultra-thin). Set in admin. */
+  storefrontCategory?: string;
+  storefrontSubcategory?: string;
+  storefrontSeries?: string;
 }
 
 export function normalizeSeriesSlug(s: string): string {
@@ -55,6 +61,92 @@ export function normalizeSeriesSlug(s: string): string {
       .replace(/-+/g, "-")
       .replace(/^-|-$/g, "")
   );
+}
+
+export type ShopMovementFilter = "mechanical" | "quartz";
+
+export type ShopProfileFilter = "ultra-thin";
+
+export function normalizeShopMovementParam(
+  raw: string | undefined | null,
+): ShopMovementFilter | null {
+  const v = raw?.trim().toLowerCase();
+  if (v === "mechanical" || v === "quartz") return v;
+  return null;
+}
+
+/** Catalog grouping for shop nav — DIGI-TEMP is quartz; other series default to mechanical. */
+export function getProductMovement(
+  product: Pick<Product, "seriesSlug">,
+): ShopMovementFilter {
+  return normalizeSeriesSlug(product.seriesSlug) === "digitemp" ? "quartz" : "mechanical";
+}
+
+export function normalizeShopProfileParam(
+  raw: string | undefined | null,
+): ShopProfileFilter | null {
+  const v = raw?.trim().toLowerCase();
+  if (v === "ultra-thin" || v === "ultrathin") return "ultra-thin";
+  return null;
+}
+
+export function productMatchesUltraThin(
+  product: Pick<
+    Product,
+    | "name"
+    | "slug"
+    | "categoryLabel"
+    | "shortDescription"
+    | "highlights"
+    | "storefrontSeries"
+  >,
+): boolean {
+  if (product.storefrontSeries?.trim().toLowerCase() === "ultra-thin") return true;
+  const haystack = [
+    product.name,
+    product.slug,
+    product.categoryLabel,
+    product.shortDescription,
+    ...product.highlights,
+  ]
+    .join(" ")
+    .toLowerCase();
+  return /\bultra[\s-]?thin\b/.test(haystack);
+}
+
+export type ShopAudienceFilter = "men" | "women";
+
+export function normalizeShopAudienceParam(
+  raw: string | undefined | null,
+): ShopAudienceFilter | null {
+  const v = raw?.trim().toLowerCase();
+  if (v === "men" || v === "women") return v;
+  return null;
+}
+
+function productAudienceHaystack(
+  product: Pick<Product, "name" | "categoryLabel" | "slug" | "specs">,
+): string {
+  return `${product.name} ${product.categoryLabel} ${product.slug} ${product.specs
+    .map((s) => `${s.label} ${s.value}`)
+    .join(" ")}`.toLowerCase();
+}
+
+/** Unisex when untagged — appears under both Men and Women shop links. */
+export function productMatchesAudience(
+  product: Pick<Product, "name" | "categoryLabel" | "slug" | "specs">,
+  audience: ShopAudienceFilter,
+): boolean {
+  const haystack = productAudienceHaystack(product);
+  const womenTagged =
+    /\bwomen'?s?\b|\bfemale\b|\bladies\b|\bfor her\b|\bher\b/.test(haystack) &&
+    !/\bmen'?s?\b|\bmale\b|\bfor him\b/.test(haystack);
+  const menTagged =
+    /\bmen'?s?\b|\bmale\b|\bfor him\b|\bhim\b/.test(haystack) &&
+    !/\bwomen'?s?\b|\bfemale\b|\bladies\b|\bfor her\b/.test(haystack);
+  if (!womenTagged && !menTagged) return true;
+  if (audience === "women") return womenTagged;
+  return menTagged;
 }
 
 export function humanizeSeriesSlug(slug: string): string {

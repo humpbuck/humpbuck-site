@@ -15,15 +15,13 @@ export async function SiteFooter() {
       title: t("shopTitle"),
       links: [
         { label: t("allProducts"), href: "/shop" },
-        { label: t("linkDigitemp"), href: "/series/digitemp" },
-        { label: t("linkTonneau"), href: "/series/tonneau" },
-        { label: t("linkRdAstral"), href: "/series/rd-astral" },
+        { label: t("linkMechanical"), href: "/shop?movement=mechanical" },
+        { label: t("linkQuartz"), href: "/shop?movement=quartz" },
       ],
     },
     {
       title: t("companyTitle"),
       links: [
-        { label: t("wholesale"), href: "/wholesale" },
         { label: t("affiliates"), href: "/affiliates" },
         { label: t("about"), href: "/about" },
       ],

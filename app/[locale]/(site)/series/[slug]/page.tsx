@@ -12,8 +12,8 @@ import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
 
-/** Same Postgres source as `/shop`; that route stays fresh via `searchParams`. Without this, series pages are SSG at build and can show "0 pieces" if the build-time DB was empty or unreachable. */
-export const dynamic = "force-dynamic";
+/** Regenerate from DB periodically; admin saves also revalidate catalog tags. */
+export const revalidate = 60;
 
 export async function generateStaticParams() {
   return routing.locales.flatMap((locale) =>
@@ -131,12 +131,6 @@ export default async function SeriesPage({
               className="inline-flex rounded-full bg-white px-7 py-3 text-[12px] font-bold uppercase tracking-[0.14em] text-[#0f1114] transition hover:bg-white/90"
             >
               {t("shopThisSeries")}
-            </Link>
-            <Link
-              href="/wholesale"
-              className="inline-flex rounded-full border border-white/20 bg-white/5 px-7 py-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/90 transition hover:bg-white/10"
-            >
-              {t("wholesale")}
             </Link>
           </div>
         </div>

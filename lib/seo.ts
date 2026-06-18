@@ -1,4 +1,4 @@
-import { R2 } from "@/lib/r2";
+import { mechanicalHeroWebpUrl } from "@/lib/r2";
 
 /**
  * Canonical site origin for metadata, sitemap, and JSON-LD.
@@ -18,7 +18,7 @@ export function getSiteUrl(): string {
 
 /** Resolve product or asset URL for og:image (R2 URLs pass through). */
 export function absoluteOgImageUrl(url: string | undefined): string {
-  if (!url) return R2.home.digitemp2301Webp;
+  if (!url) return mechanicalHeroWebpUrl();
   if (/^https?:\/\//i.test(url)) return url;
   const base = getSiteUrl();
   const path = url.startsWith("/") ? url : `/${url}`;
@@ -26,8 +26,8 @@ export function absoluteOgImageUrl(url: string | undefined): string {
 }
 
 export const defaultOgImage = {
-  url: R2.home.digitemp2301Webp,
+  url: mechanicalHeroWebpUrl(),
   width: 1200,
   height: 630,
-  alt: "HUMPBUCK — DIGI-TEMP ana-digi watch",
+  alt: "HUMPBUCK — skeleton mechanical watch movement with visible gears",
 } as const;

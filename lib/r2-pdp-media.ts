@@ -1,6 +1,8 @@
 import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 import { unstable_cache } from "next/cache";
 import type { ProductVariantOption } from "@/lib/catalog";
+import type { ProductDetailBlock } from "@/lib/product-detail-blocks";
+import { detailBlocksToImageUrls } from "@/lib/product-detail-blocks";
 import { R2_GALLERY_SPECS_BY_SLUG, R2_PUBLIC_BASE, type R2GallerySpec } from "@/lib/r2";
 import { isR2ReviewUploadConfigured } from "@/lib/r2-review-upload";
 import {
@@ -185,6 +187,7 @@ export type CatalogProductMediaInput = {
   image?: string;
   gallery?: string[];
   detail?: string[];
+  detailBlocks?: ProductDetailBlock[];
   variants?: ProductVariantOption[];
   promoVideo?: { src?: string; poster?: string } | null;
 };
@@ -192,6 +195,7 @@ export type CatalogProductMediaInput = {
 export type ResolvedStorefrontProductMedia = {
   gallery: string[];
   detail: string[];
+  detailBlocks: ProductDetailBlock[];
   variantOptions: ProductVariantOption[];
   promoVideos: { src: string; poster?: string }[] | null;
 };
@@ -209,7 +213,11 @@ export async function resolveStorefrontProductMedia(
   catalog: CatalogProductMediaInput,
 ): Promise<ResolvedStorefrontProductMedia> {
   const galleryAdmin = trimUrls(catalog.gallery);
-  const detailAdmin = trimUrls(catalog.detail);
+  const detailBlocksAdmin = catalog.detailBlocks?.filter((block) => block.image.trim()) ?? [];
+  const detailAdmin =
+    detailBlocksAdmin.length > 0
+      ? detailBlocksToImageUrls(detailBlocksAdmin)
+      : trimUrls(catalog.detail);
   const catalogVariants = catalog.variants ?? [];
 
   const spec = R2_GALLERY_SPECS_BY_SLUG[catalog.slug];
@@ -226,6 +234,17 @@ export async function resolveStorefrontProductMedia(
 
   const detail =
     detailAdmin.length > 0 ? detailAdmin : r2?.detail?.length ? r2.detail : [];
+
+  let detailBlocks: ProductDetailBlock[] = detailBlocksAdmin;
+  if (detailBlocks.length === 0 && detail.length > 0) {
+    detailBlocks = detail.map((image) => ({
+      image,
+      title: "",
+      body: "",
+      layout: "image-left" as const,
+      stacked: true,
+    }));
+  }
 
   let variantOptions = catalogVariants;
   if (catalogVariants.length > 0 && r2?.variants?.length) {
@@ -249,7 +268,7 @@ export async function resolveStorefrontProductMedia(
     promoVideos = r2.videos.map((src) => ({ src, poster }));
   }
 
-  return { gallery, detail, variantOptions, promoVideos };
+  return { gallery, detail, detailBlocks, variantOptions, promoVideos };
 }
 
 export async function getPdpR2Media(spec: R2GallerySpec): Promise<PdpR2Media> {

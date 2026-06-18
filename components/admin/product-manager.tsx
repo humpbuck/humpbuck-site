@@ -2,6 +2,29 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import {
+  AdminProductSidebar,
+  type SidebarListedProduct,
+} from "@/components/admin/admin-product-sidebar";
+import {
+  StorefrontPlacementFields,
+  applyStorefrontPlacementChange,
+  applyStorefrontSeriesChange,
+  applyStorefrontSubcategoryChange,
+} from "@/components/admin/storefront-placement-fields";
+import {
+  categoryHasSubcategories,
+  coalesceStorefrontPlacementFields,
+  normalizeStorefrontCategoryInput,
+  normalizeStorefrontSubcategoryInput,
+} from "@/lib/home-watch-sections";
+import { DetailBlockListEditor } from "@/components/admin/detail-block-list-editor";
+import {
+  detailBlocksToImageUrls,
+  emptyProductDetailBlock,
+  parseDetailBlocksJson,
+  type ProductDetailBlock,
+} from "@/lib/product-detail-blocks";
 
 type InventoryRecord = {
   productSlug: string;
@@ -28,6 +51,9 @@ type CatalogProductRecord = {
   detailJson: string;
   variantsJson: string;
   promoVideoJson: string | null;
+  storefrontCategory: string | null;
+  storefrontSubcategory: string | null;
+  storefrontSeries: string | null;
 };
 
 type SpecRow = { label: string; value: string };
@@ -50,8 +76,12 @@ type EditableProduct = {
   specs: SpecRow[];
   gallery: string[];
   detail: string[];
+  detailBlocks: ProductDetailBlock[];
   variants: VariantRow[];
   promoVideo: PromoVideo;
+  storefrontCategory: string;
+  storefrontSubcategory: string;
+  storefrontSeries: string;
   inventory: Record<string, { quantity: string; lowStockThreshold: string }>;
 };
 
@@ -92,6 +122,12 @@ function buildEditableProduct(
       map[variant.id] = { quantity: "", lowStockThreshold: "5" };
     }
   }
+  const detailBlocks = parseDetailBlocksJson(p.detailJson);
+  const placement = coalesceStorefrontPlacementFields({
+    storefrontCategory: p.storefrontCategory,
+    storefrontSubcategory: p.storefrontSubcategory,
+    storefrontSeries: p.storefrontSeries,
+  });
   return {
     id: p.id,
     slug: p.slug,
@@ -107,9 +143,13 @@ function buildEditableProduct(
     highlights: parseArray<string>(p.highlightsJson, []),
     specs: parseArray<SpecRow>(p.specsJson, []),
     gallery: parseArray<string>(p.galleryJson, []),
-    detail: parseArray<string>(p.detailJson, []),
+    detail: detailBlocksToImageUrls(detailBlocks),
+    detailBlocks,
     variants: parseArray<VariantRow>(p.variantsJson, []),
     promoVideo: parseVideo(p.promoVideoJson),
+    storefrontCategory: placement.storefrontCategory ?? "",
+    storefrontSubcategory: placement.storefrontSubcategory ?? "",
+    storefrontSeries: placement.storefrontSeries ?? "",
     inventory: map,
   };
 }
@@ -131,8 +171,12 @@ function newProductDraft(): EditableProduct {
     specs: [{ label: "", value: "" }],
     gallery: [],
     detail: [],
+    detailBlocks: [],
     variants: [{ id: "style-01", label: "Style 01", image: "", inStock: true }],
     promoVideo: null,
+    storefrontCategory: "",
+    storefrontSubcategory: "",
+    storefrontSeries: "",
     inventory: {
       "style-01": { quantity: "", lowStockThreshold: "5" },
     },
@@ -192,6 +236,14 @@ function nextIndexedSlot(
   return list.length + 1;
 }
 
+function nextDetailBlockSlot(blocks: ProductDetailBlock[]): number {
+  return nextIndexedSlot(detailBlocksToImageUrls(blocks), "detail");
+}
+
+function productSelectionKey(product: EditableProduct, index: number): string {
+  return product.id ?? `__new__:${index}`;
+}
+
 export function ProductManager({
   initialProducts,
   initialInventory,
@@ -204,9 +256,10 @@ export function ProductManager({
   const [products, setProducts] = useState<EditableProduct[]>(
     initialProducts.map((p) => buildEditableProduct(p, initialInventory)),
   );
-  const [selected, setSelected] = useState<string | null>(
-    initialProducts[0]?.id ?? null,
-  );
+  const [selected, setSelected] = useState<string | null>(() => {
+    const first = initialProducts[0];
+    return first ? (first.id ?? "__new__:0") : null;
+  });
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error" | "info">("info");
   const [busy, setBusy] = useState(false);
@@ -218,10 +271,25 @@ export function ProductManager({
     };
   }, [messageTimer]);
 
-  const current = useMemo(() => {
-    if (selected == null) return null;
-    return products.find((p) => (p.id ?? "__new__") === selected) ?? null;
+  const selectedIndex = useMemo(() => {
+    if (selected == null) return -1;
+    return products.findIndex(
+      (product, index) => productSelectionKey(product, index) === selected,
+    );
   }, [products, selected]);
+
+  const current = selectedIndex >= 0 ? products[selectedIndex] : null;
+
+  const sidebarProducts = useMemo((): SidebarListedProduct[] => {
+    return products.map((product, index) => ({
+      selectionKey: productSelectionKey(product, index),
+      slug: product.slug,
+      name: product.name,
+      storefrontCategory: product.storefrontCategory,
+      storefrontSubcategory: product.storefrontSubcategory,
+      storefrontSeries: product.storefrontSeries,
+    }));
+  }, [products]);
 
   function clearMessageTimer() {
     if (messageTimer != null) {
@@ -244,13 +312,11 @@ export function ProductManager({
   }
 
   function updateCurrent(mutator: (p: EditableProduct) => EditableProduct) {
-    if (!current) return;
+    if (selectedIndex < 0) return;
     setProducts((prev) =>
-      prev.map((p) => {
-        const key = p.id ?? "__new__";
-        const currKey = current.id ?? "__new__";
-        return key === currKey ? mutator(p) : p;
-      }),
+      prev.map((product, index) =>
+        index === selectedIndex ? mutator(product) : product,
+      ),
     );
   }
 
@@ -267,7 +333,12 @@ export function ProductManager({
     });
   }
 
-  async function uploadMedia(section: "gallery" | "detail" | "variants" | "video", file: File, variantId?: string) {
+  async function uploadMedia(
+    section: "gallery" | "detail" | "variants" | "video",
+    file: File,
+    variantId?: string,
+    detailBlockIndex?: number,
+  ) {
     if (!current) return;
     if (section === "video") {
       if (file.type !== "video/mp4") {
@@ -290,7 +361,7 @@ export function ProductManager({
       section === "gallery"
         ? nextIndexedSlot(current.gallery, "gallery")
         : section === "detail"
-          ? nextIndexedSlot(current.detail, "detail")
+          ? nextDetailBlockSlot(current.detailBlocks)
           : section === "variants"
             ? styleNumberFromVariantId(variantId) ?? undefined
             : undefined;
@@ -338,13 +409,21 @@ export function ProductManager({
           };
         }
         if (section === "detail") {
+          const blockIndex =
+            detailBlockIndex ?? Math.max(0, p.detailBlocks.length - 1);
+          const nextBlocks = [...p.detailBlocks];
+          while (nextBlocks.length <= blockIndex) {
+            nextBlocks.push(emptyProductDetailBlock());
+          }
+          nextBlocks[blockIndex] = {
+            ...nextBlocks[blockIndex],
+            image: payload.publicUrl!,
+            stacked: false,
+          };
           return {
             ...p,
-            detail: upsertByIndex(
-              p.detail,
-              sortIndex ?? p.detail.length + 1,
-              payload.publicUrl!,
-            ),
+            detailBlocks: nextBlocks,
+            detail: detailBlocksToImageUrls(nextBlocks),
           };
         }
         if (section === "video") {
@@ -374,12 +453,28 @@ export function ProductManager({
       setFlashMessage("Slug and name are required.", "error");
       return;
     }
+    const placementCategory = normalizeStorefrontCategoryInput(current.storefrontCategory);
+    if (!current.storefrontCategory.trim()) {
+      setFlashMessage("Category is required for the product to appear on the shop.", "error");
+      return;
+    }
+    if (
+      placementCategory &&
+      categoryHasSubcategories(placementCategory) &&
+      !normalizeStorefrontSubcategoryInput(current.storefrontSubcategory)
+    ) {
+      setFlashMessage("Subcategory is required (Men or Women).", "error");
+      return;
+    }
     setBusy(true);
     setFlashMessage("");
     const payload = {
       slug: current.slug.trim(),
       name: current.name.trim(),
       seriesSlug: current.seriesSlug.trim(),
+      storefrontCategory: current.storefrontCategory.trim(),
+      storefrontSubcategory: current.storefrontSubcategory.trim(),
+      storefrontSeries: current.storefrontSeries.trim(),
       categoryLabel: current.categoryLabel.trim(),
       shortDescription: current.shortDescription.trim(),
       description: current.description.trim(),
@@ -393,7 +488,14 @@ export function ProductManager({
       highlights: current.highlights.filter((s) => s.trim()),
       specs: current.specs.filter((s) => s.label.trim() || s.value.trim()),
       gallery: current.gallery.filter((u) => u.trim()),
-      detail: current.detail.filter((u) => u.trim()),
+      detail: current.detailBlocks
+        .map((block) => ({
+          image: block.image.trim(),
+          title: block.title.trim(),
+          body: block.body.trim(),
+          layout: block.layout,
+        }))
+        .filter((block) => block.image),
       variants: current.variants.map((v) => ({
         id: v.id.trim(),
         label: v.label.trim(),
@@ -430,9 +532,8 @@ export function ProductManager({
       const savedSlug = data.slug?.trim() || current.slug.trim();
       if (!current.id && data.id) {
         setProducts((prev) =>
-          prev.map((p) => {
-            if ((p.id ?? "__new__") !== "__new__") return p;
-            if (p.slug !== current.slug && p.slug !== savedSlug) return p;
+          prev.map((p, index) => {
+            if (index !== selectedIndex || p.id) return p;
             return { ...p, id: data.id!, slug: savedSlug };
           }),
         );
@@ -500,8 +601,8 @@ export function ProductManager({
         setFlashMessage(data.error || "Delete forever failed.", "error");
         return;
       }
-      setProducts((prev) => prev.filter((p) => p.id !== current.id));
-      setSelected(products.find((p) => p.id !== current.id)?.id ?? null);
+      setProducts((prev) => prev.filter((_, index) => index !== selectedIndex));
+      setSelected(sidebarProducts.find((p) => p.selectionKey !== selected)?.selectionKey ?? null);
       setFlashMessage("Deleted forever.", "success");
       startTransition(() => router.refresh());
     } catch {
@@ -523,39 +624,18 @@ export function ProductManager({
             onClick={() => {
               const draft = newProductDraft();
               setProducts((prev) => [draft, ...prev]);
-              setSelected("__new__");
+              setSelected("__new__:0");
             }}
             className="rounded-lg border border-line px-2 py-1 text-[10px] font-bold uppercase tracking-widest hover:bg-white"
           >
             Add
           </button>
         </div>
-        <div className="space-y-2">
-          {products.map((p, idx) => {
-            const key = p.id ?? "__new__";
-            const active = key === selected;
-            return (
-              <button
-                type="button"
-                key={`${key}-${idx}`}
-                onClick={() => setSelected(key)}
-                className={`w-full rounded-xl border px-3 py-2 text-left transition ${
-                  active
-                    ? "border-ink/30 bg-white"
-                    : "border-line bg-white/60 hover:border-ink/15"
-                }`}
-              >
-                <p className="truncate text-xs font-semibold text-ink">{p.name || "(New product)"}</p>
-                <p className="mt-1 truncate text-[10px] uppercase tracking-[0.12em] text-muted">
-                  {p.slug || "draft-slug"}
-                </p>
-              </button>
-            );
-          })}
-          {products.length === 0 && (
-            <p className="text-xs text-muted">No products yet. Click Add.</p>
-          )}
-        </div>
+        <AdminProductSidebar
+          products={sidebarProducts}
+          selected={selected}
+          onSelect={setSelected}
+        />
       </aside>
 
       <section className="rounded-2xl border border-line bg-white/50 p-5">
@@ -604,17 +684,33 @@ export function ProductManager({
                   numbers, and hyphens only.
                 </p>
               </div>
-              <div>
-                <LabeledInput
-                  label="Category label"
-                  value={current.categoryLabel}
-                  onChange={(v) => updateCurrent((p) => ({ ...p, categoryLabel: v }))}
-                />
-                <p className="mt-1 text-[11px] leading-relaxed text-muted">
-                  Short line above the product title on the storefront (for example DIGI-TEMP ·
-                  Wholesale).
-                </p>
-              </div>
+              <StorefrontPlacementFields
+                category={current.storefrontCategory}
+                subcategory={current.storefrontSubcategory}
+                series={current.storefrontSeries}
+                categoryLabel={current.categoryLabel}
+                onCategoryChange={(category) =>
+                  updateCurrent((p) => ({
+                    ...p,
+                    ...applyStorefrontPlacementChange(p, category),
+                  }))
+                }
+                onSubcategoryChange={(subcategory) =>
+                  updateCurrent((p) => ({
+                    ...p,
+                    ...applyStorefrontSubcategoryChange(p, subcategory),
+                  }))
+                }
+                onSeriesChange={(series) =>
+                  updateCurrent((p) => ({
+                    ...p,
+                    ...applyStorefrontSeriesChange(p, series),
+                  }))
+                }
+                onCategoryLabelChange={(categoryLabel) =>
+                  updateCurrent((p) => ({ ...p, categoryLabel }))
+                }
+              />
               <LabeledInput
                 label="Price (USD)"
                 value={current.price}
@@ -676,11 +772,16 @@ export function ProductManager({
               onUpload={(file) => uploadMedia("gallery", file)}
             />
 
-            <UrlListEditor
-              title="Detail images (WEBP)"
-              values={current.detail}
-              onChange={(vals) => updateCurrent((p) => ({ ...p, detail: vals }))}
-              onUpload={(file) => uploadMedia("detail", file)}
+            <DetailBlockListEditor
+              values={current.detailBlocks}
+              onChange={(detailBlocks) =>
+                updateCurrent((p) => ({
+                  ...p,
+                  detailBlocks,
+                  detail: detailBlocksToImageUrls(detailBlocks),
+                }))
+              }
+              onUpload={(file, blockIndex) => uploadMedia("detail", file, undefined, blockIndex)}
             />
 
             <div className="rounded-xl border border-line p-4">

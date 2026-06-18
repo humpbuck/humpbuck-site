@@ -2,7 +2,13 @@ import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import { isPrismaUniqueViolation, normalizeProductSlug } from "@/lib/admin-product-slug";
 import { normalizeSeriesSlug } from "@/lib/catalog";
+import { parseStorefrontPlacementPayload } from "@/lib/home-watch-sections";
+import {
+  parseDetailBlocksPayload,
+  serializeDetailBlocksForDb,
+} from "@/lib/product-detail-blocks";
 import { prisma } from "@/lib/prisma";
+import { revalidateCatalogStorefront } from "@/lib/revalidate-catalog";
 
 type ProductSpec = { label: string; value: string };
 type ProductVariant = {
@@ -132,11 +138,10 @@ export async function POST(req: Request) {
         galleryJson: JSON.stringify(
           Array.isArray(body.gallery) ? (body.gallery as string[]) : [],
         ),
-        detailJson: JSON.stringify(
-          Array.isArray(body.detail) ? (body.detail as string[]) : [],
-        ),
+        detailJson: serializeDetailBlocksForDb(parseDetailBlocksPayload(body.detail)),
         variantsJson: JSON.stringify(variants),
         promoVideoJson: body.promoVideo ? JSON.stringify(body.promoVideo) : null,
+        ...parseStorefrontPlacementPayload(body),
       },
     });
 
@@ -180,6 +185,8 @@ export async function POST(req: Request) {
     for (const orphan of inventoryMap.values()) {
       await prisma.productInventory.delete({ where: { id: orphan.id } }).catch(() => null);
     }
+
+    revalidateCatalogStorefront({ slug });
 
     return NextResponse.json({ ok: true, id: created.id, slug });
   } catch (e) {

@@ -167,13 +167,6 @@ export default async function ShippingPage({
         <Link href="/refund" className="font-medium text-ink underline-offset-4 hover:underline">
           {tNav("relatedRefund")}
         </Link>
-        {" · "}
-        <Link
-          href="/wholesale"
-          className="font-medium text-ink underline-offset-4 hover:underline"
-        >
-          {tNav("relatedWholesale")}
-        </Link>
       </p>
     </div>
   );

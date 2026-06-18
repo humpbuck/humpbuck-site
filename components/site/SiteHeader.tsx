@@ -1,7 +1,7 @@
 "use client";
 
 import { Link, usePathname } from "@/i18n/navigation";
-import { ChevronDown, Menu, ShoppingBag, X } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu, ShoppingBag, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
@@ -9,83 +9,93 @@ import { Suspense, useEffect, useMemo, useState, useSyncExternalStore } from "re
 import { useCart } from "@/components/cart/cart-context";
 import { AccountMenu } from "@/components/site/AccountMenu";
 import { HeaderUserAvatar } from "@/components/site/HeaderUserAvatar";
-import { StorefrontImage } from "@/components/site/storefront-image";
 import { buildLoginHref } from "@/lib/auth-callback-url";
 import { storefrontHomePath } from "@/lib/storefront-home-path";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
-import { R2 } from "@/lib/r2";
 
 const SHOP_DROPDOWN_LINKS = [
-  {
-    href: "/shop",
-    labelKey: "allProducts",
-    labelNamespace: "Footer",
-    image: R2.shop.allProductsThumbWebp,
-  },
-  {
-    href: "/series/digitemp",
-    labelKey: "seriesDigitemp",
-    labelNamespace: "Navigation",
-    image: R2.products.digitemp2301.gallery[1],
-  },
-  {
-    href: "/series/tonneau",
-    labelKey: "seriesTonneau",
-    labelNamespace: "Navigation",
-    image: R2.products.rmM01.gallery[0],
-  },
-  {
-    href: "/series/rd-astral",
-    labelKey: "seriesRdAstral",
-    labelNamespace: "Navigation",
-    image: R2.products.rdExcalibur01.gallery[0],
-  },
-] as const;
+  { type: "link" as const, href: "/shop", labelKey: "shopAllProducts" },
+  { type: "flyout" as const, movement: "mechanical" as const, labelKey: "shopMechanical" },
+  { type: "flyout" as const, movement: "quartz" as const, labelKey: "shopQuartz" },
+];
+
+const SHOP_LINK_CLASS =
+  "block px-4 py-2.5 text-[12px] font-medium uppercase tracking-[0.08em] text-ink/90 transition hover:bg-ink/[0.04]";
+const SHOP_FLYOUT_LINK_CLASS =
+  "block px-4 py-2 text-[11px] font-medium uppercase tracking-[0.08em] text-ink/85 transition hover:bg-ink/[0.04]";
 
 const NAV_ITEMS = [
   { labelKey: "affiliates", href: "/affiliates" },
-  { labelKey: "wholesale", href: "/wholesale" },
-  { labelKey: "videoTutorial", href: "/video-tutorial" },
+  { labelKey: "blog", href: "/blog" },
   { labelKey: "about", href: "/about" },
 ] as const;
 
-function ShopSeriesLink({
+function ShopDropdownLink({
   href,
   label,
-  image,
   className,
-  imageClassName,
   onNavigate,
 }: {
-  href: (typeof SHOP_DROPDOWN_LINKS)[number]["href"];
+  href: string;
   label: string;
-  image: string;
   className: string;
-  imageClassName: string;
   onNavigate?: () => void;
 }) {
   return (
     <Link href={href} onClick={onNavigate} className={className}>
-      <span className={`relative shrink-0 overflow-hidden rounded-lg border border-line bg-white ${imageClassName}`}>
-        <StorefrontImage
-          src={image}
-          alt=""
-          fill
-          sizes="56px"
-          className="object-cover"
-        />
-      </span>
-      <span className="min-w-0 truncate">{label}</span>
+      {label}
     </Link>
+  );
+}
+
+function ShopDropdownFlyout({
+  movement,
+  label,
+  menLabel,
+  womenLabel,
+}: {
+  movement: "mechanical" | "quartz";
+  label: string;
+  menLabel: string;
+  womenLabel: string;
+}) {
+  return (
+    <div className="group/item relative">
+      <Link
+        href={`/shop?movement=${movement}`}
+        className={`${SHOP_LINK_CLASS} flex items-center justify-between gap-3 pr-3`}
+      >
+        <span>{label}</span>
+        <ChevronRight size={14} className="shrink-0 opacity-45" aria-hidden />
+      </Link>
+      <div className="pointer-events-none absolute left-full top-0 z-10 pl-1 opacity-0 transition group-hover/item:pointer-events-auto group-hover/item:opacity-100">
+        <div
+          role="menu"
+          aria-label={label}
+          className="min-w-[132px] rounded-2xl border border-line bg-paper/95 py-2 shadow-card backdrop-blur-md"
+        >
+          <Link
+            href={`/shop?movement=${movement}&audience=men`}
+            className={SHOP_FLYOUT_LINK_CLASS}
+          >
+            {menLabel}
+          </Link>
+          <Link
+            href={`/shop?movement=${movement}&audience=women`}
+            className={SHOP_FLYOUT_LINK_CLASS}
+          >
+            {womenLabel}
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }
 
 function DesktopShopNav({
   tNav,
-  tFooter,
 }: {
   tNav: ReturnType<typeof useTranslations<"Navigation">>;
-  tFooter: ReturnType<typeof useTranslations<"Footer">>;
 }) {
   return (
     <div className="group relative">
@@ -106,18 +116,26 @@ function DesktopShopNav({
         <div
           role="menu"
           aria-label={tNav("shop")}
-          className="min-w-[240px] rounded-2xl border border-line bg-paper/95 py-2 shadow-card backdrop-blur-md"
+          className="min-w-[200px] overflow-visible rounded-2xl border border-line bg-paper/95 py-2 shadow-card backdrop-blur-md"
         >
-          {SHOP_DROPDOWN_LINKS.map(({ labelKey, labelNamespace, href, image }) => (
-            <ShopSeriesLink
-              key={href}
-              href={href}
-              label={labelNamespace === "Footer" ? tFooter(labelKey) : tNav(labelKey)}
-              image={image}
-              className="flex items-center gap-3 px-3 py-2.5 text-[12px] font-medium uppercase tracking-[0.08em] text-ink/90 transition hover:bg-ink/[0.04]"
-              imageClassName="h-11 w-11"
-            />
-          ))}
+          {SHOP_DROPDOWN_LINKS.map((item) =>
+            item.type === "link" ? (
+              <ShopDropdownLink
+                key={item.href}
+                href={item.href}
+                label={tNav(item.labelKey)}
+                className={SHOP_LINK_CLASS}
+              />
+            ) : (
+              <ShopDropdownFlyout
+                key={item.movement}
+                movement={item.movement}
+                label={tNav(item.labelKey)}
+                menLabel={tNav("shopMen")}
+                womenLabel={tNav("shopWomen")}
+              />
+            ),
+          )}
         </div>
       </div>
     </div>
@@ -126,11 +144,9 @@ function DesktopShopNav({
 
 function MobileShopNav({
   tNav,
-  tFooter,
   onNavigate,
 }: {
   tNav: ReturnType<typeof useTranslations<"Navigation">>;
-  tFooter: ReturnType<typeof useTranslations<"Footer">>;
   onNavigate: () => void;
 }) {
   return (
@@ -139,17 +155,38 @@ function MobileShopNav({
         {tNav("shop")}
       </p>
       <div className="flex flex-col gap-1 pb-1 pl-2">
-        {SHOP_DROPDOWN_LINKS.map(({ labelKey, labelNamespace, href, image }) => (
-          <ShopSeriesLink
-            key={href}
-            href={href}
-            label={labelNamespace === "Footer" ? tFooter(labelKey) : tNav(labelKey)}
-            image={image}
-            onNavigate={onNavigate}
-            className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-ink/[0.04]"
-            imageClassName="h-10 w-10"
-          />
-        ))}
+        {SHOP_DROPDOWN_LINKS.map((item) =>
+          item.type === "link" ? (
+            <ShopDropdownLink
+              key={item.href}
+              href={item.href}
+              label={tNav(item.labelKey)}
+              onNavigate={onNavigate}
+              className="block rounded-xl px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-ink/[0.04]"
+            />
+          ) : (
+            <div key={item.movement} className="flex flex-col">
+              <ShopDropdownLink
+                href={`/shop?movement=${item.movement}`}
+                label={tNav(item.labelKey)}
+                onNavigate={onNavigate}
+                className="block rounded-xl px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-ink/[0.04]"
+              />
+              <ShopDropdownLink
+                href={`/shop?movement=${item.movement}&audience=men`}
+                label={tNav("shopMen")}
+                onNavigate={onNavigate}
+                className="block rounded-xl py-2 pl-8 pr-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-ink/60 hover:bg-ink/[0.04]"
+              />
+              <ShopDropdownLink
+                href={`/shop?movement=${item.movement}&audience=women`}
+                label={tNav("shopWomen")}
+                onNavigate={onNavigate}
+                className="block rounded-xl py-2 pl-8 pr-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-ink/60 hover:bg-ink/[0.04]"
+              />
+            </div>
+          ),
+        )}
       </div>
     </div>
   );
@@ -181,7 +218,6 @@ function HeaderLoginLink({
 
 export function SiteHeader() {
   const t = useTranslations("Navigation");
-  const tFooter = useTranslations("Footer");
   const locale = useLocale();
   const signOutCallbackUrl = storefrontHomePath(locale);
   const [open, setOpen] = useState(false);
@@ -263,7 +299,7 @@ export function SiteHeader() {
           </div>
 
           <nav className="hidden shrink-0 items-center gap-4 lg:flex xl:gap-6">
-            <DesktopShopNav tNav={t} tFooter={tFooter} />
+            <DesktopShopNav tNav={t} />
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -350,7 +386,7 @@ export function SiteHeader() {
           </button>
         </div>
         <nav className="flex flex-col p-2">
-          <MobileShopNav tNav={t} tFooter={tFooter} onNavigate={() => setOpen(false)} />
+          <MobileShopNav tNav={t} onNavigate={() => setOpen(false)} />
           {navItems.map((item) => (
             <Link
               key={item.href}

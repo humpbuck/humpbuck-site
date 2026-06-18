@@ -6,7 +6,15 @@ import {
   normalizeProductSlug,
 } from "@/lib/admin-product-slug";
 import { normalizeSeriesSlug } from "@/lib/catalog";
+import {
+  parseStorefrontPlacementPayload,
+} from "@/lib/home-watch-sections";
+import {
+  parseDetailBlocksPayload,
+  serializeDetailBlocksForDb,
+} from "@/lib/product-detail-blocks";
 import { prisma } from "@/lib/prisma";
+import { revalidateCatalogStorefront } from "@/lib/revalidate-catalog";
 
 type ProductSpec = { label: string; value: string };
 type ProductVariant = {
@@ -59,11 +67,10 @@ function productUpdateData(
     galleryJson: JSON.stringify(
       Array.isArray(body.gallery) ? (body.gallery as string[]) : [],
     ),
-    detailJson: JSON.stringify(
-      Array.isArray(body.detail) ? (body.detail as string[]) : [],
-    ),
+    detailJson: serializeDetailBlocksForDb(parseDetailBlocksPayload(body.detail)),
     variantsJson: JSON.stringify(variants),
     promoVideoJson: body.promoVideo ? JSON.stringify(body.promoVideo) : null,
+    ...parseStorefrontPlacementPayload(body),
   };
 }
 
@@ -188,6 +195,8 @@ export async function PATCH(
 
     await syncProductInventory(slug, variants, inventory);
 
+    revalidateCatalogStorefront({ slug, oldSlug: prev.slug });
+
     return NextResponse.json({ ok: true, slug });
   } catch (e) {
     if (isPrismaUniqueViolation(e)) {
@@ -222,6 +231,7 @@ export async function DELETE(
       data: { status: "archived", inStock: false },
     });
     await prisma.productInventory.deleteMany({ where: { productSlug: product.slug } });
+    revalidateCatalogStorefront({ slug: product.slug });
     return NextResponse.json({ ok: true, archived: true });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);

@@ -1,26 +1,6 @@
-import { AdminBackLink } from "@/components/admin/admin-back-link";
-import { VideoTutorialManager } from "@/components/admin/video-tutorial-manager";
+import { redirect } from "next/navigation";
 import { adminPath } from "@/lib/admin-path";
-import {
-  listVideoTutorialProductOptions,
-  listVideoTutorials,
-} from "@/lib/video-tutorials";
 
-export default async function AdminVideoTutorialPage() {
-  const [tutorials, products] = await Promise.all([
-    listVideoTutorials(),
-    listVideoTutorialProductOptions(),
-  ]);
-  return (
-    <div>
-      <AdminBackLink href={adminPath()} label="Overview" />
-      <h1 className="mt-4 font-serif text-3xl tracking-tight">Video tutorial</h1>
-      <p className="mt-2 text-sm text-muted">
-        Manage tutorial video links by product. Supports R2, YouTube, and other platform URLs.
-      </p>
-      <div className="mt-6">
-        <VideoTutorialManager initialRows={tutorials} products={products} />
-      </div>
-    </div>
-  );
+export default function AdminVideoTutorialRedirectPage() {
+  redirect(adminPath("/blog"));
 }

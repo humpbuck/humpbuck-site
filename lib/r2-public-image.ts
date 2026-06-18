@@ -7,7 +7,11 @@
 export function isR2PublicObjectUrl(url: string): boolean {
   const s = url.trim();
   if (!s.startsWith("http")) return false;
-  if (s.includes(".r2.dev") || s.includes("r2.cloudflarestorage.com")) {
+  if (
+    s.includes(".r2.dev") ||
+    s.includes("r2.cloudflarestorage.com") ||
+    s.includes("assets.humpbuck.com")
+  ) {
     return true;
   }
   const base = process.env.NEXT_PUBLIC_R2_PUBLIC_BASE?.trim().replace(/\/$/, "");
