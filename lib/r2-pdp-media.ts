@@ -221,7 +221,15 @@ export async function resolveStorefrontProductMedia(
   const catalogVariants = catalog.variants ?? [];
 
   const spec = R2_GALLERY_SPECS_BY_SLUG[catalog.slug];
-  const r2 = spec ? await getPdpR2Media(spec) : null;
+  const needsR2Gallery = galleryAdmin.length === 0 && !catalog.image?.trim();
+  const needsR2Detail = detailAdmin.length === 0;
+  const needsR2Variants =
+    catalogVariants.length > 0 && catalogVariants.some((v) => !v.image?.trim());
+  const needsR2Video = !catalog.promoVideo?.src?.trim();
+  const r2 =
+    spec && (needsR2Gallery || needsR2Detail || needsR2Variants || needsR2Video)
+      ? await getPdpR2Media(spec)
+      : null;
 
   const gallery =
     galleryAdmin.length > 0
