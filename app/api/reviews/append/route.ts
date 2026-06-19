@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
+import { revalidateProductReviews } from "@/lib/revalidate-product-reviews";
 import { auth } from "@/auth";
 import {
   MAX_APPEND_BODY,
@@ -84,6 +85,7 @@ export async function POST(req: Request) {
     revalidateStorefrontPath(
       `/product/${encodeURIComponent(review.productSlug)}`,
     );
+    revalidateProductReviews(review.productSlug);
     return NextResponse.json({ id: row.id });
   } catch {
     return NextResponse.json(

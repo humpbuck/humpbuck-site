@@ -55,7 +55,7 @@ export function AttributionCapture() {
       trackVisitorEvent({ type: "heartbeat" });
     };
     sendHeartbeat();
-    const id = window.setInterval(sendHeartbeat, 30000);
+    const id = window.setInterval(sendHeartbeat, 120_000);
     document.addEventListener("visibilitychange", sendHeartbeat);
     return () => {
       window.clearInterval(id);

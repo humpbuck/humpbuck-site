@@ -1,18 +1,18 @@
 import type { ProductReview, ProductReviewAppend, User } from "@prisma/client";
-import { unstable_noStore as noStore } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { STOREFRONT_ISR_SECONDS } from "@/lib/storefront-revalidate";
 
 export type ProductReviewWithUser = ProductReview & {
   user: Pick<User, "id" | "name" | "email" | "image">;
   appends: ProductReviewAppend[];
 };
 
-export async function getProductReviewsWithUsers(
+async function fetchProductReviewsWithUsers(
   productSlug: string,
-  take = 50,
+  take: number,
 ): Promise<ProductReviewWithUser[]> {
-  noStore();
-  const slug = productSlug?.trim() ?? "";
+  const slug = productSlug.trim();
   if (!slug) return [];
 
   const reviews = await prisma.productReview.findMany({
@@ -41,6 +41,23 @@ export async function getProductReviewsWithUsers(
     ...r,
     appends: byReviewId.get(r.id) ?? [],
   }));
+}
+
+export async function getProductReviewsWithUsers(
+  productSlug: string,
+  take = 50,
+): Promise<ProductReviewWithUser[]> {
+  const slug = productSlug?.trim() ?? "";
+  if (!slug) return [];
+
+  return unstable_cache(
+    () => fetchProductReviewsWithUsers(slug, take),
+    ["product-reviews", slug, String(take)],
+    {
+      revalidate: STOREFRONT_ISR_SECONDS,
+      tags: [`product-reviews-${slug}`],
+    },
+  )();
 }
 
 export function parseReviewImageUrls(json: string): string[] {

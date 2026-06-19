@@ -12,8 +12,9 @@ import {
 import { routing } from "@/i18n/routing";
 import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
+import { STOREFRONT_ISR_SECONDS } from "@/lib/storefront-revalidate";
 
-export const dynamic = "force-dynamic";
+export const revalidate = STOREFRONT_ISR_SECONDS;
 
 export async function generateStaticParams() {
   const posts = await listPublishedBlogPosts();

@@ -27,14 +27,6 @@ const AttributionCapture = dynamic(
   { ssr: false },
 );
 
-const TrackPageView = dynamic(
-  () =>
-    import("@/components/analytics/track-page-view").then(
-      (m) => m.TrackPageView,
-    ),
-  { ssr: false },
-);
-
 const SiteFloatingActions = dynamic(
   () =>
     import("@/components/site/SiteFloatingActions").then(
@@ -93,7 +85,6 @@ export function SiteClientEnhancements() {
         <>
           <SiteAnalyticsConsent />
           <GoogleAnalyticsPageviews />
-          <TrackPageView />
           <AttributionCapture />
           <LocaleSwitcherFab />
           <SiteFloatingActions />

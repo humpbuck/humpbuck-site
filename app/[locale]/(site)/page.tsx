@@ -20,6 +20,7 @@ import { R2 } from "@/lib/r2";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
+import { STOREFRONT_ISR_SECONDS } from "@/lib/storefront-revalidate";
 
 export async function generateMetadata({
   params,
@@ -58,7 +59,7 @@ export async function generateMetadata({
 }
 
 /** Regenerate from DB periodically; admin saves also revalidate catalog tags. */
-export const revalidate = 60;
+export const revalidate = STOREFRONT_ISR_SECONDS;
 
 async function buildHomeWatchSlider(
   section: "mechanical" | "quartz" | "ultra-thin",

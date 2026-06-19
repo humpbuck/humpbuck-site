@@ -1,32 +1,43 @@
-import { Link } from "@/i18n/navigation";
-import { getTranslations } from "next-intl/server";
-import { getPdpWriteReviewCta } from "@/lib/pdp-review-cta";
+"use client";
 
-/**
- * On PDP: if the buyer has a reviewable, not-yet-reviewed line item for this product, show “Write a review”.
- * Pass `userId` from the parent (same `auth()` as the page) to avoid a second session lookup.
- */
-export async function PdpReviewWriteCta({
-  productSlug,
-  userId,
-}: {
-  productSlug: string;
-  userId: string | undefined;
-}) {
-  if (!userId) return null;
-  let cta: { orderId: string } | null;
-  try {
-    cta = await getPdpWriteReviewCta(userId, productSlug);
-  } catch (err) {
-    console.error("[PdpReviewWriteCta] failed", err);
-    return null;
-  }
-  if (!cta) return null;
-  const t = await getTranslations("Reviews");
+import { Link } from "@/i18n/navigation";
+import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+
+/** PDP “Write a review” — loaded client-side so the cached PDP shell stays static. */
+export function PdpReviewWriteCta({ productSlug }: { productSlug: string }) {
+  const { data: session, status } = useSession();
+  const t = useTranslations("Reviews");
+  const [orderId, setOrderId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (status !== "authenticated" || !session?.user?.id) {
+      setOrderId(null);
+      return;
+    }
+    let cancelled = false;
+    void fetch(`/api/account/review-cta?productSlug=${encodeURIComponent(productSlug)}`, {
+      credentials: "same-origin",
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { orderId?: string | null } | null) => {
+        if (!cancelled) setOrderId(typeof data?.orderId === "string" ? data.orderId : null);
+      })
+      .catch(() => {
+        if (!cancelled) setOrderId(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [productSlug, session?.user?.id, status]);
+
+  if (!orderId) return null;
+
   return (
     <p className="text-sm text-ink/90">
       <Link
-        href={`/account/orders/${cta.orderId}/review/${encodeURIComponent(productSlug)}`}
+        href={`/account/orders/${orderId}/review/${encodeURIComponent(productSlug)}`}
         className="font-semibold underline-offset-4 hover:underline"
       >
         {t("writeReview")}

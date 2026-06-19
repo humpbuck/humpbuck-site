@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import {
   recordVisitorEvent,
   VISITOR_EVENT_TYPES,
@@ -97,8 +96,6 @@ export async function POST(req: Request) {
     null;
   const city = req.headers.get("x-vercel-ip-city") ?? null;
 
-  const session = await auth();
-
   await recordVisitorEvent({
     sessionKey: body.sessionKey,
     type: body.type,
@@ -114,7 +111,7 @@ export async function POST(req: Request) {
     city,
     deviceType: detectDeviceType(ua),
     browser: detectBrowser(ua),
-    userId: session?.user?.id ?? null,
+    userId: null,
     meta: body.meta,
   });
 

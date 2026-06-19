@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
+import { revalidateProductReviews } from "@/lib/revalidate-product-reviews";
+import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
 
 const MAX_MERCHANT_REPLY = 5_000;
 
@@ -31,6 +33,14 @@ export async function PATCH(
     return NextResponse.json({ error: "Reply is too long" }, { status: 400 });
   }
 
+  const review = await prisma.productReview.findUnique({
+    where: { id },
+    select: { productSlug: true },
+  });
+  if (!review) {
+    return NextResponse.json({ error: "Review not found" }, { status: 404 });
+  }
+
   const updated = await prisma.productReview.updateMany({
     where: { id },
     data: {
@@ -41,6 +51,8 @@ export async function PATCH(
   if (updated.count === 0) {
     return NextResponse.json({ error: "Review not found" }, { status: 404 });
   }
+  revalidateProductReviews(review.productSlug);
+  revalidateStorefrontPath(`/product/${encodeURIComponent(review.productSlug)}`);
   return NextResponse.json({ ok: true });
 }
 
@@ -54,10 +66,20 @@ export async function DELETE(
   }
 
   const { id } = await ctx.params;
+  const review = await prisma.productReview.findUnique({
+    where: { id },
+    select: { productSlug: true },
+  });
+  if (!review) {
+    return NextResponse.json({ error: "Review not found" }, { status: 404 });
+  }
+
   const deleted = await prisma.productReview.deleteMany({ where: { id } });
   if (deleted.count === 0) {
     return NextResponse.json({ error: "Review not found" }, { status: 404 });
   }
 
+  revalidateProductReviews(review.productSlug);
+  revalidateStorefrontPath(`/product/${encodeURIComponent(review.productSlug)}`);
   return NextResponse.json({ ok: true });
 }

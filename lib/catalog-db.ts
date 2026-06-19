@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { STOREFRONT_ISR_SECONDS } from "@/lib/storefront-revalidate";
 import type { Product } from "@/lib/catalog";
 import { normalizeSeriesSlug } from "@/lib/catalog";
 import { parseDetailBlocksJson } from "@/lib/product-detail-blocks";
@@ -152,7 +153,7 @@ async function fetchMergedCatalogProductBySlug(slug: string): Promise<Product | 
  */
 export async function getMergedCatalogProducts(): Promise<Product[]> {
   return unstable_cache(fetchMergedCatalogProducts, ["merged-catalog-products"], {
-    revalidate: 60,
+    revalidate: STOREFRONT_ISR_SECONDS,
     tags: ["catalog"],
   })();
 }
@@ -164,7 +165,7 @@ export async function getMergedCatalogProductBySlug(
     () => fetchMergedCatalogProductBySlug(slug),
     ["merged-catalog-product", slug],
     {
-      revalidate: 60,
+      revalidate: STOREFRONT_ISR_SECONDS,
       tags: ["catalog", `catalog-product-${slug}`],
     },
   )();

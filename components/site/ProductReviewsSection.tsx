@@ -1,11 +1,9 @@
 import { Link } from "@/i18n/navigation";
 import { StorefrontImage } from "@/components/site/storefront-image";
-import { auth } from "@/auth";
-import type { Session } from "next-auth";
 import { getLocale, getTranslations } from "next-intl/server";
 import { ReviewerAvatar } from "@/components/site/ReviewerAvatar";
 import { PdpReviewWriteCta } from "@/components/site/pdp-review-write-cta";
-import { MAX_REVIEW_APPENDS } from "@/lib/review-append-constants";
+import { ReviewFollowUpLink } from "@/components/site/review-follow-up-link";
 import {
   getProductReviewsWithUsers,
   parseReviewImageUrls,
@@ -21,11 +19,9 @@ export async function ProductReviewsSection({
   productSlug: string;
   productName: string;
 }) {
-  let session: Session | null = null;
   let rows: Awaited<ReturnType<typeof getProductReviewsWithUsers>> = [];
   let reviewsLoadError = false;
   try {
-    session = (await auth()) as Session | null;
     rows = await getProductReviewsWithUsers(productSlug, 50);
   } catch (err) {
     reviewsLoadError = true;
@@ -53,10 +49,7 @@ export async function ProductReviewsSection({
         })}
       </p>
       <div className="mt-3">
-        <PdpReviewWriteCta
-          productSlug={productSlug}
-          userId={session?.user?.id}
-        />
+        <PdpReviewWriteCta productSlug={productSlug} />
       </div>
 
       {reviewsLoadError ? (
@@ -76,9 +69,6 @@ export async function ProductReviewsSection({
               image: r.user.image,
               email: r.user.email,
             });
-            const isOwn = session?.user?.id === r.user.id;
-            const canAppend = isOwn && r.appends.length < MAX_REVIEW_APPENDS;
-
             return (
               <li
                 key={r.id}
@@ -186,16 +176,11 @@ export async function ProductReviewsSection({
                       );
                     })}
 
-                    {canAppend ? (
-                      <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.12em]">
-                        <Link
-                          href={`/account/reviews/${r.id}/append`}
-                          className="text-ink underline-offset-4 hover:underline"
-                        >
-                          {t("addFollowUp")}
-                        </Link>
-                      </p>
-                    ) : null}
+                    <ReviewFollowUpLink
+                      reviewId={r.id}
+                      reviewUserId={r.user.id}
+                      appendCount={r.appends.length}
+                    />
                   </div>
                 </div>
               </li>

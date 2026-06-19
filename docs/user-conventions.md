@@ -45,6 +45,7 @@
 | 2026-04-23 | 增加「非请求不随改、最小 diff」的协作原则；添加 `.cursor/rules/humpbuck-stability.mdc` 以稳定站点、减少无关改动。 |
 | 2026-05-19 | 前台统一 `StorefrontImage`：R2 图直连 CDN，不经 `/_next/image`（修复部分手机主页/系列 hero 烂图）。 |
 | 2026-05-19 | 新增前台语言 **ar**（阿拉伯语，RTL）；文案见 `messages/ar.json` 等，构建脚本 `scripts/build-ar-locale.mjs`。 |
+| 2026-06-18 | 降 Vercel Fluid CPU：PDP 评论改 `unstable_cache`（去掉 `noStore`/`auth()` 动态化）；ISR 60s→300s；去重 analytics `page_view`、heartbeat 30s→120s；analytics API 不再 `auth()`；Blog/视频页改 ISR。 |
 
 ## 6. 附：你希望追加的个人要求（可编辑）
 

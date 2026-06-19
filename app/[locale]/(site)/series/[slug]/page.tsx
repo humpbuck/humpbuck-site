@@ -11,9 +11,10 @@ import { routing } from "@/i18n/routing";
 import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
+import { STOREFRONT_ISR_SECONDS } from "@/lib/storefront-revalidate";
 
 /** Regenerate from DB periodically; admin saves also revalidate catalog tags. */
-export const revalidate = 60;
+export const revalidate = STOREFRONT_ISR_SECONDS;
 
 export async function generateStaticParams() {
   return routing.locales.flatMap((locale) =>

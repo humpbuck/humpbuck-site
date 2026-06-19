@@ -23,6 +23,9 @@ import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
 import { routing } from "@/i18n/routing";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
+import { STOREFRONT_ISR_SECONDS } from "@/lib/storefront-revalidate";
+
+export const revalidate = STOREFRONT_ISR_SECONDS;
 
 export async function generateMetadata({
   params,
