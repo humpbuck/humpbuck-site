@@ -9,7 +9,6 @@ import {
   useState,
 } from "react";
 import type { CartLine } from "@/lib/cart-types";
-import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 
 const STORAGE_KEY = "humpbuck-cart";
 const STORAGE_COOKIE = "humpbuck-cart";
@@ -137,14 +136,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const addItem = useCallback((line: CartLine) => {
     const normalizedLine = normalizeCartLine(line);
     if (!normalizedLine) return;
-    trackVisitorEvent({
-      type: "add_to_cart",
-      productSlug: normalizedLine.slug,
-      meta: {
-        qty: Math.max(1, Math.min(CART_QTY_MAX, normalizedLine.qty)),
-        variantId: normalizedLine.variantId ?? null,
-      },
-    });
     setItems((prev) => {
       const idx = prev.findIndex(
         (p) =>
@@ -172,11 +163,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setQty = useCallback((slug: string, qty: number, variantId?: string) => {
-    trackVisitorEvent({
-      type: qty < 1 ? "remove_from_cart" : "view_cart",
-      productSlug: slug,
-      meta: { qty: Math.max(0, Math.min(CART_QTY_MAX, qty)), variantId: variantId ?? null },
-    });
     setItems((prev) => {
       if (qty < 1) {
         return prev.filter(

@@ -4,7 +4,6 @@ import { StorefrontImage } from "@/components/site/storefront-image";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { isVariantOptionSellable, type ProductVariantOption } from "@/lib/catalog";
-import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 
 export function ProductStyleVariants({
   options,
@@ -28,15 +27,6 @@ export function ProductStyleVariants({
   function setSelected(i: number) {
     onSelectedIndexChange?.(i);
     if (!controlled) setInternal(i);
-    const opt = options[i];
-    if (opt) {
-      trackVisitorEvent({
-        type: "page_view",
-        source: "variant_select",
-        productSlug: productName,
-        meta: { variantId: opt.id, variantLabel: opt.label },
-      });
-    }
   }
 
   if (options.length === 0) return null;

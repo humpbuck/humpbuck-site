@@ -9,7 +9,6 @@ import { useCart } from "@/components/cart/cart-context";
 import { isVariantOptionSellable, type ProductVariantOption } from "@/lib/catalog";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
 import { WhatsAppChatLink } from "@/components/site/WhatsAppChatLink";
-import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 
 export function ProductCartSection({
   slug,
@@ -46,11 +45,6 @@ export function ProductCartSection({
 
   function handleAdd() {
     if (!canAdd || !current) return;
-    trackVisitorEvent({
-      type: "add_to_cart",
-      productSlug: slug,
-      meta: { qty: 1, variantId: current.id, variantLabel: current.label },
-    });
     addItem({
       slug,
       qty: 1,

@@ -12,7 +12,6 @@ import {
   type ProductVariantOption,
 } from "@/lib/catalog";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
-import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 
 function firstSellableVariant(product: Product): ProductVariantOption | null {
   const options = product.variantOptions ?? [];
@@ -50,17 +49,6 @@ export function StorefrontProductGridTile({
     event.preventDefault();
     event.stopPropagation();
     if (!addEnabled) return;
-
-    trackVisitorEvent({
-      type: "add_to_cart",
-      productSlug: product.slug,
-      meta: {
-        qty: 1,
-        variantId: variant?.id ?? null,
-        variantLabel: variant?.label ?? null,
-        source: cartSource,
-      },
-    });
 
     addItem({
       slug: product.slug,

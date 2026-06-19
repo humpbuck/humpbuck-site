@@ -75,12 +75,9 @@ export default async function CheckoutSuccessPage({
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
       <CheckoutSuccessClient
         orderId={order.id}
-        totalUsd={order.totalCents / 100}
-        provider={order.provider}
         documentTitle={t("documentTitle")}
         syncCartFromPaidOrder={syncCartFromPaidOrder}
         paidOrderLines={paidOrderLines}
-        trackPurchase={purchaseAllowed}
       />
       <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6 sm:p-8">
         <div className="flex items-start gap-4">

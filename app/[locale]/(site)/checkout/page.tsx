@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { trackVisitorEvent } from "@/lib/visitor-analytics-client";
 import { useSession } from "next-auth/react";
 import { useCart } from "@/components/cart/cart-context";
 import { emptyCheckoutAddress, validateCheckoutAddressForm } from "@/lib/checkout-address";
@@ -36,14 +35,6 @@ export default function CheckoutPage() {
     runWhenIdle(() => {
       captureTrafficAttribution();
       captureAffiliatePidAttribution();
-      trackVisitorEvent(
-        {
-          type: "checkout_start",
-          source: "checkout_page",
-          meta: { stage: "begin_checkout" },
-        },
-        { dedupeKey: "checkout_start:page" },
-      );
     });
   }, []);
 
@@ -158,12 +149,6 @@ export default function CheckoutPage() {
       return;
     }
     setLoading("stripe");
-    trackVisitorEvent({
-      type: "payment_start",
-      source: "stripe",
-      orderId: orderId ?? undefined,
-      meta: { paymentMethod: "stripe", totalUsd: total },
-    }, { dedupeKey: `payment_start:stripe:${orderId ?? "draft"}` });
     try {
       const draftOrderId = orderId ?? (await ensureDraftOrder());
       const res = await fetch("/api/checkout/stripe", {
@@ -192,15 +177,6 @@ export default function CheckoutPage() {
     setLoading("paypal");
     try {
       const draftOrderId = orderId ?? (await ensureDraftOrder());
-      trackVisitorEvent(
-        {
-          type: "payment_start",
-          source: "paypal",
-          orderId: draftOrderId,
-          meta: { paymentMethod: "paypal", totalUsd: total },
-        },
-        { dedupeKey: `payment_start:paypal:${draftOrderId}` },
-      );
       const res = await fetch("/api/checkout/paypal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

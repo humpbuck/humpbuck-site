@@ -16,7 +16,6 @@ import { ProductCloserLookSection } from "@/components/site/product-closer-look-
 import { PreloadPdpGalleryImages } from "@/components/site/preload-pdp-gallery-images";
 import { ProductPdpMediaColumn } from "@/components/site/ProductPdpMediaColumn";
 import { ProductReviewsSection } from "@/components/site/ProductReviewsSection";
-import { TrackProductView } from "@/components/analytics/track-product-view";
 import { ProductDetailClient } from "@/components/site/ProductDetailClient";
 import { resolveStorefrontProductMedia } from "@/lib/r2-pdp-media";
 
@@ -109,7 +108,6 @@ export default async function ProductPage({
   return (
     <div>
       {gallerySlides.length > 0 ? <PreloadPdpGalleryImages urls={gallerySlides} /> : null}
-      <TrackProductView slug={product.slug} />
       <div className="mx-auto min-w-0 max-w-7xl py-10 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:pl-[max(1.5rem,env(safe-area-inset-left))] sm:pr-[max(1.5rem,env(safe-area-inset-right))] lg:py-14">
         <Link
           href="/product"
