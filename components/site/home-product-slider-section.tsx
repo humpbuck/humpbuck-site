@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { HomeRecommendedProductsSlider } from "@/components/site/home-recommended-products-slider";
+import { HomeProductsEmptyState } from "@/components/site/home-products-empty-state";
 import type { Product } from "@/lib/catalog";
 
 export async function HomeProductSliderSection({
@@ -23,8 +24,6 @@ export async function HomeProductSliderSection({
   cardImages: (string | undefined)[];
   cartSource: string;
 }) {
-  if (products.length === 0) return null;
-
   const t = await getTranslations("Home");
 
   return (
@@ -63,14 +62,18 @@ export async function HomeProductSliderSection({
           </Link>
         </div>
 
-        <HomeRecommendedProductsSlider
-          products={products}
-          cardImages={cardImages}
-          cartSource={cartSource}
-          prevLabel={t("recommendedSliderPrev")}
-          nextLabel={t("recommendedSliderNext")}
-          scrollLabel={t("recommendedSliderScroll")}
-        />
+        {products.length > 0 ? (
+          <HomeRecommendedProductsSlider
+            products={products}
+            cardImages={cardImages}
+            cartSource={cartSource}
+            prevLabel={t("recommendedSliderPrev")}
+            nextLabel={t("recommendedSliderNext")}
+            scrollLabel={t("recommendedSliderScroll")}
+          />
+        ) : (
+          <HomeProductsEmptyState />
+        )}
       </div>
     </section>
   );

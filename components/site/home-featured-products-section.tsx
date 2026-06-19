@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { HomeFeaturedProductsGrid } from "@/components/site/home-featured-products";
+import { HomeProductsEmptyState } from "@/components/site/home-products-empty-state";
 import type { Product } from "@/lib/catalog";
 
 export async function HomeFeaturedProductsSection({
@@ -9,8 +10,6 @@ export async function HomeFeaturedProductsSection({
   products: Product[];
   cardImages: (string | undefined)[];
 }) {
-  if (products.length === 0) return null;
-
   const t = await getTranslations("Home");
 
   return (
@@ -25,7 +24,11 @@ export async function HomeFeaturedProductsSection({
         >
           {t("allProductsHeading")}
         </h2>
-        <HomeFeaturedProductsGrid products={products} cardImages={cardImages} />
+        {products.length > 0 ? (
+          <HomeFeaturedProductsGrid products={products} cardImages={cardImages} />
+        ) : (
+          <HomeProductsEmptyState className="mt-14 text-center sm:mt-16 lg:mt-20" />
+        )}
       </div>
     </section>
   );
