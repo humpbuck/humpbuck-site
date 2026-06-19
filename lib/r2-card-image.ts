@@ -41,7 +41,7 @@ export const getShopCardImages = cache(
     if (!spec) return { cover: null, hover: null };
 
     const pdp = await getPdpR2Media(spec);
-    return resolveShopCardImagesFromGallery(pdp.gallery);
+    return resolveShopCardImagesFromGallery(pdp.gallery ?? undefined);
   },
 );
 
