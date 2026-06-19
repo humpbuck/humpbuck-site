@@ -4,7 +4,7 @@ import { type MouseEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useCart } from "@/components/cart/cart-context";
-import { StorefrontImage } from "@/components/site/storefront-image";
+import { ProductCardHoverImages } from "@/components/site/product-card-hover-images";
 import {
   formatPrice,
   isVariantOptionSellable,
@@ -29,12 +29,14 @@ function canQuickAdd(product: Product): boolean {
 export function StorefrontProductGridTile({
   product,
   cardImageUrl,
+  cardHoverImageUrl,
   imagePriority = false,
   imageEager = false,
   cartSource = "home_grid",
 }: {
   product: Product;
   cardImageUrl?: string;
+  cardHoverImageUrl?: string;
   imagePriority?: boolean;
   imageEager?: boolean;
   cartSource?: string;
@@ -74,15 +76,13 @@ export function StorefrontProductGridTile({
         href={`/product/${product.slug}`}
         className="group relative aspect-square overflow-hidden rounded-xl border border-line/80 bg-white/50 shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-lg"
       >
-        <StorefrontImage
-          src={imgSrc}
+        <ProductCardHoverImages
+          primarySrc={imgSrc}
+          hoverSrc={cardHoverImageUrl}
           alt={product.name}
-          fill
-          priority={imagePriority}
-          loading={imagePriority || imageEager ? "eager" : undefined}
-          fetchPriority={imagePriority ? "high" : imageEager ? "low" : undefined}
+          imagePriority={imagePriority}
+          imageEager={imageEager}
           sizes="(max-width:640px) 50vw, 25vw"
-          className="object-cover object-center transition duration-500 group-hover:scale-[1.03]"
         />
       </Link>
 

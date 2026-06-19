@@ -6,7 +6,7 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { PreloadProductGridImages } from "@/components/site/preload-product-grid-images";
 import { getSeriesBySlug, normalizeSeriesSlug, resolveSeriesInfo, seriesList } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
-import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
+import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
 import { routing } from "@/i18n/routing";
 import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
@@ -80,11 +80,8 @@ export default async function SeriesPage({
   const series = resolveSeriesInfo(seriesKey, { heroImage: items[0]?.image });
   const localizedSeries = getLocalizedSeriesFields(series, locale, messages);
 
-  const cardImages = await Promise.all(
-    items.map((p) =>
-      getShopCardR2GalleryImage(p.slug, p.image, p.galleryImages ?? p.images),
-    ),
-  );
+  const { covers: cardImages, hovers: cardHoverImages } =
+    await mapProductsToShopCardImages(items);
   const gridImageUrls = items.map((p, i) => cardImages[i]?.trim() || p.image);
 
   const heroClass =
@@ -147,6 +144,7 @@ export default async function SeriesPage({
               key={p.slug}
               product={p}
               cardImageUrl={cardImages[i] ?? undefined}
+              cardHoverImageUrl={cardHoverImages[i] ?? undefined}
               imagePriority={i < 2}
               imageEager={i < 4}
             />

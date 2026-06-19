@@ -19,7 +19,7 @@ import {
   hasStorefrontDbPlacements,
   productHasStorefrontUltraThinSeries,
 } from "@/lib/home-watch-sections";
-import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
+import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
 import { routing } from "@/i18n/routing";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
@@ -90,11 +90,8 @@ export default async function ProductCatalogPage({
       : all
   ).map((p) => applyStorefrontProductLocale(p, locale, messages));
 
-  const cardImages = await Promise.all(
-    list.map((p) =>
-      getShopCardR2GalleryImage(p.slug, p.image, p.galleryImages ?? p.images),
-    ),
-  );
+  const { covers: cardImages, hovers: cardHoverImages } =
+    await mapProductsToShopCardImages(list);
   const gridImageUrls = list.map((p, i) => cardImages[i]?.trim() || p.image);
 
   const activeSeriesLabel =
@@ -208,6 +205,7 @@ export default async function ProductCatalogPage({
             key={p.slug}
             product={p}
             cardImageUrl={cardImages[i] ?? undefined}
+            cardHoverImageUrl={cardHoverImages[i] ?? undefined}
             imagePriority={i < 2}
             imageEager={i < 4}
           />

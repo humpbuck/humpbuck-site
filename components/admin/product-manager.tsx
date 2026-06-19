@@ -158,14 +158,15 @@ function buildEditableProduct(
   };
 }
 
-function resolveProductMainImage(
+function resolveProductImageFallback(
   product: Pick<EditableProduct, "gallery" | "variants" | "image">,
 ): string {
+  if (product.image.trim()) return product.image.trim();
   const fromGallery = product.gallery.map((url) => url.trim()).find(Boolean);
   if (fromGallery) return fromGallery;
   const fromVariant = product.variants.map((variant) => variant.image.trim()).find(Boolean);
   if (fromVariant) return fromVariant;
-  return product.image.trim();
+  return "";
 }
 
 function resolveProductInStock(product: Pick<EditableProduct, "variants" | "inventory">): boolean {
@@ -434,7 +435,6 @@ export function ProductManager({
           return {
             ...p,
             gallery,
-            image: gallery.map((url) => url.trim()).find(Boolean) || p.image,
           };
         }
         if (section === "detail") {
@@ -497,7 +497,7 @@ export function ProductManager({
     }
     setBusy(true);
     setFlashMessage("");
-    const mainImage = resolveProductMainImage(current);
+    const coverImage = current.image.trim();
     const inStock = resolveProductInStock(current);
     const payload = {
       slug: current.slug.trim(),
@@ -514,7 +514,7 @@ export function ProductManager({
         current.compareAtPrice.trim() === ""
           ? null
           : Number(current.compareAtPrice) || null,
-      image: mainImage,
+      image: coverImage,
       inStock,
       highlights: current.highlights.filter((s) => s.trim()),
       specs: current.specs.filter((s) => s.label.trim() || s.value.trim()),
@@ -565,14 +565,14 @@ export function ProductManager({
         setProducts((prev) =>
           prev.map((p, index) => {
             if (index !== selectedIndex || p.id) return p;
-            return { ...p, id: data.id!, slug: savedSlug, image: mainImage, inStock };
+            return { ...p, id: data.id!, slug: savedSlug, image: coverImage, inStock };
           }),
         );
         setSelected(data.id);
       } else if (current.id) {
         setProducts((prev) =>
           prev.map((p) =>
-            p.id === current.id ? { ...p, slug: savedSlug, image: mainImage, inStock } : p,
+            p.id === current.id ? { ...p, slug: savedSlug, image: coverImage, inStock } : p,
           ),
         );
       }
@@ -769,6 +769,27 @@ export function ProductManager({
               values={current.specs}
               onChange={(vals) => updateCurrent((p) => ({ ...p, specs: vals }))}
             />
+
+            <div>
+              <LabeledInput
+                label="Cover image / 首图 (R2 URL)"
+                value={current.image}
+                onChange={(v) => updateCurrent((p) => ({ ...p, image: v }))}
+              />
+              <p className="mt-1 text-[11px] leading-relaxed text-muted">
+                Shop card and listing thumbnail. Paste a full R2 or HTTPS URL. PDP gallery below is
+                separate; leave empty to fall back to the first gallery image.
+                {current.image.trim() ? null : resolveProductImageFallback(current) ? (
+                  <>
+                    {" "}
+                    Preview fallback:{" "}
+                    <span className="break-all text-ink/70">
+                      {resolveProductImageFallback(current)}
+                    </span>
+                  </>
+                ) : null}
+              </p>
+            </div>
 
             <UrlListEditor
               title="Gallery images (WEBP)"

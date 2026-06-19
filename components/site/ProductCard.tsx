@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { StorefrontImage } from "@/components/site/storefront-image";
+import { ProductCardHoverImages } from "@/components/site/product-card-hover-images";
 import type { Product } from "@/lib/catalog";
 import { formatPrice } from "@/lib/catalog";
 
@@ -12,6 +12,8 @@ export async function ProductCard({
   imageQuality = 60,
   /** When set (e.g. R2-resolved), overrides `product.image` for cards. */
   cardImageUrl,
+  /** Gallery hover image; when set, shown on pointer hover. */
+  cardHoverImageUrl,
 }: {
   product: Product;
   /** First viewport row(s) of grids — LCP + avoid lazy for above-the-fold. */
@@ -25,6 +27,7 @@ export async function ProductCard({
   optimizeR2Image?: boolean;
   imageQuality?: number;
   cardImageUrl?: string;
+  cardHoverImageUrl?: string;
 }) {
   const t = await getTranslations("Product");
   const imgSrc = cardImageUrl?.trim() || product.image;
@@ -37,17 +40,14 @@ export async function ProductCard({
         <div className="absolute left-3 top-3 z-10 rounded-full bg-ink px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-paper">
           {t("sale")}
         </div>
-        <StorefrontImage
-          src={imgSrc}
+        <ProductCardHoverImages
+          primarySrc={imgSrc}
+          hoverSrc={cardHoverImageUrl}
           alt={product.name}
-          fill
-          priority={imagePriority}
-          loading={imagePriority || imageEager ? "eager" : undefined}
-          fetchPriority={imagePriority ? "high" : imageEager ? "low" : undefined}
-          sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
-          quality={imageQuality}
+          imagePriority={imagePriority}
+          imageEager={imageEager}
           optimizeR2={optimizeR2Image}
-          className="object-cover object-center transition duration-500 group-hover:scale-[1.03]"
+          imageQuality={imageQuality}
         />
       </div>
       <div className="flex flex-1 flex-col p-4">

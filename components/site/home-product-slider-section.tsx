@@ -13,6 +13,7 @@ export async function HomeProductSliderSection({
   viewAllLabel,
   products,
   cardImages,
+  cardHoverImages,
   cartSource,
 }: {
   headingId: string;
@@ -22,6 +23,7 @@ export async function HomeProductSliderSection({
   viewAllLabel: string;
   products: Product[];
   cardImages: (string | undefined)[];
+  cardHoverImages: (string | undefined)[];
   cartSource: string;
 }) {
   const t = await getTranslations("Home");
@@ -66,6 +68,7 @@ export async function HomeProductSliderSection({
           <HomeRecommendedProductsSlider
             products={products}
             cardImages={cardImages}
+            cardHoverImages={cardHoverImages}
             cartSource={cartSource}
             prevLabel={t("recommendedSliderPrev")}
             nextLabel={t("recommendedSliderNext")}

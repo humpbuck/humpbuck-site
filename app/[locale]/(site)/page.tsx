@@ -15,7 +15,7 @@ import { routing } from "@/i18n/routing";
 import { formatPrice, getProductMovement } from "@/lib/catalog";
 import { resolveHomeWatchSectionProducts } from "@/lib/home-watch-sections";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
-import { getShopCardR2GalleryImage } from "@/lib/r2-card-image";
+import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
 import { R2 } from "@/lib/r2";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
@@ -68,14 +68,8 @@ async function buildHomeWatchSlider(
 ) {
   const localized = all.map((p) => applyStorefrontProductLocale(p, locale, messages));
   const products = resolveHomeWatchSectionProducts(localized, section);
-  const cardImages = (
-    await Promise.all(
-      products.map((p) =>
-        getShopCardR2GalleryImage(p.slug, p.image, p.galleryImages ?? p.images),
-      ),
-    )
-  ).map((url) => url ?? undefined);
-  return { products, cardImages };
+  const { covers: cardImages, hovers: cardHoverImages } = await mapProductsToShopCardImages(products);
+  return { products, cardImages, cardHoverImages };
 }
 
 export default async function HomePage({
@@ -89,13 +83,8 @@ export default async function HomePage({
   const all = await getMergedCatalogProducts();
   const messages = await getMessages({ locale });
   const featured = all.map((p) => applyStorefrontProductLocale(p, locale, messages));
-  const featuredCardImages = (
-    await Promise.all(
-      featured.map((p) =>
-        getShopCardR2GalleryImage(p.slug, p.image, p.galleryImages ?? p.images),
-      ),
-    )
-  ).map((url) => url ?? undefined);
+  const { covers: featuredCardImages, hovers: featuredCardHoverImages } =
+    await mapProductsToShopCardImages(featured);
   const featuredImageUrls = featured
     .slice(0, 12)
     .map((p, i) => featuredCardImages[i]?.trim() || p.image);
@@ -110,13 +99,8 @@ export default async function HomePage({
   const recommended = recommendedRaw.map((p) =>
     applyStorefrontProductLocale(p, locale, messages),
   );
-  const recommendedCardImages = (
-    await Promise.all(
-      recommended.map((p) =>
-        getShopCardR2GalleryImage(p.slug, p.image, p.galleryImages ?? p.images),
-      ),
-    )
-  ).map((url) => url ?? undefined);
+  const { covers: recommendedCardImages, hovers: recommendedCardHoverImages } =
+    await mapProductsToShopCardImages(recommended);
   const recommendedImageUrls = recommended.map(
     (p, i) => recommendedCardImages[i]?.trim() || p.image,
   );
@@ -150,6 +134,7 @@ export default async function HomePage({
       <HomeRecommendedProducts
         products={recommended}
         cardImages={recommendedCardImages}
+        cardHoverImages={recommendedCardHoverImages}
       />
       {/* Series spotlight — HUMPBUCK DIGI-TEMP */}
       <section className="border-b border-line bg-paper text-ink">
@@ -227,15 +212,19 @@ export default async function HomePage({
       <HomeFeaturedProductsSection
         products={featured}
         cardImages={featuredCardImages}
+        cardHoverImages={featuredCardHoverImages}
       />
 
       <HomeCategoryProductSliders
         mechanicalProducts={mechanicalSlider.products}
         mechanicalCardImages={mechanicalSlider.cardImages}
+        mechanicalCardHoverImages={mechanicalSlider.cardHoverImages}
         quartzProducts={quartzSlider.products}
         quartzCardImages={quartzSlider.cardImages}
+        quartzCardHoverImages={quartzSlider.cardHoverImages}
         ultraThinProducts={ultraThinSlider.products}
         ultraThinCardImages={ultraThinSlider.cardImages}
+        ultraThinCardHoverImages={ultraThinSlider.cardHoverImages}
       />
 
       <HomeFounderStorySection />

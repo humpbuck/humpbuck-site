@@ -5,17 +5,23 @@ import type { Product } from "@/lib/catalog";
 export async function HomeCategoryProductSliders({
   mechanicalProducts,
   mechanicalCardImages,
+  mechanicalCardHoverImages,
   quartzProducts,
   quartzCardImages,
+  quartzCardHoverImages,
   ultraThinProducts,
   ultraThinCardImages,
+  ultraThinCardHoverImages,
 }: {
   mechanicalProducts: Product[];
   mechanicalCardImages: (string | undefined)[];
+  mechanicalCardHoverImages: (string | undefined)[];
   quartzProducts: Product[];
   quartzCardImages: (string | undefined)[];
+  quartzCardHoverImages: (string | undefined)[];
   ultraThinProducts: Product[];
   ultraThinCardImages: (string | undefined)[];
+  ultraThinCardHoverImages: (string | undefined)[];
 }) {
   const t = await getTranslations("Home");
   const kicker = t("categoryRowKicker");
@@ -30,6 +36,7 @@ export async function HomeCategoryProductSliders({
         viewAllLabel={t("mechanicalWatchesShop")}
         products={mechanicalProducts}
         cardImages={mechanicalCardImages}
+        cardHoverImages={mechanicalCardHoverImages}
         cartSource="home_mechanical_row"
       />
       <HomeProductSliderSection
@@ -40,6 +47,7 @@ export async function HomeCategoryProductSliders({
         viewAllLabel={t("quartzWatchesShop")}
         products={quartzProducts}
         cardImages={quartzCardImages}
+        cardHoverImages={quartzCardHoverImages}
         cartSource="home_quartz_row"
       />
       <HomeProductSliderSection
@@ -50,6 +58,7 @@ export async function HomeCategoryProductSliders({
         viewAllLabel={t("ultraThinWatchesShop")}
         products={ultraThinProducts}
         cardImages={ultraThinCardImages}
+        cardHoverImages={ultraThinCardHoverImages}
         cartSource="home_ultra_thin_row"
       />
     </>

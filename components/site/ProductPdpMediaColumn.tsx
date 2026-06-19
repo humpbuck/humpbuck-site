@@ -1,4 +1,4 @@
-import { ProductImageCarousel } from "@/components/site/ProductImageCarousel";
+import { ProductPdpSyncedCarousel } from "@/components/site/product-pdp-synced-carousel";
 import { ProductPromoVideo } from "@/components/site/ProductPromoVideo";
 
 /**
@@ -35,7 +35,7 @@ export function ProductPdpMediaColumn({
     return (
       <div className="flex min-h-0 min-w-0 flex-col justify-between gap-10 lg:h-full lg:min-h-0">
         <div className="min-w-0 shrink-0">
-          <ProductImageCarousel
+          <ProductPdpSyncedCarousel
             alt={productName}
             images={gallerySlides}
             themeGlowClass={themeGlowClass}
@@ -60,7 +60,7 @@ export function ProductPdpMediaColumn({
 
   return (
     <div className="min-w-0">
-      <ProductImageCarousel
+      <ProductPdpSyncedCarousel
         alt={productName}
         images={gallerySlides}
         themeGlowClass={themeGlowClass}

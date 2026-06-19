@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { isVariantOptionSellable, type ProductVariantOption } from "@/lib/catalog";
 import { ProductStyleVariants } from "@/components/site/ProductStyleVariants";
 import { ProductCartSection } from "@/components/site/ProductCartSection";
+import { useProductPdpGallerySync } from "@/components/site/product-pdp-gallery-sync";
 
 export function ProductDetailClient({
   slug,
@@ -20,9 +21,15 @@ export function ProductDetailClient({
   variantOptions?: ProductVariantOption[] | null;
 }) {
   const t = useTranslations("Product");
+  const gallerySync = useProductPdpGallerySync();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const options = variantOptions ?? [];
   const current = options[selectedIndex];
+
+  function handleVariantChange(index: number) {
+    setSelectedIndex(index);
+    gallerySync?.syncGalleryToVariant(index);
+  }
 
   const stockLabel = useMemo(() => {
     const opt = current;
@@ -47,7 +54,7 @@ export function ProductDetailClient({
           options={options}
           productName={name}
           selectedIndex={selectedIndex}
-          onSelectedIndexChange={setSelectedIndex}
+          onSelectedIndexChange={handleVariantChange}
         />
       )}
 

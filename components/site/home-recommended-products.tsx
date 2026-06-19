@@ -5,9 +5,11 @@ import type { Product } from "@/lib/catalog";
 export async function HomeRecommendedProducts({
   products,
   cardImages,
+  cardHoverImages,
 }: {
   products: Product[];
   cardImages: (string | undefined)[];
+  cardHoverImages: (string | undefined)[];
 }) {
   const t = await getTranslations("Home");
 
@@ -19,6 +21,7 @@ export async function HomeRecommendedProducts({
       viewAllLabel={t("recommendedViewAll")}
       products={products}
       cardImages={cardImages}
+      cardHoverImages={cardHoverImages}
       cartSource="home_recommended"
     />
   );

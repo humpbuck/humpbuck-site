@@ -11,9 +11,11 @@ const PAGE_SIZE = 12;
 export function HomeFeaturedProductsGrid({
   products,
   cardImages,
+  cardHoverImages,
 }: {
   products: Product[];
   cardImages: (string | undefined)[];
+  cardHoverImages: (string | undefined)[];
 }) {
   const t = useTranslations("Home");
   const [page, setPage] = useState(1);
@@ -33,6 +35,11 @@ export function HomeFeaturedProductsGrid({
     return cardImages.slice(start, start + PAGE_SIZE);
   }, [cardImages, page]);
 
+  const pageCardHoverImages = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return cardHoverImages.slice(start, start + PAGE_SIZE);
+  }, [cardHoverImages, page]);
+
   const globalStartIndex = (page - 1) * PAGE_SIZE;
 
   return (
@@ -43,6 +50,7 @@ export function HomeFeaturedProductsGrid({
             key={product.slug}
             product={product}
             cardImageUrl={pageCardImages[i] ?? undefined}
+            cardHoverImageUrl={pageCardHoverImages[i] ?? undefined}
             imagePriority={globalStartIndex + i < 4}
             imageEager={globalStartIndex + i < 12}
             cartSource="home_featured"

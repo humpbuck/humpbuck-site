@@ -191,6 +191,7 @@ function RecommendedProductsScrollSlider({
 export function HomeRecommendedProductsSlider({
   products,
   cardImages,
+  cardHoverImages,
   prevLabel,
   nextLabel,
   scrollLabel,
@@ -198,6 +199,7 @@ export function HomeRecommendedProductsSlider({
 }: {
   products: Product[];
   cardImages: (string | undefined)[];
+  cardHoverImages: (string | undefined)[];
   prevLabel: string;
   nextLabel: string;
   scrollLabel: string;
@@ -304,6 +306,7 @@ export function HomeRecommendedProductsSlider({
             <StorefrontProductGridTile
               product={product}
               cardImageUrl={cardImages[i]}
+              cardHoverImageUrl={cardHoverImages[i]}
               imagePriority={i < 4}
               imageEager={i < 6}
               cartSource={cartSource}

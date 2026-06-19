@@ -17,7 +17,9 @@ import { PreloadPdpGalleryImages } from "@/components/site/preload-pdp-gallery-i
 import { ProductPdpMediaColumn } from "@/components/site/ProductPdpMediaColumn";
 import { ProductReviewsSection } from "@/components/site/ProductReviewsSection";
 import { ProductDetailClient } from "@/components/site/ProductDetailClient";
+import { ProductPdpGallerySyncProvider } from "@/components/site/product-pdp-gallery-sync";
 import { resolveStorefrontProductMedia } from "@/lib/r2-pdp-media";
+import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
 
 /** Regenerate from DB periodically; admin saves also revalidate catalog tags. Keep in sync with `STOREFRONT_ISR_SECONDS`. */
 export const revalidate = 300;
@@ -92,6 +94,8 @@ export default async function ProductPage({
     )
     .map((p) => applyStorefrontProductLocale(p, locale, messages))
     .slice(0, 3);
+  const { covers: relatedCardImages, hovers: relatedCardHoverImages } =
+    await mapProductsToShopCardImages(related);
 
   const media = await resolveStorefrontProductMedia({
     slug: product.slug,
@@ -117,6 +121,10 @@ export default async function ProductPage({
           {t("backToShop")}
         </Link>
 
+        <ProductPdpGallerySyncProvider
+          gallerySlides={gallerySlides}
+          variantOptions={variantOptions}
+        >
         <div className="mt-8 grid min-w-0 grid-cols-1 gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-x-14 lg:gap-y-10">
           <ProductPdpMediaColumn
             productName={product.name}
@@ -219,6 +227,7 @@ export default async function ProductPage({
             </div>
           </div>
         </div>
+        </ProductPdpGallerySyncProvider>
 
         <ProductCloserLookSection
           productName={product.name}
@@ -238,11 +247,12 @@ export default async function ProductPage({
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <h2 className="font-serif text-2xl">{t("youMayAlsoLike")}</h2>
             <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
-              {related.map((p) => (
+              {related.map((p, i) => (
                 <ProductCard
                   key={p.slug}
                   product={p}
-                  cardImageUrl={undefined}
+                  cardImageUrl={relatedCardImages[i] ?? undefined}
+                  cardHoverImageUrl={relatedCardHoverImages[i] ?? undefined}
                 />
               ))}
             </div>

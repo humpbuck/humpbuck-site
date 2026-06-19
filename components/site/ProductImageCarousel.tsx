@@ -28,7 +28,7 @@ function ProductImageZoomSlide({
     <button
       type="button"
       {...tap}
-      className="relative aspect-square w-full min-w-full shrink-0 cursor-zoom-in snap-center touch-pan-x"
+      className="relative aspect-square w-full min-w-full shrink-0 cursor-zoom-in snap-start snap-always touch-pan-x"
       aria-label={label}
     >
       <StorefrontImage
@@ -49,37 +49,97 @@ export function ProductImageCarousel({
   alt,
   images,
   themeGlowClass,
+  activeIndex: controlledIndex,
+  onActiveIndexChange,
+  activeSlideOverride,
 }: {
   alt: string;
   images: string[];
   themeGlowClass: string;
+  activeIndex?: number;
+  onActiveIndexChange?: (index: number) => void;
+  activeSlideOverride?: string | null;
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(0);
+  const thumbsRef = useRef<HTMLDivElement>(null);
+  const programmaticScrollRef = useRef(false);
+  const programmaticTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const skipControlledSyncRef = useRef(false);
+  const lastSyncedIndexRef = useRef(0);
+  const [internalActive, setInternalActive] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxStartIndex, setLightboxStartIndex] = useState(0);
+  const controlled =
+    controlledIndex !== undefined && onActiveIndexChange !== undefined;
+  const active = controlled ? controlledIndex! : internalActive;
 
-  const scrollTo = useCallback(
+  const setActive = useCallback(
     (index: number) => {
-      const el = scrollerRef.current;
-      if (!el) return;
       const n = images.length;
       if (n === 0) return;
       const i = ((index % n) + n) % n;
-      const w = el.clientWidth;
-      el.scrollTo({ left: i * w, behavior: "smooth" });
-      setActive(i);
+      onActiveIndexChange?.(i);
+      if (!controlled) setInternalActive(i);
     },
-    [images.length],
+    [controlled, images.length, onActiveIndexChange],
+  );
+
+  const beginProgrammaticScroll = useCallback((behavior: ScrollBehavior) => {
+    programmaticScrollRef.current = true;
+    if (programmaticTimerRef.current) {
+      clearTimeout(programmaticTimerRef.current);
+    }
+    const ms = behavior === "smooth" ? 450 : 0;
+    programmaticTimerRef.current = setTimeout(() => {
+      programmaticScrollRef.current = false;
+      programmaticTimerRef.current = null;
+    }, ms);
+  }, []);
+
+  const scrollMainTo = useCallback(
+    (index: number, behavior: ScrollBehavior = "smooth") => {
+      const el = scrollerRef.current;
+      if (!el || images.length === 0) return;
+      const i = ((index % images.length) + images.length) % images.length;
+      const w = Math.max(el.clientWidth, 1);
+      beginProgrammaticScroll(behavior);
+      el.scrollTo({ left: i * w, behavior });
+    },
+    [beginProgrammaticScroll, images.length],
+  );
+
+  const scrollThumbIntoView = useCallback((index: number) => {
+    const el = thumbsRef.current;
+    if (!el) return;
+    const thumb = el.children[index] as HTMLElement | undefined;
+    thumb?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+  }, []);
+
+  const scrollTo = useCallback(
+    (index: number, behavior: ScrollBehavior = "smooth") => {
+      const n = images.length;
+      if (n === 0) return;
+      const i = ((index % n) + n) % n;
+      skipControlledSyncRef.current = true;
+      lastSyncedIndexRef.current = i;
+      scrollMainTo(i, behavior);
+      setActive(i);
+      scrollThumbIntoView(i);
+    },
+    [images.length, scrollMainTo, scrollThumbIntoView, setActive],
   );
 
   const onScroll = useCallback(() => {
+    if (programmaticScrollRef.current) return;
     const el = scrollerRef.current;
     if (!el || !images.length) return;
     const w = Math.max(el.clientWidth, 1);
     const i = Math.round(el.scrollLeft / w);
-    setActive(Math.min(i, images.length - 1));
-  }, [images.length]);
+    const next = Math.min(i, images.length - 1);
+    if (next === active) return;
+    lastSyncedIndexRef.current = next;
+    setActive(next);
+  }, [active, images.length, setActive]);
 
   useEffect(() => {
     const el = scrollerRef.current;
@@ -91,12 +151,51 @@ export function ProductImageCarousel({
   const imagesKey = useMemo(() => images.join("\0"), [images]);
 
   useEffect(() => {
-    queueMicrotask(() => setActive(0));
-  }, [imagesKey]);
+    queueMicrotask(() => {
+      skipControlledSyncRef.current = true;
+      lastSyncedIndexRef.current = 0;
+      setActive(0);
+      const el = scrollerRef.current;
+      if (el) el.scrollLeft = 0;
+      thumbsRef.current?.scrollTo({ left: 0 });
+    });
+  }, [imagesKey, setActive]);
+
+  useEffect(() => {
+    if (!controlled) return;
+    if (skipControlledSyncRef.current) {
+      skipControlledSyncRef.current = false;
+      return;
+    }
+    if (controlledIndex === lastSyncedIndexRef.current) return;
+    lastSyncedIndexRef.current = controlledIndex!;
+    scrollMainTo(controlledIndex!, "auto");
+    scrollThumbIntoView(controlledIndex!);
+  }, [controlled, controlledIndex, imagesKey, scrollMainTo, scrollThumbIntoView]);
+
+  useEffect(
+    () => () => {
+      if (programmaticTimerRef.current) {
+        clearTimeout(programmaticTimerRef.current);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     preloadImageUrls(images);
-  }, [imagesKey]);
+  }, [imagesKey, images]);
+
+  const slideSrc = useCallback(
+    (index: number, src: string) =>
+      index === active && activeSlideOverride?.trim() ? activeSlideOverride.trim() : src,
+    [active, activeSlideOverride],
+  );
+
+  const lightboxImages = useMemo(() => {
+    if (!activeSlideOverride?.trim()) return images;
+    return images.map((src, i) => slideSrc(i, src));
+  }, [activeSlideOverride, images, slideSrc]);
 
   if (images.length === 0) return null;
 
@@ -114,13 +213,13 @@ export function ProductImageCarousel({
             {images.map((src, i) => (
               <ProductImageZoomSlide
                 key={`${i}-${src}`}
-                src={src}
+                src={slideSrc(i, src)}
                 alt={`${alt} — ${i + 1}`}
                 label={`${alt} — view full size`}
                 priority={i === 0}
                 eager={i > 0 && i < 4}
                 onOpen={() => {
-                  setActive(i);
+                  scrollTo(i, "auto");
                   setLightboxStartIndex(i);
                   setLightboxOpen(true);
                 }}
@@ -152,14 +251,17 @@ export function ProductImageCarousel({
 
       {images.length > 1 && (
         <>
-          <div className="mt-4 flex w-full max-w-full justify-center gap-2 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div
+            ref={thumbsRef}
+            className="mt-4 flex w-full max-w-full justify-start gap-2 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
             {images.map((src, i) => (
               <button
                 key={`thumb-${i}-${src}`}
                 type="button"
                 onClick={() => scrollTo(i)}
                 className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-paper transition ${
-                  active === i
+                  active === i && !activeSlideOverride?.trim()
                     ? "border-ink ring-2 ring-ink/10"
                     : "border-line hover:border-ink/25"
                 }`}
@@ -185,7 +287,7 @@ export function ProductImageCarousel({
               <span
                 key={i}
                 className={`h-1.5 rounded-full transition-all ${
-                  active === i ? "w-6 bg-ink" : "w-1.5 bg-ink/20"
+                  active === i && !activeSlideOverride?.trim() ? "w-6 bg-ink" : "w-1.5 bg-ink/20"
                 }`}
               />
             ))}
@@ -194,16 +296,12 @@ export function ProductImageCarousel({
       )}
 
       <ImageLightbox
-        images={images}
+        images={lightboxImages}
         alt={alt}
         initialIndex={lightboxStartIndex}
         open={lightboxOpen}
         onIndexChange={(i) => {
-          setActive(i);
-          const el = scrollerRef.current;
-          if (!el) return;
-          const w = el.clientWidth;
-          el.scrollTo({ left: i * w, behavior: "auto" });
+          scrollTo(i, "auto");
         }}
         onClose={() => setLightboxOpen(false)}
       />

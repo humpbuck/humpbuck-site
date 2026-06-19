@@ -6,9 +6,11 @@ import type { Product } from "@/lib/catalog";
 export async function HomeFeaturedProductsSection({
   products,
   cardImages,
+  cardHoverImages,
 }: {
   products: Product[];
   cardImages: (string | undefined)[];
+  cardHoverImages: (string | undefined)[];
 }) {
   const t = await getTranslations("Home");
 
@@ -25,7 +27,11 @@ export async function HomeFeaturedProductsSection({
           {t("allProductsHeading")}
         </h2>
         {products.length > 0 ? (
-          <HomeFeaturedProductsGrid products={products} cardImages={cardImages} />
+          <HomeFeaturedProductsGrid
+            products={products}
+            cardImages={cardImages}
+            cardHoverImages={cardHoverImages}
+          />
         ) : (
           <HomeProductsEmptyState className="mt-14 text-center sm:mt-16 lg:mt-20" />
         )}
