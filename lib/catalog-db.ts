@@ -147,15 +147,26 @@ async function fetchMergedCatalogProductBySlug(slug: string): Promise<Product | 
   return undefined;
 }
 
-/**
- * Frontend catalog source: admin-managed `CatalogProduct` + inventory.
- * Cached ~60s; admin saves call `revalidateCatalogStorefront`.
- */
-export async function getMergedCatalogProducts(): Promise<Product[]> {
-  return unstable_cache(fetchMergedCatalogProducts, ["merged-catalog-products"], {
+const getCachedMergedCatalogProducts = unstable_cache(
+  fetchMergedCatalogProducts,
+  ["merged-catalog-products"],
+  {
     revalidate: STOREFRONT_ISR_SECONDS,
     tags: ["catalog"],
-  })();
+  },
+);
+
+/**
+ * Frontend catalog source: admin-managed `CatalogProduct` + inventory.
+ * Cached ~300s when non-empty; admin saves call `revalidateCatalogStorefront`.
+ * Empty results are always refetched so a stale empty cache cannot hide new products.
+ */
+export async function getMergedCatalogProducts(): Promise<Product[]> {
+  const products = await getCachedMergedCatalogProducts();
+  if (products.length > 0) {
+    return products;
+  }
+  return fetchMergedCatalogProducts();
 }
 
 export async function getMergedCatalogProductBySlug(
