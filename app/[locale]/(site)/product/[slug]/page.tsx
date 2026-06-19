@@ -19,10 +19,9 @@ import { ProductReviewsSection } from "@/components/site/ProductReviewsSection";
 import { TrackProductView } from "@/components/analytics/track-product-view";
 import { ProductDetailClient } from "@/components/site/ProductDetailClient";
 import { resolveStorefrontProductMedia } from "@/lib/r2-pdp-media";
-import { STOREFRONT_ISR_SECONDS } from "@/lib/storefront-revalidate";
 
-/** Regenerate from DB periodically; admin saves also revalidate catalog tags. */
-export const revalidate = STOREFRONT_ISR_SECONDS;
+/** Regenerate from DB periodically; admin saves also revalidate catalog tags. Keep in sync with `STOREFRONT_ISR_SECONDS`. */
+export const revalidate = 300;
 
 export async function generateStaticParams() {
   const products = await getMergedCatalogProducts();

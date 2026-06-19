@@ -3,9 +3,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { listVideoTutorials, type VideoTutorial } from "@/lib/video-tutorials";
-import { STOREFRONT_ISR_SECONDS } from "@/lib/storefront-revalidate";
 
-export const revalidate = STOREFRONT_ISR_SECONDS;
+/** Keep in sync with `STOREFRONT_ISR_SECONDS`. */
+export const revalidate = 300;
 
 export async function generateMetadata({
   params,
