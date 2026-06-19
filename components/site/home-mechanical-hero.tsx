@@ -35,7 +35,7 @@ export async function HomeMechanicalHero() {
         />
       </div>
 
-      <div className="relative z-10 mx-auto flex max-w-7xl min-h-[min(72vh,760px)] items-stretch px-4 py-16 sm:px-6 sm:py-20 md:min-h-screen md:items-center md:py-24 lg:py-28">
+      <div className="relative z-10 mx-auto flex max-w-7xl min-h-[min(72vh,760px)] items-stretch px-4 pt-28 pb-16 sm:px-6 sm:py-20 md:min-h-screen md:items-center md:py-24 lg:py-28">
         <div className="max-w-xl">
           <p className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/75">
             {t("mechanicalHeroBadge")}
@@ -60,7 +60,7 @@ export async function HomeMechanicalHero() {
               {t("mechanicalHeroChipFinishing")}
             </span>
           </div>
-          <div className="mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
+          <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
             <Link
               href="/product"
               className="inline-flex items-center justify-center rounded-full bg-white px-8 py-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#080808] transition hover:bg-white/90"
