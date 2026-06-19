@@ -2,66 +2,49 @@ import { cache } from "react";
 import { R2_GALLERY_SPECS_BY_SLUG } from "@/lib/r2";
 import { getPdpR2Media } from "@/lib/r2-pdp-media";
 
-function normalizeShopImageUrl(url: string): string {
-  const trimmed = url.trim();
-  if (!trimmed) return "";
-  try {
-    const parsed = new URL(trimmed, "https://placeholder.local");
-    return parsed.pathname.replace(/\/+$/, "").toLowerCase();
-  } catch {
-    return trimmed.toLowerCase();
-  }
-}
-
-/** First gallery URL that differs from the cover (shop card hover image). */
-export function resolveShopCardHoverImage(
-  coverUrl: string | null | undefined,
-  catalogGallery?: string[],
-): string | null {
-  const gallery = (catalogGallery ?? []).map((u) => u.trim()).filter(Boolean);
-  if (gallery.length === 0) return null;
-
-  const coverNorm = normalizeShopImageUrl(coverUrl ?? "");
-  for (const url of gallery) {
-    if (normalizeShopImageUrl(url) !== coverNorm) return url;
-  }
-  return null;
-}
-
 export type ShopCardImagePair = {
   cover: string | null;
   hover: string | null;
 };
 
+function galleryUrls(urls: string[] | undefined): string[] {
+  return (urls ?? []).map((u) => u.trim()).filter(Boolean);
+}
+
+/** Shop card: gallery[0] default, gallery[1] on hover. */
+export function resolveShopCardImagesFromGallery(
+  catalogGallery?: string[],
+): ShopCardImagePair {
+  const gallery = galleryUrls(catalogGallery);
+  return {
+    cover: gallery[0] ?? null,
+    hover: gallery[1] ?? null,
+  };
+}
+
 /**
- * Shop card images: cover = admin `image` (首图), else first gallery; hover = next distinct gallery URL.
+ * Shop card images from gallery only: first image default, second on hover.
+ * Falls back to R2 bucket discovery when gallery is empty in the catalog.
  */
 export const getShopCardImages = cache(
   async (
     productSlug: string,
-    catalogImage?: string,
+    _catalogImage?: string,
     catalogGallery?: string[],
   ): Promise<ShopCardImagePair> => {
-    const galleryAdmin = (catalogGallery ?? []).map((u) => u.trim()).filter(Boolean);
-    const coverFromAdmin = catalogImage?.trim();
-
-    let cover = coverFromAdmin || galleryAdmin[0] || null;
-    let hover = resolveShopCardHoverImage(cover, galleryAdmin);
-
-    const spec = R2_GALLERY_SPECS_BY_SLUG[productSlug];
-    if ((!cover || !hover) && spec) {
-      const pdp = await getPdpR2Media(spec);
-      const r2Gallery = (pdp.gallery ?? []).map((u) => u.trim()).filter(Boolean);
-      const mergedGallery = galleryAdmin.length > 0 ? galleryAdmin : r2Gallery;
-      if (!cover) cover = mergedGallery[0] ?? null;
-      if (!hover) hover = resolveShopCardHoverImage(cover, mergedGallery);
+    const galleryAdmin = galleryUrls(catalogGallery);
+    if (galleryAdmin.length > 0) {
+      return resolveShopCardImagesFromGallery(galleryAdmin);
     }
 
-    return { cover, hover };
+    const spec = R2_GALLERY_SPECS_BY_SLUG[productSlug];
+    if (!spec) return { cover: null, hover: null };
+
+    const pdp = await getPdpR2Media(spec);
+    return resolveShopCardImagesFromGallery(pdp.gallery);
   },
 );
 
-/** @deprecated Prefer `getShopCardImages` when hover image is needed. */
 export const getShopCardR2GalleryImage = cache(
   async (
     productSlug: string,

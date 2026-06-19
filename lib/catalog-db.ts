@@ -93,7 +93,7 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
     description: row.description,
     price: Number.isFinite(row.price) ? row.price : 0,
     compareAtPrice: row.compareAtPrice ?? undefined,
-    image: row.image || gallery[0] || "",
+    image: gallery[0] || row.image || "",
     images: gallery,
     galleryImages: gallery,
     detailImages: detailBlocks.length > 0 ? detailBlocks.map((block) => block.image) : detail,
