@@ -1,8 +1,14 @@
 import { ArrowRight } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { StorefrontImage } from "@/components/site/storefront-image";
-import { mechanicalHeroWebpUrl, flagshipCategoryBackgroundWebpUrl } from "@/lib/r2";
+import { flagshipCategoryBackgroundWebpUrl } from "@/lib/r2";
+import { getMergedCatalogProducts } from "@/lib/catalog-db";
+import { getShopCardImages } from "@/lib/r2-card-image";
+import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
+
+/** Homepage spotlight — single catalog product (not a movement category link). */
+const HOME_SPOTLIGHT_PRODUCT_SLUG = "9253";
 
 function CategoryImage({
   href,
@@ -63,9 +69,25 @@ function CategoryCopy({
 }
 
 export async function HomeMovementCategories() {
+  const locale = await getLocale();
   const t = await getTranslations("Home");
-  const mechanicalImage = mechanicalHeroWebpUrl();
+  const messages = await getMessages();
   const sectionBackground = flagshipCategoryBackgroundWebpUrl();
+
+  const raw = (await getMergedCatalogProducts()).find(
+    (p) => p.slug === HOME_SPOTLIGHT_PRODUCT_SLUG,
+  );
+  const product = raw ? applyStorefrontProductLocale(raw, locale, messages) : null;
+  const { cover } = product
+    ? await getShopCardImages(
+        product.slug,
+        product.image,
+        product.galleryImages ?? product.images,
+      )
+    : { cover: null };
+  const productHref = product ? `/product/${product.slug}` : "/product?movement=mechanical";
+  const productImage = cover ?? product?.image;
+  if (!productImage) return null;
 
   return (
     <section
@@ -90,16 +112,16 @@ export async function HomeMovementCategories() {
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-9 lg:py-11">
         <div className="mx-auto flex w-full max-w-sm flex-col items-center gap-5 md:max-w-none md:flex-row md:justify-center md:gap-14 lg:gap-20">
           <CategoryImage
-            href="/product?movement=mechanical"
-            imageSrc={mechanicalImage}
-            imageAlt={t("categoryMechanicalImageAlt")}
+            href={productHref}
+            imageSrc={productImage}
+            imageAlt={product?.name ?? t("categoryMechanicalImageAlt")}
             imagePriority
           />
           <CategoryCopy
-            href="/product?movement=mechanical"
+            href={productHref}
             kicker={t("categoryMechanicalKicker")}
-            title={t("categoryMechanicalTitle")}
-            cta={t("categoryMechanicalCta")}
+            title={product?.name ?? t("categoryMechanicalTitle")}
+            cta={t("heroViewProduct")}
           />
         </div>
       </div>

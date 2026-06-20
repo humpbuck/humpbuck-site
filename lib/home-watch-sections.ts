@@ -15,7 +15,7 @@ export const STOREFRONT_SUBCATEGORY_KEYS = ["men", "women"] as const;
 export type StorefrontSubcategorySlug = (typeof STOREFRONT_SUBCATEGORY_KEYS)[number];
 
 /** Optional third level under Men / Women. */
-export const STOREFRONT_SERIES_KEYS = ["ultra-thin"] as const;
+export const STOREFRONT_SERIES_KEYS = ["digitemp", "ultra-thin"] as const;
 export type StorefrontSeriesSlug = (typeof STOREFRONT_SERIES_KEYS)[number];
 
 /** Homepage “Search by” slider ids (3 rows). */
@@ -33,6 +33,7 @@ export const STOREFRONT_SUBCATEGORY_LABELS: Record<StorefrontSubcategorySlug, st
 };
 
 export const STOREFRONT_SERIES_LABELS: Record<StorefrontSeriesSlug, string> = {
+  digitemp: "DIGI-TEMP",
   "ultra-thin": "Ultra-thin",
 };
 
@@ -234,10 +235,8 @@ export function productMatchesStorefrontSeries(
   product: Product & HomeWatchPlacementFields,
   series: StorefrontSeriesSlug,
 ): boolean {
-  if (series === "ultra-thin") {
-    return productHasStorefrontUltraThinSeries(product);
-  }
-  return false;
+  const placement = coalesceStorefrontPlacementFields(product);
+  return normalizeStorefrontSeriesInput(placement.storefrontSeries) === series;
 }
 
 export function parseStorefrontPlacementPayload(body: {

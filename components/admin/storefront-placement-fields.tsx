@@ -105,7 +105,8 @@ export function StorefrontPlacementFields({
         </p>
         <p className="mt-1 text-[11px] leading-relaxed text-muted">
           Category is Mechanical or Quartz. Subcategory is Men or Women. Optionally pick
-          Ultra-thin under Men/Women for the homepage Ultra-thin row.
+          DIGI-TEMP or Ultra-thin under Men/Women for series grouping (Ultra-thin also
+          powers the homepage Ultra-thin row).
         </p>
       </div>
       <div

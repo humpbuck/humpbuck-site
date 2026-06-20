@@ -3,6 +3,7 @@ import { getMessages, getTranslations, setRequestLocale } from "next-intl/server
 import { Link } from "@/i18n/navigation";
 import { ProductCard } from "@/components/site/ProductCard";
 import { PreloadProductGridImages } from "@/components/site/preload-product-grid-images";
+import { ShopProductFilters } from "@/components/site/shop-product-filters";
 import {
   getSeriesBySlug,
   getShopSeriesFilters,
@@ -23,6 +24,7 @@ import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
 import { routing } from "@/i18n/routing";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
+import { shopCatalogFiltersActive } from "@/lib/shop-filter-url";
 
 /** Keep in sync with `STOREFRONT_ISR_SECONDS`. */
 export const revalidate = 300;
@@ -100,20 +102,26 @@ export default async function ProductCatalogPage({
         ? getLocalizedSeriesFields(getSeriesBySlug(active)!, locale, messages).name
         : seriesFilters.find((s) => s.slug === active)?.name ?? active
       : null;
-  const activeMovementLabel =
+  const activeFilterLabels = [
+    activeSeriesLabel,
     activeMovement === "mechanical"
       ? t("filterMechanical")
       : activeMovement === "quartz"
         ? t("filterQuartz")
-        : null;
-  const activeProfileLabel =
-    activeProfile === "ultra-thin" ? t("filterUltraThin") : null;
-  const activeAudienceLabel =
+        : null,
     activeAudience === "men"
       ? t("filterMen")
       : activeAudience === "women"
         ? t("filterWomen")
-        : null;
+        : null,
+    activeProfile === "ultra-thin" ? t("filterUltraThin") : null,
+  ].filter(Boolean) as string[];
+  const seriesFilterOptions = seriesFilters.map((s) => ({
+    slug: s.slug,
+    label: getSeriesBySlug(s.slug)
+      ? getLocalizedSeriesFields(getSeriesBySlug(s.slug)!, locale, messages).name
+      : s.name,
+  }));
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
@@ -128,78 +136,31 @@ export default async function ProductCatalogPage({
         <p className="mt-3 text-muted">{t("intro")}</p>
       </div>
 
-      <div className="mt-10 flex flex-wrap gap-2">
-        <FilterPill
-          href="/product"
-          active={
-            active === null &&
-            activeMovement === null &&
-            activeAudience === null &&
-            activeProfile === null
-          }
-          label={t("filterAll")}
-        />
-        {seriesFilters.map((s) => {
-          const label = getSeriesBySlug(s.slug)
-            ? getLocalizedSeriesFields(getSeriesBySlug(s.slug)!, locale, messages).name
-            : s.name;
-          return (
-            <FilterPill
-              key={s.slug}
-              href={`/product?series=${s.slug}`}
-              active={active === s.slug}
-              label={label}
-            />
-          );
-        })}
-      </div>
+      <ShopProductFilters
+        filters={{
+          series: active,
+          movement: activeMovement,
+          audience: activeAudience,
+          profile: activeProfile,
+        }}
+        seriesOptions={seriesFilterOptions}
+      />
 
-      {active != null && activeSeriesLabel && (
-        <p className="mt-6 text-sm text-muted">
-          {t("showingSeries", {
-            series: activeSeriesLabel,
+      {shopCatalogFiltersActive({
+        series: active,
+        movement: activeMovement,
+        audience: activeAudience,
+        profile: activeProfile,
+      }) && (
+        <p className="mt-4 text-sm text-muted">
+          {t("showingFiltered", {
+            filters: activeFilterLabels.join(" · "),
             count: list.length,
           })}
         </p>
       )}
 
-      {active == null && activeProfileLabel && !activeMovementLabel && !activeAudienceLabel && (
-        <p className="mt-6 text-sm text-muted">
-          {t("showingProfile", {
-            profile: activeProfileLabel,
-            count: list.length,
-          })}
-        </p>
-      )}
-
-      {active == null && activeMovementLabel && !activeAudienceLabel && !activeProfileLabel && (
-        <p className="mt-6 text-sm text-muted">
-          {t("showingMovement", {
-            movement: activeMovementLabel,
-            count: list.length,
-          })}
-        </p>
-      )}
-
-      {(activeMovementLabel || activeAudienceLabel) &&
-        (activeMovementLabel && activeAudienceLabel ? (
-          <p className="mt-6 text-sm text-muted">
-            {t("showingMovementAudience", {
-              movement: activeMovementLabel,
-              audience: activeAudienceLabel,
-              count: list.length,
-            })}
-          </p>
-        ) : activeAudienceLabel ? (
-          <p className="mt-6 text-sm text-muted">
-            {t("showingAudience", {
-              audience: activeAudienceLabel,
-              count: list.length,
-            })}
-          </p>
-        ) : null)}
-
-      <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
+      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
         {list.map((p, i) => (
           <ProductCard
             key={p.slug}
@@ -221,28 +182,5 @@ export default async function ProductCatalogPage({
         </p>
       )}
     </div>
-  );
-}
-
-function FilterPill({
-  href,
-  active,
-  label,
-}: {
-  href: string;
-  active: boolean;
-  label: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className={`rounded-full border px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] transition ${
-        active
-          ? "border-ink bg-ink text-paper"
-          : "border-line bg-white/60 text-ink/75 hover:border-ink/15 hover:text-ink"
-      }`}
-    >
-      {label}
-    </Link>
   );
 }
