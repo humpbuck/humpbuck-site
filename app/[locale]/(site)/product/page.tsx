@@ -18,7 +18,10 @@ import {
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import {
   hasStorefrontDbPlacements,
+  isStorefrontSeriesSlug,
   productHasStorefrontUltraThinSeries,
+  productMatchesShopSeriesFilter,
+  STOREFRONT_SERIES_LABELS,
 } from "@/lib/home-watch-sections";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
 import { routing } from "@/i18n/routing";
@@ -70,7 +73,10 @@ export default async function ProductCatalogPage({
   const seriesFilters = getShopSeriesFilters(all);
   const filterSlugs = new Set(seriesFilters.map((s) => s.slug));
   const requested = normalizeSeriesSlug(seriesParam ?? "");
-  const active = requested && filterSlugs.has(requested) ? requested : null;
+  const active =
+    requested && (isStorefrontSeriesSlug(requested) || filterSlugs.has(requested))
+      ? requested
+      : null;
   const activeMovement = normalizeShopMovementParam(movementParam);
   const activeAudience = normalizeShopAudienceParam(audienceParam);
   const activeProfile = normalizeShopProfileParam(profileParam);
@@ -78,7 +84,12 @@ export default async function ProductCatalogPage({
   const list = (
     active || activeMovement || activeAudience || activeProfile
       ? all.filter((p) => {
-          if (active && normalizeSeriesSlug(p.seriesSlug) !== active) return false;
+          if (
+            active &&
+            !productMatchesShopSeriesFilter(p, active, useStorefrontPlacements)
+          ) {
+            return false;
+          }
           if (activeMovement && getProductMovement(p) !== activeMovement) return false;
           if (activeAudience && !productMatchesAudience(p, activeAudience)) return false;
           if (activeProfile === "ultra-thin") {
@@ -98,9 +109,11 @@ export default async function ProductCatalogPage({
 
   const activeSeriesLabel =
     active != null
-      ? getSeriesBySlug(active)
-        ? getLocalizedSeriesFields(getSeriesBySlug(active)!, locale, messages).name
-        : seriesFilters.find((s) => s.slug === active)?.name ?? active
+      ? isStorefrontSeriesSlug(active)
+        ? STOREFRONT_SERIES_LABELS[active]
+        : getSeriesBySlug(active)
+          ? getLocalizedSeriesFields(getSeriesBySlug(active)!, locale, messages).name
+          : seriesFilters.find((s) => s.slug === active)?.name ?? active
       : null;
   const activeFilterLabels = [
     activeSeriesLabel,
@@ -116,24 +129,18 @@ export default async function ProductCatalogPage({
         : null,
     activeProfile === "ultra-thin" ? t("filterUltraThin") : null,
   ].filter(Boolean) as string[];
-  const seriesFilterOptions = seriesFilters.map((s) => ({
-    slug: s.slug,
-    label: getSeriesBySlug(s.slug)
-      ? getLocalizedSeriesFields(getSeriesBySlug(s.slug)!, locale, messages).name
-      : s.name,
-  }));
+  const seriesFilterOptions = [{ slug: "digitemp", label: STOREFRONT_SERIES_LABELS.digitemp }];
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:py-16">
       {list.length > 0 ? <PreloadProductGridImages urls={gridImageUrls} /> : null}
-      <div className="max-w-2xl">
+      <div>
         <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
           {t("kicker")}
         </p>
-        <h1 className="mt-3 font-serif text-4xl tracking-tight">
+        <h1 className="mt-3 max-w-full font-serif text-[clamp(0.75rem,1.8vw+0.42rem,1.625rem)] leading-snug tracking-[-0.015em] whitespace-nowrap">
           {t("title")}
         </h1>
-        <p className="mt-3 text-muted">{t("intro")}</p>
       </div>
 
       <ShopProductFilters

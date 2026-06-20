@@ -239,6 +239,20 @@ export function productMatchesStorefrontSeries(
   return normalizeStorefrontSeriesInput(placement.storefrontSeries) === series;
 }
 
+/** Shop `?series=` filter — prefers admin storefrontSeries when placements exist. */
+export function productMatchesShopSeriesFilter(
+  product: Product & HomeWatchPlacementFields,
+  seriesSlug: string,
+  useStorefrontPlacements: boolean,
+): boolean {
+  const normalized = seriesSlug.trim().toLowerCase();
+  if (!normalized) return true;
+  if (useStorefrontPlacements && isStorefrontSeriesSlug(normalized)) {
+    return productMatchesStorefrontSeries(product, normalized);
+  }
+  return product.seriesSlug.trim().toLowerCase() === normalized;
+}
+
 export function parseStorefrontPlacementPayload(body: {
   storefrontCategory?: unknown;
   storefrontSubcategory?: unknown;

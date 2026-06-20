@@ -1,10 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import {
   buildShopCatalogHref,
   buildShopCatalogPrimarySelection,
-  defaultShopSubValue,
   readShopPrimaryCategory,
   readShopSubValue,
   shopCatalogFiltersActive,
@@ -66,11 +66,17 @@ export function ShopProductFiltersDropdown({
   labels: FilterLabels;
 }) {
   const router = useRouter();
-  const seriesSlugs = seriesOptions.map((s) => s.slug);
-  const primaryCategory = readShopPrimaryCategory(filters);
-  const subValue = readShopSubValue(filters, primaryCategory);
-  const hasActive = shopCatalogFiltersActive(filters);
-  const subOptions = subOptionsForCategory(primaryCategory, seriesOptions, labels);
+  const categoryFromUrl = readShopPrimaryCategory(filters);
+  const [pendingCategory, setPendingCategory] = useState<ShopPrimaryCategory>("");
+
+  useEffect(() => {
+    if (categoryFromUrl) setPendingCategory("");
+  }, [categoryFromUrl]);
+
+  const displayCategory = categoryFromUrl || pendingCategory;
+  const subValue = categoryFromUrl ? readShopSubValue(filters, categoryFromUrl) : "";
+  const hasActive = shopCatalogFiltersActive(filters) || Boolean(pendingCategory);
+  const subOptions = subOptionsForCategory(displayCategory, seriesOptions, labels);
 
   const primaryOptions: Array<{ value: ShopPrimaryCategory; label: string }> = [
     { value: "", label: labels.filterAll },
@@ -85,20 +91,26 @@ export function ShopProductFiltersDropdown({
     );
   };
 
+  const clearFilters = () => {
+    setPendingCategory("");
+    router.push("/product");
+  };
+
   return (
     <div className="mt-6 flex flex-wrap items-center gap-2 sm:gap-3">
       <select
         aria-label={labels.filterSelectCategory}
-        value={primaryCategory}
+        value={displayCategory}
         onChange={(e) => {
           const category = e.target.value as ShopPrimaryCategory;
           if (!category) {
-            router.push("/product");
+            clearFilters();
             return;
           }
-          const sub = defaultShopSubValue(category, seriesSlugs);
-          if (!sub) return;
-          navigateSelection(category, sub);
+          setPendingCategory(category);
+          if (categoryFromUrl) {
+            router.push("/product");
+          }
         }}
         className={selectClass}
       >
@@ -109,17 +121,23 @@ export function ShopProductFiltersDropdown({
         ))}
       </select>
 
-      {primaryCategory ? (
+      {displayCategory ? (
         <select
           aria-label={labels.filterSelectSub}
           value={subValue}
           onChange={(e) => {
             const next = e.target.value;
-            if (!next) return;
-            navigateSelection(primaryCategory, next);
+            if (!next) {
+              setPendingCategory(displayCategory);
+              router.push("/product");
+              return;
+            }
+            setPendingCategory("");
+            navigateSelection(displayCategory, next);
           }}
           className={selectClass}
         >
+          <option value="">{labels.filterAll}</option>
           {subOptions.map((o) => (
             <option key={o.value} value={o.value}>
               {o.label}
@@ -131,7 +149,7 @@ export function ShopProductFiltersDropdown({
       {hasActive ? (
         <button
           type="button"
-          onClick={() => router.push("/product")}
+          onClick={clearFilters}
           className="text-[9px] font-semibold uppercase tracking-[0.12em] text-muted underline-offset-4 transition hover:text-ink hover:underline sm:ml-1 sm:text-[10px]"
         >
           {labels.filterClearAll}
