@@ -9,6 +9,8 @@ type ProductCopyBlock = {
   description?: string;
   highlights?: string[];
   specs?: { label?: string; value?: string }[];
+  /** PDP closer-look blocks — matched by index to catalog `detailBlocks`. */
+  detailBlocks?: { title?: string; body?: string }[];
 };
 
 type SeriesCopyBlock = {
@@ -17,11 +19,38 @@ type SeriesCopyBlock = {
   description?: string;
 };
 
+/** Catalog titles like "Mechanical 9027" → localized "mechanical watch" + model. */
+const PRODUCT_NAME_PREFIX: Record<string, { mechanical: string; quartz: string }> = {
+  ar: { mechanical: "ساعة ميكانيكية", quartz: "ساعة كوارتز" },
+  de: { mechanical: "Mechanische Uhr", quartz: "Quarzuhr" },
+  es: { mechanical: "Reloj mecánico", quartz: "Reloj de cuarzo" },
+  fr: { mechanical: "Montre mécanique", quartz: "Montre quartz" },
+  he: { mechanical: "שעון מכני", quartz: "שעון קварץ" },
+  hu: { mechanical: "Mechanikus óra", quartz: "Kvartz óra" },
+  it: { mechanical: "Orologio meccanico", quartz: "Orologio al quarzo" },
+  ja: { mechanical: "機械式時計", quartz: "クォーツ時計" },
+  ko: { mechanical: "기계식 시계", quartz: "쿼츠 시계" },
+  nl: { mechanical: "Mechanisch horloge", quartz: "Quarzhorloge" },
+  pt: { mechanical: "Relógio mecânico", quartz: "Relógio de quartzo" },
+  ru: { mechanical: "Механические часы", quartz: "Кварцевые часы" },
+};
+
+function localizeCatalogProductName(name: string, locale: string): string {
+  const prefix = PRODUCT_NAME_PREFIX[locale];
+  if (!prefix) return name;
+  const mechanical = /^Mechanical\s+(.+)$/i.exec(name.trim());
+  if (mechanical) return `${prefix.mechanical} ${mechanical[1]}`;
+  const quartz = /^Quartz\s+(.+)$/i.exec(name.trim());
+  if (quartz) return `${prefix.quartz} ${quartz[1]}`;
+  return name;
+}
+
 const SPEC_LABELS: Record<string, Record<string, string>> = {
   es: {
     "Case diameter": "Diámetro de la caja",
     "Case thickness": "Grosor de la caja",
     "Band width": "Ancho de la correa",
+    "Band material": "Material de la correa",
     Weight: "Peso",
     Crystal: "Cristal",
     "Case material": "Material de la caja",
@@ -32,6 +61,7 @@ const SPEC_LABELS: Record<string, Record<string, string>> = {
     "Case diameter": "Diâmetro da caixa",
     "Case thickness": "Espessura da caixa",
     "Band width": "Largura da pulseira",
+    "Band material": "Material da pulseira",
     Weight: "Peso",
     Crystal: "Cristal",
     "Case material": "Material da caixa",
@@ -42,6 +72,7 @@ const SPEC_LABELS: Record<string, Record<string, string>> = {
     "Case diameter": "Диаметр корпуса",
     "Case thickness": "Толщина корпуса",
     "Band width": "Ширина ремешка",
+    "Band material": "Материал ремешка",
     Weight: "Вес",
     Crystal: "Стекло",
     "Case material": "Материал корпуса",
@@ -52,6 +83,7 @@ const SPEC_LABELS: Record<string, Record<string, string>> = {
     "Case diameter": "Diamètre du boîtier",
     "Case thickness": "Épaisseur du boîtier",
     "Band width": "Largeur du bracelet",
+    "Band material": "Matière du bracelet",
     Weight: "Poids",
     Crystal: "Verre",
     "Case material": "Matière du boîtier",
@@ -62,6 +94,7 @@ const SPEC_LABELS: Record<string, Record<string, string>> = {
     "Case diameter": "Diametro cassa",
     "Case thickness": "Spessore cassa",
     "Band width": "Larghezza cinturino",
+    "Band material": "Materiale cinturino",
     Weight: "Peso",
     Crystal: "Vetro",
     "Case material": "Materiale cassa",
@@ -72,6 +105,7 @@ const SPEC_LABELS: Record<string, Record<string, string>> = {
     "Case diameter": "Kastdiameter",
     "Case thickness": "Kastdikte",
     "Band width": "Bandbreedte",
+    "Band material": "Bandmateriaal",
     Weight: "Gewicht",
     Crystal: "Glas",
     "Case material": "Kastmateriaal",
@@ -82,6 +116,7 @@ const SPEC_LABELS: Record<string, Record<string, string>> = {
     "Case diameter": "Tok átmérő",
     "Case thickness": "Tok vastagság",
     "Band width": "Szíj szélesség",
+    "Band material": "Szíj anyaga",
     Weight: "Súly",
     Crystal: "Üveg",
     "Case material": "Tok anyaga",
@@ -92,6 +127,7 @@ const SPEC_LABELS: Record<string, Record<string, string>> = {
     "Case diameter": "케이스 직경",
     "Case thickness": "케이스 두께",
     "Band width": "밴드 너비",
+    "Band material": "밴드 소재",
     Weight: "무게",
     Crystal: "글래스",
     "Case material": "케이스 소재",
@@ -102,6 +138,7 @@ const SPEC_LABELS: Record<string, Record<string, string>> = {
     "Case diameter": "Gehäusedurchmesser",
     "Case thickness": "Gehäusehöhe",
     "Band width": "Bandbreite",
+    "Band material": "Bandmaterial",
     Weight: "Gewicht",
     Crystal: "Glas",
     "Case material": "Gehäusematerial",
@@ -112,6 +149,7 @@ const SPEC_LABELS: Record<string, Record<string, string>> = {
     "Case diameter": "ケース径",
     "Case thickness": "ケース厚",
     "Band width": "バンド幅",
+    "Band material": "バンド素材",
     Weight: "重量",
     Crystal: "ガラス",
     "Case material": "ケース素材",
@@ -122,6 +160,7 @@ const SPEC_LABELS: Record<string, Record<string, string>> = {
     "Case diameter": "קוטר הבית",
     "Case thickness": "עובי הבית",
     "Band width": "רוחב הרצועה",
+    "Band material": "חומר הרצועה",
     Weight: "משקל",
     Crystal: "זכוכית",
     "Case material": "חומר הבית",
@@ -132,6 +171,7 @@ const SPEC_LABELS: Record<string, Record<string, string>> = {
     "Case diameter": "قطر الهيكل",
     "Case thickness": "سُمك الهيكل",
     "Band width": "عرض السوار",
+    "Band material": "مادة السوار",
     Weight: "الوزن",
     Crystal: "الزجاج",
     "Case material": "مادة الهيكل",
@@ -139,6 +179,27 @@ const SPEC_LABELS: Record<string, Record<string, string>> = {
     "Water resistance": "مقاومة الماء",
   },
 };
+
+/** Admin catalog often stores mechanical spec labels in ALL CAPS. */
+const SPEC_LABEL_ALIASES: Record<string, string> = {
+  "CASE DIAMETER": "Case diameter",
+  "CASE THICKNESS": "Case thickness",
+  "BAND WIDTH": "Band width",
+  "BAND MATERIAL": "Band material",
+  WEIGHT: "Weight",
+  CRYSTAL: "Crystal",
+  "CASE MATERIAL": "Case material",
+  "WATER RESISITANCE": "Water resistance",
+  "WATER RESISTANCE": "Water resistance",
+};
+
+function resolveSpecLabel(
+  labels: Record<string, string>,
+  raw: string,
+): string {
+  const key = SPEC_LABEL_ALIASES[raw] ?? raw;
+  return labels[key] ?? labels[raw] ?? raw;
+}
 
 const SPEC_VALUES: Record<string, Record<string, string>> = {
   es: {
@@ -354,9 +415,11 @@ export function applyStorefrontProductLocale(
     highlights: [...product.highlights],
     specs: product.specs.map((s) => ({ ...s })),
     variantOptions: product.variantOptions?.map((v) => ({ ...v })),
+    detailBlocks: product.detailBlocks?.map((b) => ({ ...b })),
   };
 
   if (copy?.name?.trim()) next.name = copy.name.trim();
+  else next.name = localizeCatalogProductName(product.name, locale);
   if (copy?.categoryLabel?.trim()) next.categoryLabel = copy.categoryLabel.trim();
   if (copy?.shortDescription != null) next.shortDescription = copy.shortDescription;
   if (copy?.description != null) next.description = copy.description;
@@ -377,7 +440,7 @@ export function applyStorefrontProductLocale(
     const specValues = SPEC_VALUES[locale] ?? {};
     next.specs = next.specs.map((row) => ({
       ...row,
-      label: row.label ? (specLabels[row.label] ?? row.label) : row.label,
+      label: row.label ? resolveSpecLabel(specLabels, row.label) : row.label,
       value: row.value ? (specValues[row.value] ?? row.value) : row.value,
     }));
   }
@@ -387,6 +450,18 @@ export function applyStorefrontProductLocale(
       ...v,
       label: localizeVariantLabel(v.label, locale),
     }));
+  }
+
+  if (copy?.detailBlocks?.length && next.detailBlocks?.length) {
+    next.detailBlocks = next.detailBlocks.map((block, index) => {
+      const translated = copy.detailBlocks?.[index];
+      if (!translated) return block;
+      return {
+        ...block,
+        title: translated.title?.trim() ? translated.title.trim() : block.title,
+        body: translated.body?.trim() ? translated.body.trim() : block.body,
+      };
+    });
   }
 
   return next;

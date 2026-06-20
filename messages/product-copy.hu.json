@@ -1,162 +1,306 @@
 {
   "ProductCopy": {
-    "digitemp-2301": {
-      "categoryLabel": "DIGI-TEMP · Ana-digi · Acél",
+    "2301": {
+      "categoryLabel": "Kvarc · Férfi · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2301 — acél ana-digi óra kettős LCD-vel, ébresztővel, külső hőmérséklettel és stopperrel.",
-      "description": "A DIGI-TEMP 2301 teljes ana-digi élményt nyújt: kettős digitális mezők idő/dátum/12–24 ó, hőmérséklet és másodperc számára; TIME, DATE, ALM (ébresztő), OUT (külső hőmérséklet) és STW (stopper) módok. A háttérvilágítás és módkör a mindennapi olvashatóságot biztosítja — 33 mm-es acél tok, ásványi üveg, 30 m vízállóság.",
       "highlights": [
         "TIME/DATE/ALM/OUT/STW módok",
         "Japán mechanizmus, ~3 év akkumulátor",
         "Rozsdamentes acél tok"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Multifunkciós",
+          "body": "A DIGI-TEMP 2301 a teljes ana-digi élményt nyújtja: két digitális mező az idő/dátum és 12–24 órás formátumhoz, valamint hőmérséklet és futó másodpercek; a módok sorában TIME, DATE, ALM (ébresztő), OUT (külső hőmérséklet) és STW (stopper) szerepel. A háttérvilágítás és a dedikált módváltás a mindennapi használatban is jól olvasható — 33 mm-es acél tokban, ásványi üveggel és 30 m vízállósággal."
+        }
       ]
     },
-    "digitemp-2412m": {
-      "categoryLabel": "DIGI-TEMP · Ana-digi · Acél",
+    "6004": {
+      "categoryLabel": "Mechanikus · Férfi",
+      "shortDescription": "Teljesen csontvázas automata szerkezet innovatív, könnyű 316L rozsdamentes acél és repülőgép-alumínium tokban. A légáteresztő fluoreszkáló gumi szíj és az ultra-vékony profil (6,58 mm, 48h+ tartalék) merész mechanikus esztétikát és könnyű egész napos kényelmet egyensúlyoz.",
+      "highlights": [
+        "Csontváz automata szerkezet",
+        "316L acél és repülőgép-alumínium",
+        "Fluoreszkáló gumi · 48h+ tartalék"
+      ],
+      "detailBlocks": [
+        {
+          "title": "FELFEDETT MECHANIKA",
+          "body": "Lássa a MINBER szerkezet lenyűgöző szépségét — minden fogaskerék, inga és rubin csapágy teljes pompájában látható az open-worked számlapon."
+        },
+        {
+          "title": "PRECÍZIÓS TOK",
+          "body": "Prémium 316L rozsdamentes acél és könnyű repülőgép-alumínium ötvözete. Kivételes szilárdság-súly arány."
+        },
+        {
+          "title": "KIÁLLÍTÓ HÁTLAP",
+          "body": "Nyolc csavarral rögzítve a kefézett 316L acél tokon."
+        },
+        {
+          "title": "KÉNYELMES FLUORORUBBER SZÍJ",
+          "body": "Biztonságos tűcsat és légáteresztő perforált kialakítás a maximális kényelemért."
+        },
+        {
+          "title": "SOKOLDALÚSÁG A CSUKLÓN",
+          "body": "Ez az óra könnyedén vált — az edzőteremtől és a laza irodai napoktól az esti programokig. Tökéletes egész napos stílus a modern férfinak, aki teljesítményt és személyiséget akar korlátok nélkül."
+        },
+        {
+          "title": "CALIBRE 2806",
+          "body": "Automata csontvázas szerkezet. 31 mm átmérő, 6,58 mm vastagság. 48 óra feletti tartalék, 21 600 rezgés/óra (3 Hz) frekvencián."
+        }
+      ]
+    },
+    "9027": {
+      "categoryLabel": "Mechanikus · Férfi",
+      "shortDescription": "Egyedi, teljesen átlátszó TR90 kristály tonneau tokban ez a csontvázas óra 360°-os panorámát nyújt a fogaskerekek és az inga ritmusáról. A gunmetal felületű szerkezet vékony profilban — 34 mm átmérő, mindössze 7,18 mm vastagság — erős vizuális hatást és ultrakönnyű, hipoallergén viselést ad. 48 óra feletti tartalék 21 600 vph-nál (3 Hz).",
+      "highlights": [
+        "TR90 átlátszó tonneau tok",
+        "360° csontváz · gunmetal szerkezet",
+        "34 mm · 7,18 mm · 48h+ tartalék"
+      ],
+      "detailBlocks": [
+        {
+          "title": "FELFEDETT MECHANIKA",
+          "body": "360°-os panoráma a kifinomult csontvázas szerkezetről — tiszta mechanikus színház. Fogaskerekek, inga és rotor minden szögből láthatók a kristálytiszta tonneau tokon át."
+        },
+        {
+          "title": "ÁTLÁTSZÓ TOK",
+          "body": "Ultrakönnyű TR90 kristálytok — ugyanaz a hipoallergén, high-tech anyag, mint a prémium szemüvegeknél. Szinte súlytalan, bőrirritáció nélkül, egész napos kényelem."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Automata csontvázas szerkezet percmutatóval. Gunmetal felület, strapabíró, mindennapi használatra tervezve. 34 mm átmérő, 7,18 mm vastagság. 48 óra feletti tartalék, 21 600 rezgés/óra (3 Hz)."
+        }
+      ]
+    },
+    "9045": {
+      "categoryLabel": "Mechanikus · Férfi",
+      "shortDescription": "Avantgárd geometriai tok és hat látható csavar — merész ötvözet ipari stílussal és lázadó karakterrel. Az összetett mechanikus mag teljesen látható a csontváz számlapon, minden csuklómozdulatot kinetikus művészetté téve.",
+      "highlights": [
+        "Avantgárd geometriai tok",
+        "Hat csavar · csontváz számlap",
+        "Ipari kinetikus stílus"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Oldalnézet",
+          "body": "Szokatlan geometriai tokkal merész, futurisztikus sziluettje kitör a hagyományos kerek órák kereteiből. A kefézett fém lunettán hat kifinomult csavar büszkén emelkedik ki — ipari textúrát és lázadó egyéniséget sugároz."
+        },
+        {
+          "title": "KIÁLLÍTÓ HÁTLAP",
+          "body": "A hátlap szabálytalan fekete kefézett acél casebacket mutat, négy csavarral rögzítve; a középső ablak teljesen fekete csontvázas szerkezetet tár fel csillag alakú hidakkal, arany fogaskerekekkel és kék csavarokkal — mechanikus komplexitás avant-garde sport stílussal."
+        }
+      ]
+    },
+    "9108": {
+      "categoryLabel": "Mechanikus · Férfi",
+      "shortDescription": "A csontvázas MIYOTA 82S0 szerkezettel ez a karcsú fekete óra arany számlapot ötvöz finom mechanikával és 21 rubin csapággyal — tiszta mechanikus elegancia és visszafogott luxus.",
+      "highlights": [
+        "Csontváz MIYOTA 82S0",
+        "Fekete tok · arany számlap",
+        "21 rubin csapágy"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Oldalnézet",
+          "body": "Az elegancia és a mechanikus mesterség ragyogó fúziója: open-worked számlap arany kiemelésekkel, karcsú fekete keret és luxus fekete szíj. A látható fogaskerekek és tourbillon kifinomult mesterséget mutatnak — tökéletes választás az időtlen luxust keresőknek. Rendelje meg most, és ragyogjon ezzel a remekművel!"
+        },
+        {
+          "title": "CALIBRE 82S0",
+          "body": "A kép megragadja a MIYOTA 82S0 szerkezet mechanikus esztétikáját: tiszta fehér háttéren a rotor finom kefézett textúrája és éles félelső élek kifinomult hatást keltenek; 21 rubin csapágy gyönyörűen kontrasztál a sárgaréz ingával; a jellegzetes csontvázas kivágások pedig az open-heart dizájn ritmusos szépségét mutatják."
+        }
+      ]
+    },
+    "9164": {
+      "categoryLabel": "Mechanikus · Férfi",
+      "shortDescription": "40 mm-es acél tok és szíj kifinomult gunmetal felületen — csontváz automata mindennapi viselésre. Ásványi üveg, 30 m WR és 48h+ tartalék.",
+      "highlights": [
+        "40 mm acél tok és szíj",
+        "Gunmetal · csontváz automata",
+        "30 m WR · 48h+ tartalék"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Oldalnézet",
+          "body": "Klasszikus rozsdamentes acél tok és szíj, merész és strapabíró. A mélykék sunray számlap búvár lunettával dinamikus energiát sugároz, míg a 6 óránál lévő open-heart ablak tökéletesen bemutatja a mechanikus szerkezet szépségét. Sokoldalú napi óra, amely feltűnő esztétikát és prémium textúrát ötvöz."
+        },
+        {
+          "title": "CALIBRE 2800",
+          "body": "Automata csontvázas szerkezet percmutatóval. Gunmetal felület, strapabíró, mindennapi használatra tervezve. 34 mm átmérő, 7,18 mm vastagság. 48 óra feletti tartalék, 21 600 rezgés/óra (3 Hz)."
+        }
+      ]
+    },
+    "9167": {
+      "categoryLabel": "Mechanikus · Férfi",
+      "shortDescription": "Robusztus, kopásálló acél tok és szíj gunmetal felületen. A mélykék számlap csontváz automata szerkezetet mutat perc kijelzéssel. Nagy teljesítményű kaliber, 48h+ tartalék és 21 600 vph (3 Hz).",
+      "highlights": [
+        "Gunmetal acél tok és szíj",
+        "Mélykék csontváz · percek",
+        "48h+ · 21 600 vph"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Oldalnézet",
+          "body": "Klasszikus rozsdamentes acél tok és szíj, merész és strapabíró. A mélykék sunray számlap búvár lunettával dinamikus energiát sugároz, míg a 6 óránál lévő open-heart ablak tökéletesen bemutatja a mechanikus szerkezet szépségét. Sokoldalú napi óra, amely feltűnő esztétikát és prémium textúrát ötvöz."
+        },
+        {
+          "title": "CALIBRE 2802",
+          "body": "Automata csontvázas szerkezet percmutatóval. Gunmetal felület, strapabíró, mindennapi használatra tervezve. 34 mm átmérő, 7,18 mm vastagság. 48 óra feletti tartalék, 21 600 rezgés/óra (3 Hz)."
+        }
+      ]
+    },
+    "9191": {
+      "categoryLabel": "Mechanikus · Férfi",
+      "shortDescription": "44 mm-es acél csontváz automata drámai open-worked számlappal és puha szilikon szíjjal egész napos kényelemért. Ásványi üveg és 30 m WR mindennapi használatra.",
+      "highlights": [
+        "44 mm acél csontváz automata",
+        "Szilikon szíj · ásványi üveg",
+        "30 m WR"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Oldalnézet",
+          "body": "Ez a mechanikus óra rendkívül felismerhető tonneau tokkal és merész fekete-piros sportos színvilággal rendelkezik, jellegzetes fém lunetta-csavarokkal a maszkulin, kemény megjelenésért. A teljesen csontvázas számlap feltűnő kilátást nyújt az arany fogaskerekekre és a működő automata szerkezetre, piros szerkezeti hidakkal és nagy teljesítményű fekete gumis szíjjal — kemény mechanika futurisztikus sport stílussal."
+        },
+        {
+          "title": "CALIBRE 2805",
+          "body": "Automata csontvázas szerkezet. Gunmetal felület, strapabíró, mindennapi használatra tervezve. 31 mm átmérő, 6,58 mm vastagság. 48 óra feletti tartalék, 21 600 rezgés/óra (3 Hz)."
+        }
+      ]
+    },
+    "9220": {
+      "categoryLabel": "Mechanikus · Férfi",
+      "shortDescription": "Teljesen csontvázas automata és átlátszó hátlap mutatja a mechanikus művészet végső ritmusát. Karcsú ultra-vékony gunmetal profil, nagy teljesítményű fluoreszkáló gumi szíj és 48h+ tartalék.",
+      "highlights": [
+        "Teljes csontváz automata",
+        "Átlátszó hátlap · gunmetal",
+        "Fluoreszkáló gumi · 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Oldalnézet",
+          "body": "Csontvázas szerkezet, funkcionális korona, strapabíró tűcsat és nagy teljesítményű fluororubber szíj egyesít kényelmet és mechanikus kifinomultságot."
+        },
+        {
+          "title": "ÁTLÁTSZÓ HÁTLAP",
+          "body": "Tiszta kilátás az automata szerkezetre."
+        },
+        {
+          "title": "SOKOLDALÚSÁG A CSUKLÓN",
+          "body": "Ez az óra könnyedén vált — az edzőteremtől és a laza irodai napoktól az esti programokig. Tökéletes egész napos stílus a modern férfinak, aki teljesítményt és személyiséget akar korlátok nélkül."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Automata csontvázas szerkezet percmutatóval. Gunmetal felület, strapabíró, mindennapi használatra tervezve. 34 mm átmérő, 7,18 mm vastagság. 48 óra feletti tartalék, 21 600 rezgés/óra (3 Hz)."
+        }
+      ]
+    },
+    "9236": {
+      "categoryLabel": "Mechanikus · Férfi",
+      "shortDescription": "Merész 50 mm-es acél csontváz automata maximális csukló-jelenléttel. Open-worked mechanika, kényelmes szilikon szíj, ásványi üveg és 30 m WR.",
+      "highlights": [
+        "50 mm merész acél tok",
+        "Csontváz automata · szilikon",
+        "Statement jelenlét · 30 m WR"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Oldalnézet",
+          "body": "Csontvázas szerkezet, funkcionális korona, strapabíró tűcsat és nagy teljesítményű fluororubber szíj egyesít kényelmet és mechanikus kifinomultságot."
+        },
+        {
+          "title": "CALIBRE 2802",
+          "body": "Automata csontvázas szerkezet percmutatóval. Gunmetal felület, strapabíró, mindennapi használatra tervezve. 34 mm átmérő, 7,18 mm vastagság. 48 óra feletti tartalék, 21 600 rezgés/óra (3 Hz)."
+        }
+      ]
+    },
+    "9253": {
+      "categoryLabel": "Mechanikus · Férfi",
+      "shortDescription": "Teljesen csontvázas automata és átlátszó hátlap mutatja a mechanikus művészet végső ritmusát. Karcsú ultra-vékony gunmetal profil, nagy teljesítményű fluoreszkáló gumi szíj és 48h+ tartalék.",
+      "highlights": [
+        "Teljes csontváz automata",
+        "Átlátszó hátlap · gunmetal",
+        "Fluoreszkáló gumi · 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "FELFEDETT MECHANIKA",
+          "body": "Lássa a MINBER szerkezet lenyűgöző szépségét — minden fogaskerék, inga és rubin csapágy teljes pompájában látható az open-worked számlapon."
+        },
+        {
+          "title": "KIÁLLÍTÓ HÁTLAP",
+          "body": "Négy csavarral rögzítve a kefézett acél tokon."
+        },
+        {
+          "title": "SOKOLDALÚSÁG A CSUKLÓN",
+          "body": "Ez az óra könnyedén vált — az edzőteremtől és a laza irodai napoktól az esti programokig. Tökéletes egész napos stílus a modern férfinak, aki teljesítményt és személyiséget akar korlátok nélkül."
+        },
+        {
+          "title": "CALIBRE 2806",
+          "body": "Automata csontvázas szerkezet. Gunmetal felület, strapabíró, mindennapi használatra tervezve. 31 mm átmérő, 6,58 mm vastagság. 48 óra feletti tartalék, 21 600 rezgés/óra (3 Hz)."
+        }
+      ]
+    },
+    "2412m": {
+      "categoryLabel": "Kvarc · Férfi · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2412M — acél ana-digi óra kettős LCD-vel, ébresztővel, külső hőmérséklettel és stopperrel.",
-      "description": "A DIGI-TEMP 2412M teljes ana-digi élményt nyújt 40 mm-es acél tokkal, ásványi üveggel és 30 m vízállósággal: ugyanazok a TIME, DATE, ALM, OUT és STW módok, tiszta olvashatósággal mindennapi használatra.",
       "highlights": [
         "TIME/DATE/ALM/OUT/STW módok",
         "Japán mechanizmus, ~3 év akkumulátor",
         "Rozsdamentes acél tok"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Multifunkciós",
+          "body": "A DIGI-TEMP 2412M a teljes ana-digi élményt nyújtja: két digitális mező az idő/dátum és 12–24 órás formátumhoz, valamint hőmérséklet és futó másodpercek; a módok sorában TIME, DATE, ALM (ébresztő), OUT (külső hőmérséklet) és STW (stopper) szerepel. A háttérvilágítás és a dedikált módváltás a mindennapi használatban is jól olvasható — 40 mm-es acél tokban, ásványi üveggel és 30 m vízállósággal."
+        }
       ]
     },
-    "rd-excalibur01": {
-      "name": "RD-Excalibur01 Gyémánttal kirakott Astral",
-      "categoryLabel": "RD-ASTRAL · Iced out",
-      "shortDescription": "RD-Excalibur01 — skeleton „iced out” darab kiemelkedő lunettával és luxury kidolgozással.",
-      "description": "RD-ASTRAL kirakatdarab: skeleton architektúra és erőteljes lunetta; média R2-ről, mint a DIGI-TEMP és RM-TONNEAU esetében.",
+    "9027g": {
+      "categoryLabel": "Mechanikus · Férfi",
+      "shortDescription": "Egyedi, teljesen átlátszó TR90 kristály tonneau tokban ez a csontvázas óra 360°-os panorámát nyújt a fogaskerekek és az inga ritmusáról. A gunmetal felületű szerkezet vékony profilban — 34 mm átmérő, mindössze 7,18 mm vastagság — erős vizuális hatást és ultrakönnyű, hipoallergén viselést ad. 48 óra feletti tartalék 21 600 vph-nál (3 Hz).",
       "highlights": [
-        "Iced-out jellegű lunetta",
-        "Skeleton számlap",
-        "Erőteljes jelenlét a csuklón"
+        "TR90 átlátszó tonneau tok",
+        "360° csontváz · gunmetal szerkezet",
+        "34 mm · 7,18 mm · 48h+ tartalék"
+      ],
+      "detailBlocks": [
+        {
+          "title": "FELFEDETT MECHANIKA",
+          "body": "360°-os panoráma a kifinomult csontvázas szerkezetről — tiszta mechanikus színház. Fogaskerekek, inga és rotor minden szögből láthatók a kristálytiszta tonneau tokon át."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Automata csontvázas szerkezet percmutatóval. Gunmetal felület, strapabíró, mindennapi használatra tervezve. 34 mm átmérő, 7,18 mm vastagság. 48 óra feletti tartalék, 21 600 rezgés/óra (3 Hz)."
+        }
       ]
     },
-    "rm-m01": {
-      "name": "RM-M01 Tonneau ultra fino",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "RM-M01 — sport tonneau ultravékony acél tokkal és strapabíró, légáteresztő nylon szíjjal.",
-      "description": "Az RM-M01 ultravékony acél tonneau sziluettet párosít strapabíró nylon szíjjal. Precíziós quartz és skeleton esztétika könnyű profilban — aktív viseléshez vagy elegáns hétköznapokhoz.",
+    "9220g": {
+      "categoryLabel": "Mechanikus · Férfi",
+      "shortDescription": "Sokoldalú precíziós csontváz automata karcsú 34 mm-es gunmetal tokkal és exhibition hátlappal. Sunray számlap 6 óránál open-heart mutatja a 3Hz automata ritmusát (48h+). Csavaros konstrukció és nagy rugalmasságú fluoreszkáló gumi szíj.",
       "highlights": [
-        "Ultravékony tonneau profil",
-        "Sport nylon szíj",
-        "Skeleton jellegű számlap"
+        "34 mm gunmetal · exhibition hátlap",
+        "Sunray · open-heart 6 óránál",
+        "3Hz automata · csavar · fluoreszkáló gumi"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Oldalnézet",
+          "body": "A számlap sunray felületű, amely különböző szögekből veri vissza a fényt. 6 óránál az open-heart dizájn részben felfedi a mechanikus szerkezetet és a mozgó ingát."
+        },
+        {
+          "title": "KIÁLLÍTÓ HÁTLAP",
+          "body": "A rotor és a belső alkatrészek működés közben láthatók, bemutatva a mechanikus szerkezetet és mozgást. A csavarozott tok szerkezet növeli a stabilitást."
+        },
+        {
+          "title": "SOKOLDALÚSÁG A CSUKLÓN",
+          "body": "Kényelmes fluororubber szíjjal tartós, rugalmas és egész napos viselhetőséget kínál. Az üzleti környezettől a laza programokig tiszta tokja és élénk számlapja sokoldalú társ bármely stílushoz."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Automata csontvázas szerkezet percmutatóval. Gunmetal felület, strapabíró, mindennapi használatra tervezve. 34 mm átmérő, 7,18 mm vastagság. 48 óra feletti tartalék, 21 600 rezgés/óra (3 Hz)."
+        }
       ]
-    },
-    "rm-m02": {
-      "name": "RM-M02 Tonneau ultra fino",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "RM-M02 — sport tonneau ultravékony acél tokkal és strapabíró, légáteresztő nylon szíjjal.",
-      "description": "Az RM-M02 ugyanazt az ultravékony sport tonneau koncepciót osztja nylon szíjjal és skeleton olvashatósággal; könnyű és kifejező mindennapi rotációhoz.",
-      "highlights": [
-        "Ultravékony tonneau profil",
-        "Sport nylon szíj",
-        "Skeleton jellegű számlap"
-      ]
-    },
-    "rm-m03": {
-      "name": "RM-M03 Happy Face",
-      "categoryLabel": "RM-TONNEAU · Szilikon",
-      "shortDescription": "Klasszikus tonneau sziluett pop „happy face” dizájnnal; strapabíró acél tok, precíziós quartz és élénk szilikon szíj streetwearhez.",
-      "description": "Tonneau és pop-art keveréke a számlapon; acél tok, quartz és feltűnő szilikon szíj — merész darab modern stílusokhoz.",
-      "highlights": [
-        "„Happy face” tonneau karakter",
-        "Acél tok és szilikon szíj",
-        "Skeleton quartz olvashatóság"
-      ]
-    },
-    "rm-m04": {
-      "name": "RM-M04 Skeleton Sport",
-      "categoryLabel": "RM-TONNEAU · Szilikon",
-      "shortDescription": "RM-M04 — sport luxury stílusú skeleton quartz tonneau szilikon szíjjal.",
-      "description": "Sport luxury örökség: nyitott tonneau számlap, quartz működés és strukturált szilikon szíj mindennapi viseléshez motorsport DNS-sel.",
-      "highlights": [
-        "Skeleton tonneau számlap",
-        "Sport luxury arányok",
-        "Szilikon szíj kényelme"
-      ]
-    },
-    "rm-m05": {
-      "name": "RM-M05 Tonneau ultra fino",
-      "categoryLabel": "RM-TONNEAU · Szilikon",
-      "shortDescription": "Sport quartz fehér tonneau tokkal és piros szilikon szíjjal.",
-      "description": "Kontraszt a fehér tonneau tok és az élénk piros szíj között; skeleton olvashatóság mozgás közben is.",
-      "highlights": [
-        "Fehér acél tonneau tok",
-        "Piros verseny szilikon szíj",
-        "Skeleton quartz mechanizmus"
-      ]
-    },
-    "rm-m06": {
-      "name": "RM-M06 Esqueleto listrado",
-      "categoryLabel": "RM-TONNEAU · Szilikon",
-      "shortDescription": "Luxury tonneau rózsaszín-fehér csíkos acél tokkal és skeleton quartz számlappal.",
-      "description": "Csíkos acél történet kontrasztos tónusokban: kétszínű tonneau tok, nyitott számlap és puha szilikon szíj — kifejező, mégis visszafogott irodához vagy hétvégéhez.",
-      "highlights": [
-        "Rózsaszín-fehér csíkos acél tok",
-        "Skeleton tonneau megjelenés",
-        "Prémium szilikon szíj"
-      ]
-    },
-    "rm-m07": {
-      "name": "RM-M07 Textura carbono",
-      "categoryLabel": "RM-TONNEAU · Szilikon",
-      "shortDescription": "Carbon-textúra tonneau tok, sport skeleton quartz és szilikon szíj.",
-      "description": "Rétegezett kidolgozás és aero-motor jelleg; nyitott számlap látható quartz modullal és megbízható szilikon szíjjal.",
-      "highlights": [
-        "Carbon-textúra tok",
-        "Skeleton quartz megjelenés",
-        "Sport szilikon szíj"
-      ]
-    },
-    "rm-m08": {
-      "name": "RM-M08 Mostrador borboleta",
-      "categoryLabel": "RM-TONNEAU · Szilikon",
-      "shortDescription": "Skeleton „pillangó” számlap, sport luxury kivitel és prémium szilikon szíj.",
-      "description": "Díszes nyitott geometria, tonneau tartás és szilikon szíj — streetwear és casual blézer között.",
-      "highlights": [
-        "Pillangó skeleton elrendezés",
-        "Sport luxury tonneau tok",
-        "Prémium szilikon szíj"
-      ]
-    },
-    "rm-m09": {
-      "name": "RM-M09 Butterfly Sport",
-      "categoryLabel": "RM-TONNEAU · Szilikon",
-      "shortDescription": "Pillangó skeleton számlap „boyfriend” jelenléttel és prémium szilikon szíjjal.",
-      "description": "Széles csuklókarakter, részletes skeleton hidak és bőséges szilikon — rétegezett hétvégi vagy oversize sziluettekhez.",
-      "highlights": [
-        "Pillangó skeleton esztétika",
-        "Széles csuklójelenlét",
-        "Prémium szilikon szíj"
-      ]
-    },
-    "rm-m10": {
-      "name": "RM-M10 Transparente",
-      "categoryLabel": "RM-TONNEAU · Polikarbonát",
-      "shortDescription": "Átlátszó skeleton quartz tonneau, polikarbonát tok és sport szíj.",
-      "description": "Ultrakönnyű polikarbonát váz feltárja a skeleton modult; sport szíj reggeltől estig.",
-      "highlights": [
-        "Átlátszó polikarbonát tonneau tok",
-        "Skeleton quartz mag",
-        "Sport szíj ergonomia"
-      ]
-    },
-    "rm-mx": {
-      "name": "RM-MX Tonneau Watch",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "Csak árkorrekcióhoz. NE rendeljen, amíg fel nem vette velünk a kapcsolatot. Jogosulatlan rendelések törlésre kerülnek vagy nem kerülnek feladásra.",
-      "description": "",
-      "highlights": []
-    },
-    "wholesale-price": {
-      "name": "Nagykereskedelmi tömeges rendelés fizetési link",
-      "categoryLabel": "NAGYKER · Fizetési link",
-      "shortDescription": "Hogyan fejezze be a fizetést:\n\n• Árképlet:\nVégösszeg = az összes termék értéke + szállítási díj (nemzetközi szállítás VAGY belföldi szállítás kínai ügynökéhez, megállapodás szerint).\n\n• Egységár:\nEz a link 1 USD / egység.\n\n• Rendelés:\nÁllítsa a «Mennyiség» értékét úgy, hogy a végösszeg megegyezzen a megállapodott összeggel (szállítással együtt).\nPélda: megállapodott összeg 50 USD → állítsa a mennyiséget, amíg a pénztár 50 USD-ot mutat.\n\n• Fontos:\nHagyja figyelmen kívül a szállítási vagy termékdíj bontást a pénztárnál. Ha a végösszeg (ténylegesen fizetett összeg) megegyezik a megállapodott árral, a fizetés helyes, és a rendelést manuálisan dolgozzuk fel.\n\nKöszönjük a bizalmát!"
-    },
-    "custom-logo-fee": {
-      "name": "Márkapersonalizálás fizetési link",
-      "categoryLabel": "Egyedi fizetési link",
-      "shortDescription": "Hogyan fizesse ki az egyedi logó díját:\n\n• Árképlet:\nVégösszeg = az összes termék értéke + szállítási díj (a beszélgetésben megállapodott végleges, mindent tartalmazó ár).\n\n• Egységár:\nEz a link 1 USD / egység.\n\n• Rendelés:\nÁllítsa a «Mennyiség» értékét úgy, hogy a végösszeg megegyezzen a megállapodott testreszabási díjjal.\nPélda: logó díj 50 USD → állítsa a mennyiséget, amíg a pénztár 50 USD-ot mutat.\n\n• Fontos:\nHagyja figyelmen kívül a szállítási díjakat vagy automatikus számításokat a pénztárnál. Ha a végösszeg megegyezik a megállapodott logó díjjal, a fizetés helyes, és az egyedi rendelést manuálisan dolgozzuk fel.\n\nKöszönjük a bizalmát!"
     }
   }
 }

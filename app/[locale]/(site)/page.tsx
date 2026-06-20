@@ -108,7 +108,7 @@ export default async function HomePage({
   const quartzSlider = await buildHomeWatchSlider("quartz", all, locale, messages);
   const ultraThinSlider = await buildHomeWatchSlider("ultra-thin", all, locale, messages);
   const heroFeaturedRaw =
-    all.find((p) => p.slug === "digitemp-2301") ?? [...all].slice(0, 12)[0] ?? null;
+    all.find((p) => p.slug === "2301" || p.slug === "digitemp-2301") ?? [...all].slice(0, 12)[0] ?? null;
   const heroFeatured = heroFeaturedRaw
     ? applyStorefrontProductLocale(heroFeaturedRaw, locale, messages)
     : null;

@@ -1,162 +1,306 @@
 {
   "ProductCopy": {
-    "digitemp-2301": {
-      "categoryLabel": "DIGI-TEMP · Ana-digi · Aço",
+    "2301": {
+      "categoryLabel": "Quartz · Homem · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2301 — relógio ana-digi em aço com LCD duplo, alarme, temperatura externa e cronômetro.",
-      "description": "DIGI-TEMP 2301 oferece a experiência ana-digi completa: campos digitais duplos para hora/data/12–24h, temperatura e segundos; modos TIME, DATE, ALM (alarme), OUT (temperatura externa) e STW (cronômetro). A iluminação e o circuito de modo mantêm a leitura confortável no dia a dia, em caixa de aço de 33 mm, vidro mineral e 30 m de resistência à água.",
       "highlights": [
         "Modos TIME/DATE/ALM/OUT/STW",
         "Movimento japonês, bateria ~3 anos",
         "Caixa de aço inoxidável"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Multifuncional",
+          "body": "O DIGI-TEMP 2301 oferece a experiência ana-digi completa: dois campos digitais para hora/data e 12–24 h, além de temperatura e segundos em curso; a pilha de modos inclui TIME, DATE, ALM (alarme), OUT (temperatura exterior) e STW (cronómetro). A retroiluminação e um percurso de modos dedicado mantêm a operação legível no uso diário — numa caixa de aço de 33 mm com cristal mineral e 30 m de resistência à água."
+        }
       ]
     },
-    "digitemp-2412m": {
-      "categoryLabel": "DIGI-TEMP · Ana-digi · Aço",
+    "6004": {
+      "categoryLabel": "Mecânico · Homem",
+      "shortDescription": "Este relógio reúne um movimento automático totalmente esqueletizado numa caixa inovadora e leve em aço 316L e alumínio aeronáutico. A pulseira de fluorborracha respirável e o perfil ultrafino (6,58 mm, reserva de 48h+) equilibram estética mecânica ousada com conforto leve para o dia inteiro.",
+      "highlights": [
+        "Movimento automático esqueleto",
+        "Caixa 316L e alumínio aeronáutico",
+        "Pulseira fluorborracha · reserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ARTE MECÂNICA REVELADA",
+          "body": "Contemple a beleza hipnotizante do movimento MINBER — cada engrenagem, balanço e rubi dança em plena vista através do mostrador open-worked."
+        },
+        {
+          "title": "CAIXA DE PRECISÃO",
+          "body": "Construída em aço inoxidável 316L premium fundido com alumínio aeronáutico leve. Relação resistência-peso excecional."
+        },
+        {
+          "title": "FUNDO EXHIBITION",
+          "body": "Fixada com oito parafusos na caixa de aço 316L escovado."
+        },
+        {
+          "title": "PULSEIRA FLUORORUBBER CONFORTO",
+          "body": "Com fivela de pino segura e design perfurado respirável para o máximo conforto."
+        },
+        {
+          "title": "VERSATILIDADE NO PULSO",
+          "body": "Este relógio transita sem esforço — do ginásio e dias de escritório casual a noites de saída. A declaração perfeita para todo o dia do homem moderno que quer desempenho e personalidade sem limites."
+        },
+        {
+          "title": "CALIBRE 2806",
+          "body": "Movimento automático esqueleto. Diâmetro de 31 mm, espessura de 6,58 mm. Reserva de marcha superior a 48 horas, a 21.600 vibrações por hora (3 Hz)."
+        }
+      ]
+    },
+    "9027": {
+      "categoryLabel": "Mecânico · Homem",
+      "shortDescription": "Com uma caixa tonneau totalmente transparente em cristal TR90, este relógio esqueleto oferece vista panorâmica de 360° do ritmo das engrenagens e do balanço. O movimento com acabamento gunmetal repousa num perfil fino — 34 mm de diâmetro e apenas 7,18 mm de espessura — com forte impacto visual e uso ultraleve e hipoalergénico. Reserva superior a 48 h a 21.600 vph (3 Hz).",
+      "highlights": [
+        "Caixa tonneau TR90 transparente",
+        "Vista esqueleto 360° · movimento gunmetal",
+        "34 mm · 7,18 mm · reserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ARTE MECÂNICA REVELADA",
+          "body": "Vista panorâmica 360° do requintado movimento esqueleto — puro teatro mecânico. Engrenagens, balanço e rotor visíveis de todos os ângulos através da caixa tonneau perfeitamente transparente."
+        },
+        {
+          "title": "CAIXA TRANSPARENTE",
+          "body": "Caixa de cristal TR90 ultraleve — o mesmo material hipoalergénico de alta tecnologia usado em óculos premium. Quase sem peso, zero irritação cutânea, conforto perfeito o dia todo."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Movimento automático esqueleto com indicação de minutos. Acabamento gunmetal, equipado e resistente ao uso diário com design robusto. Diâmetro de 34 mm, espessura de 7,18 mm. Reserva superior a 48 horas, a 21.600 vibrações por hora (3 Hz)."
+        }
+      ]
+    },
+    "9045": {
+      "categoryLabel": "Mecânico · Homem",
+      "shortDescription": "Com uma caixa geométrica vanguardista e seis parafusos visíveis, este relógio funde estilo industrial e caráter rebelde. O núcleo mecânico intrincado revela-se por completo através de um mostrador esqueleto, transformando cada movimento do pulso em arte cinética.",
+      "highlights": [
+        "Caixa geométrica vanguardista",
+        "Seis parafusos · mostrador esqueleto",
+        "Estilo industrial cinético"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista lateral",
+          "body": "Com uma caixa geométrica pouco convencional, a sua silhueta ousada e futurista rompe as limitações dos relógios redondos tradicionais. No bisel metálico escovado, seis parafusos requintados destacam-se com orgulho, acrescentando textura industrial e um sentido rebelde de individualidade."
+        },
+        {
+          "title": "FUNDO EXHIBITION",
+          "body": "O verso apresenta um fundo de caixa em aço preto escovado de forma irregular, fixado com quatro parafusos; a janela central revela um movimento esqueleto totalmente preto com pontes em estrela, engrenagens douradas e parafusos azulados, fundindo complexidade mecânica com estilo desportivo vanguardista."
+        }
+      ]
+    },
+    "9108": {
+      "categoryLabel": "Mecânico · Homem",
+      "shortDescription": "Com o movimento esqueletizado MIYOTA 82S0, este relógio preto elegante combina mostrador dourado com mecânica intrincada e 21 rubis — pura elegância mecânica e luxo discreto.",
+      "highlights": [
+        "MIYOTA 82S0 esqueletizado",
+        "Caixa preta · mostrador dourado",
+        "21 rubis"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista lateral",
+          "body": "Uma fusão radiante de elegância e mestria mecânica, com mostrador open-worked e acentos dourados, este relógio está num elegante moldura preta e pulseira preta luxuosa. Engrenagens visíveis e tourbillon destacam um artesanato requintado — a escolha perfeita para quem procura luxo intemporal. Encomende agora e brilhe com esta obra-prima!"
+        },
+        {
+          "title": "CALIBRE 82S0",
+          "body": "A imagem capta a estética mecânica do movimento MIYOTA 82S0: sobre fundo branco puro, a textura escovada do rotor e os chanfros metálicos nítidos exalam refinamento; 21 rolamentos de rubi contrastam lindamente com a roda de balanço em tom latão; e os recortes esqueletizados mostram a beleza rítmica do design open-heart."
+        }
+      ]
+    },
+    "9164": {
+      "categoryLabel": "Mecânico · Homem",
+      "shortDescription": "Caixa e pulseira em aço de 40 mm com acabamento gunmetal refinado — automático esqueleto para o dia a dia. Vidro mineral, 30 m WR e reserva de 48h+ prontos para uso diário.",
+      "highlights": [
+        "Caixa e pulseira aço 40 mm",
+        "Gunmetal · automático esqueleto",
+        "30 m WR · reserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista lateral",
+          "body": "Caixa e bracelete em aço inoxidável clássicos, ousados e robustos. O mostrador azul profundo sunray com bisel de mergulho irradia energia dinâmica, enquanto a janela open-heart às 6 h mostra a beleza do movimento mecânico. Um relógio diário versátil que combina estética marcante e textura premium."
+        },
+        {
+          "title": "CALIBRE 2800",
+          "body": "Movimento automático esqueleto com indicação de minutos. Acabamento gunmetal, equipado e resistente ao uso diário com design robusto. Diâmetro de 34 mm, espessura de 7,18 mm. Reserva superior a 48 horas, a 21.600 vibrações por hora (3 Hz)."
+        }
+      ]
+    },
+    "9167": {
+      "categoryLabel": "Mecânico · Homem",
+      "shortDescription": "Caixa e pulseira em aço robustos e resistentes ao desgaste com acabamento gunmetal. Mostrador azul profundo com movimento automático esqueleto e display de minutos. Calibre de alto desempenho, reserva 48h+ e 21.600 vph (3 Hz).",
+      "highlights": [
+        "Caixa e pulseira aço gunmetal",
+        "Mostrador esqueleto azul profundo · minutos",
+        "48h+ · 21.600 vph"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista lateral",
+          "body": "Caixa e bracelete em aço inoxidável clássicos, ousados e robustos. O mostrador azul profundo sunray com bisel de mergulho irradia energia dinâmica, enquanto a janela open-heart às 6 h mostra a beleza do movimento mecânico. Um relógio diário versátil que combina estética marcante e textura premium."
+        },
+        {
+          "title": "CALIBRE 2802",
+          "body": "Movimento automático esqueleto com indicação de minutos. Acabamento gunmetal, equipado e resistente ao uso diário com design robusto. Diâmetro de 34 mm, espessura de 7,18 mm. Reserva superior a 48 horas, a 21.600 vibrações por hora (3 Hz)."
+        }
+      ]
+    },
+    "9191": {
+      "categoryLabel": "Mecânico · Homem",
+      "shortDescription": "Automático esqueleto em aço de 44 mm com mostrador open-worked marcante e pulseira de silicone confortável o dia todo. Vidro mineral e 30 m WR para uso diário.",
+      "highlights": [
+        "Automático esqueleto aço 44 mm",
+        "Pulseira silicone · vidro mineral",
+        "30 m WR"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista lateral",
+          "body": "Este relógio mecânico apresenta uma caixa tonneau muito reconhecível num ousado esquema desportivo preto e vermelho, acentuado por parafusos metálicos no bisel para um look robusto e masculino. O mostrador totalmente esqueletizado oferece uma vista impressionante das engrenagens douradas e do movimento automático em ação, amplificado por pontes estruturais vermelhas e uma pulseira de borracha preta de alto desempenho que funde estética mecânica hardcore com estilo desportivo futurista."
+        },
+        {
+          "title": "CALIBRE 2805",
+          "body": "Movimento automático esqueleto. Acabamento gunmetal, equipado e resistente ao uso diário com design robusto. Diâmetro de 31 mm, espessura de 6,58 mm. Reserva superior a 48 horas, a 21.600 vibrações por hora (3 Hz)."
+        }
+      ]
+    },
+    "9220": {
+      "categoryLabel": "Mecânico · Homem",
+      "shortDescription": "Movimento automático totalmente esqueletizado e fundo transparente revelam o ritmo definitivo da arte mecânica. Perfil fino ultrafino em gunmetal, pulseira fluorborracha de alto desempenho e reserva superior a 48 h.",
+      "highlights": [
+        "Automático totalmente esqueleto",
+        "Fundo transparente · gunmetal",
+        "Fluorborracha · reserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista lateral",
+          "body": "Movimento esqueletizado, coroa funcional, fivela de pino durável e pulseira de fluororubber de alto desempenho combinam conforto e sofisticação mecânica."
+        },
+        {
+          "title": "FUNDO TRANSPARENTE",
+          "body": "Vista clara do movimento automático."
+        },
+        {
+          "title": "VERSATILIDADE NO PULSO",
+          "body": "Este relógio transita sem esforço — do ginásio e dias de escritório casual a noites de saída. A declaração perfeita para todo o dia do homem moderno que quer desempenho e personalidade sem limites."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Movimento automático esqueleto com indicação de minutos. Acabamento gunmetal, equipado e resistente ao uso diário com design robusto. Diâmetro de 34 mm, espessura de 7,18 mm. Reserva superior a 48 horas, a 21.600 vibrações por hora (3 Hz)."
+        }
+      ]
+    },
+    "9236": {
+      "categoryLabel": "Mecânico · Homem",
+      "shortDescription": "Automático esqueleto em aço ousado de 50 mm para máxima presença no pulso. Mecânica open-worked, pulseira de silicone confortável, vidro mineral e 30 m WR para uso diário confiante.",
+      "highlights": [
+        "Caixa aço ousada 50 mm",
+        "Automático esqueleto · silicone",
+        "Presença statement · 30 m WR"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista lateral",
+          "body": "Movimento esqueletizado, coroa funcional, fivela de pino durável e pulseira de fluororubber de alto desempenho combinam conforto e sofisticação mecânica."
+        },
+        {
+          "title": "CALIBRE 2802",
+          "body": "Movimento automático esqueleto com indicação de minutos. Acabamento gunmetal, equipado e resistente ao uso diário com design robusto. Diâmetro de 34 mm, espessura de 7,18 mm. Reserva superior a 48 horas, a 21.600 vibrações por hora (3 Hz)."
+        }
+      ]
+    },
+    "9253": {
+      "categoryLabel": "Mecânico · Homem",
+      "shortDescription": "Movimento automático totalmente esqueletizado e fundo transparente revelam o ritmo definitivo da arte mecânica. Perfil fino ultrafino em gunmetal, pulseira fluorborracha de alto desempenho e reserva superior a 48 h.",
+      "highlights": [
+        "Automático totalmente esqueleto",
+        "Fundo transparente · gunmetal",
+        "Fluorborracha · reserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ARTE MECÂNICA REVELADA",
+          "body": "Contemple a beleza hipnotizante do movimento MINBER — cada engrenagem, balanço e rubi dança em plena vista através do mostrador open-worked."
+        },
+        {
+          "title": "FUNDO EXHIBITION",
+          "body": "Fixada com quatro parafusos na caixa de aço escovado."
+        },
+        {
+          "title": "VERSATILIDADE NO PULSO",
+          "body": "Este relógio transita sem esforço — do ginásio e dias de escritório casual a noites de saída. A declaração perfeita para todo o dia do homem moderno que quer desempenho e personalidade sem limites."
+        },
+        {
+          "title": "CALIBRE 2806",
+          "body": "Movimento automático esqueleto. Acabamento gunmetal, equipado e resistente ao uso diário com design robusto. Diâmetro de 31 mm, espessura de 6,58 mm. Reserva superior a 48 horas, a 21.600 vibrações por hora (3 Hz)."
+        }
+      ]
+    },
+    "2412m": {
+      "categoryLabel": "Quartz · Homem · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2412M — relógio ana-digi em aço com LCD duplo, alarme, temperatura externa e cronômetro.",
-      "description": "DIGI-TEMP 2412M oferece a experiência ana-digi completa com caixa de aço de 40 mm, vidro mineral e 30 m de resistência à água: mesmos modos TIME, DATE, ALM, OUT e STW com leitura clara no uso diário.",
       "highlights": [
         "Modos TIME/DATE/ALM/OUT/STW",
         "Movimento japonês, bateria ~3 anos",
         "Caixa de aço inoxidável"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Multifuncional",
+          "body": "O DIGI-TEMP 2412M oferece a experiência ana-digi completa: dois campos digitais para hora/data e 12–24 h, além de temperatura e segundos em curso; a pilha de modos inclui TIME, DATE, ALM (alarme), OUT (temperatura exterior) e STW (cronómetro). A retroiluminação e um percurso de modos dedicado mantêm a operação legível no uso diário — numa caixa de aço de 40 mm com cristal mineral e 30 m de resistência à água."
+        }
       ]
     },
-    "rd-excalibur01": {
-      "name": "RD-Excalibur01 Astral com diamantes",
-      "categoryLabel": "RD-ASTRAL · Iced out",
-      "shortDescription": "RD-Excalibur01 — peça esqueleto “iced out” com luneta em destaque e acabamento luxury.",
-      "description": "Peça RD-ASTRAL pensada para vitrine: arquitetura esqueleto e luneta com presença; mídia servida do R2 como DIGI-TEMP e RM-TONNEAU.",
+    "9027g": {
+      "categoryLabel": "Mecânico · Homem",
+      "shortDescription": "Com uma caixa tonneau totalmente transparente em cristal TR90, este relógio esqueleto oferece vista panorâmica de 360° do ritmo das engrenagens e do balanço. O movimento com acabamento gunmetal repousa num perfil fino — 34 mm de diâmetro e apenas 7,18 mm de espessura — com forte impacto visual e uso ultraleve e hipoalergénico. Reserva superior a 48 h a 21.600 vph (3 Hz).",
       "highlights": [
-        "Luneta com presença tipo iced-out",
-        "Mostrador esqueleto",
-        "Presença marcante no pulso"
+        "Caixa tonneau TR90 transparente",
+        "Vista esqueleto 360° · movimento gunmetal",
+        "34 mm · 7,18 mm · reserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ARTE MECÂNICA REVELADA",
+          "body": "Vista panorâmica 360° do requintado movimento esqueleto — puro teatro mecânico. Engrenagens, balanço e rotor visíveis de todos os ângulos através da caixa tonneau perfeitamente transparente."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Movimento automático esqueleto com indicação de minutos. Acabamento gunmetal, equipado e resistente ao uso diário com design robusto. Diâmetro de 34 mm, espessura de 7,18 mm. Reserva superior a 48 horas, a 21.600 vibrações por hora (3 Hz)."
+        }
       ]
     },
-    "rm-m01": {
-      "name": "RM-M01 Tonneau ultra fino",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "RM-M01 — esportivo tonneau com caixa de aço ultrafina e pulseira de nylon resistente e respirável.",
-      "description": "RM-M01 combina silhueta tonneau ultrafina em aço com pulseira de nylon robusta. Quartzo preciso e estética esqueleto em um perfil leve, ideal para uso ativo ou dia a dia elegante.",
+    "9220g": {
+      "categoryLabel": "Mecânico · Homem",
+      "shortDescription": "Automático esqueleto de precisão versátil com caixa gunmetal fina de 34 mm e fundo exhibition. Mostrador sunray open-heart às 6 h revela o ritmo automático 3 Hz (48h+). Construção rosqueada e pulseira fluorborracha de alta elasticidade.",
       "highlights": [
-        "Perfil tonneau ultrafino",
-        "Pulseira esportiva de nylon",
-        "Mostrador tipo esqueleto"
+        "34 mm gunmetal · fundo exhibition",
+        "Sunray · open-heart às 6 h",
+        "Automático 3 Hz · rosqueado · fluorborracha"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista lateral",
+          "body": "O mostrador apresenta um acabamento sunray que reflete a luz de diferentes ângulos. Às 6 h, o design open-heart revela parte do movimento mecânico e do balanço em movimento."
+        },
+        {
+          "title": "FUNDO EXHIBITION",
+          "body": "O rotor e os componentes internos são visíveis em funcionamento, mostrando a estrutura e o movimento mecânico. A construção da caixa aparafusada melhora a estabilidade."
+        },
+        {
+          "title": "VERSATILIDADE NO PULSO",
+          "body": "Com uma pulseira de fluororubber confortável, oferece durabilidade, flexibilidade e uso o dia todo. De ambientes profissionais a saídas casuais, a caixa limpa e o mostrador vibrante tornam-no um companheiro versátil para qualquer estilo."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Movimento automático esqueleto com indicação de minutos. Acabamento gunmetal, equipado e resistente ao uso diário com design robusto. Diâmetro de 34 mm, espessura de 7,18 mm. Reserva superior a 48 horas, a 21.600 vibrações por hora (3 Hz)."
+        }
       ]
-    },
-    "rm-m02": {
-      "name": "RM-M02 Tonneau ultra fino",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "RM-M02 — esportivo tonneau com caixa de aço ultrafina e pulseira de nylon resistente e respirável.",
-      "description": "RM-M02 compartilha a proposta esportiva tonneau ultrafina com pulseira de nylon e leitura esqueleto; leve e expressivo para rotação diária.",
-      "highlights": [
-        "Perfil tonneau ultrafino",
-        "Pulseira esportiva de nylon",
-        "Mostrador tipo esqueleto"
-      ]
-    },
-    "rm-m03": {
-      "name": "RM-M03 Happy Face",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Silhueta tonneau clássica com “happy face” pop; caixa de aço robusta, quartzo preciso e pulseira de silicone vibrante para streetwear.",
-      "description": "Mistura tonneau e um toque pop-art no mostrador; caixa de aço, quartzo e pulseira de silicone chamativa — peça de declaração para looks modernos.",
-      "highlights": [
-        "Personalidade tonneau “happy face”",
-        "Caixa de aço e pulseira de silicone",
-        "Clareza de quartzo tipo esqueleto"
-      ]
-    },
-    "rm-m04": {
-      "name": "RM-M04 Skeleton Sport",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "RM-M04 — tonneau esqueleto de quartzo com estilo sport luxury e pulseira de silicone.",
-      "description": "Herança esportiva luxury: mostrador tonneau aberto, batimento de quartzo e pulseira de silicone estruturada para uso diário com DNA motorsport.",
-      "highlights": [
-        "Mostrador tonneau esqueleto",
-        "Proporção sport luxury",
-        "Conforto da pulseira de silicone"
-      ]
-    },
-    "rm-m05": {
-      "name": "RM-M05 Tonneau ultra fino",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Quartz esportivo com caixa tonneau branca e pulseira de silicone vermelha.",
-      "description": "Contraste entre caixa tonneau branca e faixa vermelha saturada; leitura esqueleto para manter legibilidade em movimento.",
-      "highlights": [
-        "Caixa tonneau de aço branca",
-        "Pulseira de silicone racing vermelha",
-        "Movimento de quartzo esqueleto"
-      ]
-    },
-    "rm-m06": {
-      "name": "RM-M06 Esqueleto listrado",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Tonneau luxury com caixa de aço listrada rosa e branca e mostrador esqueleto de quartzo.",
-      "description": "História de aço listrado em tons contrastantes: caixa tonneau dual-tone, mostrador aberto e pulseira de silicone suave — expressiva, porém contida para escritório ou fim de semana.",
-      "highlights": [
-        "Caixa de aço listrada rosa e branca",
-        "Visual tonneau esqueleto",
-        "Pulseira de silicone premium"
-      ]
-    },
-    "rm-m07": {
-      "name": "RM-M07 Textura carbono",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Caixa tonneau com textura tipo fibra de carbono, quartzo esqueleto esportivo e pulseira de silicone.",
-      "description": "Camadas de acabamento e atitude aero-motor; mostrador aberto que revela o módulo de quartzo, com pulseira de silicone confiável.",
-      "highlights": [
-        "Caixa com textura carbono",
-        "Visual esqueleto de quartzo",
-        "Pulseira esportiva de silicone"
-      ]
-    },
-    "rm-m08": {
-      "name": "RM-M08 Mostrador borboleta",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Esqueleto com mostrador “borboleta”, construção sport luxury e pulseira de silicone premium.",
-      "description": "Geometria aberta ornamental, postura tonneau e pulseira de silicone que ancora o relógio entre streetwear e alfaiataria casual.",
-      "highlights": [
-        "Layout esqueleto borboleta",
-        "Caixa tonneau sport luxury",
-        "Pulseira de silicone premium"
-      ]
-    },
-    "rm-m09": {
-      "name": "RM-M09 Butterfly Sport",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Mostrador borboleta esqueleto com presença tipo “boyfriend” e pulseira de silicone premium.",
-      "description": "Carisma de pulso amplo, pontes esqueleto detalhadas e silicone generoso — para camadas de fim de semana ou silhuetas oversize.",
-      "highlights": [
-        "Estética borboleta esqueleto",
-        "Presença ampla no pulso",
-        "Pulseira de silicone premium"
-      ]
-    },
-    "rm-m10": {
-      "name": "RM-M10 Transparente",
-      "categoryLabel": "RM-TONNEAU · Policarbonato",
-      "shortDescription": "Tonneau transparente esqueleto de quartzo, caixa de policarbonato e pulseira esportiva.",
-      "description": "Chassi de policarbonato ultraleve deixa ver o módulo esqueleto; pulseira esportiva para usar do dia à noite.",
-      "highlights": [
-        "Caixa tonneau de policarbonato transparente",
-        "Núcleo de quartzo esqueleto",
-        "Ergonomia da pulseira esportiva"
-      ]
-    },
-    "rm-mx": {
-      "name": "RM-MX Tonneau Watch",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "Somente ajuste de preço. NÃO peça até nos contatar. Pedidos não autorizados serão cancelados ou não enviados.",
-      "description": "",
-      "highlights": []
-    },
-    "wholesale-price": {
-      "name": "Link de pagamento para pedido em atacado",
-      "categoryLabel": "ATACADO · Link de pagamento",
-      "shortDescription": "Como concluir seu pagamento:\n\n• Fórmula de preço:\nValor total = valor de todos os produtos + frete (envio internacional OU envio doméstico ao seu agente na China, conforme acordado).\n\n• Preço unitário:\nEste link está definido em 1 USD por unidade.\n\n• Como pedir:\nAjuste a «Quantidade» para que o total final corresponda ao valor acordado (frete incluído).\nExemplo: total acordado 50 USD → ajuste a quantidade até o checkout mostrar 50 USD.\n\n• Nota importante:\nIgnore a divisão de frete ou produto no checkout. Se o total final (valor pago) corresponder ao preço acordado, o pagamento está correto e seu pedido será processado manualmente.\n\nObrigado pela preferência!"
-    },
-    "custom-logo-fee": {
-      "name": "Link de pagamento para personalização de marca",
-      "categoryLabel": "Link de pagamento personalizado",
-      "shortDescription": "Como pagar sua taxa de logo personalizado:\n\n• Fórmula de preço:\nValor total = valor de todos os produtos + frete (preço final tudo incluído acordado em nossa conversa).\n\n• Preço unitário:\nEste link está definido em 1 USD por unidade.\n\n• Como pedir:\nAjuste a «Quantidade» para que o total final corresponda à taxa de personalização acordada.\nExemplo: taxa de logo 50 USD → ajuste a quantidade até o checkout mostrar 50 USD.\n\n• Nota importante:\nIgnore taxas de frete ou cálculos automáticos no checkout. Se o total final corresponder à taxa de logo acordada, o pagamento está correto e seu pedido personalizado será processado manualmente.\n\nObrigado pela preferência!"
     }
   }
 }

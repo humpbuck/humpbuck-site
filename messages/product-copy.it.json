@@ -1,162 +1,306 @@
 {
   "ProductCopy": {
-    "digitemp-2301": {
-      "categoryLabel": "DIGI-TEMP · Ana-digi · Acciaio",
+    "2301": {
+      "categoryLabel": "Quarzo · Uomo · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2301 — orologio ana-digi in acciaio con LCD doppio, sveglia, temperatura esterna e cronometro.",
-      "description": "DIGI-TEMP 2301 offre l’esperienza ana-digi completa: campi digitali doppi per ora/data/12–24h, temperatura e secondi; modalità TIME, DATE, ALM (sveglia), OUT (temperatura esterna) e STW (cronometro). Illuminazione e circuito modalità mantengono la lettura confortevole nel quotidiano, in cassa in acciaio da 33 mm, vetro minerale e 30 m di resistenza all’acqua.",
       "highlights": [
         "Modalità TIME/DATE/ALM/OUT/STW",
         "Movimento giapponese, batteria ~3 anni",
         "Cassa in acciaio inossidabile"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Multifunzione",
+          "body": "DIGI-TEMP 2301 offre l'esperienza ana-digi completa: due campi digitali per ora/data e 12–24 h, più temperatura e secondi in corsa; la pila di modalità include TIME, DATE, ALM (sveglia), OUT (temperatura esterna) e STW (cronometro). Retroilluminazione e percorso modalità dedicato mantengono l'uso leggibile ogni giorno — in cassa acciaio da 33 mm con vetro minerale e 30 m di resistenza all'acqua."
+        }
       ]
     },
-    "digitemp-2412m": {
-      "categoryLabel": "DIGI-TEMP · Ana-digi · Acciaio",
+    "6004": {
+      "categoryLabel": "Meccanico · Uomo",
+      "shortDescription": "Questo orologio unisce un movimento automatico completamente scheletrato a una cassa innovativa e leggera in acciaio 316L e alluminio aeronautico. Il cinturino in fluororubber traspirante e il profilo ultra-sottile (6,58 mm, riserva 48h+) bilanciano estetica meccanica audace e comfort leggero per tutta la giornata.",
+      "highlights": [
+        "Movimento automatico scheletrato",
+        "Cassa 316L e alluminio aeronautico",
+        "Cinturino fluororubber · riserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ARTE MECCANICA SVELATA",
+          "body": "Ammirate la bellezza ipnotica del movimento MINBER — ogni ingranaggio, bilanciere e rubino danza in piena vista attraverso il quadrante open-worked."
+        },
+        {
+          "title": "CASSA DI PRECISIONE",
+          "body": "Realizzata in acciaio inox 316L premium fuso con alluminio aeronautico leggero. Rapporto resistenza-peso eccezionale."
+        },
+        {
+          "title": "FONDO EXHIBITION",
+          "body": "Fissata con otto viti sulla cassa in acciaio 316L spazzolato."
+        },
+        {
+          "title": "CINTURINO FLUORORUBBER COMFORT",
+          "body": "Con fibbia ad ardiglione sicura e design perforato traspirante per il massimo comfort."
+        },
+        {
+          "title": "VERSATILITÀ AL POLSO",
+          "body": "Questo orologio passa senza sforzo — dalla palestra e dalle giornate d'ufficio informali alle serate fuori. La dichiarazione perfetta per tutta la giornata dell'uomo moderno che vuole prestazioni e personalità senza limiti."
+        },
+        {
+          "title": "CALIBRE 2806",
+          "body": "Movimento automatico scheletrato. Diametro 31 mm, spessore 6,58 mm. Riserva di carica oltre 48 ore, a 21.600 vibrazioni all'ora (3 Hz)."
+        }
+      ]
+    },
+    "9027": {
+      "categoryLabel": "Meccanico · Uomo",
+      "shortDescription": "Con una cassa tonneau completamente trasparente in cristallo TR90, questo orologio scheletrato offre una vista panoramica a 360° del ritmo di ingranaggi e bilanciere. Il movimento finito gunmetal è in un profilo sottile — 34 mm di diametro e soli 7,18 mm di spessore — con forte impatto visivo e portabilità ultraleggera e ipoallergenica. Oltre 48 ore di riserva a 21.600 vph (3 Hz).",
+      "highlights": [
+        "Cassa tonneau TR90 trasparente",
+        "Vista scheletrata 360° · movimento gunmetal",
+        "34 mm · 7,18 mm · riserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ARTE MECCANICA SVELATA",
+          "body": "Vista panoramica a 360° dell'esquisito movimento scheletrato — puro teatro meccanico. Ingranaggi, bilanciere e rotore visibili da ogni angolo attraverso la cassa tonneau perfettamente trasparente."
+        },
+        {
+          "title": "CASSA TRASPARENTE",
+          "body": "Cassa in cristallo TR90 ultraleggera — lo stesso materiale ipoallergenico high-tech usato negli occhiali premium. Quasi senza peso, zero irritazione cutanea, comfort perfetto tutto il giorno."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Movimento automatico scheletrato con indicazione dei minuti. Finitura gunmetal, equipaggiato e resistente all'uso quotidiano con design robusto. Diametro 34 mm, spessore 7,18 mm. Riserva oltre 48 ore, a 21.600 vibrazioni all'ora (3 Hz)."
+        }
+      ]
+    },
+    "9045": {
+      "categoryLabel": "Meccanico · Uomo",
+      "shortDescription": "Con una cassa geometrica avant-garde e sei viti visibili, questo orologio fonde stile industriale e carattere ribelle. Il complesso cuore meccanico si rivela interamente tramite un quadrante scheletrato, trasformando ogni movimento del polso in arte cinetica.",
+      "highlights": [
+        "Cassa geometrica avant-garde",
+        "Sei viti · quadrante scheletrato",
+        "Stile industriale cinetico"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista laterale",
+          "body": "Con una cassa geometrica non convenzionale, la sua silhouette audace e futuristica rompe i limiti degli orologi rotondi tradizionali. Sulla lunetta metallica spazzolata, sei viti pregiate spiccano con orgoglio, aggiungendo texture industriale e un senso ribelle di individualità."
+        },
+        {
+          "title": "FONDO EXHIBITION",
+          "body": "Il fondo presenta un caseback in acciaio nero spazzolato di forma irregolare, fissato con quattro viti; la finestra centrale rivela un movimento scheletrato tutto nero con ponti a stella, ingranaggi dorati e viti blu, fondendo complessità meccanica e stile sportivo avant-garde."
+        }
+      ]
+    },
+    "9108": {
+      "categoryLabel": "Meccanico · Uomo",
+      "shortDescription": "Con il movimento scheletrato MIYOTA 82S0, questo elegante orologio nero abbina quadrante dorato a meccanica raffinata e 21 rubini — pura eleganza meccanica e lusso sobrio.",
+      "highlights": [
+        "MIYOTA 82S0 scheletrato",
+        "Cassa nera · quadrante dorato",
+        "21 rubini"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista laterale",
+          "body": "Fusione radiosa di eleganza e maestria meccanica, con quadrante open-worked e accenti dorati, questo orologio è incorniciato in un elegante telaio nero e cinturino nero lussuoso. Ingranaggi visibili e tourbillon evidenziano un'artigianalità squisita — la scelta perfetta per chi cerca un lusso senza tempo. Ordina ora e brilla con questo capolavoro!"
+        },
+        {
+          "title": "CALIBRE 82S0",
+          "body": "Il rendering cattura l'estetica meccanica del movimento MIYOTA 82S0: su sfondo bianco puro, la delicata texture spazzolata del rotore e gli smussi metallici nitidi emanano raffinatezza; 21 cuscinetti a rubino contrastano splendidamente con la ruota del bilanciere color ottone; e i tagli scheletizzati mostrano la bellezza ritmica del design open-heart."
+        }
+      ]
+    },
+    "9164": {
+      "categoryLabel": "Meccanico · Uomo",
+      "shortDescription": "Cassa e bracciale in acciaio da 40 mm con finitura gunmetal raffinata — automatico scheletrato per l'uso quotidiano. Vetro minerale, 30 m WR e riserva 48h+ pronti per ogni giorno.",
+      "highlights": [
+        "Cassa e bracciale acciaio 40 mm",
+        "Gunmetal · automatico scheletrato",
+        "30 m WR · riserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista laterale",
+          "body": "Cassa e bracciale in acciaio inox classici, audaci e robusti. Il quadrante blu profondo sunray con lunetta da immersione irradia energia dinamica, mentre la finestra open-heart alle 6 mostra la bellezza del movimento meccanico. Un orologio quotidiano versatile che unisce estetica d'impatto e texture premium."
+        },
+        {
+          "title": "CALIBRE 2800",
+          "body": "Movimento automatico scheletrato con indicazione dei minuti. Finitura gunmetal, equipaggiato e resistente all'uso quotidiano con design robusto. Diametro 34 mm, spessore 7,18 mm. Riserva oltre 48 ore, a 21.600 vibrazioni all'ora (3 Hz)."
+        }
+      ]
+    },
+    "9167": {
+      "categoryLabel": "Meccanico · Uomo",
+      "shortDescription": "Cassa e bracciale in acciaio robusto e resistente all'usura con finitura gunmetal. Il quadrante blu profondo presenta un movimento automatico scheletrato con display dei minuti. Calibro ad alte prestazioni, riserva 48h+ e 21.600 vph (3 Hz).",
+      "highlights": [
+        "Cassa e bracciale acciaio gunmetal",
+        "Quadrante scheletrato blu profondo · minuti",
+        "48h+ · 21.600 vph"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista laterale",
+          "body": "Cassa e bracciale in acciaio inox classici, audaci e robusti. Il quadrante blu profondo sunray con lunetta da immersione irradia energia dinamica, mentre la finestra open-heart alle 6 mostra la bellezza del movimento meccanico. Un orologio quotidiano versatile che unisce estetica d'impatto e texture premium."
+        },
+        {
+          "title": "CALIBRE 2802",
+          "body": "Movimento automatico scheletrato con indicazione dei minuti. Finitura gunmetal, equipaggiato e resistente all'uso quotidiano con design robusto. Diametro 34 mm, spessore 7,18 mm. Riserva oltre 48 ore, a 21.600 vibrazioni all'ora (3 Hz)."
+        }
+      ]
+    },
+    "9191": {
+      "categoryLabel": "Meccanico · Uomo",
+      "shortDescription": "Automatico scheletrato in acciaio da 44 mm con quadrante open-worked drammatico e cinturino in silicone morbido per tutto il giorno. Vetro minerale e 30 m WR per l'uso quotidiano.",
+      "highlights": [
+        "Automatico scheletrato acciaio 44 mm",
+        "Cinturino silicone · vetro minerale",
+        "30 m WR"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista laterale",
+          "body": "Questo orologio meccanico presenta una cassa tonneau altamente riconoscibile in un audace colorway sportivo nero e rosso, accentuato da viti metalliche sulla lunetta per un look robusto e maschile. Il quadrante completamente scheletizzato offre una vista sorprendente degli ingranaggi dorati e del movimento automatico in azione, amplificato da ponti strutturali rossi e un cinturino in gomma nera ad alte prestazioni che fonde estetica meccanica hardcore e stile sportivo futuristico."
+        },
+        {
+          "title": "CALIBRE 2805",
+          "body": "Movimento automatico scheletrato. Finitura gunmetal, equipaggiato e resistente all'uso quotidiano con design robusto. Diametro 31 mm, spessore 6,58 mm. Riserva oltre 48 ore, a 21.600 vibrazioni all'ora (3 Hz)."
+        }
+      ]
+    },
+    "9220": {
+      "categoryLabel": "Meccanico · Uomo",
+      "shortDescription": "Movimento automatico completamente scheletrato e fondello trasparente mostrano il ritmo definitivo dell'arte meccanica. Profilo sottile ultra-sottile in gunmetal, cinturino fluororubber ad alte prestazioni e riserva oltre 48 ore.",
+      "highlights": [
+        "Automatico completamente scheletrato",
+        "Fondello trasparente · gunmetal",
+        "Fluororubber · riserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista laterale",
+          "body": "Movimento scheletizzato, corona funzionale, fibbia ad ardiglione resistente e cinturino fluororubber ad alte prestazioni si combinano per comfort e sofisticazione meccanica."
+        },
+        {
+          "title": "FONDO TRASPARENTE",
+          "body": "Vista chiara del movimento automatico."
+        },
+        {
+          "title": "VERSATILITÀ AL POLSO",
+          "body": "Questo orologio passa senza sforzo — dalla palestra e dalle giornate d'ufficio informali alle serate fuori. La dichiarazione perfetta per tutta la giornata dell'uomo moderno che vuole prestazioni e personalità senza limiti."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Movimento automatico scheletrato con indicazione dei minuti. Finitura gunmetal, equipaggiato e resistente all'uso quotidiano con design robusto. Diametro 34 mm, spessore 7,18 mm. Riserva oltre 48 ore, a 21.600 vibrazioni all'ora (3 Hz)."
+        }
+      ]
+    },
+    "9236": {
+      "categoryLabel": "Meccanico · Uomo",
+      "shortDescription": "Automatico scheletrato in acciaio audace da 50 mm per massima presenza al polso. Meccanica open-worked, cinturino silicone confortevole, vetro minerale e 30 m WR per uso quotidiano sicuro.",
+      "highlights": [
+        "Cassa acciaio audace 50 mm",
+        "Automatico scheletrato · silicone",
+        "Presenza statement · 30 m WR"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista laterale",
+          "body": "Movimento scheletizzato, corona funzionale, fibbia ad ardiglione resistente e cinturino fluororubber ad alte prestazioni si combinano per comfort e sofisticazione meccanica."
+        },
+        {
+          "title": "CALIBRE 2802",
+          "body": "Movimento automatico scheletrato con indicazione dei minuti. Finitura gunmetal, equipaggiato e resistente all'uso quotidiano con design robusto. Diametro 34 mm, spessore 7,18 mm. Riserva oltre 48 ore, a 21.600 vibrazioni all'ora (3 Hz)."
+        }
+      ]
+    },
+    "9253": {
+      "categoryLabel": "Meccanico · Uomo",
+      "shortDescription": "Movimento automatico completamente scheletrato e fondello trasparente mostrano il ritmo definitivo dell'arte meccanica. Profilo sottile ultra-sottile in gunmetal, cinturino fluororubber ad alte prestazioni e riserva oltre 48 ore.",
+      "highlights": [
+        "Automatico completamente scheletrato",
+        "Fondello trasparente · gunmetal",
+        "Fluororubber · riserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ARTE MECCANICA SVELATA",
+          "body": "Ammirate la bellezza ipnotica del movimento MINBER — ogni ingranaggio, bilanciere e rubino danza in piena vista attraverso il quadrante open-worked."
+        },
+        {
+          "title": "FONDO EXHIBITION",
+          "body": "Fissata con quattro viti sulla cassa in acciaio spazzolato."
+        },
+        {
+          "title": "VERSATILITÀ AL POLSO",
+          "body": "Questo orologio passa senza sforzo — dalla palestra e dalle giornate d'ufficio informali alle serate fuori. La dichiarazione perfetta per tutta la giornata dell'uomo moderno che vuole prestazioni e personalità senza limiti."
+        },
+        {
+          "title": "CALIBRE 2806",
+          "body": "Movimento automatico scheletrato. Finitura gunmetal, equipaggiato e resistente all'uso quotidiano con design robusto. Diametro 31 mm, spessore 6,58 mm. Riserva oltre 48 ore, a 21.600 vibrazioni all'ora (3 Hz)."
+        }
+      ]
+    },
+    "2412m": {
+      "categoryLabel": "Quarzo · Uomo · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2412M — orologio ana-digi in acciaio con LCD doppio, sveglia, temperatura esterna e cronometro.",
-      "description": "DIGI-TEMP 2412M offre l’esperienza ana-digi completa con cassa in acciaio da 40 mm, vetro minerale e 30 m di resistenza all’acqua: stesse modalità TIME, DATE, ALM, OUT e STW con lettura chiara nell’uso quotidiano.",
       "highlights": [
         "Modalità TIME/DATE/ALM/OUT/STW",
         "Movimento giapponese, batteria ~3 anni",
         "Cassa in acciaio inossidabile"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Multifunzione",
+          "body": "DIGI-TEMP 2412M offre l'esperienza ana-digi completa: due campi digitali per ora/data e 12–24 h, più temperatura e secondi in corsa; la pila di modalità include TIME, DATE, ALM (sveglia), OUT (temperatura esterna) e STW (cronometro). Retroilluminazione e percorso modalità dedicato mantengono l'uso leggibile ogni giorno — in cassa acciaio da 40 mm con vetro minerale e 30 m di resistenza all'acqua."
+        }
       ]
     },
-    "rd-excalibur01": {
-      "name": "RD-Excalibur01 Astral impreziosito",
-      "categoryLabel": "RD-ASTRAL · Iced out",
-      "shortDescription": "RD-Excalibur01 — pezzo scheletrato “iced out” con lunetta in evidenza e finitura luxury.",
-      "description": "Pezzo RD-ASTRAL pensato per vetrina: architettura scheletrata e lunetta con presenza; i media sono serviti da R2 come DIGI-TEMP e RM-TONNEAU.",
+    "9027g": {
+      "categoryLabel": "Meccanico · Uomo",
+      "shortDescription": "Con una cassa tonneau completamente trasparente in cristallo TR90, questo orologio scheletrato offre una vista panoramica a 360° del ritmo di ingranaggi e bilanciere. Il movimento finito gunmetal è in un profilo sottile — 34 mm di diametro e soli 7,18 mm di spessore — con forte impatto visivo e portabilità ultraleggera e ipoallergenica. Oltre 48 ore di riserva a 21.600 vph (3 Hz).",
       "highlights": [
-        "Lunetta con presenza tipo iced-out",
-        "Quadrante scheletrato",
-        "Presenza marcata al polso"
+        "Cassa tonneau TR90 trasparente",
+        "Vista scheletrata 360° · movimento gunmetal",
+        "34 mm · 7,18 mm · riserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ARTE MECCANICA SVELATA",
+          "body": "Vista panoramica a 360° dell'esquisito movimento scheletrato — puro teatro meccanico. Ingranaggi, bilanciere e rotore visibili da ogni angolo attraverso la cassa tonneau perfettamente trasparente."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Movimento automatico scheletrato con indicazione dei minuti. Finitura gunmetal, equipaggiato e resistente all'uso quotidiano con design robusto. Diametro 34 mm, spessore 7,18 mm. Riserva oltre 48 ore, a 21.600 vibrazioni all'ora (3 Hz)."
+        }
       ]
     },
-    "rm-m01": {
-      "name": "RM-M01 Tonneau ultra sottile",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "RM-M01 — sportivo tonneau con cassa in acciaio ultrasottile e cinturino in nylon resistente e traspirante.",
-      "description": "RM-M01 combina silhouette tonneau ultrasottile in acciaio con cinturino in nylon robusto. Quarzo preciso ed estetica scheletrata in un profilo leggero, ideale per uso attivo o quotidiano elegante.",
+    "9220g": {
+      "categoryLabel": "Meccanico · Uomo",
+      "shortDescription": "Automatico scheletrato di precisione versatile con cassa gunmetal sottile da 34 mm e fondello exhibition. Quadrante sunray open-heart alle 6 mostra il ritmo automatico 3 Hz (48h+). Costruzione a vite e cinturino fluororubber ad alta elasticità.",
       "highlights": [
-        "Profilo tonneau ultrasottile",
-        "Cinturino sportivo in nylon",
-        "Quadrante tipo scheletrato"
+        "34 mm gunmetal · fondello exhibition",
+        "Sunray · open-heart alle 6",
+        "Automatico 3 Hz · avvitato · fluororubber"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vista laterale",
+          "body": "Il quadrante presenta una finitura sunray che riflette la luce da angolazioni diverse. Alle 6, il design open-heart rivela parte del movimento meccanico e del bilanciere in movimento."
+        },
+        {
+          "title": "FONDO EXHIBITION",
+          "body": "Rotore e componenti interni sono visibili in funzionamento, mostrando struttura e movimento meccanico. La costruzione della cassa avvitata migliora la stabilità."
+        },
+        {
+          "title": "VERSATILITÀ AL POLSO",
+          "body": "Con un comodo cinturino fluororubber, offre durata, flessibilità e indossabilità tutto il giorno. Dall'ambiente business alle uscite informali, la cassa pulita e il quadrante vivace lo rendono un compagno versatile per ogni stile."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Movimento automatico scheletrato con indicazione dei minuti. Finitura gunmetal, equipaggiato e resistente all'uso quotidiano con design robusto. Diametro 34 mm, spessore 7,18 mm. Riserva oltre 48 ore, a 21.600 vibrazioni all'ora (3 Hz)."
+        }
       ]
-    },
-    "rm-m02": {
-      "name": "RM-M02 Tonneau ultra sottile",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "RM-M02 — sportivo tonneau con cassa in acciaio ultrasottile e cinturino in nylon resistente e traspirante.",
-      "description": "RM-M02 condivide la proposta sportiva tonneau ultrasottile con cinturino in nylon e lettura scheletrata; leggero ed espressivo per la rotazione quotidiana.",
-      "highlights": [
-        "Profilo tonneau ultrasottile",
-        "Cinturino sportivo in nylon",
-        "Quadrante tipo scheletrato"
-      ]
-    },
-    "rm-m03": {
-      "name": "RM-M03 Happy Face",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Silhouette tonneau classica con “happy face” pop; cassa in acciaio robusta, quarzo preciso e cinturino in silicone vivace per streetwear.",
-      "description": "Unisce tonneau e un tocco pop-art sul quadrante; cassa in acciaio, quarzo e cinturino in silicone d’impatto — pezzo statement per look moderni.",
-      "highlights": [
-        "Personalità tonneau “happy face”",
-        "Cassa in acciaio e cinturino in silicone",
-        "Chiarezza quarzo tipo scheletrato"
-      ]
-    },
-    "rm-m04": {
-      "name": "RM-M04 Skeleton Sport",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "RM-M04 — tonneau scheletrato al quarzo con stile sport luxury e cinturino in silicone.",
-      "description": "Eredità sport luxury: quadrante tonneau aperto, battito del quarzo e cinturino in silicone strutturato per l’uso quotidiano con DNA motorsport.",
-      "highlights": [
-        "Quadrante tonneau scheletrato",
-        "Proporzione sport luxury",
-        "Comfort del cinturino in silicone"
-      ]
-    },
-    "rm-m05": {
-      "name": "RM-M05 Tonneau ultra sottile",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Quarzo sportivo con cassa tonneau bianca e cinturino in silicone rosso.",
-      "description": "Contrasto tra cassa tonneau bianca e fascia rossa satura; lettura scheletrata per mantenere la leggibilità in movimento.",
-      "highlights": [
-        "Cassa tonneau in acciaio bianco",
-        "Cinturino in silicone racing rosso",
-        "Movimento al quarzo scheletrato"
-      ]
-    },
-    "rm-m06": {
-      "name": "RM-M06 Scheletrato a righe",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Tonneau luxury con cassa in acciaio a righe rosa e bianca e quadrante scheletrato al quarzo.",
-      "description": "Storia di acciaio a righe in toni contrastanti: cassa tonneau bicolore, quadrante aperto e cinturino in silicone morbido — espressivo ma contenuto per ufficio o weekend.",
-      "highlights": [
-        "Cassa in acciaio a righe rosa e bianca",
-        "Look tonneau scheletrato",
-        "Cinturino in silicone premium"
-      ]
-    },
-    "rm-m07": {
-      "name": "RM-M07 Texture carbonio",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Cassa tonneau con texture tipo fibra di carbonio, quarzo scheletrato sportivo e cinturino in silicone.",
-      "description": "Strati di finitura e attitude aero-motor; quadrante aperto che rivela il modulo al quarzo, con cinturino in silicone affidabile.",
-      "highlights": [
-        "Cassa con texture carbonio",
-        "Look scheletrato al quarzo",
-        "Cinturino sportivo in silicone"
-      ]
-    },
-    "rm-m08": {
-      "name": "RM-M08 Quadrante farfalla",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Scheletrato con quadrante “farfalla”, costruzione sport luxury e cinturino in silicone premium.",
-      "description": "Geometria aperta ornamentale, postura tonneau e cinturino in silicone che ancorano l’orologio tra streetwear e sartoriale casual.",
-      "highlights": [
-        "Layout scheletrato farfalla",
-        "Cassa tonneau sport luxury",
-        "Cinturino in silicone premium"
-      ]
-    },
-    "rm-m09": {
-      "name": "RM-M09 Butterfly Sport",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Quadrante farfalla scheletrato con presenza tipo “boyfriend” e cinturino in silicone premium.",
-      "description": "Carisma da polso ampio, ponti scheletrati dettagliati e silicone generoso — per layering da weekend o silhouette oversize.",
-      "highlights": [
-        "Estetica farfalla scheletrata",
-        "Presenza ampia al polso",
-        "Cinturino in silicone premium"
-      ]
-    },
-    "rm-m10": {
-      "name": "RM-M10 Trasparente",
-      "categoryLabel": "RM-TONNEAU · Policarbonato",
-      "shortDescription": "Tonneau trasparente scheletrato al quarzo, cassa in policarbonato e cinturino sportivo.",
-      "description": "Telaio in policarbonato ultraleggero lascia vedere il modulo scheletrato; cinturino sportivo per indossarlo dal giorno alla sera.",
-      "highlights": [
-        "Cassa tonneau in policarbonato trasparente",
-        "Nucleo al quarzo scheletrato",
-        "Ergonomia del cinturino sportivo"
-      ]
-    },
-    "rm-mx": {
-      "name": "RM-MX Tonneau Watch",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "Solo regolazione prezzo. NON ordini finché non ci contatta. Gli ordini non autorizzati saranno annullati o non spediti.",
-      "description": "",
-      "highlights": []
-    },
-    "wholesale-price": {
-      "name": "Link di pagamento ordine all'ingrosso",
-      "categoryLabel": "INGROSSO · Link di pagamento",
-      "shortDescription": "Come completare il pagamento:\n\n• Formula prezzo:\nImporto totale = valore di tutti i prodotti + spese di spedizione (internazionale O spedizione nazionale al Suo agente in Cina, secondo accordo).\n\n• Prezzo unitario:\nQuesto link è impostato a 1 USD per unità.\n\n• Come ordinare:\nRegoli la «Quantità» affinché il totale finale corrisponda all'importo concordato (spedizione inclusa).\nEsempio: totale concordato 50 USD → regoli la quantità finché il checkout mostra 50 USD.\n\n• Nota importante:\nIgnori la ripartizione di spedizione o prodotto al checkout. Se il totale finale (importo pagato) corrisponde al prezzo concordato, il pagamento è corretto e l'ordine sarà elaborato manualmente.\n\nGrazie per la Sua fiducia!"
-    },
-    "custom-logo-fee": {
-      "name": "Link di pagamento personalizzazione brand",
-      "categoryLabel": "Link di pagamento personalizzato",
-      "shortDescription": "Come pagare la tariffa logo personalizzato:\n\n• Formula prezzo:\nImporto totale = valore di tutti i prodotti + spese di spedizione (prezzo finale tutto incluso concordato nella nostra conversazione).\n\n• Prezzo unitario:\nQuesto link è impostato a 1 USD per unità.\n\n• Come ordinare:\nRegoli la «Quantità» affinché il totale finale corrisponda alla tariffa di personalizzazione concordata.\nEsempio: tariffa logo 50 USD → regoli la quantità finché il checkout mostra 50 USD.\n\n• Nota importante:\nIgnori spese di spedizione o calcoli automatici al checkout. Se il totale finale corrisponde alla tariffa logo concordata, il pagamento è corretto e l'ordine personalizzato sarà elaborato manualmente.\n\nGrazie per la Sua fiducia!"
     }
   }
 }

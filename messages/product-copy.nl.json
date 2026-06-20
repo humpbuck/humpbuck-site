@@ -1,162 +1,306 @@
 {
   "ProductCopy": {
-    "digitemp-2301": {
-      "categoryLabel": "DIGI-TEMP · Ana-digi · Staal",
+    "2301": {
+      "categoryLabel": "Quartz · Heren · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2301 — ana-digi stalen horloge met dubbel LCD, alarm, buitentemperatuur en stopwatch.",
-      "description": "DIGI-TEMP 2301 biedt de volledige ana-digi-ervaring: dubbel digitaal display voor tijd/datum/12–24 u, temperatuur en seconden; modi TIME, DATE, ALM (alarm), OUT (buitentemperatuur) en STW (stopwatch). Achtergrondverlichting en moduscircuit zorgen voor comfortabele afleesbaarheid dagelijks, in een stalen kast van 33 mm, mineraalglas en 30 m waterdichtheid.",
       "highlights": [
         "Modi TIME/DATE/ALM/OUT/STW",
         "Japans uurwerk, batterij ~3 jaar",
         "Roestvrijstalen kast"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Multifunctioneel",
+          "body": "DIGI-TEMP 2301 levert de volledige ana-digi-ervaring: twee digitale velden voor tijd/datum en 12–24 uur, plus temperatuur en lopende seconden; de modusstack omvat TIME, DATE, ALM (wekker), OUT (buitentemperatuur) en STW (stopwatch). Achtergrondverlichting en een dedicated moduspad houden de bediening leesbaar in dagelijks gebruik — in een 33 mm stalen kast met mineraalglas en 30 m waterdichtheid."
+        }
       ]
     },
-    "digitemp-2412m": {
-      "categoryLabel": "DIGI-TEMP · Ana-digi · Staal",
+    "6004": {
+      "categoryLabel": "Mechanisch · Heren",
+      "shortDescription": "Dit horloge combineert een volledig geskeletteerd automatisch uurwerk met een innovatieve, lichte kast van 316L roestvrij staal en luchtvaartaluminium. De ademende fluororubber band en het ultradunne profiel (6,58 mm, 48u+ gangreserve) balanceren gedurfde mechanische esthetiek met licht draagcomfort de hele dag.",
+      "highlights": [
+        "Geskeletteerd automatisch uurwerk",
+        "316L staal & luchtvaartaluminium",
+        "Fluororubber band · 48u+ reserve"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ONTHULDE MECHANIEK",
+          "body": "Aanschouw de betoverende schoonheid van het MINBER-uurwerk — elk tandwiel, balans en robijn danst volledig zichtbaar door de open-worked wijzerplaat."
+        },
+        {
+          "title": "PRECISIEK GEMAAKTE KAST",
+          "body": "Gemaakt van premium 316L roestvrij staal, gecombineerd met licht luchtvaartaluminium. Uitzonderlijke sterkte-gewichtverhouding."
+        },
+        {
+          "title": "EXHIBITION CASE BACK",
+          "body": "Bevestigd met acht schroeven op de geborstelde 316L stalen kast."
+        },
+        {
+          "title": "COMFORT FLUORORUBBER BAND",
+          "body": "Met veilige pinsluiting en ademend geperforeerd design voor ultiem comfort."
+        },
+        {
+          "title": "VEELZIJDIGHEID OM JE POLS",
+          "body": "Dit horloge schakelt moeiteloos — van de sportschool en informele kantoor dagen tot avonden uit. Het perfecte all-day statement voor de moderne man die prestaties en persoonlijkheid zonder grenzen wil."
+        },
+        {
+          "title": "CALIBRE 2806",
+          "body": "Automatisch skeletuurwerk. Diameter 31 mm, dikte 6,58 mm. Gangreserve van meer dan 48 uur, bij 21.600 trillingen per uur (3 Hz)."
+        }
+      ]
+    },
+    "9027": {
+      "categoryLabel": "Mechanisch · Heren",
+      "shortDescription": "Met een volledig transparante tonneau-kast van TR90-kristal biedt dit skelet horloge een 360° panoramisch zicht op het ritme van tandwielen en balans. Het gunmetal afgewerkte uurwerk zit in een slank profiel — 34 mm diameter, slechts 7,18 mm dik — met krachtige visuele impact en ultralicht, hypoallergeen draagcomfort. Meer dan 48 uur gangreserve bij 21.600 vph (3 Hz).",
+      "highlights": [
+        "TR90 transparante tonneau-kast",
+        "360° skelet · gunmetal uurwerk",
+        "34 mm · 7,18 mm · 48u+ reserve"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ONTHULDE MECHANIEK",
+          "body": "360° volledig zicht op het verfijnde skeletuurwerk — puur mechanisch theater. Tandwielen, balans en rotor zijn vanuit elke hoek zichtbaar door de kristalheldere tonneau-kast."
+        },
+        {
+          "title": "TRANSPARANTE KAST",
+          "body": "Ultralichte TR90 kristalkast — hetzelfde hypoallergene high-tech materiaal als bij premium brillen. Bijna gewichtloos, geen huidirritatie, perfect comfort de hele dag."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Automatisch skeletuurwerk met minutenweergave. Gunmetal-afwerking, robuust en bestand tegen dagelijks gebruik. Diameter 34 mm, dikte 7,18 mm. Gangreserve van meer dan 48 uur, bij 21.600 trillingen per uur (3 Hz)."
+        }
+      ]
+    },
+    "9045": {
+      "categoryLabel": "Mechanisch · Heren",
+      "shortDescription": "Met een avant-garde geometrische kast en zes zichtbare schroeven combineert dit horloge industriële stijl met rebelse flair. Het ingewikkelde mechanische hart wordt volledig onthuld via een skelet wijzerplaat en maakt elke polsbeweging tot kinetische kunst.",
+      "highlights": [
+        "Avant-garde geometrische kast",
+        "Zes schroeven · skelet wijzerplaat",
+        "Industriële kinetische stijl"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Zijaanzicht",
+          "body": "Met een onconventionele geometrische kast doorbreekt zijn gedurfde, futuristische silhouet de grenzen van traditionele ronde horloges. Op de geborstelde metalen lunette staan zes verfijnde schroeven trots in het oog — ze voegen industriële textuur toe en tonen een rebelse individualiteit."
+        },
+        {
+          "title": "EXHIBITION CASE BACK",
+          "body": "De achterkant heeft een onregelmatige zwarte geborstelde stalen caseback, bevestigd met vier schroeven; het centrale venster onthult een volledig zwart skeletuurwerk met stervormige bruggen, gouden tandwielen en geblauwde schroeven — mechanische complexiteit met avant-gardistische sportstijl."
+        }
+      ]
+    },
+    "9108": {
+      "categoryLabel": "Mechanisch · Heren",
+      "shortDescription": "Met het geskeletteerde MIYOTA 82S0-uurwerk combineert dit slanke zwarte horloge een gouden wijzerplaat met verfijnde mechaniek en 21 robijnen — pure mechanische elegantie en ingetogen luxe.",
+      "highlights": [
+        "Geskeletteerd MIYOTA 82S0",
+        "Zwarte kast · gouden wijzerplaat",
+        "21 robijnen"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Zijaanzicht",
+          "body": "Een stralende fusie van elegantie en mechanische meesterschap, met open-worked wijzerplaat en gouden accenten, omlijst door een strak zwart frame en luxe zwarte band. Zichtbare tandwielen en tourbillon benadrukken verfijnd vakmanschap — de perfecte keuze voor wie tijdloze luxe zoekt. Bestel nu en straal met dit meesterwerk!"
+        },
+        {
+          "title": "CALIBRE 82S0",
+          "body": "De weergave vangt de mechanische esthetiek van het MIYOTA 82S0-uurwerk: tegen een puur witte achtergrond stralen de fijne geborstelde rotorstructuur en scherpe metalen facetten verfijning uit; 21 robijnlagers contrasteren prachtig met het messingkleurige balanswiel; en de kenmerkende skeletuitsparingen tonen de ritmische schoonheid van het open-heart design."
+        }
+      ]
+    },
+    "9164": {
+      "categoryLabel": "Mechanisch · Heren",
+      "shortDescription": "40 mm stalen kast en band in verfijnde gunmetal-afwerking — automatisch skelet voor dagelijks gebruik. Mineraalglas, 30 m WR en 48u+ gangreserve klaar voor daily wear.",
+      "highlights": [
+        "40 mm stalen kast & band",
+        "Gunmetal · automatisch skelet",
+        "30 m WR · 48u+ reserve"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Zijaanzicht",
+          "body": "Klassieke roestvrijstalen kast en band, gedurfd en robuust. De diepblauwe sunray-wijzerplaat met duiklunette straalt dynamische energie uit, terwijl het open-heart venster op 6 uur de schoonheid van het mechanische uurwerk perfect toont. Een veelzijdig dagelijks horloge dat opvallende esthetiek en premium textuur combineert."
+        },
+        {
+          "title": "CALIBRE 2800",
+          "body": "Automatisch skeletuurwerk met minutenweergave. Gunmetal-afwerking, robuust en bestand tegen dagelijks gebruik. Diameter 34 mm, dikte 7,18 mm. Gangreserve van meer dan 48 uur, bij 21.600 trillingen per uur (3 Hz)."
+        }
+      ]
+    },
+    "9167": {
+      "categoryLabel": "Mechanisch · Heren",
+      "shortDescription": "Robuuste, slijtvaste stalen kast en band in gunmetal-afwerking. De diepblauwe wijzerplaat toont een automatisch skelet uurwerk met minutenweergave. Hoogpresterend kaliber, 48u+ reserve en 21.600 vph (3 Hz).",
+      "highlights": [
+        "Gunmetal stalen kast & band",
+        "Diepblauw skelet · minuten",
+        "48u+ · 21.600 vph"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Zijaanzicht",
+          "body": "Klassieke roestvrijstalen kast en band, gedurfd en robuust. De diepblauwe sunray-wijzerplaat met duiklunette straalt dynamische energie uit, terwijl het open-heart venster op 6 uur de schoonheid van het mechanische uurwerk perfect toont. Een veelzijdig dagelijks horloge dat opvallende esthetiek en premium textuur combineert."
+        },
+        {
+          "title": "CALIBRE 2802",
+          "body": "Automatisch skeletuurwerk met minutenweergave. Gunmetal-afwerking, robuust en bestand tegen dagelijks gebruik. Diameter 34 mm, dikte 7,18 mm. Gangreserve van meer dan 48 uur, bij 21.600 trillingen per uur (3 Hz)."
+        }
+      ]
+    },
+    "9191": {
+      "categoryLabel": "Mechanisch · Heren",
+      "shortDescription": "44 mm stalen skelet automatisch horloge met dramatische open-worked wijzerplaat en zachte siliconen band voor comfort de hele dag. Mineraalglas en 30 m WR voor dagelijks gebruik.",
+      "highlights": [
+        "44 mm stalen skelet automatisch",
+        "Siliconen band · mineraalglas",
+        "30 m WR"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Zijaanzicht",
+          "body": "Dit mechanische horloge heeft een zeer herkenbare tonneau-kast in een gedurfd zwart-rood sportkleurenschema, geaccentueerd door kenmerkende metalen lunetteschroeven voor een robuuste, mannelijke look. De volledig geskeletteerde wijzerplaat biedt een opvallend zicht op gouden tandwielen en het automatische uurwerk in actie, versterkt door rode structurele bruggen en een hoogwaardige zwarte rubberen band die hardcore mechanische esthetiek en futuristische sportstijl combineert."
+        },
+        {
+          "title": "CALIBRE 2805",
+          "body": "Automatisch skeletuurwerk. Gunmetal-afwerking, robuust en bestand tegen dagelijks gebruik. Diameter 31 mm, dikte 6,58 mm. Gangreserve van meer dan 48 uur, bij 21.600 trillingen per uur (3 Hz)."
+        }
+      ]
+    },
+    "9220": {
+      "categoryLabel": "Mechanisch · Heren",
+      "shortDescription": "Volledig geskeletteerd automatisch uurwerk en transparante caseback tonen het ultieme ritme van mechanische kunst. Slank ultradun profiel in gunmetal, high-performance fluororubber band en meer dan 48 uur gangreserve.",
+      "highlights": [
+        "Volledig geskeletteerd automatisch",
+        "Transparante caseback · gunmetal",
+        "Fluororubber · 48u+ reserve"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Zijaanzicht",
+          "body": "Geskeletteerd uurwerk, functionele kroon, duurzame pinsluiting en een hoogwaardige fluororubber band combineren comfort en mechanische verfijning."
+        },
+        {
+          "title": "TRANSPARANTE CASE BACK",
+          "body": "Helder zicht op het automatische uurwerk."
+        },
+        {
+          "title": "VEELZIJDIGHEID OM JE POLS",
+          "body": "Dit horloge schakelt moeiteloos — van de sportschool en informele kantoor dagen tot avonden uit. Het perfecte all-day statement voor de moderne man die prestaties en persoonlijkheid zonder grenzen wil."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Automatisch skeletuurwerk met minutenweergave. Gunmetal-afwerking, robuust en bestand tegen dagelijks gebruik. Diameter 34 mm, dikte 7,18 mm. Gangreserve van meer dan 48 uur, bij 21.600 trillingen per uur (3 Hz)."
+        }
+      ]
+    },
+    "9236": {
+      "categoryLabel": "Mechanisch · Heren",
+      "shortDescription": "Gedurfd 50 mm stalen skelet automatisch horloge voor maximale polspresentie. Open-worked mechaniek, comfortabele siliconen band, mineraalglas en 30 m WR voor zelfverzekerd dagelijks gebruik.",
+      "highlights": [
+        "50 mm gedurfde stalen kast",
+        "Skelet automatisch · siliconen band",
+        "Statement presence · 30 m WR"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Zijaanzicht",
+          "body": "Geskeletteerd uurwerk, functionele kroon, duurzame pinsluiting en een hoogwaardige fluororubber band combineren comfort en mechanische verfijning."
+        },
+        {
+          "title": "CALIBRE 2802",
+          "body": "Automatisch skeletuurwerk met minutenweergave. Gunmetal-afwerking, robuust en bestand tegen dagelijks gebruik. Diameter 34 mm, dikte 7,18 mm. Gangreserve van meer dan 48 uur, bij 21.600 trillingen per uur (3 Hz)."
+        }
+      ]
+    },
+    "9253": {
+      "categoryLabel": "Mechanisch · Heren",
+      "shortDescription": "Volledig geskeletteerd automatisch uurwerk en transparante caseback tonen het ultieme ritme van mechanische kunst. Slank ultradun profiel in gunmetal, high-performance fluororubber band en meer dan 48 uur gangreserve.",
+      "highlights": [
+        "Volledig geskeletteerd automatisch",
+        "Transparante caseback · gunmetal",
+        "Fluororubber · 48u+ reserve"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ONTHULDE MECHANIEK",
+          "body": "Aanschouw de betoverende schoonheid van het MINBER-uurwerk — elk tandwiel, balans en robijn danst volledig zichtbaar door de open-worked wijzerplaat."
+        },
+        {
+          "title": "EXHIBITION CASE BACK",
+          "body": "Bevestigd met vier schroeven op de geborstelde stalen kast."
+        },
+        {
+          "title": "VEELZIJDIGHEID OM JE POLS",
+          "body": "Dit horloge schakelt moeiteloos — van de sportschool en informele kantoor dagen tot avonden uit. Het perfecte all-day statement voor de moderne man die prestaties en persoonlijkheid zonder grenzen wil."
+        },
+        {
+          "title": "CALIBRE 2806",
+          "body": "Automatisch skeletuurwerk. Gunmetal-afwerking, robuust en bestand tegen dagelijks gebruik. Diameter 31 mm, dikte 6,58 mm. Gangreserve van meer dan 48 uur, bij 21.600 trillingen per uur (3 Hz)."
+        }
+      ]
+    },
+    "2412m": {
+      "categoryLabel": "Quartz · Heren · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2412M — ana-digi stalen horloge met dubbel LCD, alarm, buitentemperatuur en stopwatch.",
-      "description": "DIGI-TEMP 2412M biedt de volledige ana-digi-ervaring met een stalen kast van 40 mm, mineraalglas en 30 m waterdichtheid: dezelfde modi TIME, DATE, ALM, OUT en STW voor heldere afleesbaarheid dagelijks.",
       "highlights": [
         "Modi TIME/DATE/ALM/OUT/STW",
         "Japans uurwerk, batterij ~3 jaar",
         "Roestvrijstalen kast"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Multifunctioneel",
+          "body": "DIGI-TEMP 2412M levert de volledige ana-digi-ervaring: twee digitale velden voor tijd/datum en 12–24 uur, plus temperatuur en lopende seconden; de modusstack omvat TIME, DATE, ALM (wekker), OUT (buitentemperatuur) en STW (stopwatch). Achtergrondverlichting en een dedicated moduspad houden de bediening leesbaar in dagelijks gebruik — in een 40 mm stalen kast met mineraalglas en 30 m waterdichtheid."
+        }
       ]
     },
-    "rd-excalibur01": {
-      "name": "RD-Excalibur01 Diamant Astral",
-      "categoryLabel": "RD-ASTRAL · Iced out",
-      "shortDescription": "RD-Excalibur01 — iced-out skeleton met markante lunette en luxury-afwerking.",
-      "description": "RD-ASTRAL-showpiece: skeletonarchitectuur en een krachtige lunette; media vanaf R2 zoals bij DIGI-TEMP en RM-TONNEAU.",
+    "9027g": {
+      "categoryLabel": "Mechanisch · Heren",
+      "shortDescription": "Met een volledig transparante tonneau-kast van TR90-kristal biedt dit skelet horloge een 360° panoramisch zicht op het ritme van tandwielen en balans. Het gunmetal afgewerkte uurwerk zit in een slank profiel — 34 mm diameter, slechts 7,18 mm dik — met krachtige visuele impact en ultralicht, hypoallergeen draagcomfort. Meer dan 48 uur gangreserve bij 21.600 vph (3 Hz).",
       "highlights": [
-        "Markante iced-out lunette",
-        "Skeletonwijzerplaat",
-        "Sterke polspresence"
+        "TR90 transparante tonneau-kast",
+        "360° skelet · gunmetal uurwerk",
+        "34 mm · 7,18 mm · 48u+ reserve"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ONTHULDE MECHANIEK",
+          "body": "360° volledig zicht op het verfijnde skeletuurwerk — puur mechanisch theater. Tandwielen, balans en rotor zijn vanuit elke hoek zichtbaar door de kristalheldere tonneau-kast."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Automatisch skeletuurwerk met minutenweergave. Gunmetal-afwerking, robuust en bestand tegen dagelijks gebruik. Diameter 34 mm, dikte 7,18 mm. Gangreserve van meer dan 48 uur, bij 21.600 trillingen per uur (3 Hz)."
+        }
       ]
     },
-    "rm-m01": {
-      "name": "RM-M01 Ultradunne tonneau",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "RM-M01 — sport tonneau met ultradunne stalen kast en ademend, slijtvast nylon band.",
-      "description": "RM-M01 combineert een ultradunne tonneau-silhouet in staal met een robuust nylon band. Nauwkeurige quartz en skeleton-esthetiek in een licht profiel, ideaal voor actief gebruik of elegante dagelijkse wear.",
+    "9220g": {
+      "categoryLabel": "Mechanisch · Heren",
+      "shortDescription": "Veelzijdig precisie skelet automatisch horloge met slank 34 mm gunmetal kast en exhibition caseback. Sunray wijzerplaat met open-heart op 6 uur toont het 3Hz automatische ritme (48u+). Schroefconstructie en hoogelastische fluororubber band.",
       "highlights": [
-        "Ultradun tonneau-profiel",
-        "Sportnylon band",
-        "Skeleton-type wijzerplaat"
+        "34 mm gunmetal · exhibition back",
+        "Sunray · open-heart op 6 uur",
+        "3Hz automatisch · schroef · fluororubber"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Zijaanzicht",
+          "body": "De wijzerplaat heeft een sunray-afwerking die licht vanuit verschillende hoeken reflecteert. Op 6 uur onthult het open-heart design een deel van het mechanische uurwerk en de bewegende balans."
+        },
+        {
+          "title": "EXHIBITION CASE BACK",
+          "body": "Rotor en interne componenten zijn zichtbaar tijdens gebruik en tonen de mechanische structuur en beweging. De geschroefde kastconstructie verhoogt de stabiliteit."
+        },
+        {
+          "title": "VEELZIJDIGHEID OM JE POLS",
+          "body": "Met een comfortabele fluororubber band biedt het duurzaamheid, flexibiliteit en draagcomfort de hele dag. Van zakelijke omgevingen tot informele uitstapjes — het strakke kastdesign en levendige wijzerplaat maken het een veelzijdige metgezel voor elke stijl."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Automatisch skeletuurwerk met minutenweergave. Gunmetal-afwerking, robuust en bestand tegen dagelijks gebruik. Diameter 34 mm, dikte 7,18 mm. Gangreserve van meer dan 48 uur, bij 21.600 trillingen per uur (3 Hz)."
+        }
       ]
-    },
-    "rm-m02": {
-      "name": "RM-M02 Ultradunne tonneau",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "RM-M02 — sport tonneau met ultradunne stalen kast en ademend, slijtvast nylon band.",
-      "description": "RM-M02 deelt het ultradunne sport-tonneau-concept met nylon band en skeleton-afleesbaarheid; licht en expressief voor dagelijkse rotatie.",
-      "highlights": [
-        "Ultradun tonneau-profiel",
-        "Sportnylon band",
-        "Skeleton-type wijzerplaat"
-      ]
-    },
-    "rm-m03": {
-      "name": "RM-M03 Happy Face",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Klassiek tonneau-silhouet met pop «happy face»; robuuste stalen kast, nauwkeurige quartz en opvallend siliconen band voor streetwear.",
-      "description": "Tonneau ontmoet pop-art op de wijzerplaat; stalen kast, quartz en een opvallend siliconen band — statement-piece voor moderne looks.",
-      "highlights": [
-        "Tonneau «happy face»-karakter",
-        "Stalen kast en siliconen band",
-        "Skeleton-type quartz-afleesbaarheid"
-      ]
-    },
-    "rm-m04": {
-      "name": "RM-M04 Skeleton Sport",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "RM-M04 — tonneau skeleton quartz, sport-luxury stijl en siliconen band.",
-      "description": "Sport-luxury erfgoed: open tonneau-wijzerplaat, quartz-slagen en gestructureerd siliconen band voor dagelijks gebruik met motorsport-DNA.",
-      "highlights": [
-        "Tonneau skeleton-wijzerplaat",
-        "Sport-luxury verhoudingen",
-        "Comfort van siliconen band"
-      ]
-    },
-    "rm-m05": {
-      "name": "RM-M05 Ultradunne tonneau",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Sport quartz met witte tonneau-kast en rood siliconen band.",
-      "description": "Contrast tussen witte stalen tonneau-kast en verzadigd rood band; skeleton-afleesbaarheid blijft leesbaar in beweging.",
-      "highlights": [
-        "Witte stalen tonneau-kast",
-        "Rood racing-siliconen band",
-        "Skeleton quartz-uurwerk"
-      ]
-    },
-    "rm-m06": {
-      "name": "RM-M06 Gestreept skeleton",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Luxury tonneau met roze-wit gestreepte stalen kast en skeleton quartz-wijzerplaat.",
-      "description": "Verhaal van contrasterende strepen in staal: bicolour tonneau-kast, open wijzerplaat en soepel siliconen band — expressief maar ingetogen voor kantoor of weekend.",
-      "highlights": [
-        "Roze-wit gestreepte stalen kast",
-        "Tonneau skeleton-look",
-        "Premium siliconen band"
-      ]
-    },
-    "rm-m07": {
-      "name": "RM-M07 Carbonlook",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Tonneau-kast met carbonlook, sport skeleton quartz en siliconen band.",
-      "description": "Gelaagde afwerking en luchtvaart-motorsporthouding; open wijzerplaat toont het quartz-module, met betrouwbaar siliconen band.",
-      "highlights": [
-        "Carbonlook kast",
-        "Skeleton quartz-look",
-        "Sport siliconen band"
-      ]
-    },
-    "rm-m08": {
-      "name": "RM-M08 Vlinderwijzerplaat",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Skeleton «vlinder»-wijzerplaat, sport-luxury constructie en premium siliconen band.",
-      "description": "Sierlijke open geometrie, tonneau-houding en siliconen band die het horloge tussen streetwear en casual tailoring verankert.",
-      "highlights": [
-        "Vlinder-skeletonindeling",
-        "Sport-luxury tonneau-kast",
-        "Premium siliconen band"
-      ]
-    },
-    "rm-m09": {
-      "name": "RM-M09 Butterfly Sport",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Skeleton vlinderwijzerplaat met «boyfriend»-presence en premium siliconen band.",
-      "description": "Ruime polscharisma, gedetailleerde skeleton-bruggen en royale siliconen — voor weekendlooks of oversized silhouetten.",
-      "highlights": [
-        "Vlinder-skeleton-esthetiek",
-        "Ruime polspresence",
-        "Premium siliconen band"
-      ]
-    },
-    "rm-m10": {
-      "name": "RM-M10 Transparant",
-      "categoryLabel": "RM-TONNEAU · Polycarbonaat",
-      "shortDescription": "Transparante tonneau skeleton quartz, polycarbonaat kast en sportband.",
-      "description": "Ultralicht polycarbonaat-chassis laat het skeleton-module zien; sportband voor dag-tot-nacht wear.",
-      "highlights": [
-        "Transparante polycarbonaat tonneau-kast",
-        "Skeleton quartz-kern",
-        "Ergonomie van sportband"
-      ]
-    },
-    "rm-mx": {
-      "name": "RM-MX Tonneau Watch",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "Alleen prijsaanpassing. Bestel NIET vóór contact met ons. Ongeautoriseerde bestellingen worden geannuleerd of niet verzonden.",
-      "description": "",
-      "highlights": []
-    },
-    "wholesale-price": {
-      "name": "Betaallink groothandelsbestelling",
-      "categoryLabel": "GROOTHANDEL · Betaallink",
-      "shortDescription": "Zo rondt u uw betaling af:\n\n• Prijsformule:\nTotaalbedrag = waarde van alle producten + verzendkosten (internationale verzending OF binnenlandse verzending naar uw agent in China, volgens afspraak).\n\n• Stukprijs:\nDeze link staat op 1 USD per eenheid.\n\n• Bestellen:\nPas de «Aantal» aan zodat het eindtotaal overeenkomt met ons afgesproken bedrag (inclusief verzending).\nVoorbeeld: afgesproken totaal 50 USD → pas het aantal aan tot de checkout 50 USD toont.\n\n• Belangrijke opmerking:\nNegeer de uitsplitsing van verzend- of productkosten bij het afrekenen. Zolang uw eindtotaal (betaald bedrag) overeenkomt met onze afgesproken prijs, is de betaling correct en wordt uw bestelling handmatig verwerkt.\n\nBedankt voor uw vertrouwen!"
-    },
-    "custom-logo-fee": {
-      "name": "Betaallink merkpersonalisatie",
-      "categoryLabel": "Aangepaste betaallink",
-      "shortDescription": "Zo betaalt u uw custom logo-kosten:\n\n• Prijsformule:\nTotaalbedrag = waarde van alle producten + verzendkosten (definitieve all-in prijs zoals afgesproken in ons gesprek).\n\n• Stukprijs:\nDeze link staat op 1 USD per eenheid.\n\n• Bestellen:\nPas de «Aantal» aan zodat het eindtotaal overeenkomt met onze afgesproken personalisatiekosten.\nVoorbeeld: logo-kosten 50 USD → pas het aantal aan tot de checkout 50 USD toont.\n\n• Belangrijke opmerking:\nNegeer verzendkosten of automatische berekeningen bij het afrekenen. Zolang uw eindtotaal overeenkomt met onze afgesproken logo-kosten, is de betaling correct en wordt uw maatwerkbestelling handmatig verwerkt.\n\nBedankt voor uw vertrouwen!"
     }
   }
 }

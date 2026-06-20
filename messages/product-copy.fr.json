@@ -1,162 +1,306 @@
 {
   "ProductCopy": {
-    "digitemp-2301": {
-      "categoryLabel": "DIGI-TEMP · Ana-digi · Acier",
+    "2301": {
+      "categoryLabel": "Quartz · Homme · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2301 — montre ana-digi en acier avec double LCD, alarme, température extérieure et chronomètre.",
-      "description": "DIGI-TEMP 2301 offre l’expérience ana-digi complète : double affichage numérique pour heure/date/12–24 h, température et secondes ; modes TIME, DATE, ALM (alarme), OUT (température extérieure) et STW (chronomètre). L’éclairage et le circuit de mode assurent une lecture confortable au quotidien, dans un boîtier acier de 33 mm, verre minéral et 30 m d’étanchéité.",
       "highlights": [
         "Modes TIME/DATE/ALM/OUT/STW",
         "Mouvement japonais, pile ~3 ans",
         "Boîtier en acier inoxydable"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Multifonction",
+          "body": "DIGI-TEMP 2301 offre l'expérience ana-digi complète : deux affichages numériques pour l'heure/la date et 12–24 h, plus la température et les secondes courantes ; la pile de modes couvre TIME, DATE, ALM (alarme), OUT (température extérieure) et STW (chronomètre). Le rétroéclairage et un parcours de modes dédié assurent une lecture claire au quotidien — dans un boîtier acier de 33 mm avec verre minéral et 30 m d'étanchéité."
+        }
       ]
     },
-    "digitemp-2412m": {
-      "categoryLabel": "DIGI-TEMP · Ana-digi · Acier",
+    "6004": {
+      "categoryLabel": "Mécanique · Homme",
+      "shortDescription": "Cette montre associe un mouvement automatique entièrement squeletté à un boîtier innovant et léger en acier 316L et aluminium aéronautique. Son bracelet en caoutchouc fluoré respirant et son profil ultra-fin (6,58 mm, réserve de marche 48h+) allient esthétique mécanique audacieuse et confort léger toute la journée.",
+      "highlights": [
+        "Mouvement automatique squelette",
+        "Boîtier 316L & aluminium aéronautique",
+        "Bracelet fluoré · réserve 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ART MÉCANIQUE RÉVÉLÉ",
+          "body": "Admirez la beauté envoûtante du mouvement MINBER — chaque rouage, balancier et rubis danse pleinement visible à travers le cadran open-worked."
+        },
+        {
+          "title": "BOÎTIER DE PRÉCISION",
+          "body": "Conçu en acier inoxydable 316L premium fusionné avec de l'aluminium aéronautique léger. Un rapport résistance/poids exceptionnel."
+        },
+        {
+          "title": "FOND EXHIBITION",
+          "body": "Fixé par huit vis sur le boîtier en acier 316L brossé."
+        },
+        {
+          "title": "BRACELET FLUORORUBBER CONFORT",
+          "body": "Avec boucle ardillon sécurisée et design perforé respirant pour un confort optimal."
+        },
+        {
+          "title": "POLYVALENCE AU POIGNET",
+          "body": "Cette montre passe sans effort — de la salle de sport et du bureau décontracté aux soirées. La déclaration idéale toute la journée pour l'homme moderne qui veut performance et personnalité sans limites."
+        },
+        {
+          "title": "CALIBRE 2806",
+          "body": "Mouvement automatique squelette. Diamètre 31 mm, épaisseur 6,58 mm. Réserve de marche supérieure à 48 heures, à 21 600 vibrations par heure (3 Hz)."
+        }
+      ]
+    },
+    "9027": {
+      "categoryLabel": "Mécanique · Homme",
+      "shortDescription": "Avec un boîtier tonneau entièrement transparent en cristal TR90, cette montre squelette offre une vue panoramique à 360° sur le rythme des engrenages et du balancier. Le mouvement fini gunmetal repose dans un profil fin — 34 mm de diamètre, 7,18 mm d'épaisseur — pour un impact visuel fort et un port ultra-léger, hypoallergénique. Plus de 48 h de réserve à 21 600 vph (3 Hz).",
+      "highlights": [
+        "Boîtier tonneau TR90 transparent",
+        "Vue squelette 360° · mouvement gunmetal",
+        "34 mm · 7,18 mm · réserve 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ART MÉCANIQUE RÉVÉLÉ",
+          "body": "Vue panoramique à 360° de l'exquis mouvement squelette — pur théâtre mécanique. Rouages, balancier et rotor visibles sous tous les angles à travers le boîtier tonneau parfaitement transparent."
+        },
+        {
+          "title": "BOÎTIER TRANSPARENT",
+          "body": "Boîtier cristal TR90 ultra-léger — le même matériau hypoallergénique haute technologie que les lunettes premium. Quasi sans poids, zéro irritation cutanée, confort parfait toute la journée."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Mouvement automatique squelette avec affichage des minutes. Finition gunmetal, équipé et résistant à l'usure quotidienne avec un design robuste. Diamètre 34 mm, épaisseur 7,18 mm. Réserve supérieure à 48 heures, à 21 600 vibrations par heure (3 Hz)."
+        }
+      ]
+    },
+    "9045": {
+      "categoryLabel": "Mécanique · Homme",
+      "shortDescription": "Avec un boîtier géométrique avant-gardiste et six vis visibles, cette montre fusionne style industriel et caractère rebelle. Son cœur mécanique complexe se révèle entièrement via un cadran squelette, transformant chaque mouvement du poignet en art cinétique.",
+      "highlights": [
+        "Boîtier géométrique avant-gardiste",
+        "Six vis · cadran squelette",
+        "Style industriel cinétique"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vue latérale",
+          "body": "Avec un boîtier géométrique non conventionnel, sa silhouette audacieuse et futuriste brise les contraintes des montres rondes traditionnelles. Sur la lunette métallique brossée, six vis exquises se détachent fièrement, ajoutant une texture industrielle et une individualité rebelle."
+        },
+        {
+          "title": "FOND EXHIBITION",
+          "body": "Le fond présente un fond de boîte en acier noir brossé de forme irrégulière, fixé par quatre vis ; la fenêtre centrale révèle un mouvement squelette entièrement noir avec ponts en étoile, rouages dorés et vis bleuies, mêlant complexité mécanique et style sportif avant-gardiste."
+        }
+      ]
+    },
+    "9108": {
+      "categoryLabel": "Mécanique · Homme",
+      "shortDescription": "Équipée du mouvement MIYOTA 82S0 squeletté, cette montre noire élégante associe un cadran doré à une mécanique raffinée et 21 rubis — pure élégance mécanique et luxe discret.",
+      "highlights": [
+        "MIYOTA 82S0 squeletté",
+        "Boîtier noir · cadran doré",
+        "21 rubis"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vue latérale",
+          "body": "Fusion radieuse d'élégance et de maîtrise mécanique, avec cadran open-worked et accents dorés, cette montre est encadrée d'un boîtier noir élégant et d'un bracelet noir luxueux. Les rouages visibles et le tourbillon soulignent un savoir-faire exquis — le choix parfait pour une luxe intemporelle. Commandez maintenant et brillez avec ce chef-d'œuvre !"
+        },
+        {
+          "title": "CALIBRE 82S0",
+          "body": "Le rendu capture l'esthétique mécanique du mouvement MIYOTA 82S0 : sur fond blanc pur, la texture brossée du rotor et les chanfreins métalliques nets dégagent une finesse raffinée ; 21 rubis contrastent magnifiquement avec la roue de balancier dorée ; et les découpes squelettisées révèlent la beauté rythmique du design open-heart."
+        }
+      ]
+    },
+    "9164": {
+      "categoryLabel": "Mécanique · Homme",
+      "shortDescription": "Boîtier et bracelet acier 40 mm en finition gunmetal raffinée — automatique squelette pour le quotidien. Verre minéral, 30 m d'étanchéité et réserve 48h+ pour une rotation daily driver.",
+      "highlights": [
+        "Boîtier & bracelet acier 40 mm",
+        "Gunmetal · automatique squelette",
+        "30 m · réserve 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vue latérale",
+          "body": "Boîtier et bracelet en acier inoxydable classiques, audacieux et robustes. Le cadran bleu profond sunray avec lunette de plongée irradie une énergie dynamique, tandis que la fenêtre open-heart à 6 h met en valeur la beauté du mouvement mécanique. Une montre quotidienne polyvalente alliant esthétique frappante et texture premium."
+        },
+        {
+          "title": "CALIBRE 2800",
+          "body": "Mouvement automatique squelette avec affichage des minutes. Finition gunmetal, équipé et résistant à l'usure quotidienne avec un design robuste. Diamètre 34 mm, épaisseur 7,18 mm. Réserve supérieure à 48 heures, à 21 600 vibrations par heure (3 Hz)."
+        }
+      ]
+    },
+    "9167": {
+      "categoryLabel": "Mécanique · Homme",
+      "shortDescription": "Boîtier et bracelet acier robustes et résistants à l'usure en finition gunmetal. Le cadran bleu profond met en scène un mouvement automatique squelette avec affichage des minutes. Calibre haute performance, réserve 48h+ et 21 600 vph (3 Hz).",
+      "highlights": [
+        "Boîtier & bracelet acier gunmetal",
+        "Cadran squelette bleu profond · minutes",
+        "48h+ · 21 600 vph"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vue latérale",
+          "body": "Boîtier et bracelet en acier inoxydable classiques, audacieux et robustes. Le cadran bleu profond sunray avec lunette de plongée irradie une énergie dynamique, tandis que la fenêtre open-heart à 6 h met en valeur la beauté du mouvement mécanique. Une montre quotidienne polyvalente alliant esthétique frappante et texture premium."
+        },
+        {
+          "title": "CALIBRE 2802",
+          "body": "Mouvement automatique squelette avec affichage des minutes. Finition gunmetal, équipé et résistant à l'usure quotidienne avec un design robuste. Diamètre 34 mm, épaisseur 7,18 mm. Réserve supérieure à 48 heures, à 21 600 vibrations par heure (3 Hz)."
+        }
+      ]
+    },
+    "9191": {
+      "categoryLabel": "Mécanique · Homme",
+      "shortDescription": "Automatique squelette acier 44 mm avec cadran open-worked saisissant et bracelet silicone souple pour un confort toute la journée. Verre minéral et 30 m d'étanchéité pour le quotidien.",
+      "highlights": [
+        "Automatique squelette acier 44 mm",
+        "Bracelet silicone · verre minéral",
+        "30 m d'étanchéité"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vue latérale",
+          "body": "Cette montre mécanique arbore un boîtier tonneau très reconnaissable dans un coloris sportif audacieux noir et rouge, accentué par des vis métalliques sur la lunette pour un look robuste et masculin. Le cadran entièrement squelettisé offre une vue saisissante des rouages dorés et du mouvement automatique en action, amplifié par des ponts structurels rouges et un bracelet caoutchouc noir haute performance qui fusionne esthétique mécanique hardcore et style sportif futuriste."
+        },
+        {
+          "title": "CALIBRE 2805",
+          "body": "Mouvement automatique squelette. Finition gunmetal, équipé et résistant à l'usure quotidienne avec un design robuste. Diamètre 31 mm, épaisseur 6,58 mm. Réserve supérieure à 48 heures, à 21 600 vibrations par heure (3 Hz)."
+        }
+      ]
+    },
+    "9220": {
+      "categoryLabel": "Mécanique · Homme",
+      "shortDescription": "Mouvement automatique entièrement squeletté et fond transparent révèlent le rythme ultime de l'art mécanique. Profil fin ultra-mince en gunmetal, bracelet caoutchouc fluoré haute performance et réserve de marche supérieure à 48 h.",
+      "highlights": [
+        "Automatique entièrement squelette",
+        "Fond transparent · gunmetal",
+        "Bracelet fluoré · réserve 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vue latérale",
+          "body": "Mouvement squelettisé, couronne fonctionnelle, boucle ardillon durable et bracelet fluororubber haute performance se combinent pour le confort et la sophistication mécanique."
+        },
+        {
+          "title": "FOND TRANSPARENT",
+          "body": "Vue dégagée du mouvement automatique."
+        },
+        {
+          "title": "POLYVALENCE AU POIGNET",
+          "body": "Cette montre passe sans effort — de la salle de sport et du bureau décontracté aux soirées. La déclaration idéale toute la journée pour l'homme moderne qui veut performance et personnalité sans limites."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Mouvement automatique squelette avec affichage des minutes. Finition gunmetal, équipé et résistant à l'usure quotidienne avec un design robuste. Diamètre 34 mm, épaisseur 7,18 mm. Réserve supérieure à 48 heures, à 21 600 vibrations par heure (3 Hz)."
+        }
+      ]
+    },
+    "9236": {
+      "categoryLabel": "Mécanique · Homme",
+      "shortDescription": "Automatique squelette acier audacieux de 50 mm pour une présence maximale au poignet. Mécanique open-worked, bracelet silicone confortable, verre minéral et 30 m WR pour un port quotidien assuré.",
+      "highlights": [
+        "Boîtier acier audacieux 50 mm",
+        "Automatique squelette · silicone",
+        "Présence statement · 30 m WR"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vue latérale",
+          "body": "Mouvement squelettisé, couronne fonctionnelle, boucle ardillon durable et bracelet fluororubber haute performance se combinent pour le confort et la sophistication mécanique."
+        },
+        {
+          "title": "CALIBRE 2802",
+          "body": "Mouvement automatique squelette avec affichage des minutes. Finition gunmetal, équipé et résistant à l'usure quotidienne avec un design robuste. Diamètre 34 mm, épaisseur 7,18 mm. Réserve supérieure à 48 heures, à 21 600 vibrations par heure (3 Hz)."
+        }
+      ]
+    },
+    "9253": {
+      "categoryLabel": "Mécanique · Homme",
+      "shortDescription": "Mouvement automatique entièrement squeletté et fond transparent révèlent le rythme ultime de l'art mécanique. Profil fin ultra-mince en gunmetal, bracelet caoutchouc fluoré haute performance et réserve de marche supérieure à 48 h.",
+      "highlights": [
+        "Automatique entièrement squelette",
+        "Fond transparent · gunmetal",
+        "Bracelet fluoré · réserve 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ART MÉCANIQUE RÉVÉLÉ",
+          "body": "Admirez la beauté envoûtante du mouvement MINBER — chaque rouage, balancier et rubis danse pleinement visible à travers le cadran open-worked."
+        },
+        {
+          "title": "FOND EXHIBITION",
+          "body": "Fixé par quatre vis sur le boîtier en acier brossé."
+        },
+        {
+          "title": "POLYVALENCE AU POIGNET",
+          "body": "Cette montre passe sans effort — de la salle de sport et du bureau décontracté aux soirées. La déclaration idéale toute la journée pour l'homme moderne qui veut performance et personnalité sans limites."
+        },
+        {
+          "title": "CALIBRE 2806",
+          "body": "Mouvement automatique squelette. Finition gunmetal, équipé et résistant à l'usure quotidienne avec un design robuste. Diamètre 31 mm, épaisseur 6,58 mm. Réserve supérieure à 48 heures, à 21 600 vibrations par heure (3 Hz)."
+        }
+      ]
+    },
+    "2412m": {
+      "categoryLabel": "Quartz · Homme · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2412M — montre ana-digi en acier avec double LCD, alarme, température extérieure et chronomètre.",
-      "description": "DIGI-TEMP 2412M offre l’expérience ana-digi complète avec boîtier acier de 40 mm, verre minéral et 30 m d’étanchéité : mêmes modes TIME, DATE, ALM, OUT et STW pour une lecture claire au quotidien.",
       "highlights": [
         "Modes TIME/DATE/ALM/OUT/STW",
         "Mouvement japonais, pile ~3 ans",
         "Boîtier en acier inoxydable"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Multifonction",
+          "body": "DIGI-TEMP 2412M offre l'expérience ana-digi complète : deux affichages numériques pour l'heure/la date et 12–24 h, plus la température et les secondes courantes ; la pile de modes couvre TIME, DATE, ALM (alarme), OUT (température extérieure) et STW (chronomètre). Le rétroéclairage et un parcours de modes dédié assurent une lecture claire au quotidien — dans un boîtier acier de 40 mm avec verre minéral et 30 m d'étanchéité."
+        }
       ]
     },
-    "rd-excalibur01": {
-      "name": "RD-Excalibur01 Astral serti diamants",
-      "categoryLabel": "RD-ASTRAL · Iced out",
-      "shortDescription": "RD-Excalibur01 — pièce squelette « iced out » avec lunette marquante et finition luxury.",
-      "description": "Pièce RD-ASTRAL pensée pour la vitrine : architecture squelette et lunette affirmée ; médias servis depuis R2 comme DIGI-TEMP et RM-TONNEAU.",
+    "9027g": {
+      "categoryLabel": "Mécanique · Homme",
+      "shortDescription": "Avec un boîtier tonneau entièrement transparent en cristal TR90, cette montre squelette offre une vue panoramique à 360° sur le rythme des engrenages et du balancier. Le mouvement fini gunmetal repose dans un profil fin — 34 mm de diamètre, 7,18 mm d'épaisseur — pour un impact visuel fort et un port ultra-léger, hypoallergénique. Plus de 48 h de réserve à 21 600 vph (3 Hz).",
       "highlights": [
-        "Lunette type iced-out marquante",
-        "Cadran squelette",
-        "Présence affirmée au poignet"
+        "Boîtier tonneau TR90 transparent",
+        "Vue squelette 360° · mouvement gunmetal",
+        "34 mm · 7,18 mm · réserve 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ART MÉCANIQUE RÉVÉLÉ",
+          "body": "Vue panoramique à 360° de l'exquis mouvement squelette — pur théâtre mécanique. Rouages, balancier et rotor visibles sous tous les angles à travers le boîtier tonneau parfaitement transparent."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Mouvement automatique squelette avec affichage des minutes. Finition gunmetal, équipé et résistant à l'usure quotidienne avec un design robuste. Diamètre 34 mm, épaisseur 7,18 mm. Réserve supérieure à 48 heures, à 21 600 vibrations par heure (3 Hz)."
+        }
       ]
     },
-    "rm-m01": {
-      "name": "RM-M01 Tonneau ultra fin",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "RM-M01 — sport tonneau avec boîtier acier ultrafin et bracelet nylon résistant et respirant.",
-      "description": "RM-M01 associe une silhouette tonneau ultrafine en acier à un bracelet nylon robuste. Quartz précis et esthétique squelette dans un profil léger, idéal pour un usage actif ou un quotidien élégant.",
+    "9220g": {
+      "categoryLabel": "Mécanique · Homme",
+      "shortDescription": "Automatique squelette de précision polyvalente — boîtier gunmetal fin de 34 mm et fond exhibition. Cadran sunray open-heart à 6 h révèle le rythme automatique 3 Hz (48h+). Couronne vissée et bracelet caoutchouc fluoré haute élasticité.",
       "highlights": [
-        "Profil tonneau ultrafin",
-        "Bracelet sport en nylon",
-        "Cadran type squelette"
+        "34 mm gunmetal · fond exhibition",
+        "Sunray · open-heart à 6 h",
+        "Automatique 3 Hz · vissé · fluoré"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Vue latérale",
+          "body": "Le cadran présente une finition sunray qui reflète la lumière sous différents angles. À 6 h, le design open-heart révèle une partie du mouvement mécanique et du balancier en mouvement."
+        },
+        {
+          "title": "FOND EXHIBITION",
+          "body": "Le rotor et les composants internes sont visibles en fonctionnement, montrant la structure et le mouvement mécanique. La construction du boîtier vissé renforce la stabilité."
+        },
+        {
+          "title": "POLYVALENCE AU POIGNET",
+          "body": "Avec un bracelet fluororubber confortable, il offre durabilité, flexibilité et portabilité toute la journée. Du bureau aux sorties décontractées, son boîtier épuré et son cadran vibrant en font un compagnon polyvalent pour tout style."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Mouvement automatique squelette avec affichage des minutes. Finition gunmetal, équipé et résistant à l'usure quotidienne avec un design robuste. Diamètre 34 mm, épaisseur 7,18 mm. Réserve supérieure à 48 heures, à 21 600 vibrations par heure (3 Hz)."
+        }
       ]
-    },
-    "rm-m02": {
-      "name": "RM-M02 Tonneau ultra fin",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "RM-M02 — sport tonneau avec boîtier acier ultrafin et bracelet nylon résistant et respirant.",
-      "description": "RM-M02 partage la proposition sport tonneau ultrafine avec bracelet nylon et lecture squelette ; léger et expressif pour la rotation quotidienne.",
-      "highlights": [
-        "Profil tonneau ultrafin",
-        "Bracelet sport en nylon",
-        "Cadran type squelette"
-      ]
-    },
-    "rm-m03": {
-      "name": "RM-M03 Happy Face",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Silhouette tonneau classique avec « happy face » pop ; boîtier acier robuste, quartz précis et bracelet silicone vibrant pour le streetwear.",
-      "description": "Mélange tonneau et touche pop-art au cadran ; boîtier acier, quartz et bracelet silicone marquant — pièce déclaration pour les looks modernes.",
-      "highlights": [
-        "Personnalité tonneau « happy face »",
-        "Boîtier acier et bracelet silicone",
-        "Lisibilité quartz type squelette"
-      ]
-    },
-    "rm-m04": {
-      "name": "RM-M04 Skeleton Sport",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "RM-M04 — tonneau squelette quartz, style sport luxury et bracelet silicone.",
-      "description": "Héritage sport luxury : cadran tonneau ouvert, battement quartz et bracelet silicone structuré pour un usage quotidien avec ADN motorsport.",
-      "highlights": [
-        "Cadran tonneau squelette",
-        "Proportions sport luxury",
-        "Confort du bracelet silicone"
-      ]
-    },
-    "rm-m05": {
-      "name": "RM-M05 Tonneau ultra fin",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Quartz sport avec boîtier tonneau blanc et bracelet silicone rouge.",
-      "description": "Contraste entre boîtier tonneau blanc et bracelet rouge saturé ; lecture squelette pour rester lisible en mouvement.",
-      "highlights": [
-        "Boîtier tonneau acier blanc",
-        "Bracelet silicone racing rouge",
-        "Mouvement quartz squelette"
-      ]
-    },
-    "rm-m06": {
-      "name": "RM-M06 Squelette rayé",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Tonneau luxury avec boîtier acier rayé rose et blanc et cadran squelette quartz.",
-      "description": "Histoire d’acier rayé en tons contrastés : boîtier tonneau bicolore, cadran ouvert et bracelet silicone souple — expressif, mais contenu pour le bureau ou le week-end.",
-      "highlights": [
-        "Boîtier acier rayé rose et blanc",
-        "Look tonneau squelette",
-        "Bracelet silicone premium"
-      ]
-    },
-    "rm-m07": {
-      "name": "RM-M07 Texture carbone",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Boîtier tonneau texture type fibre de carbone, quartz squelette sport et bracelet silicone.",
-      "description": "Couches de finition et attitude aéro-moteur ; cadran ouvert qui révèle le module quartz, avec bracelet silicone fiable.",
-      "highlights": [
-        "Boîtier texture carbone",
-        "Look squelette quartz",
-        "Bracelet sport silicone"
-      ]
-    },
-    "rm-m08": {
-      "name": "RM-M08 Cadran papillon",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Squelette cadran « papillon », construction sport luxury et bracelet silicone premium.",
-      "description": "Géométrie ouverte ornementale, posture tonneau et bracelet silicone qui ancre la montre entre streetwear et tailoring décontracté.",
-      "highlights": [
-        "Disposition squelette papillon",
-        "Boîtier tonneau sport luxury",
-        "Bracelet silicone premium"
-      ]
-    },
-    "rm-m09": {
-      "name": "RM-M09 Butterfly Sport",
-      "categoryLabel": "RM-TONNEAU · Silicone",
-      "shortDescription": "Cadran papillon squelette avec présence type « boyfriend » et bracelet silicone premium.",
-      "description": "Charisme de poignet ample, ponts squelette détaillés et silicone généreux — pour les looks week-end ou les silhouettes oversize.",
-      "highlights": [
-        "Esthétique papillon squelette",
-        "Présence ample au poignet",
-        "Bracelet silicone premium"
-      ]
-    },
-    "rm-m10": {
-      "name": "RM-M10 Transparent",
-      "categoryLabel": "RM-TONNEAU · Polycarbonate",
-      "shortDescription": "Tonneau transparent squelette quartz, boîtier polycarbonate et bracelet sport.",
-      "description": "Châssis polycarbonate ultraléger laisse voir le module squelette ; bracelet sport pour le porter du jour à la nuit.",
-      "highlights": [
-        "Boîtier tonneau polycarbonate transparent",
-        "Cœur quartz squelette",
-        "Ergonomie du bracelet sport"
-      ]
-    },
-    "rm-mx": {
-      "name": "RM-MX Tonneau Watch",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "Ajustement de prix uniquement. NE commandez PAS avant de nous contacter. Les commandes non autorisées seront annulées ou non expédiées.",
-      "description": "",
-      "highlights": []
-    },
-    "wholesale-price": {
-      "name": "Lien de paiement commande en gros",
-      "categoryLabel": "GROS · Lien de paiement",
-      "shortDescription": "Comment finaliser votre paiement :\n\n• Formule de prix :\nMontant total = valeur de tous les produits + frais d'expédition (international OU livraison nationale vers votre agent en Chine, selon accord).\n\n• Prix unitaire :\nCe lien est fixé à 1 USD par unité.\n\n• Comment commander :\nAjustez la « Quantité » pour que le total final corresponde au montant convenu (expédition incluse).\nExemple : total convenu 50 USD → ajustez la quantité jusqu'à ce que le checkout affiche 50 USD.\n\n• Note importante :\nIgnorez la ventilation des frais d'expédition ou produit au checkout. Tant que votre total final (montant payé) correspond au prix convenu, le paiement est correct et votre commande sera traitée manuellement.\n\nMerci pour votre confiance !"
-    },
-    "custom-logo-fee": {
-      "name": "Lien de paiement personnalisation de marque",
-      "categoryLabel": "Lien de paiement sur mesure",
-      "shortDescription": "Comment payer vos frais de logo personnalisé :\n\n• Formule de prix :\nMontant total = valeur de tous les produits + frais d'expédition (prix final tout compris convenu lors de notre échange).\n\n• Prix unitaire :\nCe lien est fixé à 1 USD par unité.\n\n• Comment commander :\nAjustez la « Quantité » pour que le total final corresponde aux frais de personnalisation convenus.\nExemple : frais de logo 50 USD → ajustez la quantité jusqu'à ce que le checkout affiche 50 USD.\n\n• Note importante :\nIgnorez les frais d'expédition ou calculs automatiques au checkout. Tant que votre total final correspond aux frais de logo convenus, le paiement est correct et votre commande personnalisée sera traitée manuellement.\n\nMerci pour votre confiance !"
     }
   }
 }

@@ -1,162 +1,306 @@
 {
   "ProductCopy": {
-    "digitemp-2301": {
-      "categoryLabel": "DIGI-TEMP · Ana-Digi · Stahl",
+    "2301": {
+      "categoryLabel": "Quarz · Herren · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2301 — Stahl-Ana-Digi-Uhr mit Dual-LCD, Wecker, Außentemperatur und Stoppuhr.",
-      "description": "DIGI-TEMP 2301 bietet das volle Ana-Digi-Erlebnis: duales Digitaldisplay für Zeit/Datum/12–24 h, Temperatur und Sekunden; Modi TIME, DATE, ALM (Wecker), OUT (Außentemperatur) und STW (Stoppuhr). Hintergrundbeleuchtung und Modusring sorgen für komfortable Ablesbarkeit im Alltag — 33 mm Stahlgehäuse, Mineralglas, 30 m Wasserdichtigkeit.",
       "highlights": [
         "Modi TIME/DATE/ALM/OUT/STW",
         "Japanisches Werk, Batterie ~3 Jahre",
         "Edelstahlgehäuse"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Multifunktional",
+          "body": "DIGI-TEMP 2301 bietet das volle Ana-Digi-Erlebnis: zwei digitale Felder für Zeit/Datum und 12–24h plus Temperatur und laufende Sekunden; der Modus-Stack umfasst TIME, DATE, ALM (Wecker), OUT (Außentemperatur) und STW (Stoppuhr). Hintergrundbeleuchtung und ein dedizierter Modusweg sorgen im Alltag für gute Ablesbarkeit — in einem 33 mm Edelstahlgehäuse mit Mineralglas und 30 m Wasserdichtigkeit."
+        }
       ]
     },
-    "digitemp-2412m": {
-      "categoryLabel": "DIGI-TEMP · Ana-Digi · Stahl",
+    "6004": {
+      "categoryLabel": "Mechanisch · Herren",
+      "shortDescription": "Diese Uhr vereint ein vollständig skelettiertes Automatikwerk mit einem innovativen, leichten Gehäuse aus 316L-Edelstahl und Flugzeugaluminium. Das atmungsaktive Fluorkautschukband und das ultradünne Profil (6,58 mm, 48h+ Gangreserve) verbinden markante Mechanik-Ästhetik mit leichtem Tragekomfort für jeden Anlass.",
+      "highlights": [
+        "Skelett-Automatikwerk",
+        "316L-Stahl & Flugzeugaluminium",
+        "Fluorkautschuk · 48h+ Gangreserve"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ENTHÜLLTE MECHANIK",
+          "body": "Erleben Sie die faszinierende Schönheit des MINBER-Werks — jedes Zahnrad, jede Unruh und jedes Rubinlager tanzt vollständig sichtbar durch das open-worked Zifferblatt."
+        },
+        {
+          "title": "PRÄZISIONSGEHÄUSE",
+          "body": "Gefertigt aus premium 316L-Edelstahl, verschmolzen mit leichtem Flugzeugaluminium. Außergewöhnliches Verhältnis von Festigkeit zu Gewicht."
+        },
+        {
+          "title": "EXHIBITION CASE BACK",
+          "body": "Mit acht Schrauben am gebürsteten 316L-Edelstahlgehäuse gesichert."
+        },
+        {
+          "title": "KOMFORT-FLUORORUBBER-BAND",
+          "body": "Mit sicherer Stiftschließe und atmungsaktivem perforiertem Design für maximalen Komfort."
+        },
+        {
+          "title": "VIELSEITIG AM HANDGELENK",
+          "body": "Diese Uhr wechselt mühelos — vom Fitnessstudio und lockeren Bürotagen bis zu Abenden aus. Das perfekte Alltagsstatement für den modernen Mann, der Leistung und Persönlichkeit ohne Kompromisse will."
+        },
+        {
+          "title": "CALIBRE 2806",
+          "body": "Automatisches Skelettwerk. Durchmesser 31 mm, Höhe 6,58 mm. Gangreserve über 48 Stunden bei 21.600 Schwingungen pro Stunde (3 Hz)."
+        }
+      ]
+    },
+    "9027": {
+      "categoryLabel": "Mechanisch · Herren",
+      "shortDescription": "Mit einem einzigartigen, vollständig transparenten Tonneau-Gehäuse aus TR90-Kristall bietet diese Skelettuhr einen 360°-Panoramablick auf das rhythmische Spiel von Zahnrädern und Unruh. Das gunmetal-finierte Werk sitzt in einem schlanken Profil — 34 mm Durchmesser, nur 7,18 mm hoch — und liefert starke Optik bei ultraleichtem, hypoallergenem Tragegefühl. Über 48 Stunden Gangreserve bei 21.600 vph (3 Hz).",
+      "highlights": [
+        "TR90 transparentes Tonneau-Gehäuse",
+        "360°-Skelettansicht · gunmetal Werk",
+        "34 mm · 7,18 mm dünn · 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ENTHÜLLTE MECHANIK",
+          "body": "360°-Vollansicht des exquisiten Skelettwerks — reines mechanisches Theater. Zahnräder, Unruh und Rotor sind aus jedem Winkel durch das kristallklare Tonneau-Gehäuse sichtbar."
+        },
+        {
+          "title": "TRANSPARENTES GEHÄUSE",
+          "body": "Ultraleichtes TR90-Kristallgehäuse — dasselbe hypoallergene Hightech-Material wie bei Premium-Brillen. Fast gewichtslos, keine Hautreizung, perfekter Komfort den ganzen Tag."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Automatisches Skelettwerk mit Minutenanzeige. Gunmetal-Finish, robust und alltagstauglich. Durchmesser 34 mm, Höhe 7,18 mm. Gangreserve über 48 Stunden bei 21.600 Schwingungen pro Stunde (3 Hz)."
+        }
+      ]
+    },
+    "9045": {
+      "categoryLabel": "Mechanisch · Herren",
+      "shortDescription": "Mit avantgardistischem geometrischem Gehäuse und sechs sichtbaren Schrauben verbindet diese Uhr Industrial Style mit rebellischem Charakter. Das komplexe mechanische Herzwerk wird durch ein Skelettzifferblatt vollständig enthüllt und macht jede Handbewegung zu kinetischer Kunst.",
+      "highlights": [
+        "Avantgardistisches Gehäuse",
+        "Sechs Schrauben · Skelettzifferblatt",
+        "Industrial Style mit kinetischer Kante"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Seitenansicht",
+          "body": "Mit einem unkonventionellen geometrischen Gehäuse bricht seine kühne, futuristische Silhouette aus den Grenzen klassischer Runduhren aus. Auf der gebürsteten Metalllünette stehen sechs exquisite Schrauben stolz im Vordergrund — sie verleihen industrielle Textur und zeigen rebellischen Individualismus."
+        },
+        {
+          "title": "EXHIBITION CASE BACK",
+          "body": "Die Rückseite zeigt einen unregelmäßigen schwarzen gebürsteten Stahldeckel, mit vier Schrauben gesichert; das zentrale Fenster enthüllt ein komplett schwarzes Skelettwerk mit sternförmigen Brücken, goldenen Zahnrädern und blauierten Schrauben — mechanische Komplexität trifft avantgardistischen Sportstil."
+        }
+      ]
+    },
+    "9108": {
+      "categoryLabel": "Mechanisch · Herren",
+      "shortDescription": "Mit dem skelettierten MIYOTA 82S0-Werk verbindet diese schlanke schwarze Uhr ein goldenes Zifferblatt mit filigraner Mechanik und 21 Rubinlagern — pure mechanische Eleganz und dezenter Luxus.",
+      "highlights": [
+        "Skelettiertes MIYOTA 82S0",
+        "Schwarzes Gehäuse · goldenes Zifferblatt",
+        "21 Rubinlager"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Seitenansicht",
+          "body": "Eine strahlende Fusion aus Eleganz und mechanischer Meisterschaft: open-worked Zifferblatt mit goldenen Akzenten, schlanker schwarzer Rahmen und luxuriöses schwarzes Band. Sichtbare Zahnräder und Tourbillon unterstreichen exquisite Handwerkskunst — die perfekte Wahl für zeitlose Luxusliebhaber. Jetzt bestellen und mit diesem Meisterwerk glänzen!"
+        },
+        {
+          "title": "CALIBRE 82S0",
+          "body": "Die Darstellung fängt die mechanische Ästhetik des MIYOTA 82S0 ein: vor reinweißem Hintergrund zeigen die feine Rotor-Struktur und scharfe Metallfasen raffinierte Textur; 21 Rubinlager kontrastieren wunderschön mit dem messingfarbenen Unruhrad; und die charakteristischen Skelett-Ausschnitte zeigen die rhythmische Schönheit des Open-Heart-Designs."
+        }
+      ]
+    },
+    "9164": {
+      "categoryLabel": "Mechanisch · Herren",
+      "shortDescription": "40 mm Edelstahlgehäuse und passendes Armband in raffiniertem Gunmetal-Finish — automatisches Skelettwerk für den Alltag. Mineralglas, 30 m Wasserdichtigkeit und 48h+ Gangreserve für täglichen Einsatz.",
+      "highlights": [
+        "40 mm Stahlgehäuse & Armband",
+        "Gunmetal · Skelett-Automatik",
+        "30 m WR · 48h+ Gangreserve"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Seitenansicht",
+          "body": "Klassisches Edelstahlgehäuse und -armband, kühn und robust. Das tiefblaue Sunray-Zifferblatt mit Taucherlünette strahlt dynamische Energie aus, während das Open-Heart-Fenster bei 6 Uhr die Schönheit des mechanischen Werks perfekt zeigt. Eine vielseitige Alltagsuhr mit markanter Ästhetik und Premium-Textur."
+        },
+        {
+          "title": "CALIBRE 2800",
+          "body": "Automatisches Skelettwerk mit Minutenanzeige. Gunmetal-Finish, robust und alltagstauglich. Durchmesser 34 mm, Höhe 7,18 mm. Gangreserve über 48 Stunden bei 21.600 Schwingungen pro Stunde (3 Hz)."
+        }
+      ]
+    },
+    "9167": {
+      "categoryLabel": "Mechanisch · Herren",
+      "shortDescription": "Robustes, verschleißfestes Edelstahlgehäuse und -armband in Gunmetal-Finish. Das tiefblaue Zifferblatt präsentiert ein automatisches Skelettwerk mit Minutenanzeige. Kaliber mit 48h+ Gangreserve und 21.600 vph (3 Hz) — kraftvolle Mechanik und vielseitiger Stil.",
+      "highlights": [
+        "Gunmetal-Stahlgehäuse & Armband",
+        "Tiefblaues Skelettzifferblatt · Minuten",
+        "48h+ · 21.600 vph"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Seitenansicht",
+          "body": "Klassisches Edelstahlgehäuse und -armband, kühn und robust. Das tiefblaue Sunray-Zifferblatt mit Taucherlünette strahlt dynamische Energie aus, während das Open-Heart-Fenster bei 6 Uhr die Schönheit des mechanischen Werks perfekt zeigt. Eine vielseitige Alltagsuhr mit markanter Ästhetik und Premium-Textur."
+        },
+        {
+          "title": "CALIBRE 2802",
+          "body": "Automatisches Skelettwerk mit Minutenanzeige. Gunmetal-Finish, robust und alltagstauglich. Durchmesser 34 mm, Höhe 7,18 mm. Gangreserve über 48 Stunden bei 21.600 Schwingungen pro Stunde (3 Hz)."
+        }
+      ]
+    },
+    "9191": {
+      "categoryLabel": "Mechanisch · Herren",
+      "shortDescription": "44 mm Edelstahl-Skelett-Automatik mit dramatisch open-worked Zifferblatt und weichem Silikonband für ganztägigen Komfort. Mineralglas schützt das Werk, 30 m Wasserdichtigkeit für den Alltag.",
+      "highlights": [
+        "44 mm Stahl-Skelett-Automatik",
+        "Silikonband · Mineralglas",
+        "30 m Wasserdichtigkeit"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Seitenansicht",
+          "body": "Diese mechanische Uhr hat ein hoch erkennbares Tonneau-Gehäuse in kräftigem Schwarz-Rot-Sportlook, akzentuiert durch markante Metallschrauben an der Lünette für einen robusten, maskulinen Auftritt. Das vollständig skelettierte Zifferblatt zeigt goldene Zahnräder und das Automatikwerk in Aktion, verstärkt durch rote Strukturbrücken und ein leistungsstarkes schwarzes Kautschukband — harte Mechanik trifft futuristischen Sportstil."
+        },
+        {
+          "title": "CALIBRE 2805",
+          "body": "Automatisches Skelettwerk. Gunmetal-Finish, robust und alltagstauglich. Durchmesser 31 mm, Höhe 6,58 mm. Gangreserve über 48 Stunden bei 21.600 Schwingungen pro Stunde (3 Hz)."
+        }
+      ]
+    },
+    "9220": {
+      "categoryLabel": "Mechanisch · Herren",
+      "shortDescription": "Mit vollständig skelettiertem Automatikwerk und transparentem Gehäuseboden zeigt diese Uhr den ultimativen Rhythmus mechanischer Kunst. Schlankes, ultradünnes Profil in robustem Gunmetal-Finish, Fluorkautschukband für Tragekomfort und über 48 Stunden Gangreserve.",
+      "highlights": [
+        "Voll skelettierte Automatik",
+        "Transparenter Boden · Gunmetal",
+        "Fluorkautschuk · 48h+ Gangreserve"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Seitenansicht",
+          "body": "Skelettiertes Werk, funktionale Krone, robuste Stiftschließe und ein leistungsstarkes Fluororubber-Band vereinen Komfort und mechanische Raffinesse."
+        },
+        {
+          "title": "TRANSPARENTES CASE BACK",
+          "body": "Klarer Blick auf das Automatikwerk."
+        },
+        {
+          "title": "VIELSEITIG AM HANDGELENK",
+          "body": "Diese Uhr wechselt mühelos — vom Fitnessstudio und lockeren Bürotagen bis zu Abenden aus. Das perfekte Alltagsstatement für den modernen Mann, der Leistung und Persönlichkeit ohne Kompromisse will."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Automatisches Skelettwerk mit Minutenanzeige. Gunmetal-Finish, robust und alltagstauglich. Durchmesser 34 mm, Höhe 7,18 mm. Gangreserve über 48 Stunden bei 21.600 Schwingungen pro Stunde (3 Hz)."
+        }
+      ]
+    },
+    "9236": {
+      "categoryLabel": "Mechanisch · Herren",
+      "shortDescription": "Kühne 50-mm-Edelstahl-Skelett-Automatik für maximale Präsenz am Handgelenk. Open-worked Mechanik trifft komfortables Silikonband, Mineralglas und 30 m Wasserdichtigkeit für selbstbewussten Alltagseinsatz.",
+      "highlights": [
+        "50 mm markantes Stahlgehäuse",
+        "Skelett-Automatik · Silikonband",
+        "Statement-Präsenz · 30 m WR"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Seitenansicht",
+          "body": "Skelettiertes Werk, funktionale Krone, robuste Stiftschließe und ein leistungsstarkes Fluororubber-Band vereinen Komfort und mechanische Raffinesse."
+        },
+        {
+          "title": "CALIBRE 2802",
+          "body": "Automatisches Skelettwerk mit Minutenanzeige. Gunmetal-Finish, robust und alltagstauglich. Durchmesser 34 mm, Höhe 7,18 mm. Gangreserve über 48 Stunden bei 21.600 Schwingungen pro Stunde (3 Hz)."
+        }
+      ]
+    },
+    "9253": {
+      "categoryLabel": "Mechanisch · Herren",
+      "shortDescription": "Mit vollständig skelettiertem Automatikwerk und transparentem Gehäuseboden zeigt diese Uhr den ultimativen Rhythmus mechanischer Kunst. Schlankes, ultradünnes Profil in robustem Gunmetal-Finish, Fluorkautschukband für Tragekomfort und über 48 Stunden Gangreserve.",
+      "highlights": [
+        "Voll skelettierte Automatik",
+        "Transparenter Boden · Gunmetal",
+        "Fluorkautschuk · 48h+ Gangreserve"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ENTHÜLLTE MECHANIK",
+          "body": "Erleben Sie die faszinierende Schönheit des MINBER-Werks — jedes Zahnrad, jede Unruh und jedes Rubinlager tanzt vollständig sichtbar durch das open-worked Zifferblatt."
+        },
+        {
+          "title": "EXHIBITION CASE BACK",
+          "body": "Mit vier Schrauben am gebürsteten Edelstahlgehäuse gesichert."
+        },
+        {
+          "title": "VIELSEITIG AM HANDGELENK",
+          "body": "Diese Uhr wechselt mühelos — vom Fitnessstudio und lockeren Bürotagen bis zu Abenden aus. Das perfekte Alltagsstatement für den modernen Mann, der Leistung und Persönlichkeit ohne Kompromisse will."
+        },
+        {
+          "title": "CALIBRE 2806",
+          "body": "Automatisches Skelettwerk. Gunmetal-Finish, robust und alltagstauglich. Durchmesser 31 mm, Höhe 6,58 mm. Gangreserve über 48 Stunden bei 21.600 Schwingungen pro Stunde (3 Hz)."
+        }
+      ]
+    },
+    "2412m": {
+      "categoryLabel": "Quarz · Herren · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2412M — Stahl-Ana-Digi-Uhr mit Dual-LCD, Wecker, Außentemperatur und Stoppuhr.",
-      "description": "DIGI-TEMP 2412M bietet das volle Ana-Digi-Erlebnis mit 40 mm Stahlgehäuse, Mineralglas und 30 m Wasserdichtigkeit: dieselben Modi TIME, DATE, ALM, OUT und STW für klare Ablesbarkeit im Alltag.",
       "highlights": [
         "Modi TIME/DATE/ALM/OUT/STW",
         "Japanisches Werk, Batterie ~3 Jahre",
         "Edelstahlgehäuse"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Multifunktional",
+          "body": "DIGI-TEMP 2412M bietet das volle Ana-Digi-Erlebnis: zwei digitale Felder für Zeit/Datum und 12–24h plus Temperatur und laufende Sekunden; der Modus-Stack umfasst TIME, DATE, ALM (Wecker), OUT (Außentemperatur) und STW (Stoppuhr). Hintergrundbeleuchtung und ein dedizierter Modusweg sorgen im Alltag für gute Ablesbarkeit — in einem 40 mm Edelstahlgehäuse mit Mineralglas und 30 m Wasserdichtigkeit."
+        }
       ]
     },
-    "rd-excalibur01": {
-      "name": "RD-Excalibur01 Diamantbesetzter Astral",
-      "categoryLabel": "RD-ASTRAL · Iced out",
-      "shortDescription": "RD-Excalibur01 — Iced-out-Skeleton mit markanter Lünette und Luxury-Finish.",
-      "description": "RD-ASTRAL-Showpiece: Skelett-Architektur und kraftvolle Lünette; Medien von R2 wie bei DIGI-TEMP und RM-TONNEAU.",
+    "9027g": {
+      "categoryLabel": "Mechanisch · Herren",
+      "shortDescription": "Mit einem einzigartigen, vollständig transparenten Tonneau-Gehäuse aus TR90-Kristall bietet diese Skelettuhr einen 360°-Panoramablick auf das rhythmische Spiel von Zahnrädern und Unruh. Das gunmetal-finierte Werk sitzt in einem schlanken Profil — 34 mm Durchmesser, nur 7,18 mm hoch — und liefert starke Optik bei ultraleichtem, hypoallergenem Tragegefühl. Über 48 Stunden Gangreserve bei 21.600 vph (3 Hz).",
       "highlights": [
-        "Markante Iced-out-Lünette",
-        "Skeleton-Zifferblatt",
-        "Starke Präsenz am Handgelenk"
+        "TR90 transparentes Tonneau-Gehäuse",
+        "360°-Skelettansicht · gunmetal Werk",
+        "34 mm · 7,18 mm dünn · 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "ENTHÜLLTE MECHANIK",
+          "body": "360°-Vollansicht des exquisiten Skelettwerks — reines mechanisches Theater. Zahnräder, Unruh und Rotor sind aus jedem Winkel durch das kristallklare Tonneau-Gehäuse sichtbar."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Automatisches Skelettwerk mit Minutenanzeige. Gunmetal-Finish, robust und alltagstauglich. Durchmesser 34 mm, Höhe 7,18 mm. Gangreserve über 48 Stunden bei 21.600 Schwingungen pro Stunde (3 Hz)."
+        }
       ]
     },
-    "rm-m01": {
-      "name": "RM-M01 Ultradünne Tonneau",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "RM-M01 — Sport-Tonneau mit ultradünnem Stahlgehäuse und atmungsaktivem, strapazierfähigem Nylonband.",
-      "description": "RM-M01 verbindet eine ultradünne Tonneau-Silhouette in Stahl mit einem robusten Nylonband. Präzisionsquarz und Skeleton-Ästhetik in leichtem Profil — ideal für aktiven Einsatz oder eleganten Alltag.",
+    "9220g": {
+      "categoryLabel": "Mechanisch · Herren",
+      "shortDescription": "Vielseitige Präzisions-Skelett-Automatik mit schlankem 34-mm-Gunmetal-Gehäuse und Exhibition-Boden. Sunray-Zifferblatt mit Open-Heart bei 6 Uhr zeigt den 3-Hz-Automatikrhythmus (48h+). Schraubkrone, hochelastisches Fluorkautschukband — Mechanik-Ästhetik trifft Alltagstauglichkeit.",
       "highlights": [
-        "Ultradünnes Tonneau-Profil",
-        "Sport-Nylonband",
-        "Skeleton-Zifferblatt-Look"
+        "34 mm Gunmetal · Exhibition-Boden",
+        "Sunray · Open-Heart bei 6 Uhr",
+        "3Hz Automatik · verschraubt · Fluorkautschuk"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Seitenansicht",
+          "body": "Das Zifferblatt hat ein Sunray-Finish, das Licht aus verschiedenen Winkeln reflektiert. Bei 6 Uhr enthüllt das Open-Heart-Design einen Teil des mechanischen Werks und der Unruh in Bewegung."
+        },
+        {
+          "title": "EXHIBITION CASE BACK",
+          "body": "Rotor und innere Komponenten sind im Betrieb sichtbar und zeigen Struktur und Bewegung. Die verschraubte Gehäusekonstruktion erhöht die Stabilität."
+        },
+        {
+          "title": "VIELSEITIG AM HANDGELENK",
+          "body": "Mit einem bequemen Fluororubber-Band bietet sie Haltbarkeit, Flexibilität und ganztägigen Tragekomfort. Vom Business bis zu lockeren Ausflügen — klares Gehäuse und lebendiges Zifferblatt machen sie zum vielseitigen Begleiter."
+        },
+        {
+          "title": "CALIBRE 2808",
+          "body": "Automatisches Skelettwerk mit Minutenanzeige. Gunmetal-Finish, robust und alltagstauglich. Durchmesser 34 mm, Höhe 7,18 mm. Gangreserve über 48 Stunden bei 21.600 Schwingungen pro Stunde (3 Hz)."
+        }
       ]
-    },
-    "rm-m02": {
-      "name": "RM-M02 Ultradünne Tonneau",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "RM-M02 — Sport-Tonneau mit ultradünnem Stahlgehäuse und atmungsaktivem, strapazierfähigem Nylonband.",
-      "description": "RM-M02 teilt das ultradünne Sport-Tonneau-Konzept mit Nylonband und Skeleton-Ablesbarkeit — leicht und expressiv für den täglichen Wechsel.",
-      "highlights": [
-        "Ultradünnes Tonneau-Profil",
-        "Sport-Nylonband",
-        "Skeleton-Zifferblatt-Look"
-      ]
-    },
-    "rm-m03": {
-      "name": "RM-M03 Happy Face",
-      "categoryLabel": "RM-TONNEAU · Silikon",
-      "shortDescription": "Klassische Tonneau-Silhouette mit Pop-«Happy Face»; robustes Stahlgehäuse, präziser Quarz und auffälliges Silikonband für Streetwear.",
-      "description": "Tonneau trifft Pop-Art auf dem Zifferblatt; Stahlgehäuse, Quarz und markantes Silikonband — Statement-Piece für moderne Looks.",
-      "highlights": [
-        "Tonneau-«Happy-Face»-Charakter",
-        "Stahlgehäuse und Silikonband",
-        "Skeleton-Quarz-Ablesbarkeit"
-      ]
-    },
-    "rm-m04": {
-      "name": "RM-M04 Skeleton Sport",
-      "categoryLabel": "RM-TONNEAU · Silikon",
-      "shortDescription": "RM-M04 — Tonneau-Skeleton-Quarz, Sport-Luxury-Stil und Silikonband.",
-      "description": "Sport-Luxury-Erbe: offenes Tonneau-Zifferblatt, Quarzwerk und strukturiertes Silikonband für den Alltag mit Motorsport-DNA.",
-      "highlights": [
-        "Tonneau-Skeleton-Zifferblatt",
-        "Sport-Luxury-Proportionen",
-        "Komfort des Silikonbands"
-      ]
-    },
-    "rm-m05": {
-      "name": "RM-M05 Ultradünne Tonneau",
-      "categoryLabel": "RM-TONNEAU · Silikon",
-      "shortDescription": "Sport-Quarz mit weißem Tonneau-Gehäuse und rotem Silikonband.",
-      "description": "Kontrast zwischen weißem Stahl-Tonneau-Gehäuse und gesättigt rotem Band; Skeleton-Ablesbarkeit bleibt in Bewegung lesbar.",
-      "highlights": [
-        "Weißes Stahl-Tonneau-Gehäuse",
-        "Rotes Racing-Silikonband",
-        "Skeleton-Quarzwerk"
-      ]
-    },
-    "rm-m06": {
-      "name": "RM-M06 Gestreiftes Skeleton",
-      "categoryLabel": "RM-TONNEAU · Silikon",
-      "shortDescription": "Luxury-Tonneau mit rosa-weiß gestreiftem Stahlgehäuse und Skeleton-Quarz-Zifferblatt.",
-      "description": "Geschichte kontrastierender Streifen in Stahl: Bicolor-Tonneau-Gehäuse, offenes Zifferblatt und weiches Silikonband — expressiv, aber zurückhaltend für Büro oder Wochenende.",
-      "highlights": [
-        "Rosa-weiß gestreiftes Stahlgehäuse",
-        "Tonneau-Skeleton-Look",
-        "Premium-Silikonband"
-      ]
-    },
-    "rm-m07": {
-      "name": "RM-M07 Carbon-Look",
-      "categoryLabel": "RM-TONNEAU · Silikon",
-      "shortDescription": "Tonneau-Gehäuse im Carbon-Look, Sport-Skeleton-Quarz und Silikonband.",
-      "description": "Geschichtete Oberfläche und Luftfahrt-Motorsport-Haltung; offenes Zifferblatt zeigt das Quarzmodul mit zuverlässigem Silikonband.",
-      "highlights": [
-        "Gehäuse im Carbon-Look",
-        "Skeleton-Quarz-Look",
-        "Sport-Silikonband"
-      ]
-    },
-    "rm-m08": {
-      "name": "RM-M08 Schmetterlingszifferblatt",
-      "categoryLabel": "RM-TONNEAU · Silikon",
-      "shortDescription": "Skeleton-«Schmetterling»-Zifferblatt, Sport-Luxury-Konstruktion und Premium-Silikonband.",
-      "description": "Elegante offene Geometrie, Tonneau-Haltung und Silikonband — verankert die Uhr zwischen Streetwear und casual Tailoring.",
-      "highlights": [
-        "Schmetterling-Skeleton-Anordnung",
-        "Sport-Luxury-Tonneau-Gehäuse",
-        "Premium-Silikonband"
-      ]
-    },
-    "rm-m09": {
-      "name": "RM-M09 Butterfly Sport",
-      "categoryLabel": "RM-TONNEAU · Silikon",
-      "shortDescription": "Skeleton-Schmetterlingszifferblatt mit «Boyfriend»-Präsenz und Premium-Silikonband.",
-      "description": "Großzügige Handgelenk-Präsenz, detaillierte Skeleton-Brücken und royales Silikon — für Weekend-Looks oder Oversized-Silhouetten.",
-      "highlights": [
-        "Schmetterling-Skeleton-Ästhetik",
-        "Großzügige Handgelenk-Präsenz",
-        "Premium-Silikonband"
-      ]
-    },
-    "rm-m10": {
-      "name": "RM-M10 Transparent",
-      "categoryLabel": "RM-TONNEAU · Polycarbonat",
-      "shortDescription": "Transparente Tonneau-Skeleton-Quarz, Polycarbonat-Gehäuse und Sportband.",
-      "description": "Ultraleichtes Polycarbonat-Chassis lässt das Skeleton-Modul sichtbar; Sportband für Tag und Nacht.",
-      "highlights": [
-        "Transparentes Polycarbonat-Tonneau-Gehäuse",
-        "Skeleton-Quarz-Kern",
-        "Ergonomie des Sportbands"
-      ]
-    },
-    "rm-mx": {
-      "name": "RM-MX Tonneau Watch",
-      "categoryLabel": "RM-TONNEAU · Nylon",
-      "shortDescription": "Nur Preisanpassung. Bitte NICHT bestellen, bevor Sie uns kontaktiert haben. Unbefugte Bestellungen werden storniert oder nicht versendet.",
-      "description": "",
-      "highlights": []
-    },
-    "wholesale-price": {
-      "name": "Großhandels-Sammelbestellung Zahlungslink",
-      "categoryLabel": "GROSSHANDEL · Zahlungslink",
-      "shortDescription": "So schließen Sie Ihre Zahlung ab:\n\n• Preisformel:\nGesamtbetrag = Warenwert aller Produkte + Versandkosten (internationaler Versand ODER Inlandsversand zu Ihrem China-Agenten, gemäß Vereinbarung).\n\n• Stückpreis:\nDieser Link ist auf 1 USD pro Einheit festgelegt.\n\n• Bestellung:\nBitte passen Sie die „Menge“ so an, dass der Endpreis unserem vereinbarten Gesamtbetrag (inkl. Versand) entspricht.\nBeispiel: Vereinbarter Gesamtbetrag 50 USD → Menge wählen, bis die Kasse 50 USD anzeigt.\n\n• Wichtiger Hinweis:\nBitte ignorieren Sie die Aufschlüsselung von Versand- oder Produktgebühren an der Kasse. Solange Ihr Gesamtbetrag (final bezahlt) unserem vereinbarten Preis entspricht, ist die Zahlung korrekt und Ihre Bestellung wird manuell bearbeitet.\n\nVielen Dank für Ihr Vertrauen!"
-    },
-    "custom-logo-fee": {
-      "name": "Markenanpassung Zahlungslink",
-      "categoryLabel": "Individueller Zahlungslink",
-      "shortDescription": "So zahlen Sie Ihre Custom-Logo-Gebühr:\n\n• Preisformel:\nGesamtbetrag = Warenwert aller Produkte + Versandkosten (Endpreis inklusive, wie in unserem Gespräch vereinbart).\n\n• Stückpreis:\nDieser Link ist auf 1 USD pro Einheit festgelegt.\n\n• Bestellung:\nBitte passen Sie die „Menge“ so an, dass der Endpreis unserer vereinbarten Anpassungsgebühr entspricht.\nBeispiel: Logo-Gebühr 50 USD → Menge wählen, bis die Kasse 50 USD anzeigt.\n\n• Wichtiger Hinweis:\nBitte ignorieren Sie Versandgebühren oder automatische Berechnungen an der Kasse. Solange Ihr Gesamtbetrag (final bezahlt) unserer vereinbarten Logo-Gebühr entspricht, ist die Zahlung korrekt und Ihre Sonderbestellung wird manuell bearbeitet.\n\nVielen Dank für Ihr Vertrauen!"
     }
   }
 }
