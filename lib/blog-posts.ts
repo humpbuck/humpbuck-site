@@ -88,9 +88,13 @@ function rowFromDb(row: DbBlogPostRow): BlogPostRow {
 }
 
 async function queryBlogPosts(sql: string): Promise<BlogPostRow[]> {
-  await ensureBlogPostTable();
-  const rows = (await prisma.$queryRawUnsafe(sql)) as DbBlogPostRow[];
-  return rows.map(rowFromDb);
+  try {
+    const rows = (await prisma.$queryRawUnsafe(sql)) as DbBlogPostRow[];
+    return rows.map(rowFromDb);
+  } catch (e) {
+    console.error("[blog-posts] Failed to load blog posts; returning empty list.", e);
+    return [];
+  }
 }
 
 async function queryBlogPostById(id: string): Promise<BlogPostRow | null> {
@@ -151,15 +155,19 @@ export async function getPublishedBlogPostBySlug(
 ): Promise<BlogPostRow | null> {
   const cleaned = cleanBlogPostSlug(slug);
   if (!cleaned) return null;
-  await ensureBlogPostTable();
-  const rows = (await prisma.$queryRaw`
-    SELECT "id", "slug", "title", "excerpt", "body", "coverImageUrl", "status",
-           "sortOrder", "publishedAt", "createdAt", "updatedAt"
-    FROM "BlogPost"
-    WHERE "slug" = ${cleaned} AND "status" = 'published'
-    LIMIT 1
-  `) as DbBlogPostRow[];
-  return rows[0] ? rowFromDb(rows[0]) : null;
+  try {
+    const rows = (await prisma.$queryRaw`
+      SELECT "id", "slug", "title", "excerpt", "body", "coverImageUrl", "status",
+             "sortOrder", "publishedAt", "createdAt", "updatedAt"
+      FROM "BlogPost"
+      WHERE "slug" = ${cleaned} AND "status" = 'published'
+      LIMIT 1
+    `) as DbBlogPostRow[];
+    return rows[0] ? rowFromDb(rows[0]) : null;
+  } catch (e) {
+    console.error("[blog-posts] Failed to load published blog post:", cleaned, e);
+    return null;
+  }
 }
 
 export async function listBlogPostsAdmin(): Promise<BlogPostRow[]> {

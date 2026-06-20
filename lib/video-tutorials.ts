@@ -67,15 +67,10 @@ export async function listVideoTutorials({
 }: {
   includeFallback?: boolean;
 } = {}): Promise<VideoTutorial[]> {
-  await ensureVideoTutorialTable();
   const merged = await getMergedCatalogProducts();
   const bySlug = new Map(merged.map((p) => [p.slug, p]));
 
-  const rows = (await prisma.$queryRawUnsafe(`
-    SELECT "productSlug", "title", "url", "youtubeUrl", "aspectRatio", "sortOrder", "updatedAt"
-    FROM "VideoTutorial"
-    ORDER BY "updatedAt" DESC
-  `)) as Array<{
+  let rows: Array<{
     productSlug: string;
     title: string;
     url: string;
@@ -83,7 +78,21 @@ export async function listVideoTutorials({
     aspectRatio: string;
     sortOrder: number | null;
     updatedAt: Date;
-  }>;
+  }> = [];
+
+  try {
+    await ensureVideoTutorialTable();
+    rows = (await prisma.$queryRawUnsafe(`
+      SELECT "productSlug", "title", "url", "youtubeUrl", "aspectRatio", "sortOrder", "updatedAt"
+      FROM "VideoTutorial"
+      ORDER BY "updatedAt" DESC
+    `)) as typeof rows;
+  } catch (e) {
+    console.error(
+      "[video-tutorials] Failed to load VideoTutorial rows; using catalog fallbacks only.",
+      e,
+    );
+  }
   const rowBySlug = new Map<string, (typeof rows)[number]>();
   for (const row of rows) {
     const key = normalizeProductSlug(row.productSlug);

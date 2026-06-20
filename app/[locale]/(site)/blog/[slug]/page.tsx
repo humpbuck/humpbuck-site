@@ -17,10 +17,15 @@ import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 export const revalidate = 300;
 
 export async function generateStaticParams() {
-  const posts = await listPublishedBlogPosts();
-  return routing.locales.flatMap((locale) =>
-    posts.map((post) => ({ locale, slug: post.slug })),
-  );
+  try {
+    const posts = await listPublishedBlogPosts();
+    return routing.locales.flatMap((locale) =>
+      posts.map((post) => ({ locale, slug: post.slug })),
+    );
+  } catch (e) {
+    console.error("[blog] generateStaticParams: DB unavailable during build.", e);
+    return [];
+  }
 }
 
 export async function generateMetadata({
