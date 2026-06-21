@@ -1,23 +1,34 @@
 "use client";
 
-import { CenterModal } from "@/components/ui/center-modal";
-import { compressReviewImageToWebP } from "@/lib/review-image-compress-webp";
 import { Link, useRouter } from "@/i18n/navigation";
+import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { CenterModal } from "@/components/ui/center-modal";
+import { ReviewEmojiPicker } from "@/components/reviews/review-emoji-picker";
+import { compressReviewImageToWebP } from "@/lib/review-image-compress-webp";
 
 type Props = {
-  orderId: string;
   productSlug: string;
   productName: string;
+  cancelHref: string;
+  orderId?: string;
+  /** On product page: hide cancel, stay on page after thanks. */
+  embedded?: boolean;
+  /** Called after a successful submit (embedded / modal flows). */
+  onSuccess?: () => void;
 };
 
 export function ProductReviewForm({
-  orderId,
   productSlug,
   productName,
+  cancelHref,
+  orderId,
+  embedded = false,
+  onSuccess,
 }: Props) {
   const router = useRouter();
+  const { data: session } = useSession();
   const t = useTranslations("AccountReview");
   const [rating, setRating] = useState(5);
   const [body, setBody] = useState("");
@@ -26,8 +37,19 @@ export function ProductReviewForm({
   const [err, setErr] = useState<string | null>(null);
   const [thanksOpen, setThanksOpen] = useState(false);
 
+  function appendEmoji(emoji: string) {
+    setBody((prev) => {
+      const next = `${prev}${emoji}`;
+      return next.length > 2000 ? prev : next;
+    });
+  }
+
   function closeThanksAndGoToProduct() {
     setThanksOpen(false);
+    if (embedded) {
+      onSuccess?.();
+      return;
+    }
     router.push(`/product/${productSlug}`);
     router.refresh();
   }
@@ -35,6 +57,14 @@ export function ProductReviewForm({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
+
+    if (!session?.user?.id) {
+      router.push(
+        `/auth/login?callbackUrl=${encodeURIComponent(`/product/${productSlug}#buyer-reviews`)}`,
+      );
+      return;
+    }
+
     setBusy(true);
     try {
       const imageUrls: string[] = [];
@@ -46,7 +76,7 @@ export function ProductReviewForm({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            orderId,
+            ...(orderId ? { orderId } : {}),
             productSlug,
             contentType: "image/webp",
             byteSize: blob.size,
@@ -93,7 +123,7 @@ export function ProductReviewForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          orderId,
+          ...(orderId ? { orderId } : {}),
           productSlug,
           rating,
           body: body.trim(),
@@ -104,7 +134,6 @@ export function ProductReviewForm({
         const j = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(j.error || t("errGeneric"));
       }
-      router.refresh();
       setThanksOpen(true);
     } catch (e) {
       setErr(e instanceof Error ? e.message : t("errGeneric"));
@@ -116,101 +145,99 @@ export function ProductReviewForm({
   return (
     <>
       {thanksOpen ? (
-        <CenterModal title={t("thanksTitle")} onClose={closeThanksAndGoToProduct}>
-          <p className="text-sm leading-relaxed text-ink/90">
-            {t("thanksBody")}
-          </p>
+        <CenterModal
+          title={t("thanksTitle")}
+          onClose={closeThanksAndGoToProduct}
+          layer="elevated"
+        >
+          <p className="text-sm leading-relaxed text-ink/90">{t("thanksPendingBody")}</p>
         </CenterModal>
       ) : null}
 
-    <form onSubmit={submit} className="space-y-6">
-      <p className="text-sm text-muted">
-        {t("photosHint")}
-      </p>
-
-      <div>
-        <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          {t("ratingLabel")}
-        </div>
-        <div className="mt-2 flex flex-wrap gap-1">
+      <form onSubmit={submit} className="space-y-6">
+        <div
+          className="flex gap-0.5"
+          role="radiogroup"
+          aria-label={t("ratingLabel")}
+        >
           {[1, 2, 3, 4, 5].map((n) => (
             <button
               key={n}
               type="button"
+              role="radio"
+              aria-checked={rating === n}
               onClick={() => setRating(n)}
-              className={`rounded-lg px-3 py-2 text-sm font-semibold tabular-nums transition ${
-                rating >= n
-                  ? "bg-ink text-paper"
-                  : "border border-line bg-paper text-muted"
+              className={`px-0.5 text-lg leading-none transition ${
+                rating >= n ? "text-amber-500" : "text-ink/20"
               }`}
               aria-label={t("starsAria", { n })}
             >
-              {n}★
+              ★
             </button>
           ))}
         </div>
-      </div>
 
-      <div>
-        <label
-          htmlFor="review-body"
-          className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted"
-        >
-          {t("bodyLabel", { productName })}
-        </label>
-        <textarea
-          id="review-body"
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          rows={6}
-          maxLength={2000}
-          required
-          className="mt-2 w-full rounded-xl border border-line bg-paper px-4 py-3 text-sm text-ink outline-none focus:ring-2 focus:ring-ink/15"
-          placeholder={t("bodyPlaceholder")}
-        />
-        <p className="mt-1 text-xs text-muted tabular-nums">{body.length}/2000</p>
-      </div>
-
-      <div>
-        <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
-          {t("photosOptional")}
+        <div>
+          <div className="relative">
+            <textarea
+              id="review-body"
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              rows={6}
+              maxLength={2000}
+              required
+              className="block w-full resize-y rounded-xl border border-line bg-paper px-4 pb-10 pt-3 pr-11 text-sm text-ink outline-none focus:ring-2 focus:ring-ink/15"
+              placeholder={t("bodyPlaceholder")}
+            />
+            <ReviewEmojiPicker
+              variant="popover"
+              label={t("emojiLabel")}
+              onPick={appendEmoji}
+            />
+          </div>
+          <p className="mt-1 text-xs text-muted tabular-nums">{body.length}/2000</p>
         </div>
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          className="mt-2 block w-full text-sm text-muted file:mr-3 file:rounded-lg file:border file:border-line file:bg-paper file:px-3 file:py-2 file:text-sm file:font-medium file:text-ink"
-          onChange={(e) =>
-            setFiles(Array.from(e.target.files ?? []).slice(0, 4))
-          }
-        />
-        {files.length > 0 ? (
-          <p className="mt-1 text-xs text-muted">{t("filesSelected", { count: files.length })}</p>
+
+        <div>
+          <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+            {t("photosOptional")}
+          </div>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            className="mt-2 block w-full text-sm text-muted file:mr-3 file:rounded-lg file:border file:border-line file:bg-paper file:px-3 file:py-2 file:text-sm file:font-medium file:text-ink"
+            onChange={(e) => setFiles(Array.from(e.target.files ?? []).slice(0, 4))}
+          />
+          {files.length > 0 ? (
+            <p className="mt-1 text-xs text-muted">{t("filesSelected", { count: files.length })}</p>
+          ) : null}
+        </div>
+
+        {err ? (
+          <p className="text-sm text-red-600" role="alert">
+            {err}
+          </p>
         ) : null}
-      </div>
 
-      {err ? (
-        <p className="text-sm text-red-600" role="alert">
-          {err}
-        </p>
-      ) : null}
-
-      <div className="flex flex-wrap gap-3">
-        <button
-          type="submit"
-          disabled={busy || !body.trim()}
-          className="rounded-full bg-ink px-6 py-2.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-paper disabled:opacity-50"
-        >
-          {busy ? t("submitting") : t("submitReview")}
-        </button>
-        <Link
-          href={`/account/orders/${orderId}`}
-          className="inline-flex items-center rounded-full border border-line px-6 py-2.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink/80"
-        >
-          {t("cancel")}
-        </Link>
-      </div>
-    </form>
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="submit"
+            disabled={busy || !body.trim()}
+            className="rounded-full bg-ink px-6 py-2.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-paper disabled:opacity-50"
+          >
+            {busy ? t("submitting") : t("submitReview")}
+          </button>
+          {!embedded ? (
+            <Link
+              href={cancelHref}
+              className="inline-flex items-center rounded-full border border-line px-6 py-2.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink/80"
+            >
+              {t("cancel")}
+            </Link>
+          ) : null}
+        </div>
+      </form>
     </>
   );
 }

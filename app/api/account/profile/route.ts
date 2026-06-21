@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { normalizeBuyerProfileImage } from "@/lib/buyer-profile-image";
 import { prisma } from "@/lib/prisma";
+import { userPublicDisplayName } from "@/lib/user-display-name";
 
 export async function GET() {
   const session = await auth();
@@ -15,8 +15,6 @@ export async function GET() {
       lastName: true,
       displayName: true,
       email: true,
-      name: true,
-      image: true,
     },
   });
   if (!user) {
@@ -43,34 +41,51 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  let image: string | null | undefined;
   if (body.image !== undefined) {
-    try {
-      image = normalizeBuyerProfileImage(session.user.id, body.image);
-    } catch {
-      return NextResponse.json(
-        { error: "Invalid profile photo URL." },
-        { status: 400 },
-      );
-    }
+    return NextResponse.json(
+      { error: "Profile photos are not supported." },
+      { status: 400 },
+    );
   }
+
+  const firstName =
+    body.firstName === undefined
+      ? undefined
+      : String(body.firstName || "").trim() || null;
+  const lastName =
+    body.lastName === undefined
+      ? undefined
+      : String(body.lastName || "").trim() || null;
+  const displayName =
+    body.displayName === undefined
+      ? undefined
+      : String(body.displayName || "").trim() || null;
+
+  const existing = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { firstName: true, lastName: true, displayName: true, email: true },
+  });
+  if (!existing) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const nextFirst = firstName !== undefined ? firstName : existing.firstName;
+  const nextLast = lastName !== undefined ? lastName : existing.lastName;
+  const nextDisplay =
+    displayName !== undefined ? displayName : existing.displayName;
 
   await prisma.user.update({
     where: { id: session.user.id },
     data: {
-      firstName:
-        body.firstName === undefined
-          ? undefined
-          : String(body.firstName || "").trim() || null,
-      lastName:
-        body.lastName === undefined
-          ? undefined
-          : String(body.lastName || "").trim() || null,
-      displayName:
-        body.displayName === undefined
-          ? undefined
-          : String(body.displayName || "").trim() || null,
-      ...(image !== undefined ? { image } : {}),
+      ...(firstName !== undefined ? { firstName } : {}),
+      ...(lastName !== undefined ? { lastName } : {}),
+      ...(displayName !== undefined ? { displayName } : {}),
+      name: userPublicDisplayName({
+        firstName: nextFirst,
+        lastName: nextLast,
+        displayName: nextDisplay,
+        email: existing.email,
+      }),
     },
   });
 

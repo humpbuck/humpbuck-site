@@ -8,7 +8,6 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import { AccountMenu } from "@/components/site/AccountMenu";
-import { HeaderUserAvatar } from "@/components/site/HeaderUserAvatar";
 import { buildLoginHref } from "@/lib/auth-callback-url";
 import { storefrontHomePath } from "@/lib/storefront-home-path";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
@@ -234,9 +233,9 @@ export function SiteHeader() {
 
   const navItems = useMemo(() => NAV_ITEMS, []);
 
-  const accountAvatarLabel =
+  const accountMenuLabel =
     session?.user?.name?.trim() ||
-    session?.user?.email?.split("@")[0]?.trim() ||
+    session?.user?.email?.trim() ||
     t("accountFallback");
 
   useEffect(() => {
@@ -265,7 +264,7 @@ export function SiteHeader() {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-[background,box-shadow,padding] duration-300 ${
+        className={`fixed inset-x-0 top-[var(--site-announcement-h,0px)] z-50 transition-[background,box-shadow,padding,top] duration-300 ${
           scrolled
             ? "border-b border-line bg-paper/90 py-3 shadow-sm backdrop-blur-md"
             : "border-b border-transparent bg-transparent py-4 md:py-5"
@@ -315,10 +314,7 @@ export function SiteHeader() {
             {status === "authenticated" ? (
               <AccountMenu
                 userEmail={session?.user?.email}
-                userImage={
-                  session?.user?.displayAvatarUrl ?? session?.user?.image
-                }
-                userName={session?.user?.name}
+                userDisplayName={session?.user?.name}
               />
             ) : (
               <Suspense
@@ -360,7 +356,7 @@ export function SiteHeader() {
         onClick={() => setOpen(false)}
       />
       <div
-        className={`fixed left-0 top-0 z-[60] h-full w-[min(88vw,360px)] border-r border-line bg-paper transition-[transform,box-shadow] duration-300 ease-out md:hidden ${
+        className={`fixed left-0 top-[var(--site-announcement-h,0px)] z-[60] flex h-[calc(100%-var(--site-announcement-h,0px))] w-[min(88vw,360px)] flex-col border-r border-line bg-paper transition-[transform,box-shadow,top] duration-300 ease-out md:hidden ${
           open ? "translate-x-0 shadow-2xl" : "-translate-x-full shadow-none"
         }`}
         role="dialog"
@@ -426,16 +422,9 @@ export function SiteHeader() {
               <Link
                 href="/account"
                 onClick={() => setOpen(false)}
-                className="mt-4 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-ink/85 hover:bg-ink/[0.04]"
+                className="mt-4 block rounded-xl px-4 py-3 text-sm font-semibold text-ink/85 hover:bg-ink/[0.04]"
               >
-                <HeaderUserAvatar
-                  src={
-                    session?.user?.displayAvatarUrl ?? session?.user?.image
-                  }
-                  label={accountAvatarLabel}
-                  size={36}
-                />
-                {t("myAccount")}
+                {accountMenuLabel}
               </Link>
               <button
                 type="button"

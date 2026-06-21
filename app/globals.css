@@ -61,11 +61,18 @@
   }
 }
 
+@property --site-announcement-h {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 @layer base {
   /* `stable` alone reserves gutter on the scrollbar side only → content looks left-heavy.
      `both-edges` keeps left/right balance when the scrollbar occupies space. */
   html {
     scrollbar-gutter: stable;
+    transition: --site-announcement-h 0.3s ease-out;
   }
   @supports (scrollbar-gutter: stable both-edges) {
     html {

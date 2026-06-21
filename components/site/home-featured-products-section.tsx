@@ -7,10 +7,12 @@ export async function HomeFeaturedProductsSection({
   products,
   cardImages,
   cardHoverImages,
+  fiveStarReviewCounts,
 }: {
   products: Product[];
   cardImages: (string | undefined)[];
   cardHoverImages: (string | undefined)[];
+  fiveStarReviewCounts: Record<string, number>;
 }) {
   const t = await getTranslations("Home");
 
@@ -31,6 +33,7 @@ export async function HomeFeaturedProductsSection({
             products={products}
             cardImages={cardImages}
             cardHoverImages={cardHoverImages}
+            fiveStarReviewCounts={fiveStarReviewCounts}
           />
         ) : (
           <HomeProductsEmptyState className="mt-14 text-center sm:mt-16 lg:mt-20" />

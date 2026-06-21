@@ -12,6 +12,7 @@ export async function HomeCategoryProductSliders({
   ultraThinProducts,
   ultraThinCardImages,
   ultraThinCardHoverImages,
+  fiveStarReviewCounts,
 }: {
   mechanicalProducts: Product[];
   mechanicalCardImages: (string | undefined)[];
@@ -22,6 +23,7 @@ export async function HomeCategoryProductSliders({
   ultraThinProducts: Product[];
   ultraThinCardImages: (string | undefined)[];
   ultraThinCardHoverImages: (string | undefined)[];
+  fiveStarReviewCounts: Record<string, number>;
 }) {
   const t = await getTranslations("Home");
   const kicker = t("categoryRowKicker");
@@ -37,6 +39,7 @@ export async function HomeCategoryProductSliders({
         products={mechanicalProducts}
         cardImages={mechanicalCardImages}
         cardHoverImages={mechanicalCardHoverImages}
+        fiveStarReviewCounts={fiveStarReviewCounts}
         cartSource="home_mechanical_row"
       />
       <HomeProductSliderSection
@@ -48,6 +51,7 @@ export async function HomeCategoryProductSliders({
         products={quartzProducts}
         cardImages={quartzCardImages}
         cardHoverImages={quartzCardHoverImages}
+        fiveStarReviewCounts={fiveStarReviewCounts}
         cartSource="home_quartz_row"
       />
       <HomeProductSliderSection
@@ -59,6 +63,7 @@ export async function HomeCategoryProductSliders({
         products={ultraThinProducts}
         cardImages={ultraThinCardImages}
         cardHoverImages={ultraThinCardHoverImages}
+        fiveStarReviewCounts={fiveStarReviewCounts}
         cartSource="home_ultra_thin_row"
       />
     </>

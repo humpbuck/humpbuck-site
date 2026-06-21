@@ -3,6 +3,7 @@ import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { adminPath } from "@/lib/admin-path";
 import { DeleteReviewButton } from "@/components/admin/delete-review-button";
 import { MerchantReplyBox } from "@/components/admin/merchant-reply-box";
+import { ReviewModerationButtons } from "@/components/admin/review-moderation-buttons";
 
 import { prisma } from "@/lib/prisma";
 import { parseReviewImageUrls } from "@/lib/product-reviews-queries";
@@ -16,7 +17,7 @@ export default async function AdminReviewsPage() {
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: 500,
     include: {
-      user: { select: { email: true, name: true } },
+      user: { select: { email: true, name: true, firstName: true, lastName: true } },
     },
   });
 
@@ -25,9 +26,9 @@ export default async function AdminReviewsPage() {
       <AdminBackLink href={adminPath()} label="Overview" />
       <h1 className="font-serif text-3xl tracking-tight">Reviews</h1>
       <p className="mt-2 max-w-2xl text-sm text-muted">
-        Buyer reviews are published as soon as they submit (verified purchase
-        flow). Use this list to remove spam or inappropriate content. Deleting
-        here removes the review from the storefront only.
+        New reviews stay <strong>pending</strong> until you approve them. Approved
+        reviews appear on the product page; rejected reviews stay hidden. You can
+        still reply to approved reviews or delete spam.
       </p>
 
       {rows.length === 0 ? (
@@ -43,6 +44,7 @@ export default async function AdminReviewsPage() {
                 <th className="px-4 py-3">Rating</th>
                 <th className="px-4 py-3">Comment</th>
                 <th className="px-4 py-3">Store reply</th>
+                <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Photos</th>
                 <th className="px-4 py-3 text-right">Action</th>
               </tr>
@@ -50,9 +52,14 @@ export default async function AdminReviewsPage() {
             <tbody>
               {rows.map((r) => {
                 const title = r.productSlug;
-                const email = r.user.email ?? "—";
-                const name = r.user.name?.trim();
-                const buyer = name ? `${name} · ${email}` : email;
+                const email = r.user?.email ?? "—";
+                const fullName = [r.user?.firstName?.trim(), r.user?.lastName?.trim()]
+                  .filter(Boolean)
+                  .join(" ")
+                  .trim();
+                const legacyName = r.user?.name?.trim();
+                const displayName = fullName || legacyName;
+                const buyer = displayName ? `${displayName} · ${email}` : email;
                 const imgs = parseReviewImageUrls(r.imageUrlsJson);
                 const when = new Date(r.createdAt).toLocaleString("en-US", {
                   dateStyle: "short",
@@ -100,6 +107,9 @@ export default async function AdminReviewsPage() {
                             : null
                         }
                       />
+                    </td>
+                    <td className="align-top px-4 py-3">
+                      <ReviewModerationButtons reviewId={r.id} status={r.status} />
                     </td>
                     <td className="px-4 py-3 tabular-nums text-muted">{imgs.length}</td>
                     <td className="px-4 py-3">

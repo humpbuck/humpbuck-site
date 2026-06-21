@@ -15,13 +15,13 @@ import {
 import {
   orderDisplayCode,
   parseShippingRecord,
-  paymentProviderLabel,
 } from "@/lib/admin/order-ui";
 import { BuyerOrderLineItems } from "@/components/account/buyer-order-line-items";
-import { BuyerConfirmReceivedButton } from "@/components/account/buyer-confirm-received-button";
+import { BuyerOrderDetailActions } from "@/components/account/buyer-order-detail-actions";
 import { formatPrice } from "@/lib/catalog";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { prisma } from "@/lib/prisma";
+import { redirectWithLocale } from "@/lib/storefront-redirect";
 import { intlLocaleFromAppLocale } from "@/lib/site-locale";
 
 export default async function AccountOrderDetailPage({
@@ -31,7 +31,11 @@ export default async function AccountOrderDetailPage({
 }) {
   const { id } = await params;
   const session = await auth();
-  if (!session?.user?.id) notFound();
+  if (!session?.user?.id) {
+    return redirectWithLocale(
+      `/auth/login?callbackUrl=${encodeURIComponent(`/account/orders/${id}`)}`,
+    );
+  }
 
   const order = await prisma.order.findFirst({
     where: { id, userId: session.user.id, deletedAt: null },
@@ -128,7 +132,6 @@ export default async function AccountOrderDetailPage({
               </p>
               <BuyerOrderStatusBlock
                 className="mt-2 text-right"
-                providerLabel={paymentProviderLabel(order.provider)}
                 status={order.status}
                 statusDisplay={buyerOrderStatusForLocale(order.status, tStatus)}
                 orderStatusHeading={tStatus("heading")}
@@ -148,6 +151,7 @@ export default async function AccountOrderDetailPage({
               orderId: order.id,
               orderStatus: order.status,
               reviewedProductSlugs,
+              hideWriteReviewLink: true,
             }}
           />
 
@@ -173,9 +177,11 @@ export default async function AccountOrderDetailPage({
               </p>
             </div>
           ) : null}
-          <BuyerConfirmReceivedButton
+          <BuyerOrderDetailActions
             orderId={order.id}
-            enabled={order.status === "shipped"}
+            orderStatus={order.status}
+            lines={lines.map((l) => ({ slug: l.slug, name: l.name }))}
+            reviewedProductSlugs={reviewedProductSlugs}
           />
 
           <BuyerCancelOrderActions

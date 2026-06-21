@@ -3,6 +3,25 @@
 import { X } from "lucide-react";
 import { useEffect, useId, type ReactNode } from "react";
 
+let scrollLockCount = 0;
+let scrollLockPrevOverflow = "";
+
+function lockDocumentScroll() {
+  if (scrollLockCount === 0) {
+    scrollLockPrevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+  }
+  scrollLockCount += 1;
+}
+
+function unlockDocumentScroll() {
+  scrollLockCount = Math.max(0, scrollLockCount - 1);
+  if (scrollLockCount === 0) {
+    document.body.style.overflow = scrollLockPrevOverflow;
+    scrollLockPrevOverflow = "";
+  }
+}
+
 /**
  * Centered dialog: backdrop click closes, top-right close control, Escape closes.
  * Use for site-wide modal patterns (same behavior as expectations for overlays).
@@ -25,10 +44,9 @@ export function CenterModal({
   const titleId = useId();
 
   useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    lockDocumentScroll();
     return () => {
-      document.body.style.overflow = prev;
+      unlockDocumentScroll();
     };
   }, []);
 

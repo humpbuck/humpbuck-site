@@ -192,6 +192,7 @@ export function HomeRecommendedProductsSlider({
   products,
   cardImages,
   cardHoverImages,
+  fiveStarReviewCounts,
   prevLabel,
   nextLabel,
   scrollLabel,
@@ -200,6 +201,7 @@ export function HomeRecommendedProductsSlider({
   products: Product[];
   cardImages: (string | undefined)[];
   cardHoverImages: (string | undefined)[];
+  fiveStarReviewCounts: Record<string, number>;
   prevLabel: string;
   nextLabel: string;
   scrollLabel: string;
@@ -310,6 +312,7 @@ export function HomeRecommendedProductsSlider({
               imagePriority={i < 4}
               imageEager={i < 6}
               cartSource={cartSource}
+              fiveStarReviewCount={fiveStarReviewCounts[product.slug] ?? 0}
             />
           </div>
         ))}

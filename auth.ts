@@ -2,8 +2,8 @@ import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { getBuyerAvatarDisplayUrl } from "@/lib/avatar-resolve";
 import { prisma } from "@/lib/prisma";
+import { userPublicDisplayName } from "@/lib/user-display-name";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
@@ -22,7 +22,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
         const email = String(credentials.email).toLowerCase().trim();
-        const user = await prisma.user.findUnique({ where: { email } });
+        const user = await prisma.user.findUnique({
+          where: { email },
+          select: {
+            id: true,
+            email: true,
+            passwordHash: true,
+            firstName: true,
+            lastName: true,
+            displayName: true,
+          },
+        });
         if (!user?.passwordHash) return null;
         const valid = await bcrypt.compare(
           String(credentials.password),
@@ -32,8 +42,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return {
           id: user.id,
           email: user.email!,
-          name: user.name,
-          image: user.image,
+          name: userPublicDisplayName(user),
         };
       },
     }),
@@ -44,21 +53,42 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
-        token.picture = user.image ?? null;
       }
+
+      if (token.id) {
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: {
+              firstName: true,
+              lastName: true,
+              displayName: true,
+              email: true,
+            },
+          });
+          if (dbUser) {
+            token.firstName = dbUser.firstName;
+            token.lastName = dbUser.lastName;
+            token.displayName = dbUser.displayName;
+            token.email = dbUser.email ?? token.email;
+            token.name = userPublicDisplayName(dbUser);
+          }
+        } catch {
+          // Keep JWT session when DB is briefly unavailable (e.g. after router.refresh).
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {
       if (session.user && token.id) {
         session.user.id = token.id as string;
-        const u = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { image: true, email: true },
-        });
-        session.user.image = u?.image ?? null;
-        session.user.displayAvatarUrl = u
-          ? getBuyerAvatarDisplayUrl({ image: u.image, email: u.email })
-          : null;
+        session.user.name = (token.name as string | null) ?? null;
+        const email = token.email as string | null | undefined;
+        if (email != null) session.user.email = email;
+        session.user.firstName = (token.firstName as string | null) ?? null;
+        session.user.lastName = (token.lastName as string | null) ?? null;
+        session.user.displayName = (token.displayName as string | null) ?? null;
       }
       return session;
     },

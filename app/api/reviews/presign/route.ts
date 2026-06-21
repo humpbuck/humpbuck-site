@@ -95,18 +95,16 @@ export async function POST(req: Request) {
     );
   }
 
-  const existing = await prisma.productReview.findUnique({
+  const existing = await prisma.productReview.findFirst({
     where: {
-      userId_orderId_productSlug: {
-        userId: session.user.id,
-        orderId,
-        productSlug,
-      },
+      userId: session.user.id,
+      orderId,
+      productSlug,
     },
   });
   if (existing) {
     return NextResponse.json(
-      { error: "You already submitted a review for this item." },
+      { error: "You already submitted a review for this product." },
       { status: 409 },
     );
   }

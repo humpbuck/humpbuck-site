@@ -1,24 +1,36 @@
 /**
- * Creates one order for a real account so you can test buyer reviews
- * (account → order detail → “Write review”).
+ * Creates one order for a real account so you can test buyer reviews.
  *
- *   npx tsx scripts/seed-test-order-for-review.ts
- *   TEST_REVIEW_ORDER_EMAIL=you@ex.com npx tsx scripts/seed-test-order-for-review.ts
+ *   npm run db:seed-test-review-order
+ *   TEST_REVIEW_ORDER_EMAIL=you@ex.com npm run db:seed-test-review-order
+ *   TEST_REVIEW_PRODUCT_SLUG=2301 npm run db:seed-test-review-order
  *
- * Requires: user already registered (we link `Order.userId`). Status is
- * `shipped` (eligible for reviews per `lib/review-eligibility.ts`).
+ * Uses the first CatalogProduct in DB (override with TEST_REVIEW_PRODUCT_SLUG).
+ * Default status: `shipped` — confirm receipt on the order page before reviewing.
  */
+import { readFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
 import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
 
 loadEnvConfig(process.cwd());
+/** Shell/IDE may set DATABASE_URL to localhost; for this script, `.env.local` wins. */
+const el = join(process.cwd(), ".env.local");
+if (existsSync(el)) {
+  for (const line of readFileSync(el, "utf8").split("\n")) {
+    const t = line.trim();
+    if (!t.startsWith("DATABASE_URL=")) continue;
+    let v = t.slice("DATABASE_URL=".length).trim();
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'")))
+      v = v.slice(1, -1);
+    process.env.DATABASE_URL = v;
+    break;
+  }
+}
 
 const prisma = new PrismaClient();
 
 const DEFAULT_EMAIL = "843574506@qq.com";
-const SLUG = "digitemp-2301";
-const NAME = "DIGI-TEMP 2301";
-const UNIT_CENTS = 2630;
 const PROVIDER_PREFIX = "test_review_order";
 
 const shipping = {
@@ -34,6 +46,43 @@ const shipping = {
   phone: "+8613800138000",
 };
 
+type VariantRow = { id: string; label: string; image?: string };
+
+function parseVariants(json: string | null): VariantRow[] {
+  if (!json?.trim()) return [];
+  try {
+    const v = JSON.parse(json) as unknown;
+    if (!Array.isArray(v)) return [];
+    return v.filter(
+      (x): x is VariantRow =>
+        typeof x === "object" &&
+        x != null &&
+        typeof (x as VariantRow).id === "string" &&
+        typeof (x as VariantRow).label === "string",
+    );
+  } catch {
+    return [];
+  }
+}
+
+async function resolveCatalogProduct() {
+  const slugOverride = process.env.TEST_REVIEW_PRODUCT_SLUG?.trim();
+  if (slugOverride) {
+    const row = await prisma.catalogProduct.findUnique({ where: { slug: slugOverride } });
+    if (!row) throw new Error(`CatalogProduct not found: ${slugOverride}`);
+    return row;
+  }
+  const row = await prisma.catalogProduct.findFirst({
+    orderBy: { slug: "asc" },
+  });
+  if (!row) {
+    throw new Error(
+      "No CatalogProduct in database. Add products in admin or run catalog seed first.",
+    );
+  }
+  return row;
+}
+
 async function main() {
   const email = (process.env.TEST_REVIEW_ORDER_EMAIL || DEFAULT_EMAIL)
     .trim()
@@ -47,8 +96,12 @@ async function main() {
     process.exit(1);
   }
 
+  const product = await resolveCatalogProduct();
+  const variants = parseVariants(product.variantsJson);
+  const variant = variants[0];
+  const unitCents = Math.round(product.price * 100);
   const ts = Date.now();
-  const lineTotalCents = UNIT_CENTS;
+  const shippedAt = new Date();
 
   const order = await prisma.order.create({
     data: {
@@ -57,25 +110,26 @@ async function main() {
       status: "shipped",
       provider: "dev_seed",
       providerRef: `${PROVIDER_PREFIX}_${ts}`,
-      totalCents: lineTotalCents,
+      totalCents: unitCents,
       billingJson: JSON.stringify(shipping),
       shippingJson: JSON.stringify(shipping),
       orderNotes: `Test order for buyer review flow — ${PROVIDER_PREFIX}`,
       carrier: "Test Carrier",
       trackingNumber: `TEST${String(ts).slice(-10)}`,
       trafficSource: "unknown",
+      shippedAt,
       items: {
         create: [
           {
-            productSlug: SLUG,
-            productName: NAME,
-            productImage: null,
-            variantId: "style-01",
-            variantLabel: `${SLUG}: style-01`,
-            variantImage: null,
+            productSlug: product.slug,
+            productName: product.name,
+            productImage: product.image?.trim() || variant?.image?.trim() || null,
+            variantId: variant?.id ?? null,
+            variantLabel: variant?.label ?? null,
+            variantImage: variant?.image?.trim() || null,
             qty: 1,
-            unitPriceCents: UNIT_CENTS,
-            lineTotalCents,
+            unitPriceCents: unitCents,
+            lineTotalCents: unitCents,
             currency: "usd",
             productSnapshotJson: null,
           },
@@ -86,11 +140,13 @@ async function main() {
 
   const base = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") || "http://localhost:3000";
   console.log(`\nUser: ${email} (${user.id})`);
-  console.log(`Order: ${order.id} — status=shipped, line=${SLUG}`);
+  console.log(`Order: ${order.id} — status=shipped (paid & shipped), line=${product.slug}`);
+  console.log(`Product: ${product.name}`);
   console.log(`\nOpen (logged in as ${email}):`);
   console.log(`  ${base}/account/orders/${order.id}`);
-  console.log(`\nWrite review (direct):`);
-  console.log(`  ${base}/account/orders/${order.id}/review/${SLUG}\n`);
+  console.log(`\n1) Click “Confirm received” on the order page`);
+  console.log(`2) Then “Write review” or open PDP:`);
+  console.log(`  ${base}/product/${product.slug}#buyer-reviews\n`);
 }
 
 main()

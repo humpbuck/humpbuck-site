@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
+import { userPublicDisplayName } from "@/lib/user-display-name";
 import { prisma } from "@/lib/prisma";
 
 export default async function AccountOverviewPage() {
@@ -26,11 +27,9 @@ export default async function AccountOverviewPage() {
     }),
   ]);
 
-  const greeting =
-    user?.displayName ||
-    [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
-    user?.email?.split("@")[0] ||
-    t("overviewGreetingFallback");
+  const greeting = user
+    ? userPublicDisplayName(user, t("overviewGreetingFallback"))
+    : t("overviewGreetingFallback");
 
   return (
     <div>

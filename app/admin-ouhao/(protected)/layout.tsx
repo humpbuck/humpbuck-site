@@ -42,6 +42,7 @@ export default async function AdminProtectedLayout({
     pendingSubscribeCount,
     pendingMockupRequestCount,
     pendingContactCount,
+    pendingProductReviewCount,
   ] = await Promise.all([
     prisma.affiliateCouponRequest.count({ where: { status: "pending" } }).catch(() => 0),
     prisma.adminInboxMessage.count({
@@ -56,13 +57,15 @@ export default async function AdminProtectedLayout({
     prisma.adminInboxMessage.count({
       where: { category: ADMIN_INBOX_CATEGORY.contactSupport, status: "pending" },
     }).catch(() => 0),
+    prisma.productReview.count({ where: { status: "pending" } }).catch(() => 0),
   ]);
   const totalPendingInboxCount =
     pendingOrderCount +
     pendingCouponRequestCount +
     pendingSubscribeCount +
     pendingMockupRequestCount +
-    pendingContactCount;
+    pendingContactCount +
+    pendingProductReviewCount;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
@@ -102,6 +105,9 @@ export default async function AdminProtectedLayout({
               <Link href={adminPath("/blog")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
                 BLOG
               </Link>
+              <Link href={adminPath("/announcement")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
+                ANNOUNCEMENT
+              </Link>
               <Link href="https://www.humpbuck.com/" className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
                 VIEW SITE
               </Link>
@@ -136,6 +142,9 @@ export default async function AdminProtectedLayout({
                 </li>
                 <li>
                   {adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.contactSupport)}: {pendingContactCount}
+                </li>
+                <li>
+                  {adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.productReview)}: {pendingProductReviewCount}
                 </li>
               </ul>
             </div>

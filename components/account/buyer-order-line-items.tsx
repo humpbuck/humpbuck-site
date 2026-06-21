@@ -16,11 +16,13 @@ type Props = {
     reviewSubmitted: string;
     writeReview: string;
   };
-  /** When set with a paid order, eligible lines show “Write review”. */
+  /** When set with a delivered order, eligible lines show “Review submitted” only (no inline write link). */
   reviewContext?: {
     orderId: string;
     orderStatus: string;
     reviewedProductSlugs: string[];
+    /** Hide per-line “Write review” link (order detail uses modal instead). */
+    hideWriteReviewLink?: boolean;
   };
 };
 
@@ -107,9 +109,9 @@ export function BuyerOrderLineItems({
                   <span className="text-[10px] font-semibold uppercase tracking-widest text-muted">
                     {reviewSubmitted}
                   </span>
-                ) : (
+                ) : reviewContext.hideWriteReviewLink ? null : (
                   <Link
-                    href={`/account/orders/${reviewContext.orderId}/review/${line.slug}`}
+                    href={`/product/${line.slug}#buyer-reviews`}
                     className="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4 hover:underline"
                   >
                     {writeReview}

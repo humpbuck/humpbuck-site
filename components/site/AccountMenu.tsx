@@ -5,17 +5,14 @@ import { ChevronDown } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { HeaderUserAvatar } from "@/components/site/HeaderUserAvatar";
 import { storefrontHomePath } from "@/lib/storefront-home-path";
 
 export function AccountMenu({
   userEmail,
-  userImage,
-  userName,
+  userDisplayName,
 }: {
   userEmail?: string | null;
-  userImage?: string | null;
-  userName?: string | null;
+  userDisplayName?: string | null;
 }) {
   const t = useTranslations("Navigation");
   const locale = useLocale();
@@ -38,9 +35,9 @@ export function AccountMenu({
     };
   }, []);
 
-  const avatarLabel =
-    userName?.trim() ||
-    userEmail?.split("@")[0]?.trim() ||
+  const menuLabel =
+    userDisplayName?.trim() ||
+    userEmail?.trim() ||
     t("accountFallback");
 
   return (
@@ -50,11 +47,10 @@ export function AccountMenu({
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="inline-flex max-w-[220px] items-center gap-2 rounded-full py-1.5 pl-1.5 pr-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 transition hover:bg-ink/[0.04] hover:text-ink xl:tracking-[0.12em]"
+        className="inline-flex max-w-[240px] items-center gap-1.5 rounded-full px-3 py-2 text-[12px] font-medium normal-case tracking-normal text-ink/80 transition hover:bg-ink/[0.04] hover:text-ink"
       >
-        <HeaderUserAvatar src={userImage} label={avatarLabel} size={30} />
-        <span className="truncate whitespace-nowrap" title={userEmail ?? undefined}>
-          {t("myAccount")}
+        <span className="truncate" title={userEmail ?? undefined}>
+          {menuLabel}
         </span>
         <ChevronDown
           size={14}

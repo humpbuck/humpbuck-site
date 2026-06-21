@@ -16,6 +16,8 @@ import { ProductCloserLookSection } from "@/components/site/product-closer-look-
 import { PreloadPdpGalleryImages } from "@/components/site/preload-pdp-gallery-images";
 import { ProductPdpMediaColumn } from "@/components/site/ProductPdpMediaColumn";
 import { ProductReviewsSection } from "@/components/site/ProductReviewsSection";
+import { ProductFiveStarRating } from "@/components/site/product-five-star-rating";
+import { getProductFiveStarReviewCounts } from "@/lib/product-reviews-queries";
 import { ProductDetailClient } from "@/components/site/ProductDetailClient";
 import { ProductPdpGallerySyncProvider } from "@/components/site/product-pdp-gallery-sync";
 import { resolveStorefrontProductMedia } from "@/lib/r2-pdp-media";
@@ -109,6 +111,12 @@ export default async function ProductPage({
   const { gallery: gallerySlides, detailBlocks, variantOptions, promoVideos } =
     media;
 
+  const fiveStarReviewCounts = await getProductFiveStarReviewCounts([
+    product.slug,
+    ...related.map((p) => p.slug),
+  ]);
+  const fiveStarReviewCount = fiveStarReviewCounts.get(product.slug) ?? 0;
+
   return (
     <div>
       {gallerySlides.length > 0 ? <PreloadPdpGalleryImages urls={gallerySlides} /> : null}
@@ -148,6 +156,7 @@ export default async function ProductPage({
             <h1 className="mt-4 font-serif text-4xl tracking-tight sm:text-5xl">
               {product.name}
             </h1>
+            <ProductFiveStarRating count={fiveStarReviewCount} className="mt-2" />
             <p className="mt-4 whitespace-pre-line text-lg leading-relaxed text-muted">
               {product.shortDescription}
             </p>

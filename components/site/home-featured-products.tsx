@@ -12,10 +12,12 @@ export function HomeFeaturedProductsGrid({
   products,
   cardImages,
   cardHoverImages,
+  fiveStarReviewCounts,
 }: {
   products: Product[];
   cardImages: (string | undefined)[];
   cardHoverImages: (string | undefined)[];
+  fiveStarReviewCounts: Record<string, number>;
 }) {
   const t = useTranslations("Home");
   const [page, setPage] = useState(1);
@@ -54,6 +56,7 @@ export function HomeFeaturedProductsGrid({
             imagePriority={globalStartIndex + i < 4}
             imageEager={globalStartIndex + i < 12}
             cartSource="home_featured"
+            fiveStarReviewCount={fiveStarReviewCounts[product.slug] ?? 0}
           />
         ))}
       </div>

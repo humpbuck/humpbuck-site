@@ -6,10 +6,12 @@ export async function HomeRecommendedProducts({
   products,
   cardImages,
   cardHoverImages,
+  fiveStarReviewCounts,
 }: {
   products: Product[];
   cardImages: (string | undefined)[];
   cardHoverImages: (string | undefined)[];
+  fiveStarReviewCounts: Record<string, number>;
 }) {
   const t = await getTranslations("Home");
 
@@ -22,6 +24,7 @@ export async function HomeRecommendedProducts({
       products={products}
       cardImages={cardImages}
       cardHoverImages={cardHoverImages}
+      fiveStarReviewCounts={fiveStarReviewCounts}
       cartSource="home_recommended"
     />
   );

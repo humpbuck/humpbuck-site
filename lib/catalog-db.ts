@@ -120,7 +120,7 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
   };
 }
 
-async function fetchMergedCatalogProducts(): Promise<Product[]> {
+async function loadMergedCatalogProductsUncached(): Promise<Product[]> {
   try {
     const [dbRows, inventory] = await Promise.all([
       prisma.catalogProduct.findMany(),
@@ -132,6 +132,11 @@ async function fetchMergedCatalogProducts(): Promise<Product[]> {
     console.error("[catalog-db] Failed to load CatalogProduct; returning empty storefront catalog.", e);
     return emptyStorefrontCatalog();
   }
+}
+
+/** Uncached catalog load for scripts (seed, audits). */
+export async function fetchMergedCatalogProducts(): Promise<Product[]> {
+  return loadMergedCatalogProductsUncached();
 }
 
 async function fetchMergedCatalogProductBySlug(slug: string): Promise<Product | undefined> {
@@ -148,7 +153,7 @@ async function fetchMergedCatalogProductBySlug(slug: string): Promise<Product | 
 }
 
 const getCachedMergedCatalogProducts = unstable_cache(
-  fetchMergedCatalogProducts,
+  loadMergedCatalogProductsUncached,
   ["merged-catalog-products"],
   {
     revalidate: STOREFRONT_ISR_SECONDS,
@@ -166,7 +171,7 @@ export async function getMergedCatalogProducts(): Promise<Product[]> {
   if (products.length > 0) {
     return products;
   }
-  return fetchMergedCatalogProducts();
+  return loadMergedCatalogProductsUncached();
 }
 
 export async function getMergedCatalogProductBySlug(

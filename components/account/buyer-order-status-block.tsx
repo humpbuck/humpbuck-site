@@ -1,14 +1,11 @@
 import { buyerOrderStatusLabel } from "@/lib/account-buyer-order";
 
 export function BuyerOrderStatusBlock({
-  providerLabel,
   status,
   statusDisplay,
   orderStatusHeading,
   className,
 }: {
-  /** Already human-readable (e.g. payment provider name). */
-  providerLabel: string;
   status: string;
   /** Overrides the default English `buyerOrderStatusLabel(status)` when provided. */
   statusDisplay?: string;
@@ -25,7 +22,7 @@ export function BuyerOrderStatusBlock({
         {heading}
       </p>
       <p className="mt-1 text-[10px] uppercase tracking-[0.14em] text-muted">
-        {providerLabel} · {line}
+        {line}
       </p>
     </div>
   );

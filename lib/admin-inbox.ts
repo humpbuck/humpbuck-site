@@ -8,6 +8,7 @@ export const ADMIN_INBOX_CATEGORY = {
   subscribe: "subscribe",
   emailMockupRequest: "email_mockup_request",
   contactSupport: "contact_support",
+  productReview: "product_review",
 } as const;
 
 export type AdminInboxCategory =
@@ -20,6 +21,7 @@ export function adminInboxCategoryLabel(category: string): string {
   if (category === ADMIN_INBOX_CATEGORY.subscribe) return "Subscribe";
   if (category === ADMIN_INBOX_CATEGORY.emailMockupRequest) return "Email mockup request";
   if (category === ADMIN_INBOX_CATEGORY.contactSupport) return "Contact form";
+  if (category === ADMIN_INBOX_CATEGORY.productReview) return "Reviews";
   return category;
 }
 
@@ -215,4 +217,98 @@ export async function syncSystemInboxMessages() {
       skipDuplicates: true,
     })
     .catch(() => null);
+  await syncPendingProductReviewInboxMessages();
 }
+
+export async function notifyAdminInboxProductReview(input: {
+  reviewId: string;
+  productSlug: string;
+  productName?: string | null;
+  rating: number;
+  body: string;
+  buyerEmail?: string | null;
+}): Promise<void> {
+  const productName = input.productName?.trim() || input.productSlug;
+  const bodyPreview =
+    input.body.trim().length > 160
+      ? `${input.body.trim().slice(0, 160)}…`
+      : input.body.trim();
+  await prisma.adminInboxMessage
+    .createMany({
+      data: [
+        {
+          category: ADMIN_INBOX_CATEGORY.productReview,
+          dedupeKey: `product_review:${input.reviewId}`,
+          status: "pending",
+          sourceEmail: input.buyerEmail?.trim() || null,
+          payloadJson: JSON.stringify({
+            reviewId: input.reviewId,
+            productSlug: input.productSlug,
+            productName,
+            rating: input.rating,
+            bodyPreview,
+            message: `New product review | ${productName} · ${input.rating}★`,
+          }),
+        },
+      ],
+      skipDuplicates: true,
+    })
+    .catch(() => null);
+}
+
+export async function markProductReviewInboxHandled(reviewId: string): Promise<void> {
+  await prisma.adminInboxMessage
+    .updateMany({
+      where: {
+        category: ADMIN_INBOX_CATEGORY.productReview,
+        dedupeKey: `product_review:${reviewId}`,
+      },
+      data: { status: "handled", handledAt: new Date() },
+    })
+    .catch(() => null);
+}
+
+/** Backfill inbox rows for pending reviews (badge + Message inbox). */
+export async function syncPendingProductReviewInboxMessages(): Promise<void> {
+  const pending = await prisma.productReview
+    .findMany({
+      where: { status: "pending" },
+      orderBy: { createdAt: "desc" },
+      take: 500,
+      select: {
+        id: true,
+        productSlug: true,
+        rating: true,
+        body: true,
+        user: { select: { email: true } },
+      },
+    })
+    .catch(() => []);
+
+  if (pending.length === 0) return;
+
+  await prisma.adminInboxMessage
+    .createMany({
+      data: pending.map((r) => {
+        const bodyPreview =
+          r.body.trim().length > 160 ? `${r.body.trim().slice(0, 160)}…` : r.body.trim();
+        return {
+          category: ADMIN_INBOX_CATEGORY.productReview,
+          dedupeKey: `product_review:${r.id}`,
+          status: "pending" as const,
+          sourceEmail: r.user?.email?.trim() || null,
+          payloadJson: JSON.stringify({
+            reviewId: r.id,
+            productSlug: r.productSlug,
+            productName: r.productSlug,
+            rating: r.rating,
+            bodyPreview,
+            message: `New product review | ${r.productSlug} · ${r.rating}★`,
+          }),
+        };
+      }),
+      skipDuplicates: true,
+    })
+    .catch(() => null);
+}
+

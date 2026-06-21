@@ -20,6 +20,8 @@ import { R2 } from "@/lib/r2";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
+import { getProductFiveStarReviewCounts } from "@/lib/product-reviews-queries";
+import { ProductFiveStarRating } from "@/components/site/product-five-star-rating";
 
 /** Regenerate from DB periodically; admin saves also revalidate catalog tags. Keep in sync with `STOREFRONT_ISR_SECONDS`. */
 export const revalidate = 300;
@@ -107,11 +109,25 @@ export default async function HomePage({
   const mechanicalSlider = await buildHomeWatchSlider("mechanical", all, locale, messages);
   const quartzSlider = await buildHomeWatchSlider("quartz", all, locale, messages);
   const ultraThinSlider = await buildHomeWatchSlider("ultra-thin", all, locale, messages);
+  const homeProductSlugs = [
+    ...new Set([
+      ...featured.map((p) => p.slug),
+      ...recommended.map((p) => p.slug),
+      ...mechanicalSlider.products.map((p) => p.slug),
+      ...quartzSlider.products.map((p) => p.slug),
+      ...ultraThinSlider.products.map((p) => p.slug),
+    ]),
+  ];
+  const fiveStarCountsMap = await getProductFiveStarReviewCounts(homeProductSlugs);
+  const fiveStarReviewCounts = Object.fromEntries(fiveStarCountsMap.entries());
   const heroFeaturedRaw =
     all.find((p) => p.slug === "2301" || p.slug === "digitemp-2301") ?? [...all].slice(0, 12)[0] ?? null;
   const heroFeatured = heroFeaturedRaw
     ? applyStorefrontProductLocale(heroFeaturedRaw, locale, messages)
     : null;
+  const heroFiveStarCount = heroFeatured
+    ? (fiveStarReviewCounts[heroFeatured.slug] ?? 0)
+    : 0;
   const heroFallback = {
     slug: "digitemp",
     name: "HUMPBUCK DIGI-TEMP",
@@ -135,6 +151,7 @@ export default async function HomePage({
         products={recommended}
         cardImages={recommendedCardImages}
         cardHoverImages={recommendedCardHoverImages}
+        fiveStarReviewCounts={fiveStarReviewCounts}
       />
       {/* Series spotlight — HUMPBUCK DIGI-TEMP */}
       <section className="border-b border-line bg-paper text-ink">
@@ -163,6 +180,9 @@ export default async function HomePage({
                         {t("heroFeaturedLabel")}
                       </div>
                       <div className="mt-1 font-serif text-base text-ink sm:text-lg">{(heroFeatured ?? heroFallback).name}</div>
+                      {heroFeatured ? (
+                        <ProductFiveStarRating count={heroFiveStarCount} compact className="mt-1" />
+                      ) : null}
                     </div>
                     <div className="text-right">
                       <div className="text-lg font-semibold tabular-nums text-ink sm:text-xl">
@@ -213,6 +233,7 @@ export default async function HomePage({
         products={featured}
         cardImages={featuredCardImages}
         cardHoverImages={featuredCardHoverImages}
+        fiveStarReviewCounts={fiveStarReviewCounts}
       />
 
       <HomeCategoryProductSliders
@@ -225,6 +246,7 @@ export default async function HomePage({
         ultraThinProducts={ultraThinSlider.products}
         ultraThinCardImages={ultraThinSlider.cardImages}
         ultraThinCardHoverImages={ultraThinSlider.cardHoverImages}
+        fiveStarReviewCounts={fiveStarReviewCounts}
       />
 
       <HomeFounderStorySection />

@@ -7,7 +7,7 @@ import {
   buyerOrderStatusForLocale,
   showBuyerCancelOrderCta,
 } from "@/lib/account-buyer-order";
-import { orderDisplayCode, paymentProviderLabel } from "@/lib/admin/order-ui";
+import { orderDisplayCode } from "@/lib/admin/order-ui";
 import { BuyerOrderLineItems } from "@/components/account/buyer-order-line-items";
 import { formatPrice } from "@/lib/catalog";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
@@ -179,10 +179,6 @@ export default async function AccountOrdersPage({
                         </p>
                         <p className="mt-1 text-xs text-muted">
                           {t("ordersOrderNumber", { num: orderDisplayCode(order) })}
-                          <span className="text-muted/80">
-                            {" "}
-                            {t("ordersRefPart", { suffix: order.id.slice(-8) })}
-                          </span>
                         </p>
                       </div>
                       <div className="text-right">
@@ -191,7 +187,6 @@ export default async function AccountOrdersPage({
                         </p>
                         <BuyerOrderStatusBlock
                           className="mt-2 text-right"
-                          providerLabel={paymentProviderLabel(order.provider)}
                           status={order.status}
                           statusDisplay={buyerOrderStatusForLocale(order.status, tStatus)}
                           orderStatusHeading={tStatus("heading")}

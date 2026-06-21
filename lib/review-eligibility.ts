@@ -1,7 +1,7 @@
 import { orderItemsFromOrder } from "@/lib/order-item-display";
 
-/** Paid / fulfillment — buyer may leave a product review. */
-const REVIEW_OK = new Set(["paid", "processing", "shipped", "delivered"]);
+/** Buyer may leave a review only after confirming receipt (`delivered`). */
+const REVIEW_OK = new Set(["delivered"]);
 
 export function orderStatusAllowsReview(status: string): boolean {
   return REVIEW_OK.has(status);

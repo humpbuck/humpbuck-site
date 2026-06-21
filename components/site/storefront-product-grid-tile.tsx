@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useCart } from "@/components/cart/cart-context";
 import { ProductCardHoverImages } from "@/components/site/product-card-hover-images";
+import { ProductFiveStarRating } from "@/components/site/product-five-star-rating";
 import {
   formatPrice,
   isVariantOptionSellable,
@@ -33,6 +34,7 @@ export function StorefrontProductGridTile({
   imagePriority = false,
   imageEager = false,
   cartSource = "home_grid",
+  fiveStarReviewCount = 0,
 }: {
   product: Product;
   cardImageUrl?: string;
@@ -40,6 +42,7 @@ export function StorefrontProductGridTile({
   imagePriority?: boolean;
   imageEager?: boolean;
   cartSource?: string;
+  fiveStarReviewCount?: number;
 }) {
   const t = useTranslations("Home");
   const { addItem, openCartDrawer } = useCart();
@@ -92,6 +95,8 @@ export function StorefrontProductGridTile({
       >
         {product.name}
       </Link>
+
+      <ProductFiveStarRating count={fiveStarReviewCount} compact className="mt-1.5" />
 
       <div className="mt-2 flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-baseline gap-1.5">

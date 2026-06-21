@@ -4,11 +4,11 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      /**
-       * Resolved URL to show in header: DB `image` (upload or preset) or Gravatar from email
-       * (`getBuyerAvatarDisplayUrl`). PDP reviews use `getReviewAvatarDisplayUrl` (Pravatar fallback).
-       */
-      displayAvatarUrl?: string | null;
+      firstName?: string | null;
+      lastName?: string | null;
+      displayName?: string | null;
+      /** Resolved from first + last name → display name → email. */
+      name?: string | null;
     } & DefaultSession["user"];
   }
 }
@@ -16,6 +16,8 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     id?: string;
-    picture?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    displayName?: string | null;
   }
 }

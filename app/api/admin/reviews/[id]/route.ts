@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
+import { markProductReviewInboxHandled } from "@/lib/admin-inbox";
+import { getProductBySlug } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
-import { revalidateProductReviews } from "@/lib/revalidate-product-reviews";
 import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
+import { isProductReviewStatus } from "@/lib/review-status";
 
 const MAX_MERCHANT_REPLY = 5_000;
 
@@ -16,12 +18,39 @@ export async function PATCH(
   }
 
   const { id } = await ctx.params;
-  let body: { merchantReply?: string };
+  let body: { merchantReply?: string; status?: string };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
+
+  const review = await prisma.productReview.findUnique({
+    where: { id },
+    select: { productSlug: true, status: true },
+  });
+  if (!review) {
+    return NextResponse.json({ error: "Review not found" }, { status: 404 });
+  }
+
+  if (body.status !== undefined) {
+    const status = String(body.status).trim();
+    if (!isProductReviewStatus(status)) {
+      return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+    }
+    await prisma.productReview.update({
+      where: { id },
+      data: { status },
+    });
+    if (status === "approved" || status === "rejected") {
+      await markProductReviewInboxHandled(id);
+    }
+    if (status === "approved" && (await getProductBySlug(review.productSlug))) {
+      revalidateStorefrontPath(`/product/${encodeURIComponent(review.productSlug)}`);
+    }
+    return NextResponse.json({ ok: true, status });
+  }
+
   const reply = String(body.merchantReply ?? "").trim();
   if (!reply) {
     return NextResponse.json(
@@ -33,26 +62,13 @@ export async function PATCH(
     return NextResponse.json({ error: "Reply is too long" }, { status: 400 });
   }
 
-  const review = await prisma.productReview.findUnique({
-    where: { id },
-    select: { productSlug: true },
-  });
-  if (!review) {
-    return NextResponse.json({ error: "Review not found" }, { status: 404 });
-  }
-
-  const updated = await prisma.productReview.updateMany({
+  await prisma.productReview.update({
     where: { id },
     data: {
       merchantReply: reply,
       merchantRepliedAt: new Date(),
     },
   });
-  if (updated.count === 0) {
-    return NextResponse.json({ error: "Review not found" }, { status: 404 });
-  }
-  revalidateProductReviews(review.productSlug);
-  revalidateStorefrontPath(`/product/${encodeURIComponent(review.productSlug)}`);
   return NextResponse.json({ ok: true });
 }
 
@@ -70,16 +86,14 @@ export async function DELETE(
     where: { id },
     select: { productSlug: true },
   });
-  if (!review) {
-    return NextResponse.json({ error: "Review not found" }, { status: 404 });
-  }
-
   const deleted = await prisma.productReview.deleteMany({ where: { id } });
   if (deleted.count === 0) {
     return NextResponse.json({ error: "Review not found" }, { status: 404 });
   }
+  await markProductReviewInboxHandled(id);
+  if (review && (await getProductBySlug(review.productSlug))) {
+    revalidateStorefrontPath(`/product/${encodeURIComponent(review.productSlug)}`);
+  }
 
-  revalidateProductReviews(review.productSlug);
-  revalidateStorefrontPath(`/product/${encodeURIComponent(review.productSlug)}`);
   return NextResponse.json({ ok: true });
 }

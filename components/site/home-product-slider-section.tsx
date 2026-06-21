@@ -15,6 +15,7 @@ export async function HomeProductSliderSection({
   cardImages,
   cardHoverImages,
   cartSource,
+  fiveStarReviewCounts,
 }: {
   headingId: string;
   kicker?: string;
@@ -25,6 +26,7 @@ export async function HomeProductSliderSection({
   cardImages: (string | undefined)[];
   cardHoverImages: (string | undefined)[];
   cartSource: string;
+  fiveStarReviewCounts: Record<string, number>;
 }) {
   const t = await getTranslations("Home");
 
@@ -69,6 +71,7 @@ export async function HomeProductSliderSection({
             products={products}
             cardImages={cardImages}
             cardHoverImages={cardHoverImages}
+            fiveStarReviewCounts={fiveStarReviewCounts}
             cartSource={cartSource}
             prevLabel={t("recommendedSliderPrev")}
             nextLabel={t("recommendedSliderNext")}

@@ -96,6 +96,7 @@ export default async function RootLayout({
       dir={locale === "he" || locale === "ar" ? "rtl" : "ltr"}
       data-scroll-behavior="smooth"
       className={`${fontBody.variable} ${fontDisplay.variable} h-full`}
+      suppressHydrationWarning
     >
       <head>
         <link rel="preconnect" href={R2_PUBLIC_BASE} crossOrigin="anonymous" />
