@@ -24,3 +24,13 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## Storefront locale `ar` (Arabic)
 
 - Locale code **`ar`** in `i18n/routing.ts`; RTL with Hebrew (`dir` on `<html>`). Messages: `messages/ar.json`, `messages/policies.ar.json`, `messages/storefront-extra.ar.json`, `messages/product-copy.ar.json`. Rebuild: `node scripts/build-ar-locale.mjs` after editing `scripts/ar-batch*.json` or `scripts/ar-quality-fixes.json` (apply via `node scripts/apply-ar-quality-fixes.mjs`).
+
+## Git push to GitHub (humpbuck-site)
+
+Read **`docs/user-conventions.md` §5** before any sync. Summary:
+
+- **Remote:** `git@github.com-humpbuck:ouhao2016-creator/humpbuck-site.git` — never plain `git@github.com:`.
+- **SSH key:** `~/.ssh/id_ed25519` via Host `github.com-humpbuck` in `~/.ssh/config`. **Not** `id_ed25519_humpbuck`.
+- **GitHub fingerprint (source of truth):** `SHA256:0v8+sG9YkiVKYgS0/gX/8sJDoMg3ZEgxodBjTHRAHnw` on key title `humpbuck`.
+- **When user asks to sync:** verify `ssh -T git@github.com-humpbuck` → `Hi ouhao2016-creator!`, then `git push origin main`. Commit only when explicitly requested.
+- **sadhakashop-site** is separate: `github.com-sadhakashop` + `id_ed25519_sadhakashop` — do not cross wires.

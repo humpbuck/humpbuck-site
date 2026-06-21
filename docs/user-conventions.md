@@ -37,7 +37,34 @@
 
 - 结构变更用 Prisma 迁移；新环境在跑种子前执行：`npm run db:migrate`（通过 `scripts/migrate-with-env.ts` 加载 `.env` / `.env.local` 中的 `DATABASE_URL`）。
 
-## 5. 变更记录（由你或助手在重要会话后追加）
+## 5. Git / GitHub 同步（本机双站独立 SSH）
+
+本机同时维护 **humpbuck-site** 与 **sadhakashop-site**，各自 GitHub 账号与 SSH 密钥**必须独立**，互不串用。配置在 **`C:\Users\Administrator\.ssh\config`**（换机器时需按同样规则重建）。
+
+| 仓库 | GitHub 账号 | `git remote` Host 别名 | 本机私钥 | GitHub 上密钥 Title |
+|------|-------------|-------------------------|----------|---------------------|
+| **humpbuck-site** | `ouhao2016-creator` | `github.com-humpbuck` | `~/.ssh/id_ed25519` | `humpbuck` |
+| **sadhakashop-site** | `sadhakashop-website` | `github.com-sadhakashop` | `~/.ssh/id_ed25519_sadhakashop` | （sadhakashop 专用） |
+
+**humpbuck 以 GitHub 为准：** GitHub 上 `humpbuck` 密钥指纹为 `SHA256:0v8+sG9YkiVKYgS0/gX/8sJDoMg3ZEgxodBjTHRAHnw`，对应本机 **`id_ed25519`**（注释 `ouhao2016@gmail.com`）。**不要**把 `~/.ssh/id_ed25519_humpbuck` 当作 humpbuck 的推送密钥（那是另一把未登记密钥，会导致 `Permission denied`）。
+
+**humpbuck-site 远程地址（已固定，勿改成 `git@github.com:`）：**
+
+```text
+git@github.com-humpbuck:ouhao2016-creator/humpbuck-site.git
+```
+
+**当你说「同步到 GitHub」时，助手应：**
+
+1. `git status` / `git diff` / `git log -1` 确认待提交内容  
+2. 仅在你明确要求时 `git commit`（勿擅自提交）  
+3. 推送前验证：`ssh -T git@github.com-humpbuck`（应出现 `Hi ouhao2016-creator!`）  
+4. `git push origin main`  
+5. 若 SSH 失败：**先查**是否误用 `id_ed25519_humpbuck` 或 remote 是否丢失 `-humpbuck` 后缀；**不要**擅自换 GitHub 上的公钥，以 GitHub 已登记的 `id_ed25519` 为准调整 `~/.ssh/config`
+
+**Prisma 迁移后推送：** 若改了 `schema.prisma`，部署前需在本地跑过 `npm run db:migrate`；Vercel 生产环境需能连同一套 Neon。
+
+## 6. 变更记录（由你或助手在重要会话后追加）
 
 | 日期 | 摘要 |
 |------|------|
@@ -47,8 +74,9 @@
 | 2026-05-19 | 新增前台语言 **ar**（阿拉伯语，RTL）；文案见 `messages/ar.json` 等，构建脚本 `scripts/build-ar-locale.mjs`。 |
 | 2026-06-18 | 降 Vercel Fluid CPU：PDP 评论改 `unstable_cache`（去掉 `noStore`/`auth()` 动态化）；ISR 60s→300s；Blog/视频页改 ISR。 |
 | 2026-06-18 | 停用自研访客统计（`/api/analytics/event` 不再写 Neon）；流量看 GA + Vercel Analytics；checkout 归因仍用 `traffic-attribution` 本地存储；移除商家后台 Traffic 页。 |
+| 2026-06-21 | 记录本机双站 GitHub SSH：`humpbuck` 用 `github.com-humpbuck` + `~/.ssh/id_ed25519`（指纹与 GitHub 密钥 `humpbuck` 一致）；勿用 `id_ed25519_humpbuck`。 |
 
-## 6. 附：你希望追加的个人要求（可编辑）
+## 7. 附：你希望追加的个人要求（可编辑）
 
 （在此下方向下写即可，例如：品牌措辞、不能出现的用语、定价比对规则、客服流程等。）
 
