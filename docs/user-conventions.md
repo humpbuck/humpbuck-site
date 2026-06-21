@@ -39,6 +39,15 @@
 
 ## 5. Git / GitHub 同步（本机双站独立 SSH）
 
+**工作区即同步目标（最重要）：** Cursor 里**当前打开的是哪个仓库文件夹**，你说「同步到 GitHub」就**只同步该仓库**到其对应的 GitHub remote——**不要**推另一个站。
+
+| 当前工作区文件夹 | 只同步到 |
+|------------------|----------|
+| `humpbuck-site` | `ouhao2016-creator/humpbuck-site` |
+| `sadhakashop-site` | `sadhakashop-website/sadhakashop-website` |
+
+助手应先确认工作区路径（或 `git remote -v`）再操作；**禁止**在 humpbuck 工作区推 sadhakashop，或反过来。
+
 本机同时维护 **humpbuck-site** 与 **sadhakashop-site**，各自 GitHub 账号与 SSH 密钥**必须独立**，互不串用。配置在 **`C:\Users\Administrator\.ssh\config`**（换机器时需按同样规则重建）。
 
 | 仓库 | GitHub 账号 | `git remote` Host 别名 | 本机私钥 | GitHub 上密钥 Title |
@@ -54,13 +63,16 @@
 git@github.com-humpbuck:ouhao2016-creator/humpbuck-site.git
 ```
 
-**当你说「同步到 GitHub」时，助手应：**
+**在 `humpbuck-site` 工作区说「同步到 GitHub」时，助手应：**
 
-1. `git status` / `git diff` / `git log -1` 确认待提交内容  
-2. 仅在你明确要求时 `git commit`（勿擅自提交）  
-3. 推送前验证：`ssh -T git@github.com-humpbuck`（应出现 `Hi ouhao2016-creator!`）  
-4. `git push origin main`  
-5. 若 SSH 失败：**先查**是否误用 `id_ed25519_humpbuck` 或 remote 是否丢失 `-humpbuck` 后缀；**不要**擅自换 GitHub 上的公钥，以 GitHub 已登记的 `id_ed25519` 为准调整 `~/.ssh/config`
+1. 确认当前目录是 **humpbuck-site**（`git remote -v` 含 `github.com-humpbuck`）  
+2. `git status` / `git diff` / `git log -1` 确认待提交内容  
+3. 仅在你明确要求时 `git commit`（勿擅自提交）  
+4. 推送前验证：`ssh -T git@github.com-humpbuck`（应出现 `Hi ouhao2016-creator!`）  
+5. `git push origin main`  
+6. 若 SSH 失败：**先查**是否误用 `id_ed25519_humpbuck` 或 remote 是否丢失 `-humpbuck` 后缀；**不要**擅自换 GitHub 上的公钥，以 GitHub 已登记的 `id_ed25519` 为准调整 `~/.ssh/config`
+
+**在 `sadhakashop-site` 工作区**的同步步骤见该仓库 `docs/user-conventions.md` §5（`github.com-sadhakashop` + `id_ed25519_sadhakashop`）。
 
 **Prisma 迁移后推送：** 若改了 `schema.prisma`，部署前需在本地跑过 `npm run db:migrate`；Vercel 生产环境需能连同一套 Neon。
 
@@ -75,6 +87,7 @@ git@github.com-humpbuck:ouhao2016-creator/humpbuck-site.git
 | 2026-06-18 | 降 Vercel Fluid CPU：PDP 评论改 `unstable_cache`（去掉 `noStore`/`auth()` 动态化）；ISR 60s→300s；Blog/视频页改 ISR。 |
 | 2026-06-18 | 停用自研访客统计（`/api/analytics/event` 不再写 Neon）；流量看 GA + Vercel Analytics；checkout 归因仍用 `traffic-attribution` 本地存储；移除商家后台 Traffic 页。 |
 | 2026-06-21 | 记录本机双站 GitHub SSH：`humpbuck` 用 `github.com-humpbuck` + `~/.ssh/id_ed25519`（指纹与 GitHub 密钥 `humpbuck` 一致）；勿用 `id_ed25519_humpbuck`。 |
+| 2026-06-21 | 约定：**当前 Cursor 工作区是哪个站，说「同步」就只推该站**；两站 remote/SSH 互不串用。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 

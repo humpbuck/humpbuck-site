@@ -8,7 +8,7 @@ import {
   SITE_ANNOUNCEMENT_BAR_HEIGHT_PX,
   type SiteAnnouncementData,
 } from "@/lib/site-announcement";
-import { isStorefrontHomePathname } from "@/lib/storefront-home-path";
+import { isStorefrontAnnouncementPathname } from "@/lib/storefront-home-path";
 
 export { SITE_ANNOUNCEMENT_BAR_HEIGHT_PX };
 
@@ -22,7 +22,7 @@ export function SiteAnnouncementBar({
   const show =
     enabled &&
     activeSlides.length > 0 &&
-    isStorefrontHomePathname(pathname);
+    isStorefrontAnnouncementPathname(pathname);
 
   if (!show) return null;
 

@@ -18,14 +18,22 @@ export function deterministicShuffle<T>(arr: readonly T[], seed: string): T[] {
   return out;
 }
 
-/** Fixed upper bound keeps GitHub / CI / production seeds aligned (through 2026-06-21). */
-const REVIEW_DATE_END = new Date("2026-06-21T23:59:59.000Z").getTime();
-const REVIEW_DATE_START = new Date("2026-01-01T08:00:00.000Z").getTime();
+/** Fixed bounds — bump REVIEW_DATE_END when re-seeding so CI/production stay aligned. */
+const REVIEW_DATE_START = new Date("2025-01-01T00:00:00.000Z");
+const REVIEW_DATE_END = new Date("2026-06-30T23:59:59.000Z");
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
+function reviewDateDayCount(): number {
+  const start = REVIEW_DATE_START.getTime();
+  const end = REVIEW_DATE_END.getTime();
+  return Math.max(Math.floor((end - start) / MS_PER_DAY) + 1, 1);
+}
+
+/** Spread each review across 2025-01 … 2026-06 (day + time-of-day). Uses day index, not ms offset — hash is 32-bit and ms span overflows that. */
 export function deterministicReviewDate(productSlug: string, index: number): Date {
-  const span = Math.max(REVIEW_DATE_END - REVIEW_DATE_START, 1);
-  const offset = hashString(`${productSlug}:date:${index}`) % span;
-  return new Date(REVIEW_DATE_START + offset);
+  const dayIndex = hashString(`${productSlug}:date:${index}`) % reviewDateDayCount();
+  const timeOfDayMs = hashString(`${productSlug}:time:${index}`) % MS_PER_DAY;
+  return new Date(REVIEW_DATE_START.getTime() + dayIndex * MS_PER_DAY + timeOfDayMs);
 }
 
 export function deterministicReviewerOffset(productSlug: string): number {

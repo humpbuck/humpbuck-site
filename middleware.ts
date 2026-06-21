@@ -1,14 +1,8 @@
 import createMiddleware from "next-intl/middleware";
-import { type NextRequest } from "next/server";
 import { routing } from "./i18n/routing";
 
-const intlMiddleware = createMiddleware(routing);
-
-export default function middleware(request: NextRequest) {
-  const response = intlMiddleware(request);
-  response.headers.set("x-pathname", request.nextUrl.pathname);
-  return response;
-}
+/** Keep this a thin pass-through — do not clone `NextRequest` here (breaks refresh with type-only imports). */
+export default createMiddleware(routing);
 
 export const config = {
   matcher: ["/((?!api|_next|_vercel|admin-ouhao|.*\\..*).*)"],
