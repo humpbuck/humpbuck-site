@@ -2,7 +2,7 @@
 export const HUMPBUCK_SOCIAL_LINKS = [
   {
     id: "facebook",
-    href: "https://www.facebook.com/humpbuck.ceo",
+    href: "https://www.facebook.com/humpbuck.official",
   },
   {
     id: "instagram",
