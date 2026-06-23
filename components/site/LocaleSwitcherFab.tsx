@@ -6,22 +6,28 @@ import { Languages } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LocaleFlagIcon } from "@/components/site/locale-flag-icons";
 import { routing } from "@/i18n/routing";
+import type { SiteFabPopoverCoordination } from "@/components/site/site-fab-popover-coordination";
 
-/** Fixed bottom-left; pairs with WhatsApp (right) and scroll-to-top (right). */
-export function LocaleSwitcherFab() {
+export function LocaleSwitcherFab({
+  fabCoordination,
+}: {
+  fabCoordination: SiteFabPopoverCoordination;
+}) {
   const locale = useLocale();
   const pathname = usePathname();
   const t = useTranslations("LocaleSwitcher");
   const rootRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState(false);
-  const [pinned, setPinned] = useState(false);
+  const [localPinned, setLocalPinned] = useState(false);
   const [canHoverOpen, setCanHoverOpen] = useState(false);
 
-  const open = pinned || (canHoverOpen && hover);
+  const coordinatedOpen = fabCoordination.openMenu === fabCoordination.menuId;
+  const open = coordinatedOpen || localPinned || (canHoverOpen && hover);
   const otherLocales = routing.locales.filter((l) => l !== locale);
 
   const closeMenu = () => {
-    setPinned(false);
+    fabCoordination.onOpenMenuChange(null);
+    setLocalPinned(false);
     setHover(false);
   };
 
@@ -34,15 +40,15 @@ export function LocaleSwitcherFab() {
   }, []);
 
   useEffect(() => {
-    if (!pinned) return;
+    if (!coordinatedOpen && !localPinned) return;
     const onPointerDown = (e: PointerEvent) => {
       if (!rootRef.current?.contains(e.target as Node)) {
-        setPinned(false);
+        closeMenu();
       }
     };
     document.addEventListener("pointerdown", onPointerDown, true);
     return () => document.removeEventListener("pointerdown", onPointerDown, true);
-  }, [pinned]);
+  }, [coordinatedOpen, localPinned]);
 
   useEffect(() => {
     if (!open) return;
@@ -54,7 +60,6 @@ export function LocaleSwitcherFab() {
   return (
     <div
       ref={rootRef}
-      className="fixed bottom-6 left-6 z-40 md:bottom-8 md:left-8"
       role="navigation"
       aria-label={t("label")}
       onMouseEnter={() => {
@@ -104,7 +109,10 @@ export function LocaleSwitcherFab() {
           aria-haspopup="listbox"
           onClick={() => {
             if (open) closeMenu();
-            else setPinned(true);
+            else {
+              fabCoordination.onOpenMenuChange(fabCoordination.menuId);
+              setLocalPinned(true);
+            }
           }}
         >
           <Languages size={14} className="shrink-0 text-muted" aria-hidden />

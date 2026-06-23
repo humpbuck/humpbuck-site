@@ -35,9 +35,9 @@ const SiteFloatingActions = dynamic(
   { ssr: false },
 );
 
-const LocaleSwitcherFab = dynamic(
+const SiteLocaleCurrencyFab = dynamic(
   () =>
-    import("@/components/site/LocaleSwitcherFab").then((m) => m.LocaleSwitcherFab),
+    import("@/components/site/SiteLocaleCurrencyFab").then((m) => m.SiteLocaleCurrencyFab),
   { ssr: false },
 );
 
@@ -79,17 +79,13 @@ export function SiteClientEnhancements() {
     };
   }, [isHeavyCheckout]);
 
-  return (
+  return ready ? (
     <>
-      {ready ? (
-        <>
-          <SiteAnalyticsConsent />
-          <GoogleAnalyticsPageviews />
-          <AttributionCapture />
-          <LocaleSwitcherFab />
-          <SiteFloatingActions />
-        </>
-      ) : null}
+      <SiteAnalyticsConsent />
+      <GoogleAnalyticsPageviews />
+      <AttributionCapture />
+      <SiteLocaleCurrencyFab />
+      <SiteFloatingActions />
     </>
-  );
+  ) : null;
 }

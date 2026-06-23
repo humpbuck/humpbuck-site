@@ -1,11 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { type MouseEvent, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { useCart } from "@/components/cart/cart-context";
 import { ProductCardHoverImages } from "@/components/site/product-card-hover-images";
 import { ProductCardVariantSwatches } from "@/components/site/product-card-variant-swatches";
-import { formatPrice, type Product } from "@/lib/catalog";
+import { DisplayPrice } from "@/components/site/DisplayPrice";
+import { type Product } from "@/lib/catalog";
+import { CART_ADDED_EVENT } from "@/lib/cart-events";
+import {
+  canQuickAddProduct,
+  variantForQuickAdd,
+} from "@/lib/product-quick-add";
 
 export function ProductCard({
   product,
@@ -33,6 +40,7 @@ export function ProductCard({
   cardHoverImageUrl?: string;
 }) {
   const t = useTranslations("Product");
+  const { addItem, openCartDrawer } = useCart();
   const [variantIndex, setVariantIndex] = useState(0);
   const variants = product.variantOptions ?? [];
   const baseImage = cardImageUrl?.trim() || product.image;
@@ -41,6 +49,31 @@ export function ProductCard({
       ? variants[variantIndex]?.image?.trim() || baseImage
       : baseImage;
   const hoverSrc = cardHoverImageUrl;
+  const variant = variantForQuickAdd(product, variantIndex);
+  const addEnabled = canQuickAddProduct(product, variantIndex);
+
+  function handleAdd(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!addEnabled) return;
+
+    addItem({
+      slug: product.slug,
+      qty: 1,
+      productName: product.name,
+      unitPrice: product.price,
+      ...(variant
+        ? {
+            variantId: variant.id,
+            variantLabel: variant.label,
+            variantImage: variant.image,
+          }
+        : {}),
+    });
+
+    window.dispatchEvent(new CustomEvent(CART_ADDED_EVENT));
+    openCartDrawer();
+  }
 
   return (
     <article
@@ -80,21 +113,27 @@ export function ProductCard({
         ) : null}
         <div className="mt-4 flex items-end justify-between gap-3">
           <div>
-            <div className="text-base font-semibold tabular-nums">
-              {formatPrice(product.price)}
-            </div>
+            <DisplayPrice
+              usd={product.price}
+              className="text-base font-semibold"
+            />
             {product.compareAtPrice != null && (
-              <div className="text-[12px] text-muted line-through tabular-nums">
-                {formatPrice(product.compareAtPrice)}
-              </div>
+              <DisplayPrice
+                usd={product.compareAtPrice}
+                className="text-[12px] line-through"
+                referenceClassName="hidden"
+                primaryClassName="text-muted tabular-nums"
+              />
             )}
           </div>
-          <Link
-            href={`/product/${product.slug}`}
-            className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/70 underline-offset-4 hover:underline"
+          <button
+            type="button"
+            disabled={!addEnabled}
+            onClick={handleAdd}
+            className="shrink-0 rounded-full border border-ink/15 bg-ink px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-paper transition hover:bg-ink/90 disabled:cursor-not-allowed disabled:opacity-40 sm:px-3.5 sm:text-[11px]"
           >
-            {t("view")}
-          </Link>
+            {t("cardAdd")}
+          </button>
         </div>
       </div>
     </article>

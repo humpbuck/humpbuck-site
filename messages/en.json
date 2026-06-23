@@ -5,6 +5,10 @@
     "ogTitle": "HUMPBUCK — Mechanical Watches",
     "ogDescription": "Raw mechanical beauty for the man in motion. My goal is to offer high-quality, affordable mechanical watches to everyone."
   },
+  "DisplayCurrency": {
+    "label": "Display currency",
+    "usdChargeNotice": "Prices are shown in USD. Your card will be charged in USD at checkout."
+  },
   "LocaleSwitcher": {
     "en": "English",
     "es": "Español",

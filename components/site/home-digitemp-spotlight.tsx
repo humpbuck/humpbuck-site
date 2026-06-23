@@ -6,7 +6,8 @@ import { Link } from "@/i18n/navigation";
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { ProductCardVariantSwatches } from "@/components/site/product-card-variant-swatches";
 import { ProductFiveStarRating } from "@/components/site/product-five-star-rating";
-import { formatPrice, type ProductVariantOption } from "@/lib/catalog";
+import { DisplayPrice } from "@/components/site/DisplayPrice";
+import { type ProductVariantOption } from "@/lib/catalog";
 
 export function HomeDigitempSpotlight({
   productHref,
@@ -83,13 +84,17 @@ export function HomeDigitempSpotlight({
                 ) : null}
               </div>
               <div className="text-right">
-                <div className="text-lg font-semibold tabular-nums text-ink sm:text-xl">
-                  {formatPrice(price)}
-                </div>
+                <DisplayPrice
+                  usd={price}
+                  className="text-lg font-semibold text-ink sm:text-xl"
+                  referenceClassName="text-[10px] text-muted"
+                />
                 {compareAtPrice != null && (
-                  <div className="text-[12px] text-muted line-through tabular-nums">
-                    {formatPrice(compareAtPrice)}
-                  </div>
+                  <DisplayPrice
+                    usd={compareAtPrice}
+                    hideReference
+                    primaryClassName="text-[12px] text-muted line-through tabular-nums"
+                  />
                 )}
               </div>
             </div>

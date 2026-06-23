@@ -6,7 +6,8 @@ import { StorefrontImage } from "@/components/site/storefront-image";
 import { Minus, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/components/cart/cart-context";
-import { formatPrice } from "@/lib/catalog";
+import { DisplayPrice } from "@/components/site/DisplayPrice";
+import { UsdChargeNotice } from "@/components/site/usd-charge-notice";
 import { runWhenIdle } from "@/lib/defer-non-critical";
 import {
   captureAffiliatePidAttribution,
@@ -80,7 +81,12 @@ export default function CartPage() {
                       <p className="mt-1 text-xs text-muted">{line.variantLabel}</p>
                     )}
                     <p className="mt-2 text-sm tabular-nums">
-                      {formatPrice(typeof line.unitPrice === "number" ? line.unitPrice : 0)}{" "}
+                      <DisplayPrice
+                        usd={typeof line.unitPrice === "number" ? line.unitPrice : 0}
+                        stack={false}
+                        primaryClassName=""
+                        referenceClassName="text-[10px] text-muted"
+                      />{" "}
                       {t("each")}
                     </p>
                     <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -147,9 +153,16 @@ export default function CartPage() {
               );
             })}
           </ul>
-          <div className="mt-8 flex items-center justify-between rounded-2xl border border-line bg-white/70 p-4">
-            <span className="text-sm uppercase tracking-[0.14em] text-muted">{t("subtotal")}</span>
-            <span className="text-xl font-semibold tabular-nums">{formatPrice(subtotal)}</span>
+          <div className="mt-8 rounded-2xl border border-line bg-white/70 p-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm uppercase tracking-[0.14em] text-muted">{t("subtotal")}</span>
+              <DisplayPrice
+                usd={subtotal}
+                className="text-xl font-semibold"
+                referenceClassName="text-xs text-muted"
+              />
+            </div>
+            <UsdChargeNotice className="mt-3" />
           </div>
         </>
       )}

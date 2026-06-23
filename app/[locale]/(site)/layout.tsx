@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { NavigationProgress } from "@/components/site/navigation-progress";
 import { SiteAnnouncementBar } from "@/components/site/site-announcement-bar";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { SiteDisplayCurrencyShell } from "@/components/site/site-display-currency-shell";
 import { SiteClientEnhancements } from "@/components/site/site-client-enhancements";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { getSiteAnnouncement } from "@/lib/site-announcement-queries";
@@ -14,7 +15,7 @@ export default async function SiteLayout({
   const announcement = await getSiteAnnouncement();
 
   return (
-    <>
+    <SiteDisplayCurrencyShell>
       <Suspense fallback={null}>
         <NavigationProgress />
       </Suspense>
@@ -29,6 +30,6 @@ export default async function SiteLayout({
       <Suspense fallback={null}>
         <SiteFooter />
       </Suspense>
-    </>
+    </SiteDisplayCurrencyShell>
   );
 }

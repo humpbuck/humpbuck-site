@@ -6,7 +6,9 @@ import { Link } from "@/i18n/navigation";
 import { Minus, Plus, X } from "lucide-react";
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useCart } from "@/components/cart/cart-context";
-import { formatPrice, getCartLineImage } from "@/lib/catalog";
+import { DisplayPrice } from "@/components/site/DisplayPrice";
+import { UsdChargeNotice } from "@/components/site/usd-charge-notice";
+import { getCartLineImage } from "@/lib/catalog";
 const CART_QTY_MAX = 9999;
 
 export function CartDrawer() {
@@ -135,7 +137,12 @@ export function CartDrawer() {
                         <p className="mt-0.5 text-xs text-muted">{line.variantLabel}</p>
                       )}
                       <p className="mt-1 text-xs tabular-nums text-muted">
-                        {formatPrice(typeof line.unitPrice === "number" ? line.unitPrice : 0)}{" "}
+                        <DisplayPrice
+                          usd={typeof line.unitPrice === "number" ? line.unitPrice : 0}
+                          stack={false}
+                          primaryClassName=""
+                          referenceClassName="text-[10px] text-muted"
+                        />{" "}
                         {t("each")}
                       </p>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -191,8 +198,8 @@ export function CartDrawer() {
                         </button>
                       </div>
                     </div>
-                    <div className="shrink-0 text-right text-sm font-semibold tabular-nums">
-                      {formatPrice(lineTotal)}
+                    <div className="shrink-0 text-right text-sm font-semibold">
+                      <DisplayPrice usd={lineTotal} referenceClassName="text-[10px] text-muted" />
                     </div>
                   </li>
                 );
@@ -203,9 +210,18 @@ export function CartDrawer() {
 
         <div className="border-t border-line bg-paper px-4 py-4">
           {displayItems.length > 0 && (
-            <p className="mb-4 text-base font-semibold tabular-nums">
-              {t("subtotal")} {formatPrice(subtotal)}
-            </p>
+            <div className="mb-3">
+              <p className="text-base font-semibold tabular-nums">
+                {t("subtotal")}{" "}
+                <DisplayPrice
+                  usd={subtotal}
+                  stack={false}
+                  primaryClassName="font-semibold"
+                  referenceClassName="text-xs text-muted"
+                />
+              </p>
+              <UsdChargeNotice className="mt-2" />
+            </div>
           )}
           <div className="flex flex-col gap-2">
             {displayItems.length > 0 && (

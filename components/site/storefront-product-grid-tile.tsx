@@ -7,36 +7,13 @@ import { useCart } from "@/components/cart/cart-context";
 import { ProductCardHoverImages } from "@/components/site/product-card-hover-images";
 import { ProductCardVariantSwatches } from "@/components/site/product-card-variant-swatches";
 import { ProductFiveStarRating } from "@/components/site/product-five-star-rating";
-import {
-  formatPrice,
-  isVariantOptionSellable,
-  type Product,
-  type ProductVariantOption,
-} from "@/lib/catalog";
+import { DisplayPrice } from "@/components/site/DisplayPrice";
+import { type Product } from "@/lib/catalog";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
-
-function firstSellableVariant(product: Product): ProductVariantOption | null {
-  const options = product.variantOptions ?? [];
-  if (options.length === 0) return null;
-  return options.find(isVariantOptionSellable) ?? null;
-}
-
-function canQuickAdd(product: Product, variantIndex: number): boolean {
-  if (!product.inStock) return false;
-  const options = product.variantOptions ?? [];
-  if (options.length === 0) return true;
-  const selected = options[variantIndex];
-  if (selected && isVariantOptionSellable(selected)) return true;
-  return firstSellableVariant(product) != null;
-}
-
-function variantForQuickAdd(product: Product, variantIndex: number): ProductVariantOption | null {
-  const options = product.variantOptions ?? [];
-  if (options.length === 0) return null;
-  const selected = options[variantIndex];
-  if (selected && isVariantOptionSellable(selected)) return selected;
-  return firstSellableVariant(product);
-}
+import {
+  canQuickAddProduct,
+  variantForQuickAdd,
+} from "@/lib/product-quick-add";
 
 export function StorefrontProductGridTile({
   product,
@@ -66,7 +43,7 @@ export function StorefrontProductGridTile({
       : baseImage;
   const hoverSrc = cardHoverImageUrl;
   const variant = variantForQuickAdd(product, variantIndex);
-  const addEnabled = canQuickAdd(product, variantIndex);
+  const addEnabled = canQuickAddProduct(product, variantIndex);
 
   function handleAdd(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
@@ -126,14 +103,18 @@ export function StorefrontProductGridTile({
       <ProductFiveStarRating count={fiveStarReviewCount} compact className="mt-1.5" />
 
       <div className="mt-2 flex items-center justify-between gap-2">
-        <div className="flex min-w-0 items-baseline gap-1.5">
-          <span className="text-[13px] font-semibold tabular-nums text-ink sm:text-sm">
-            {formatPrice(product.price)}
-          </span>
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <DisplayPrice
+            usd={product.price}
+            className="text-[13px] font-semibold text-ink sm:text-sm"
+            referenceClassName="text-[10px] text-muted"
+          />
           {product.compareAtPrice != null && (
-            <span className="text-[11px] text-muted line-through tabular-nums sm:text-xs">
-              {formatPrice(product.compareAtPrice)}
-            </span>
+            <DisplayPrice
+              usd={product.compareAtPrice}
+              hideReference
+              primaryClassName="text-[11px] text-muted line-through tabular-nums sm:text-xs"
+            />
           )}
         </div>
         <button

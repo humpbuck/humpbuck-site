@@ -129,3 +129,65 @@ export function ShopProductGridFallback() {
     </div>
   );
 }
+
+/** PDP — gallery + buy box (two-column main grid). */
+export function ProductPdpMainFallback() {
+  return (
+    <div
+      className="mt-8 grid min-w-0 animate-pulse grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-x-14"
+      aria-busy="true"
+      aria-label="Loading product"
+    >
+      <PulseBlock className="aspect-square rounded-[28px] bg-ink/[0.06]" />
+      <div className="space-y-4">
+        <PulseBlock className="h-3 w-24" />
+        <PulseBlock className="h-12 w-full max-w-md" />
+        <PulseBlock className="h-5 w-full max-w-lg bg-ink/[0.06]" />
+        <PulseBlock className="h-10 w-32" />
+        <PulseBlock className="h-12 w-full max-w-xs rounded-full" />
+      </div>
+    </div>
+  );
+}
+
+export function ProductPdpReviewsFallback() {
+  return (
+    <div
+      className="mt-14 animate-pulse border-t border-line pt-14"
+      aria-busy="true"
+      aria-label="Loading reviews"
+    >
+      <PulseBlock className="h-8 w-40" />
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <PulseBlock key={i} className="h-48 rounded-2xl bg-ink/[0.06]" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function ProductPdpRelatedFallback() {
+  return (
+    <section
+      className="border-t border-line bg-paper py-14"
+      aria-busy="true"
+      aria-label="Loading related products"
+    >
+      <div className="mx-auto max-w-7xl animate-pulse px-4 sm:px-6">
+        <PulseBlock className="h-8 w-48" />
+        <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="overflow-hidden rounded-2xl border border-line bg-white/60">
+              <PulseBlock className="aspect-square bg-ink/[0.06]" />
+              <div className="space-y-2 p-4">
+                <PulseBlock className="h-4 w-full" />
+                <PulseBlock className="h-3 w-16" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

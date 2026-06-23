@@ -1,6 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import { StorefrontImage } from "@/components/site/storefront-image";
-import { formatPrice } from "@/lib/catalog";
+import { DisplayPrice } from "@/components/site/DisplayPrice";
 
 export type HomeFeaturedCardTheme = "digital" | "luxe" | "mixed";
 
@@ -107,11 +107,17 @@ export function HomeFeaturedProductCard({
             <div className="mt-1 truncate font-serif text-lg text-white">{name}</div>
           </div>
           <div className="shrink-0 text-right">
-            <div className="text-xl font-semibold tabular-nums text-white">{formatPrice(price)}</div>
+            <DisplayPrice
+              usd={price}
+              className="text-xl font-semibold text-white"
+              referenceClassName="text-[10px] text-white/55"
+            />
             {compareAtPrice != null && (
-              <div className="text-[12px] text-white/55 line-through tabular-nums">
-                {formatPrice(compareAtPrice)}
-              </div>
+              <DisplayPrice
+                usd={compareAtPrice}
+                hideReference
+                primaryClassName="text-[12px] text-white/55 line-through tabular-nums"
+              />
             )}
           </div>
         </div>

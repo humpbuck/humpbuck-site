@@ -10,6 +10,8 @@ import { CheckoutAddressForm } from "@/components/checkout/checkout-address-form
 import { CheckoutShippingLoading } from "@/components/checkout/checkout-shipping-loading";
 import { PaymentBrandButtons } from "@/components/checkout/payment-brand-buttons";
 import { getTaxIdRequirement, quoteCheckoutShipping, type ShippingMethodId } from "@/lib/checkout-shipping-quote";
+import { DisplayPrice } from "@/components/site/DisplayPrice";
+import { UsdChargeNotice } from "@/components/site/usd-charge-notice";
 import { runWhenIdle } from "@/lib/defer-non-critical";
 import { captureAffiliatePidAttribution, captureTrafficAttribution, getAffiliatePidForCheckout, getAffiliatePidForCheckoutFromUrl, getTrafficSourceForCheckout } from "@/lib/traffic-attribution";
 
@@ -339,7 +341,12 @@ export default function CheckoutPage() {
                 return (
                   <div key={`${line.slug}-${line.variantId ?? ""}`} className="flex items-center justify-between gap-3 text-ink/90">
                     <span className="truncate">{t("orderLine", { name, qty: line.qty })}</span>
-                    <span className="shrink-0">${price.toFixed(2)}</span>
+                    <DisplayPrice
+                      usd={price}
+                      stack={false}
+                      className="shrink-0 font-medium"
+                      referenceClassName="text-[10px] text-muted"
+                    />
                   </div>
                 );
               })
@@ -349,22 +356,50 @@ export default function CheckoutPage() {
           <div className="border-t border-line pt-3 text-sm">
             <div className="flex items-center justify-between">
               <span className="text-muted">{t("subtotal")}</span>
-              <span className="font-medium">${subtotal.toFixed(2)}</span>
+              <DisplayPrice
+                usd={subtotal}
+                stack={false}
+                className="font-medium"
+                referenceClassName="text-[10px] text-muted"
+              />
             </div>
             <div className="mt-2 flex items-center justify-between">
               <span className="text-muted">{t("shipping")}</span>
-              <span className="font-medium">{cartReady && shippingQuote.ok ? `$${shippingPrice.toFixed(2)}` : t("shippingDash")}</span>
+              <span className="font-medium">
+                {cartReady && shippingQuote.ok ? (
+                  <DisplayPrice
+                    usd={shippingPrice}
+                    stack={false}
+                    referenceClassName="text-[10px] text-muted"
+                  />
+                ) : (
+                  t("shippingDash")
+                )}
+              </span>
             </div>
             {appliedCoupon ? (
               <div className="mt-2 flex items-center justify-between">
                 <span className="text-muted">{t("coupon")}</span>
-                <span className="font-medium text-emerald-700">-${couponDiscount.toFixed(2)}</span>
+                <span className="font-medium text-emerald-700">
+                  -<DisplayPrice
+                    usd={couponDiscount}
+                    stack={false}
+                    hideReference
+                    primaryClassName="text-emerald-700"
+                  />
+                </span>
               </div>
             ) : null}
             <div className="mt-2 flex items-center justify-between border-t border-line pt-3 text-base">
               <span className="font-semibold text-ink">{t("total")}</span>
-              <span className="font-semibold text-ink">${total.toFixed(2)}</span>
+              <DisplayPrice
+                usd={total}
+                stack={false}
+                className="font-semibold text-ink"
+                referenceClassName="text-xs text-muted"
+              />
             </div>
+            <UsdChargeNotice className="mt-3" />
           </div>
 
           {getTaxIdRequirement(shipAddress.country ? shipAddress.country.trim().toUpperCase() : null) ? (
