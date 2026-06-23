@@ -1,10 +1,13 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ProductCardHoverImages } from "@/components/site/product-card-hover-images";
-import type { Product } from "@/lib/catalog";
-import { formatPrice } from "@/lib/catalog";
+import { ProductCardVariantSwatches } from "@/components/site/product-card-variant-swatches";
+import { formatPrice, type Product } from "@/lib/catalog";
 
-export async function ProductCard({
+export function ProductCard({
   product,
   imagePriority = false,
   imageEager = false,
@@ -29,37 +32,52 @@ export async function ProductCard({
   cardImageUrl?: string;
   cardHoverImageUrl?: string;
 }) {
-  const t = await getTranslations("Product");
-  const imgSrc = cardImageUrl?.trim() || product.image;
+  const t = useTranslations("Product");
+  const [variantIndex, setVariantIndex] = useState(0);
+  const variants = product.variantOptions ?? [];
+  const baseImage = cardImageUrl?.trim() || product.image;
+  const activeImage =
+    variants.length > 0
+      ? variants[variantIndex]?.image?.trim() || baseImage
+      : baseImage;
+  const hoverSrc = cardHoverImageUrl;
+
   return (
-    <Link
-      href={`/product/${product.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white/60 shadow-card transition hover:-translate-y-0.5 hover:shadow-lg"
+    <article
+      className="flex flex-col overflow-hidden rounded-2xl border border-line bg-white/60 shadow-card transition hover:-translate-y-0.5 hover:shadow-lg"
     >
-      <div className="relative aspect-square overflow-hidden bg-paper">
+      <Link
+        href={`/product/${product.slug}`}
+        className="group relative aspect-square overflow-hidden bg-paper"
+      >
         <div className="absolute left-3 top-3 z-10 rounded-full bg-ink px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-paper">
           {t("sale")}
         </div>
         <ProductCardHoverImages
-          primarySrc={imgSrc}
-          hoverSrc={cardHoverImageUrl}
+          primarySrc={activeImage}
+          hoverSrc={hoverSrc}
           alt={product.name}
           imagePriority={imagePriority}
           imageEager={imageEager}
           optimizeR2={optimizeR2Image}
           imageQuality={imageQuality}
         />
-      </div>
+      </Link>
       <div className="flex flex-1 flex-col p-4">
-        <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
-          {product.categoryLabel}
-        </div>
-        <div className="mt-2 font-serif text-base leading-snug text-ink">
+        <Link
+          href={`/product/${product.slug}`}
+          className="font-serif text-base leading-snug text-ink transition hover:text-ink/80"
+        >
           {product.name}
-        </div>
-        <p className="mt-2 line-clamp-2 flex-1 text-[13px] leading-relaxed text-muted">
-          {product.shortDescription}
-        </p>
+        </Link>
+        {variants.length > 0 ? (
+          <ProductCardVariantSwatches
+            options={variants}
+            productName={product.name}
+            selectedIndex={variantIndex}
+            onSelectedIndexChange={setVariantIndex}
+          />
+        ) : null}
         <div className="mt-4 flex items-end justify-between gap-3">
           <div>
             <div className="text-base font-semibold tabular-nums">
@@ -71,11 +89,14 @@ export async function ProductCard({
               </div>
             )}
           </div>
-          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/70 underline-offset-4 group-hover:underline">
+          <Link
+            href={`/product/${product.slug}`}
+            className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/70 underline-offset-4 hover:underline"
+          >
             {t("view")}
-          </span>
+          </Link>
         </div>
       </div>
-    </Link>
+    </article>
   );
 }

@@ -1,10 +1,11 @@
 "use client";
 
-import { type MouseEvent } from "react";
+import { type MouseEvent, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useCart } from "@/components/cart/cart-context";
 import { ProductCardHoverImages } from "@/components/site/product-card-hover-images";
+import { ProductCardVariantSwatches } from "@/components/site/product-card-variant-swatches";
 import { ProductFiveStarRating } from "@/components/site/product-five-star-rating";
 import {
   formatPrice,
@@ -20,11 +21,21 @@ function firstSellableVariant(product: Product): ProductVariantOption | null {
   return options.find(isVariantOptionSellable) ?? null;
 }
 
-function canQuickAdd(product: Product): boolean {
+function canQuickAdd(product: Product, variantIndex: number): boolean {
   if (!product.inStock) return false;
   const options = product.variantOptions ?? [];
   if (options.length === 0) return true;
+  const selected = options[variantIndex];
+  if (selected && isVariantOptionSellable(selected)) return true;
   return firstSellableVariant(product) != null;
+}
+
+function variantForQuickAdd(product: Product, variantIndex: number): ProductVariantOption | null {
+  const options = product.variantOptions ?? [];
+  if (options.length === 0) return null;
+  const selected = options[variantIndex];
+  if (selected && isVariantOptionSellable(selected)) return selected;
+  return firstSellableVariant(product);
 }
 
 export function StorefrontProductGridTile({
@@ -46,9 +57,16 @@ export function StorefrontProductGridTile({
 }) {
   const t = useTranslations("Home");
   const { addItem, openCartDrawer } = useCart();
-  const imgSrc = cardImageUrl?.trim() || product.image;
-  const variant = firstSellableVariant(product);
-  const addEnabled = canQuickAdd(product);
+  const [variantIndex, setVariantIndex] = useState(0);
+  const variants = product.variantOptions ?? [];
+  const baseImage = cardImageUrl?.trim() || product.image;
+  const activeImage =
+    variants.length > 0
+      ? variants[variantIndex]?.image?.trim() || baseImage
+      : baseImage;
+  const hoverSrc = cardHoverImageUrl;
+  const variant = variantForQuickAdd(product, variantIndex);
+  const addEnabled = canQuickAdd(product, variantIndex);
 
   function handleAdd(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
@@ -80,8 +98,8 @@ export function StorefrontProductGridTile({
         className="group relative aspect-square overflow-hidden rounded-xl border border-line/80 bg-white/50 shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-lg"
       >
         <ProductCardHoverImages
-          primarySrc={imgSrc}
-          hoverSrc={cardHoverImageUrl}
+          primarySrc={activeImage}
+          hoverSrc={hoverSrc}
           alt={product.name}
           imagePriority={imagePriority}
           imageEager={imageEager}
@@ -95,6 +113,15 @@ export function StorefrontProductGridTile({
       >
         {product.name}
       </Link>
+
+      {variants.length > 0 ? (
+        <ProductCardVariantSwatches
+          options={variants}
+          productName={product.name}
+          selectedIndex={variantIndex}
+          onSelectedIndexChange={setVariantIndex}
+        />
+      ) : null}
 
       <ProductFiveStarRating count={fiveStarReviewCount} compact className="mt-1.5" />
 
