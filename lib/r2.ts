@@ -108,6 +108,16 @@ function humpbuck2301FirstWebpUrl(): string {
 }
 
 /**
+ * Homepage DIGI-TEMP spotlight card — `Products/humpbuck-2301/HUMPBUCK-2301-gallery-03.webp` on assets CDN.
+ * Bump `NEXT_PUBLIC_R2_HUMPBUCK_2301_HOME_SPOTLIGHT_REV` after same-name overwrites.
+ */
+function humpbuck2301HomeSpotlightGallery03WebpUrl(): string {
+  const rev =
+    process.env.NEXT_PUBLIC_R2_HUMPBUCK_2301_HOME_SPOTLIGHT_REV?.trim() || "1";
+  return `${R2_ASSETS_PUBLIC_BASE}/Products/humpbuck-2301/HUMPBUCK-2301-gallery-03.webp?v=${encodeURIComponent(rev)}`;
+}
+
+/**
  * Hero background — `home/digitemp-space.mp4` on R2.
  * Bump `NEXT_PUBLIC_R2_DIGI_SPACE_MP4_REV` after same-name overwrites.
  */
@@ -369,6 +379,8 @@ export const R2 = {
   home: {
     /** DIGI-TEMP homepage hero promo — `home/HUMPBUCK-2301-first.webp` (`?v=` cache bust) */
     digitemp2301Webp: humpbuck2301FirstWebpUrl(),
+    /** DIGI-TEMP homepage spotlight card — gallery-03 on assets CDN (`?v=` cache bust) */
+    digitemp2301SpotlightWebp: humpbuck2301HomeSpotlightGallery03WebpUrl(),
     /** RM-TONNEAU — `home/Racing car.webp` on R2 (URL includes `?v=` cache bust) */
     racingCarWebp: racingCarWebpUrl(),
     /** RD-ASTRAL — `home/RD Star.webp` (URL includes `?v=` cache bust) */

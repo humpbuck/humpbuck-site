@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { StorefrontImage } from "@/components/site/storefront-image";
 import { getTranslations, getMessages, setRequestLocale } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
 import { Globe2, ShieldCheck, Sparkles } from "lucide-react";
+import { HomeDigitempSpotlight } from "@/components/site/home-digitemp-spotlight";
 import { HomeMechanicalHero } from "@/components/site/home-mechanical-hero";
 import { HomeMovementCategories } from "@/components/site/home-movement-categories";
 import { HomeCategoryProductSliders } from "@/components/site/home-category-product-sliders";
@@ -12,7 +11,7 @@ import { HomeRecommendedProducts } from "@/components/site/home-recommended-prod
 import { PreloadHomeFeaturedImages } from "@/components/site/preload-home-featured-images";
 import { NewsletterSubscribe } from "@/components/site/NewsletterSubscribe";
 import { routing } from "@/i18n/routing";
-import { formatPrice, getProductMovement } from "@/lib/catalog";
+import { getProductMovement } from "@/lib/catalog";
 import { resolveHomeWatchSectionProducts } from "@/lib/home-watch-sections";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
@@ -21,7 +20,6 @@ import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
 import { getProductFiveStarReviewCounts } from "@/lib/product-reviews-queries";
-import { ProductFiveStarRating } from "@/components/site/product-five-star-rating";
 
 /** Regenerate from DB periodically; admin saves also revalidate catalog tags. Keep in sync with `STOREFRONT_ISR_SECONDS`. */
 export const revalidate = 300;
@@ -156,76 +154,36 @@ export default async function HomePage({
       {/* Series spotlight — HUMPBUCK DIGI-TEMP */}
       <section className="border-b border-line bg-paper text-ink">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-16 lg:py-20">
-          <div className="mx-auto flex w-full max-w-sm flex-col gap-10 md:max-w-none md:flex-row md:items-center md:justify-center md:gap-12 lg:gap-16 xl:gap-20">
-          <div className="relative mx-auto w-full max-w-sm min-w-0 shrink-0 md:mx-0 md:max-w-[340px] lg:max-w-[400px]">
-            {(heroFeatured ?? heroFallback) ? (
-              <Link
-                href={(heroFeatured ?? heroFallback).slug === "digitemp" ? "/product?series=digitemp" : `/product/${(heroFeatured ?? heroFallback).slug}`}
-                className="group relative block aspect-square overflow-hidden rounded-[24px] border border-line/70 bg-white shadow-sm transition outline-offset-4 hover:-translate-y-0.5 hover:border-line hover:shadow-md focus-visible:outline-2 focus-visible:outline-ink/30 sm:rounded-[28px]"
-              >
-                <StorefrontImage
-                  src={R2.home.digitemp2301Webp}
-                  alt={t("heroFeaturedAlt")}
-                  fill
-                  priority
-                  fetchPriority="high"
-                  quality={68}
-                  className="object-cover transition duration-700 group-hover:scale-[1.03]"
-                  sizes="(max-width:767px) 92vw, 400px"
-                />
-                <div className="absolute bottom-4 left-4 right-4 rounded-2xl border border-line/80 bg-paper/95 p-3.5 shadow-sm backdrop-blur-sm sm:bottom-5 sm:left-5 sm:right-5 sm:p-4">
-                  <div className="flex items-center justify-between gap-3 sm:gap-4">
-                    <div>
-                      <div className="text-[10px] uppercase tracking-[0.2em] text-muted">
-                        {t("heroFeaturedLabel")}
-                      </div>
-                      <div className="mt-1 font-serif text-base text-ink sm:text-lg">{(heroFeatured ?? heroFallback).name}</div>
-                      {heroFeatured ? (
-                        <ProductFiveStarRating count={heroFiveStarCount} compact className="mt-1" />
-                      ) : null}
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg font-semibold tabular-nums text-ink sm:text-xl">
-                        {formatPrice((heroFeatured ?? heroFallback).price)}
-                      </div>
-                      {(heroFeatured ?? heroFallback).compareAtPrice != null && (
-                        <div className="text-[12px] text-muted line-through tabular-nums">
-                          {formatPrice((heroFeatured ?? heroFallback).compareAtPrice!)}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <span className="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-ink py-2 text-[10px] font-bold uppercase tracking-[0.14em] text-paper transition group-hover:bg-ink/90 sm:mt-4 sm:py-2.5 sm:text-[11px]">
-                    {t("heroViewProduct")}
-                  </span>
-                </div>
-              </Link>
-            ) : (
-              <div className="flex aspect-square items-center justify-center rounded-[24px] border border-line bg-white/60 p-8 text-center text-muted sm:rounded-[28px]">
+          {(heroFeatured ?? heroFallback) ? (
+            <HomeDigitempSpotlight
+              productHref={
+                (heroFeatured ?? heroFallback).slug === "digitemp"
+                  ? "/product?series=digitemp"
+                  : `/product/${(heroFeatured ?? heroFallback).slug}`
+              }
+              productName={(heroFeatured ?? heroFallback).name}
+              baseImage={R2.home.digitemp2301SpotlightWebp}
+              imageAlt={t("heroFeaturedAlt")}
+              featuredLabel={t("heroFeaturedLabel")}
+              viewProductLabel={t("heroViewProduct")}
+              heroBadge={t("heroBadge")}
+              heroLead={t("heroLead2")}
+              price={(heroFeatured ?? heroFallback).price}
+              compareAtPrice={(heroFeatured ?? heroFallback).compareAtPrice}
+              fiveStarCount={heroFiveStarCount}
+              showRating={heroFeatured != null}
+              variantOptions={heroFeatured?.variantOptions ?? []}
+            />
+          ) : (
+            <div className="mx-auto flex w-full max-w-sm flex-col gap-10 md:max-w-none md:flex-row md:items-center md:justify-center md:gap-12 lg:gap-16 xl:gap-20">
+              <div className="flex aspect-square w-full max-w-sm items-center justify-center rounded-[24px] border border-line bg-white/60 p-8 text-center text-muted sm:rounded-[28px]">
                 <div>
                   <div className="font-serif text-2xl text-ink">{t("heroComingSoonTitle")}</div>
                   <p className="mt-3 text-sm">{t("heroComingSoonBody")}</p>
                 </div>
               </div>
-            )}
-          </div>
-
-          <div className="min-w-0 md:max-w-[20rem] md:flex-none lg:max-w-[24rem]">
-            <div className="inline-flex items-center gap-1 rounded-full border border-line bg-white/60 px-2.5 py-1 text-[7px] font-semibold uppercase tracking-[0.2em] text-muted sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-[8px]">
-              <Sparkles className="h-2.5 w-2.5 shrink-0 text-digital-dim sm:h-3 sm:w-3" strokeWidth={2} />
-              {t("heroBadge")}
             </div>
-            <h2 className="mt-6 font-serif font-normal leading-[1.05] tracking-[-0.02em] text-ink md:mt-5">
-              <span className="block w-full max-w-full min-w-0 whitespace-nowrap leading-[1.08] text-[clamp(1.45rem,min(5vw+0.45rem,2.2rem),2.2rem)] md:text-[clamp(1.85rem,2.2vw,2.35rem)] lg:text-[clamp(2rem,2vw,2.65rem)]">
-                HUMPBUCK{" "}
-                <span className="inline">DIGI{"\u2011"}TEMP</span>
-              </span>
-            </h2>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-muted md:mt-5 md:max-w-none md:text-[17px] md:leading-[1.65] lg:mt-6 lg:text-lg lg:leading-relaxed">
-              {t("heroLead2")}
-            </p>
-          </div>
-          </div>
+          )}
         </div>
       </section>
 
