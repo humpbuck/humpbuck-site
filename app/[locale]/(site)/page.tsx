@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
-import { getTranslations, getMessages, setRequestLocale } from "next-intl/server";
 import { Globe2, ShieldCheck, Sparkles } from "lucide-react";
-import { HomeDigitempSpotlight } from "@/components/site/home-digitemp-spotlight";
+import { Suspense } from "react";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { HomeMechanicalHero } from "@/components/site/home-mechanical-hero";
 import { HomeMovementCategories } from "@/components/site/home-movement-categories";
-import { HomeCategoryProductSliders } from "@/components/site/home-category-product-sliders";
 import { HomeFounderStorySection } from "@/components/site/home-founder-story-section";
-import { HomeFeaturedProductsSection } from "@/components/site/home-featured-products-section";
-import { HomeRecommendedProducts } from "@/components/site/home-recommended-products";
-import { PreloadHomeFeaturedImages } from "@/components/site/preload-home-featured-images";
 import { NewsletterSubscribe } from "@/components/site/NewsletterSubscribe";
+import {
+  HomeCategorySlidersAsyncSection,
+  HomeDigitempSpotlightAsyncSection,
+  HomeFeaturedAsyncSection,
+  HomeRecommendedAsyncSection,
+} from "@/components/site/home-page-async-sections";
+import {
+  HomeCategorySlidersFallback,
+  HomeProductGridSectionFallback,
+  HomeProductSliderSectionFallback,
+  HomeSpotlightSectionFallback,
+} from "@/components/site/route-section-fallbacks";
 import { routing } from "@/i18n/routing";
-import { getProductMovement } from "@/lib/catalog";
-import { resolveHomeWatchSectionProducts } from "@/lib/home-watch-sections";
-import { getMergedCatalogProducts } from "@/lib/catalog-db";
-import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
-import { R2 } from "@/lib/r2";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
-import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
-import { getProductFiveStarReviewCounts } from "@/lib/product-reviews-queries";
 
 /** Regenerate from DB periodically; admin saves also revalidate catalog tags. Keep in sync with `STOREFRONT_ISR_SECONDS`. */
 export const revalidate = 300;
@@ -60,156 +61,16 @@ export async function generateMetadata({
   };
 }
 
-async function buildHomeWatchSlider(
-  section: "mechanical" | "quartz" | "ultra-thin",
-  all: Awaited<ReturnType<typeof getMergedCatalogProducts>>,
-  locale: string,
-  messages: Awaited<ReturnType<typeof getMessages>>,
-) {
-  const localized = all.map((p) => applyStorefrontProductLocale(p, locale, messages));
-  const products = resolveHomeWatchSectionProducts(localized, section);
-  const { covers: cardImages, hovers: cardHoverImages } = await mapProductsToShopCardImages(products);
-  return { products, cardImages, cardHoverImages };
-}
-
-export default async function HomePage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
+async function HomeTrustNewsletterSection({ locale }: { locale: string }) {
   setRequestLocale(locale);
   const t = await getTranslations("Home");
-  const all = await getMergedCatalogProducts();
-  const messages = await getMessages({ locale });
-  const featured = all.map((p) => applyStorefrontProductLocale(p, locale, messages));
-  const { covers: featuredCardImages, hovers: featuredCardHoverImages } =
-    await mapProductsToShopCardImages(featured);
-  const featuredImageUrls = featured
-    .slice(0, 12)
-    .map((p, i) => featuredCardImages[i]?.trim() || p.image);
-  const mechanicalAll = all.filter((p) => getProductMovement(p) === "mechanical");
-  const recommendedRaw =
-    mechanicalAll.length >= 10
-      ? mechanicalAll.slice(0, 10)
-      : [
-          ...mechanicalAll,
-          ...all.filter((p) => getProductMovement(p) !== "mechanical"),
-        ].slice(0, 10);
-  const recommended = recommendedRaw.map((p) =>
-    applyStorefrontProductLocale(p, locale, messages),
-  );
-  const { covers: recommendedCardImages, hovers: recommendedCardHoverImages } =
-    await mapProductsToShopCardImages(recommended);
-  const recommendedImageUrls = recommended.map(
-    (p, i) => recommendedCardImages[i]?.trim() || p.image,
-  );
-  const mechanicalSlider = await buildHomeWatchSlider("mechanical", all, locale, messages);
-  const quartzSlider = await buildHomeWatchSlider("quartz", all, locale, messages);
-  const ultraThinSlider = await buildHomeWatchSlider("ultra-thin", all, locale, messages);
-  const homeProductSlugs = [
-    ...new Set([
-      ...featured.map((p) => p.slug),
-      ...recommended.map((p) => p.slug),
-      ...mechanicalSlider.products.map((p) => p.slug),
-      ...quartzSlider.products.map((p) => p.slug),
-      ...ultraThinSlider.products.map((p) => p.slug),
-    ]),
-  ];
-  const fiveStarCountsMap = await getProductFiveStarReviewCounts(homeProductSlugs);
-  const fiveStarReviewCounts = Object.fromEntries(fiveStarCountsMap.entries());
-  const heroFeaturedRaw =
-    all.find((p) => p.slug === "2301" || p.slug === "digitemp-2301") ?? [...all].slice(0, 12)[0] ?? null;
-  const heroFeatured = heroFeaturedRaw
-    ? applyStorefrontProductLocale(heroFeaturedRaw, locale, messages)
-    : null;
-  const heroFiveStarCount = heroFeatured
-    ? (fiveStarReviewCounts[heroFeatured.slug] ?? 0)
-    : 0;
-  const heroFallback = {
-    slug: "digitemp",
-    name: "HUMPBUCK DIGI-TEMP",
-    price: 0,
-    compareAtPrice: undefined,
-  };
   const deferredSectionStyle = {
     contentVisibility: "auto",
     containIntrinsicSize: "1000px",
   } as const;
 
   return (
-    <div>
-      {featured.length > 0 ? <PreloadHomeFeaturedImages urls={featuredImageUrls} /> : null}
-      {recommended.length > 0 ? (
-        <PreloadHomeFeaturedImages urls={recommendedImageUrls} />
-      ) : null}
-      <HomeMechanicalHero />
-      <HomeMovementCategories />
-      <HomeRecommendedProducts
-        products={recommended}
-        cardImages={recommendedCardImages}
-        cardHoverImages={recommendedCardHoverImages}
-        fiveStarReviewCounts={fiveStarReviewCounts}
-      />
-      {/* Series spotlight — HUMPBUCK DIGI-TEMP */}
-      <section className="border-b border-line bg-paper text-ink">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-16 lg:py-20">
-          {(heroFeatured ?? heroFallback) ? (
-            <HomeDigitempSpotlight
-              productHref={
-                (heroFeatured ?? heroFallback).slug === "digitemp"
-                  ? "/product?series=digitemp"
-                  : `/product/${(heroFeatured ?? heroFallback).slug}`
-              }
-              productName={(heroFeatured ?? heroFallback).name}
-              baseImage={R2.home.digitemp2301SpotlightWebp}
-              imageAlt={t("heroFeaturedAlt")}
-              featuredLabel={t("heroFeaturedLabel")}
-              viewProductLabel={t("heroViewProduct")}
-              heroBadge={t("heroBadge")}
-              heroLead={t("heroLead2")}
-              price={(heroFeatured ?? heroFallback).price}
-              compareAtPrice={(heroFeatured ?? heroFallback).compareAtPrice}
-              fiveStarCount={heroFiveStarCount}
-              showRating={heroFeatured != null}
-              variantOptions={heroFeatured?.variantOptions ?? []}
-            />
-          ) : (
-            <div className="mx-auto flex w-full max-w-sm flex-col gap-10 md:max-w-none md:flex-row md:items-center md:justify-center md:gap-12 lg:gap-16 xl:gap-20">
-              <div className="flex aspect-square w-full max-w-sm items-center justify-center rounded-[24px] border border-line bg-white/60 p-8 text-center text-muted sm:rounded-[28px]">
-                <div>
-                  <div className="font-serif text-2xl text-ink">{t("heroComingSoonTitle")}</div>
-                  <p className="mt-3 text-sm">{t("heroComingSoonBody")}</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <HomeFeaturedProductsSection
-        products={featured}
-        cardImages={featuredCardImages}
-        cardHoverImages={featuredCardHoverImages}
-        fiveStarReviewCounts={fiveStarReviewCounts}
-      />
-
-      <HomeCategoryProductSliders
-        mechanicalProducts={mechanicalSlider.products}
-        mechanicalCardImages={mechanicalSlider.cardImages}
-        mechanicalCardHoverImages={mechanicalSlider.cardHoverImages}
-        quartzProducts={quartzSlider.products}
-        quartzCardImages={quartzSlider.cardImages}
-        quartzCardHoverImages={quartzSlider.cardHoverImages}
-        ultraThinProducts={ultraThinSlider.products}
-        ultraThinCardImages={ultraThinSlider.cardImages}
-        ultraThinCardHoverImages={ultraThinSlider.cardHoverImages}
-        fiveStarReviewCounts={fiveStarReviewCounts}
-      />
-
-      <HomeFounderStorySection />
-
-      {/* Stats + trust */}
+    <>
       <section
         className="border-t border-line bg-white/55 py-14"
         style={deferredSectionStyle}
@@ -268,7 +129,6 @@ export default async function HomePage({
         </div>
       </section>
 
-      {/* Newsletter */}
       <section
         id="newsletter"
         className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20"
@@ -289,6 +149,42 @@ export default async function HomePage({
           </div>
         </div>
       </section>
+    </>
+  );
+}
+
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  return (
+    <div>
+      <HomeMechanicalHero />
+      <Suspense fallback={<HomeSpotlightSectionFallback />}>
+        <HomeMovementCategories />
+      </Suspense>
+      <Suspense fallback={<HomeProductSliderSectionFallback />}>
+        <HomeRecommendedAsyncSection locale={locale} />
+      </Suspense>
+      <Suspense fallback={<HomeSpotlightSectionFallback />}>
+        <HomeDigitempSpotlightAsyncSection locale={locale} />
+      </Suspense>
+      <Suspense fallback={<HomeProductGridSectionFallback />}>
+        <HomeFeaturedAsyncSection locale={locale} />
+      </Suspense>
+      <Suspense fallback={<HomeCategorySlidersFallback />}>
+        <HomeCategorySlidersAsyncSection locale={locale} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <HomeFounderStorySection />
+      </Suspense>
+      <Suspense fallback={null}>
+        <HomeTrustNewsletterSection locale={locale} />
+      </Suspense>
     </div>
   );
 }

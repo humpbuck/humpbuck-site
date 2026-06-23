@@ -1,5 +1,4 @@
-import { RouteLoadingFallback } from "@/components/site/route-loading-fallback";
-
+/** Route-level loading is handled by per-section Suspense fallbacks on heavy pages. */
 export default function SiteLoading() {
-  return <RouteLoadingFallback />;
+  return null;
 }
