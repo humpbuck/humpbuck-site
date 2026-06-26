@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
+import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
 import {
   deleteVideoTutorial,
   listVideoTutorials,
@@ -10,6 +11,10 @@ import {
 
 function isAspectRatio(v: string): v is VideoAspectRatio {
   return v === "16:9" || v === "1:1" || v === "9:16";
+}
+
+function revalidateVideoTutorialPages(): void {
+  revalidateStorefrontPath("/video-tutorial");
 }
 
 export async function GET() {
@@ -53,6 +58,7 @@ export async function POST(req: Request) {
         ? body.sortOrder
         : undefined,
   });
+  revalidateVideoTutorialPages();
   return NextResponse.json({ ok: true });
 }
 
@@ -69,6 +75,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
   await saveVideoTutorialOrder(ordered);
+  revalidateVideoTutorialPages();
   return NextResponse.json({ ok: true });
 }
 
@@ -83,5 +90,6 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "productSlug is required" }, { status: 400 });
   }
   await deleteVideoTutorial(productSlug);
+  revalidateVideoTutorialPages();
   return NextResponse.json({ ok: true });
 }

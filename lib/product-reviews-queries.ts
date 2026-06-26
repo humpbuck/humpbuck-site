@@ -1,5 +1,5 @@
 import type { ProductReview, ProductReviewAppend, User } from "@prisma/client";
-import { unstable_noStore as noStore } from "next/cache";
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { userPublicDisplayName, type UserDisplayNameInput } from "@/lib/user-display-name";
 
@@ -9,14 +9,13 @@ export type ProductReviewWithUser = ProductReview & {
   itemVariantLabel?: string | null;
 };
 
-export async function getProductReviewStats(
+async function loadProductReviewStatsUncached(
   productSlug: string,
 ): Promise<{
   reviewCount: number;
   ratingValue: number;
   fiveStarCount: number;
 } | null> {
-  noStore();
   const slug = productSlug?.trim() ?? "";
   if (!slug) return null;
 
@@ -40,11 +39,28 @@ export async function getProductReviewStats(
   };
 }
 
-/** Batch lookup: count of 5-star reviews per product slug (missing slugs → 0). */
-export async function getProductFiveStarReviewCounts(
+export async function getProductReviewStats(
+  productSlug: string,
+): Promise<{
+  reviewCount: number;
+  ratingValue: number;
+  fiveStarCount: number;
+} | null> {
+  const slug = productSlug?.trim() ?? "";
+  if (!slug) return null;
+
+  return unstable_cache(
+    () => loadProductReviewStatsUncached(slug),
+    ["product-review-stats", slug],
+    {
+      tags: [`product-reviews-${slug}`],
+    },
+  )();
+}
+
+async function loadProductFiveStarReviewCountsUncached(
   productSlugs: readonly string[],
 ): Promise<Map<string, number>> {
-  noStore();
   const slugs = [...new Set(productSlugs.map((s) => s.trim()).filter(Boolean))];
   const counts = new Map<string, number>();
   if (slugs.length === 0) return counts;
@@ -67,11 +83,26 @@ export async function getProductFiveStarReviewCounts(
   return counts;
 }
 
-export async function getProductReviewsWithUsers(
+/** Batch lookup: count of 5-star reviews per product slug (missing slugs → 0). */
+export async function getProductFiveStarReviewCounts(
+  productSlugs: readonly string[],
+): Promise<Map<string, number>> {
+  const slugs = [...new Set(productSlugs.map((s) => s.trim()).filter(Boolean))].sort();
+  if (slugs.length === 0) return new Map();
+
+  return unstable_cache(
+    () => loadProductFiveStarReviewCountsUncached(slugs),
+    ["product-five-star-counts", slugs.join("|")],
+    {
+      tags: slugs.map((slug) => `product-reviews-${slug}`),
+    },
+  )();
+}
+
+async function loadProductReviewsWithUsersUncached(
   productSlug: string,
-  take = 100,
+  take: number,
 ): Promise<ProductReviewWithUser[]> {
-  noStore();
   const slug = productSlug?.trim() ?? "";
   if (!slug) return [];
 
@@ -129,6 +160,22 @@ export async function getProductReviewsWithUsers(
     appends: byReviewId.get(r.id) ?? [],
     itemVariantLabel: r.orderId ? (variantByOrderId.get(r.orderId) ?? null) : null,
   }));
+}
+
+export async function getProductReviewsWithUsers(
+  productSlug: string,
+  take = 100,
+): Promise<ProductReviewWithUser[]> {
+  const slug = productSlug?.trim() ?? "";
+  if (!slug) return [];
+
+  return unstable_cache(
+    () => loadProductReviewsWithUsersUncached(slug, take),
+    ["product-reviews-with-users", slug, String(take)],
+    {
+      tags: [`product-reviews-${slug}`],
+    },
+  )();
 }
 
 export function parseReviewImageUrls(json: string): string[] {

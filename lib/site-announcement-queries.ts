@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import {
   DEFAULT_ANNOUNCEMENT_BACKGROUND,
@@ -45,7 +46,7 @@ function isBackgroundColorUnsupportedError(error: unknown): boolean {
   );
 }
 
-export async function getSiteAnnouncement(): Promise<SiteAnnouncementData> {
+async function loadSiteAnnouncementUncached(): Promise<SiteAnnouncementData> {
   if (!prisma.siteAnnouncement) return EMPTY;
 
   const row = (await prisma.siteAnnouncement
@@ -67,6 +68,17 @@ export async function getSiteAnnouncement(): Promise<SiteAnnouncementData> {
       normalizeAnnouncementBackgroundColor(row.backgroundColor) ??
       DEFAULT_ANNOUNCEMENT_BACKGROUND,
   };
+}
+
+/** Cached for all storefront layouts; admin save calls `revalidateSiteAnnouncement()`. */
+export async function getSiteAnnouncement(): Promise<SiteAnnouncementData> {
+  return unstable_cache(
+    loadSiteAnnouncementUncached,
+    ["site-announcement"],
+    {
+      tags: ["site-announcement"],
+    },
+  )();
 }
 
 export async function saveSiteAnnouncement(

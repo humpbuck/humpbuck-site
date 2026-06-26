@@ -12,8 +12,8 @@ import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
 
-/** Regenerate from DB periodically; admin saves also revalidate catalog tags. Keep in sync with `STOREFRONT_ISR_SECONDS`. */
-export const revalidate = 300;
+/** Cached until admin catalog saves or deploy; no time-based expiry. */
+export const revalidate = false;
 
 export async function generateStaticParams() {
   return routing.locales.flatMap((locale) =>

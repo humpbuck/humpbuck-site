@@ -1,9 +1,10 @@
 import { revalidateTag } from "next/cache";
-import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
+import { revalidateStorefrontPath, revalidateSitemap } from "@/lib/revalidate-storefront";
 
 /** Bust catalog cache and key storefront routes after admin catalog changes. */
 export function revalidateCatalogStorefront(opts?: { slug?: string; oldSlug?: string }): void {
   revalidateTag("catalog", "seconds");
+  revalidateSitemap();
   revalidateStorefrontPath("/");
   revalidateStorefrontPath("/product");
 

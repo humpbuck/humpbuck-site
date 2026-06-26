@@ -5,7 +5,7 @@ import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { AdminFlashMessage } from "@/components/admin/admin-flash-message";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
-import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
+import { revalidateStorefrontShell, revalidateSiteAnnouncement } from "@/lib/revalidate-storefront";
 import {
   getSiteAnnouncement,
   saveSiteAnnouncement,
@@ -73,7 +73,8 @@ async function saveAnnouncementAction(formData: FormData) {
     goAnnouncement({ error: note });
   }
 
-  revalidateStorefrontPath("/");
+  revalidateSiteAnnouncement();
+  revalidateStorefrontShell();
   if (!result.colorSaved) {
     goAnnouncement({
       success:

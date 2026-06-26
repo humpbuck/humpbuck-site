@@ -4,6 +4,7 @@ import { markProductReviewInboxHandled } from "@/lib/admin-inbox";
 import { getProductBySlug } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
 import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
+import { revalidateProductReviews } from "@/lib/revalidate-product-reviews";
 import { isProductReviewStatus } from "@/lib/review-status";
 
 const MAX_MERCHANT_REPLY = 5_000;
@@ -45,7 +46,8 @@ export async function PATCH(
     if (status === "approved" || status === "rejected") {
       await markProductReviewInboxHandled(id);
     }
-    if (status === "approved" && (await getProductBySlug(review.productSlug))) {
+    revalidateProductReviews(review.productSlug);
+    if (await getProductBySlug(review.productSlug)) {
       revalidateStorefrontPath(`/product/${encodeURIComponent(review.productSlug)}`);
     }
     return NextResponse.json({ ok: true, status });
@@ -69,6 +71,7 @@ export async function PATCH(
       merchantRepliedAt: new Date(),
     },
   });
+  revalidateProductReviews(review.productSlug);
   return NextResponse.json({ ok: true });
 }
 
@@ -92,6 +95,7 @@ export async function DELETE(
   }
   await markProductReviewInboxHandled(id);
   if (review && (await getProductBySlug(review.productSlug))) {
+    revalidateProductReviews(review.productSlug);
     revalidateStorefrontPath(`/product/${encodeURIComponent(review.productSlug)}`);
   }
 

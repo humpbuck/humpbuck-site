@@ -4,8 +4,8 @@ import { routing } from "@/i18n/routing";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { listVideoTutorials, type VideoTutorial } from "@/lib/video-tutorials";
 
-/** Keep in sync with `STOREFRONT_ISR_SECONDS`. */
-export const revalidate = 300;
+/** Cached until admin video saves or deploy; no time-based expiry. */
+export const revalidate = false;
 
 export async function generateMetadata({
   params,

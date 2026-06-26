@@ -13,8 +13,8 @@ import { routing } from "@/i18n/routing";
 import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
-/** Keep in sync with `STOREFRONT_ISR_SECONDS`. */
-export const revalidate = 300;
+/** Cached until admin blog saves or deploy; no time-based expiry. */
+export const revalidate = false;
 
 export async function generateStaticParams() {
   try {

@@ -6,8 +6,8 @@ import { ShopProductGridFallback } from "@/components/site/route-section-fallbac
 import { routing } from "@/i18n/routing";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
-/** Keep in sync with `STOREFRONT_ISR_SECONDS`. */
-export const revalidate = 300;
+/** Cached until admin catalog saves or deploy; no time-based expiry. */
+export const revalidate = false;
 
 export async function generateMetadata({
   params,

@@ -6,8 +6,8 @@ import { routing } from "@/i18n/routing";
 import { storefrontLocalizedPath } from "@/lib/storefront-hreflang";
 import { getSiteUrl } from "@/lib/seo";
 
-/** Regenerate periodically so new PDP URLs appear without a full redeploy. */
-export const revalidate = 3600;
+/** Regenerate when admin catalog/blog saves call `revalidateSitemap()` or on deploy. */
+export const revalidate = false;
 
 const STATIC_PATHS: {
   path: string;

@@ -1,6 +1,5 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { STOREFRONT_ISR_SECONDS } from "@/lib/storefront-revalidate";
 import type { Product } from "@/lib/catalog";
 import { normalizeSeriesSlug } from "@/lib/catalog";
 import { parseDetailBlocksJson } from "@/lib/product-detail-blocks";
@@ -156,14 +155,13 @@ const getCachedMergedCatalogProducts = unstable_cache(
   loadMergedCatalogProductsUncached,
   ["merged-catalog-products"],
   {
-    revalidate: STOREFRONT_ISR_SECONDS,
     tags: ["catalog"],
   },
 );
 
 /**
  * Frontend catalog source: admin-managed `CatalogProduct` + inventory.
- * Cached ~300s when non-empty; admin saves call `revalidateCatalogStorefront`.
+ * Cached until admin saves call `revalidateCatalogStorefront` (no time-based expiry).
  * Empty results are always refetched so a stale empty cache cannot hide new products.
  */
 export async function getMergedCatalogProducts(): Promise<Product[]> {
@@ -181,7 +179,6 @@ export async function getMergedCatalogProductBySlug(
     () => fetchMergedCatalogProductBySlug(slug),
     ["merged-catalog-product", slug],
     {
-      revalidate: STOREFRONT_ISR_SECONDS,
       tags: ["catalog", `catalog-product-${slug}`],
     },
   )();

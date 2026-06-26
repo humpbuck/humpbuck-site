@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { isPrismaUniqueViolation } from "@/lib/admin-product-slug";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
+import { revalidateSitemap, revalidateStorefrontPath } from "@/lib/revalidate-storefront";
 import {
   createBlogPost,
   listBlogPostsAdmin,
@@ -12,9 +13,10 @@ import {
 
 function revalidateBlogPages(slug?: string) {
   revalidatePath(adminPath("/blog"));
-  revalidatePath("/blog");
+  revalidateSitemap();
+  revalidateStorefrontPath("/blog");
   if (slug) {
-    revalidatePath(`/blog/${encodeURIComponent(slug)}`);
+    revalidateStorefrontPath(`/blog/${encodeURIComponent(slug)}`);
   }
 }
 

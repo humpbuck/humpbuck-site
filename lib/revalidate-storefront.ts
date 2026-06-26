@@ -1,5 +1,27 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { routing } from "@/i18n/routing";
+
+/** Storefront pages and DB caches do not time-expire — only admin saves, webhooks, and deploys invalidate them. */
+
+/** Bust cached homepage announcement bar (all storefront layouts). */
+export function revalidateSiteAnnouncement(): void {
+  revalidateTag("site-announcement", "seconds");
+}
+
+/** Paths that share the storefront shell (announcement bar + header). */
+const STOREFRONT_SHELL_PATHS = ["/", "/product", "/blog", "/video-tutorial"] as const;
+
+/** Revalidate main storefront pages (all locales) after shell-wide changes (e.g. announcement bar). */
+export function revalidateStorefrontShell(): void {
+  for (const pathname of STOREFRONT_SHELL_PATHS) {
+    revalidateStorefrontPath(pathname);
+  }
+}
+
+/** Regenerate sitemap.xml after catalog or blog URLs change. */
+export function revalidateSitemap(): void {
+  revalidatePath("/sitemap.xml");
+}
 
 /** Revalidate a storefront pathname for every `[locale]` segment (`as-needed` + `/es/...`). */
 export function revalidateStorefrontPath(pathname: string): void {

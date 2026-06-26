@@ -22,8 +22,8 @@ import {
   ProductPdpReviewsFallback,
 } from "@/components/site/route-section-fallbacks";
 
-/** Regenerate from DB periodically; admin saves also revalidate catalog tags. Keep in sync with `STOREFRONT_ISR_SECONDS`. */
-export const revalidate = 300;
+/** Cached until admin catalog saves or deploy; no time-based expiry. */
+export const revalidate = false;
 
 export async function generateStaticParams() {
   const products = await getMergedCatalogProducts();
