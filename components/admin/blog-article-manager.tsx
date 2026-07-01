@@ -522,9 +522,12 @@ export function BlogArticleManager({ initialRows }: { initialRows: BlogPostRow[]
                 }
               />
               <p className="mt-2 text-xs leading-relaxed text-muted">
-                Select text, then use <strong>Bold</strong>, <strong>Font</strong>, or{" "}
-                <strong>Color</strong> — formatting shows directly in the editor. Press Enter for a
-                new paragraph. Save, then preview on the storefront.
+                One continuous editor — press Enter for a new paragraph. Place the cursor where you
+                want a block, then use <strong>Insert image</strong> (R2 URL, like the cover),{" "}
+                <strong>Insert product</strong>, or <strong>Insert video</strong> (R2 .mp4 or
+                YouTube — choose landscape, portrait, or auto layout). Select text for{" "}
+                <strong>Bold</strong>, <strong>Font</strong>, or <strong>Color</strong>. Save, then
+                preview on the storefront.
               </p>
 
               <div className="mt-4 flex flex-wrap items-center gap-3">

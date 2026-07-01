@@ -6,6 +6,16 @@ import {
   type BlogInlineFont,
   type BlogInlinePart,
 } from "@/lib/blog-article-inline";
+import { parseBlogBody } from "@/lib/blog-article-blocks";
+import {
+  buildImageBlockEditorHtml,
+  buildProductBlockEditorHtml,
+  buildVideoBlockEditorHtml,
+  serializeImageBlockFromElement,
+  serializeProductBlockFromElement,
+  serializeVideoBlockFromElement,
+  type AdminProductOption,
+} from "@/lib/blog-body-editor-html";
 
 const VALID_COLORS = new Set<BlogInlineColor>(["gold", "muted", "teal", "ink"]);
 const VALID_FONTS = new Set<BlogInlineFont>(["serif", "sans"]);
@@ -38,19 +48,28 @@ function inlinePartsToEditorHtml(parts: BlogInlinePart[]): string {
     .join("");
 }
 
-export function markupToEditorHtml(markup: string): string {
+export function markupToEditorHtml(markup: string, products: AdminProductOption[] = []): string {
   const trimmed = markup.trim();
   if (!trimmed) return "";
 
-  const paragraphs = trimmed
-    .split(/\n{2,}/)
-    .map((paragraph) => paragraph.trim())
-    .filter(Boolean);
+  const segments = parseBlogBody(trimmed);
+  if (segments.length === 0) return "";
 
-  if (paragraphs.length === 0) return "";
-
-  return paragraphs
-    .map((paragraph) => `<p>${inlinePartsToEditorHtml(parseBlogInline(paragraph))}</p>`)
+  return segments
+    .map((segment) => {
+      if (segment.type === "paragraph") {
+        const text = segment.text.trim();
+        if (!text) return "<p><br></p>";
+        return `<p>${inlinePartsToEditorHtml(parseBlogInline(text))}</p>`;
+      }
+      if (segment.type === "image") {
+        return buildImageBlockEditorHtml(segment, products);
+      }
+      if (segment.type === "video") {
+        return buildVideoBlockEditorHtml(segment);
+      }
+      return buildProductBlockEditorHtml(segment, products);
+    })
     .join("");
 }
 
@@ -85,6 +104,65 @@ function blockElementToMarkup(element: HTMLElement): string {
   return inlineNodesToMarkup(element).replace(/\n+$/, "").trim();
 }
 
+function collectEditorNodeMarkup(node: Node, parts: string[]) {
+  if (node.nodeType === Node.TEXT_NODE) {
+    const text = (node.textContent ?? "").trim();
+    if (text) parts.push(text);
+    return;
+  }
+  if (node.nodeType !== Node.ELEMENT_NODE) return;
+
+  const element = node as HTMLElement;
+  const blockKind = element.getAttribute("data-blog-block");
+  if (blockKind === "image") {
+    const token = serializeImageBlockFromElement(element);
+    if (token) parts.push(token);
+    return;
+  }
+  if (blockKind === "product") {
+    const token = serializeProductBlockFromElement(element);
+    if (token) parts.push(token);
+    return;
+  }
+  if (blockKind === "video") {
+    const token = serializeVideoBlockFromElement(element);
+    if (token) parts.push(token);
+    return;
+  }
+
+  const tag = element.tagName.toLowerCase();
+  if (tag === "p") {
+    if (element.querySelector("[data-blog-block]")) {
+      for (const child of Array.from(element.childNodes)) {
+        collectEditorNodeMarkup(child, parts);
+      }
+      return;
+    }
+    const text = blockElementToMarkup(element);
+    if (text) parts.push(text);
+    return;
+  }
+
+  if (tag === "div" || tag === "br") {
+    for (const child of Array.from(element.childNodes)) {
+      collectEditorNodeMarkup(child, parts);
+    }
+    return;
+  }
+
+  const text = blockElementToMarkup(element);
+  if (text) parts.push(text);
+}
+
+/** Serialize live editor DOM — reads current input/select values (not innerHTML). */
+export function editorElementToMarkup(editor: HTMLElement): string {
+  const parts: string[] = [];
+  for (const child of Array.from(editor.childNodes)) {
+    collectEditorNodeMarkup(child, parts);
+  }
+  return parts.join("\n\n");
+}
+
 export function editorHtmlToMarkup(html: string): string {
   const trimmed = html.trim();
   if (!trimmed || trimmed === "<br>" || trimmed === "<p><br></p>") return "";
@@ -93,31 +171,28 @@ export function editorHtmlToMarkup(html: string): string {
   const root = doc.body.firstElementChild;
   if (!root) return "";
 
-  const paragraphs: string[] = [];
-
+  const parts: string[] = [];
   for (const child of Array.from(root.childNodes)) {
-    if (child.nodeType === Node.TEXT_NODE) {
-      const text = (child.textContent ?? "").trim();
-      if (text) paragraphs.push(text);
-      continue;
-    }
-    if (child.nodeType !== Node.ELEMENT_NODE) continue;
-
-    const element = child as HTMLElement;
-    const tag = element.tagName.toLowerCase();
-    if (tag === "p" || tag === "div") {
-      const text = blockElementToMarkup(element);
-      if (text) paragraphs.push(text);
-    } else {
-      const text = blockElementToMarkup(element);
-      if (text) paragraphs.push(text);
-    }
+    collectEditorNodeMarkup(child, parts);
   }
 
-  return paragraphs.join("\n\n");
+  return parts.join("\n\n");
 }
 
 /** Read markup from a contentEditable element, with plain-text fallback. */
+export function getMarkupFromEditorElement(editor: HTMLElement): string {
+  const markup = editorElementToMarkup(editor);
+  if (markup.trim()) return markup;
+  const text = editor.innerText.replace(/\u00a0/g, " ").trim();
+  if (!text) return "";
+  return text
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .join("\n\n");
+}
+
+/** @deprecated Prefer getMarkupFromEditorElement — innerHTML omits input values. */
 export function getMarkupFromEditorHtml(html: string, plainText: string): string {
   const markup = editorHtmlToMarkup(html);
   if (markup.trim()) return markup;

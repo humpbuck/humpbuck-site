@@ -844,7 +844,8 @@
   "BlogArticle": {
     "kicker": "Journal",
     "backToBlog": "Back to blog",
-    "notFoundTitle": "Article not found"
+    "notFoundTitle": "Article not found",
+    "viewProduct": "View product"
   },
   "AboutPage": {
     "metaTitle": "About — HUMPBUCK Mechanical Watches",
