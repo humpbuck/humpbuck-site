@@ -447,20 +447,24 @@ model VideoTutorial {
 }
 
 model BlogPost {
-  id            String    @id @default(cuid())
-  slug          String    @unique
-  title         String
-  excerpt       String    @default("")
-  body          String    @default("")
-  coverImageUrl String    @default("")
-  status        String    @default("draft")
-  sortOrder     Int       @default(0)
-  publishedAt   DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                      String    @id @default(cuid())
+  slug                    String    @unique
+  title                   String
+  excerpt                 String    @default("")
+  body                    String    @default("")
+  coverImageUrl           String    @default("")
+  homeCarouselSlot        Int?
+  homeCarouselImageUrl    String    @default("")
+  homeCarouselDescription String    @default("")
+  status                  String    @default("draft")
+  sortOrder               Int       @default(0)
+  publishedAt             DateTime?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
 
   @@index([status, sortOrder])
   @@index([publishedAt])
+  @@index([homeCarouselSlot])
 }
 
 model WholesaleListing {

@@ -30,6 +30,9 @@ function emptyRow(sortOrder: number): DraftRow {
     excerpt: "",
     body: "",
     coverImageUrl: "",
+    homeCarouselSlot: null,
+    homeCarouselImageUrl: "",
+    homeCarouselDescription: "",
     status: "draft",
     sortOrder,
     publishedAt: null,
@@ -42,10 +45,20 @@ function emptyRow(sortOrder: number): DraftRow {
 export function BlogArticleManager({ initialRows }: { initialRows: BlogPostRow[] }) {
   const [rows, setRows] = useState<DraftRow[]>(() => initialRows.map(parsePostRow));
   const [message, setMessage] = useState("");
+  const [messageTone, setMessageTone] = useState<"info" | "success" | "error">("info");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
   const editorRefs = useRef<Map<string, BlogBodyEditorHandle>>(new Map());
+  const messageRef = useRef<HTMLParagraphElement>(null);
+
+  function showMessage(text: string, tone: "info" | "success" | "error" = "info") {
+    setMessage(text);
+    setMessageTone(tone);
+    requestAnimationFrame(() => {
+      messageRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+  }
 
   function toggleExpanded(id: string) {
     setExpandedIds((prev) => {
@@ -84,17 +97,18 @@ export function BlogArticleManager({ initialRows }: { initialRows: BlogPostRow[]
       error?: string;
     };
     if (!res.ok || !Array.isArray(data.posts)) {
-      setMessage(data.error ?? "Could not reload articles from the server.");
+      showMessage(data.error ?? "Could not reload articles from the server.", "error");
       return;
     }
     setRows((prev) => {
       const drafts = prev.filter((row) => row.isNew);
       return [...drafts, ...data.posts!.map(parsePostRow)];
     });
-    setMessage(
+    showMessage(
       data.posts.length === 0
         ? "No saved articles in the database."
         : `Loaded ${data.posts.length} article${data.posts.length === 1 ? "" : "s"}.`,
+      "info",
     );
   }
 
@@ -107,13 +121,28 @@ export function BlogArticleManager({ initialRows }: { initialRows: BlogPostRow[]
     const flushedBody = editorRefs.current.get(row.id)?.flushMarkup() ?? row.body;
     const rowToSave = { ...row, body: flushedBody };
 
-    if (!rowToSave.title.trim() || !rowToSave.body.trim()) {
-      setMessage(
-        "Title and body are required. Type in the editor, then click Save again (the editor must not be empty).",
+    if (!rowToSave.title.trim()) {
+      showMessage("Title is required before saving.", "error");
+      return;
+    }
+    if (!rowToSave.body.trim()) {
+      showMessage(
+        "Body is required. Type in the editor, then click Save again.",
+        "error",
       );
       return;
     }
-    if (!window.confirm(`Save article${rowToSave.title ? ` "${rowToSave.title}"` : ""}?`)) return;
+    if (
+      rowToSave.homeCarouselSlot != null &&
+      !rowToSave.homeCarouselImageUrl.trim() &&
+      !rowToSave.coverImageUrl.trim()
+    ) {
+      showMessage(
+        "Homepage carousel needs a homepage image URL or a cover image URL when a carousel slot is selected.",
+        "error",
+      );
+      return;
+    }
 
     setBusyId(row.id);
     setMessage("");
@@ -123,44 +152,52 @@ export function BlogArticleManager({ initialRows }: { initialRows: BlogPostRow[]
       excerpt: rowToSave.excerpt,
       body: rowToSave.body,
       coverImageUrl: rowToSave.coverImageUrl,
+      homeCarouselSlot: rowToSave.homeCarouselSlot,
+      homeCarouselImageUrl: rowToSave.homeCarouselImageUrl,
+      homeCarouselDescription: rowToSave.homeCarouselDescription,
       status: rowToSave.status,
       sortOrder: rowToSave.sortOrder,
     };
-    const res = rowToSave.isNew
-      ? await fetch("/api/admin/blog-posts", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        })
-      : await fetch(`/api/admin/blog-posts/${encodeURIComponent(rowToSave.id)}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-    const data = (await res.json().catch(() => ({}))) as {
-      post?: BlogPostRow;
-      error?: string;
-    };
-    if (!res.ok || !data.post) {
-      setMessage(data.error ?? "Save failed");
+    try {
+      const res = rowToSave.isNew
+        ? await fetch("/api/admin/blog-posts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          })
+        : await fetch(`/api/admin/blog-posts/${encodeURIComponent(rowToSave.id)}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+      const data = (await res.json().catch(() => ({}))) as {
+        post?: BlogPostRow;
+        error?: string;
+      };
+      if (!res.ok || !data.post) {
+        showMessage(data.error ?? "Save failed. Check the fields and try again.", "error");
+        setBusyId(null);
+        return;
+      }
+      const saved = parsePostRow(data.post);
+      setRows((prev) => {
+        const drafts = prev.filter((r) => r.isNew && r.id !== rowToSave.id);
+        const others = prev.filter((r) => !r.isNew && r.id !== saved.id);
+        return [saved, ...drafts, ...others];
+      });
+      showMessage(`Saved "${saved.title}". It is stored in the database.`, "success");
       setBusyId(null);
-      return;
+      setPage(1);
+      setExpandedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(rowToSave.id);
+        next.add(saved.id);
+        return next;
+      });
+    } catch {
+      showMessage("Save failed — network error. Check your connection and try again.", "error");
+      setBusyId(null);
     }
-    const saved = parsePostRow(data.post);
-    setRows((prev) => {
-      const drafts = prev.filter((row) => row.isNew && row.id !== rowToSave.id);
-      const others = prev.filter((row) => !row.isNew && row.id !== saved.id);
-      return [saved, ...drafts, ...others];
-    });
-    setMessage(`Saved "${saved.title}". It is stored in the database.`);
-    setBusyId(null);
-    setPage(1);
-    setExpandedIds((prev) => {
-      const next = new Set(prev);
-      next.delete(rowToSave.id);
-      next.add(saved.id);
-      return next;
-    });
   }
 
   async function deleteRow(row: DraftRow) {
@@ -178,12 +215,12 @@ export function BlogArticleManager({ initialRows }: { initialRows: BlogPostRow[]
       method: "DELETE",
     });
     if (!res.ok) {
-      setMessage("Delete failed");
+      showMessage("Delete failed", "error");
       setBusyId(null);
       return;
     }
     setRows((prev) => prev.filter((x) => x.id !== row.id));
-    setMessage("Deleted.");
+    showMessage("Deleted.", "success");
     setBusyId(null);
   }
 
@@ -197,10 +234,10 @@ export function BlogArticleManager({ initialRows }: { initialRows: BlogPostRow[]
       body: JSON.stringify({ orderedIds: persisted.map((x) => x.id) }),
     });
     if (!res.ok) {
-      setMessage("Order save failed");
+      showMessage("Order save failed", "error");
       return;
     }
-    setMessage("Order updated.");
+    showMessage("Order updated.", "success");
   }
 
   function moveToPosition(globalIdx: number, position1Based: number) {
@@ -225,7 +262,17 @@ export function BlogArticleManager({ initialRows }: { initialRows: BlogPostRow[]
   return (
     <div>
       {message ? (
-        <p className="mb-4 rounded-xl border border-line bg-white/60 px-3 py-2 text-sm text-muted">
+        <p
+          ref={messageRef}
+          role="status"
+          className={`mb-4 rounded-xl border px-3 py-2 text-sm ${
+            messageTone === "success"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+              : messageTone === "error"
+                ? "border-rose-200 bg-rose-50 text-rose-900"
+                : "border-line bg-white/60 text-muted"
+          }`}
+        >
           {message}
         </p>
       ) : null}
@@ -293,6 +340,9 @@ export function BlogArticleManager({ initialRows }: { initialRows: BlogPostRow[]
                     </span>
                     {row.slug.trim() ? <span>{row.slug}</span> : null}
                     <span>Order {row.sortOrder}</span>
+                    {row.homeCarouselSlot ? (
+                      <span>Home carousel {row.homeCarouselSlot}</span>
+                    ) : null}
                   </span>
                 </span>
                 <span className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted">
@@ -391,6 +441,73 @@ export function BlogArticleManager({ initialRows }: { initialRows: BlogPostRow[]
                 rows={2}
                 className="mt-3 w-full rounded-xl border border-line bg-white px-3 py-2 text-sm"
               />
+
+              <div className="mt-3 grid gap-3 sm:grid-cols-12">
+                <select
+                  value={row.homeCarouselSlot?.toString() ?? ""}
+                  onChange={(e) =>
+                    setRows((prev) =>
+                      prev.map((x) =>
+                        x.id === row.id
+                          ? {
+                              ...x,
+                              homeCarouselSlot: e.target.value
+                                ? Number.parseInt(e.target.value, 10)
+                                : null,
+                            }
+                          : x,
+                      ),
+                    )
+                  }
+                  className="sm:col-span-3 rounded-xl border border-line bg-white px-3 py-2 text-sm"
+                >
+                  <option value="">Not in homepage carousel</option>
+                  <option value="1">Homepage carousel 1</option>
+                  <option value="2">Homepage carousel 2</option>
+                  <option value="3">Homepage carousel 3</option>
+                  <option value="4">Homepage carousel 4</option>
+                  <option value="5">Homepage carousel 5</option>
+                  <option value="6">Homepage carousel 6</option>
+                </select>
+
+                <input
+                  value={row.homeCarouselImageUrl}
+                  onChange={(e) =>
+                    setRows((prev) =>
+                      prev.map((x) =>
+                        x.id === row.id
+                          ? { ...x, homeCarouselImageUrl: e.target.value }
+                          : x,
+                      ),
+                    )
+                  }
+                  placeholder="Homepage carousel image URL (R2 or HTTPS)"
+                  className="sm:col-span-9 rounded-xl border border-line bg-white px-3 py-2 text-sm"
+                />
+              </div>
+
+              <div className="mt-3 grid gap-3 sm:grid-cols-12">
+                <input
+                  value={row.homeCarouselDescription}
+                  onChange={(e) =>
+                    setRows((prev) =>
+                      prev.map((x) =>
+                        x.id === row.id
+                          ? { ...x, homeCarouselDescription: e.target.value }
+                          : x,
+                      ),
+                    )
+                  }
+                  placeholder="Homepage carousel text under the image"
+                  className="sm:col-span-12 rounded-xl border border-line bg-white px-3 py-2 text-sm"
+                />
+              </div>
+              <p className="mt-2 text-xs leading-relaxed text-muted">
+                To show this article on the homepage carousel, set a slot from 1 to 6, add a
+                homepage image URL (or reuse the cover image), and keep the post{" "}
+                <strong>Published</strong>. The homepage shows up to six blog articles in slot
+                order. If two posts use the same slot, the most recently updated one wins.
+              </p>
 
               <BlogBodyEditor
                 ref={(handle) => {

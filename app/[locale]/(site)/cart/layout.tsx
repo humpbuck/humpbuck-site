@@ -18,6 +18,7 @@ export async function generateMetadata({
       canonical: `${pathPrefix}/cart`,
       languages: storefrontHreflangLanguages("/cart"),
     },
+    robots: { index: false, follow: false },
   };
 }
 

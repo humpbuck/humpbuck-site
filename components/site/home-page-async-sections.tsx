@@ -1,4 +1,5 @@
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
+import { HomeBlogDualCarousel } from "@/components/site/home-blog-dual-carousel";
 import { HomeDigitempSpotlight } from "@/components/site/home-digitemp-spotlight";
 import { HomeCategoryProductSliders } from "@/components/site/home-category-product-sliders";
 import { HomeFeaturedProductsSection } from "@/components/site/home-featured-products-section";
@@ -187,5 +188,30 @@ export async function HomeCategorySlidersAsyncSection({ locale }: { locale: stri
       ultraThinCardHoverImages={ultraThinSlider.cardHoverImages}
       fiveStarReviewCounts={fiveStarReviewCounts}
     />
+  );
+}
+
+export async function HomeBlogCarouselAsyncSection({ locale }: { locale: string }) {
+  setRequestLocale(locale);
+  const t = await getTranslations("Home");
+  const { getHomeBlogDualCarouselItems } = await import("@/lib/home-blog-carousel");
+  const items = await getHomeBlogDualCarouselItems();
+  if (items.length === 0) return null;
+
+  return (
+    <section
+      className="border-t border-line bg-paper py-16 sm:py-20"
+      aria-labelledby="home-blog-carousel-heading"
+    >
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <HomeBlogDualCarousel
+          items={items}
+          title={t("homeBlogTitle")}
+          viewAllLabel={t("homeBlogViewAll")}
+          previousLabel={t("homeBlogCarouselPrevious")}
+          nextLabel={t("homeBlogCarouselNext")}
+        />
+      </div>
+    </section>
   );
 }

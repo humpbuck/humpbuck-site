@@ -90,13 +90,23 @@ export async function getProductFiveStarReviewCounts(
   const slugs = [...new Set(productSlugs.map((s) => s.trim()).filter(Boolean))].sort();
   if (slugs.length === 0) return new Map();
 
-  return unstable_cache(
-    () => loadProductFiveStarReviewCountsUncached(slugs),
+  // unstable_cache serializes values — store a plain record, rebuild Map on read.
+  const record = await unstable_cache(
+    async (): Promise<Record<string, number>> => {
+      const counts = await loadProductFiveStarReviewCountsUncached(slugs);
+      return Object.fromEntries(counts);
+    },
     ["product-five-star-counts", slugs.join("|")],
     {
       tags: slugs.map((slug) => `product-reviews-${slug}`),
     },
   )();
+
+  const map = new Map<string, number>();
+  for (const slug of slugs) {
+    map.set(slug, record[slug] ?? 0);
+  }
+  return map;
 }
 
 async function loadProductReviewsWithUsersUncached(

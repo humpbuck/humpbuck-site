@@ -8,13 +8,12 @@ import { HomeFounderStorySection } from "@/components/site/home-founder-story-se
 import { NewsletterSubscribe } from "@/components/site/NewsletterSubscribe";
 import {
   HomeCategorySlidersAsyncSection,
+  HomeBlogCarouselAsyncSection,
   HomeDigitempSpotlightAsyncSection,
-  HomeFeaturedAsyncSection,
   HomeRecommendedAsyncSection,
 } from "@/components/site/home-page-async-sections";
 import {
   HomeCategorySlidersFallback,
-  HomeProductGridSectionFallback,
   HomeProductSliderSectionFallback,
   HomeSpotlightSectionFallback,
 } from "@/components/site/route-section-fallbacks";
@@ -173,11 +172,11 @@ export default async function HomePage({
       <Suspense fallback={<HomeSpotlightSectionFallback />}>
         <HomeDigitempSpotlightAsyncSection locale={locale} />
       </Suspense>
-      <Suspense fallback={<HomeProductGridSectionFallback />}>
-        <HomeFeaturedAsyncSection locale={locale} />
-      </Suspense>
       <Suspense fallback={<HomeCategorySlidersFallback />}>
         <HomeCategorySlidersAsyncSection locale={locale} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <HomeBlogCarouselAsyncSection locale={locale} />
       </Suspense>
       <Suspense fallback={null}>
         <HomeFounderStorySection />

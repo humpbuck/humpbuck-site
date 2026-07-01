@@ -21,6 +21,12 @@ export {
   normalizeBlogPostSlug,
 } from "@/lib/blog-post-shared";
 
+const BLOG_SELECT = `
+  "id", "slug", "title", "excerpt", "body", "coverImageUrl",
+  "homeCarouselSlot", "homeCarouselImageUrl", "homeCarouselDescription",
+  "status", "sortOrder", "publishedAt", "createdAt", "updatedAt"
+`;
+
 type DbBlogPostRow = {
   id: string;
   slug: string;
@@ -28,6 +34,9 @@ type DbBlogPostRow = {
   excerpt: string;
   body: string;
   coverImageUrl: string;
+  homeCarouselSlot: number | null;
+  homeCarouselImageUrl: string;
+  homeCarouselDescription: string;
   status: string;
   sortOrder: number;
   publishedAt: Date | null;
@@ -48,6 +57,9 @@ async function ensureBlogPostTable(): Promise<void> {
           "excerpt" TEXT NOT NULL DEFAULT '',
           "body" TEXT NOT NULL DEFAULT '',
           "coverImageUrl" TEXT NOT NULL DEFAULT '',
+          "homeCarouselSlot" INTEGER,
+          "homeCarouselImageUrl" TEXT NOT NULL DEFAULT '',
+          "homeCarouselDescription" TEXT NOT NULL DEFAULT '',
           "status" TEXT NOT NULL DEFAULT 'draft',
           "sortOrder" INTEGER NOT NULL DEFAULT 0,
           "publishedAt" TIMESTAMP(3),
@@ -66,6 +78,18 @@ async function ensureBlogPostTable(): Promise<void> {
       await prisma.$executeRawUnsafe(`
         CREATE INDEX IF NOT EXISTS "BlogPost_publishedAt_idx" ON "BlogPost"("publishedAt")
       `).catch(() => null);
+      await prisma.$executeRawUnsafe(`
+        ALTER TABLE "BlogPost" ADD COLUMN IF NOT EXISTS "homeCarouselSlot" INTEGER
+      `).catch(() => null);
+      await prisma.$executeRawUnsafe(`
+        ALTER TABLE "BlogPost" ADD COLUMN IF NOT EXISTS "homeCarouselImageUrl" TEXT NOT NULL DEFAULT ''
+      `).catch(() => null);
+      await prisma.$executeRawUnsafe(`
+        ALTER TABLE "BlogPost" ADD COLUMN IF NOT EXISTS "homeCarouselDescription" TEXT NOT NULL DEFAULT ''
+      `).catch(() => null);
+      await prisma.$executeRawUnsafe(`
+        CREATE INDEX IF NOT EXISTS "BlogPost_homeCarouselSlot_idx" ON "BlogPost"("homeCarouselSlot")
+      `).catch(() => null);
     })();
   }
   await blogTableReady;
@@ -79,6 +103,9 @@ function rowFromDb(row: DbBlogPostRow): BlogPostRow {
     excerpt: row.excerpt,
     body: row.body,
     coverImageUrl: row.coverImageUrl,
+    homeCarouselSlot: row.homeCarouselSlot,
+    homeCarouselImageUrl: row.homeCarouselImageUrl,
+    homeCarouselDescription: row.homeCarouselDescription,
     status: row.status === "published" ? "published" : "draft",
     sortOrder: row.sortOrder,
     publishedAt: row.publishedAt,
@@ -89,6 +116,7 @@ function rowFromDb(row: DbBlogPostRow): BlogPostRow {
 
 async function queryBlogPosts(sql: string): Promise<BlogPostRow[]> {
   try {
+    await ensureBlogPostTable();
     const rows = (await prisma.$queryRawUnsafe(sql)) as DbBlogPostRow[];
     return rows.map(rowFromDb);
   } catch (e) {
@@ -100,8 +128,9 @@ async function queryBlogPosts(sql: string): Promise<BlogPostRow[]> {
 async function queryBlogPostById(id: string): Promise<BlogPostRow | null> {
   await ensureBlogPostTable();
   const rows = (await prisma.$queryRaw`
-    SELECT "id", "slug", "title", "excerpt", "body", "coverImageUrl", "status",
-           "sortOrder", "publishedAt", "createdAt", "updatedAt"
+    SELECT "id", "slug", "title", "excerpt", "body", "coverImageUrl",
+           "homeCarouselSlot", "homeCarouselImageUrl", "homeCarouselDescription",
+           "status", "sortOrder", "publishedAt", "createdAt", "updatedAt"
     FROM "BlogPost"
     WHERE "id" = ${id}
     LIMIT 1
@@ -122,6 +151,12 @@ function cleanCoverImageUrl(url: string): string {
   return trimmed.slice(0, 2048);
 }
 
+function cleanHomeCarouselSlot(slot: number | null | undefined): number | null {
+  if (typeof slot !== "number" || !Number.isFinite(slot)) return null;
+  const rounded = Math.round(slot);
+  return rounded >= 1 && rounded <= 6 ? rounded : null;
+}
+
 function prepareInput(input: BlogPostInput): BlogPostInput | null {
   const slug = cleanBlogPostSlug(input.slug);
   if (!slug) return null;
@@ -135,6 +170,9 @@ function prepareInput(input: BlogPostInput): BlogPostInput | null {
     excerpt: input.excerpt.trim().slice(0, 500),
     body: body.slice(0, 50000),
     coverImageUrl: cleanCoverImageUrl(input.coverImageUrl),
+    homeCarouselSlot: cleanHomeCarouselSlot(input.homeCarouselSlot),
+    homeCarouselImageUrl: cleanCoverImageUrl(input.homeCarouselImageUrl),
+    homeCarouselDescription: input.homeCarouselDescription.trim().slice(0, 280),
     status: input.status === "published" ? "published" : "draft",
     sortOrder: Number.isFinite(input.sortOrder) ? Math.round(input.sortOrder) : 0,
   };
@@ -142,12 +180,35 @@ function prepareInput(input: BlogPostInput): BlogPostInput | null {
 
 export async function listPublishedBlogPosts(): Promise<BlogPostRow[]> {
   return queryBlogPosts(`
-    SELECT "id", "slug", "title", "excerpt", "body", "coverImageUrl", "status",
-           "sortOrder", "publishedAt", "createdAt", "updatedAt"
+    SELECT ${BLOG_SELECT}
     FROM "BlogPost"
     WHERE "status" = 'published'
     ORDER BY "sortOrder" ASC, "publishedAt" DESC NULLS LAST, "updatedAt" DESC
   `);
+}
+
+export async function listPublishedHomeCarouselBlogPosts(): Promise<BlogPostRow[]> {
+  const rows = await queryBlogPosts(`
+    SELECT ${BLOG_SELECT}
+    FROM "BlogPost"
+    WHERE "status" = 'published'
+      AND "homeCarouselSlot" BETWEEN 1 AND 6
+      AND (
+        TRIM("homeCarouselImageUrl") <> ''
+        OR TRIM("coverImageUrl") <> ''
+      )
+    ORDER BY "homeCarouselSlot" ASC, "updatedAt" DESC
+  `);
+
+  const deduped = new Map<number, BlogPostRow>();
+  for (const row of rows) {
+    if (row.homeCarouselSlot == null || deduped.has(row.homeCarouselSlot)) continue;
+    deduped.set(row.homeCarouselSlot, row);
+  }
+
+  return [...deduped.values()].sort(
+    (a, b) => (a.homeCarouselSlot ?? 0) - (b.homeCarouselSlot ?? 0),
+  );
 }
 
 export async function getPublishedBlogPostBySlug(
@@ -156,9 +217,11 @@ export async function getPublishedBlogPostBySlug(
   const cleaned = cleanBlogPostSlug(slug);
   if (!cleaned) return null;
   try {
+    await ensureBlogPostTable();
     const rows = (await prisma.$queryRaw`
-      SELECT "id", "slug", "title", "excerpt", "body", "coverImageUrl", "status",
-             "sortOrder", "publishedAt", "createdAt", "updatedAt"
+      SELECT "id", "slug", "title", "excerpt", "body", "coverImageUrl",
+             "homeCarouselSlot", "homeCarouselImageUrl", "homeCarouselDescription",
+             "status", "sortOrder", "publishedAt", "createdAt", "updatedAt"
       FROM "BlogPost"
       WHERE "slug" = ${cleaned} AND "status" = 'published'
       LIMIT 1
@@ -172,8 +235,7 @@ export async function getPublishedBlogPostBySlug(
 
 export async function listBlogPostsAdmin(): Promise<BlogPostRow[]> {
   return queryBlogPosts(`
-    SELECT "id", "slug", "title", "excerpt", "body", "coverImageUrl", "status",
-           "sortOrder", "publishedAt", "createdAt", "updatedAt"
+    SELECT ${BLOG_SELECT}
     FROM "BlogPost"
     ORDER BY "updatedAt" DESC, "sortOrder" ASC
   `);
@@ -188,9 +250,11 @@ export async function createBlogPost(input: BlogPostInput): Promise<BlogPostRow>
   await prisma.$executeRaw`
     INSERT INTO "BlogPost" (
       "id", "slug", "title", "excerpt", "body", "coverImageUrl",
+      "homeCarouselSlot", "homeCarouselImageUrl", "homeCarouselDescription",
       "status", "sortOrder", "publishedAt", "createdAt", "updatedAt"
     ) VALUES (
       ${id}, ${data.slug}, ${data.title}, ${data.excerpt}, ${data.body}, ${data.coverImageUrl},
+      ${data.homeCarouselSlot}, ${data.homeCarouselImageUrl}, ${data.homeCarouselDescription},
       ${data.status}, ${data.sortOrder}, ${publishedAt}, NOW(), NOW()
     )
   `;
@@ -219,6 +283,9 @@ export async function updateBlogPost(
       "excerpt" = ${data.excerpt},
       "body" = ${data.body},
       "coverImageUrl" = ${data.coverImageUrl},
+      "homeCarouselSlot" = ${data.homeCarouselSlot},
+      "homeCarouselImageUrl" = ${data.homeCarouselImageUrl},
+      "homeCarouselDescription" = ${data.homeCarouselDescription},
       "status" = ${data.status},
       "sortOrder" = ${data.sortOrder},
       "publishedAt" = ${publishedAt},

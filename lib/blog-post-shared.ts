@@ -9,6 +9,9 @@ export type BlogPostRow = {
   excerpt: string;
   body: string;
   coverImageUrl: string;
+  homeCarouselSlot: number | null;
+  homeCarouselImageUrl: string;
+  homeCarouselDescription: string;
   status: BlogPostStatus;
   sortOrder: number;
   publishedAt: Date | null;
@@ -18,7 +21,14 @@ export type BlogPostRow = {
 
 export type BlogPostCard = Pick<
   BlogPostRow,
-  "slug" | "title" | "excerpt" | "coverImageUrl" | "publishedAt"
+  | "slug"
+  | "title"
+  | "excerpt"
+  | "coverImageUrl"
+  | "homeCarouselSlot"
+  | "homeCarouselImageUrl"
+  | "homeCarouselDescription"
+  | "publishedAt"
 >;
 
 export type BlogPostInput = {
@@ -27,6 +37,9 @@ export type BlogPostInput = {
   excerpt: string;
   body: string;
   coverImageUrl: string;
+  homeCarouselSlot: number | null;
+  homeCarouselImageUrl: string;
+  homeCarouselDescription: string;
   status: BlogPostStatus;
   sortOrder: number;
 };

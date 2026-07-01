@@ -13,6 +13,7 @@ import {
 function revalidateBlogPages(slug?: string) {
   revalidatePath(adminPath("/blog"));
   revalidateSitemap();
+  revalidateStorefrontPath("/");
   revalidateStorefrontPath("/blog");
   if (slug) {
     revalidateStorefrontPath(`/blog/${encodeURIComponent(slug)}`);
@@ -33,15 +34,23 @@ export async function PATCH(req: Request, context: RouteContext) {
     excerpt?: string;
     body?: string;
     coverImageUrl?: string;
+    homeCarouselSlot?: number | null;
+    homeCarouselImageUrl?: string;
+    homeCarouselDescription?: string;
     status?: string;
     sortOrder?: number;
   };
+  const rawSlot = body.homeCarouselSlot;
   const payload: BlogPostInput = {
     slug: (body.slug ?? "").trim(),
     title: (body.title ?? "").trim(),
     excerpt: (body.excerpt ?? "").trim(),
     body: (body.body ?? "").trim(),
     coverImageUrl: (body.coverImageUrl ?? "").trim(),
+    homeCarouselSlot:
+      typeof rawSlot === "number" && Number.isFinite(rawSlot) ? rawSlot : null,
+    homeCarouselImageUrl: (body.homeCarouselImageUrl ?? "").trim(),
+    homeCarouselDescription: (body.homeCarouselDescription ?? "").trim(),
     status: body.status === "published" ? "published" : "draft",
     sortOrder:
       typeof body.sortOrder === "number" && Number.isFinite(body.sortOrder)

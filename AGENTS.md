@@ -6,7 +6,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # Humpbuck — persistent notes (read each session)
 
-**Cursor does not keep chat history across new conversations.** The evolving **user requirements and agreed rules** for this site are recorded in [`docs/user-conventions.md`](docs/user-conventions.md) (and updated after important sessions). Read that file in addition to this section. This `AGENTS.md` block is a short technical handoff for local ops.
+**Cursor and Codex do not keep repo-backed chat history across new conversations.** The evolving **user requirements and agreed rules** for this site are recorded in [`docs/user-conventions.md`](docs/user-conventions.md) (and updated after important sessions). Read that file in addition to this section. This `AGENTS.md` block is a short technical handoff for local ops.
 
 **Stability / change policy:** The repo includes [`.cursor/rules/humpbuck-stability.mdc`](.cursor/rules/humpbuck-stability.mdc) (`alwaysApply: true`). Do **not** change the app unless the user’s current request clearly asks for it; no drive-by refactors; minimal diffs; `docs/user-conventions.md` is the written source of what the site “should be.”
 
@@ -29,7 +29,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 Read **`docs/user-conventions.md` §5** before any sync.
 
-**Workspace = sync target:** Only push the repo whose folder is open in Cursor. In **this** workspace (`humpbuck-site`), never push sadhakashop; open `sadhakashop-site` for that.
+**Workspace = sync target:** Only push the repo whose folder is open in the current assistant workspace. In **this** workspace (`humpbuck-site`), never push sadhakashop; open `sadhakashop-site` for that.
 
 **humpbuck-site (this repo):**
 
