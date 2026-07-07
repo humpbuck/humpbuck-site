@@ -13,7 +13,7 @@ export function OrganizationJsonLd() {
         url,
         name: "HUMPBUCK",
         description:
-          "HUMPBUCK — affordable mechanical watches. Automatic movements, skeleton dials, and barrel-case designs with global shipping.",
+          "HUMPBUCK — curated premium automatic and quartz watches. Handpicked timepieces with secure checkout and global shipping.",
         publisher: { "@id": `${url}/#organization` },
         inLanguage: "en-US",
       },
@@ -24,7 +24,7 @@ export function OrganizationJsonLd() {
         url,
         logo: R2.home.digitemp2301Webp,
         description:
-          "Raw mechanical beauty for the man in motion. High-quality, affordable mechanical watches for everyone.",
+          "Curated premium automatic and quartz watches for everyday wear and collectors.",
       },
     ],
   };

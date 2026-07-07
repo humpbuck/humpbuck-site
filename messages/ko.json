@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK — 기계식 시계 | 오토매틱 & 스켈레톤",
-    "descriptionDefault": "합리적인 가격의 기계식 시계 — 오토매틱 무브먼트, 스켈레톤 다이얼, tonneau 케이스. 움직이는 남자를 위한 raw mechanical beauty. 안전한 결제 · 글로벌 배송.",
-    "ogTitle": "HUMPBUCK — 기계식 시계",
-    "ogDescription": "움직이는 남자를 위한 raw mechanical beauty. 고품질의 합리적인 기계식 시계를 모두에게 제공하는 것이 목표입니다."
+    "titleDefault": "HUMPBUCK - 엄선된 타임피스 | 프리미엄 오토매틱 & 쿼츠",
+    "descriptionDefault": "엄선된 오토매틱·쿼츠 시계 — 프리미엄 무브먼트, 스켈레톤 다이얼, 눈에 띄는 마감. 안전한 결제와 글로벌 배송으로 제공하는 핸드픽 타임피스.",
+    "ogTitle": "HUMPBUCK - 엄선된 타임피스",
+    "ogDescription": "일상과 컬렉터를 위한 프리미엄 오토매틱·쿼츠 시계. 안전한 결제 · 글로벌 배송."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -78,10 +78,10 @@
     "socialTiktokAria": "TikTok의 HUMPBUCK"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK — 합리적인 기계식 시계 | 오토매틱 & 스켈레톤",
-    "metaDescription": "HUMPBUCK에서 고품질·합리적인 기계식 시계 — 오토매틱, 스켈레톤 다이얼, tonneau 디자인. 움직이는 남자를 위한 raw mechanical beauty. 글로벌 배송.",
-    "ogTitle": "HUMPBUCK — 기계식 시계",
-    "ogDescription": "움직이는 남자를 위한 raw mechanical beauty. 고품질의 합리적인 기계식 시계를 모두에게 제공하는 것이 목표입니다.",
+    "metaTitle": "HUMPBUCK - 엄선된 타임피스 | 프리미엄 오토매틱 & 쿼츠",
+    "metaDescription": "HUMPBUCK에서 엄선된 오토매틱·쿼츠 시계 — 프리미엄 기계식 무브먼트, 스켈레톤 다이얼, 정밀 쿼츠 칼리버. 핸드픽 타임피스 글로벌 배송.",
+    "ogTitle": "HUMPBUCK - 엄선된 타임피스",
+    "ogDescription": "일상과 컬렉터를 위한 프리미엄 오토매틱·쿼츠 시계. 안전한 결제 · 글로벌 배송.",
     "heroBadge": "시리즈 · DIGI-TEMP",
     "heroLead1": "아나로그·디지털 멀티펑션 시계 — 듀얼 디스플레이, 풀 기능.",
     "heroLead2": "시간, 날짜, 알람, 외부 온도, 스톱워치 모드를 컴팩트한 스테인리스 케이스에 — 일상에서도 선명한 가독성.",

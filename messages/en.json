@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK — Mechanical Watches | Automatic & Skeleton",
-    "descriptionDefault": "Affordable mechanical watches — automatic movements, skeleton dials, and barrel-case designs. Raw mechanical beauty for the man in motion. Secure checkout · global shipping.",
-    "ogTitle": "HUMPBUCK — Mechanical Watches",
-    "ogDescription": "Raw mechanical beauty for the man in motion. My goal is to offer high-quality, affordable mechanical watches to everyone."
+    "titleDefault": "HUMPBUCK - Curated Timepieces | Premium Automatic & Quartz Watches",
+    "descriptionDefault": "Curated automatic and quartz watches — premium movements, skeleton dials, ana-digi quartz, and standout finishing. Handpicked timepieces with secure checkout and global shipping.",
+    "ogTitle": "HUMPBUCK - Curated Timepieces",
+    "ogDescription": "Premium automatic and quartz watches, curated for everyday wear and collectors. Secure checkout · global shipping."
   },
   "DisplayCurrency": {
     "label": "Display currency",
@@ -54,7 +54,7 @@
     "accountFallback": "Account"
   },
   "Footer": {
-    "tagline": "Curated mechanical and quartz watches with secure checkout and global shipping.",
+    "tagline": "Curated premium automatic and quartz watches with secure checkout and global shipping.",
     "highlights": "Secure payments · Global shipping · 24/7 support",
     "socialFacebookAria": "HUMPBUCK on Facebook",
     "socialInstagramAria": "HUMPBUCK on Instagram",
@@ -76,10 +76,10 @@
     "termsOfService": "Terms of service"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK — Affordable Mechanical Watches | Automatic & Skeleton",
-    "metaDescription": "Shop high-quality, affordable mechanical watches at HUMPBUCK — automatic movements, skeleton dials, and barrel-case designs. Raw mechanical beauty for the man in motion. Global shipping.",
-    "ogTitle": "HUMPBUCK — Mechanical Watches",
-    "ogDescription": "Raw mechanical beauty for the man in motion. My goal is to offer high-quality, affordable mechanical watches to everyone.",
+    "metaTitle": "HUMPBUCK - Curated Timepieces | Premium Automatic & Quartz Watches",
+    "metaDescription": "Shop curated automatic and quartz watches at HUMPBUCK — premium mechanical movements, skeleton dials, and precise quartz calibers. Handpicked timepieces with global shipping.",
+    "ogTitle": "HUMPBUCK - Curated Timepieces",
+    "ogDescription": "Premium automatic and quartz watches, curated for everyday wear and collectors. Secure checkout · global shipping.",
     "mechanicalHeroBadge": "Curated · Mechanical",
     "mechanicalHeroTitle": "Mechanical Watches",
     "mechanicalHeroLead": "Raw mechanical beauty for the man in motion.",
@@ -130,7 +130,7 @@
     "viewWatches": "View watches",
     "recommendedKicker": "Search by",
     "recommendedTitle": "Recommended watches",
-    "recommendedIntro": "Hand-picked mechanical pieces — skeleton dials, automatic movements, and standout finishing.",
+    "recommendedIntro": "Hand-picked automatic and quartz pieces — skeleton dials, premium movements, and standout finishing.",
     "recommendedViewAll": "Shop mechanical",
     "recommendedAdd": "Add",
     "recommendedSliderPrev": "Previous products",
@@ -172,7 +172,7 @@
     "trustLaunchBody": "Factory programs for growing watch brands.",
     "newsletterKicker": "Updates",
     "newsletterTitle": "NEW WATCHES DROPS",
-    "newsletterBody": "Raw mechanical beauty for the man in motion."
+    "newsletterBody": "Curated automatic and quartz drops — premium timepieces for everyday wear."
   },
   "Newsletter": {
     "emailLabel": "Email",
@@ -222,12 +222,12 @@
     "successClose": "Close"
   },
   "Shop": {
-    "metaTitle": "Shop mechanical watches",
-    "metaDescription": "Browse HUMPBUCK mechanical and quartz watches — filter by movement, men’s and women’s styles, and ultra-thin models. Affordable automatic and skeleton dials with secure checkout.",
-    "ogTitle": "Shop mechanical watches · HUMPBUCK",
-    "ogDescription": "Raw mechanical beauty for the man in motion. My goal is to offer high-quality, affordable mechanical watches to everyone.",
+    "metaTitle": "Shop curated watches",
+    "metaDescription": "Browse HUMPBUCK curated automatic and quartz watches — filter by movement, men’s and women’s styles, and ultra-thin models. Premium finishing with secure checkout.",
+    "ogTitle": "Shop curated watches · HUMPBUCK",
+    "ogDescription": "Premium automatic and quartz watches, curated for everyday wear and collectors. Secure checkout · global shipping.",
     "kicker": "Catalog",
-    "title": "Raw mechanical beauty for the man in motion.",
+    "title": "Curated automatic and quartz watches.",
     "filterAll": "All",
     "filterPanelTitle": "Filter",
     "filterGroupMovement": "Movement",
@@ -833,11 +833,11 @@
   },
   "BlogPage": {
     "metaTitle": "Blog — HUMPBUCK",
-    "metaDescription": "Stories on mechanical watches, movements, and style from HUMPBUCK.",
+    "metaDescription": "Stories on curated watches, movements, and style from HUMPBUCK.",
     "ogTitle": "Blog — HUMPBUCK",
     "kicker": "Journal",
     "title": "Blog",
-    "intro": "Stories on mechanical watches, movements, and the craft behind HUMPBUCK.",
+    "intro": "Stories on curated watches, movements, and the craft behind HUMPBUCK.",
     "empty": "New posts are on the way. Check back soon.",
     "readMore": "Read article"
   },
@@ -848,8 +848,8 @@
     "viewProduct": "View product"
   },
   "AboutPage": {
-    "metaTitle": "About — HUMPBUCK Mechanical Watches",
-    "metaDescription": "Why HUMPBUCK exists — my goal is to offer high-quality, affordable mechanical watches to everyone. Raw mechanical beauty for the man in motion. Contact by email or WhatsApp.",
+    "metaTitle": "About — HUMPBUCK Curated Timepieces",
+    "metaDescription": "Why HUMPBUCK exists — curated premium automatic and quartz watches for everyday wear and collectors. Contact by email or WhatsApp.",
     "storyKicker": "About",
     "storyP1": "I have loved mechanical watches since I was a child. Back then, my family was poor, and I couldn't afford one. However, I was completely fascinated by how the intricate gears interlock and how the complex mechanical structures work together to keep precise time.",
     "storyP2": "Now, I have built this mechanical watch website. My goal is to offer high-quality, affordable mechanical watches to everyone, while fulfilling my childhood dream of owning one. Keep chasing your dreams.",

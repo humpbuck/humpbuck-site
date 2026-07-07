@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { MAX_REVIEW_APPENDS } from "@/lib/review-append-constants";
 import { findEligibleOrderIdForProductReview } from "@/lib/review-eligibility-queries";
 import { orderContainsProductSlug } from "@/lib/review-eligibility";
 
@@ -8,6 +9,24 @@ export type PdpReviewFormAccess =
   | { kind: "eligible"; orderId: string }
   | { kind: "confirmReceiptRequired" }
   | { kind: "signedInNoPurchase" };
+
+/** Approved reviews the signed-in buyer may append to (PDP masonry links). */
+export async function getAppendableReviewIdsForUser(
+  userId: string,
+  productSlug: string,
+): Promise<string[]> {
+  const slug = productSlug.trim();
+  if (!slug) return [];
+
+  const rows = await prisma.productReview.findMany({
+    where: { userId, productSlug: slug, status: "approved" },
+    select: { id: true, _count: { select: { appends: true } } },
+  });
+
+  return rows
+    .filter((row) => row._count.appends < MAX_REVIEW_APPENDS)
+    .map((row) => row.id);
+}
 
 /** Who may see the PDP review form and whether submission is allowed. */
 export async function getPdpReviewFormAccess(

@@ -29,5 +29,5 @@ export const defaultOgImage = {
   url: mechanicalHeroWebpUrl(),
   width: 1200,
   height: 630,
-  alt: "HUMPBUCK — skeleton mechanical watch movement with visible gears",
+  alt: "HUMPBUCK curated automatic watch — skeleton movement with visible gears",
 } as const;
