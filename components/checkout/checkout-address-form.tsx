@@ -39,12 +39,53 @@ function formatPhoneValue(dialCode: string, nationalNumber: string) {
   return num ? `${code}${num}` : code;
 }
 
+function normalizeDialCodeInput(raw: string): string {
+  const digits = raw.trim().replace(/^\+/, "").replace(/\D/g, "");
+  return digits ? `+${digits}` : "";
+}
+
+function resolveDialCodeOnBlur(typed: string, committed: string): string {
+  const normalized = normalizeDialCodeInput(typed);
+  if (!normalized) return committed || "+1";
+  if (DIAL_CODE_OPTIONS.includes(normalized)) return normalized;
+  return committed || "+1";
+}
+
 function countryLabel(iso2: string) {
   return COUNTRY_LABELS.of(iso2) ?? iso2;
 }
 
 function normalizeCountryText(text: string) {
   return text.trim().toLowerCase();
+}
+
+function parseStateCodeFromLabel(stateLabel: string, countryIso2: string): string {
+  const trimmed = stateLabel.trim();
+  if (!trimmed) return "";
+  const parenMatch = trimmed.match(/\(([A-Za-z0-9]+)\)\s*$/);
+  if (parenMatch) return parenMatch[1].toUpperCase();
+  const matched = State.getStatesOfCountry(countryIso2).find(
+    (item) => item.name === trimmed || item.isoCode === trimmed,
+  );
+  return matched?.isoCode ?? "";
+}
+
+function findStateMatch(states: Array<{ code: string; name: string }>, query: string) {
+  const q = query.trim().toLowerCase();
+  if (!q) return null;
+  return (
+    states.find(
+      (item) =>
+        item.code.toLowerCase() === q ||
+        item.name.toLowerCase() === q ||
+        `${item.name} (${item.code})`.toLowerCase() === q,
+    ) ??
+    states.find(
+      (item) =>
+        item.name.toLowerCase().startsWith(q) || item.code.toLowerCase().startsWith(q),
+    ) ??
+    null
+  );
 }
 
 export function CheckoutAddressForm({
@@ -77,7 +118,9 @@ export function CheckoutAddressForm({
   );
 
   const [countryIso2, setCountryIso2] = useState(initialCountryIso2);
-  const [stateCode, setStateCode] = useState("");
+  const [stateCode, setStateCode] = useState(() =>
+    parseStateCodeFromLabel(value.state || "", initialCountryIso2),
+  );
   const [countryOpen, setCountryOpen] = useState(false);
   const [stateOpen, setStateOpen] = useState(false);
   const [cityOpen, setCityOpen] = useState(false);
@@ -102,8 +145,6 @@ export function CheckoutAddressForm({
     () => State.getStatesOfCountry(countryIso2 || DEFAULT_COUNTRY).map((item) => ({ code: item.isoCode, name: item.name })),
     [countryIso2],
   );
-  const hasStates = states.length > 0;
-  const useFreeStateInput = countryIso2 === "AX" || !hasStates;
   const cities = useMemo(
     () => (countryIso2 && stateCode ? City.getCitiesOfState(countryIso2, stateCode) : []),
     [countryIso2, stateCode],
@@ -116,6 +157,7 @@ export function CheckoutAddressForm({
   useEffect(() => {
     const parsed = parsePhoneValue(value.phone);
     setPhoneCodeInput(parsed.dialCode);
+    setPhoneCodeCommitted(parsed.dialCode);
     setPhoneNumber(parsed.nationalNumber);
   }, [value.phone]);
 
@@ -133,16 +175,12 @@ export function CheckoutAddressForm({
   }, [countryIso2, value.country]);
 
   useEffect(() => {
-    if (value.state && stateCode && !states.some((item) => item.code === stateCode)) {
+    if (!value.state.trim()) {
       setStateCode("");
-      setStateText("");
-      setStateCommitted("");
-      stateRestoreRef.current = "";
-      setCityText("");
-      setCityCommitted("");
-      cityRestoreRef.current = "";
+      return;
     }
-  }, [stateCode, states, value.state]);
+    setStateCode(parseStateCodeFromLabel(value.state, countryIso2 || DEFAULT_COUNTRY));
+  }, [countryIso2, value.state]);
 
   function commitCountry(nextIso2: string) {
     const nextLabel = `${countryLabel(nextIso2)} (${nextIso2})`;
@@ -171,6 +209,52 @@ export function CheckoutAddressForm({
     cityRestoreRef.current = "";
     setStateOpen(false);
     onChange({ ...value, state: nextLabel, city: "" });
+  }
+
+  function commitStateFreeText(next: string) {
+    const trimmed = next.trim();
+    if (!trimmed) return;
+    const parsedCode = parseStateCodeFromLabel(trimmed, countryIso2 || DEFAULT_COUNTRY);
+    const stateChanged = stateRestoreRef.current.trim() !== trimmed;
+    setStateCode(parsedCode);
+    setStateCommitted(trimmed);
+    stateRestoreRef.current = trimmed;
+    setStateText(trimmed);
+    setStateOpen(false);
+    if (stateChanged) {
+      setCityText("");
+      setCityCommitted("");
+      cityRestoreRef.current = "";
+      onChange({ ...value, state: trimmed, city: "" });
+      return;
+    }
+    onChange({ ...value, state: trimmed });
+  }
+
+  function resolveStateOnBlur() {
+    setStateOpen(false);
+    const typed = stateText.trim();
+    if (!typed) {
+      setStateText(stateRestoreRef.current || "");
+      return;
+    }
+    const match = findStateMatch(states, typed);
+    if (match) {
+      commitState(match.code);
+      return;
+    }
+    commitStateFreeText(typed);
+  }
+
+  function resolveCityOnBlur() {
+    setCityOpen(false);
+    const typed = cityText.trim();
+    if (!typed) {
+      setCityText(cityRestoreRef.current || "");
+      return;
+    }
+    const exactMatch = cityCandidates.find((item) => item.name.toLowerCase() === typed.toLowerCase());
+    commitCity(exactMatch?.name ?? typed);
   }
 
   function commitCity(next: string) {
@@ -263,45 +347,28 @@ export function CheckoutAddressForm({
         <Field id={`${idPrefix}-line1`} className="sm:col-span-2" label={t("street")} required value={value.line1} onChange={(v) => onChange({ ...value, line1: v })} />
         <Field id={`${idPrefix}-line2`} className="sm:col-span-2" label={t("line2")} value={value.line2} onChange={(v) => onChange({ ...value, line2: v })} />
 
-        {hasStates && !useFreeStateInput ? (
-          <PickerField
-            id={`${idPrefix}-state`}
-            label={t("state")}
-            value={stateText}
-            open={stateOpen}
-            options={stateOptions}
-            placeholder={t("statePlaceholder")}
-            autoComplete="address-level1"
-            onOpen={() => {
-              setStateText("");
-              setStateOpen(true);
-            }}
-            onChangeText={(next) => {
-              setStateText(next);
-              setStateOpen(true);
-            }}
-            onSelect={(item) => commitState(item.code)}
-            onBlur={() => {
-              window.setTimeout(() => {
-                setStateOpen(false);
-                setStateText(stateRestoreRef.current || "");
-              }, 0);
-            }}
-            renderOption={(item) => `${item.name} (${item.code})`}
-          />
-        ) : (
-          <Field
-            id={`${idPrefix}-state`}
-            label={t("state")}
-            value={stateText}
-            onChange={(next) => {
-              setStateText(next);
-              setStateCommitted(next);
-              stateRestoreRef.current = next;
-              onChange({ ...value, state: next });
-            }}
-          />
-        )}
+        <PickerField
+          id={`${idPrefix}-state`}
+          label={t("state")}
+          value={stateText}
+          open={stateOpen}
+          options={stateOptions}
+          placeholder={t("statePlaceholder")}
+          autoComplete="address-level1"
+          onOpen={() => {
+            setStateText("");
+            setStateOpen(true);
+          }}
+          onChangeText={(next) => {
+            setStateText(next);
+            setStateOpen(true);
+          }}
+          onSelect={(item) => commitState(item.code)}
+          onBlur={() => {
+            window.setTimeout(resolveStateOnBlur, 0);
+          }}
+          renderOption={(item) => `${item.name} (${item.code})`}
+        />
 
         <PickerField
           id={`${idPrefix}-city`}
@@ -321,86 +388,76 @@ export function CheckoutAddressForm({
           }}
           onSelect={(item) => commitCity(item.name)}
           onBlur={() => {
-            window.setTimeout(() => {
-              setCityOpen(false);
-              setCityText(cityRestoreRef.current || "");
-            }, 0);
+            window.setTimeout(resolveCityOnBlur, 0);
           }}
           renderOption={(item) => item.name}
         />
 
         <div className="relative sm:col-span-2">
-          <label className="block">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
-              {t("phone")} <span className="text-rose-600">*</span>
-            </span>
-            <div className="mt-1.5 grid grid-cols-[120px_1fr] gap-3">
-              <div className="relative z-30">
-                <input
-                  type="text"
-                  value={phoneCodeInput}
-                  onFocus={() => {
-                    setPhoneCodeInput("");
-                    setPhoneCodeOpen(true);
-                  }}
-                  onClick={() => {
-                    setPhoneCodeInput("");
-                    setPhoneCodeOpen(true);
-                  }}
-                  onChange={(e) => {
-                    const next = e.target.value;
-                    setPhoneCodeInput(next);
-                    setPhoneCodeOpen(true);
-                  }}
-                  onBlur={() => {
-                    window.setTimeout(() => {
-                      setPhoneCodeOpen(false);
-                      setPhoneCodeInput(phoneCodeCommitted || "+1");
-                    }, 0);
-                  }}
-                  className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-                  placeholder="+1"
-                  inputMode="tel"
-                  autoComplete="tel-country-code"
-                />
-                {phoneCodeOpen && phoneCodeOptions.length > 0 ? (
-                  <div className="absolute left-0 right-0 top-full z-70 mt-2 overflow-hidden rounded-2xl border border-line bg-white shadow-lg">
-                    <div className="max-h-60 overflow-auto py-2">
-                      {phoneCodeOptions.map((item) => (
-                        <button
-                          key={item.code}
-                          type="button"
-                          className="flex w-full items-center justify-between px-4 py-2.5 text-left text-sm text-ink hover:bg-[#f5f5f5]"
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            setPhoneCodeInput(item.code);
-                            setPhoneCodeCommitted(item.code);
-                            setPhoneCodeOpen(false);
-                            onChange({ ...value, phone: formatPhoneValue(item.code, phoneNumber) });
-                          }}
-                        >
-                          <span>{item.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ) : null}
-              </div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
+            {t("phone")} <span className="text-rose-600">*</span>
+          </p>
+          <div className="mt-1.5 grid grid-cols-[120px_1fr] gap-3">
+            <div className="relative z-30">
               <input
-                ref={phoneNumberInputRef}
-                type="tel"
-                value={phoneNumber}
+                type="text"
+                value={phoneCodeInput}
                 onChange={(e) => {
-                  const next = e.target.value.replace(/\D+/g, "");
-                  setPhoneNumber(next);
-                  onChange({ ...value, phone: formatPhoneValue(phoneCodeInput || phoneCodeCommitted || "+1", next) });
+                  const next = e.target.value;
+                  setPhoneCodeInput(next);
+                  setPhoneCodeOpen(true);
+                }}
+                onBlur={() => {
+                  window.setTimeout(() => {
+                    setPhoneCodeOpen(false);
+                    const nextCode = resolveDialCodeOnBlur(phoneCodeInput, phoneCodeCommitted || "+1");
+                    setPhoneCodeCommitted(nextCode);
+                    setPhoneCodeInput(nextCode);
+                    onChange({ ...value, phone: formatPhoneValue(nextCode, phoneNumber) });
+                  }, 0);
                 }}
                 className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
-                placeholder={t("phonePlaceholder")}
-                autoComplete="tel-national"
+                placeholder="+1"
+                inputMode="tel"
+                autoComplete="tel-country-code"
               />
+              {phoneCodeOpen && phoneCodeOptions.length > 0 ? (
+                <div className="absolute left-0 right-0 top-full z-70 mt-2 overflow-hidden rounded-2xl border border-line bg-white shadow-lg">
+                  <div className="max-h-60 overflow-auto py-2">
+                    {phoneCodeOptions.map((item) => (
+                      <button
+                        key={item.code}
+                        type="button"
+                        className="flex w-full items-center justify-between px-4 py-2.5 text-left text-sm text-ink hover:bg-[#f5f5f5]"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          setPhoneCodeInput(item.code);
+                          setPhoneCodeCommitted(item.code);
+                          setPhoneCodeOpen(false);
+                          onChange({ ...value, phone: formatPhoneValue(item.code, phoneNumber) });
+                        }}
+                      >
+                        <span>{item.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
             </div>
-          </label>
+            <input
+              ref={phoneNumberInputRef}
+              type="tel"
+              value={phoneNumber}
+              onChange={(e) => {
+                const next = e.target.value.replace(/\D+/g, "");
+                setPhoneNumber(next);
+                onChange({ ...value, phone: formatPhoneValue(phoneCodeCommitted || "+1", next) });
+              }}
+              className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+              placeholder={t("phonePlaceholder")}
+              autoComplete="tel-national"
+            />
+          </div>
         </div>
 
         <Field
