@@ -3,9 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
-    const body = (await req.json().catch(() => null)) as
-      | { code?: string; affiliatePid?: string | null }
-      | null;
+    const body = (await req.json().catch(() => null)) as { code?: string } | null;
 
     const code = body?.code?.trim().toUpperCase();
     if (!code) {
@@ -15,9 +13,6 @@ export async function POST(req: Request) {
     const now = new Date();
     const coupon = await prisma.coupon.findUnique({
       where: { code },
-      include: {
-        affiliate: { select: { pid: true } },
-      },
     });
 
     if (!coupon) {
@@ -34,13 +29,6 @@ export async function POST(req: Request) {
     }
     if (coupon.usedCount >= coupon.quantity) {
       return NextResponse.json({ ok: false, error: "Coupon has reached its usage limit." }, { status: 400 });
-    }
-
-    const affiliatePid = body?.affiliatePid?.trim() || null;
-    if (coupon.affiliateId && coupon.affiliate?.pid) {
-      if (affiliatePid && affiliatePid !== coupon.affiliate.pid) {
-        return NextResponse.json({ ok: false, error: "This coupon is not valid for your referral source." }, { status: 403 });
-      }
     }
 
     return NextResponse.json({

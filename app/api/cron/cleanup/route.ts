@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { upsertAffiliateCommissionLedgerForOrder } from "@/lib/affiliate-commission-ledger";
 import { prisma } from "@/lib/prisma";
 
 const ABANDONED_THRESHOLD_HOURS = 24;
@@ -60,19 +59,8 @@ export async function GET(req: Request) {
     });
     if (changed.count > 0) {
       autoDeliveredCount += 1;
-      await upsertAffiliateCommissionLedgerForOrder(row.id);
     }
   }
-
-  const eligibleNow = await prisma.affiliateCommissionLedger.updateMany({
-    where: {
-      status: "pending",
-      eligibleAt: { lte: new Date() },
-      reversedAt: null,
-      paidAt: null,
-    },
-    data: { status: "eligible" },
-  });
 
   return NextResponse.json({
     ok: true,
@@ -80,6 +68,5 @@ export async function GET(req: Request) {
     threshold: `${ABANDONED_THRESHOLD_HOURS}h`,
     autoDelivered: autoDeliveredCount,
     autoConfirmWindow: `${AUTO_CONFIRM_DAYS}d`,
-    ledgerEligible: eligibleNow.count,
   });
 }

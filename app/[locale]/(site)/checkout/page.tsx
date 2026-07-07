@@ -13,7 +13,7 @@ import { getTaxIdRequirement, quoteCheckoutShipping, type ShippingMethodId } fro
 import { DisplayPrice } from "@/components/site/DisplayPrice";
 import { UsdChargeNotice } from "@/components/site/usd-charge-notice";
 import { runWhenIdle } from "@/lib/defer-non-critical";
-import { captureAffiliatePidAttribution, captureTrafficAttribution, getAffiliatePidForCheckout, getAffiliatePidForCheckoutFromUrl, getTrafficSourceForCheckout } from "@/lib/traffic-attribution";
+import { captureTrafficAttribution, getTrafficSourceForCheckout } from "@/lib/traffic-attribution";
 
 const CheckoutShippingSection = dynamic(
   () =>
@@ -36,7 +36,6 @@ export default function CheckoutPage() {
   useEffect(() => {
     runWhenIdle(() => {
       captureTrafficAttribution();
-      captureAffiliatePidAttribution();
     });
   }, []);
 
@@ -105,7 +104,6 @@ export default function CheckoutPage() {
 
   async function ensureDraftOrder() {
     if (!customerEmail.trim()) throw new Error(t("emailRequired"));
-    const affiliatePid = getAffiliatePidForCheckoutFromUrl() ?? getAffiliatePidForCheckout();
     const res = await fetch("/api/checkout/order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -135,7 +133,6 @@ export default function CheckoutPage() {
         shippingEstimateCny: shippingQuote.ok ? shippingQuote.shippingCny : 0,
         couponCode: appliedCoupon?.code ?? null,
         discountCents: Math.round(couponDiscount * 100),
-        affiliatePid,
         trafficSource: getTrafficSourceForCheckout(),
       }),
     });
@@ -211,7 +208,7 @@ export default function CheckoutPage() {
       const res = await fetch("/api/checkout/coupon", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, affiliatePid: getAffiliatePidForCheckout() }),
+        body: JSON.stringify({ code }),
       });
       const data = (await res.json()) as
         | { ok: true; coupon: { code: string; discountAmount: number; currency: string } }

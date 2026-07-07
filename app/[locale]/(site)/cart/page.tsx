@@ -9,10 +9,7 @@ import { useCart } from "@/components/cart/cart-context";
 import { DisplayPrice } from "@/components/site/DisplayPrice";
 import { UsdChargeNotice } from "@/components/site/usd-charge-notice";
 import { runWhenIdle } from "@/lib/defer-non-critical";
-import {
-  captureAffiliatePidAttribution,
-  captureTrafficAttribution,
-} from "@/lib/traffic-attribution";
+import { captureTrafficAttribution } from "@/lib/traffic-attribution";
 
 const CART_QTY_MAX = 9999;
 
@@ -23,7 +20,6 @@ export default function CartPage() {
   useEffect(() => {
     runWhenIdle(() => {
       captureTrafficAttribution();
-      captureAffiliatePidAttribution();
     });
   }, []);
 

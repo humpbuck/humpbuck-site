@@ -10,9 +10,6 @@ async function main() {
     "james.chen.demo@humpbuck-check.local",
     "sarah.miller.demo@humpbuck-check.local",
     "refund.alert.demo@humpbuck-check.local",
-    "alex.rivera.demo@humpbuck-check.local",
-    "elena.design.demo@humpbuck-check.local",
-    "affiliate.extra.demo@humpbuck-check.local",
     "lisa.v.demo@humpbuck-check.local",
     "dwu88.demo@humpbuck-check.local",
     "mark.s.demo@humpbuck-check.local",
@@ -116,41 +113,6 @@ async function main() {
           }),
         }),
       },
-      // AFFILIATES
-      {
-        category: "affiliates",
-        status: "pending",
-        sourceEmail: "alex.rivera.demo@humpbuck-check.local",
-        payloadJson: JSON.stringify({
-          email: "alex.rivera.demo@humpbuck-check.local",
-          name: "Alex Rivera",
-          eventType: "affiliate_approved",
-          message:
-            "Affiliate Approved | Alex Rivera joined successfully. Welcome email sent.",
-        }),
-      },
-      {
-        category: "affiliates",
-        status: "pending",
-        sourceEmail: "elena.design.demo@humpbuck-check.local",
-        payloadJson: JSON.stringify({
-          email: "elena.design.demo@humpbuck-check.local",
-          name: "Elena Design",
-          eventType: "coupon_request",
-          message: "Coupon Request | Elena Design requested an exclusive coupon code.",
-        }),
-      },
-      {
-        category: "affiliates",
-        status: "pending",
-        sourceEmail: "affiliate.extra.demo@humpbuck-check.local",
-        payloadJson: JSON.stringify({
-          email: "affiliate.extra.demo@humpbuck-check.local",
-          name: "Nova Partner",
-          eventType: "profile_update",
-          message: "Affiliate profile updated and pending admin review.",
-        }),
-      },
       // SUBSCRIBE
       {
         category: "subscribe",
@@ -228,23 +190,6 @@ async function main() {
       },
     ],
   });
-
-  // Also add coupon-request style affiliate rows for existing UI card/count.
-  const users = await prisma.user.findMany({
-    where: { email: { not: null } },
-    select: { id: true },
-    take: 3,
-  });
-  if (users.length > 0) {
-    await prisma.affiliateCouponRequest.createMany({
-      data: users.map((u, idx) => ({
-        userId: u.id,
-        status: "pending",
-        requestedAt: new Date(Date.now() - idx * 60_000),
-      })),
-      skipDuplicates: true,
-    });
-  }
 
   const summary = await prisma.adminInboxMessage.groupBy({
     by: ["category"],

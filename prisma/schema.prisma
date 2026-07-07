@@ -18,9 +18,6 @@ model User {
   image                   String?
   passwordHash            String?
   accounts                Account[]
-  affiliateApplications   AffiliateApplication[]
-  affiliateCouponRequests AffiliateCouponRequest[]
-  affiliateProfile        AffiliateProfile?
   orders                  Order[]
   passwordResetTokens     PasswordResetToken[]
   productReviews          ProductReview[]
@@ -99,19 +96,13 @@ model Order {
   refundedAt                 DateTime?
   couponCode                 String?
   discountCents              Int                        @default(0)
-  affiliateAttribution       String?
-  affiliateId                String?
-  affiliatePid               String?
   shippedAt                  DateTime?
   deliveredAt                DateTime?
   deliveryConfirmedBy        String?
   items                      OrderItemSnapshot[]
-  affiliateCommission        AffiliateCommissionLedger?
-  affiliate                  AffiliateProfile?          @relation(fields: [affiliateId], references: [id])
   user                       User?                      @relation(fields: [userId], references: [id])
 
   @@index([deletedAt])
-  @@index([affiliateId, createdAt])
   @@index([status, shippedAt])
 }
 
@@ -300,117 +291,8 @@ model Coupon {
   updatedAt      DateTime          @updatedAt
   quantity       Int               @default(1)
   usedCount      Int               @default(0)
-  affiliateId    String?
-  affiliate      AffiliateProfile? @relation(fields: [affiliateId], references: [id])
 
   @@index([isActive, startsAt, endsAt])
-  @@index([affiliateId])
-}
-
-model AffiliateTier {
-  id              String             @id @default(cuid())
-  name            String             @unique
-  commissionType  String             @default("percent")
-  commissionValue Float              @default(0)
-  isDefault       Boolean            @default(false)
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
-  profiles        AffiliateProfile[]
-}
-
-model AffiliateProfile {
-  id                 String                      @id @default(cuid())
-  userId             String                      @unique
-  displayName        String?
-  status             String                      @default("active")
-  riskFlag           Boolean                     @default(false)
-  tierId             String?
-  whitelist          Boolean                     @default(false)
-  blacklist          Boolean                     @default(false)
-  paymentInfoPending Boolean                     @default(true)
-  notes              String?
-  createdAt          DateTime                    @default(now())
-  updatedAt          DateTime                    @updatedAt
-  pid                String?                     @unique
-  payoutEmail        String?
-  whatsapp           String?                     @map("payoutWhatsapp")
-  payoutMethod       String?
-  payoutAccount      String?
-  payoutVerifiedAt   DateTime?
-  payoutVerifiedBy   String?
-  applications       AffiliateApplication[]
-  commissionLedgers  AffiliateCommissionLedger[]
-  couponRequests     AffiliateCouponRequest[]
-  tier               AffiliateTier?              @relation(fields: [tierId], references: [id])
-  user               User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  coupons            Coupon[]
-  orders             Order[]
-
-  @@index([status])
-  @@index([blacklist, whitelist])
-}
-
-model AffiliateCommissionLedger {
-  id                      String           @id @default(cuid())
-  affiliateId             String
-  orderId                 String           @unique
-  orderTotalCents         Int
-  commissionType          String
-  commissionValue         Float
-  commissionCents         Int
-  holdDays                Int              @default(30)
-  eligibleAt              DateTime
-  status                  String           @default("pending")
-  reversedCommissionCents Int              @default(0)
-  reversalReason          String?
-  reversedAt              DateTime?
-  paidAt                  DateTime?
-  createdAt               DateTime         @default(now())
-  updatedAt               DateTime         @updatedAt
-  payoutBatchId           String?
-  payoutTxnRef            String?
-  paidNote                String?
-  paidEmailSentAt         DateTime?
-  affiliate               AffiliateProfile @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
-  order                   Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
-
-  @@index([affiliateId, status, eligibleAt])
-}
-
-model AffiliateApplication {
-  id              String            @id @default(cuid())
-  userId          String
-  affiliateId     String?
-  socialLinksJson String            @default("[]")
-  followerCount   Int?
-  about           String?
-  status          String            @default("pending")
-  riskReason      String?
-  reviewedBy      String?
-  reviewedAt      DateTime?
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  affiliate       AffiliateProfile? @relation(fields: [affiliateId], references: [id])
-  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, createdAt])
-  @@index([status, createdAt])
-}
-
-model AffiliateCouponRequest {
-  id          String            @id @default(cuid())
-  userId      String
-  affiliateId String?
-  status      String            @default("pending")
-  requestedAt DateTime          @default(now())
-  handledAt   DateTime?
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-  affiliate   AffiliateProfile? @relation(fields: [affiliateId], references: [id])
-  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([status, requestedAt])
-  @@index([userId, requestedAt])
 }
 
 model AdminInboxMessage {

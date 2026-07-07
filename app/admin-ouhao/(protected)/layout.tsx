@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { ChevronDown, Mail } from "lucide-react";
 import {
   ADMIN_INBOX_CATEGORY,
@@ -37,14 +39,12 @@ export default async function AdminProtectedLayout({
   await assertAdmin();
   await syncSystemInboxMessages();
   const [
-    pendingCouponRequestCount,
     pendingOrderCount,
     pendingSubscribeCount,
     pendingMockupRequestCount,
     pendingContactCount,
     pendingProductReviewCount,
   ] = await Promise.all([
-    prisma.affiliateCouponRequest.count({ where: { status: "pending" } }).catch(() => 0),
     prisma.adminInboxMessage.count({
       where: { category: ADMIN_INBOX_CATEGORY.order, status: "pending" },
     }).catch(() => 0),
@@ -61,7 +61,6 @@ export default async function AdminProtectedLayout({
   ]);
   const totalPendingInboxCount =
     pendingOrderCount +
-    pendingCouponRequestCount +
     pendingSubscribeCount +
     pendingMockupRequestCount +
     pendingContactCount +
@@ -99,9 +98,6 @@ export default async function AdminProtectedLayout({
               <ChevronDown className="h-3 w-3" />
             </button>
             <div className="pointer-events-none absolute right-0 top-6 z-20 hidden min-w-44 rounded-xl border border-line bg-white p-2 text-xs text-ink shadow-md group-hover:pointer-events-auto group-hover:block">
-              <Link href={adminPath("/affiliate")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
-                AFFILIATE
-              </Link>
               <Link href={adminPath("/blog")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
                 BLOG
               </Link>
@@ -135,7 +131,6 @@ export default async function AdminProtectedLayout({
               <p className="mt-1 text-muted">Hover summary by category</p>
               <ul className="mt-2 space-y-1 text-ink/90">
                 <li>{adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.order)}: {pendingOrderCount}</li>
-                <li>{adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.affiliates)}: {pendingCouponRequestCount}</li>
                 <li>{adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.subscribe)}: {pendingSubscribeCount}</li>
                 <li>
                   {adminInboxCategoryLabel(ADMIN_INBOX_CATEGORY.emailMockupRequest)}: {pendingMockupRequestCount}

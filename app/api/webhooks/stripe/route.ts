@@ -6,8 +6,6 @@ import { decrementInventory } from "@/lib/inventory";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
-import { reverseAffiliateCommissionLedgerForOrder } from "@/lib/affiliate-commission-ledger";
-import { syncAffiliateGrowthTierByOrderCount } from "@/lib/affiliate-tier-growth";
 import { stripeSessionBuyerEmail } from "@/lib/order-buyer-email";
 import { getStripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
@@ -79,9 +77,6 @@ export async function POST(req: Request) {
               paidOrder.shippingJson,
             );
           }
-          if (paidOrder.affiliateId) {
-            await syncAffiliateGrowthTierByOrderCount(paidOrder.affiliateId);
-          }
         }
         await notifyCustomerOrderPaid(orderId);
         await notifyMerchantOrderPaid(orderId);
@@ -123,11 +118,6 @@ export async function POST(req: Request) {
                 refundedAt: new Date(),
                 refundAmountCents: charge.amount_refunded ?? order.totalCents,
               },
-            });
-            await reverseAffiliateCommissionLedgerForOrder({
-              orderId: order.id,
-              reason: "stripe_webhook_refund",
-              refundAmountCents: charge.amount_refunded ?? order.totalCents,
             });
             const refundAmountCents = charge.amount_refunded ?? order.totalCents;
             const refundUsd = `$${(refundAmountCents / 100).toFixed(2)}`;

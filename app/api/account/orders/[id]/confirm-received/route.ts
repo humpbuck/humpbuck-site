@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { upsertAffiliateCommissionLedgerForOrder } from "@/lib/affiliate-commission-ledger";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(
@@ -38,7 +37,6 @@ export async function POST(
       deliveryConfirmedBy: "buyer",
     },
   });
-  await upsertAffiliateCommissionLedgerForOrder(order.id);
   return NextResponse.json({ ok: true, unchanged: false });
 }
 

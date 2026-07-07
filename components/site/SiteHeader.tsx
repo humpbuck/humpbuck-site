@@ -24,7 +24,6 @@ const SHOP_FLYOUT_LINK_CLASS =
   "block px-4 py-2 text-[11px] font-medium uppercase tracking-[0.08em] text-ink/85 transition hover:bg-ink/[0.04]";
 
 const NAV_ITEMS = [
-  { labelKey: "affiliates", href: "/affiliates" },
   { labelKey: "blog", href: "/blog" },
   { labelKey: "about", href: "/about" },
 ] as const;

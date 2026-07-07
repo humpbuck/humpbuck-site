@@ -4,7 +4,6 @@ import { orderItemsFromOrder } from "@/lib/order-item-display";
 export const ADMIN_INBOX_CATEGORY = {
   order: "order",
   dispute: "dispute",
-  affiliates: "affiliates",
   subscribe: "subscribe",
   emailMockupRequest: "email_mockup_request",
   contactSupport: "contact_support",
@@ -17,7 +16,6 @@ export type AdminInboxCategory =
 export function adminInboxCategoryLabel(category: string): string {
   if (category === ADMIN_INBOX_CATEGORY.order) return "Orders";
   if (category === ADMIN_INBOX_CATEGORY.dispute) return "Orders";
-  if (category === ADMIN_INBOX_CATEGORY.affiliates) return "Affiliates";
   if (category === ADMIN_INBOX_CATEGORY.subscribe) return "Subscribe";
   if (category === ADMIN_INBOX_CATEGORY.emailMockupRequest) return "Email mockup request";
   if (category === ADMIN_INBOX_CATEGORY.contactSupport) return "Contact form";

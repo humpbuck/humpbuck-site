@@ -8,7 +8,6 @@ const NAV_LINKS = [
   { href: "/account/orders", msgKey: "navOrders" as const },
   { href: "/account/addresses", msgKey: "navAddresses" as const },
   { href: "/account/subscribe", msgKey: "navSubscribe" as const },
-  { href: "/account/affiliate", msgKey: "navAffiliate" as const },
   { href: "/account/details", msgKey: "navDetails" as const },
 ] as const;
 

@@ -22,7 +22,6 @@ export async function SiteFooter() {
     {
       title: t("companyTitle"),
       links: [
-        { label: t("affiliates"), href: "/affiliates" },
         { label: t("about"), href: "/about" },
       ],
     },

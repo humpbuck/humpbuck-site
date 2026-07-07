@@ -73,8 +73,6 @@ export default async function AdminOrdersPage({
     trackingNumber: o.trackingNumber,
     provider: o.provider,
     trafficSource: o.trafficSource,
-    affiliateAttribution: o.affiliateAttribution,
-    affiliatePid: o.affiliatePid,
     createdAt: o.createdAt.toISOString(),
     merchantOrderCode: o.merchantOrderCode,
   }));

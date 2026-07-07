@@ -29,24 +29,6 @@ function redirectToMessagesCategory(category?: string): never {
   redirect(adminPath("/messages"));
 }
 
-async function markCouponRequestHandledAction(formData: FormData) {
-  "use server";
-  await assertAdmin();
-  const requestId = String(formData.get("requestId") ?? "").trim();
-  const category = String(formData.get("category") ?? "all").trim();
-  if (!requestId) goMessages("Missing request id.");
-  await prisma.affiliateCouponRequest.update({
-    where: { id: requestId },
-    data: {
-      status: "handled",
-      handledAt: new Date(),
-    },
-  });
-  revalidatePath(adminPath("/messages"));
-  revalidatePath(adminPath("/affiliate"));
-  redirectToMessagesCategory(category);
-}
-
 async function markInboxMessageHandledAction(formData: FormData) {
   "use server";
   await assertAdmin();
@@ -79,20 +61,6 @@ async function markCategoryReadAction(formData: FormData) {
       })
       .catch(() => null);
   }
-  if (category === "all" || category === ADMIN_INBOX_CATEGORY.affiliates) {
-    await prisma.affiliateCouponRequest
-      .updateMany({
-        where: { status: "pending" },
-        data: { status: "handled", handledAt: now },
-      })
-      .catch(() => null);
-    await prisma.adminInboxMessage
-      .updateMany({
-        where: { status: "pending", category: ADMIN_INBOX_CATEGORY.affiliates },
-        data: { status: "handled", handledAt: now },
-      })
-      .catch(() => null);
-  }
   if (category === "all" || category === ADMIN_INBOX_CATEGORY.subscribe) {
     await prisma.adminInboxMessage
       .updateMany({
@@ -120,7 +88,6 @@ async function markCategoryReadAction(formData: FormData) {
 
   revalidatePath(adminPath("/messages"));
   revalidatePath(adminPath("/orders"));
-  revalidatePath(adminPath("/affiliate"));
   redirectToMessagesCategory(category);
 }
 
@@ -132,14 +99,7 @@ async function deleteMessageAction(formData: FormData) {
   const category = String(formData.get("category") ?? "all").trim();
   if (!id || !target) goMessages("Missing delete target.");
 
-  if (target === "affiliate") {
-    await prisma.affiliateCouponRequest
-      .update({
-        where: { id },
-        data: { status: "deleted", handledAt: new Date() },
-      })
-      .catch(() => null);
-  } else if (target === "inbox") {
+  if (target === "inbox") {
     await prisma.adminInboxMessage
       .update({
         where: { id },
@@ -150,7 +110,6 @@ async function deleteMessageAction(formData: FormData) {
 
   revalidatePath(adminPath("/messages"));
   revalidatePath(adminPath("/orders"));
-  revalidatePath(adminPath("/affiliate"));
   redirectToMessagesCategory(category);
 }
 
@@ -167,10 +126,8 @@ async function deleteSelectedMessagesAction(formData: FormData) {
   }
 
   const inboxIds: string[] = [];
-  const affiliateIds: string[] = [];
   for (const key of selected) {
     if (key.startsWith("inbox:")) inboxIds.push(key.slice("inbox:".length));
-    if (key.startsWith("affiliate:")) affiliateIds.push(key.slice("affiliate:".length));
   }
 
   if (inboxIds.length > 0) {
@@ -181,18 +138,9 @@ async function deleteSelectedMessagesAction(formData: FormData) {
       })
       .catch(() => null);
   }
-  if (affiliateIds.length > 0) {
-    await prisma.affiliateCouponRequest
-      .updateMany({
-        where: { id: { in: affiliateIds } },
-        data: { status: "deleted", handledAt: new Date() },
-      })
-      .catch(() => null);
-  }
 
   revalidatePath(adminPath("/messages"));
   revalidatePath(adminPath("/orders"));
-  revalidatePath(adminPath("/affiliate"));
   redirectToMessagesCategory(category);
 }
 
@@ -313,7 +261,6 @@ export default async function AdminMessagesPage({
   const allowedCategories = new Set<string>([
     "all",
     ADMIN_INBOX_CATEGORY.order,
-    ADMIN_INBOX_CATEGORY.affiliates,
     ADMIN_INBOX_CATEGORY.subscribe,
     ADMIN_INBOX_CATEGORY.emailMockupRequest,
     ADMIN_INBOX_CATEGORY.contactSupport,
@@ -321,11 +268,9 @@ export default async function AdminMessagesPage({
   const selectedCategory = allowedCategories.has(normalizedCategory) ? normalizedCategory : "all";
   const [
     pendingOrderCount,
-    pendingAffiliateCount,
     pendingSubscribeCount,
     pendingMockupRequestCount,
     pendingContactCount,
-    allAffiliateRequests,
     allInboxMessages,
   ] = await Promise.all([
     prisma.adminInboxMessage
@@ -334,11 +279,6 @@ export default async function AdminMessagesPage({
           status: "pending",
           category: ADMIN_INBOX_CATEGORY.order,
         },
-      })
-      .catch(() => 0),
-    prisma.affiliateCouponRequest
-      .count({
-        where: { status: "pending" },
       })
       .catch(() => 0),
     prisma.adminInboxMessage
@@ -356,27 +296,6 @@ export default async function AdminMessagesPage({
         where: { category: ADMIN_INBOX_CATEGORY.contactSupport, status: "pending" },
       })
       .catch(() => 0),
-    prisma.affiliateCouponRequest
-      .findMany({
-        where:
-          selectedCategory === "all" || selectedCategory === ADMIN_INBOX_CATEGORY.affiliates
-            ? { status: { in: ["pending", "handled"] } }
-            : { status: "__none__" },
-        include: {
-          user: {
-            select: {
-              email: true,
-              displayName: true,
-              firstName: true,
-              lastName: true,
-            },
-          },
-          affiliate: { select: { pid: true } },
-        },
-        orderBy: [{ requestedAt: "desc" }, { id: "desc" }],
-        take: 100,
-      })
-      .catch(() => []),
     prisma.adminInboxMessage
       .findMany({
         where: {
@@ -390,13 +309,11 @@ export default async function AdminMessagesPage({
   ]);
   const totalPendingCount =
     pendingOrderCount +
-    pendingAffiliateCount +
     pendingSubscribeCount +
     pendingMockupRequestCount +
     pendingContactCount;
-  const showAffiliateRows = selectedCategory === "all" || selectedCategory === ADMIN_INBOX_CATEGORY.affiliates;
   const allMessages = allInboxMessages;
-  const visibleRows = allMessages.length + (showAffiliateRows ? allAffiliateRequests.length : 0);
+  const visibleRows = allMessages.length;
   const cardClass = (count: number, categoryKey: string) =>
     `rounded-xl border px-3 py-2 text-sm transition ${
       selectedCategory === categoryKey ? "border-ink bg-white shadow-sm ring-1 ring-ink/20 " : ""
@@ -427,13 +344,6 @@ export default async function AdminMessagesPage({
           >
             <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">Orders</p>
             <p className="mt-1 text-xl font-semibold text-ink">{pendingOrderCount}</p>
-          </Link>
-          <Link
-            href={adminPath("/messages?category=affiliates")}
-            className={cardClass(pendingAffiliateCount, ADMIN_INBOX_CATEGORY.affiliates)}
-          >
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">Affiliates</p>
-            <p className="mt-1 text-xl font-semibold text-ink">{pendingAffiliateCount}</p>
           </Link>
           <Link
             href={adminPath("/messages?category=subscribe")}
@@ -472,7 +382,6 @@ export default async function AdminMessagesPage({
             {[
               { key: "all", label: "All" },
               { key: ADMIN_INBOX_CATEGORY.order, label: "Orders" },
-              { key: ADMIN_INBOX_CATEGORY.affiliates, label: "Affiliates" },
               { key: ADMIN_INBOX_CATEGORY.subscribe, label: "Subscribe" },
               { key: ADMIN_INBOX_CATEGORY.emailMockupRequest, label: "Email mockup request" },
               { key: ADMIN_INBOX_CATEGORY.contactSupport, label: "Contact form" },
@@ -519,78 +428,6 @@ export default async function AdminMessagesPage({
           <p className="mt-3 text-sm text-muted">No messages in this category.</p>
         ) : (
           <div className="mt-3 space-y-2">
-            {showAffiliateRows
-              ? allAffiliateRequests.map((req) => {
-              const name =
-                [req.user.firstName?.trim(), req.user.lastName?.trim()].filter(Boolean).join(" ").trim() ||
-                req.user.displayName?.trim() ||
-                req.user.email?.trim() ||
-                "-";
-              const isRead = req.status !== "pending";
-              return (
-                <div
-                  key={req.id}
-                  className={`flex flex-wrap items-center justify-between gap-2 rounded-xl border px-3 py-2 text-sm ${
-                    isRead ? "border-line/70 bg-paper/40 text-ink/65" : "border-line bg-paper/70 text-ink/90"
-                  }`}
-                >
-                  <div className="flex items-start gap-2">
-                    <input
-                      type="checkbox"
-                      name="selected"
-                      value={`affiliate:${req.id}`}
-                      form="bulk-delete-form"
-                      className="mt-0.5 h-3.5 w-3.5 rounded border-line text-ink focus:ring-ink/30"
-                    />
-                    <div>
-                    <p>
-                      <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
-                        Affiliates
-                      </span>{" "}
-                      <details className="inline-block max-w-[680px] align-middle open:[&_summary]:overflow-visible open:[&_summary]:whitespace-normal open:[&_summary]:text-clip">
-                        <summary className="max-w-[680px] cursor-pointer list-none truncate font-medium text-ink/90 [&::-webkit-details-marker]:hidden">
-                          Coupon Request | {name} requested a dedicated coupon code.
-                        </summary>
-                      </details>
-                    </p>
-                    <p className="text-xs text-muted">
-                      {req.user.email ?? "-"} · PID {req.affiliate?.pid ?? "-"} · {req.requestedAt.toLocaleString()}
-                    </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    {isRead ? (
-                      <span className="rounded-xl border border-line/80 bg-paper px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
-                        Read
-                      </span>
-                    ) : (
-                      <form action={markCouponRequestHandledAction}>
-                        <input type="hidden" name="requestId" value={req.id} />
-                      <input type="hidden" name="category" value={selectedCategory} />
-                        <button
-                          type="submit"
-                          className="inline-flex items-center justify-center rounded-xl border border-line bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-ink transition hover:border-ink/20"
-                        >
-                          Mark as read
-                        </button>
-                      </form>
-                    )}
-                    <form action={deleteMessageAction}>
-                      <input type="hidden" name="target" value="affiliate" />
-                      <input type="hidden" name="id" value={req.id} />
-                      <input type="hidden" name="category" value={selectedCategory} />
-                      <button
-                        type="submit"
-                        className="inline-flex items-center justify-center rounded-xl border border-rose-200 bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-rose-700 transition hover:border-rose-300"
-                      >
-                        Delete
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              );
-            })
-              : null}
             {allMessages.map((msg) => {
               const payload = parsePayload(msg.payloadJson);
               const isRead = msg.status !== "pending";
