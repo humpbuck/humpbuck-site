@@ -1,5 +1,3 @@
-/// <reference types="@cloudflare/workers-types" />
-
 /* Cloudflare Worker bindings — run `npm run cf-typegen` after editing wrangler.jsonc. */
 interface CloudflareEnv {
   DB: D1Database;

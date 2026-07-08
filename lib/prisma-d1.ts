@@ -1,19 +1,26 @@
 import type { PrismaClient as PrismaClientType } from "@prisma/client";
 
+/** Minimal D1 binding surface for `@prisma/adapter-d1` (full types via `npm run cf-typegen`). */
+type D1DatabaseBinding = {
+  prepare: (query: string) => unknown;
+  batch?: (statements: unknown[]) => Promise<unknown[]>;
+  exec?: (query: string) => Promise<unknown>;
+};
+
 const LOG: ("error" | "warn")[] =
   process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"];
 
-function isD1Database(value: unknown): value is D1Database {
+function isD1Database(value: unknown): value is D1DatabaseBinding {
   return (
     typeof value === "object" &&
     value !== null &&
     "prepare" in value &&
-    typeof (value as D1Database).prepare === "function"
+    typeof (value as D1DatabaseBinding).prepare === "function"
   );
 }
 
 /** Cloudflare D1 binding from OpenNext (`wrangler.jsonc` → binding `DB`). */
-export function tryGetCloudflareD1(): D1Database | null {
+export function tryGetCloudflareD1(): D1DatabaseBinding | null {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { getCloudflareContext } =
@@ -26,12 +33,12 @@ export function tryGetCloudflareD1(): D1Database | null {
   }
 }
 
-export function createD1PrismaClient(db: D1Database): PrismaClientType {
+export function createD1PrismaClient(db: D1DatabaseBinding): PrismaClientType {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { PrismaClient } = require("@prisma/client") as typeof import("@prisma/client");
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { PrismaD1 } = require("@prisma/adapter-d1") as typeof import("@prisma/adapter-d1");
-  const adapter = new PrismaD1(db);
+  const adapter = new PrismaD1(db as ConstructorParameters<typeof PrismaD1>[0]);
   return new PrismaClient({ adapter, log: LOG });
 }
 

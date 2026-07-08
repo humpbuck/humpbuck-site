@@ -16,9 +16,6 @@ export function createLocalFilePrismaClient(): PrismaClientType {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { PrismaLibSQL } =
     require("@prisma/adapter-libsql") as typeof import("@prisma/adapter-libsql");
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { createClient } = require("@libsql/client") as typeof import("@libsql/client");
-  const libsql = createClient({ url });
-  const adapter = new PrismaLibSQL(libsql);
+  const adapter = new PrismaLibSQL({ url });
   return new PrismaClient({ adapter, log: LOG });
 }

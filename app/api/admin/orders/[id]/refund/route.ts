@@ -20,7 +20,7 @@ export async function POST(
   let amountCents: number | undefined;
   let reason: string | undefined;
   try {
-    const body = await req.json();
+    const body = (await req.json()) as { amountCents?: unknown; reason?: unknown };
     if (typeof body.amountCents === "number" && body.amountCents > 0) {
       amountCents = Math.floor(body.amountCents);
     }
