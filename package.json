@@ -59,6 +59,7 @@
     "last 2 Edge versions"
   ],
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260706.1",
     "@aws-sdk/client-s3": "^3.1034.0",
     "cross-env": "^7.0.3",
     "@tailwindcss/postcss": "^4",
