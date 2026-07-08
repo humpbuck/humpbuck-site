@@ -78,6 +78,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
   },
+  serverExternalPackages: ["@prisma/client", ".prisma/client"],
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
