@@ -59,6 +59,35 @@ type CatalogProductRecord = {
 };
 
 type SpecRow = { label: string; value: string };
+
+/** Fixed PDP spec rows — admin only fills values. */
+const DEFAULT_PRODUCT_SPEC_LABELS = [
+  "CASE DIAMETER",
+  "CASE THICKNESS",
+  "BAND WIDTH",
+  "CASE MATERIAL",
+  "BAND MATERIAL",
+  "MOVEMENT",
+  "WEIGHT",
+  "WATERPROOF",
+] as const;
+
+function defaultProductSpecRows(): SpecRow[] {
+  return DEFAULT_PRODUCT_SPEC_LABELS.map((label) => ({ label, value: "" }));
+}
+
+function normalizeProductSpecsForEditor(saved: SpecRow[]): SpecRow[] {
+  const valueByLabel = new Map<string, string>();
+  for (const row of saved) {
+    const key = row.label.trim().toUpperCase();
+    if (key) valueByLabel.set(key, row.value);
+  }
+  return DEFAULT_PRODUCT_SPEC_LABELS.map((label) => ({
+    label,
+    value: valueByLabel.get(label) ?? "",
+  }));
+}
+
 type VariantRow = { id: string; label: string; image: string; inStock?: boolean };
 type PromoVideo = { src: string; poster?: string } | null;
 
@@ -145,7 +174,7 @@ function buildEditableProduct(
     inStock: p.inStock,
     status: p.status === "archived" ? "archived" : "active",
     highlights: parseArray<string>(p.highlightsJson, []),
-    specs: parseArray<SpecRow>(p.specsJson, []),
+    specs: normalizeProductSpecsForEditor(parseArray<SpecRow>(p.specsJson, [])),
     gallery: parseArray<string>(p.galleryJson, []),
     detail: detailBlocksToImageUrls(detailBlocks),
     detailBlocks,
@@ -195,7 +224,7 @@ function newProductDraft(): EditableProduct {
     inStock: true,
     status: "active",
     highlights: [""],
-    specs: [{ label: "", value: "" }],
+    specs: defaultProductSpecRows(),
     gallery: [],
     detail: [],
     detailBlocks: [],
@@ -517,7 +546,7 @@ export function ProductManager({
       image: mainImage,
       inStock,
       highlights: current.highlights.filter((s) => s.trim()),
-      specs: current.specs.filter((s) => s.label.trim() || s.value.trim()),
+      specs: current.specs.filter((s) => s.value.trim()),
       gallery: current.gallery.filter((u) => u.trim()),
       detail: current.detailBlocks
         .map((block) => ({
@@ -1130,33 +1159,15 @@ function SpecListEditor({
 }) {
   return (
     <div className="rounded-xl border border-line p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
-          Specs
-        </p>
-        <button
-          type="button"
-          onClick={() => onChange([...values, { label: "", value: "" }])}
-          className="rounded-lg border border-line px-2 py-1 text-[10px] font-bold uppercase tracking-widest hover:bg-white"
-        >
-          Add
-        </button>
-      </div>
+      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-muted">
+        Specs
+      </p>
       <div className="space-y-2">
         {values.map((row, i) => (
-          <div key={i} className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
-            <input
-              value={row.label}
-              placeholder="Label"
-              onChange={(e) =>
-                onChange(
-                  values.map((x, idx) =>
-                    idx === i ? { ...x, label: e.target.value } : x,
-                  ),
-                )
-              }
-              className="rounded-lg border border-line bg-white px-3 py-2 text-sm"
-            />
+          <div key={row.label} className="grid gap-2 sm:grid-cols-[minmax(9rem,1fr)_2fr]">
+            <div className="flex items-center rounded-lg border border-line/70 bg-paper/80 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
+              {row.label}
+            </div>
             <input
               value={row.value}
               placeholder="Value"
@@ -1169,13 +1180,6 @@ function SpecListEditor({
               }
               className="rounded-lg border border-line bg-white px-3 py-2 text-sm"
             />
-            <button
-              type="button"
-              onClick={() => onChange(values.filter((_, idx) => idx !== i))}
-              className="rounded-lg border border-red-200 px-2 text-[10px] font-bold uppercase tracking-widest text-red-700 hover:bg-red-50"
-            >
-              Remove
-            </button>
           </div>
         ))}
       </div>
