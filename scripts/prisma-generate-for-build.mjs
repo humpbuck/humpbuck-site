@@ -1,16 +1,13 @@
 import { execSync } from "node:child_process";
-import nextEnv from "@next/env";
+import { loadProjectEnv } from "./load-project-env.mjs";
 
-const { loadEnvConfig } = nextEnv;
+loadProjectEnv();
 
-// Load `.env` + `.env.local` so local dev/postinstall pick the right generate mode.
-loadEnvConfig(process.cwd());
-
-const url = process.env.DATABASE_URL ?? "";
+const direct = process.env.DIRECT_DATABASE_URL?.trim();
+const url = direct || process.env.DATABASE_URL?.trim() || "";
+const cfBuild = process.env.CF_WORKERS_BUILD === "1" && !direct;
 const useAccelerateGenerate =
-  process.env.CF_WORKERS_BUILD === "1" ||
-  url.startsWith("prisma://") ||
-  url.startsWith("prisma+postgres://");
+  cfBuild || url.startsWith("prisma://") || url.startsWith("prisma+postgres://");
 
 const args = useAccelerateGenerate ? "generate --no-engine" : "generate";
 execSync(`npx prisma ${args}`, { stdio: "inherit" });

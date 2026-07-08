@@ -1,9 +1,6 @@
 import type { PrismaClient as PrismaClientType } from "@prisma/client";
 import { withAccelerate } from "@prisma/extension-accelerate";
-
-function isAccelerateDatabaseUrl(url: string): boolean {
-  return url.startsWith("prisma://") || url.startsWith("prisma+postgres://");
-}
+import { isAccelerateDatabaseUrl, isCloudflareWorkersBuild, resolveDatabaseUrl } from "@/lib/database-url";
 
 function createAccelerateClient(connectionString: string): PrismaClientType {
   // Edge client + Accelerate with --no-engine / engineType=client (no wasm in Worker bundle).
@@ -15,21 +12,15 @@ function createAccelerateClient(connectionString: string): PrismaClientType {
 }
 
 function createPrismaClient(): PrismaClientType {
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
-    throw new Error("DATABASE_URL is not set");
+  const direct = process.env.DIRECT_DATABASE_URL?.trim();
+  if (direct && !isCloudflareWorkersBuild()) {
+    process.env.DATABASE_URL = direct;
   }
+
+  const connectionString = resolveDatabaseUrl();
 
   if (isAccelerateDatabaseUrl(connectionString)) {
     return createAccelerateClient(connectionString);
-  }
-
-  // CF build uses `prisma generate --no-engine`; Neon adapter is incompatible with that client.
-  if (process.env.CF_WORKERS_BUILD === "1") {
-    throw new Error(
-      "Cloudflare build requires DATABASE_URL to be a Prisma Accelerate URL (prisma://...). " +
-        "Set it in Cloudflare Build variables, not only Runtime variables.",
-    );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -39,6 +30,18 @@ function createPrismaClient(): PrismaClientType {
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClientType | undefined };
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+function getPrismaClient(): PrismaClientType {
+  if (!globalForPrisma.prisma) {
+    globalForPrisma.prisma = createPrismaClient();
+  }
+  return globalForPrisma.prisma;
+}
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+/** Lazy singleton — connects on first query after `next.config` applies `.env.local`. */
+export const prisma: PrismaClientType = new Proxy({} as PrismaClientType, {
+  get(_target, prop) {
+    const client = getPrismaClient();
+    const value = Reflect.get(client, prop, client) as unknown;
+    return typeof value === "function" ? (value as (...args: unknown[]) => unknown).bind(client) : value;
+  },
+});

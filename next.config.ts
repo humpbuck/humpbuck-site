@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
+import { createRequire } from "node:module";
 import createNextIntlPlugin from "next-intl/plugin";
 import { routing } from "./i18n/routing";
 import { ADMIN_PATH } from "./lib/admin-path";
+
+const require = createRequire(import.meta.url);
+require("./scripts/load-project-env.mjs").applyLocalDatabaseEnvOverride();
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
@@ -100,12 +104,6 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
-        source: "/:path*",
-        has: [{ type: "host", value: "humpbuck.com" }],
-        destination: "https://www.humpbuck.com/:path*",
-        permanent: true,
-      },
-      {
         source: "/admin",
         destination: ADMIN_PATH,
         permanent: true,
@@ -165,4 +163,7 @@ const nextConfig: NextConfig = {
 
 export default withNextIntl(nextConfig);
 
-import('@opennextjs/cloudflare').then(m => m.initOpenNextCloudflareForDev());
+import("@opennextjs/cloudflare").then(async (m) => {
+  await m.initOpenNextCloudflareForDev();
+  require("./scripts/load-project-env.mjs").applyLocalDatabaseEnvOverride();
+});

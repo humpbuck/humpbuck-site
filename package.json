@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "node scripts/prisma-generate-for-build.mjs && next build",
-    "dev": "node scripts/prisma-generate-for-build.mjs && next dev",
+    "dev": "node scripts/check-local-env.mjs && node scripts/prisma-generate-for-build.mjs && next dev",
     "start": "next start",
     "lint": "eslint . --max-warnings 0",
     "postinstall": "node scripts/prisma-generate-for-build.mjs",

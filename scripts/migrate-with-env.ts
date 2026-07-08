@@ -3,16 +3,23 @@
  * Prisma CLI only auto-loads `.env`, not `.env.local`.
  */
 import { execSync } from "node:child_process";
-import { loadEnvConfig } from "@next/env";
+import { createRequire } from "node:module";
 
-loadEnvConfig(process.cwd());
+const require = createRequire(import.meta.url);
+const { loadProjectEnv } = require("./load-project-env.mjs") as typeof import("./load-project-env.mjs");
 
-if (!process.env.DATABASE_URL?.trim()) {
+loadProjectEnv();
+
+const migrateUrl =
+  process.env.DIRECT_DATABASE_URL?.trim() || process.env.DATABASE_URL?.trim();
+if (!migrateUrl) {
   console.error(
-    "DATABASE_URL is missing. Add it to .env or .env.local in the project root.",
+    "DATABASE_URL or DIRECT_DATABASE_URL is missing. Add Neon postgresql://... to .env.local.",
   );
   process.exit(1);
 }
+
+process.env.DATABASE_URL = migrateUrl;
 
 execSync("npx prisma migrate deploy", {
   stdio: "inherit",
