@@ -6,8 +6,7 @@ export function isR2ReviewUploadConfigured(): boolean {
   return Boolean(
     process.env.R2_ACCOUNT_ID?.trim() &&
       process.env.R2_ACCESS_KEY_ID?.trim() &&
-      process.env.R2_SECRET_ACCESS_KEY?.trim() &&
-      process.env.R2_BUCKET_NAME?.trim(),
+      process.env.R2_SECRET_ACCESS_KEY?.trim(),
   );
 }
 

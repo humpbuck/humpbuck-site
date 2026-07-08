@@ -1,5 +1,8 @@
+/** Default R2 bucket — public assets and ISR cache (`opennext-cache/` prefix). */
+export const R2_BUCKET_NAME_DEFAULT = "humpbuck-site" as const;
+
 /**
- * Cloudflare R2 public development URL (bucket: humpbuck-assets).
+ * Cloudflare R2 public development URL (bucket: `humpbuck-site`).
  * For Lighthouse “cache lifetime” on large media, set per-object `Cache-Control` in R2 (see `.env.example` → R2 public object caching).
  */
 export const R2_PUBLIC_BASE =

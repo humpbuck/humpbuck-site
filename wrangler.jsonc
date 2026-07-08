@@ -22,10 +22,10 @@
 		}
 	],
 	"r2_buckets": [
-		// Next.js ISR cache — reuses existing humpbuck-assets bucket (prefix keeps keys separate)
+		// Next.js ISR cache — same bucket as public assets (`opennext-cache/` prefix keeps keys separate)
 		{
 			"binding": "NEXT_INC_CACHE_R2_BUCKET",
-			"bucket_name": "humpbuck-assets"
+			"bucket_name": "humpbuck-site"
 		}
 	],
 	"vars": {

@@ -1,10 +1,11 @@
 import { AwsClient } from "aws4fetch";
+import { R2_BUCKET_NAME_DEFAULT } from "@/lib/r2";
 
 function r2Credentials() {
   const accountId = process.env.R2_ACCOUNT_ID?.trim();
   const accessKeyId = process.env.R2_ACCESS_KEY_ID?.trim();
   const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY?.trim();
-  const bucket = process.env.R2_BUCKET_NAME?.trim();
+  const bucket = process.env.R2_BUCKET_NAME?.trim() || R2_BUCKET_NAME_DEFAULT;
   if (!accountId || !accessKeyId || !secretAccessKey || !bucket) {
     throw new Error("R2 credentials are not configured");
   }
