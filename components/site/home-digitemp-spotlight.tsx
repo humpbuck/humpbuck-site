@@ -1,7 +1,7 @@
 "use client";
 
 import { Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useSpotlightCardImages } from "@/components/site/use-product-card-images";
 import { Link } from "@/i18n/navigation";
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { ProductCardVariantSwatches } from "@/components/site/product-card-variant-swatches";
@@ -38,12 +38,8 @@ export function HomeDigitempSpotlight({
   showRating: boolean;
   variantOptions: ProductVariantOption[];
 }) {
-  const [variantIndex, setVariantIndex] = useState(0);
-  const variants = variantOptions;
-  const activeImage =
-    variants.length > 0
-      ? variants[variantIndex]?.image?.trim() || baseImage
-      : baseImage;
+  const { variantIndex, onVariantIndexChange, primarySrc: activeImage, variants } =
+    useSpotlightCardImages(baseImage, undefined, variantOptions);
 
   const swatches =
     variants.length > 0 ? (
@@ -51,7 +47,7 @@ export function HomeDigitempSpotlight({
         options={variants}
         productName={productName}
         selectedIndex={variantIndex}
-        onSelectedIndexChange={setVariantIndex}
+        onSelectedIndexChange={onVariantIndexChange}
       />
     ) : null;
 

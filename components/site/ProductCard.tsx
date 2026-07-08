@@ -1,6 +1,6 @@
 "use client";
 
-import { type MouseEvent, useState } from "react";
+import { type MouseEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useCart } from "@/components/cart/cart-context";
@@ -13,6 +13,7 @@ import {
   canQuickAddProduct,
   variantForQuickAdd,
 } from "@/lib/product-quick-add";
+import { useProductCardImages } from "@/components/site/use-product-card-images";
 
 export function ProductCard({
   product,
@@ -41,14 +42,13 @@ export function ProductCard({
 }) {
   const t = useTranslations("Product");
   const { addItem, openCartDrawer } = useCart();
-  const [variantIndex, setVariantIndex] = useState(0);
-  const variants = product.variantOptions ?? [];
-  const baseImage = cardImageUrl?.trim() || product.image;
-  const activeImage =
-    variants.length > 0
-      ? variants[variantIndex]?.image?.trim() || baseImage
-      : baseImage;
-  const hoverSrc = cardHoverImageUrl;
+  const {
+    variants,
+    variantIndex,
+    onVariantIndexChange,
+    primarySrc,
+    hoverSrc,
+  } = useProductCardImages(product, cardImageUrl, cardHoverImageUrl);
   const variant = variantForQuickAdd(product, variantIndex);
   const addEnabled = canQuickAddProduct(product, variantIndex);
 
@@ -87,7 +87,7 @@ export function ProductCard({
           {t("sale")}
         </div>
         <ProductCardHoverImages
-          primarySrc={activeImage}
+          primarySrc={primarySrc}
           hoverSrc={hoverSrc}
           alt={product.name}
           imagePriority={imagePriority}
@@ -108,7 +108,7 @@ export function ProductCard({
             options={variants}
             productName={product.name}
             selectedIndex={variantIndex}
-            onSelectedIndexChange={setVariantIndex}
+            onSelectedIndexChange={onVariantIndexChange}
           />
         ) : null}
         <div className="mt-4 flex items-end justify-between gap-3">

@@ -1,6 +1,6 @@
 "use client";
 
-import { type MouseEvent, useState } from "react";
+import { type MouseEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useCart } from "@/components/cart/cart-context";
@@ -14,6 +14,7 @@ import {
   canQuickAddProduct,
   variantForQuickAdd,
 } from "@/lib/product-quick-add";
+import { useProductCardImages } from "@/components/site/use-product-card-images";
 
 export function StorefrontProductGridTile({
   product,
@@ -34,14 +35,13 @@ export function StorefrontProductGridTile({
 }) {
   const t = useTranslations("Home");
   const { addItem, openCartDrawer } = useCart();
-  const [variantIndex, setVariantIndex] = useState(0);
-  const variants = product.variantOptions ?? [];
-  const baseImage = cardImageUrl?.trim() || product.image;
-  const activeImage =
-    variants.length > 0
-      ? variants[variantIndex]?.image?.trim() || baseImage
-      : baseImage;
-  const hoverSrc = cardHoverImageUrl;
+  const {
+    variants,
+    variantIndex,
+    onVariantIndexChange,
+    primarySrc,
+    hoverSrc,
+  } = useProductCardImages(product, cardImageUrl, cardHoverImageUrl);
   const variant = variantForQuickAdd(product, variantIndex);
   const addEnabled = canQuickAddProduct(product, variantIndex);
 
@@ -75,7 +75,7 @@ export function StorefrontProductGridTile({
         className="group relative aspect-square overflow-hidden rounded-xl border border-line/80 bg-white/50 shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-lg"
       >
         <ProductCardHoverImages
-          primarySrc={activeImage}
+          primarySrc={primarySrc}
           hoverSrc={hoverSrc}
           alt={product.name}
           imagePriority={imagePriority}
@@ -96,7 +96,7 @@ export function StorefrontProductGridTile({
           options={variants}
           productName={product.name}
           selectedIndex={variantIndex}
-          onSelectedIndexChange={setVariantIndex}
+          onSelectedIndexChange={onVariantIndexChange}
         />
       ) : null}
 
