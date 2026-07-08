@@ -83,12 +83,8 @@ const partKeys = [
   [
     "NewsletterConfirmed",
     "UnsubscribeFlow",
-    "AffiliatesPublic",
     "AboutPage",
-    "WholesalePage",
-    "WholesaleForm",
     "VideoTutorials",
-    "AccountAffiliate",
   ],
 ];
 

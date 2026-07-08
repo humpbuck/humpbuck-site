@@ -3,8 +3,8 @@ import { join } from "node:path";
 
 const OPEN_NEXT_DIR = ".open-next";
 
-function findWasmFiles(dir: string): string[] {
-  const found: string[] = [];
+function findWasmFiles(dir) {
+  const found = [];
   for (const name of readdirSync(dir)) {
     const path = join(dir, name);
     const stat = statSync(path);

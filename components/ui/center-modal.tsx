@@ -38,7 +38,7 @@ export function CenterModal({
   children: ReactNode;
   /** `wide` for landscape forms (e.g. contact). */
   size?: "default" | "wide";
-  /** Stack above another open modal (e.g. contact from wholesale listing). */
+  /** Stack above another open modal (e.g. nested dialogs). */
   layer?: "default" | "elevated";
 }) {
   const titleId = useId();

@@ -1,4 +1,4 @@
-/** Cloudflare Turnstile server-side verification (shared by contact + wholesale forms). */
+/** Cloudflare Turnstile server-side verification (shared by contact forms). */
 export async function verifyTurnstileToken(
   token: string,
   ip?: string | null,
