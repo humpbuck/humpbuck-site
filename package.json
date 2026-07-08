@@ -21,7 +21,7 @@
     "db:export-catalog-snapshot": "npx tsx scripts/export-catalog-snapshot.ts",
     "db:cleanup-abandoned": "npx tsx scripts/cleanup-abandoned-orders.ts",
     "geo:generate": "npx tsx scripts/generate-geo-data.ts",
-    "cf-build": "cross-env CF_WORKERS_BUILD=1 opennextjs-cloudflare build && node scripts/strip-opennext-prisma-wasm.mjs",
+    "cf-build": "cross-env CF_WORKERS_BUILD=1 opennextjs-cloudflare build && node scripts/patch-opennext-prisma-for-accelerate.mjs",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy -- --keep-vars",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
