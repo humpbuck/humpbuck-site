@@ -43,6 +43,34 @@ export async function createAdminInboxMessage(input: {
     .catch(() => null);
 }
 
+type AdminInboxCreateRow = {
+  category: string;
+  dedupeKey: string | null;
+  status: string;
+  sourceEmail: string | null;
+  payloadJson: string;
+};
+
+/** SQLite/D1 does not support `createMany({ skipDuplicates })` — filter by dedupeKey first. */
+async function createManyAdminInboxMessagesDeduped(rows: AdminInboxCreateRow[]): Promise<void> {
+  if (rows.length === 0) return;
+  const keys = rows.map((r) => r.dedupeKey).filter((k): k is string => Boolean(k));
+  if (keys.length === 0) {
+    await prisma.adminInboxMessage.createMany({ data: rows }).catch(() => null);
+    return;
+  }
+  const existing = await prisma.adminInboxMessage
+    .findMany({
+      where: { dedupeKey: { in: keys } },
+      select: { dedupeKey: true },
+    })
+    .catch(() => []);
+  const seen = new Set(existing.map((e) => e.dedupeKey).filter(Boolean));
+  const fresh = rows.filter((r) => !r.dedupeKey || !seen.has(r.dedupeKey));
+  if (fresh.length === 0) return;
+  await prisma.adminInboxMessage.createMany({ data: fresh }).catch(() => null);
+}
+
 export async function markAdminInboxCategoryRead(category: string, readAt = new Date()) {
   await prisma.adminInboxReadCursor
     .upsert({
@@ -203,18 +231,15 @@ export async function syncSystemInboxMessages() {
       data: { status: "handled", handledAt: new Date() },
     })
     .catch(() => null);
-  await prisma.adminInboxMessage
-    .createMany({
-      data: rows.map((r) => ({
-        category: r.category,
-        dedupeKey: r.dedupeKey,
-        status: "pending",
-        sourceEmail: r.sourceEmail ?? null,
-        payloadJson: JSON.stringify(r.payload),
-      })),
-      skipDuplicates: true,
-    })
-    .catch(() => null);
+  await createManyAdminInboxMessagesDeduped(
+    rows.map((r) => ({
+      category: r.category,
+      dedupeKey: r.dedupeKey,
+      status: "pending",
+      sourceEmail: r.sourceEmail ?? null,
+      payloadJson: JSON.stringify(r.payload),
+    })),
+  );
   await syncPendingProductReviewInboxMessages();
 }
 
@@ -231,27 +256,19 @@ export async function notifyAdminInboxProductReview(input: {
     input.body.trim().length > 160
       ? `${input.body.trim().slice(0, 160)}…`
       : input.body.trim();
-  await prisma.adminInboxMessage
-    .createMany({
-      data: [
-        {
-          category: ADMIN_INBOX_CATEGORY.productReview,
-          dedupeKey: `product_review:${input.reviewId}`,
-          status: "pending",
-          sourceEmail: input.buyerEmail?.trim() || null,
-          payloadJson: JSON.stringify({
-            reviewId: input.reviewId,
-            productSlug: input.productSlug,
-            productName,
-            rating: input.rating,
-            bodyPreview,
-            message: `New product review | ${productName} · ${input.rating}★`,
-          }),
-        },
-      ],
-      skipDuplicates: true,
-    })
-    .catch(() => null);
+  await createAdminInboxMessage({
+    category: ADMIN_INBOX_CATEGORY.productReview,
+    dedupeKey: `product_review:${input.reviewId}`,
+    sourceEmail: input.buyerEmail,
+    payload: {
+      reviewId: input.reviewId,
+      productSlug: input.productSlug,
+      productName,
+      rating: input.rating,
+      bodyPreview,
+      message: `New product review | ${productName} · ${input.rating}★`,
+    },
+  });
 }
 
 export async function markProductReviewInboxHandled(reviewId: string): Promise<void> {
@@ -285,28 +302,25 @@ export async function syncPendingProductReviewInboxMessages(): Promise<void> {
 
   if (pending.length === 0) return;
 
-  await prisma.adminInboxMessage
-    .createMany({
-      data: pending.map((r) => {
-        const bodyPreview =
-          r.body.trim().length > 160 ? `${r.body.trim().slice(0, 160)}…` : r.body.trim();
-        return {
-          category: ADMIN_INBOX_CATEGORY.productReview,
-          dedupeKey: `product_review:${r.id}`,
-          status: "pending" as const,
-          sourceEmail: r.user?.email?.trim() || null,
-          payloadJson: JSON.stringify({
-            reviewId: r.id,
-            productSlug: r.productSlug,
-            productName: r.productSlug,
-            rating: r.rating,
-            bodyPreview,
-            message: `New product review | ${r.productSlug} · ${r.rating}★`,
-          }),
-        };
-      }),
-      skipDuplicates: true,
-    })
-    .catch(() => null);
+  await createManyAdminInboxMessagesDeduped(
+    pending.map((r) => {
+      const bodyPreview =
+        r.body.trim().length > 160 ? `${r.body.trim().slice(0, 160)}…` : r.body.trim();
+      return {
+        category: ADMIN_INBOX_CATEGORY.productReview,
+        dedupeKey: `product_review:${r.id}`,
+        status: "pending" as const,
+        sourceEmail: r.user?.email?.trim() || null,
+        payloadJson: JSON.stringify({
+          reviewId: r.id,
+          productSlug: r.productSlug,
+          productName: r.productSlug,
+          rating: r.rating,
+          bodyPreview,
+          message: `New product review | ${r.productSlug} · ${r.rating}★`,
+        }),
+      };
+    }),
+  );
 }
 
