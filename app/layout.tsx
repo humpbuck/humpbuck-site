@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AppProviders } from "@/components/providers/app-providers";
 import { OrganizationJsonLd } from "@/components/seo/organization-json-ld";
 import { R2_PUBLIC_BASE } from "@/lib/r2";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
+import { VercelObservabilityClient } from "@/components/site/vercel-observability";
 
 const fontBody = DM_Sans({
   subsets: ["latin", "latin-ext"],
@@ -107,8 +106,7 @@ export default async function RootLayout({
       <body className="flex min-h-full flex-col font-sans">
         <OrganizationJsonLd />
         <AppProviders>{children}</AppProviders>
-        <Analytics />
-        <SpeedInsights />
+        {process.env.VERCEL === "1" ? <VercelObservabilityClient /> : null}
       </body>
     </html>
   );

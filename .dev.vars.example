@@ -1,0 +1,12 @@
+# Local Wrangler preview (`npm run preview`) — copy to `.dev.vars` and fill values.
+# Production secrets go in Cloudflare Workers → Settings → Variables and Secrets.
+NEXTJS_ENV=development
+
+# Same as Vercel / .env.local (required for DB, auth, checkout):
+# DATABASE_URL=
+# AUTH_SECRET=
+# AUTH_TRUST_HOST=true
+# NEXT_PUBLIC_APP_URL=http://localhost:8787
+# STRIPE_SECRET_KEY=
+# STRIPE_WEBHOOK_SECRET=
+# ... (see .env.example)

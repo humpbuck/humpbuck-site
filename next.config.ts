@@ -75,6 +75,9 @@ const legacyShopToProductRedirects = routing.locales.map((locale) =>
 );
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: process.cwd(),
+  },
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
@@ -145,3 +148,5 @@ const nextConfig: NextConfig = {
 };
 
 export default withNextIntl(nextConfig);
+
+import('@opennextjs/cloudflare').then(m => m.initOpenNextCloudflareForDev());
