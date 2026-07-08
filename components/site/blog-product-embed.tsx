@@ -1,7 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { StorefrontImage } from "@/components/site/storefront-image";
-import { formatPrice, getProductBySlug } from "@/lib/catalog";
+import { formatPrice } from "@/lib/catalog";
+import { getProductBySlug } from "@/lib/catalog-server";
 
 export async function BlogProductEmbed({ slug }: { slug: string }) {
   const product = await getProductBySlug(slug.trim());

@@ -1,8 +1,13 @@
 import { listR2ObjectKeys } from "@/lib/r2-aws4";
 import { unstable_cache } from "next/cache";
 import type { ProductVariantOption } from "@/lib/catalog";
-import type { ProductDetailBlock } from "@/lib/product-detail-blocks";
-import { detailBlocksToImageUrls } from "@/lib/product-detail-blocks";
+import {
+  detailBlocksToImageUrls,
+  detailBlockHasContent,
+  mergeDetailBlocksWithR2Images,
+  resolveCloserLookBlocksForPdp,
+  type ProductDetailBlock,
+} from "@/lib/product-detail-blocks";
 import { R2_GALLERY_SPECS_BY_SLUG, R2_PUBLIC_BASE, type R2GallerySpec } from "@/lib/r2";
 import { isR2ReviewUploadConfigured } from "@/lib/r2-review-upload";
 import {
@@ -176,16 +181,20 @@ export async function resolveStorefrontProductMedia(
   catalog: CatalogProductMediaInput,
 ): Promise<ResolvedStorefrontProductMedia> {
   const galleryAdmin = trimUrls(catalog.gallery);
-  const detailBlocksAdmin = catalog.detailBlocks?.filter((block) => block.image.trim()) ?? [];
+  const detailBlocksAdmin =
+    catalog.detailBlocks?.filter(detailBlockHasContent) ?? [];
+  const detailAdminFromBlocks = detailBlocksToImageUrls(detailBlocksAdmin);
+  const legacyDetailUrls = trimUrls(catalog.detail);
   const detailAdmin =
-    detailBlocksAdmin.length > 0
-      ? detailBlocksToImageUrls(detailBlocksAdmin)
-      : trimUrls(catalog.detail);
+    detailAdminFromBlocks.length > 0 ? detailAdminFromBlocks : legacyDetailUrls;
   const catalogVariants = catalog.variants ?? [];
 
   const spec = R2_GALLERY_SPECS_BY_SLUG[catalog.slug];
   const needsR2Gallery = galleryAdmin.length === 0 && !catalog.image?.trim();
-  const needsR2Detail = detailAdmin.length === 0;
+  const needsR2Detail =
+    detailBlocksAdmin.length === 0
+      ? detailAdmin.length === 0
+      : detailBlocksAdmin.some((block) => !block.image.trim());
   const needsR2Variants =
     catalogVariants.length > 0 && catalogVariants.some((v) => !v.image?.trim());
   const needsR2Video = !catalog.promoVideo?.src?.trim();
@@ -203,19 +212,26 @@ export async function resolveStorefrontProductMedia(
           ? [catalog.image.trim()]
           : [];
 
-  const detail =
-    detailAdmin.length > 0 ? detailAdmin : r2?.detail?.length ? r2.detail : [];
+  const r2DetailUrls = r2?.detail?.length ? r2.detail : [];
+  const resolvedDetailUrls =
+    detailAdmin.length > 0 ? detailAdmin : r2DetailUrls.length > 0 ? r2DetailUrls : [];
 
-  let detailBlocks: ProductDetailBlock[] = detailBlocksAdmin;
-  if (detailBlocks.length === 0 && detail.length > 0) {
-    detailBlocks = detail.map((image) => ({
+  let detailBlocks: ProductDetailBlock[];
+  if (detailBlocksAdmin.length > 0) {
+    detailBlocks = mergeDetailBlocksWithR2Images(detailBlocksAdmin, r2DetailUrls);
+  } else if (resolvedDetailUrls.length > 0) {
+    detailBlocks = resolvedDetailUrls.map((image) => ({
       image,
       title: "",
       body: "",
       layout: "image-left" as const,
       stacked: true,
     }));
+  } else {
+    detailBlocks = [];
   }
+
+  const detail = detailBlocksToImageUrls(detailBlocks);
 
   let variantOptions = catalogVariants;
   if (catalogVariants.length > 0 && r2?.variants?.length) {
@@ -240,6 +256,18 @@ export async function resolveStorefrontProductMedia(
   }
 
   return { gallery, detail, detailBlocks, variantOptions, promoVideos };
+}
+
+export async function resolvePdpCloserLookBlocks(
+  slug: string,
+  catalogBlocks: ProductDetailBlock[] | undefined,
+): Promise<ProductDetailBlock[]> {
+  const spec = R2_GALLERY_SPECS_BY_SLUG[slug];
+  return resolveCloserLookBlocksForPdp(catalogBlocks, async () => {
+    if (!spec) return [];
+    const r2 = await getPdpR2Media(spec);
+    return r2.detail ?? [];
+  });
 }
 
 export async function getPdpR2Media(spec: R2GallerySpec): Promise<PdpR2Media> {

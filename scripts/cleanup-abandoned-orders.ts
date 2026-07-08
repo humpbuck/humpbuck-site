@@ -4,9 +4,7 @@
  *
  * On Vercel, you can set up a cron job via vercel.json or call this as an API route.
  */
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/prisma-script";
 
 const ABANDONED_THRESHOLD_HOURS = 24;
 

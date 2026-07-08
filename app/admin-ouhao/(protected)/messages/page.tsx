@@ -11,7 +11,8 @@ import {
 } from "@/lib/admin-inbox";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
-import { getProductBySlug, resolveCatalogVariantId } from "@/lib/catalog";
+import { resolveCatalogVariantId } from "@/lib/catalog";
+import { getProductBySlug } from "@/lib/catalog-server";
 import { prisma } from "@/lib/prisma";
 import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
 import { R2_PUBLIC_BASE } from "@/lib/r2";

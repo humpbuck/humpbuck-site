@@ -2,8 +2,8 @@
 # Production secrets go in Cloudflare Workers → Settings → Variables and Secrets.
 NEXTJS_ENV=development
 
-# Same as Vercel / .env.local (required for DB, auth, checkout):
-# DATABASE_URL=
+# D1 is bound as `DB` in wrangler.jsonc — no DATABASE_URL needed on Workers.
+# For local scripts (seed, migrate): DATABASE_URL=file:./dev.db in `.env.local`
 # AUTH_SECRET=
 # AUTH_TRUST_HOST=true
 # NEXT_PUBLIC_APP_URL=http://localhost:8787

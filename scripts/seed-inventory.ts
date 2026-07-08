@@ -5,9 +5,7 @@
  *
  * Usage: npx tsx scripts/seed-inventory.ts
  */
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/prisma-script";
 
 // Inline product/variant list to avoid importing catalog (which needs R2 env)
 const PRODUCTS: { slug: string; variants: string[] }[] = [

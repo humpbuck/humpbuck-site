@@ -87,17 +87,13 @@ const nextConfig: NextConfig = {
     ...(cfWorkersBuild
       ? {
           resolveAlias: {
-            "@prisma/client": "@prisma/client/edge",
-            "@/lib/prisma-neon": cfEmptyModule,
-            "@neondatabase/serverless": cfEmptyModule,
-            "@prisma/adapter-neon": cfEmptyModule,
             "@vercel/analytics/react": cfEmptyModule,
             "@vercel/speed-insights/next": cfEmptyModule,
           },
         }
       : {}),
   },
-  serverExternalPackages: cfWorkersBuild ? [] : ["@prisma/client", ".prisma/client"],
+  serverExternalPackages: ["@prisma/client", ".prisma/client"],
   experimental: {
     optimizePackageImports: ["lucide-react", "stripe", "country-state-city"],
   },

@@ -1,45 +1,16 @@
 import { cache } from "react";
 import { R2_GALLERY_SPECS_BY_SLUG } from "@/lib/r2";
 import { getPdpR2Media } from "@/lib/r2-pdp-media";
+import {
+  resolveShopCardImagesFromGallery,
+  type ShopCardImagePair,
+} from "@/lib/r2-card-image-resolve";
 
-export type ShopCardImagePair = {
-  cover: string | null;
-  hover: string | null;
-};
+export type { ShopCardImagePair } from "@/lib/r2-card-image-resolve";
+export { resolveProductCardDisplayImages, resolveShopCardImagesFromGallery } from "@/lib/r2-card-image-resolve";
 
 function galleryUrls(urls: string[] | undefined): string[] {
   return (urls ?? []).map((u) => u.trim()).filter(Boolean);
-}
-
-/** Shop card: gallery[0] default, gallery[1] on hover. */
-export function resolveShopCardImagesFromGallery(
-  catalogGallery?: string[],
-): ShopCardImagePair {
-  const gallery = galleryUrls(catalogGallery);
-  return {
-    cover: gallery[0] ?? null,
-    hover: gallery[1] ?? null,
-  };
-}
-
-/** Card tile baseline: gallery first image default, second on hover. */
-export function resolveProductCardDisplayImages(
-  product: {
-    image: string;
-    galleryImages?: string[];
-    images?: string[];
-  },
-  cardImageUrl?: string,
-  cardHoverImageUrl?: string,
-): { primarySrc: string; hoverSrc?: string } {
-  const fromGallery = resolveShopCardImagesFromGallery(
-    product.galleryImages ?? product.images,
-  );
-  const primarySrc =
-    cardImageUrl?.trim() || fromGallery.cover?.trim() || product.image.trim();
-  const hoverSrc =
-    cardHoverImageUrl?.trim() || fromGallery.hover?.trim() || undefined;
-  return { primarySrc, hoverSrc };
 }
 
 /**

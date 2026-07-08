@@ -11,7 +11,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { loadEnvConfig } from "@next/env";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/prisma-script";
 
 loadEnvConfig(process.cwd());
 /** Shell/IDE may set DATABASE_URL to localhost; for this script, `.env.local` wins. */
@@ -28,7 +28,7 @@ if (existsSync(el)) {
   }
 }
 
-const prisma = new PrismaClient();
+import { prisma } from "../lib/prisma-script";
 
 const DEFAULT_EMAIL = "843574506@qq.com";
 const PROVIDER_PREFIX = "test_review_order";

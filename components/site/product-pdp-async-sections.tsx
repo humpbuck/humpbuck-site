@@ -20,7 +20,7 @@ import { ProductFiveStarRating } from "@/components/site/product-five-star-ratin
 import { getProductFiveStarReviewCounts } from "@/lib/product-reviews-queries";
 import { ProductDetailClient } from "@/components/site/ProductDetailClient";
 import { ProductPdpGallerySyncProvider } from "@/components/site/product-pdp-gallery-sync";
-import { resolveStorefrontProductMedia } from "@/lib/r2-pdp-media";
+import { resolvePdpCloserLookBlocks, resolveStorefrontProductMedia } from "@/lib/r2-pdp-media";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
 
 export async function ProductPdpMainAsyncSection({
@@ -41,7 +41,7 @@ export async function ProductPdpMainAsyncSection({
     ? resolveSeriesInfo(product.seriesSlug, { heroImage: product.image })
     : null;
 
-  const [media, fiveStarCountsMap] = await Promise.all([
+  const [media, closerLookBlocks, fiveStarCountsMap] = await Promise.all([
     resolveStorefrontProductMedia({
       slug: product.slug,
       image: product.image,
@@ -51,10 +51,11 @@ export async function ProductPdpMainAsyncSection({
       variants: product.variantOptions,
       promoVideo: product.promoVideo,
     }),
+    resolvePdpCloserLookBlocks(product.slug, product.detailBlocks),
     getProductFiveStarReviewCounts([product.slug]),
   ]);
 
-  const { gallery: gallerySlides, detailBlocks, variantOptions, promoVideos } = media;
+  const { gallery: gallerySlides, variantOptions, promoVideos } = media;
   const fiveStarReviewCount = fiveStarCountsMap.get(product.slug) ?? 0;
 
   return (
@@ -177,7 +178,7 @@ export async function ProductPdpMainAsyncSection({
         productName={product.name}
         sectionTitle={t("closerLookTitle")}
         sectionIntro={t("closerLookBody", { name: product.name })}
-        blocks={detailBlocks}
+        blocks={closerLookBlocks}
       />
     </>
   );

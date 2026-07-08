@@ -4,14 +4,12 @@
  *
  *   npx tsx scripts/audit-product-reviews-by-slug.ts
  *
- * Compare: run with local env vs `DATABASE_URL=...` copied from Vercel (Neon) — if counts differ, you have two different databases.
+ * Uses `DATABASE_URL` from `.env` / `.env.local` (SQLite file or D1 apply target).
  */
 import { loadEnvConfig } from "@next/env";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/prisma-script";
 
 loadEnvConfig(process.cwd());
-
-const prisma = new PrismaClient();
 const FOCUS = "digitemp-2301";
 
 async function main() {

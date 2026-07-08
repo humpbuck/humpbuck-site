@@ -29,14 +29,13 @@ export function loadProjectEnv(cwd = process.cwd()) {
   }
 }
 
-/** Prefer Neon direct for local dev; Cloudflare build keeps Accelerate `DATABASE_URL`. */
+/** Local dev: clear stale `CF_WORKERS_BUILD=1` from Windows env when using `.env.local`. */
 export function applyLocalDatabaseEnvOverride() {
   loadProjectEnv();
-  const direct = process.env.DIRECT_DATABASE_URL?.trim();
-  if (!direct) return;
-  // Local Neon dev — override system Accelerate `DATABASE_URL` and stale `CF_WORKERS_BUILD=1`.
-  process.env.DATABASE_URL = direct;
-  if (process.env.CF_WORKERS_BUILD === "1") {
+  if (process.env.CF_WORKERS_BUILD === "1" && process.env.NODE_ENV !== "production") {
     delete process.env.CF_WORKERS_BUILD;
+  }
+  if (!process.env.DATABASE_URL?.trim()) {
+    process.env.DATABASE_URL = "file:./dev.db";
   }
 }

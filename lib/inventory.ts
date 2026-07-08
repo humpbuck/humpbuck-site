@@ -67,7 +67,7 @@ export async function decrementInventory(
       const updated = await tx.$executeRaw`
         UPDATE "ProductInventory"
         SET "quantity" = "quantity" - ${line.qty},
-            "updatedAt" = NOW()
+            "updatedAt" = ${new Date()}
         WHERE "productSlug" = ${line.slug}
           AND "variantId" = ${variantId}
           AND "quantity" >= ${line.qty}
@@ -102,7 +102,7 @@ export async function restoreInventory(
       await tx.$executeRaw`
         UPDATE "ProductInventory"
         SET "quantity" = "quantity" + ${line.qty},
-            "updatedAt" = NOW()
+            "updatedAt" = ${new Date()}
         WHERE "productSlug" = ${line.slug}
           AND "variantId" = ${variantId}
       `;

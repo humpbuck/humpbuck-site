@@ -28,6 +28,13 @@
 			"bucket_name": "humpbuck-site"
 		}
 	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "humpbuck-site",
+			"database_id": "2bc677db-27b4-4759-8eeb-6eadd0683c73"
+		}
+	],
 	"vars": {
 		"NEXT_INC_CACHE_R2_PREFIX": "opennext-cache"
 	},

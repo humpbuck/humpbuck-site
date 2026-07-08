@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { ReviewAppendForm } from "@/components/account/review-append-form";
 import { MAX_REVIEW_APPENDS } from "@/lib/review-append-constants";
-import { getProductBySlug } from "@/lib/catalog";
+import { getProductBySlug } from "@/lib/catalog-server";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 

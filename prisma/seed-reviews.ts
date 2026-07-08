@@ -12,7 +12,7 @@ import { randomUUID } from "node:crypto";
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { loadEnvConfig } from "@next/env";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/prisma-script";
 import { fetchMergedCatalogProducts } from "../lib/catalog-db";
 import {
   deterministicReviewCount,
@@ -37,8 +37,6 @@ if (existsSync(el)) {
     break;
   }
 }
-
-const prisma = new PrismaClient();
 
 const SEED_EMAIL_HOST = "reviews.seed.humpbuck";
 const REVIEWS_MIN_PER_PRODUCT = 10;

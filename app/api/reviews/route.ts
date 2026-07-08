@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
 import { auth } from "@/auth";
 import { notifyAdminInboxProductReview } from "@/lib/admin-inbox";
-import { getProductBySlug } from "@/lib/catalog";
+import { getProductBySlug } from "@/lib/catalog-server";
 import { prisma } from "@/lib/prisma";
 import { assertReviewImageUrlsBelongToProduct } from "@/lib/r2-review-upload";
 import {

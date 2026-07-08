@@ -2,10 +2,8 @@
  * Demo order for admin UI preview. Re-run is a no-op if the demo row already exists (no auto-delete).
  * Run: npx prisma db seed
  */
-import { PrismaClient } from "@prisma/client";
 import { adminPath } from "../lib/admin-path";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/prisma-script";
 
 const DEMO_REF = "demo_preview_seed";
 

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Product, ProductVariantOption } from "@/lib/catalog";
-import { resolveProductCardDisplayImages } from "@/lib/r2-card-image";
+import { resolveProductCardDisplayImages } from "@/lib/r2-card-image-resolve";
 
 function useVariantGalleryCardImages(
   galleryPrimary: string,

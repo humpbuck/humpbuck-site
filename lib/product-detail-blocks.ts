@@ -28,6 +28,10 @@ export function emptyProductDetailBlock(): ProductDetailBlock {
   };
 }
 
+export function detailBlockHasContent(block: ProductDetailBlock): boolean {
+  return Boolean(block.image.trim() || block.title.trim() || block.body.trim());
+}
+
 export function isProductDetailBlockLayout(value: unknown): value is ProductDetailBlockLayout {
   return value === "image-left" || value === "text-left";
 }
@@ -47,9 +51,9 @@ export function normalizeProductDetailBlock(raw: unknown): ProductDetailBlock | 
   if (!raw || typeof raw !== "object") return null;
   const row = raw as Record<string, unknown>;
   const image = typeof row.image === "string" ? row.image.trim() : "";
-  if (!image) return null;
   const title = typeof row.title === "string" ? row.title : "";
   const body = typeof row.body === "string" ? row.body : "";
+  if (!image && !title.trim() && !body.trim()) return null;
   const layout = isProductDetailBlockLayout(row.layout) ? row.layout : "image-left";
   return { image, title, body, layout };
 }
@@ -75,8 +79,22 @@ export function serializeDetailBlocksForDb(blocks: ProductDetailBlock[]): string
       body: block.body.trim(),
       layout: block.layout,
     }))
-    .filter((block) => block.image);
+    .filter((block) => block.image || block.title || block.body);
   return JSON.stringify(payload);
+}
+
+/** Pair R2 `detail/` URLs with admin blocks missing an image (same index). */
+export function mergeDetailBlocksWithR2Images(
+  blocks: ProductDetailBlock[],
+  r2ImageUrls: string[],
+): ProductDetailBlock[] {
+  if (blocks.length === 0) return [];
+  const urls = r2ImageUrls.map((url) => url.trim()).filter(Boolean);
+  if (urls.length === 0) return blocks;
+  return blocks.map((block, index) => ({
+    ...block,
+    image: block.image.trim() || urls[index] || block.image,
+  }));
 }
 
 export function detailBlocksToImageUrls(blocks: ProductDetailBlock[]): string[] {
@@ -92,4 +110,27 @@ export function parseDetailBlocksPayload(body: unknown): ProductDetailBlock[] {
 
 export function blockUsesStackedLayout(block: ProductDetailBlock): boolean {
   return block.stacked === true;
+}
+
+/** PDP closer-look: admin `detailJson` blocks win; optional R2 `detail/` fill-in by index. */
+export async function resolveCloserLookBlocksForPdp(
+  catalogBlocks: ProductDetailBlock[] | undefined,
+  listR2Detail: () => Promise<string[]>,
+): Promise<ProductDetailBlock[]> {
+  const adminBlocks = (catalogBlocks ?? []).filter(detailBlockHasContent);
+  if (adminBlocks.length === 0) {
+    const detail = await listR2Detail();
+    return detail.map((image) => ({
+      image,
+      title: "",
+      body: "",
+      layout: "image-left" as const,
+      stacked: true,
+    }));
+  }
+  if (adminBlocks.every((block) => block.image.trim())) {
+    return adminBlocks;
+  }
+  const detail = await listR2Detail();
+  return mergeDetailBlocksWithR2Images(adminBlocks, detail);
 }

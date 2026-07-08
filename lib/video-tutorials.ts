@@ -158,9 +158,10 @@ export async function saveVideoTutorial(input: {
       WHERE "productSlug" = ${row.productSlug}
     `;
   }
+  const now = new Date();
   await prisma.$executeRaw`
     INSERT INTO "VideoTutorial" ("productSlug", "title", "url", "youtubeUrl", "aspectRatio", "sortOrder", "updatedAt")
-    VALUES (${productSlug}, ${input.title}, ${input.url}, ${(input.youtubeUrl ?? "").trim()}, ${input.aspectRatio}, ${Math.max(1, input.sortOrder ?? 9999)}, NOW())
+    VALUES (${productSlug}, ${input.title}, ${input.url}, ${(input.youtubeUrl ?? "").trim()}, ${input.aspectRatio}, ${Math.max(1, input.sortOrder ?? 9999)}, ${now})
     ON CONFLICT ("productSlug")
     DO UPDATE SET
       "title" = EXCLUDED."title",
@@ -168,7 +169,7 @@ export async function saveVideoTutorial(input: {
       "youtubeUrl" = EXCLUDED."youtubeUrl",
       "aspectRatio" = EXCLUDED."aspectRatio",
       "sortOrder" = EXCLUDED."sortOrder",
-      "updatedAt" = NOW()
+      "updatedAt" = ${now}
   `;
 }
 
@@ -179,9 +180,10 @@ export async function saveVideoTutorialOrder(
   for (let i = 0; i < orderedProductSlugs.length; i += 1) {
     const slug = normalizeProductSlug(orderedProductSlugs[i] ?? "");
     if (!slug) continue;
+    const orderUpdatedAt = new Date();
     await prisma.$executeRaw`
       UPDATE "VideoTutorial"
-      SET "sortOrder" = ${i + 1}, "updatedAt" = NOW()
+      SET "sortOrder" = ${i + 1}, "updatedAt" = ${orderUpdatedAt}
       WHERE LOWER("productSlug") = LOWER(${slug})
     `;
   }
@@ -191,13 +193,14 @@ export async function deleteVideoTutorial(productSlug: string) {
   await ensureVideoTutorialTable();
   const normalizedSlug = normalizeProductSlug(productSlug);
   const deletedTitle = `${normalizedSlug} video tutorial`;
+  const deletedAt = new Date();
   await prisma.$executeRaw`
     INSERT INTO "VideoTutorial" ("productSlug", "title", "url", "youtubeUrl", "aspectRatio", "updatedAt")
-    VALUES (${normalizedSlug}, ${deletedTitle}, ${""}, ${""}, ${DEFAULT_ASPECT_RATIO}, NOW())
+    VALUES (${normalizedSlug}, ${deletedTitle}, ${""}, ${""}, ${DEFAULT_ASPECT_RATIO}, ${deletedAt})
     ON CONFLICT ("productSlug")
     DO UPDATE SET
       "url" = ${""},
       "youtubeUrl" = ${""},
-      "updatedAt" = NOW()
+      "updatedAt" = ${deletedAt}
   `;
 }

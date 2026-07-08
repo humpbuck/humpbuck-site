@@ -555,7 +555,9 @@ export function ProductManager({
           body: block.body.trim(),
           layout: block.layout,
         }))
-        .filter((block) => block.image),
+        .filter(
+          (block) => block.image.trim() || block.title.trim() || block.body.trim(),
+        ),
       variants: current.variants.map((v) => ({
         id: v.id.trim(),
         label: v.label.trim(),

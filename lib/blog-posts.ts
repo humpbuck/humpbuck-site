@@ -183,7 +183,7 @@ export async function listPublishedBlogPosts(): Promise<BlogPostRow[]> {
     SELECT ${BLOG_SELECT}
     FROM "BlogPost"
     WHERE "status" = 'published'
-    ORDER BY "sortOrder" ASC, "publishedAt" DESC NULLS LAST, "updatedAt" DESC
+    ORDER BY "sortOrder" ASC, CASE WHEN "publishedAt" IS NULL THEN 1 ELSE 0 END, "publishedAt" DESC, "updatedAt" DESC
   `);
 }
 
@@ -247,6 +247,7 @@ export async function createBlogPost(input: BlogPostInput): Promise<BlogPostRow>
   await ensureBlogPostTable();
   const id = randomUUID();
   const publishedAt = data.status === "published" ? new Date() : null;
+  const now = new Date();
   await prisma.$executeRaw`
     INSERT INTO "BlogPost" (
       "id", "slug", "title", "excerpt", "body", "coverImageUrl",
@@ -255,7 +256,7 @@ export async function createBlogPost(input: BlogPostInput): Promise<BlogPostRow>
     ) VALUES (
       ${id}, ${data.slug}, ${data.title}, ${data.excerpt}, ${data.body}, ${data.coverImageUrl},
       ${data.homeCarouselSlot}, ${data.homeCarouselImageUrl}, ${data.homeCarouselDescription},
-      ${data.status}, ${data.sortOrder}, ${publishedAt}, NOW(), NOW()
+      ${data.status}, ${data.sortOrder}, ${publishedAt}, ${now}, ${now}
     )
   `;
   const row = await queryBlogPostById(id);
@@ -275,6 +276,7 @@ export async function updateBlogPost(
   const publishedAt =
     data.status === "published" ? existing.publishedAt ?? new Date() : null;
 
+  const updatedAt = new Date();
   await prisma.$executeRaw`
     UPDATE "BlogPost"
     SET
@@ -289,7 +291,7 @@ export async function updateBlogPost(
       "status" = ${data.status},
       "sortOrder" = ${data.sortOrder},
       "publishedAt" = ${publishedAt},
-      "updatedAt" = NOW()
+      "updatedAt" = ${updatedAt}
     WHERE "id" = ${id}
   `;
   return queryBlogPostById(id);
@@ -307,9 +309,10 @@ export async function saveBlogPostOrder(ids: string[]): Promise<void> {
   await ensureBlogPostTable();
   for (let index = 0; index < unique.length; index += 1) {
     const id = unique[index];
+    const sortUpdatedAt = new Date();
     await prisma.$executeRaw`
       UPDATE "BlogPost"
-      SET "sortOrder" = ${index + 1}, "updatedAt" = NOW()
+      SET "sortOrder" = ${index + 1}, "updatedAt" = ${sortUpdatedAt}
       WHERE "id" = ${id}
     `;
   }

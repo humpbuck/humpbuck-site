@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import { markProductReviewInboxHandled } from "@/lib/admin-inbox";
-import { getProductBySlug } from "@/lib/catalog";
+import { getProductBySlug } from "@/lib/catalog-server";
 import { prisma } from "@/lib/prisma";
 import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
 import { revalidateProductReviews } from "@/lib/revalidate-product-reviews";

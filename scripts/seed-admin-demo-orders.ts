@@ -5,12 +5,10 @@
  *   npm run db:seed-demo-orders
  */
 import { loadEnvConfig } from "@next/env";
-import { PrismaClient } from "@prisma/client";
 import { adminPath } from "../lib/admin-path";
+import { prisma } from "../lib/prisma-script";
 
 loadEnvConfig(process.cwd());
-
-const prisma = new PrismaClient();
 
 const PREFIX = "admin_demo_orders_v1";
 

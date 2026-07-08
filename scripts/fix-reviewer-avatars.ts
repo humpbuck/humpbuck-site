@@ -5,11 +5,9 @@
  * Run: npx tsx scripts/fix-reviewer-avatars.ts
  */
 import { loadEnvConfig } from "@next/env";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../lib/prisma-script";
 
 loadEnvConfig(process.cwd());
-
-const prisma = new PrismaClient();
 
 const SEED_EMAIL_HOST = "reviews.seed.humpbuck";
 

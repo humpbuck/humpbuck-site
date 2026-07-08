@@ -10,12 +10,9 @@ const { loadProjectEnv } = require("./load-project-env.mjs") as typeof import(".
 
 loadProjectEnv();
 
-const migrateUrl =
-  process.env.DIRECT_DATABASE_URL?.trim() || process.env.DATABASE_URL?.trim();
+const migrateUrl = process.env.DATABASE_URL?.trim() || "file:./dev.db";
 if (!migrateUrl) {
-  console.error(
-    "DATABASE_URL or DIRECT_DATABASE_URL is missing. Add Neon postgresql://... to .env.local.",
-  );
+  console.error("DATABASE_URL is missing. Add file:./dev.db to .env.local for local SQLite.");
   process.exit(1);
 }
 

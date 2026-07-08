@@ -1,3 +1,5 @@
+import "server-only";
+
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import type { Product } from "@/lib/catalog";
@@ -50,7 +52,6 @@ function emptyStorefrontCatalog(): Promise<Product[]> {
 
 function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
   const gallery = parseArray<string>(row.galleryJson, []);
-  const detail = parseArray<string>(row.detailJson, []);
   const detailBlocks = parseDetailBlocksJson(row.detailJson);
   const variants = parseArray<
     { id?: string; label?: string; image?: string; inStock?: boolean }
@@ -95,7 +96,7 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
     image: gallery[0] || row.image || "",
     images: gallery,
     galleryImages: gallery,
-    detailImages: detailBlocks.length > 0 ? detailBlocks.map((block) => block.image) : detail,
+    detailImages: detailBlocks.map((block) => block.image).filter(Boolean),
     detailBlocks,
     promoVideo: promo,
     variantOptions: variantStock.filter((v) => v.id && v.label && v.image).map((v) => ({

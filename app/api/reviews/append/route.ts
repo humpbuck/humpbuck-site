@@ -7,7 +7,7 @@ import {
   MAX_APPEND_IMAGES,
   MAX_REVIEW_APPENDS,
 } from "@/lib/review-append-constants";
-import { getProductBySlug } from "@/lib/catalog";
+import { getProductBySlug } from "@/lib/catalog-server";
 import { prisma } from "@/lib/prisma";
 import { assertReviewImageUrlsBelongToProduct } from "@/lib/r2-review-upload";
 
