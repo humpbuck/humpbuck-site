@@ -4,5 +4,5 @@ import { revalidateTag } from "next/cache";
 export function revalidateProductReviews(productSlug: string): void {
   const slug = productSlug.trim();
   if (!slug) return;
-  revalidateTag(`product-reviews-${slug}`, "seconds");
+  revalidateTag(`product-reviews-${slug}`, { expire: 0 });
 }

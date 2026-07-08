@@ -5,7 +5,7 @@ import { routing } from "@/i18n/routing";
 
 /** Bust cached homepage announcement bar (all storefront layouts). */
 export function revalidateSiteAnnouncement(): void {
-  revalidateTag("site-announcement", "seconds");
+  revalidateTag("site-announcement", { expire: 0 });
 }
 
 /** Paths that share the storefront shell (announcement bar + header). */

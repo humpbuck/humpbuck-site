@@ -27,17 +27,19 @@ import {
 export const revalidate = false;
 
 export async function generateStaticParams() {
-  let slugs: string[] = [];
+  const slugSet = new Set<string>();
   try {
-    slugs = (await getMergedCatalogProducts()).map((p) => p.slug);
+    for (const product of await getMergedCatalogProducts()) {
+      if (product.slug.trim()) slugSet.add(product.slug.trim());
+    }
   } catch (err) {
     console.error("[product] generateStaticParams: catalog load failed.", err);
   }
-  if (slugs.length === 0) {
-    slugs = readCatalogBuildSlugs();
+  for (const slug of readCatalogBuildSlugs()) {
+    slugSet.add(slug);
   }
   return routing.locales.flatMap((locale) =>
-    slugs.map((slug) => ({ locale, slug })),
+    [...slugSet].map((slug) => ({ locale, slug })),
   );
 }
 

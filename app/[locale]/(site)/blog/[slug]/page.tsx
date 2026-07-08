@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BlogArticleBody } from "@/components/site/blog-article-body";
 import { StorefrontImage } from "@/components/site/storefront-image";
+import { readBlogBuildSlugs } from "@/lib/blog-build-slugs";
 import {
   formatBlogPostDate,
   getPublishedBlogPostBySlug,
@@ -17,15 +18,20 @@ import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 export const revalidate = false;
 
 export async function generateStaticParams() {
+  const slugSet = new Set<string>();
   try {
-    const posts = await listPublishedBlogPosts();
-    return routing.locales.flatMap((locale) =>
-      posts.map((post) => ({ locale, slug: post.slug })),
-    );
+    for (const post of await listPublishedBlogPosts()) {
+      if (post.slug.trim()) slugSet.add(post.slug.trim());
+    }
   } catch (e) {
     console.error("[blog] generateStaticParams: DB unavailable during build.", e);
-    return [];
   }
+  for (const slug of readBlogBuildSlugs()) {
+    slugSet.add(slug);
+  }
+  return routing.locales.flatMap((locale) =>
+    [...slugSet].map((slug) => ({ locale, slug })),
+  );
 }
 
 export async function generateMetadata({

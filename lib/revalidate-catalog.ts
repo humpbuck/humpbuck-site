@@ -3,7 +3,7 @@ import { revalidateStorefrontPath, revalidateSitemap } from "@/lib/revalidate-st
 
 /** Bust catalog cache and key storefront routes after admin catalog changes. */
 export function revalidateCatalogStorefront(opts?: { slug?: string; oldSlug?: string }): void {
-  revalidateTag("catalog", "seconds");
+  revalidateTag("catalog", { expire: 0 });
   revalidateSitemap();
   revalidateStorefrontPath("/");
   revalidateStorefrontPath("/product");
@@ -13,7 +13,7 @@ export function revalidateCatalogStorefront(opts?: { slug?: string; oldSlug?: st
   if (opts?.oldSlug?.trim()) slugs.add(opts.oldSlug.trim());
 
   for (const slug of slugs) {
-    revalidateTag(`catalog-product-${slug}`, "seconds");
+    revalidateTag(`catalog-product-${slug}`, { expire: 0 });
     revalidateStorefrontPath(`/product/${encodeURIComponent(slug)}`);
   }
 }

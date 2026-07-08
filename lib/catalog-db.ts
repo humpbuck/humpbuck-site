@@ -152,24 +152,12 @@ async function fetchMergedCatalogProductBySlug(slug: string): Promise<Product | 
   return undefined;
 }
 
-const getCachedMergedCatalogProducts = unstable_cache(
-  loadMergedCatalogProductsUncached,
-  ["merged-catalog-products"],
-  {
-    tags: ["catalog"],
-  },
-);
-
 /**
  * Frontend catalog source: admin-managed `CatalogProduct` + inventory.
- * Cached until admin saves call `revalidateCatalogStorefront` (no time-based expiry).
- * Empty results are always refetched so a stale empty cache cannot hide new products.
+ * Always loaded from D1 (no list cache) so new admin products appear without redeploy.
+ * Per-slug lookups stay tagged/cached in `getMergedCatalogProductBySlug`.
  */
 export async function getMergedCatalogProducts(): Promise<Product[]> {
-  const products = await getCachedMergedCatalogProducts();
-  if (products.length > 0) {
-    return products;
-  }
   return loadMergedCatalogProductsUncached();
 }
 

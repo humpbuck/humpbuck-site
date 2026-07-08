@@ -237,6 +237,12 @@ export const R2_GALLERY_SPECS_BY_SLUG: Record<string, R2GallerySpec> = {
     filePrefix: P2412_FILE,
     variantFilePrefix: P2412_VARIANT_FILE,
   },
+  /** Admin/catalog slug variant for DIGI-TEMP 2412M (same R2 folder as `digitemp-2412m`). */
+  "digi-temp-2412m": {
+    slugFolder: P2412_SLUG,
+    filePrefix: P2412_FILE,
+    variantFilePrefix: P2412_VARIANT_FILE,
+  },
   "rm-m01": { slugFolder: PRMM01_SLUG, filePrefix: PRMM01_FILE },
   "rm-m02": { slugFolder: PRMM02_SLUG, filePrefix: PRMM02_FILE },
   "rm-m03": { slugFolder: PRMM03_SLUG, filePrefix: PRMM03_FILE },
