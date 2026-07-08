@@ -27,6 +27,7 @@
 .DS_Store
 *.pem
 .cursor/
+.kilo/
 
 # local sqlite (migrations are committed)
 /prisma/dev.db
