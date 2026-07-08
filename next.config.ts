@@ -74,11 +74,20 @@ const legacyShopToProductRedirects = routing.locales.map((locale) =>
       },
 );
 
+const cfWorkersBuild = process.env.CF_WORKERS_BUILD === "1";
+
 const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
+    ...(cfWorkersBuild
+      ? {
+          resolveAlias: {
+            "@prisma/client": "@prisma/client/edge",
+          },
+        }
+      : {}),
   },
-  serverExternalPackages: ["@prisma/client", ".prisma/client"],
+  serverExternalPackages: cfWorkersBuild ? [] : ["@prisma/client", ".prisma/client"],
   experimental: {
     optimizePackageImports: ["lucide-react", "stripe"],
   },
