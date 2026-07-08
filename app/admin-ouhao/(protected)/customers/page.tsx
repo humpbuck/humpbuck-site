@@ -16,10 +16,10 @@ export default async function AdminCustomersPage({
   const where = search
     ? {
         OR: [
-          { email: { contains: search, mode: "insensitive" as const } },
-          { name: { contains: search, mode: "insensitive" as const } },
-          { firstName: { contains: search, mode: "insensitive" as const } },
-          { lastName: { contains: search, mode: "insensitive" as const } },
+          { email: { contains: search } },
+          { name: { contains: search } },
+          { firstName: { contains: search } },
+          { lastName: { contains: search } },
         ],
       }
     : {};

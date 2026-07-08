@@ -42,9 +42,10 @@ export function ordersWhere(
     const q = opts.search.trim();
     conditions.push({
       OR: [
-        { email: { contains: q, mode: "insensitive" } },
-        { merchantOrderCode: { contains: q, mode: "insensitive" } },
-        { trackingNumber: { contains: q, mode: "insensitive" } },
+        // SQLite/D1: no `mode: "insensitive"` — LIKE is case-insensitive for ASCII.
+        { email: { contains: q } },
+        { merchantOrderCode: { contains: q } },
+        { trackingNumber: { contains: q } },
         { id: { contains: q } },
       ],
     });
