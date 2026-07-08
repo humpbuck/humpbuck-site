@@ -53,7 +53,7 @@
 
 | 当前工作区文件夹 | 只同步到 |
 |------------------|----------|
-| `humpbuck-site` | `ouhao2016-creator/humpbuck-site` |
+| `humpbuck-site` | `humpbuck/humpbuck-site` |
 | `sadhakashop-site` | `sadhakashop-website/sadhakashop-website` |
 
 助手应先确认工作区路径（或 `git remote -v`）再操作；**禁止**在 humpbuck 工作区推 sadhakashop，或反过来。
@@ -62,7 +62,7 @@
 
 | 仓库 | GitHub 账号 | `git remote` Host 别名 | 本机私钥 | GitHub 上密钥 Title |
 |------|-------------|-------------------------|----------|---------------------|
-| **humpbuck-site** | `ouhao2016-creator` | `github.com-humpbuck` | `~/.ssh/id_ed25519` | `humpbuck` |
+| **humpbuck-site** | `humpbuck` | `github.com-humpbuck` | `~/.ssh/id_ed25519` | `humpbuck` |
 | **sadhakashop-site** | `sadhakashop-website` | `github.com-sadhakashop` | `~/.ssh/id_ed25519_sadhakashop` | （sadhakashop 专用） |
 
 **humpbuck 以 GitHub 为准：** GitHub 上 `humpbuck` 密钥指纹为 `SHA256:0v8+sG9YkiVKYgS0/gX/8sJDoMg3ZEgxodBjTHRAHnw`，对应本机 **`id_ed25519`**（注释 `ouhao2016@gmail.com`）。**不要**把 `~/.ssh/id_ed25519_humpbuck` 当作 humpbuck 的推送密钥（那是另一把未登记密钥，会导致 `Permission denied`）。
@@ -70,7 +70,7 @@
 **humpbuck-site 远程地址（已固定，勿改成 `git@github.com:`）：**
 
 ```text
-git@github.com-humpbuck:ouhao2016-creator/humpbuck-site.git
+git@github.com-humpbuck:humpbuck/humpbuck-site.git
 ```
 
 **在 `humpbuck-site` 工作区说「同步到 GitHub」时，助手应：**
@@ -78,7 +78,7 @@ git@github.com-humpbuck:ouhao2016-creator/humpbuck-site.git
 1. 确认当前目录是 **humpbuck-site**（`git remote -v` 含 `github.com-humpbuck`）  
 2. `git status` / `git diff` / `git log -1` 确认待提交内容  
 3. 仅在你明确要求时 `git commit`（勿擅自提交）  
-4. 推送前验证：`ssh -T git@github.com-humpbuck`（应出现 `Hi ouhao2016-creator!`）  
+4. 推送前验证：`ssh -T git@github.com-humpbuck`（应出现 `Hi humpbuck!`）  
 5. `git push origin main`  
 6. 若 SSH 失败：**先查**是否误用 `id_ed25519_humpbuck` 或 remote 是否丢失 `-humpbuck` 后缀；**不要**擅自换 GitHub 上的公钥，以 GitHub 已登记的 `id_ed25519` 为准调整 `~/.ssh/config`
 

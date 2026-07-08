@@ -33,9 +33,9 @@ Read **`docs/user-conventions.md` §5** before any sync.
 
 **humpbuck-site (this repo):**
 
-- **Remote:** `git@github.com-humpbuck:ouhao2016-creator/humpbuck-site.git` — never plain `git@github.com:`.
+- **Remote:** `git@github.com-humpbuck:humpbuck/humpbuck-site.git` — never plain `git@github.com:`.
 - **SSH key:** `~/.ssh/id_ed25519` via Host `github.com-humpbuck` in `~/.ssh/config`. **Not** `id_ed25519_humpbuck`.
 - **GitHub fingerprint (source of truth):** `SHA256:0v8+sG9YkiVKYgS0/gX/8sJDoMg3ZEgxodBjTHRAHnw` on key title `humpbuck`.
-- **When user asks to sync here:** confirm `git remote -v` → `github.com-humpbuck`; `ssh -T git@github.com-humpbuck` → `Hi ouhao2016-creator!`; then `git push origin main`. Commit only when explicitly requested.
+- **When user asks to sync here:** confirm `git remote -v` → `github.com-humpbuck`; `ssh -T git@github.com-humpbuck` → `Hi humpbuck!`; then `git push origin main`. Commit only when explicitly requested.
 
 **sadhakashop-site:** separate workspace — see that repo’s `docs/user-conventions.md` §5 (`github.com-sadhakashop` + `id_ed25519_sadhakashop`).
