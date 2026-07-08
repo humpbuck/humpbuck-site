@@ -3,6 +3,7 @@
 	"main": ".open-next/worker.js",
 	"name": "humpbuck-site",
 	"minify": true,
+	"keep_vars": true,
 	"compatibility_date": "2026-07-07",
 	"compatibility_flags": [
 		"nodejs_compat",

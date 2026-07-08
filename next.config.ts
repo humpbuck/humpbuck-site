@@ -80,7 +80,7 @@ const nextConfig: NextConfig = {
   },
   serverExternalPackages: ["@prisma/client", ".prisma/client"],
   experimental: {
-    optimizePackageImports: ["lucide-react"],
+    optimizePackageImports: ["lucide-react", "stripe"],
   },
   async redirects() {
     return [

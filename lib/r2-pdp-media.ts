@@ -1,4 +1,4 @@
-import { ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
+import { listR2ObjectKeys } from "@/lib/r2-aws4";
 import { unstable_cache } from "next/cache";
 import type { ProductVariantOption } from "@/lib/catalog";
 import type { ProductDetailBlock } from "@/lib/product-detail-blocks";
@@ -40,39 +40,8 @@ function sortKeysByFileName(keys: string[]): string[] {
   });
 }
 
-function r2S3Client(): S3Client {
-  const accountId = process.env.R2_ACCOUNT_ID!.trim();
-  return new S3Client({
-    region: "auto",
-    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-    credentials: {
-      accessKeyId: process.env.R2_ACCESS_KEY_ID!.trim(),
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!.trim(),
-    },
-  });
-}
-
-async function listObjectKeys(
-  client: S3Client,
-  bucket: string,
-  prefix: string,
-): Promise<string[]> {
-  const keys: string[] = [];
-  let token: string | undefined;
-  do {
-    const res = await client.send(
-      new ListObjectsV2Command({
-        Bucket: bucket,
-        Prefix: prefix,
-        ContinuationToken: token,
-      }),
-    );
-    for (const o of res.Contents ?? []) {
-      if (o.Key && !o.Key.endsWith("/")) keys.push(o.Key);
-    }
-    token = res.IsTruncated ? res.NextContinuationToken : undefined;
-  } while (token);
-  return keys;
+async function listObjectKeys(prefix: string): Promise<string[]> {
+  return listR2ObjectKeys(prefix);
 }
 
 function filterWebp(keys: string[]): string[] {
@@ -92,10 +61,8 @@ function canListR2(): boolean {
 async function listRootProductWebpUrls(spec: R2GallerySpec): Promise<string[]> {
   if (!canListR2()) return [];
   try {
-    const client = r2S3Client();
-    const bucket = process.env.R2_BUCKET_NAME!.trim();
     const prefix = `products/${spec.slugFolder}/`;
-    const raw = await listObjectKeys(client, bucket, prefix);
+    const raw = await listObjectKeys(prefix);
     const rootWebp = filterWebp(raw).filter((k) => {
       const rel = k.slice(prefix.length);
       return rel.length > 0 && !rel.includes("/");
@@ -112,10 +79,8 @@ async function listWebpFolderUrls(
 ): Promise<string[]> {
   if (!canListR2()) return [];
   try {
-    const client = r2S3Client();
-    const bucket = process.env.R2_BUCKET_NAME!.trim();
     const prefix = `products/${spec.slugFolder}/${sub}/`;
-    const raw = await listObjectKeys(client, bucket, prefix);
+    const raw = await listObjectKeys(prefix);
     const webp = filterWebp(raw);
     return sortKeysByFileName(webp).map(keyToPublicUrl);
   } catch {
@@ -126,10 +91,8 @@ async function listWebpFolderUrls(
 async function listVideoFolderUrls(spec: R2GallerySpec): Promise<string[]> {
   if (!canListR2()) return [];
   try {
-    const client = r2S3Client();
-    const bucket = process.env.R2_BUCKET_NAME!.trim();
     const prefix = `products/${spec.slugFolder}/video/`;
-    const raw = await listObjectKeys(client, bucket, prefix);
+    const raw = await listObjectKeys(prefix);
     const mp4 = filterMp4(raw);
     const canonicalBase = `${spec.filePrefix}-video.mp4`.toLowerCase();
     const canonical = mp4.find(
