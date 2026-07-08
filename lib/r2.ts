@@ -230,6 +230,8 @@ export type R2GallerySpec = {
  */
 export const R2_GALLERY_SPECS_BY_SLUG: Record<string, R2GallerySpec> = {
   "digitemp-2301": { slugFolder: P2301_SLUG, filePrefix: P2301_FILE },
+  /** Admin/catalog slug variant for DIGI-TEMP 2301 (same R2 folder as `digitemp-2301`). */
+  "digi-temp-2301": { slugFolder: P2301_SLUG, filePrefix: P2301_FILE },
   "digitemp-2412m": {
     slugFolder: P2412_SLUG,
     filePrefix: P2412_FILE,

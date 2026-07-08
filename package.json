@@ -20,10 +20,10 @@
     "db:seed-test-review-order": "npx tsx scripts/seed-test-order-for-review.ts",
     "db:seed-inventory": "npx tsx scripts/seed-inventory.ts",
     "db:cleanup-abandoned": "npx tsx scripts/cleanup-abandoned-orders.ts",
-    "cf-build": "cross-env CF_WORKERS_BUILD=1 opennextjs-cloudflare build",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy -- --keep-vars",
-    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-build": "node scripts/export-catalog-slugs-for-build.mjs && cross-env CF_WORKERS_BUILD=1 opennextjs-cloudflare build",
+    "preview": "node scripts/export-catalog-slugs-for-build.mjs && opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "node scripts/export-catalog-slugs-for-build.mjs && opennextjs-cloudflare build && opennextjs-cloudflare deploy -- --keep-vars",
+    "upload": "node scripts/export-catalog-slugs-for-build.mjs && opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "prisma": {

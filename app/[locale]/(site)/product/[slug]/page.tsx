@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
+import { readCatalogBuildSlugs } from "@/lib/catalog-build-slugs";
 import {
   getMergedCatalogProductBySlug,
   getMergedCatalogProducts,
@@ -26,9 +27,17 @@ import {
 export const revalidate = false;
 
 export async function generateStaticParams() {
-  const products = await getMergedCatalogProducts();
+  let slugs: string[] = [];
+  try {
+    slugs = (await getMergedCatalogProducts()).map((p) => p.slug);
+  } catch (err) {
+    console.error("[product] generateStaticParams: catalog load failed.", err);
+  }
+  if (slugs.length === 0) {
+    slugs = readCatalogBuildSlugs();
+  }
   return routing.locales.flatMap((locale) =>
-    products.map((p) => ({ locale, slug: p.slug })),
+    slugs.map((slug) => ({ locale, slug })),
   );
 }
 
