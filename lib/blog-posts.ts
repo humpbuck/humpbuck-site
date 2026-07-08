@@ -46,6 +46,20 @@ type DbBlogPostRow = {
 
 let blogTableReady: Promise<void> | null = null;
 
+/** SQLite/D1 has no `ADD COLUMN IF NOT EXISTS` — check `PRAGMA table_info` first. */
+async function addBlogPostColumnIfMissing(
+  column: string,
+  definition: string,
+): Promise<void> {
+  const columns = (await prisma.$queryRawUnsafe(
+    `PRAGMA table_info("BlogPost")`,
+  )) as { name: string }[];
+  if (columns.some((c) => c.name === column)) return;
+  await prisma.$executeRawUnsafe(
+    `ALTER TABLE "BlogPost" ADD COLUMN "${column}" ${definition}`,
+  );
+}
+
 async function ensureBlogPostTable(): Promise<void> {
   if (!blogTableReady) {
     blogTableReady = (async () => {
@@ -78,15 +92,15 @@ async function ensureBlogPostTable(): Promise<void> {
       await prisma.$executeRawUnsafe(`
         CREATE INDEX IF NOT EXISTS "BlogPost_publishedAt_idx" ON "BlogPost"("publishedAt")
       `).catch(() => null);
-      await prisma.$executeRawUnsafe(`
-        ALTER TABLE "BlogPost" ADD COLUMN IF NOT EXISTS "homeCarouselSlot" INTEGER
-      `).catch(() => null);
-      await prisma.$executeRawUnsafe(`
-        ALTER TABLE "BlogPost" ADD COLUMN IF NOT EXISTS "homeCarouselImageUrl" TEXT NOT NULL DEFAULT ''
-      `).catch(() => null);
-      await prisma.$executeRawUnsafe(`
-        ALTER TABLE "BlogPost" ADD COLUMN IF NOT EXISTS "homeCarouselDescription" TEXT NOT NULL DEFAULT ''
-      `).catch(() => null);
+      await addBlogPostColumnIfMissing("homeCarouselSlot", "INTEGER");
+      await addBlogPostColumnIfMissing(
+        "homeCarouselImageUrl",
+        "TEXT NOT NULL DEFAULT ''",
+      );
+      await addBlogPostColumnIfMissing(
+        "homeCarouselDescription",
+        "TEXT NOT NULL DEFAULT ''",
+      );
       await prisma.$executeRawUnsafe(`
         CREATE INDEX IF NOT EXISTS "BlogPost_homeCarouselSlot_idx" ON "BlogPost"("homeCarouselSlot")
       `).catch(() => null);
