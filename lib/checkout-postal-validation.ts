@@ -1,6 +1,6 @@
 import { postcodeValidator, postcodeValidatorExistsForCountry } from "postcode-validator";
-import zipcodes from "zipcodes";
 import type { CheckoutAddressForm } from "@/lib/checkout-address";
+import { normalizeUsStateCode } from "@/lib/us-state-codes";
 
 export type CheckoutPostalValidationErrorKey =
   | "postalInvalidFormat"
@@ -44,7 +44,7 @@ export function parseCheckoutStateCode(stateLabel: string, countryIso2: string):
   const match = trimmed.match(/\(([A-Za-z]{2,3})\)\s*$/);
   if (match) return match[1].toUpperCase();
   if (countryIso2 === "US") {
-    const normalized = zipcodes.states.normalize(trimmed);
+    const normalized = normalizeUsStateCode(trimmed);
     if (normalized) return normalized;
   }
   return trimmed.toUpperCase();
@@ -90,23 +90,11 @@ function caProvincesFromPostal(postalCode: string): string[] | null {
 
 function validateUsPostal(
   postalCode: string,
-  stateLabel: string,
 ): { ok: true } | { ok: false; errorKey: CheckoutPostalValidationErrorKey } {
   const zip5 = usZip5(postalCode);
   if (zip5.length !== 5) {
     return { ok: false, errorKey: "postalInvalidFormat" };
   }
-
-  const found = zipcodes.lookup(zip5);
-  if (!found) {
-    return { ok: false, errorKey: "postalNotFound" };
-  }
-
-  const stateCode = parseCheckoutStateCode(stateLabel, "US");
-  if (stateCode && found.state !== stateCode) {
-    return { ok: false, errorKey: "postalStateMismatch" };
-  }
-
   return { ok: true };
 }
 
@@ -161,7 +149,7 @@ export function validateCheckoutPostalCode(
     }
   }
 
-  if (countryIso2 === "US") return validateUsPostal(postalCode, form.state);
+  if (countryIso2 === "US") return validateUsPostal(postalCode);
   if (countryIso2 === "CA") return validateCaPostal(postalCode, form.state);
   if (countryIso2 === "AU") return validateAuPostal(postalCode, form.state);
 

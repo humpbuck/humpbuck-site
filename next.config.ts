@@ -75,6 +75,7 @@ const legacyShopToProductRedirects = routing.locales.map((locale) =>
 );
 
 const cfWorkersBuild = process.env.CF_WORKERS_BUILD === "1";
+const cfEmptyModule = "./lib/cf-empty-module.ts";
 
 const nextConfig: NextConfig = {
   turbopack: {
@@ -83,13 +84,18 @@ const nextConfig: NextConfig = {
       ? {
           resolveAlias: {
             "@prisma/client": "@prisma/client/edge",
+            "@/lib/prisma-neon": cfEmptyModule,
+            "@neondatabase/serverless": cfEmptyModule,
+            "@prisma/adapter-neon": cfEmptyModule,
+            "@vercel/analytics/react": cfEmptyModule,
+            "@vercel/speed-insights/next": cfEmptyModule,
           },
         }
       : {}),
   },
   serverExternalPackages: cfWorkersBuild ? [] : ["@prisma/client", ".prisma/client"],
   experimental: {
-    optimizePackageImports: ["lucide-react", "stripe"],
+    optimizePackageImports: ["lucide-react", "stripe", "country-state-city"],
   },
   async redirects() {
     return [
