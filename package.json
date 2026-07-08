@@ -36,6 +36,7 @@
     "@aws-sdk/s3-request-presigner": "^3.1034.0",
     "@opennextjs/cloudflare": "^1.20.1",
     "@prisma/client": "5.22.0",
+    "@swc/helpers": "^0.5.23",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "bcryptjs": "^3.0.3",
