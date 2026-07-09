@@ -44,7 +44,7 @@ export async function HomeCouponSection() {
         />
       )}
 
-      <div className="relative z-10 mx-auto flex min-h-[min(42vh,420px)] max-w-7xl items-center px-4 py-10 sm:px-6 sm:py-12 md:py-14 lg:py-16">
+      <div className="relative z-20 mx-auto flex min-h-[min(42vh,420px)] max-w-7xl items-center px-4 py-10 pb-14 sm:px-6 sm:py-12 sm:pb-16 md:py-14 md:pb-16 lg:py-16">
         <h2 id="home-coupon-heading" className="sr-only">
           {title}
         </h2>

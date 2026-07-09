@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import { useEffect, useId, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 let scrollLockCount = 0;
 let scrollLockPrevOverflow = "";
@@ -63,7 +64,9 @@ export function CenterModal({
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  return (
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <div
       className={`fixed inset-0 z-[100] flex items-center justify-center bg-ink/40 p-4 ${
         layer === "elevated" ? "!z-[110]" : ""
@@ -115,6 +118,7 @@ export function CenterModal({
         )}
         <div className={visibleTitle ? "mt-4" : "mt-0"}>{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

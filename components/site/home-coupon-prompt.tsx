@@ -33,7 +33,7 @@ export function HomeCouponPrompt({
 
   return (
     <>
-      <div className="mx-auto w-full max-w-3xl rounded-3xl border border-line/80 bg-white/80 px-4 py-10 shadow-[0_1px_0_rgba(15,17,20,0.04)] backdrop-blur-sm max-sm:px-3 sm:px-10 sm:py-12 md:px-12 md:py-14">
+      <div className="relative z-20 mx-auto w-full max-w-3xl rounded-3xl border border-line/80 bg-white/80 px-4 py-10 shadow-[0_1px_0_rgba(15,17,20,0.04)] backdrop-blur-sm max-sm:px-3 sm:px-10 sm:py-12 md:px-12 md:py-14">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted">
             {kicker}
@@ -58,7 +58,7 @@ export function HomeCouponPrompt({
               value={answer}
               onChange={(event) => setAnswer(event.target.value)}
               placeholder={inputPlaceholder}
-              className="w-full rounded-2xl border border-line bg-white px-5 py-3.5 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-ink/20 focus:ring-2 focus:ring-ink/8 sm:rounded-none sm:border-0 sm:border-r sm:border-line sm:py-4 sm:text-[15px] sm:focus:ring-0"
+              className="relative z-10 w-full scroll-mb-24 rounded-2xl border border-line bg-white px-5 py-3.5 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-ink/20 focus:ring-2 focus:ring-ink/8 sm:rounded-none sm:border-0 sm:border-r sm:border-line sm:py-4 sm:text-[15px] sm:focus:ring-0"
               aria-label={question}
             />
             <button
