@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import { isPrismaUniqueViolation, normalizeProductSlug } from "@/lib/admin-product-slug";
-import {
-  parseHomeSpotlightInput,
-  syncExclusiveHomeSpotlight,
-} from "@/lib/catalog-home-spotlight";
 import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
 import { normalizeSeriesSlug } from "@/lib/catalog";
 import { parseStorefrontPlacementPayload } from "@/lib/home-watch-sections";
@@ -120,41 +116,36 @@ export async function POST(req: Request) {
       );
     }
 
-    const created = await prisma.$transaction(async (tx) => {
-      const row = await tx.catalogProduct.create({
-        data: {
-          slug,
-          name,
-          seriesSlug: normalizeSeriesSlug(asString(body.seriesSlug)) || "digitemp",
-          categoryLabel: asString(body.categoryLabel).trim(),
-          shortDescription: asString(body.shortDescription),
-          description: asString(body.description),
-          price: Number(body.price) || 0,
-          compareAtPrice:
-            body.compareAtPrice === null || body.compareAtPrice === undefined
-              ? null
-              : Number(body.compareAtPrice) || null,
-          image: asString(body.image),
-          status: String(body.status ?? "active").toLowerCase() === "archived" ? "archived" : "active",
-          inStock: Boolean(body.inStock),
-          highlightsJson: JSON.stringify(
-            Array.isArray(body.highlights) ? (body.highlights as string[]) : [],
-          ),
-          specsJson: JSON.stringify(
-            Array.isArray(body.specs) ? (body.specs as ProductSpec[]) : [],
-          ),
-          galleryJson: JSON.stringify(
-            Array.isArray(body.gallery) ? (body.gallery as string[]) : [],
-          ),
-          detailJson: serializeDetailBlocksForDb(parseDetailBlocksPayload(body.detail)),
-          variantsJson: JSON.stringify(variants),
-          promoVideoJson: body.promoVideo ? JSON.stringify(body.promoVideo) : null,
-          homeSpotlight: parseHomeSpotlightInput(body),
-          ...parseStorefrontPlacementPayload(body),
-        },
-      });
-      await syncExclusiveHomeSpotlight(tx, row.id, row.homeSpotlight);
-      return row;
+    const created = await prisma.catalogProduct.create({
+      data: {
+        slug,
+        name,
+        seriesSlug: normalizeSeriesSlug(asString(body.seriesSlug)) || "digitemp",
+        categoryLabel: asString(body.categoryLabel).trim(),
+        shortDescription: asString(body.shortDescription),
+        description: asString(body.description),
+        price: Number(body.price) || 0,
+        compareAtPrice:
+          body.compareAtPrice === null || body.compareAtPrice === undefined
+            ? null
+            : Number(body.compareAtPrice) || null,
+        image: asString(body.image),
+        status: String(body.status ?? "active").toLowerCase() === "archived" ? "archived" : "active",
+        inStock: Boolean(body.inStock),
+        highlightsJson: JSON.stringify(
+          Array.isArray(body.highlights) ? (body.highlights as string[]) : [],
+        ),
+        specsJson: JSON.stringify(
+          Array.isArray(body.specs) ? (body.specs as ProductSpec[]) : [],
+        ),
+        galleryJson: JSON.stringify(
+          Array.isArray(body.gallery) ? (body.gallery as string[]) : [],
+        ),
+        detailJson: serializeDetailBlocksForDb(parseDetailBlocksPayload(body.detail)),
+        variantsJson: JSON.stringify(variants),
+        promoVideoJson: body.promoVideo ? JSON.stringify(body.promoVideo) : null,
+        ...parseStorefrontPlacementPayload(body),
+      },
     });
 
     const normalizedVariants = variants.map((v) => asString(v.id).trim()).filter(Boolean);

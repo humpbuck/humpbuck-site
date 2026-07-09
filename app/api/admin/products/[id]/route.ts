@@ -2,13 +2,9 @@ import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import {
   isPrismaUniqueViolation,
-  migrateCatalogProductSlug,
+  migrateCatalogProductSlugOnDb,
   normalizeProductSlug,
 } from "@/lib/admin-product-slug";
-import {
-  parseHomeSpotlightInput,
-  syncExclusiveHomeSpotlight,
-} from "@/lib/catalog-home-spotlight";
 import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
 import { normalizeSeriesSlug } from "@/lib/catalog";
 import {
@@ -75,7 +71,6 @@ function productUpdateData(
     detailJson: serializeDetailBlocksForDb(parseDetailBlocksPayload(body.detail)),
     variantsJson: JSON.stringify(variants),
     promoVideoJson: body.promoVideo ? JSON.stringify(body.promoVideo) : null,
-    homeSpotlight: parseHomeSpotlightInput(body),
     ...parseStorefrontPlacementPayload(body),
   };
 }
@@ -186,23 +181,13 @@ export async function PATCH(
     const data = productUpdateData(body, prev.status, slug, name, variants);
 
     if (slug !== prev.slug) {
-      await prisma.$transaction(async (tx) => {
-        await migrateCatalogProductSlug(tx, prev.slug, slug);
-        await syncExclusiveHomeSpotlight(tx, prev.id, data.homeSpotlight);
-        await tx.catalogProduct.update({
-          where: { id: prev.id },
-          data,
-        });
-      });
-    } else {
-      await prisma.$transaction(async (tx) => {
-        await syncExclusiveHomeSpotlight(tx, prev.id, data.homeSpotlight);
-        await tx.catalogProduct.update({
-          where: { id: prev.id },
-          data,
-        });
-      });
+      await migrateCatalogProductSlugOnDb(prev.slug, slug);
     }
+
+    await prisma.catalogProduct.update({
+      where: { id: prev.id },
+      data,
+    });
 
     await syncProductInventory(slug, variants, inventory);
 

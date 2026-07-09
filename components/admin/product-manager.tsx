@@ -6,9 +6,9 @@ import {
   AdminProductSidebar,
   type SidebarListedProduct,
 } from "@/components/admin/admin-product-sidebar";
+import { AdminHomeSpotlightPicker } from "@/components/admin/admin-home-spotlight-picker";
 import {
   StorefrontPlacementFields,
-  HomeSpotlightField,
   applyStorefrontPlacementChange,
   applyStorefrontSeriesChange,
   applyStorefrontSubcategoryChange,
@@ -116,7 +116,6 @@ type EditableProduct = {
   storefrontCategory: string;
   storefrontSubcategory: string;
   storefrontSeries: string;
-  homeSpotlight: boolean;
   inventory: Record<string, { quantity: string; lowStockThreshold: string }>;
 };
 
@@ -186,7 +185,6 @@ function buildEditableProduct(
     storefrontCategory: placement.storefrontCategory ?? "",
     storefrontSubcategory: placement.storefrontSubcategory ?? "",
     storefrontSeries: placement.storefrontSeries ?? "",
-    homeSpotlight: Boolean(p.homeSpotlight),
     inventory: map,
   };
 }
@@ -237,7 +235,6 @@ function newProductDraft(): EditableProduct {
     storefrontCategory: "",
     storefrontSubcategory: "",
     storefrontSeries: "",
-    homeSpotlight: false,
     inventory: {
       "style-01": { quantity: "", lowStockThreshold: "5" },
     },
@@ -325,6 +322,10 @@ export function ProductManager({
   const [messageType, setMessageType] = useState<"success" | "error" | "info">("info");
   const [busy, setBusy] = useState(false);
   const [messageTimer, setMessageTimer] = useState<number | null>(null);
+  const [homeSpotlightProductId, setHomeSpotlightProductId] = useState<string | null>(() => {
+    const spotlight = initialProducts.find((p) => p.homeSpotlight && p.id);
+    return spotlight?.id ?? null;
+  });
 
   useEffect(() => {
     return () => {
@@ -351,6 +352,18 @@ export function ProductManager({
       storefrontSeries: product.storefrontSeries,
     }));
   }, [products]);
+
+  const savedProductsForSpotlight = useMemo(
+    () =>
+      products
+        .filter((product): product is EditableProduct & { id: string } => Boolean(product.id))
+        .map((product) => ({
+          id: product.id,
+          slug: product.slug,
+          name: product.name,
+        })),
+    [products],
+  );
 
   function clearMessageTimer() {
     if (messageTimer != null) {
@@ -540,7 +553,6 @@ export function ProductManager({
       storefrontCategory: current.storefrontCategory.trim(),
       storefrontSubcategory: current.storefrontSubcategory.trim(),
       storefrontSeries: current.storefrontSeries.trim(),
-      homeSpotlight: current.homeSpotlight,
       categoryLabel: current.categoryLabel.trim(),
       shortDescription: current.shortDescription.trim(),
       description: current.description.trim(),
@@ -598,32 +610,19 @@ export function ProductManager({
         return;
       }
       const savedSlug = data.slug?.trim() || current.slug.trim();
-      const savedHomeSpotlight = current.homeSpotlight;
       if (!current.id && data.id) {
         setProducts((prev) =>
           prev.map((p, index) => {
-            if (index !== selectedIndex || p.id) {
-              return savedHomeSpotlight ? { ...p, homeSpotlight: false } : p;
-            }
-            return {
-              ...p,
-              id: data.id!,
-              slug: savedSlug,
-              image: mainImage,
-              inStock,
-              homeSpotlight: savedHomeSpotlight,
-            };
+            if (index !== selectedIndex || p.id) return p;
+            return { ...p, id: data.id!, slug: savedSlug, image: mainImage, inStock };
           }),
         );
         setSelected(data.id);
       } else if (current.id) {
         setProducts((prev) =>
-          prev.map((p) => {
-            if (p.id === current.id) {
-              return { ...p, slug: savedSlug, image: mainImage, inStock, homeSpotlight: savedHomeSpotlight };
-            }
-            return savedHomeSpotlight ? { ...p, homeSpotlight: false } : p;
-          }),
+          prev.map((p) =>
+            p.id === current.id ? { ...p, slug: savedSlug, image: mainImage, inStock } : p,
+          ),
         );
       }
       setFlashMessage("✅ Saved successfully.", "success");
@@ -658,10 +657,42 @@ export function ProductManager({
           p.id === current.id ? { ...p, inStock: false, status: "archived" } : p,
         ),
       );
+      if (current.id === homeSpotlightProductId) {
+        setHomeSpotlightProductId(null);
+        void fetch("/api/admin/products/home-spotlight", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId: null }),
+        });
+      }
       setFlashMessage("Archived.", "success");
       startTransition(() => router.refresh());
     } catch {
       setFlashMessage("Archive failed.", "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function saveHomeSpotlight(productId: string | null) {
+    setBusy(true);
+    setFlashMessage("");
+    try {
+      const res = await fetch("/api/admin/products/home-spotlight", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId }),
+      });
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+      if (!res.ok) {
+        setFlashMessage(data.error || "Failed to update homepage spotlight.", "error");
+        return;
+      }
+      setHomeSpotlightProductId(productId);
+      setFlashMessage("Homepage spotlight updated.", "success");
+      startTransition(() => router.refresh());
+    } catch {
+      setFlashMessage("Failed to update homepage spotlight.", "error");
     } finally {
       setBusy(false);
     }
@@ -684,6 +715,14 @@ export function ProductManager({
       }
       setProducts((prev) => prev.filter((_, index) => index !== selectedIndex));
       setSelected(sidebarProducts.find((p) => p.selectionKey !== selected)?.selectionKey ?? null);
+      if (current.id === homeSpotlightProductId) {
+        setHomeSpotlightProductId(null);
+        void fetch("/api/admin/products/home-spotlight", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId: null }),
+        });
+      }
       setFlashMessage("Deleted forever.", "success");
       startTransition(() => router.refresh());
     } catch {
@@ -696,6 +735,12 @@ export function ProductManager({
   return (
     <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
       <aside className="rounded-2xl border border-line bg-white/50 p-4">
+        <AdminHomeSpotlightPicker
+          products={savedProductsForSpotlight}
+          value={homeSpotlightProductId}
+          disabled={busy}
+          onChange={saveHomeSpotlight}
+        />
         <div className="mb-3 flex items-center justify-between">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
             Products
@@ -780,10 +825,6 @@ export function ProductManager({
                 onCategoryLabelChange={(categoryLabel) =>
                   updateCurrent((p) => ({ ...p, categoryLabel }))
                 }
-              />
-              <HomeSpotlightField
-                checked={current.homeSpotlight}
-                onChange={(homeSpotlight) => updateCurrent((p) => ({ ...p, homeSpotlight }))}
               />
               <LabeledInput
                 label="Price (USD)"

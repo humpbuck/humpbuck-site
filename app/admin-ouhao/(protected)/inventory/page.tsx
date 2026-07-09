@@ -1,8 +1,8 @@
 import { AdminBackLink } from "@/components/admin/admin-back-link";
+import { ProductManagerLoader } from "@/components/admin/product-manager-loader";
 import { adminPath } from "@/lib/admin-path";
 import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
 import { prisma } from "@/lib/prisma";
-import { ProductManager } from "@/components/admin/product-manager";
 
 const EMPTY_JSON = JSON.stringify([]);
 
@@ -23,7 +23,7 @@ export default async function AdminInventoryPage() {
       </p>
 
       <div className="mt-8">
-        <ProductManager
+        <ProductManagerLoader
           initialProducts={products.map((p) => ({
             id: p.id,
             slug: p.slug,

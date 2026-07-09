@@ -1,18 +1,21 @@
-import type { Prisma } from "@prisma/client";
+import "server-only";
 
-export function parseHomeSpotlightInput(body: Record<string, unknown>): boolean {
-  return body.homeSpotlight === true;
-}
+import { prisma } from "@/lib/prisma";
+import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
+import { revalidateCatalogStorefront } from "@/lib/revalidate-catalog";
 
 /** Only one product can be the homepage hero spotlight at a time. */
-export async function syncExclusiveHomeSpotlight(
-  tx: Prisma.TransactionClient,
-  productId: string,
-  enabled: boolean,
-): Promise<void> {
-  if (!enabled) return;
-  await tx.catalogProduct.updateMany({
-    where: { id: { not: productId }, homeSpotlight: true },
+export async function setHomeSpotlightProduct(productId: string | null): Promise<void> {
+  await ensureCatalogProductSchema();
+  await prisma.catalogProduct.updateMany({
+    where: { homeSpotlight: true },
     data: { homeSpotlight: false },
   });
+  if (productId) {
+    await prisma.catalogProduct.update({
+      where: { id: productId },
+      data: { homeSpotlight: true },
+    });
+  }
+  revalidateCatalogStorefront();
 }
