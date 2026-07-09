@@ -66,8 +66,8 @@ export function PaymentBrandButtons({
   onPayPal: () => void;
 }) {
   const t = useTranslations("Payment");
-  const stripeDisabled = disabled || loading !== null;
-  const paypalDisabled = disabled || loading !== null;
+  const stripeDisabled = disabled || loading === "stripe";
+  const paypalDisabled = disabled || loading === "paypal";
 
   return (
     <div className="space-y-3.5">

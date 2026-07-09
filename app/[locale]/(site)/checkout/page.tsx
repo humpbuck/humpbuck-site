@@ -102,6 +102,25 @@ export default function CheckoutPage() {
   const couponDiscount = appliedCoupon ? appliedCoupon.discountAmount : 0;
   const total = Math.max(0, subtotal + shippingPrice - couponDiscount);
 
+  async function checkoutFetch(input: string, init: RequestInit) {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 30_000);
+    try {
+      return await fetch(input, { ...init, signal: controller.signal });
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        throw new Error(t("paymentTimeout"));
+      }
+      throw error;
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  }
+
+  function redirectToPayment(url: string) {
+    window.location.replace(url);
+  }
+
   async function ensureDraftOrder() {
     if (!customerEmail.trim()) throw new Error(t("emailRequired"));
     const res = await fetch("/api/checkout/order", {
@@ -151,7 +170,7 @@ export default function CheckoutPage() {
     setLoading("stripe");
     try {
       const draftOrderId = orderId ?? (await ensureDraftOrder());
-      const res = await fetch("/api/checkout/stripe", {
+      const res = await checkoutFetch("/api/checkout/stripe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -163,10 +182,10 @@ export default function CheckoutPage() {
       });
       const data = (await res.json()) as { ok?: boolean; url?: string; error?: string };
       if (!res.ok || !data.ok || !data.url) throw new Error(data.error || t("stripeError"));
-      window.location.href = data.url;
+      redirectToPayment(data.url);
+      return;
     } catch (e) {
       setPaymentError(e instanceof Error ? e.message : t("stripeError"));
-    } finally {
       setLoading(null);
     }
   }
@@ -180,7 +199,7 @@ export default function CheckoutPage() {
     setLoading("paypal");
     try {
       const draftOrderId = orderId ?? (await ensureDraftOrder());
-      const res = await fetch("/api/checkout/paypal", {
+      const res = await checkoutFetch("/api/checkout/paypal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -193,10 +212,10 @@ export default function CheckoutPage() {
       });
       const data = (await res.json()) as { ok?: boolean; approvalUrl?: string; error?: string };
       if (!res.ok || !data.ok || !data.approvalUrl) throw new Error(data.error || t("paypalError"));
-      window.location.href = data.approvalUrl;
+      redirectToPayment(data.approvalUrl);
+      return;
     } catch (e) {
       setPaymentError(e instanceof Error ? e.message : t("paypalError"));
-    } finally {
       setLoading(null);
     }
   }

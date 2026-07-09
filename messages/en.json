@@ -288,6 +288,7 @@
     "couponNetwork": "Unable to validate coupon.",
     "stripeError": "Stripe not configured",
     "paypalError": "PayPal checkout failed",
+    "paymentTimeout": "Payment gateway timed out — please try again",
     "draftOrderFailed": "Unable to create draft order",
     "orderLine": "{name} × {qty}",
     "billingTitle": "Billing address",

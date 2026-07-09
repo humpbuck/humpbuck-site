@@ -22,24 +22,30 @@ export async function POST(req: Request) {
 
   if (body.action === "create") {
     if (!body.totalUsd || !body.returnUrl || !body.cancelUrl || !body.orderId) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      return NextResponse.json({ ok: false, error: "Missing required fields" }, { status: 400 });
     }
 
-    const successUrl = new URL(body.returnUrl);
-    successUrl.searchParams.set("orderId", body.orderId);
-    successUrl.searchParams.set("provider", "paypal");
+    try {
+      const successUrl = new URL(body.returnUrl);
+      successUrl.searchParams.set("orderId", body.orderId);
+      successUrl.searchParams.set("provider", "paypal");
 
-    const cancelUrl = new URL(body.cancelUrl);
-    cancelUrl.searchParams.set("payment", "cancelled");
-    cancelUrl.searchParams.set("provider", "paypal");
-    cancelUrl.searchParams.set("orderId", body.orderId);
+      const cancelUrl = new URL(body.cancelUrl);
+      cancelUrl.searchParams.set("payment", "cancelled");
+      cancelUrl.searchParams.set("provider", "paypal");
+      cancelUrl.searchParams.set("orderId", body.orderId);
 
-    const created = await paypalCreateOrder(body.totalUsd, successUrl.toString(), cancelUrl.toString());
-    await prisma.order.updateMany({
-      where: { id: body.orderId, status: "pending_payment" },
-      data: { provider: "paypal", providerRef: created.id },
-    });
-    return NextResponse.json({ ok: true, paypalOrderId: created.id, approvalUrl: created.approvalUrl });
+      const created = await paypalCreateOrder(body.totalUsd, successUrl.toString(), cancelUrl.toString());
+      await prisma.order.updateMany({
+        where: { id: body.orderId, status: "pending_payment" },
+        data: { provider: "paypal", providerRef: created.id },
+      });
+      return NextResponse.json({ ok: true, paypalOrderId: created.id, approvalUrl: created.approvalUrl });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const status = message.includes("not configured") ? 503 : 502;
+      return NextResponse.json({ ok: false, error: message }, { status });
+    }
   }
 
   if (body.action === "capture") {
