@@ -147,6 +147,7 @@ export default function CheckoutPage() {
       setPaymentError(t("emailRequired"));
       return;
     }
+    setPaymentError(null);
     setLoading("stripe");
     try {
       const draftOrderId = orderId ?? (await ensureDraftOrder());
@@ -163,6 +164,8 @@ export default function CheckoutPage() {
       const data = (await res.json()) as { ok?: boolean; url?: string; error?: string };
       if (!res.ok || !data.ok || !data.url) throw new Error(data.error || t("stripeError"));
       window.location.href = data.url;
+    } catch (e) {
+      setPaymentError(e instanceof Error ? e.message : t("stripeError"));
     } finally {
       setLoading(null);
     }
@@ -173,6 +176,7 @@ export default function CheckoutPage() {
       setPaymentError(t("emailRequired"));
       return;
     }
+    setPaymentError(null);
     setLoading("paypal");
     try {
       const draftOrderId = orderId ?? (await ensureDraftOrder());
@@ -190,6 +194,8 @@ export default function CheckoutPage() {
       const data = (await res.json()) as { ok?: boolean; approvalUrl?: string; error?: string };
       if (!res.ok || !data.ok || !data.approvalUrl) throw new Error(data.error || t("paypalError"));
       window.location.href = data.approvalUrl;
+    } catch (e) {
+      setPaymentError(e instanceof Error ? e.message : t("paypalError"));
     } finally {
       setLoading(null);
     }
@@ -402,6 +408,12 @@ export default function CheckoutPage() {
           {getTaxIdRequirement(shipAddress.country ? shipAddress.country.trim().toUpperCase() : null) ? (
             <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
               {t("taxIdHint")}
+            </p>
+          ) : null}
+
+          {paymentError ? (
+            <p className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700" role="alert">
+              {paymentError}
             </p>
           ) : null}
 

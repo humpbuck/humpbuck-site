@@ -124,43 +124,40 @@ export async function POST(req: Request) {
   });
 
   try {
-    const order = await prisma.$transaction(async (tx) => {
-      const created = await tx.order.create({
-        data: {
-          userId,
-          email: body.email!,
-          status: "pending_payment",
-          provider: "pending",
-          totalCents,
-          currency: "usd",
-          billingJson: body.billing ? JSON.stringify(body.billing) : null,
-          shippingJson: body.shipping ? JSON.stringify(body.shipping) : null,
-          discountCents,
-          trafficSource: typeof body.trafficSource === "string" ? body.trafficSource : "unknown",
-          couponCode: body.couponCode ?? null,
-        },
-      });
+    // D1 does not support interactive `$transaction` callbacks — create order then line items.
+    const order = await prisma.order.create({
+      data: {
+        userId,
+        email: body.email!,
+        status: "pending_payment",
+        provider: "pending",
+        totalCents,
+        currency: "usd",
+        billingJson: body.billing ? JSON.stringify(body.billing) : null,
+        shippingJson: body.shipping ? JSON.stringify(body.shipping) : null,
+        discountCents,
+        trafficSource: typeof body.trafficSource === "string" ? body.trafficSource : "unknown",
+        couponCode: body.couponCode ?? null,
+      },
+    });
 
-      await tx.orderItemSnapshot.createMany({
-        data: normalizedItems.map((item) => ({
-          orderId: created.id,
-          productSlug: item.slug,
-          productName: item.name,
-          productImage: item.productImage,
-          variantId: item.variantId,
-          variantLabel: item.variantLabel,
-          variantImage: item.variantImage,
-          qty: item.qty,
-          unitPriceCents: item.unitPriceCents,
-          lineTotalCents: item.lineTotalCents,
-          currency: "usd",
-          productSnapshotJson: item.productSnapshot
-            ? JSON.stringify(item.productSnapshot)
-            : null,
-        })),
-      });
-
-      return created;
+    await prisma.orderItemSnapshot.createMany({
+      data: normalizedItems.map((item) => ({
+        orderId: order.id,
+        productSlug: item.slug,
+        productName: item.name,
+        productImage: item.productImage,
+        variantId: item.variantId,
+        variantLabel: item.variantLabel,
+        variantImage: item.variantImage,
+        qty: item.qty,
+        unitPriceCents: item.unitPriceCents,
+        lineTotalCents: item.lineTotalCents,
+        currency: "usd",
+        productSnapshotJson: item.productSnapshot
+          ? JSON.stringify(item.productSnapshot)
+          : null,
+      })),
     });
 
     await notifyMerchantOrderPlaced(order.id);

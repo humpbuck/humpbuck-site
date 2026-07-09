@@ -44,10 +44,17 @@ export function createD1PrismaClient(db: D1DatabaseBinding): PrismaClientType {
 
 export function createAppPrismaClient(): PrismaClientType {
   const d1 = tryGetCloudflareD1();
-  if (!d1) {
-    throw new Error(
-      "D1 binding `DB` is not available. Check wrangler.jsonc database_id and restart `npm run dev`.",
-    );
+  if (d1) {
+    return createD1PrismaClient(d1);
   }
-  return createD1PrismaClient(d1);
+  if (process.env.NODE_ENV === "development") {
+    // `npm run dev` has no D1 binding — fall back to local SQLite (`prisma/dev.db`).
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { createLocalFilePrismaClient } =
+      require("@/lib/prisma-local") as typeof import("@/lib/prisma-local");
+    return createLocalFilePrismaClient();
+  }
+  throw new Error(
+    "D1 binding `DB` is not available. Check wrangler.jsonc database_id and restart `npm run dev`.",
+  );
 }
