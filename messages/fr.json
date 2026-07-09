@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - Montres sélectionnées | Automatiques & Quartz premium",
-    "descriptionDefault": "Montres automatiques et quartz sélectionnées — mouvements premium, cadrans squelette et finitions remarquables. Pièces choisies avec paiement sécurisé et livraison mondiale.",
-    "ogTitle": "HUMPBUCK - Montres sélectionnées",
-    "ogDescription": "Montres automatiques et quartz premium, sélectionnées pour le quotidien et les collectionneurs. Paiement sécurisé · livraison mondiale."
+    "titleDefault": "HUMPBUCK Watches - Cadeaux porteurs de temps et d'amour",
+    "descriptionDefault": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
+    "ogTitle": "HUMPBUCK Watches - Cadeaux porteurs de temps et d'amour",
+    "ogDescription": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -51,7 +51,7 @@
     "blog": "Blog"
   },
   "Footer": {
-    "tagline": "Montres mécaniques et quartz sélectionnées, paiement sécurisé et livraison mondiale.",
+    "tagline": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
     "highlights": "Paiements sécurisés · Livraison mondiale · Assistance 24h/24",
     "copyright": "© {year} HUMPBUCK. Tous droits réservés.",
     "disclaimer": "Les prix, taxes et frais de livraison sont confirmés au paiement. Pour la livraison, les remboursements, la confidentialité et les conditions, consultez Assistance ci-dessus. Questions :",
@@ -76,10 +76,10 @@
     "socialTiktokAria": "HUMPBUCK sur TikTok"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - Montres sélectionnées | Automatiques & Quartz premium",
-    "metaDescription": "Montres automatiques et quartz sélectionnées chez HUMPBUCK — mouvements premium, cadrans squelette et calibres quartz précis. Pièces choisies avec livraison mondiale.",
-    "ogTitle": "HUMPBUCK - Montres sélectionnées",
-    "ogDescription": "Montres automatiques et quartz premium, sélectionnées pour le quotidien et les collectionneurs. Paiement sécurisé · livraison mondiale.",
+    "metaTitle": "HUMPBUCK Watches - Cadeaux porteurs de temps et d'amour",
+    "metaDescription": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
+    "ogTitle": "HUMPBUCK Watches - Cadeaux porteurs de temps et d'amour",
+    "ogDescription": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
     "heroBadge": "Série · DIGI-TEMP",
     "heroLead1": "Montre ana-digital multifonction — double affichage, fonctions complètes.",
     "heroLead2": "Heure, date, alarme, température extérieure et chronomètre dans un boîtier compact en acier inoxydable — une lisibilité nette au quotidien.",
@@ -117,15 +117,15 @@
     "trustLaunchBody": "Programmes usine pour les marques horlogères en croissance.",
     "newsletterKicker": "Actualités",
     "newsletterTitle": "Réapprovisionnements DIGI-TEMP et nouveautés RM-TONNEAU",
-    "newsletterBody": "Beauté mécanique brute pour l'homme en mouvement.",
-    "mechanicalHeroBadge": "Sélection · Mécanique",
-    "mechanicalHeroTitle": "Montres mécaniques",
-    "mechanicalHeroLead": "Beauté mécanique brute pour l'homme en mouvement.",
-    "mechanicalHeroChipAutomatic": "Automatique",
-    "mechanicalHeroChipSkeleton": "Cadrans squelette",
-    "mechanicalHeroChipFinishing": "Finitions visibles",
+    "newsletterBody": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
+    "mechanicalHeroBadge": "Cadeaux · Temps et amour",
+    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroLead": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
+    "mechanicalHeroChipAutomatic": "Savoir-faire",
+    "mechanicalHeroChipSkeleton": "Étapes",
+    "mechanicalHeroChipFinishing": "Compagnie",
     "mechanicalHeroCtaShop": "Boutique",
-    "mechanicalHeroImageAlt": "Gros plan d'un mouvement mécanique squelette avec engrenages et ponts",
+    "mechanicalHeroImageAlt": "Bannière d’accueil HUMPBUCK — garde-temps premium artisanaux",
     "categoryKicker": "Acheter par mouvement",
     "categoryHeading": "Montre mécanique à la une",
     "categoryMechanicalKicker": "Automatique · Squelette",
@@ -140,7 +140,7 @@
     "categoryQuartzImageAlt": "Montre quartz ana-digi HUMPBUCK au poignet",
     "recommendedKicker": "Rechercher par",
     "recommendedTitle": "Montres recommandées",
-    "recommendedIntro": "Pièces mécaniques choisies — cadrans squelette, automatiques et finitions remarquables.",
+    "recommendedIntro": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
     "recommendedViewAll": "Voir le mécanique",
     "mechanicalWatchesTitle": "Montres mécaniques",
     "mechanicalWatchesShop": "Voir le mécanique",
@@ -203,17 +203,17 @@
     "successClose": "Fermer"
   },
   "Shop": {
-    "metaTitle": "Acheter des montres mécaniques",
-    "metaDescription": "Parcourez les montres mécaniques et quartz HUMPBUCK — filtrez par mouvement, styles homme/femme et modèles ultra-fins. Automatiques et squelettes abordables, paiement sécurisé.",
-    "ogTitle": "Acheter des montres mécaniques · HUMPBUCK",
+    "metaTitle": "Acheter des montres cadeaux porteuses de sens",
+    "metaDescription": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
+    "ogTitle": "Acheter des montres cadeaux porteuses de sens · HUMPBUCK",
     "kicker": "Catalogue",
-    "title": "Beauté mécanique brute pour l'homme en mouvement.",
+    "title": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
     "intro": "Parcourez par collection : DIGI-TEMP (phare ana-digital), RM-TONNEAU (quartz tonneau) et RD-ASTRAL. Les filtres se synchronisent avec l'URL pour le partage.",
     "filterAll": "Tout",
     "showingSeries": "Affichage : {series} ({count, plural, one {# article} other {# articles}})",
     "emptyCategory": "Rien pour l'instant.",
     "clearFilter": "Effacer le filtre",
-    "ogDescription": "Beauté mécanique brute pour l'homme en mouvement. Mon objectif : offrir des montres mécaniques de qualité et abordables à tous.",
+    "ogDescription": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
     "filterPanelTitle": "Filtrer",
     "filterGroupMovement": "Mouvement",
     "filterGroupAudience": "Public",
@@ -768,8 +768,8 @@
     "backHome": "Retour à l'accueil"
   },
   "AboutPage": {
-    "metaTitle": "À propos — HUMPBUCK Montres mécaniques",
-    "metaDescription": "Pourquoi HUMPBUCK existe — mon objectif : des montres mécaniques de qualité et abordables pour tous. Beauté mécanique brute pour l'homme en mouvement. Contact par e-mail ou WhatsApp.",
+    "metaTitle": "À propos — HUMPBUCK Watches",
+    "metaDescription": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
     "kickerBrand": "Marque",
     "heroTitle": "HUMPBUCK — l’utilité d’abord, le spectacle ensuite.",
     "heroLead": "Nous combinons boutique directe et programmes usine pour qu’un lancement puisse évoluer vers une production répétable sans resourcer chaque saison.",
@@ -820,5 +820,9 @@
     "backupLinkHint": "Si la vidéo ci-dessus ne se lit pas, ouvrez ce lien de secours :",
     "openBackupVideo": "Ouvrir la vidéo de secours",
     "backupIframeTitleSuffix": "secours YouTube"
+  },
+  "BlogPage": {
+    "metaDescription": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
+    "intro": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie."
   }
 }

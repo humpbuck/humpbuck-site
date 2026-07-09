@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - ساعات مختارة | أوتوماتيك وكوartz فاخرة",
-    "descriptionDefault": "ساعات أوتوماتيك وكوartz مختارة — حركات فاخرة، هياكل مفتوحة وتشطيبات مميزة. قطع مختارة بعناية مع دفع آمن وشحن عالمي.",
-    "ogTitle": "HUMPBUCK - ساعات مختارة",
-    "ogDescription": "ساعات أوتوماتيك وكوartz فاخرة للاستخدام اليومي ولهواة الجمع. دفع آمن · شحن عالمي."
+    "titleDefault": "HUMPBUCK Watches - هدايا ذات معنى للوقت والحب",
+    "descriptionDefault": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
+    "ogTitle": "HUMPBUCK Watches - هدايا ذات معنى للوقت والحب",
+    "ogDescription": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -51,7 +51,7 @@
     "blog": "المدونة"
   },
   "Footer": {
-    "tagline": "ساعات ميكانيكية وكوارتز منتقاة مع دفع آمن وشحن عالمي.",
+    "tagline": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
     "highlights": "مدفوعات آمنة · شحن عالمي · دعم على مدار الساعة طوال أيام الأسبوع",
     "copyright": "© {year} HUMPBUCK. جميع الحقوق محفوظة.",
     "disclaimer": "يتم تأكيد الأسعار والضرائب والشحن عند الدفع. للشحن والمبالغ المستردة والخصوصية والشروط، انظر الدعم أعلاه. الأسئلة:",
@@ -76,10 +76,10 @@
     "socialTiktokAria": "HUMPBUCK على TikTok"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - ساعات مختارة | أوتوماتيك وكوartz فاخرة",
-    "metaDescription": "ساعات أوتوماتيك وكوartz مختارة في HUMPBUCK — حركات ميكانيكية فاخرة، هياكل مفتوحة ومعاير كوartz دقيقة. قطع مختارة بعناية مع شحن عالمي.",
-    "ogTitle": "HUMPBUCK - ساعات مختارة",
-    "ogDescription": "ساعات أوتوماتيك وكوartz فاخرة للاستخدام اليومي ولهواة الجمع. دفع آمن · شحن عالمي.",
+    "metaTitle": "HUMPBUCK Watches - هدايا ذات معنى للوقت والحب",
+    "metaDescription": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
+    "ogTitle": "HUMPBUCK Watches - هدايا ذات معنى للوقت والحب",
+    "ogDescription": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
     "heroBadge": "سلسلة · DIGI-TEMP",
     "heroLead1": "ساعة أنا-ديجي متعددة الوظائف — شاشتان، مجموعة ميزات كاملة.",
     "heroLead2": "الوقت والتاريخ والمنبّه ودرجة الحرارة الخارجية وأوضاع ساعة التوقيت في علبة فولاذ مقاوم للصدأ مدمجة — وضوح قراءة كقمرة قيادة للارتداء اليومي.",
@@ -117,15 +117,15 @@
     "trustLaunchBody": "برامج مصنع لعلامات الساعات الناشئة.",
     "newsletterKicker": "التحديثات",
     "newsletterTitle": "إعادة تخزين DIGI-TEMP وإصدارات RM-TONNEAU",
-    "newsletterBody": "جمال ميكانيكي خام للرجل في حركة.",
-    "mechanicalHeroBadge": "منتقى · ميكانيكي",
-    "mechanicalHeroTitle": "ساعات ميكانيكية",
-    "mechanicalHeroLead": "جمال ميكانيكي خام للرجل في حركة.",
-    "mechanicalHeroChipAutomatic": "أوتوماتيك",
-    "mechanicalHeroChipSkeleton": "هياكل مفتوحة",
-    "mechanicalHeroChipFinishing": "تشطيب ظاهر",
+    "newsletterBody": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
+    "mechanicalHeroBadge": "هدايا · الوقت والحب",
+    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroLead": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
+    "mechanicalHeroChipAutomatic": "حرفية",
+    "mechanicalHeroChipSkeleton": "محطات",
+    "mechanicalHeroChipFinishing": "رفقة",
     "mechanicalHeroCtaShop": "تسوق",
-    "mechanicalHeroImageAlt": "لقطة مقربة لحركة ميكانيكية مفتوحة الهيكل مع تروس وجسور",
+    "mechanicalHeroImageAlt": "لافتة الصفحة الرئيسية لـ HUMPBUCK — ساعات فاخرة مصنوعة يدويًا",
     "categoryKicker": "تسوق حسب الحركة",
     "categoryHeading": "ساعة ميكانيكية مميزة",
     "categoryMechanicalKicker": "أوتوماتيك · مفتوح الهيكل",
@@ -140,7 +140,7 @@
     "categoryQuartzImageAlt": "ساعة HUMPBUCK ana-digi كوارتز على المعصم",
     "recommendedKicker": "ابحث حسب",
     "recommendedTitle": "ساعات موصى بها",
-    "recommendedIntro": "قطع ميكانيكية منتقاة — هياكل مفتوحة، أوتوماتيك وتشطيب بارز.",
+    "recommendedIntro": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
     "recommendedViewAll": "تسوق ميكانيكي",
     "mechanicalWatchesTitle": "ساعات ميكانيكية",
     "mechanicalWatchesShop": "تسوق ميكانيكي",
@@ -203,17 +203,17 @@
     "successClose": "إغلاق"
   },
   "Shop": {
-    "metaTitle": "تسوق ساعات ميكانيكية",
-    "metaDescription": "تصفّح ساعات HUMPBUCK الميكانيكية والكوارتز — رشّح حسب الحركة، أنماط الرجال والنساء والنماذج فائقة النحافة. أوتوماتيك وهياكل مفتوحة بأسعار مناسبة ودفع آمن.",
-    "ogTitle": "تسوق ساعات ميكانيكية · HUMPBUCK",
+    "metaTitle": "تسوق ساعات هدايا ذات معنى",
+    "metaDescription": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
+    "ogTitle": "تسوق ساعات هدايا ذات معنى · HUMPBUCK",
     "kicker": "الكتالوج ",
-    "title": "جمال ميكانيكي خام للرجل في حركة.",
+    "title": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
     "intro": "تصفّح حسب المجموعة: DIGI-TEMP (السلسلة الرئيسية أنالوج-رقمية)، RM-TONNEAU (كوارتز barrel) وRD-ASTRAL. تُزامَن عوامل التصفية مع عنوان URL للمشاركة.",
     "filterAll": "جميع الجهات",
     "showingSeries": "عرض {series} ({count, plural, one {عنصر #} other {# عناصر}})",
     "emptyCategory": "لا شيء هنا حتى الآن. ",
     "clearFilter": "مسح عامل التصفية",
-    "ogDescription": "جمال ميكانيكي خام للرجل في حركة. هدفي تقديم ساعات ميكانيكية عالية الجودة وبأسعار مناسبة للجميع.",
+    "ogDescription": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
     "filterPanelTitle": "تصفية",
     "filterGroupMovement": "الحركة",
     "filterGroupAudience": "الجمهور",
@@ -768,8 +768,8 @@
     "backHome": "العودة إلى الصفحة الرئيسية"
   },
   "AboutPage": {
-    "metaTitle": "من نحن — HUMPBUCK ساعات ميكانيكية",
-    "metaDescription": "لماذا HUMPBUCK — هدفي ساعات ميكانيكية عالية الجودة وبأسعار مناسبة للجميع. جمال ميكانيكي خام للرجل في حركة. تواصل عبر البريد أو WhatsApp.",
+    "metaTitle": "من نحن — HUMPBUCK Watches",
+    "metaDescription": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
     "kickerBrand": "العلامة",
     "heroTitle": "HUMPBUCK — المنفعة أولًا، ثم المظهر.",
     "heroLead": "نشغّل متجرًا مباشرًا وبرامج مصنع ليتحوّل إطلاق واحد إلى إنتاج متكرّر دون إعادة البحث عن مصادر كل موسم.",
@@ -820,5 +820,9 @@
     "backupLinkHint": "إذا لم يعمل الفيديو أعلاه، افتحوا رابط الفيديو الاحتياطي:",
     "openBackupVideo": "فتح الفيديو الاحتياطي",
     "backupIframeTitleSuffix": "نسخة احتياطية YouTube"
+  },
+  "BlogPage": {
+    "metaDescription": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
+    "intro": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة."
   }
 }

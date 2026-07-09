@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - Curated Timepieces | Premium Automatic & Quartz Watches",
-    "descriptionDefault": "Curated automatic and quartz watches — premium movements, skeleton dials, ana-digi quartz, and standout finishing. Handpicked timepieces with secure checkout and global shipping.",
-    "ogTitle": "HUMPBUCK - Curated Timepieces",
-    "ogDescription": "Premium automatic and quartz watches, curated for everyday wear and collectors. Secure checkout · global shipping."
+    "titleDefault": "HUMPBUCK Watches - Meaningful Gifts of Time and Love",
+    "descriptionDefault": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
+    "ogTitle": "HUMPBUCK Watches - Meaningful Gifts of Time and Love",
+    "ogDescription": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments."
   },
   "DisplayCurrency": {
     "label": "Display currency",
@@ -53,7 +53,7 @@
     "accountFallback": "Account"
   },
   "Footer": {
-    "tagline": "Curated premium automatic and quartz watches with secure checkout and global shipping.",
+    "tagline": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
     "highlights": "Secure payments · Global shipping · 24/7 support",
     "socialFacebookAria": "HUMPBUCK on Facebook",
     "socialInstagramAria": "HUMPBUCK on Instagram",
@@ -74,18 +74,18 @@
     "termsOfService": "Terms of service"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - Curated Timepieces | Premium Automatic & Quartz Watches",
-    "metaDescription": "Shop curated automatic and quartz watches at HUMPBUCK — premium mechanical movements, skeleton dials, and precise quartz calibers. Handpicked timepieces with global shipping.",
-    "ogTitle": "HUMPBUCK - Curated Timepieces",
-    "ogDescription": "Premium automatic and quartz watches, curated for everyday wear and collectors. Secure checkout · global shipping.",
-    "mechanicalHeroBadge": "Curated · Mechanical",
-    "mechanicalHeroTitle": "Mechanical Watches",
-    "mechanicalHeroLead": "Raw mechanical beauty for the man in motion.",
-    "mechanicalHeroChipAutomatic": "Automatic",
-    "mechanicalHeroChipSkeleton": "Skeleton dials",
-    "mechanicalHeroChipFinishing": "Visible finishing",
+    "metaTitle": "HUMPBUCK Watches - Meaningful Gifts of Time and Love",
+    "metaDescription": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
+    "ogTitle": "HUMPBUCK Watches - Meaningful Gifts of Time and Love",
+    "ogDescription": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
+    "mechanicalHeroBadge": "Gifts · Time & Love",
+    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroLead": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
+    "mechanicalHeroChipAutomatic": "Craftsmanship",
+    "mechanicalHeroChipSkeleton": "Milestones",
+    "mechanicalHeroChipFinishing": "Companionship",
     "mechanicalHeroCtaShop": "Shop",
-    "mechanicalHeroImageAlt": "Close-up of a skeleton mechanical watch movement with gears and bridges",
+    "mechanicalHeroImageAlt": "HUMPBUCK homepage hero — handcrafted premium timepieces",
     "categoryKicker": "Shop by movement",
     "categoryHeading": "Featured mechanical watch",
     "categoryMechanicalKicker": "Automatic · Skeleton",
@@ -128,7 +128,7 @@
     "viewWatches": "View watches",
     "recommendedKicker": "Search by",
     "recommendedTitle": "Recommended watches",
-    "recommendedIntro": "Hand-picked automatic and quartz pieces — skeleton dials, premium movements, and standout finishing.",
+    "recommendedIntro": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
     "recommendedViewAll": "Shop mechanical",
     "recommendedAdd": "Add",
     "recommendedSliderPrev": "Previous products",
@@ -165,7 +165,7 @@
     "trustLaunchBody": "Factory programs for growing watch brands.",
     "newsletterKicker": "Updates",
     "newsletterTitle": "NEW WATCHES DROPS",
-    "newsletterBody": "Curated automatic and quartz drops — premium timepieces for everyday wear."
+    "newsletterBody": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments."
   },
   "Newsletter": {
     "emailLabel": "Email",
@@ -215,12 +215,12 @@
     "successClose": "Close"
   },
   "Shop": {
-    "metaTitle": "Shop curated watches",
-    "metaDescription": "Browse HUMPBUCK curated automatic and quartz watches — filter by movement, men’s and women’s styles, and ultra-thin models. Premium finishing with secure checkout.",
-    "ogTitle": "Shop curated watches · HUMPBUCK",
-    "ogDescription": "Premium automatic and quartz watches, curated for everyday wear and collectors. Secure checkout · global shipping.",
+    "metaTitle": "Shop meaningful gift watches",
+    "metaDescription": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
+    "ogTitle": "Shop meaningful gift watches · HUMPBUCK",
+    "ogDescription": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
     "kicker": "Catalog",
-    "title": "Curated automatic and quartz watches.",
+    "title": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
     "filterAll": "All",
     "filterPanelTitle": "Filter",
     "filterGroupMovement": "Movement",
@@ -792,11 +792,11 @@
   },
   "BlogPage": {
     "metaTitle": "Blog — HUMPBUCK",
-    "metaDescription": "Stories on curated watches, movements, and style from HUMPBUCK.",
+    "metaDescription": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
     "ogTitle": "Blog — HUMPBUCK",
     "kicker": "Journal",
     "title": "Blog",
-    "intro": "Stories on curated watches, movements, and the craft behind HUMPBUCK.",
+    "intro": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
     "empty": "New posts are on the way. Check back soon.",
     "readMore": "Read article"
   },
@@ -807,8 +807,8 @@
     "viewProduct": "View product"
   },
   "AboutPage": {
-    "metaTitle": "About — HUMPBUCK Curated Timepieces",
-    "metaDescription": "Why HUMPBUCK exists — curated premium automatic and quartz watches for everyday wear and collectors. Contact by email or WhatsApp.",
+    "metaTitle": "About — HUMPBUCK Watches",
+    "metaDescription": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
     "storyKicker": "About",
     "storyP1": "I have loved mechanical watches since I was a child. Back then, my family was poor, and I couldn't afford one. However, I was completely fascinated by how the intricate gears interlock and how the complex mechanical structures work together to keep precise time.",
     "storyP2": "Now, I have built this mechanical watch website. My goal is to offer high-quality, affordable mechanical watches to everyone, while fulfilling my childhood dream of owning one. Keep chasing your dreams.",

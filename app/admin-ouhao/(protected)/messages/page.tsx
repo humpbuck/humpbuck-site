@@ -217,10 +217,16 @@ function messagePrimaryText(input: {
   const { category, payload, sourceEmail } = input;
   const email = asText(payload.email, sourceEmail ?? "Unknown user");
   if (category === ADMIN_INBOX_CATEGORY.order) {
-    const eventType = asText(payload.eventType) === "cancelled" ? "cancelled" : "paid";
+    const eventType = asText(payload.eventType);
     const itemCount = Math.max(1, asNumber(payload.itemCount, 1));
     const itemWord = itemCount === 1 ? "item" : "items";
-    return `${email} ${eventType} an order (${itemCount} ${itemWord}).`;
+    if (eventType === "cancelled") {
+      return `${email} cancelled an order (${itemCount} ${itemWord}).`;
+    }
+    if (eventType === "placed") {
+      return `${email} placed an order (${itemCount} ${itemWord}).`;
+    }
+    return `${email} paid an order (${itemCount} ${itemWord}).`;
   }
   if (category === ADMIN_INBOX_CATEGORY.subscribe) {
     return (

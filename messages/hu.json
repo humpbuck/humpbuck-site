@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - Válogatott órák | Prémium automata és quartz",
-    "descriptionDefault": "Válogatott automata és quartz órák — prémium szerkezetek, csontváz számlapok és kiemelkedő kivitelezés. Kézzel válogatott darabok biztonságos fizetéssel és globális szállítással.",
-    "ogTitle": "HUMPBUCK - Válogatott órák",
-    "ogDescription": "Prémium automata és quartz órák mindennapi viselésre és gyűjtőknek. Biztonságos fizetés · globális szállítás."
+    "titleDefault": "HUMPBUCK Watches - Időt és szeretetet hordozó ajándékok",
+    "descriptionDefault": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
+    "ogTitle": "HUMPBUCK Watches - Időt és szeretetet hordozó ajándékok",
+    "ogDescription": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -51,7 +51,7 @@
     "blog": "Blog"
   },
   "Footer": {
-    "tagline": "Válogatott mechanikus és kvarc órák biztonságos fizetéssel és globális szállítással.",
+    "tagline": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
     "highlights": "Biztonságos fizetés · Globális szállítás · 24/7 támogatás",
     "copyright": "© {year} HUMPBUCK. Minden jog fenntartva.",
     "disclaimer": "Az árak, adók és szállítás a fizetéskor kerülnek véglegesítésre. Szállítás, visszatérítés, adatvédelem és feltételek: lásd a Támogatás szekciót fent. Kérdések:",
@@ -76,10 +76,10 @@
     "socialTiktokAria": "HUMPBUCK a TikTokon"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - Válogatott órák | Prémium automata és quartz",
-    "metaDescription": "Válogatott automata és quartz órák a HUMPBUCK-nál — prémium mechanikus szerkezetek, csontváz számlapok és precíz quartz kaliber. Kézzel válogatott darabok globális szállítással.",
-    "ogTitle": "HUMPBUCK - Válogatott órák",
-    "ogDescription": "Prémium automata és quartz órák mindennapi viselésre és gyűjtőknek. Biztonságos fizetés · globális szállítás.",
+    "metaTitle": "HUMPBUCK Watches - Időt és szeretetet hordozó ajándékok",
+    "metaDescription": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
+    "ogTitle": "HUMPBUCK Watches - Időt és szeretetet hordozó ajándékok",
+    "ogDescription": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
     "heroBadge": "Sorozat · DIGI-TEMP",
     "heroLead1": "Ana-digi multifunkciós óra — kettős kijelző, teljes funkciókészlet.",
     "heroLead2": "Idő, dátum, ébresztő, külső hőmérséklet és stopper módok kompakt rozsdamentes acél tokban — pilótafülkét idéző olvashatóság mindennapi viseléshez.",
@@ -117,15 +117,15 @@
     "trustLaunchBody": "Gyári programok növekvő óramárkáknak.",
     "newsletterKicker": "Hírek",
     "newsletterTitle": "DIGI-TEMP utánpótlások és RM-TONNEAU megjelenések",
-    "newsletterBody": "Nyers mechanikus szépség a mozgásban lévő férfinak.",
-    "mechanicalHeroBadge": "Válogatott · Mechanikus",
-    "mechanicalHeroTitle": "Mechanikus órák",
-    "mechanicalHeroLead": "Nyers mechanikus szépség a mozgásban lévő férfinak.",
-    "mechanicalHeroChipAutomatic": "Automata",
-    "mechanicalHeroChipSkeleton": "Csontváz számlapok",
-    "mechanicalHeroChipFinishing": "Látható finomítás",
+    "newsletterBody": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
+    "mechanicalHeroBadge": "Ajándékok · Idő és szeretet",
+    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroLead": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
+    "mechanicalHeroChipAutomatic": "Kézművesség",
+    "mechanicalHeroChipSkeleton": "Mérföldkövek",
+    "mechanicalHeroChipFinishing": "Társaság",
     "mechanicalHeroCtaShop": "Bolt",
-    "mechanicalHeroImageAlt": "Közelkép egy csontváz mechanikus szerkezetről fogaskerekekkel és hidakkal",
+    "mechanicalHeroImageAlt": "HUMPBUCK kezdőlap hero — kézműves prémium órák",
     "categoryKicker": "Vásárlás szerkezet szerint",
     "categoryHeading": "Kiemelt mechanikus óra",
     "categoryMechanicalKicker": "Automata · Csontváz",
@@ -140,7 +140,7 @@
     "categoryQuartzImageAlt": "HUMPBUCK kvarc ana-digi óra a csuklón",
     "recommendedKicker": "Keresés",
     "recommendedTitle": "Ajánlott órák",
-    "recommendedIntro": "Kézzel válogatott mechanikus darabok — csontváz számlapok, automata és kiemelkedő finomítás.",
+    "recommendedIntro": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
     "recommendedViewAll": "Mechanikus órák",
     "mechanicalWatchesTitle": "Mechanikus órák",
     "mechanicalWatchesShop": "Mechanikus órák",
@@ -203,17 +203,17 @@
     "successClose": "Bezárás"
   },
   "Shop": {
-    "metaTitle": "Mechanikus órák vásárlása",
-    "metaDescription": "Böngéssz HUMPBUCK mechanikus és kvarc órákat — szűrés szerkezet, férfi és női stílus, ultra-vékony modellek szerint. Megfizethető automata és csontváz, biztonságos fizetés.",
-    "ogTitle": "Mechanikus órák vásárlása · HUMPBUCK",
+    "metaTitle": "Értelmes ajándékórák vásárlása",
+    "metaDescription": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
+    "ogTitle": "Értelmes ajándékórák vásárlása · HUMPBUCK",
     "kicker": "Katalógus",
-    "title": "Nyers mechanikus szépség a mozgásban lévő férfinak.",
+    "title": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
     "intro": "Böngésszen kollekció szerint: DIGI-TEMP (ana-digi zászlóshajó), RM-TONNEAU (tonneau quartz) és RD-ASTRAL. A szűrők szinkronban vannak az URL-lel megosztáshoz.",
     "filterAll": "Összes",
     "showingSeries": "{series} megjelenítése ({count, plural, one {# tétel} other {# tétel}})",
     "emptyCategory": "Itt még nincs termék.",
     "clearFilter": "Szűrő törlése",
-    "ogDescription": "Nyers mechanikus szépség a mozgásban lévő férfinak. Célom: minőségi, megfizethető mechanikus órák mindenkinek.",
+    "ogDescription": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
     "filterPanelTitle": "Szűrő",
     "filterGroupMovement": "Szerkezet",
     "filterGroupAudience": "Célközönség",
@@ -768,8 +768,8 @@
     "backHome": "Vissza a kezdőlapra"
   },
   "AboutPage": {
-    "metaTitle": "Rólunk — HUMPBUCK Mechanikus órák",
-    "metaDescription": "Miért létezik a HUMPBUCK — célom: minőségi, megfizethető mechanikus órák mindenkinek. Nyers mechanikus szépség a mozgásban lévő férfinak. Kapcsolat emailben vagy WhatsAppon.",
+    "metaTitle": "Rólunk — HUMPBUCK Watches",
+    "metaDescription": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
     "kickerBrand": "Márka",
     "heroTitle": "HUMPBUCK — először hasznosság, aztán látvány.",
     "heroLead": "Közvetlen webshopot és gyári programokat üzemeltetünk, hogy egy indulás ismétlhető gyártássá nőhessen anélkül, hogy minden szezonban újra forrást kellene keresni.",
@@ -820,5 +820,9 @@
     "backupLinkHint": "Ha a fenti videó nem játszható le, nyissa meg ezt a tartalék videó linket:",
     "openBackupVideo": "Tartalék videó megnyitása",
     "backupIframeTitleSuffix": "YouTube tartalék"
+  },
+  "BlogPage": {
+    "metaDescription": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
+    "intro": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait."
   }
 }

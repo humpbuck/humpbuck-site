@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - Kuratierte Uhren | Premium Automatik & Quarz",
-    "descriptionDefault": "Kuratierte Automatik- und Quarzuhren — Premium-Werke, Skelettzifferblätter und besondere Finishings. Handverlesene Zeitmesser mit sicherem Checkout und weltweitem Versand.",
-    "ogTitle": "HUMPBUCK - Kuratierte Uhren",
-    "ogDescription": "Premium Automatik- und Quarzuhren, kuratiert für Alltag und Sammler. Sicherer Checkout · weltweiter Versand."
+    "titleDefault": "HUMPBUCK Uhren – Bedeutungsvolle Geschenke aus Zeit und Liebe",
+    "descriptionDefault": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
+    "ogTitle": "HUMPBUCK Uhren – Bedeutungsvolle Geschenke aus Zeit und Liebe",
+    "ogDescription": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -51,7 +51,7 @@
     "blog": "Blog"
   },
   "Footer": {
-    "tagline": "Kuratierte mechanische und Quarzuhren mit sicherem Checkout und weltweitem Versand.",
+    "tagline": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
     "highlights": "Sichere Zahlung · Weltweiter Versand · Support rund um die Uhr",
     "copyright": "© {year} HUMPBUCK. Alle Rechte vorbehalten.",
     "disclaimer": "Preise, Steuern und Versand werden beim Checkout bestätigt. Zu Versand, Rückerstattung, Datenschutz und AGB siehe Support oben. Fragen:",
@@ -76,10 +76,10 @@
     "socialTiktokAria": "HUMPBUCK auf TikTok"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - Kuratierte Uhren | Premium Automatik & Quarz",
-    "metaDescription": "Kuratierte Automatik- und Quarzuhren bei HUMPBUCK — Premium-Mechanikwerke, Skelettzifferblätter und präzise Quarzkaliber. Handverlesene Zeitmesser mit weltweitem Versand.",
-    "ogTitle": "HUMPBUCK - Kuratierte Uhren",
-    "ogDescription": "Premium Automatik- und Quarzuhren, kuratiert für Alltag und Sammler. Sicherer Checkout · weltweiter Versand.",
+    "metaTitle": "HUMPBUCK Uhren – Bedeutungsvolle Geschenke aus Zeit und Liebe",
+    "metaDescription": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
+    "ogTitle": "HUMPBUCK Uhren – Bedeutungsvolle Geschenke aus Zeit und Liebe",
+    "ogDescription": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
     "heroBadge": "Serie · DIGI-TEMP",
     "heroLead1": "Ana-Digi-Multifunktionsuhr — Dual-Display, voller Funktionsumfang.",
     "heroLead2": "Zeit, Datum, Wecker, Außentemperatur und Stoppuhr in kompaktem Edelstahlgehäuse — cockpitklare Ablesbarkeit für den Alltag.",
@@ -117,15 +117,15 @@
     "trustLaunchBody": "Werksprogramme für wachsende Uhrenmarken.",
     "newsletterKicker": "Neuigkeiten",
     "newsletterTitle": "DIGI-TEMP Nachfüllungen & RM-TONNEAU Drops",
-    "newsletterBody": "Rohe mechanische Schönheit für den Mann in Bewegung.",
-    "mechanicalHeroBadge": "Kuratiert · Mechanisch",
-    "mechanicalHeroTitle": "Mechanische Uhren",
-    "mechanicalHeroLead": "Rohe mechanische Schönheit für den Mann in Bewegung.",
-    "mechanicalHeroChipAutomatic": "Automatik",
-    "mechanicalHeroChipSkeleton": "Skelettzifferblätter",
-    "mechanicalHeroChipFinishing": "Sichtbare Finishings",
+    "newsletterBody": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
+    "mechanicalHeroBadge": "Geschenke · Zeit & Liebe",
+    "mechanicalHeroTitle": "HUMPBUCK Uhren",
+    "mechanicalHeroLead": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
+    "mechanicalHeroChipAutomatic": "Handwerkskunst",
+    "mechanicalHeroChipSkeleton": "Meilensteine",
+    "mechanicalHeroChipFinishing": "Begleitung",
     "mechanicalHeroCtaShop": "Shoppen",
-    "mechanicalHeroImageAlt": "Nahaufnahme eines skelettierten mechanischen Uhrwerks mit Zahnrädern und Brücken",
+    "mechanicalHeroImageAlt": "HUMPBUCK Startseiten-Hero — handgefertigte Premium-Zeitmesser",
     "categoryKicker": "Nach Werk shoppen",
     "categoryHeading": "Empfohlene mechanische Uhr",
     "categoryMechanicalKicker": "Automatik · Skelett",
@@ -140,7 +140,7 @@
     "categoryQuartzImageAlt": "HUMPBUCK Quarz-Ana-digi-Uhr am Handgelenk",
     "recommendedKicker": "Suchen nach",
     "recommendedTitle": "Empfohlene Uhren",
-    "recommendedIntro": "Handverlesene mechanische Stücke — Skelettzifferblätter, Automatikwerke und herausragende Finishings.",
+    "recommendedIntro": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
     "recommendedViewAll": "Mechanisch shoppen",
     "mechanicalWatchesTitle": "Mechanische Uhren",
     "mechanicalWatchesShop": "Mechanisch shoppen",
@@ -203,17 +203,17 @@
     "successClose": "Schließen"
   },
   "Shop": {
-    "metaTitle": "Mechanische Uhren shoppen",
-    "metaDescription": "HUMPBUCK mechanische und Quarzuhren durchstöbern — filtern nach Werk, Herren- und Damenstilen sowie ultradünnen Modellen. Erschwingliche Automatik- und Skelettzifferblätter mit sicherem Checkout.",
-    "ogTitle": "Mechanische Uhren shoppen · HUMPBUCK",
+    "metaTitle": "Bedeutungsvolle Geschenk-Uhren shoppen",
+    "metaDescription": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
+    "ogTitle": "Bedeutungsvolle Geschenk-Uhren shoppen · HUMPBUCK",
     "kicker": "Katalog",
-    "title": "Rohe mechanische Schönheit für den Mann in Bewegung.",
+    "title": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
     "intro": "Nach Kollektion browsen: DIGI-TEMP (Ana-Digi-Flaggschiff), RM-TONNEAU (Tonneau-Quarz) und RD-ASTRAL. Filter sind mit der URL synchronisiert zum Teilen.",
     "filterAll": "Alle",
     "showingSeries": "{series} wird angezeigt ({count, plural, one {# Artikel} other {# Artikel}})",
     "emptyCategory": "Hier ist noch nichts.",
     "clearFilter": "Filter löschen",
-    "ogDescription": "Rohe mechanische Schönheit für den Mann in Bewegung. Mein Ziel: hochwertige, erschwingliche mechanische Uhren für alle.",
+    "ogDescription": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
     "filterPanelTitle": "Filter",
     "filterGroupMovement": "Werk",
     "filterGroupAudience": "Zielgruppe",
@@ -768,8 +768,8 @@
     "backHome": "Zurück zur Startseite"
   },
   "AboutPage": {
-    "metaTitle": "Über uns — HUMPBUCK Mechanische Uhren",
-    "metaDescription": "Warum HUMPBUCK existiert — mein Ziel: hochwertige, erschwingliche mechanische Uhren für alle. Rohe mechanische Schönheit für den Mann in Bewegung. Kontakt per E-Mail oder WhatsApp.",
+    "metaTitle": "Über uns — HUMPBUCK Uhren",
+    "metaDescription": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
     "kickerBrand": "Marke",
     "heroTitle": "HUMPBUCK — Nutzen zuerst, dann Spektakel.",
     "heroLead": "Wir betreiben einen Direktshop plus Werksprogramme, damit ein Launch zu wiederholbarer Produktion werden kann, ohne jede Saison neu zu sourcen.",
@@ -820,5 +820,9 @@
     "backupLinkHint": "Wenn das Video oben nicht abspielt, öffnen Sie diesen Backup-Videolink:",
     "openBackupVideo": "Backup-Video öffnen",
     "backupIframeTitleSuffix": "YouTube-Backup"
+  },
+  "BlogPage": {
+    "metaDescription": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
+    "intro": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben."
   }
 }

@@ -3,6 +3,7 @@ import { publicSupportEmail } from "@/lib/support-contact";
 import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/whatsapp";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
+import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
 export async function generateMetadata({
@@ -14,12 +15,26 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "AboutPage" });
   const pathPrefix = locale === routing.defaultLocale ? "" : `/${locale}`;
   const path = `${pathPrefix}/about`;
+  const pageUrl = `${getSiteUrl()}${path}`;
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
     alternates: {
       canonical: path,
       languages: storefrontHreflangLanguages("/about"),
+    },
+    openGraph: {
+      type: "website",
+      url: pageUrl,
+      title: t("metaTitle"),
+      description: t("metaDescription"),
+      images: [defaultOgImage],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("metaTitle"),
+      description: t("metaDescription"),
+      images: [defaultOgImage.url],
     },
   };
 }

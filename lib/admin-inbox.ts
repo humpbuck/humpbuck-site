@@ -81,8 +81,125 @@ export async function markAdminInboxCategoryRead(category: string, readAt = new 
     .catch(() => null);
 }
 
+type OrderInboxSource = {
+  id: string;
+  email: string;
+  items?: Array<{
+    productSlug: string;
+    productName: string;
+    productImage: string | null;
+    variantId: string | null;
+    variantLabel: string | null;
+    variantImage: string | null;
+    qty: number;
+    unitPriceCents: number;
+    lineTotalCents: number;
+    currency: string;
+    productSnapshotJson: string | null;
+  }>;
+  merchantOrderCode: string | null;
+  createdAt: Date;
+};
+
+const ORDER_INBOX_ITEM_SELECT = {
+  productSlug: true,
+  productName: true,
+  productImage: true,
+  variantId: true,
+  variantLabel: true,
+  variantImage: true,
+  qty: true,
+  unitPriceCents: true,
+  lineTotalCents: true,
+  currency: true,
+  productSnapshotJson: true,
+} as const;
+
+async function buildOrderInboxPayload(
+  order: OrderInboxSource,
+  eventType: "placed" | "paid" | "cancelled",
+) {
+  const lines = orderItemsFromOrder(order);
+  const first = lines[0];
+  const linePreviews = lines.map((line) => {
+    const lineImage = line.variantImage ?? "";
+    return {
+      name: line.name || "Order item",
+      variant: line.variantLabel || "Default",
+      variantId: line.variantId || "",
+      slug: line.slug || "",
+      qty: line.qty || 1,
+      image: lineImage,
+    };
+  });
+  const firstPreview = linePreviews[0];
+  return {
+    eventType,
+    orderId: order.id,
+    merchantOrderCode: order.merchantOrderCode ?? "",
+    email: order.email,
+    createdAt: order.createdAt.toISOString(),
+    itemName: firstPreview?.name ?? first?.name ?? "Order item",
+    itemVariant: firstPreview?.variant ?? first?.variantLabel ?? "",
+    itemQty: firstPreview?.qty ?? first?.qty ?? 1,
+    itemImage: firstPreview?.image ?? "",
+    itemVariantId: firstPreview?.variantId ?? first?.variantId ?? "",
+    itemCount: linePreviews.length || 1,
+    itemsPreviewJson: JSON.stringify(linePreviews),
+    itemSlug: first?.slug ?? "",
+  };
+}
+
+export async function notifyAdminInboxOrderPlaced(orderId: string): Promise<void> {
+  const order = await prisma.order
+    .findUnique({
+      where: { id: orderId },
+      select: {
+        id: true,
+        email: true,
+        status: true,
+        merchantOrderCode: true,
+        createdAt: true,
+        items: { select: ORDER_INBOX_ITEM_SELECT },
+      },
+    })
+    .catch(() => null);
+  if (!order || order.status !== "pending_payment") return;
+
+  await createAdminInboxMessage({
+    category: ADMIN_INBOX_CATEGORY.order,
+    dedupeKey: `order_placed:${order.id}`,
+    sourceEmail: order.email,
+    payload: await buildOrderInboxPayload(order, "placed"),
+  });
+}
+
+export async function notifyAdminInboxOrderPaid(orderId: string): Promise<void> {
+  const order = await prisma.order
+    .findUnique({
+      where: { id: orderId },
+      select: {
+        id: true,
+        email: true,
+        status: true,
+        merchantOrderCode: true,
+        createdAt: true,
+        items: { select: ORDER_INBOX_ITEM_SELECT },
+      },
+    })
+    .catch(() => null);
+  if (!order || order.status !== "paid") return;
+
+  await createAdminInboxMessage({
+    category: ADMIN_INBOX_CATEGORY.order,
+    dedupeKey: `order_paid:${order.id}`,
+    sourceEmail: order.email,
+    payload: await buildOrderInboxPayload(order, "paid"),
+  });
+}
+
 export async function syncSystemInboxMessages() {
-  const [paidOrders, cancelledOrders] = await Promise.all([
+  const [paidOrders, cancelledOrders, placedOrders] = await Promise.all([
     prisma.order
       .findMany({
         where: {
@@ -94,21 +211,7 @@ export async function syncSystemInboxMessages() {
         select: {
           id: true,
           email: true,
-          items: {
-            select: {
-              productSlug: true,
-              productName: true,
-              productImage: true,
-              variantId: true,
-              variantLabel: true,
-              variantImage: true,
-              qty: true,
-              unitPriceCents: true,
-              lineTotalCents: true,
-              currency: true,
-              productSnapshotJson: true,
-            },
-          },
+          items: { select: ORDER_INBOX_ITEM_SELECT },
           merchantOrderCode: true,
           createdAt: true,
         },
@@ -125,21 +228,24 @@ export async function syncSystemInboxMessages() {
         select: {
           id: true,
           email: true,
-          items: {
-            select: {
-              productSlug: true,
-              productName: true,
-              productImage: true,
-              variantId: true,
-              variantLabel: true,
-              variantImage: true,
-              qty: true,
-              unitPriceCents: true,
-              lineTotalCents: true,
-              currency: true,
-              productSnapshotJson: true,
-            },
-          },
+          items: { select: ORDER_INBOX_ITEM_SELECT },
+          merchantOrderCode: true,
+          createdAt: true,
+        },
+      })
+      .catch(() => []),
+    prisma.order
+      .findMany({
+        where: {
+          deletedAt: null,
+          status: "pending_payment",
+        },
+        orderBy: { createdAt: "desc" },
+        take: 300,
+        select: {
+          id: true,
+          email: true,
+          items: { select: ORDER_INBOX_ITEM_SELECT },
           merchantOrderCode: true,
           createdAt: true,
         },
@@ -147,67 +253,24 @@ export async function syncSystemInboxMessages() {
       .catch(() => []),
   ]);
 
-  const toPayload = async (order: {
-    id: string;
-    email: string;
-    items?: Array<{
-      productSlug: string;
-      productName: string;
-      productImage: string | null;
-      variantId: string | null;
-      variantLabel: string | null;
-      variantImage: string | null;
-      qty: number;
-      unitPriceCents: number;
-      lineTotalCents: number;
-      currency: string;
-      productSnapshotJson: string | null;
-    }>;
-    merchantOrderCode: string | null;
-    createdAt: Date;
-  }) => {
-    const lines = orderItemsFromOrder(order);
-    const first = lines[0];
-    const linePreviews = lines.map((line) => {
-      const lineImage = line.variantImage ?? "";
-      return {
-        name: line.name || "Order item",
-        variant: line.variantLabel || "Default",
-        variantId: line.variantId || "",
-        slug: line.slug || "",
-        qty: line.qty || 1,
-        image: lineImage,
-      };
-    });
-    const firstPreview = linePreviews[0];
-    return {
-      orderId: order.id,
-      merchantOrderCode: order.merchantOrderCode ?? "",
-      email: order.email,
-      createdAt: order.createdAt.toISOString(),
-      itemName: firstPreview?.name ?? first?.name ?? "Order item",
-      itemVariant: firstPreview?.variant ?? first?.variantLabel ?? "",
-      itemQty: firstPreview?.qty ?? first?.qty ?? 1,
-      itemImage: firstPreview?.image ?? "",
-      itemVariantId: firstPreview?.variantId ?? first?.variantId ?? "",
-      itemCount: linePreviews.length || 1,
-      itemsPreviewJson: JSON.stringify(linePreviews),
-      itemSlug: first?.slug ?? "",
-    };
-  };
-
   const rows = await Promise.all([
+    ...placedOrders.map(async (o) => ({
+      category: ADMIN_INBOX_CATEGORY.order as AdminInboxCategory,
+      dedupeKey: `order_placed:${o.id}`,
+      sourceEmail: o.email,
+      payload: await buildOrderInboxPayload(o, "placed"),
+    })),
     ...paidOrders.map(async (o) => ({
       category: ADMIN_INBOX_CATEGORY.order as AdminInboxCategory,
       dedupeKey: `order_paid:${o.id}`,
       sourceEmail: o.email,
-      payload: await toPayload(o),
+      payload: await buildOrderInboxPayload(o, "paid"),
     })),
     ...cancelledOrders.map(async (o) => ({
       category: ADMIN_INBOX_CATEGORY.order as AdminInboxCategory,
       dedupeKey: `order_cancelled:${o.id}`,
       sourceEmail: o.email,
-      payload: await toPayload(o),
+      payload: await buildOrderInboxPayload(o, "cancelled"),
     })),
   ]);
 

@@ -11,7 +11,10 @@ import {
 } from "@/lib/admin/order-ui";
 import { buildShippingAddressChangeEmailPayload } from "@/lib/customer-shipped-email";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
-import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
+import {
+  buildEmailOrderLineItemRowsHtml,
+  EMAIL_ORDER_LINE_ITEMS_TABLE_HEAD,
+} from "@/lib/email-line-thumbnail";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
 import { buyerTransactionalEmail } from "@/lib/order-buyer-email";
@@ -19,7 +22,11 @@ import { prisma } from "@/lib/prisma";
 import { SITE_LOCALE } from "@/lib/site-locale";
 import { adminPath } from "@/lib/admin-path";
 
-async function buildCustomerPaymentConfirmedEmailPayload(order: Order): Promise<{
+type OrderWithItemSnapshots = Order & { items: OrderItemSnapshot[] };
+
+async function buildCustomerPaymentConfirmedEmailPayload(
+  order: OrderWithItemSnapshots,
+): Promise<{
   subject: string;
   htmlContent: string;
   textContent: string;
@@ -32,7 +39,8 @@ async function buildCustomerPaymentConfirmedEmailPayload(order: Order): Promise<
   const base = emailPublicBaseUrl();
   const support = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "support@humpbuck.com";
   const lines = orderItemsFromOrder(order);
-  const lineRows = lines
+  const lineRows = await buildEmailOrderLineItemRowsHtml(lines);
+  const lineRowsText = lines
     .map((l) => `- ${l.name}${l.variantLabel ? ` (${l.variantLabel})` : ""} ×${l.qty} — ${formatUsdEmail(l.lineTotalCents / 100)}`)
     .join("\n");
 
@@ -57,8 +65,8 @@ async function buildCustomerPaymentConfirmedEmailPayload(order: Order): Promise<
       <tr><td style="padding:8px 24px 8px 24px;">
         <p style="margin:0 0 10px 0;font-size:10px;font-weight:700;letter-spacing:0.14em;color:#8a8680;">ORDER SUMMARY</p>
         <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:14px;border:1px solid #ece9e4;border-radius:12px;overflow:hidden;">
-          <thead><tr style="background:#faf9f7;"><th align="left" style="padding:10px 12px;font-size:11px;color:#8a8680;">Item</th><th align="right" style="padding:10px 12px;font-size:11px;color:#8a8680;">Total</th></tr></thead>
-          <tbody>${lines.map((l) => `<tr><td style="padding:12px;border-bottom:1px solid #ece9e4;color:#14120f;">${escapeHtml(l.name)}${l.variantLabel ? ` — ${escapeHtml(l.variantLabel)}` : ""}<br/><span style="color:#8a8680;font-size:12px;">Qty ${l.qty}</span></td><td style="padding:12px;border-bottom:1px solid #ece9e4;text-align:right;font-weight:600;color:#14120f;">${formatUsdEmail(l.lineTotalCents / 100)}</td></tr>`).join("")}</tbody>
+          ${EMAIL_ORDER_LINE_ITEMS_TABLE_HEAD}
+          <tbody>${lineRows}</tbody>
         </table>
       </td></tr>
       <tr><td style="padding:8px 24px 20px 24px;">
@@ -89,7 +97,7 @@ async function buildCustomerPaymentConfirmedEmailPayload(order: Order): Promise<
       `Order total: ${formatUsdEmail(order.totalCents / 100)}`,
       ``,
       `Items:`,
-      lineRows,
+      lineRowsText,
       ``,
       `View orders: ${base}/account/orders`,
       `Support: ${support}`,
@@ -101,8 +109,6 @@ const DEFAULT_MERCHANT_EMAIL = "humpbuck@outlook.com";
 
 /** Merchant inbox template: checkout placed vs payment confirmed. */
 type MerchantOrderEmailKind = "placed" | "paid";
-
-type OrderWithItemSnapshots = Order & { items: OrderItemSnapshot[] };
 
 const orderWithItemsInclude = {
   items: { orderBy: { id: "asc" as const } },
@@ -217,13 +223,6 @@ function emailAddressFieldsTable(
 </table>`;
 }
 
-function absoluteImageUrl(href: string): string {
-  const base = emailPublicBaseUrl();
-  if (href.startsWith("http://") || href.startsWith("https://")) return href;
-  const path = href.startsWith("/") ? href : `/${href}`;
-  return `${base}${path}`;
-}
-
 async function buildPlainText(
   order: Order,
   lines: Awaited<ReturnType<typeof orderItemsFromOrder>>,
@@ -312,28 +311,7 @@ async function buildHtml(
     ink,
   );
 
-  const lineRows = lines.length
-    ? lines
-    .map((l) => {
-      const imgSrc = l.variantImage || getR2VariantLineImageUrl(l.slug, l.variantId) || "";
-      const img = imgSrc
-        ? `<img src="${escapeHtml(absoluteImageUrl(imgSrc))}" alt="" width="64" height="64" style="display:block;width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid #ece9e4;background:#f7f6f3;" />`
-        : `<div style="width:64px;height:64px;border-radius:10px;background:#ece9e4;border:1px solid #e0ddd6;"></div>`;
-      const title = escapeHtml(l.name);
-      const varLabel = l.variantLabel
-        ? `<br/><span style="color:#555;font-size:13px;">${escapeHtml(l.variantLabel)}</span>`
-        : "";
-      return `<tr>
-        <td style="padding:12px 8px 12px 12px;vertical-align:top;border-bottom:1px solid #ece9e4;">${img}</td>
-        <td style="padding:12px 8px;vertical-align:top;border-bottom:1px solid #ece9e4;color:#14120f;">${title}${varLabel}<br/><span style="color:#8a8680;font-size:12px;">SKU ${escapeHtml(l.slug.toUpperCase())}</span></td>
-        <td style="padding:12px 8px;vertical-align:middle;border-bottom:1px solid #ece9e4;text-align:center;font-weight:600;color:#5c5a57;">${l.qty}</td>
-        <td style="padding:12px 12px 12px 8px;vertical-align:middle;border-bottom:1px solid #ece9e4;text-align:right;white-space:nowrap;font-weight:600;color:#14120f;font-variant-numeric:tabular-nums;">${formatUsdEmail(l.lineTotalCents / 100)}</td>
-      </tr>`;
-    })
-    .join("")
-    : `<tr>
-        <td colspan="4" style="padding:16px 12px;text-align:center;color:#8a8680;font-size:14px;">No line items on file for this order.</td>
-      </tr>`;
+  const lineRows = await buildEmailOrderLineItemRowsHtml(lines, { showSku: true });
 
   const orderNotesHtml = order.orderNotes?.trim()
     ? `<tr><td style="padding:0 24px 20px 24px;">
@@ -371,14 +349,7 @@ async function buildHtml(
       <tr><td style="padding:0 24px 8px 24px;">
         <p style="margin:0 0 10px 0;font-size:10px;font-weight:700;letter-spacing:0.14em;color:#8a8680;">LINE ITEMS</p>
         <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:14px;border:1px solid #ece9e4;border-radius:12px;overflow:hidden;">
-          <thead>
-            <tr style="background:#faf9f7;">
-              <th align="left" style="padding:10px 8px 10px 12px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a8680;width:76px;">&nbsp;</th>
-              <th align="left" style="padding:10px 8px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a8680;">Product</th>
-              <th align="center" style="padding:10px 8px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a8680;width:44px;">Qty</th>
-              <th align="right" style="padding:10px 12px 10px 8px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a8680;width:88px;">Total</th>
-            </tr>
-          </thead>
+          ${EMAIL_ORDER_LINE_ITEMS_TABLE_HEAD}
           <tbody>${lineRows}</tbody>
         </table>
       </td></tr>

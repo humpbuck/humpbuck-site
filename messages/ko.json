@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - 엄선된 타임피스 | 프리미엄 오토매틱 & 쿼츠",
-    "descriptionDefault": "엄선된 오토매틱·쿼츠 시계 — 프리미엄 무브먼트, 스켈레톤 다이얼, 눈에 띄는 마감. 안전한 결제와 글로벌 배송으로 제공하는 핸드픽 타임피스.",
-    "ogTitle": "HUMPBUCK - 엄선된 타임피스",
-    "ogDescription": "일상과 컬렉터를 위한 프리미엄 오토매틱·쿼츠 시계. 안전한 결제 · 글로벌 배송."
+    "titleDefault": "HUMPBUCK Watches - 시간과 사랑을 담은 의미 있는 선물",
+    "descriptionDefault": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
+    "ogTitle": "HUMPBUCK Watches - 시간과 사랑을 담은 의미 있는 선물",
+    "ogDescription": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -51,7 +51,7 @@
     "blog": "블로그"
   },
   "Footer": {
-    "tagline": "안전한 결제와 글로벌 배송의 큐레이션 기계식·쿼츠 시계.",
+    "tagline": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
     "highlights": "안전 결제 · 전 세계 배송 · 24시간 지원",
     "copyright": "© {year} HUMPBUCK. 모든 권리 보유.",
     "disclaimer": "가격, 세금, 배송비는 결제 시 확정됩니다. 배송, 환불, 개인정보, 이용약관은 위 고객지원을 참고하세요. 문의:",
@@ -76,10 +76,10 @@
     "socialTiktokAria": "TikTok의 HUMPBUCK"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - 엄선된 타임피스 | 프리미엄 오토매틱 & 쿼츠",
-    "metaDescription": "HUMPBUCK에서 엄선된 오토매틱·쿼츠 시계 — 프리미엄 기계식 무브먼트, 스켈레톤 다이얼, 정밀 쿼츠 칼리버. 핸드픽 타임피스 글로벌 배송.",
-    "ogTitle": "HUMPBUCK - 엄선된 타임피스",
-    "ogDescription": "일상과 컬렉터를 위한 프리미엄 오토매틱·쿼츠 시계. 안전한 결제 · 글로벌 배송.",
+    "metaTitle": "HUMPBUCK Watches - 시간과 사랑을 담은 의미 있는 선물",
+    "metaDescription": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
+    "ogTitle": "HUMPBUCK Watches - 시간과 사랑을 담은 의미 있는 선물",
+    "ogDescription": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
     "heroBadge": "시리즈 · DIGI-TEMP",
     "heroLead1": "아나로그·디지털 멀티펑션 시계 — 듀얼 디스플레이, 풀 기능.",
     "heroLead2": "시간, 날짜, 알람, 외부 온도, 스톱워치 모드를 컴팩트한 스테인리스 케이스에 — 일상에서도 선명한 가독성.",
@@ -117,15 +117,15 @@
     "trustLaunchBody": "성장하는 시계 브랜드를 위한 공장 프로그램.",
     "newsletterKicker": "소식",
     "newsletterTitle": "DIGI-TEMP 재입고 & RM-TONNEAU 신제품",
-    "newsletterBody": "움직이는 남자를 위한 raw mechanical beauty.",
-    "mechanicalHeroBadge": "큐레이션 · 기계식",
-    "mechanicalHeroTitle": "기계식 시계",
-    "mechanicalHeroLead": "움직이는 남자를 위한 raw mechanical beauty.",
-    "mechanicalHeroChipAutomatic": "오토매틱",
-    "mechanicalHeroChipSkeleton": "스켈레톤 다이얼",
-    "mechanicalHeroChipFinishing": "가시적 피니싱",
+    "newsletterBody": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
+    "mechanicalHeroBadge": "선물 · 시간과 사랑",
+    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroLead": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
+    "mechanicalHeroChipAutomatic": "장인 정신",
+    "mechanicalHeroChipSkeleton": "이정표",
+    "mechanicalHeroChipFinishing": "동행",
     "mechanicalHeroCtaShop": "쇼핑",
-    "mechanicalHeroImageAlt": "기어와 브릿지가 보이는 스켈레톤 기계식 무브먼트 클로즈업",
+    "mechanicalHeroImageAlt": "HUMPBUCK 홈페이지 히어로 — 수공예 프리미엄 타임피스",
     "categoryKicker": "무브먼트별 쇼핑",
     "categoryHeading": "추천 기계식 시계",
     "categoryMechanicalKicker": "오토매틱 · 스켈레톤",
@@ -140,7 +140,7 @@
     "categoryQuartzImageAlt": "손목의 HUMPBUCK 쿼츠 아나디지 시계",
     "recommendedKicker": "검색",
     "recommendedTitle": "추천 시계",
-    "recommendedIntro": "엄선 기계식 — 스켈레톤 다이얼, 오토매틱, 돋보이는 피니싱.",
+    "recommendedIntro": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
     "recommendedViewAll": "기계식 쇼핑",
     "mechanicalWatchesTitle": "기계식 시계",
     "mechanicalWatchesShop": "기계식 쇼핑",
@@ -203,17 +203,17 @@
     "successClose": "닫기"
   },
   "Shop": {
-    "metaTitle": "기계식 시계 쇼핑",
-    "metaDescription": "HUMPBUCK 기계식·쿼츠 시계 — 무브먼트, 남녀 스타일, 울트라-thin으로 필터. 합리적인 오토매틱·스켈레톤, 안전한 결제.",
-    "ogTitle": "기계식 시계 쇼핑 · HUMPBUCK",
+    "metaTitle": "의미 있는 선물 시계 쇼핑",
+    "metaDescription": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
+    "ogTitle": "의미 있는 선물 시계 쇼핑 · HUMPBUCK",
     "kicker": "카탈로그",
-    "title": "움직이는 남자를 위한 raw mechanical beauty.",
+    "title": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
     "intro": "컬렉션별로 둘러보세요: DIGI-TEMP(아나로그·디지털 플래그십), RM-TONNEAU(토노 쿼츠), RD-ASTRAL. 필터는 URL과 동기화되어 공유하기 쉽습니다.",
     "filterAll": "전체",
     "showingSeries": "{series} 표시 중 ({count, plural, other {#개}})",
     "emptyCategory": "아직 상품이 없습니다.",
     "clearFilter": "필터 초기화",
-    "ogDescription": "움직이는 남자를 위한 raw mechanical beauty. 고품질의 합리적인 기계식 시계를 모두에게 제공하는 것이 목표입니다.",
+    "ogDescription": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
     "filterPanelTitle": "필터",
     "filterGroupMovement": "무브먼트",
     "filterGroupAudience": "대상",
@@ -768,8 +768,8 @@
     "backHome": "홈으로"
   },
   "AboutPage": {
-    "metaTitle": "About — HUMPBUCK 기계식 시계",
-    "metaDescription": "HUMPBUCK이 존재하는 이유 — 고품질·합리적인 기계식 시계를 모두에게. 움직이는 남자를 위한 raw mechanical beauty. 이메일 또는 WhatsApp 문의.",
+    "metaTitle": "소개 — HUMPBUCK Watches",
+    "metaDescription": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
     "kickerBrand": "브랜드",
     "heroTitle": "HUMPBUCK — 실용을 먼저, 그다음 존재감.",
     "heroLead": "직영 스토어와 공장 프로그램을 운영하여 한 번의 론칭이 매 시즌 재소싱 없이 반복 생산으로 이어지도록 합니다.",
@@ -820,5 +820,9 @@
     "backupLinkHint": "위 영상을 재생할 수 없으면 이 백업 영상 링크를 여세요:",
     "openBackupVideo": "백업 영상 열기",
     "backupIframeTitleSuffix": "YouTube 백업"
+  },
+  "BlogPage": {
+    "metaDescription": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
+    "intro": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스."
   }
 }

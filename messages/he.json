@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - שעונים נבחרים | אוטומטי וקוartz פרימיום",
-    "descriptionDefault": "שעונים אוטומטיים וקוartz נבחרים — מנגנונים פרימיום, לוחות שלד וגימור בולט. פריטים שנבחרו בקפידה עם תשלום מאובטח ומשלוח עולמי.",
-    "ogTitle": "HUMPBUCK - שעונים נבחרים",
-    "ogDescription": "שעונים אוטומטיים וקוartz פרימיום לשימוש יומיומי ולאספנים. תשלום מאובטח · משלוח עולמי."
+    "titleDefault": "HUMPBUCK Watches - מתנות משמעותיות של זמן ואהבה",
+    "descriptionDefault": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
+    "ogTitle": "HUMPBUCK Watches - מתנות משמעותיות של זמן ואהבה",
+    "ogDescription": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -51,7 +51,7 @@
     "blog": "בלוג"
   },
   "Footer": {
-    "tagline": "שעונים מכניים וקварץ נבחרים עם תשלום מאובטח ומשלוח עולמי.",
+    "tagline": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
     "highlights": "תשלום מאובטח · משלוח עולמי · תמיכה 24/7",
     "copyright": "© {year} HUMPBUCK. כל הזכויות שמורות.",
     "disclaimer": "מחירים, מסים ומשלוח מאושרים בתשלום. למשלוח, החזרים, פרטיות ותנאים — ראו תמיכה למעלה. שאלות:",
@@ -76,10 +76,10 @@
     "socialTiktokAria": "HUMPBUCK ב-TikTok"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - שעונים נבחרים | אוטומטי וקוartz פרימיום",
-    "metaDescription": "שעונים אוטומטיים וקוartz נבחרים ב-HUMPBUCK — מנגנונים מכניים פרימיום, לוחות שלד וקליברים קוartz מדויקים. פריטים שנבחרו בקפידה עם משלוח עולמי.",
-    "ogTitle": "HUMPBUCK - שעונים נבחרים",
-    "ogDescription": "שעונים אוטומטיים וקוartz פרימיום לשימוש יומיומי ולאספנים. תשלום מאובטח · משלוח עולמי.",
+    "metaTitle": "HUMPBUCK Watches - מתנות משמעותיות של זמן ואהבה",
+    "metaDescription": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
+    "ogTitle": "HUMPBUCK Watches - מתנות משמעותיות של זמן ואהבה",
+    "ogDescription": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
     "heroBadge": "סדרה · DIGI-TEMP",
     "heroLead1": "שעון אנאלוגי-דיגיטלי רב-תכליתי — תצוגה כפולה, מערך תכונות מלא.",
     "heroLead2": "זמן, תאריך, התראה, טמפרטורה חיצונית ומצבי שעון עצר בבית זהב קומפקטי מפלדת אל-חלד — קריאות ברורה לשימוש יומיומי.",
@@ -117,15 +117,15 @@
     "trustLaunchBody": "תוכניות מפעל למותגי שעונים צומחים.",
     "newsletterKicker": "עדכונים",
     "newsletterTitle": "מילוי מלאי DIGI-TEMP והשקות RM-TONNEAU",
-    "newsletterBody": "יופי מכני גולמי לגבר בתנועה.",
-    "mechanicalHeroBadge": "נבחר · מכני",
-    "mechanicalHeroTitle": "שעונים מכניים",
-    "mechanicalHeroLead": "יופי מכני גולמי לגבר בתנועה.",
-    "mechanicalHeroChipAutomatic": "אוטומטי",
-    "mechanicalHeroChipSkeleton": "לוחות שלד",
-    "mechanicalHeroChipFinishing": "גימור גלוי",
+    "newsletterBody": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
+    "mechanicalHeroBadge": "מתנות · זמן ואהבה",
+    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroLead": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
+    "mechanicalHeroChipAutomatic": "אומנות",
+    "mechanicalHeroChipSkeleton": "אבני דרך",
+    "mechanicalHeroChipFinishing": "ליווי",
     "mechanicalHeroCtaShop": "חנות",
-    "mechanicalHeroImageAlt": "תקריב של מנגנון מכני שלד עם גלגלים וגשרים",
+    "mechanicalHeroImageAlt": "באנר ראשי של HUMPBUCK — שעוני פרימיום מעשה יד",
     "categoryKicker": "קנו לפי מנגנון",
     "categoryHeading": "שעון מכני מומלץ",
     "categoryMechanicalKicker": "אוטומטי · שלד",
@@ -140,7 +140,7 @@
     "categoryQuartzImageAlt": "שעון ana-digi קварץ HUMPBUCK על פרק כף היד",
     "recommendedKicker": "חפש לפי",
     "recommendedTitle": "שעונים מומלצים",
-    "recommendedIntro": "פריטים מכניים נבחרים — לוחות שלד, אוטומטיים וגימור בולט.",
+    "recommendedIntro": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
     "recommendedViewAll": "לשעונים מכניים",
     "mechanicalWatchesTitle": "שעונים מכניים",
     "mechanicalWatchesShop": "לשעונים מכניים",
@@ -203,17 +203,17 @@
     "successClose": "סגירה"
   },
   "Shop": {
-    "metaTitle": "קנו שעונים מכניים",
-    "metaDescription": "עיינו בשעונים מכניים וקварץ של HUMPBUCK — סננו לפי מנגנון, סגנונות גברים ונשים ודגמים ultra-dun. אוטומטיים ושלד במחיר נגיש עם תשלום מאובטח.",
-    "ogTitle": "קנו שעונים מכניים · HUMPBUCK",
+    "metaTitle": "קניית שעוני מתנה משמעותיים",
+    "metaDescription": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
+    "ogTitle": "קניית שעוני מתנה משמעותיים · HUMPBUCK",
     "kicker": "קטלוג",
-    "title": "יופי מכני גולמי לגבר בתנועה.",
+    "title": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
     "intro": "עיון לפי קולקציה: DIGI-TEMP (דגל אנאלוגי-דיגיטלי), RM-TONNEAU (קוורץ חבית) ו-RD-ASTRAL. המסננים מסתנכרנים עם כתובת ה-URL לשיתוף.",
     "filterAll": "הכל",
     "showingSeries": "מציג {series} ({count, plural, one {פריט #} two {שני פריטים #} many {# פריטים} other {# פריטים}})",
     "emptyCategory": "עדיין אין כאן פריטים.",
     "clearFilter": "ניקוי מסנן",
-    "ogDescription": "יופי מכני גולמי לגבר בתנועה. המטרה שלי: שעונים מכניים איכותיים ונגישים לכולם.",
+    "ogDescription": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
     "filterPanelTitle": "סינון",
     "filterGroupMovement": "מנגנון",
     "filterGroupAudience": "קהל",
@@ -768,8 +768,8 @@
     "backHome": "חזרה לדף הבית"
   },
   "AboutPage": {
-    "metaTitle": "אודות — HUMPBUCK שעונים מכניים",
-    "metaDescription": "למה HUMPBUCK קיים — המטרה שלי: שעונים מכניים איכותיים ונגישים לכולם. יופי מכני גולמי לגבר בתנועה. צרו קשר במייל או WhatsApp.",
+    "metaTitle": "אודות — HUMPBUCK Watches",
+    "metaDescription": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
     "kickerBrand": "מותג",
     "heroTitle": "HUMPBUCK — תחילה שימושיות, אחר כך מראה.",
     "heroLead": "אנו מפעילים חנות ישירה ותוכניות מפעל כדי שהשקה אחת תוכל לגדול לייצור חוזר בלי לחפש מקורות מחדש כל עונה.",
@@ -820,5 +820,9 @@
     "backupLinkHint": "אם הווידאו למעלה לא מתנגן, פתחו קישור גיבוי:",
     "openBackupVideo": "פתיחת וידאו גיבוי",
     "backupIframeTitleSuffix": "גיבוי YouTube"
+  },
+  "BlogPage": {
+    "metaDescription": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
+    "intro": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים."
   }
 }

@@ -1,4 +1,4 @@
-import { mechanicalHeroWebpUrl } from "@/lib/r2";
+import { homeHeroWebpUrl } from "@/lib/r2";
 
 /**
  * Canonical site origin for metadata, sitemap, and JSON-LD.
@@ -18,7 +18,7 @@ export function getSiteUrl(): string {
 
 /** Resolve product or asset URL for og:image (R2 URLs pass through). */
 export function absoluteOgImageUrl(url: string | undefined): string {
-  if (!url) return mechanicalHeroWebpUrl();
+  if (!url) return homeHeroWebpUrl();
   if (/^https?:\/\//i.test(url)) return url;
   const base = getSiteUrl();
   const path = url.startsWith("/") ? url : `/${url}`;
@@ -26,8 +26,8 @@ export function absoluteOgImageUrl(url: string | undefined): string {
 }
 
 export const defaultOgImage = {
-  url: mechanicalHeroWebpUrl(),
+  url: homeHeroWebpUrl(),
   width: 1200,
   height: 630,
-  alt: "HUMPBUCK curated automatic watch — skeleton movement with visible gears",
+  alt: "HUMPBUCK Watches — meaningful gifts of time and love",
 } as const;

@@ -99,11 +99,24 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-06-21 | 记录本机双站 GitHub SSH：`humpbuck` 用 `github.com-humpbuck` + `~/.ssh/id_ed25519`（指纹与 GitHub 密钥 `humpbuck` 一致）；勿用 `id_ed25519_humpbuck`。 |
 | 2026-06-21 | 约定：**当前 Cursor 工作区是哪个站，说「同步」就只推该站**；两站 remote/SSH 互不串用。 |
 | 2026-06-29 | 增加 Codex 协作默认方式：可直接口语化提需求；Codex 先读约定与现有实现；默认改完停本地，不自动 commit、不自动推送；只有明确说“同步到 GitHub”时才按本文件第 5 节执行推送。 |
+| 2026-07-09 | **全站 SEO 品牌主线**定为 *Meaningful Gifts of Time and Love*。英文标题：`HUMPBUCK Watches - Meaningful Gifts of Time and Love`；英文描述：`Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.` 以后新增/改 SEO 文案以 `scripts/seo-brand-i18n.json` 为准，改后运行 `node scripts/apply-seo-brand-messaging.mjs` 同步到各 `messages/{locale}.json`。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 
-（在此下方向下写即可，例如：品牌措辞、不能出现的用语、定价比对规则、客服流程等。）
+**SEO 品牌主线（2026-07-09）**
 
-```
+- **英文标题：** `HUMPBUCK Watches - Meaningful Gifts of Time and Love`
+- **英文描述：** `Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.`
+- **维护方式：** 编辑 `scripts/seo-brand-i18n.json` → `node scripts/apply-seo-brand-messaging.mjs`
+- **适用范围：** 全站默认 meta / Open Graph（首页、商品列表、关于、页脚 tagline 等）；商品 PDP、系列页、博客文章仍用各自产品/文章描述，不强行覆盖。
 
-```
+**首页 Hero 背景图（2026-07-09）**
+
+- **R2 路径（大小写敏感）：** `Home/humpbuck-hero-Image.webp`（CDN：`https://assets.humpbuck.com/Home/humpbuck-hero-Image.webp`）
+- **换图：** 在 R2 同路径覆盖文件，并在 `.env.local` / 生产环境把 `NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV` 加 1（否则浏览器/CDN 可能仍显示旧图）
+- **代码入口：** `lib/r2.ts` → `homeHeroWebpUrl()`；组件 `components/site/home-hero.tsx`
+- **当前 PC / 手机共用一张图**（`object-cover` 裁切）。推荐导出尺寸：
+  - **首选（一张兼顾两端）：** **2560 × 1440 px**（16∶9），WebP 质量约 80–85%，目标小于 **400 KB**
+  - **最低可接受：** 1920 × 1080 px（普通屏够用；大屏/视网膜可能略软）
+  - **若以后拆成两张：** PC **2560 × 1440**；手机 **1500 × 2000**（竖构图 3∶4，主体偏中上，因手机 `object-position` 偏右/中）
+- **构图注意：** 左侧约 40% 留给白字（badge / 标题 / 描述 / 按钮）；手机会裁切右侧与上下，避免把主体放在最左下角。

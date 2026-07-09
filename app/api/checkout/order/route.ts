@@ -5,6 +5,7 @@ import {
   formatCheckoutAddressValidationEnglish,
   validateCheckoutAddressForm,
 } from "@/lib/checkout-address";
+import { notifyAdminInboxOrderPlaced } from "@/lib/admin-inbox";
 import { notifyMerchantOrderPlaced } from "@/lib/merchant-order-email";
 import { prisma } from "@/lib/prisma";
 
@@ -161,6 +162,7 @@ export async function POST(req: Request) {
     });
 
     await notifyMerchantOrderPlaced(order.id);
+    await notifyAdminInboxOrderPlaced(order.id);
 
     return NextResponse.json({ ok: true, orderId: order.id });
   } catch (error) {

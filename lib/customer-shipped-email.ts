@@ -14,7 +14,10 @@ import {
   getOrCreateUnsubscribeToken,
   isMarketingOptOut,
 } from "@/lib/email-marketing-preference";
-import { getR2VariantLineImageUrl } from "@/lib/r2-line-image";
+import {
+  buildEmailOrderLineItemRowsHtml,
+  EMAIL_ORDER_LINE_ITEMS_TABLE_HEAD,
+} from "@/lib/email-line-thumbnail";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { prisma } from "@/lib/prisma";
 import { buildSubscribeMagicUrl } from "@/lib/subscribe-magic-link";
@@ -38,13 +41,6 @@ function escapeHtml(s: string): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
-}
-
-function absoluteImageUrl(href: string): string {
-  const base = emailPublicBaseUrl();
-  if (href.startsWith("http://") || href.startsWith("https://")) return href;
-  const path = href.startsWith("/") ? href : `/${href}`;
-  return `${base}${path}`;
 }
 
 function supportEmail(): string {
@@ -210,24 +206,7 @@ function buildBillToPlainText(order: {
 async function buildOrderLineItemRowsHtml(
   lines: Awaited<ReturnType<typeof orderItemsFromOrder>>,
 ): Promise<string> {
-  return lines
-    .map((l) => {
-      const imgSrc = l.variantImage || getR2VariantLineImageUrl(l.slug, l.variantId) || "";
-      const img = imgSrc
-        ? `<img src="${escapeHtml(absoluteImageUrl(imgSrc))}" alt="" width="64" height="64" style="display:block;width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid #ece9e4;background:#f7f6f3;" />`
-        : `<div style="width:64px;height:64px;border-radius:10px;background:#ece9e4;border:1px solid #e0ddd6;"></div>`;
-      const title = escapeHtml(l.name);
-      const varLabel = l.variantLabel
-        ? `<br/><span style="color:#555;font-size:13px;">${escapeHtml(l.variantLabel)}</span>`
-        : "";
-      return `<tr>
-        <td style="padding:12px 8px 12px 12px;vertical-align:top;border-bottom:1px solid #ece9e4;">${img}</td>
-        <td style="padding:12px 8px;vertical-align:top;border-bottom:1px solid #ece9e4;color:#14120f;">${title}${varLabel}</td>
-        <td style="padding:12px 8px;vertical-align:middle;border-bottom:1px solid #ece9e4;text-align:center;font-weight:600;color:#5c5a57;">${l.qty}</td>
-        <td style="padding:12px 12px 12px 8px;vertical-align:middle;border-bottom:1px solid #ece9e4;text-align:right;white-space:nowrap;font-weight:600;color:#14120f;font-variant-numeric:tabular-nums;">${formatUsdEmail(l.lineTotalCents / 100)}</td>
-      </tr>`;
-    })
-    .join("");
+  return buildEmailOrderLineItemRowsHtml(lines);
 }
 
 export type ShippingAddressChangeEmailAudience = "buyer" | "merchant";
@@ -413,14 +392,7 @@ export async function buildShippingAddressChangeEmailPayload(
         <p style="margin:0 0 10px 0;font-size:10px;font-weight:700;letter-spacing:0.14em;color:#8a8680;">ORDER DETAILS</p>
         <p style="margin:0 0 12px 0;font-size:13px;color:${muted};">Placed ${escapeHtml(placed)} · ${escapeHtml(paymentProviderLabel(order.provider))}</p>
         <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:14px;border:1px solid #ece9e4;border-radius:12px;overflow:hidden;">
-          <thead>
-            <tr style="background:#faf9f7;">
-              <th align="left" style="padding:10px 8px 10px 12px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a8680;width:76px;">&nbsp;</th>
-              <th align="left" style="padding:10px 8px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a8680;">Product</th>
-              <th align="center" style="padding:10px 8px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a8680;width:44px;">Qty</th>
-              <th align="right" style="padding:10px 12px 10px 8px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a8680;width:88px;">Total</th>
-            </tr>
-          </thead>
+          ${EMAIL_ORDER_LINE_ITEMS_TABLE_HEAD}
           <tbody>${lineRows}</tbody>
         </table>
       </td></tr>
@@ -657,14 +629,7 @@ export async function buildCustomerShippedEmailPayload(order: Order): Promise<{
         <p style="margin:0 0 10px 0;font-size:10px;font-weight:700;letter-spacing:0.14em;color:#8a8680;">ORDER DETAILS</p>
         <p style="margin:0 0 12px 0;font-size:13px;color:${muted};">Placed ${escapeHtml(placed)} · ${escapeHtml(paymentProviderLabel(order.provider))}</p>
         <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:14px;border:1px solid #ece9e4;border-radius:12px;overflow:hidden;">
-          <thead>
-            <tr style="background:#faf9f7;">
-              <th align="left" style="padding:10px 8px 10px 12px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a8680;width:76px;">&nbsp;</th>
-              <th align="left" style="padding:10px 8px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a8680;">Product</th>
-              <th align="center" style="padding:10px 8px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a8680;width:44px;">Qty</th>
-              <th align="right" style="padding:10px 12px 10px 8px;font-size:11px;font-weight:700;letter-spacing:0.06em;color:#8a8680;width:88px;">Total</th>
-            </tr>
-          </thead>
+          ${EMAIL_ORDER_LINE_ITEMS_TABLE_HEAD}
           <tbody>${lineRows}</tbody>
         </table>
       </td></tr>

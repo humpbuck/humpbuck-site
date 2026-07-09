@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - 厳選タイムピース | プレミアム自動巻き＆クォーツ",
-    "descriptionDefault": "厳選された自動巻き・クォーツウォッチ — プレミアムムーブメント、スケルトンダイアル、際立つ仕上げ。安全なチェックアウトと世界配送のハンドピック時計。",
-    "ogTitle": "HUMPBUCK - 厳選タイムピース",
-    "ogDescription": "日常使いとコレクター向けのプレミアム自動巻き・クォーツウォッチ。安全なチェックアウト · 世界配送。"
+    "titleDefault": "HUMPBUCK Watches - 時間と愛を贈る意味あるギフト",
+    "descriptionDefault": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
+    "ogTitle": "HUMPBUCK Watches - 時間と愛を贈る意味あるギフト",
+    "ogDescription": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。"
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -51,7 +51,7 @@
     "blog": "ブログ"
   },
   "Footer": {
-    "tagline": "安全なチェックアウトと世界配送の、厳選メカニカル＆クォーツウォッチ。",
+    "tagline": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
     "highlights": "安全な決済 · 世界配送 · 24時間サポート",
     "copyright": "© {year} HUMPBUCK. 無断転載を禁じます。",
     "disclaimer": "価格、税金、配送はチェックアウト時に確定します。配送、返金、プライバシー、利用規約については上記サポートをご覧ください。お問い合わせ：",
@@ -76,10 +76,10 @@
     "socialTiktokAria": "TikTokのHUMPBUCK"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - 厳選タイムピース | プレミアム自動巻き＆クォーツ",
-    "metaDescription": "HUMPBUCKの厳選自動巻き・クォーツウォッチ — プレミアム機械式ムーブメント、スケルトンダイアル、精密クォーツキャリバー。ハンドピック時計を世界配送。",
-    "ogTitle": "HUMPBUCK - 厳選タイムピース",
-    "ogDescription": "日常使いとコレクター向けのプレミアム自動巻き・クォーツウォッチ。安全なチェックアウト · 世界配送。",
+    "metaTitle": "HUMPBUCK Watches - 時間と愛を贈る意味あるギフト",
+    "metaDescription": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
+    "ogTitle": "HUMPBUCK Watches - 時間と愛を贈る意味あるギフト",
+    "ogDescription": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
     "heroBadge": "シリーズ · DIGI-TEMP",
     "heroLead1": "アナデジ多機能時計 — デュアルディスプレイ、フル機能。",
     "heroLead2": "時刻、日付、アラーム、外気温、ストップウォッチモードをコンパクトなステンレスケースに — 日常使いに cockpit 級の視認性。",
@@ -117,15 +117,15 @@
     "trustLaunchBody": "成長中の時計ブランド向け工場プログラム。",
     "newsletterKicker": "最新情報",
     "newsletterTitle": "DIGI-TEMP 再入荷 & RM-TONNEAU 新着",
-    "newsletterBody": "動く男のための生のメカニカル美。",
-    "mechanicalHeroBadge": "厳選 · メカニカル",
-    "mechanicalHeroTitle": "メカニカルウォッチ",
-    "mechanicalHeroLead": "動く男のための生のメカニカル美。",
-    "mechanicalHeroChipAutomatic": "自動巻き",
-    "mechanicalHeroChipSkeleton": "スケルトンダイアル",
-    "mechanicalHeroChipFinishing": "仕上げが見える",
+    "newsletterBody": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
+    "mechanicalHeroBadge": "ギフト · 時間と愛",
+    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroLead": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
+    "mechanicalHeroChipAutomatic": "クラフトマンシップ",
+    "mechanicalHeroChipSkeleton": "マイルストーン",
+    "mechanicalHeroChipFinishing": "寄り添い",
     "mechanicalHeroCtaShop": "ショップ",
-    "mechanicalHeroImageAlt": "歯車とブリッジが見えるスケルトンメカニカルムーブメントのクローズアップ",
+    "mechanicalHeroImageAlt": "HUMPBUCK ホームページヒーロー — ハンドクラフトのプレミアムタイムピース",
     "categoryKicker": "ムーブメントで探す",
     "categoryHeading": "注目のメカニカルウォッチ",
     "categoryMechanicalKicker": "自動巻き · スケルトン",
@@ -140,7 +140,7 @@
     "categoryQuartzImageAlt": "手首のHUMPBUCKクォーツアナデジウォッチ",
     "recommendedKicker": "検索",
     "recommendedTitle": "おすすめウォッチ",
-    "recommendedIntro": "厳選メカニカル — スケルトンダイアル、自動巻き、際立つ仕上げ。",
+    "recommendedIntro": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
     "recommendedViewAll": "メカニカルを見る",
     "mechanicalWatchesTitle": "メカニカルウォッチ",
     "mechanicalWatchesShop": "メカニカルを見る",
@@ -203,17 +203,17 @@
     "successClose": "閉じる"
   },
   "Shop": {
-    "metaTitle": "メカニカルウォッチをショップ",
-    "metaDescription": "HUMPBUCKのメカニカル＆クォーツウォッチを閲覧 — ムーブメント、メンズ・レディース、超薄型で絞り込み。手の届く自動巻き＆スケルトン、安全なチェックアウト。",
-    "ogTitle": "メカニカルウォッチ · HUMPBUCK",
+    "metaTitle": "意味あるギフトウォッチをショップ",
+    "metaDescription": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
+    "ogTitle": "意味あるギフトウォッチ · HUMPBUCK",
     "kicker": "カタログ",
-    "title": "動く男のための生のメカニカル美。",
+    "title": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
     "intro": "コレクション別に閲覧：DIGI-TEMP（アナデジ フラッグシップ）、RM-TONNEAU（トノー クォーツ）、RD-ASTRAL。フィルターは URL と同期し共有可能。",
     "filterAll": "すべて",
     "showingSeries": "{series} を表示（{count, plural, one {# 点} other {# 点}}）",
     "emptyCategory": "まだ商品がありません。",
     "clearFilter": "フィルターを解除",
-    "ogDescription": "動く男のための生のメカニカル美。高品質で手の届くメカニカルウォッチをすべての人に届けることが目標です。",
+    "ogDescription": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
     "filterPanelTitle": "フィルター",
     "filterGroupMovement": "ムーブメント",
     "filterGroupAudience": "対象",
@@ -768,8 +768,8 @@
     "backHome": "ホームに戻る"
   },
   "AboutPage": {
-    "metaTitle": "About — HUMPBUCK メカニカルウォッチ",
-    "metaDescription": "HUMPBUCKが存在する理由 — 高品質で手の届くメカニカルウォッチをすべての人に。動く男のための生のメカニカル美。メールまたはWhatsAppでお問い合わせ。",
+    "metaTitle": "About — HUMPBUCK Watches",
+    "metaDescription": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
     "kickerBrand": "ブランド",
     "heroTitle": "HUMPBUCK — 実用性を先に、見せ方はその次。",
     "heroLead": "ダイレクトストアと工場プログラムを運営し、1 回のローンチがシーズンごとに再調達せず繰り返し生産へ成長できるようにします。",
@@ -820,5 +820,9 @@
     "backupLinkHint": "上記の動画が再生できない場合、このバックアップ動画リンクを開いてください：",
     "openBackupVideo": "バックアップ動画を開く",
     "backupIframeTitleSuffix": "YouTube バックアップ"
+  },
+  "BlogPage": {
+    "metaDescription": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
+    "intro": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。"
   }
 }

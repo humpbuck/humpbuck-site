@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - Relojes seleccionados | Automático y cuarzo premium",
-    "descriptionDefault": "Relojes automáticos y de cuarzo seleccionados — movimientos premium, esferas esqueleto y acabados destacados. Piezas escogidas con pago seguro y envío global.",
-    "ogTitle": "HUMPBUCK - Relojes seleccionados",
-    "ogDescription": "Relojes automáticos y de cuarzo premium, seleccionados para el día a día y coleccionistas. Pago seguro · envío global."
+    "titleDefault": "HUMPBUCK Watches - Regalos con significado de tiempo y amor",
+    "descriptionDefault": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
+    "ogTitle": "HUMPBUCK Watches - Regalos con significado de tiempo y amor",
+    "ogDescription": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -51,7 +51,7 @@
     "blog": "Blog"
   },
   "Footer": {
-    "tagline": "Relojes mecánicos y de cuarzo seleccionados con pago seguro y envío global.",
+    "tagline": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
     "highlights": "Pagos seguros · Envío global · Atención 24/7",
     "copyright": "© {year} HUMPBUCK. Todos los derechos reservados.",
     "disclaimer": "Precios, impuestos y envío se confirman al pagar. Para envíos, reembolsos, privacidad y condiciones, vea Soporte arriba. Consultas:",
@@ -76,10 +76,10 @@
     "socialTiktokAria": "HUMPBUCK en TikTok"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - Relojes seleccionados | Automático y cuarzo premium",
-    "metaDescription": "Relojes automáticos y de cuarzo seleccionados en HUMPBUCK — movimientos mecánicos premium, esferas esqueleto y calibres de cuarzo precisos. Piezas escogidas con envío global.",
-    "ogTitle": "HUMPBUCK - Relojes seleccionados",
-    "ogDescription": "Relojes automáticos y de cuarzo premium, seleccionados para el día a día y coleccionistas. Pago seguro · envío global.",
+    "metaTitle": "HUMPBUCK Watches - Regalos con significado de tiempo y amor",
+    "metaDescription": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
+    "ogTitle": "HUMPBUCK Watches - Regalos con significado de tiempo y amor",
+    "ogDescription": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
     "heroBadge": "Serie · DIGI-TEMP",
     "heroLead1": "Reloj ana-dígital multifunción: doble pantalla y funciones completas.",
     "heroLead2": "Hora, fecha, alarma, temperatura exterior y cronómetro en una caja compacta de acero inoxidable — lectura clara para el día a día.",
@@ -117,15 +117,15 @@
     "trustLaunchBody": "Programas de fábrica para marcas que crecen.",
     "newsletterKicker": "Novedades",
     "newsletterTitle": "Reposiciones DIGI-TEMP y novedades RM-TONNEAU",
-    "newsletterBody": "Belleza mecánica cruda para el hombre en movimiento.",
-    "mechanicalHeroBadge": "Seleccionado · Mecánico",
-    "mechanicalHeroTitle": "Relojes mecánicos",
-    "mechanicalHeroLead": "Belleza mecánica cruda para el hombre en movimiento.",
-    "mechanicalHeroChipAutomatic": "Automático",
-    "mechanicalHeroChipSkeleton": "Esferas esqueleto",
-    "mechanicalHeroChipFinishing": "Acabados visibles",
+    "newsletterBody": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
+    "mechanicalHeroBadge": "Regalos · Tiempo y amor",
+    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroLead": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
+    "mechanicalHeroChipAutomatic": "Artesanía",
+    "mechanicalHeroChipSkeleton": "Hitos",
+    "mechanicalHeroChipFinishing": "Compañía",
     "mechanicalHeroCtaShop": "Tienda",
-    "mechanicalHeroImageAlt": "Primer plano de un movimiento mecánico esqueleto con engranajes y puentes",
+    "mechanicalHeroImageAlt": "Hero de inicio HUMPBUCK — relojes premium artesanales",
     "categoryKicker": "Comprar por movimiento",
     "categoryHeading": "Reloj mecánico destacado",
     "categoryMechanicalKicker": "Automático · Esqueleto",
@@ -140,7 +140,7 @@
     "categoryQuartzImageAlt": "Reloj ana-digi de cuarzo HUMPBUCK en muñeca",
     "recommendedKicker": "Buscar por",
     "recommendedTitle": "Relojes recomendados",
-    "recommendedIntro": "Piezas mecánicas seleccionadas — esferas esqueleto, automáticos y acabados destacados.",
+    "recommendedIntro": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
     "recommendedViewAll": "Ver mecánicos",
     "mechanicalWatchesTitle": "Relojes mecánicos",
     "mechanicalWatchesShop": "Ver mecánicos",
@@ -203,17 +203,17 @@
     "successClose": "Cerrar"
   },
   "Shop": {
-    "metaTitle": "Comprar relojes mecánicos",
-    "metaDescription": "Explora relojes mecánicos y de cuarzo HUMPBUCK — filtra por movimiento, estilos de hombre y mujer y modelos ultrafinos. Automáticos y esqueleto asequibles con pago seguro.",
-    "ogTitle": "Comprar relojes mecánicos · HUMPBUCK",
+    "metaTitle": "Comprar relojes regalo con significado",
+    "metaDescription": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
+    "ogTitle": "Comprar relojes regalo con significado · HUMPBUCK",
     "kicker": "Catálogo",
-    "title": "Belleza mecánica cruda para el hombre en movimiento.",
+    "title": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
     "intro": "Navegue por colección: DIGI-TEMP (buque insignia ana-dígital), RM-TONNEAU (cuarzo tonneau) y RD-ASTRAL. Los filtros se reflejan en la URL para compartir.",
     "filterAll": "Todos",
     "showingSeries": "Mostrando {series} ({count, plural, one {# artículo} other {# artículos}})",
     "emptyCategory": "Aún no hay nada aquí.",
     "clearFilter": "Quitar filtro",
-    "ogDescription": "Belleza mecánica cruda para el hombre en movimiento. Mi objetivo: ofercer relojes mecánicos de calidad y asequibles para todos.",
+    "ogDescription": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
     "filterPanelTitle": "Filtrar",
     "filterGroupMovement": "Movimiento",
     "filterGroupAudience": "Público",
@@ -768,8 +768,8 @@
     "backHome": "Volver al inicio"
   },
   "AboutPage": {
-    "metaTitle": "Acerca de — HUMPBUCK Relojes mecánicos",
-    "metaDescription": "Por qué existe HUMPBUCK — mi objetivo: relojes mecánicos de calidad y asequibles para todos. Belleza mecánica cruda para el hombre en movimiento. Contacto por email o WhatsApp.",
+    "metaTitle": "Sobre nosotros — HUMPBUCK Watches",
+    "metaDescription": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
     "kickerBrand": "Marca",
     "heroTitle": "HUMPBUCK — la utilidad primero, luego el espectáculo.",
     "heroLead": "Combinamos tienda directa y programas de fábrica para que un lanzamiento pueda crecer a producción repetible sin reabastecer cada temporada.",
@@ -820,5 +820,9 @@
     "backupLinkHint": "Si el vídeo de arriba no se reproduce, abra este enlace de respaldo:",
     "openBackupVideo": "Abrir vídeo de respaldo",
     "backupIframeTitleSuffix": "respaldo YouTube"
+  },
+  "BlogPage": {
+    "metaDescription": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
+    "intro": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida."
   }
 }

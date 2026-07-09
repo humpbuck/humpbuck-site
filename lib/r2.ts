@@ -18,15 +18,20 @@ function r2PublicBaseUrl(): string {
 export const R2_ASSETS_PUBLIC_BASE = "https://assets.humpbuck.com" as const;
 
 /**
- * Homepage mechanical hero — `Home/humpbuck-hero-Image.webp` on R2 (case-sensitive path).
- * Lives on the production bucket/CDN; falls back to `R2_ASSETS_PUBLIC_BASE` when env still points at legacy `r2.dev`.
- * Bump `NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV` after same-name overwrites.
+ * Homepage hero — `Home/humpbuck-hero-Image.webp` on R2 (case-sensitive path).
+ * Replace the file in R2 to swap the banner; bump `NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV` after same-name overwrites.
+ * Recommended source: 2560×1440 WebP (see `docs/user-conventions.md` §7).
  */
-export function mechanicalHeroWebpUrl(): string {
+export function homeHeroWebpUrl(): string {
   const rev = process.env.NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV?.trim() || "1";
   const base = r2PublicBaseUrl();
   const heroBase = base.includes(".r2.dev") ? R2_ASSETS_PUBLIC_BASE : base;
   return `${heroBase}/Home/humpbuck-hero-Image.webp?v=${encodeURIComponent(rev)}`;
+}
+
+/** @deprecated Use `homeHeroWebpUrl` */
+export function mechanicalHeroWebpUrl(): string {
+  return homeHeroWebpUrl();
 }
 
 /**

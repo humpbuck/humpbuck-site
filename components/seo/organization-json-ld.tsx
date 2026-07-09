@@ -13,7 +13,7 @@ export function OrganizationJsonLd() {
         url,
         name: "HUMPBUCK",
         description:
-          "HUMPBUCK — curated premium automatic and quartz watches. Handpicked timepieces with secure checkout and global shipping.",
+          "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
         publisher: { "@id": `${url}/#organization` },
         inLanguage: "en-US",
       },
@@ -24,7 +24,7 @@ export function OrganizationJsonLd() {
         url,
         logo: R2.home.digitemp2301Webp,
         description:
-          "Curated premium automatic and quartz watches for everyday wear and collectors.",
+          "HUMPBUCK Watches — meaningful gifts of time and love. Handcrafted timepieces for life's meaningful moments.",
       },
     ],
   };
