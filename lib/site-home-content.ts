@@ -51,7 +51,7 @@ function trimField(value: unknown): string {
 }
 
 export function normalizeSiteHomeContent(
-  input: Partial<SiteHomeContentData> | null | undefined,
+  input: Partial<Record<keyof SiteHomeContentData, unknown>> | null | undefined,
 ): SiteHomeContentData {
   return {
     heroBadge: trimField(input?.heroBadge),
