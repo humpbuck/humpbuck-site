@@ -8,6 +8,16 @@ export function revalidateSiteAnnouncement(): void {
   revalidateTag("site-announcement", { expire: 0 });
 }
 
+/** Bust cached homepage hero / about content. */
+export function revalidateSiteHomeContent(): void {
+  revalidateTag("site-home-content", { expire: 0 });
+}
+
+/** Bust cached homepage featured coupon code. */
+export function revalidateHomepageFeaturedCoupon(): void {
+  revalidateTag("homepage-featured-coupon", { expire: 0 });
+}
+
 /** Paths that share the storefront shell (announcement bar + header). */
 const STOREFRONT_SHELL_PATHS = ["/", "/product", "/blog", "/video-tutorial"] as const;
 

@@ -165,7 +165,17 @@
     "trustLaunchBody": "Factory programs for growing watch brands.",
     "newsletterKicker": "Updates",
     "newsletterTitle": "NEW WATCHES DROPS",
-    "newsletterBody": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments."
+    "newsletterBody": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
+    "couponTitle": "Get a coupon",
+    "couponKicker": "Reflection",
+    "couponQuestion": "What's the most precious thing in life?",
+    "couponInputPlaceholder": "Share your thoughts…",
+    "couponConfirm": "Submit",
+    "couponRewardLabel": "Your Coupon is",
+    "couponNoCodeMessage": "Your coupon will appear here once a homepage coupon is configured in admin.",
+    "couponTaglineLine1": "Life has no standard answer.",
+    "couponTaglineLine2": "Just live it your way.",
+    "couponModalClose": "Close"
   },
   "Newsletter": {
     "emailLabel": "Email",

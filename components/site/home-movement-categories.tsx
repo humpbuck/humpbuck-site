@@ -6,12 +6,17 @@ import { flagshipCategoryBackgroundWebpUrl, mechanicalHeroWebpUrl } from "@/lib/
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardImages } from "@/lib/r2-card-image";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
+import { getSiteHomeContent } from "@/lib/site-home-content-queries";
 
 export async function HomeMovementCategories() {
   const locale = await getLocale();
-  const t = await getTranslations("Home");
-  const messages = await getMessages();
-  const sectionBackground = flagshipCategoryBackgroundWebpUrl();
+  const [t, messages, content] = await Promise.all([
+    getTranslations("Home"),
+    getMessages(),
+    getSiteHomeContent(),
+  ]);
+  const sectionBackground =
+    content.spotlightBackgroundImageUrl || flagshipCategoryBackgroundWebpUrl();
 
   const all = await getMergedCatalogProducts();
   const raw =

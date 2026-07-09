@@ -289,12 +289,14 @@ model Coupon {
   startsAt       DateTime
   endsAt         DateTime
   isActive       Boolean           @default(true)
+  homeFeatured   Boolean           @default(false)
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
   quantity       Int               @default(1)
   usedCount      Int               @default(0)
 
   @@index([isActive, startsAt, endsAt])
+  @@index([homeFeatured])
 }
 
 model AdminInboxMessage {
@@ -359,4 +361,30 @@ model SiteAnnouncement {
   slidesJson      String   @default("[]")
   backgroundColor String   @default("#0f1114")
   updatedAt       DateTime @updatedAt
+}
+
+model SiteHomeContent {
+  id                  String   @id @default("default")
+  heroBadge           String   @default("")
+  heroTitle           String   @default("")
+  heroLead            String   @default("")
+  heroChip1           String   @default("")
+  heroChip2           String   @default("")
+  heroChip3           String   @default("")
+  heroCtaShop         String   @default("")
+  heroImageAlt        String   @default("")
+  heroDesktopImageUrl String   @default("")
+  heroMobileImageUrl  String   @default("")
+  aboutHeading        String   @default("")
+  aboutParagraph1     String   @default("")
+  aboutParagraph2     String   @default("")
+  aboutImageAlt       String   @default("")
+  aboutImageUrl       String   @default("")
+  spotlightBackgroundImageUrl String @default("")
+  couponTitle             String   @default("")
+  couponQuestion          String   @default("")
+  couponSuccessMessage    String   @default("")
+  couponTagline           String   @default("")
+  couponBackgroundImageUrl String  @default("")
+  updatedAt           DateTime @updatedAt
 }

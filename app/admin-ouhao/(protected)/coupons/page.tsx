@@ -4,6 +4,14 @@ import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { AdminFlashMessage } from "@/components/admin/admin-flash-message";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
+import {
+  revalidateHomepageFeaturedCoupon,
+  revalidateStorefrontPath,
+} from "@/lib/revalidate-storefront";
+import {
+  getHomepageFeaturedCoupon,
+  setCouponHomeFeatured,
+} from "@/lib/homepage-coupon-queries";
 import { prisma } from "@/lib/prisma";
 
 function parseAmountOffCents(raw: FormDataEntryValue | null): number | null {
@@ -46,6 +54,12 @@ function goCoupons(params?: { error?: string; success?: string }): never {
   redirect(`${adminPath("/coupons")}?${qs.toString()}`);
 }
 
+function revalidateCouponAdminViews(): void {
+  revalidatePath(adminPath("/coupons"));
+  revalidateHomepageFeaturedCoupon();
+  revalidateStorefrontPath("/");
+}
+
 async function createCouponAction(formData: FormData) {
   "use server";
   await assertAdmin();
@@ -58,6 +72,7 @@ async function createCouponAction(formData: FormData) {
   const startsAt = parseDateAtStartOfDay(formData.get("startsAt"));
   const endsAt = parseDateAtStartOfDay(formData.get("endsAt"));
   const isActive = String(formData.get("isActive") ?? "") === "on";
+  const homeFeatured = String(formData.get("homeFeatured") ?? "") === "on";
 
   if (!code) goCoupons({ error: "Coupon code is required." });
   if (amountOffCents === null) goCoupons({ error: "Amount must be greater than 0." });
@@ -68,7 +83,7 @@ async function createCouponAction(formData: FormData) {
   }
 
   try {
-    await prisma.coupon.create({
+    const created = await prisma.coupon.create({
       data: {
         code,
         amountOffCents,
@@ -78,12 +93,15 @@ async function createCouponAction(formData: FormData) {
         isActive,
       },
     });
+    if (homeFeatured) {
+      await setCouponHomeFeatured(created.id, true);
+    }
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Failed to create coupon.";
     goCoupons({ error: msg.includes("Coupon_code_key") ? "Coupon code already exists." : msg });
   }
 
-  revalidatePath(adminPath("/coupons"));
+  revalidateCouponAdminViews();
   goCoupons({ success: "Coupon created successfully." });
 }
 
@@ -100,6 +118,7 @@ async function updateCouponAction(formData: FormData) {
   const startsAt = parseDateAtStartOfDay(formData.get("startsAt"));
   const endsAt = parseDateAtStartOfDay(formData.get("endsAt"));
   const isActive = String(formData.get("isActive") ?? "") === "on";
+  const homeFeatured = String(formData.get("homeFeatured") ?? "") === "on";
 
   if (!id) goCoupons({ error: "Missing coupon id." });
   if (!code) goCoupons({ error: "Coupon code is required." });
@@ -122,12 +141,13 @@ async function updateCouponAction(formData: FormData) {
         isActive,
       },
     });
+    await setCouponHomeFeatured(id, homeFeatured);
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Failed to update coupon.";
     goCoupons({ error: msg.includes("Coupon_code_key") ? "Coupon code already exists." : msg });
   }
 
-  revalidatePath(adminPath("/coupons"));
+  revalidateCouponAdminViews();
   redirect(`${adminPath("/coupons")}?success=${encodeURIComponent("Coupon saved successfully")}`);
 }
 
@@ -137,7 +157,7 @@ async function deleteCouponAction(formData: FormData) {
   const id = String(formData.get("id") ?? "").trim();
   if (!id) goCoupons({ error: "Missing coupon id." });
   await prisma.coupon.delete({ where: { id } });
-  revalidatePath(adminPath("/coupons"));
+  revalidateCouponAdminViews();
   redirect(adminPath("/coupons"));
 }
 
@@ -148,9 +168,12 @@ export default async function AdminCouponsPage({
 }) {
   await assertAdmin();
   const sp = await searchParams;
-  const coupons = await prisma.coupon.findMany({
-    orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-  });
+  const [coupons, homepageCoupon] = await Promise.all([
+    prisma.coupon.findMany({
+      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+    }),
+    getHomepageFeaturedCoupon(),
+  ]);
 
   return (
     <div>
@@ -158,6 +181,8 @@ export default async function AdminCouponsPage({
       <h1 className="font-serif text-3xl tracking-tight">Coupons</h1>
       <p className="mt-2 text-sm text-muted">
         Create and manage coupon codes, amount, quantity, and valid date range.
+        Check Homepage coupon on one code to power the homepage &quot;Get a coupon&quot;
+        prompt{homepageCoupon ? ` (currently ${homepageCoupon.code})` : ""}.
       </p>
 
       {sp.error ? (
@@ -171,7 +196,7 @@ export default async function AdminCouponsPage({
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Add coupon
         </h2>
-        <form action={createCouponAction} className="mt-4 grid gap-3 md:grid-cols-6">
+        <form action={createCouponAction} className="mt-4 grid gap-3 md:grid-cols-7">
           <input
             name="code"
             required
@@ -213,9 +238,13 @@ export default async function AdminCouponsPage({
             <span>Active</span>
             <input name="isActive" type="checkbox" defaultChecked className="h-4 w-4" />
           </label>
+          <label className="inline-flex items-center justify-between gap-3 rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink">
+            <span>Homepage coupon</span>
+            <input name="homeFeatured" type="checkbox" className="h-4 w-4" />
+          </label>
           <button
             type="submit"
-            className="md:col-span-6 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
+            className="md:col-span-7 inline-flex items-center justify-center rounded-xl bg-ink px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
           >
             Create coupon
           </button>
@@ -236,7 +265,7 @@ export default async function AdminCouponsPage({
               <form
                 key={c.id}
                 action={updateCouponAction}
-                className="grid gap-3 rounded-2xl border border-line bg-white/60 p-4 md:grid-cols-6"
+                className="grid gap-3 rounded-2xl border border-line bg-white/60 p-4 md:grid-cols-7"
               >
                 <input type="hidden" name="id" value={c.id} />
                 <input
@@ -281,7 +310,16 @@ export default async function AdminCouponsPage({
                   <span>Active</span>
                   <input name="isActive" type="checkbox" defaultChecked={c.isActive} className="h-4 w-4" />
                 </label>
-                <p className="md:col-span-6 -mt-1 text-xs text-muted">
+                <label className="inline-flex items-center justify-between gap-3 rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink">
+                  <span>Homepage coupon</span>
+                  <input
+                    name="homeFeatured"
+                    type="checkbox"
+                    defaultChecked={c.homeFeatured}
+                    className="h-4 w-4"
+                  />
+                </label>
+                <p className="md:col-span-7 -mt-1 text-xs text-muted">
                   Used {c.usedCount} / {c.quantity}
                 </p>
                 <div className="flex items-center gap-2">

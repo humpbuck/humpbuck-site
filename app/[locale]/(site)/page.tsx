@@ -3,6 +3,7 @@ import { Globe2, ShieldCheck, Sparkles } from "lucide-react";
 import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { HomeHero } from "@/components/site/home-hero";
+import { HomeCouponSection } from "@/components/site/home-coupon-section";
 import { HomeMovementCategories } from "@/components/site/home-movement-categories";
 import { HomeFounderStorySection } from "@/components/site/home-founder-story-section";
 import { NewsletterSubscribe } from "@/components/site/NewsletterSubscribe";
@@ -163,6 +164,9 @@ export default async function HomePage({
   return (
     <div>
       <HomeHero />
+      <Suspense fallback={null}>
+        <HomeCouponSection />
+      </Suspense>
       <Suspense fallback={<HomeSpotlightSectionFallback />}>
         <HomeMovementCategories />
       </Suspense>
