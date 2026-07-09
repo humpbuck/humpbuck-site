@@ -50,6 +50,47 @@ function trimField(value: unknown): string {
   return String(value ?? "").trim();
 }
 
+/** Fill empty stored fields with built-in defaults so admin inputs show live copy (black), not grey placeholders. */
+export function resolveSiteHomeContentForAdminForm(
+  stored: SiteHomeContentData,
+  fallbacks: SiteHomeContentData,
+): SiteHomeContentData {
+  const or = (value: string, fallback: string) => {
+    const trimmed = value.trim();
+    return trimmed || fallback;
+  };
+
+  return {
+    heroBadge: or(stored.heroBadge, fallbacks.heroBadge),
+    heroTitle: or(stored.heroTitle, fallbacks.heroTitle),
+    heroLead: or(stored.heroLead, fallbacks.heroLead),
+    heroChip1: or(stored.heroChip1, fallbacks.heroChip1),
+    heroChip2: or(stored.heroChip2, fallbacks.heroChip2),
+    heroChip3: or(stored.heroChip3, fallbacks.heroChip3),
+    heroCtaShop: or(stored.heroCtaShop, fallbacks.heroCtaShop),
+    heroImageAlt: or(stored.heroImageAlt, fallbacks.heroImageAlt),
+    heroDesktopImageUrl: or(stored.heroDesktopImageUrl, fallbacks.heroDesktopImageUrl),
+    heroMobileImageUrl: or(stored.heroMobileImageUrl, fallbacks.heroMobileImageUrl),
+    aboutHeading: or(stored.aboutHeading, fallbacks.aboutHeading),
+    aboutParagraph1: or(stored.aboutParagraph1, fallbacks.aboutParagraph1),
+    aboutParagraph2: or(stored.aboutParagraph2, fallbacks.aboutParagraph2),
+    aboutImageAlt: or(stored.aboutImageAlt, fallbacks.aboutImageAlt),
+    aboutImageUrl: or(stored.aboutImageUrl, fallbacks.aboutImageUrl),
+    spotlightBackgroundImageUrl: or(
+      stored.spotlightBackgroundImageUrl,
+      fallbacks.spotlightBackgroundImageUrl,
+    ),
+    couponTitle: or(stored.couponTitle, fallbacks.couponTitle),
+    couponQuestion: or(stored.couponQuestion, fallbacks.couponQuestion),
+    couponSuccessMessage: or(stored.couponSuccessMessage, fallbacks.couponSuccessMessage),
+    couponTagline: or(stored.couponTagline, fallbacks.couponTagline),
+    couponBackgroundImageUrl: or(
+      stored.couponBackgroundImageUrl,
+      fallbacks.couponBackgroundImageUrl,
+    ),
+  };
+}
+
 export function normalizeSiteHomeContent(
   input: Partial<Record<keyof SiteHomeContentData, unknown>> | null | undefined,
 ): SiteHomeContentData {

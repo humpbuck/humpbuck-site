@@ -14,10 +14,11 @@ import {
   revalidateStorefrontPath,
 } from "@/lib/revalidate-storefront";
 import {
-  getSiteHomeContent,
+  getSiteHomeContentForAdmin,
   saveSiteHomeContent,
 } from "@/lib/site-home-content-queries";
 import {
+  resolveSiteHomeContentForAdminForm,
   siteHomeContentFromFormData,
   validateSiteHomeContent,
 } from "@/lib/site-home-content";
@@ -112,7 +113,7 @@ export default async function AdminHomepageContentPage({
   searchParams: Promise<{ error?: string; success?: string }>;
 }) {
   await assertAdmin();
-  const content = await getSiteHomeContent();
+  const { content: storedContent, updatedAt } = await getSiteHomeContentForAdmin();
   const { error, success } = await searchParams;
 
   const defaultHeroDesktop = homeHeroDesktopWebpUrl();
@@ -120,14 +121,42 @@ export default async function AdminHomepageContentPage({
   const defaultAboutImage = founderStoryHomePoolWebpUrl();
   const defaultSpotlightBackground = flagshipCategoryBackgroundWebpUrl();
 
+  const content = resolveSiteHomeContentForAdminForm(storedContent, {
+    heroBadge: "Gifts · Time & Love",
+    heroTitle: "HUMPBUCK Watches",
+    heroLead:
+      "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
+    heroChip1: "Craftsmanship",
+    heroChip2: "Milestones",
+    heroChip3: "Companionship",
+    heroCtaShop: "Shop",
+    heroImageAlt: "HUMPBUCK homepage hero — handcrafted premium timepieces",
+    heroDesktopImageUrl: defaultHeroDesktop,
+    heroMobileImageUrl: defaultHeroMobile,
+    aboutHeading: "About",
+    aboutParagraph1:
+      "I have loved mechanical watches since I was a child. Back then, my family was poor, and I couldn't afford one. However, I was completely fascinated by how the intricate gears interlock and how the complex mechanical structures work together to keep precise time.",
+    aboutParagraph2:
+      "Now, I have built this mechanical watch website. My goal is to offer high-quality, affordable mechanical watches to everyone, while fulfilling my childhood dream of owning one. Keep chasing your dreams.",
+    aboutImageAlt:
+      "Mechanical watch on a wooden post with a child in a rural village in the background",
+    aboutImageUrl: defaultAboutImage,
+    spotlightBackgroundImageUrl: defaultSpotlightBackground,
+    couponTitle: "Get a coupon",
+    couponQuestion: "What's the most precious thing in life?",
+    couponSuccessMessage: "",
+    couponTagline: "Life has no standard answer.\nJust live it your way.",
+    couponBackgroundImageUrl: "",
+  });
+
   return (
     <div>
       <AdminBackLink href={adminPath()} label="Overview" />
       <h1 className="mt-4 font-serif text-3xl tracking-tight">Homepage hero &amp; about</h1>
       <p className="mt-2 max-w-2xl text-sm text-muted">
-        Edit the homepage hero banner and founder story (about) section. Leave a
-        field blank to keep the built-in default. Image fields accept full R2 or
-        HTTPS URLs.
+        Edit the homepage hero banner and founder story (about) section. Fields
+        show the copy currently live on the site. Clear a field and save to
+        restore the built-in default. Image fields accept full R2 or HTTPS URLs.
       </p>
 
       {error ? (
@@ -145,7 +174,11 @@ export default async function AdminHomepageContentPage({
         />
       ) : null}
 
-      <form action={saveHomepageContentAction} className="mt-8 max-w-2xl space-y-10">
+      <form
+        key={updatedAt ?? "empty"}
+        action={saveHomepageContentAction}
+        className="mt-8 max-w-2xl space-y-10"
+      >
         <fieldset className="space-y-4 rounded-2xl border border-line bg-white/60 p-5">
           <legend className="px-1 text-[11px] font-bold uppercase tracking-[0.14em] text-ink">
             Hero section

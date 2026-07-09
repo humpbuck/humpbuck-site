@@ -28,6 +28,29 @@ export async function getSiteHomeContent(): Promise<SiteHomeContentData> {
   )();
 }
 
+/** Admin editor — always read fresh from DB (never `unstable_cache`). */
+export async function getSiteHomeContentForAdmin(): Promise<{
+  content: SiteHomeContentData;
+  updatedAt: string | null;
+}> {
+  if (!prisma.siteHomeContent) {
+    return { content: EMPTY_SITE_HOME_CONTENT, updatedAt: null };
+  }
+
+  const row = await prisma.siteHomeContent
+    .findUnique({ where: { id: DEFAULT_ID } })
+    .catch(() => null);
+
+  if (!row) {
+    return { content: EMPTY_SITE_HOME_CONTENT, updatedAt: null };
+  }
+
+  return {
+    content: normalizeSiteHomeContent(row),
+    updatedAt: row.updatedAt.toISOString(),
+  };
+}
+
 export async function saveSiteHomeContent(
   data: SiteHomeContentData,
 ): Promise<void> {
