@@ -17,7 +17,7 @@ export async function HomeHero() {
     content.heroDesktopImageUrl || homeHeroDesktopWebpUrl();
   const heroAlt = content.heroImageAlt || t("mechanicalHeroImageAlt");
   const heroMinH =
-    "min-h-[calc((100svh-var(--site-announcement-h,0px)-72px)*0.7)] md:min-h-[calc(100vh-var(--site-announcement-h,0px)-80px)]";
+    "min-h-[calc((100svh-var(--site-announcement-h,0px)-72px)*0.85)] md:min-h-[calc(100vh-var(--site-announcement-h,0px)-80px)]";
 
   return (
     <section
