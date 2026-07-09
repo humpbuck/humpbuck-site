@@ -3,6 +3,14 @@
 import { useState } from "react";
 import { CenterModal } from "@/components/ui/center-modal";
 
+/** iOS Safari auto-zooms inputs under 16px; a no-op scroll nudge can reset stray zoom after blur. */
+function stabilizeViewportAfterInput() {
+  if (typeof window === "undefined") return;
+  requestAnimationFrame(() => {
+    window.scrollTo(0, window.scrollY);
+  });
+}
+
 export function HomeCouponPrompt({
   kicker,
   title,
@@ -31,6 +39,19 @@ export function HomeCouponPrompt({
   const [answer, setAnswer] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
 
+  const openModal = () => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    stabilizeViewportAfterInput();
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    stabilizeViewportAfterInput();
+  };
+
   return (
     <>
       <div className="relative z-20 mx-auto w-full max-w-3xl rounded-3xl border border-line/80 bg-white/80 px-4 py-10 shadow-[0_1px_0_rgba(15,17,20,0.04)] backdrop-blur-sm max-sm:px-3 sm:px-10 sm:py-12 md:px-12 md:py-14">
@@ -57,13 +78,14 @@ export function HomeCouponPrompt({
               type="text"
               value={answer}
               onChange={(event) => setAnswer(event.target.value)}
+              onBlur={stabilizeViewportAfterInput}
               placeholder={inputPlaceholder}
-              className="relative z-10 w-full scroll-mb-24 rounded-2xl border border-line bg-white px-5 py-3.5 text-sm text-ink outline-none transition placeholder:text-muted/70 focus:border-ink/20 focus:ring-2 focus:ring-ink/8 sm:rounded-none sm:border-0 sm:border-r sm:border-line sm:py-4 sm:text-[15px] sm:focus:ring-0"
+              className="relative z-10 w-full scroll-mb-24 rounded-2xl border border-line bg-white px-5 py-3.5 text-[16px] text-ink outline-none transition placeholder:text-muted/70 focus:border-ink/20 focus:ring-2 focus:ring-ink/8 sm:rounded-none sm:border-0 sm:border-r sm:border-line sm:py-4 sm:text-[15px] sm:focus:ring-0"
               aria-label={question}
             />
             <button
               type="button"
-              onClick={() => setModalOpen(true)}
+              onClick={openModal}
               className="inline-flex shrink-0 items-center justify-center rounded-2xl bg-ink px-8 py-3.5 text-[11px] font-bold uppercase tracking-[0.16em] text-paper transition hover:bg-ink/90 sm:rounded-none sm:px-10 sm:py-4"
             >
               {confirmLabel}
@@ -76,7 +98,7 @@ export function HomeCouponPrompt({
         <CenterModal
           title=""
           accessibleTitle={`${taglineLine1} ${taglineLine2}`}
-          onClose={() => setModalOpen(false)}
+          onClose={closeModal}
         >
           <div className="px-1 pb-1 pt-1 text-center sm:px-2">
             <div className="font-serif text-[clamp(1.125rem,2.5vw+0.75rem,1.5rem)] leading-relaxed text-ink">
@@ -101,7 +123,7 @@ export function HomeCouponPrompt({
 
             <button
               type="button"
-              onClick={() => setModalOpen(false)}
+              onClick={closeModal}
               className="mt-8 inline-flex min-w-[9rem] items-center justify-center rounded-full bg-ink px-8 py-3 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
             >
               {closeLabel}
