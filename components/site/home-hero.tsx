@@ -17,7 +17,7 @@ export async function HomeHero() {
     content.heroDesktopImageUrl || homeHeroDesktopWebpUrl();
   const heroAlt = content.heroImageAlt || t("mechanicalHeroImageAlt");
   const heroMinH =
-    "min-h-[calc(100svh-var(--site-announcement-h,0px)-72px)] md:min-h-[calc(100vh-var(--site-announcement-h,0px)-80px)]";
+    "min-h-[calc((100svh-var(--site-announcement-h,0px)-72px)*0.7)] md:min-h-[calc(100vh-var(--site-announcement-h,0px)-80px)]";
 
   return (
     <section
@@ -56,11 +56,11 @@ export async function HomeHero() {
       </div>
 
       <div
-        className={`relative z-10 mx-auto flex min-h-0 flex-1 flex-col ${heroMinH} w-full max-w-7xl px-[clamp(1rem,4.5vw,1.75rem)] pt-[clamp(1.25rem,5svh,2.75rem)] pb-[clamp(4.75rem,9.5svh,6.25rem)] md:px-6 md:pt-0 md:pb-0 lg:px-8`}
+        className={`relative z-10 mx-auto flex min-h-0 flex-1 flex-col ${heroMinH} w-full max-w-7xl px-[clamp(1rem,4.5vw,1.75rem)] pt-[clamp(0.5rem,1.75svh,1rem)] pb-[clamp(2.75rem,4.5svh,3.5rem)] md:px-6 md:pt-0 md:pb-0 lg:px-8`}
       >
         <div className="hidden shrink-0 md:block md:flex-[2]" aria-hidden />
 
-        <div className="my-auto flex w-full max-w-xl flex-col gap-[clamp(1rem,3.2svh,1.875rem)] md:my-0 md:shrink-0 md:gap-[clamp(0.875rem,2.4svh,1.5rem)]">
+        <div className="my-auto flex w-full max-w-xl flex-col gap-[clamp(0.75rem,2svh,1.375rem)] md:my-0 md:shrink-0 md:gap-[clamp(0.875rem,2.4svh,1.5rem)]">
           <p className="inline-flex w-fit rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-[clamp(9px,2.4vw,10px)] font-semibold uppercase tracking-[0.16em] text-white/80 md:text-[10px] md:tracking-[0.2em]">
             {content.heroBadge || t("mechanicalHeroBadge")}
           </p>
