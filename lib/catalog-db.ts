@@ -3,6 +3,7 @@ import "server-only";
 import { prisma } from "@/lib/prisma";
 import type { Product } from "@/lib/catalog";
 import { normalizeSeriesSlug } from "@/lib/catalog";
+import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
 import { parseDetailBlocksJson } from "@/lib/product-detail-blocks";
 
 type CatalogProductRow = {
@@ -123,6 +124,7 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
 
 async function loadMergedCatalogProductsUncached(): Promise<Product[]> {
   try {
+    await ensureCatalogProductSchema();
     const [dbRows, inventory] = await Promise.all([
       prisma.catalogProduct.findMany(),
       prisma.productInventory.findMany(),
@@ -142,6 +144,7 @@ export async function fetchMergedCatalogProducts(): Promise<Product[]> {
 
 async function fetchMergedCatalogProductBySlug(slug: string): Promise<Product | undefined> {
   try {
+    await ensureCatalogProductSchema();
     const [row, inventory] = await Promise.all([
       prisma.catalogProduct.findUnique({ where: { slug } }),
       prisma.productInventory.findMany({ where: { productSlug: slug } }),

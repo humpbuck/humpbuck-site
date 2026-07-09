@@ -5,6 +5,7 @@ import {
   parseHomeSpotlightInput,
   syncExclusiveHomeSpotlight,
 } from "@/lib/catalog-home-spotlight";
+import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
 import { normalizeSeriesSlug } from "@/lib/catalog";
 import { parseStorefrontPlacementPayload } from "@/lib/home-watch-sections";
 import {
@@ -50,6 +51,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
+    await ensureCatalogProductSchema();
     const products = await prisma.catalogProduct.findMany({
       where: { status: { not: "archived" } },
       orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
@@ -109,6 +111,7 @@ export async function POST(req: Request) {
     : [];
 
   try {
+    await ensureCatalogProductSchema();
     const taken = await prisma.catalogProduct.findUnique({ where: { slug } });
     if (taken) {
       return NextResponse.json(

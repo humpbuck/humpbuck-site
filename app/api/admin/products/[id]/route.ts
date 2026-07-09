@@ -9,6 +9,7 @@ import {
   parseHomeSpotlightInput,
   syncExclusiveHomeSpotlight,
 } from "@/lib/catalog-home-spotlight";
+import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
 import { normalizeSeriesSlug } from "@/lib/catalog";
 import {
   parseStorefrontPlacementPayload,
@@ -166,6 +167,7 @@ export async function PATCH(
     : [];
 
   try {
+    await ensureCatalogProductSchema();
     const prev = await prisma.catalogProduct.findUnique({ where: { id } });
     if (!prev) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
@@ -231,6 +233,7 @@ export async function DELETE(
   }
   const { id } = await ctx.params;
   try {
+    await ensureCatalogProductSchema();
     const product = await prisma.catalogProduct.findUnique({ where: { id } });
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });

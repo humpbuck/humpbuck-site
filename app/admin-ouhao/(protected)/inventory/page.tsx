@@ -1,11 +1,13 @@
 import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { adminPath } from "@/lib/admin-path";
+import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
 import { prisma } from "@/lib/prisma";
 import { ProductManager } from "@/components/admin/product-manager";
 
 const EMPTY_JSON = JSON.stringify([]);
 
 export default async function AdminInventoryPage() {
+  await ensureCatalogProductSchema();
   const [products, inventory] = await Promise.all([
     prisma.catalogProduct.findMany({ orderBy: [{ slug: "asc" }] }),
     prisma.productInventory.findMany({
