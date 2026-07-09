@@ -56,42 +56,46 @@ export async function HomeHero() {
       </div>
 
       <div
-        className={`relative z-10 mx-auto flex min-h-0 flex-1 flex-col ${heroMinH} w-full max-w-7xl px-[clamp(1rem,4.5vw,1.75rem)] pt-[clamp(0.5rem,1.75svh,1rem)] pb-[clamp(2.75rem,4.5svh,3.5rem)] md:px-6 md:pt-0 md:pb-0 lg:px-8`}
+        className={`relative z-10 mx-auto flex min-h-0 flex-1 flex-col ${heroMinH} w-full max-w-7xl px-[clamp(1rem,4.5vw,1.75rem)] pt-[clamp(0.75rem,2.5svh,1.25rem)] pb-[clamp(1rem,3svh,1.5rem)] md:px-6 md:py-0 lg:px-8`}
       >
         <div className="hidden shrink-0 md:block md:flex-[2]" aria-hidden />
 
-        <div className="my-auto flex w-full max-w-xl flex-col gap-[clamp(0.75rem,2svh,1.375rem)] md:my-0 md:shrink-0 md:gap-[clamp(0.875rem,2.4svh,1.5rem)]">
-          <p className="inline-flex w-fit rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-[clamp(9px,2.4vw,10px)] font-semibold uppercase tracking-[0.16em] text-white/80 md:text-[10px] md:tracking-[0.2em]">
-            {content.heroBadge || t("mechanicalHeroBadge")}
-          </p>
+        <div className="w-full max-w-xl max-md:flex max-md:min-h-0 max-md:flex-1 max-md:flex-col md:shrink-0">
+          {/* Copy block — badge → headline → lead → chips */}
+          <div className="flex flex-col">
+            <p className="inline-flex w-fit rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/80 md:tracking-[0.2em]">
+              {content.heroBadge || t("mechanicalHeroBadge")}
+            </p>
 
-          <h1
-            id="home-hero-heading"
-            className="font-serif text-[clamp(1.625rem,4.8vw+0.65rem,3.25rem)] font-normal leading-[1.2] tracking-[-0.02em] min-[390px]:leading-[1.22] min-[430px]:leading-[1.24] md:leading-[1.08]"
-          >
-            {content.heroTitle || t("mechanicalHeroTitle")}
-          </h1>
+            <h1
+              id="home-hero-heading"
+              className="mt-4 font-serif text-[clamp(1.75rem,5vw+0.5rem,3.25rem)] font-normal leading-[1.15] tracking-[-0.02em] md:mt-5 md:leading-[1.08]"
+            >
+              {content.heroTitle || t("mechanicalHeroTitle")}
+            </h1>
 
-          <p className="max-w-[min(100%,22.5rem)] text-[clamp(0.9375rem,2.6vw,1.0625rem)] leading-[1.72] text-white/88 min-[390px]:leading-[1.78] min-[430px]:leading-[1.82] md:max-w-prose md:text-lg md:leading-relaxed md:text-white/82">
-            {content.heroLead || t("mechanicalHeroLead")}
-          </p>
+            <p className="mt-5 max-w-[min(100%,24rem)] text-[clamp(0.9375rem,2.5vw,1.0625rem)] leading-[1.75] text-white/86 md:mt-6 md:max-w-prose md:text-lg md:leading-[1.7] md:text-white/82">
+              {content.heroLead || t("mechanicalHeroLead")}
+            </p>
 
-          <div className="flex flex-wrap gap-x-2.5 gap-y-2.5 md:gap-2">
-            <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[clamp(8px,2.2vw,10px)] font-semibold uppercase tracking-[0.12em] text-white/88 md:px-3 md:py-1.5 md:tracking-[0.14em]">
-              {content.heroChip1 || t("mechanicalHeroChipAutomatic")}
-            </span>
-            <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[clamp(8px,2.2vw,10px)] font-semibold uppercase tracking-[0.12em] text-white/88 md:px-3 md:py-1.5 md:tracking-[0.14em]">
-              {content.heroChip2 || t("mechanicalHeroChipSkeleton")}
-            </span>
-            <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[clamp(8px,2.2vw,10px)] font-semibold uppercase tracking-[0.12em] text-white/88 md:px-3 md:py-1.5 md:tracking-[0.14em]">
-              {content.heroChip3 || t("mechanicalHeroChipFinishing")}
-            </span>
+            <div className="mt-5 flex flex-wrap gap-2 md:mt-6">
+              <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-white/88 md:px-3.5 md:py-1.5 md:text-[10px] md:tracking-[0.14em]">
+                {content.heroChip1 || t("mechanicalHeroChipAutomatic")}
+              </span>
+              <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-white/88 md:px-3.5 md:py-1.5 md:text-[10px] md:tracking-[0.14em]">
+                {content.heroChip2 || t("mechanicalHeroChipSkeleton")}
+              </span>
+              <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-white/88 md:px-3.5 md:py-1.5 md:text-[10px] md:tracking-[0.14em]">
+                {content.heroChip3 || t("mechanicalHeroChipFinishing")}
+              </span>
+            </div>
           </div>
 
-          <div className="flex flex-col items-start gap-[clamp(1rem,2.8svh,1.375rem)] sm:flex-row sm:flex-wrap sm:items-center md:gap-4">
+          {/* Actions — mobile: pinned to lower hero; desktop: follows copy */}
+          <div className="max-md:mt-auto flex flex-col items-start gap-3.5 pt-6 sm:flex-row sm:flex-wrap sm:items-center md:mt-10 md:gap-5 md:pt-0">
             <Link
               href="/product"
-              className="inline-flex items-center justify-center rounded-full bg-white px-8 py-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#080808] transition hover:bg-white/90"
+              className="inline-flex items-center justify-center rounded-full bg-white px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#080808] transition hover:bg-white/90 md:px-7 md:py-2.5 md:text-xs"
             >
               {content.heroCtaShop || t("mechanicalHeroCtaShop")}
             </Link>
