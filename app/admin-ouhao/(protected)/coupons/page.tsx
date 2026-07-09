@@ -12,6 +12,10 @@ import {
   getHomepageFeaturedCoupon,
   setCouponHomeFeatured,
 } from "@/lib/homepage-coupon-queries";
+import {
+  isHomeFeaturedColumnMissing,
+  listAdminCoupons,
+} from "@/lib/admin-coupon-queries";
 import { prisma } from "@/lib/prisma";
 
 function parseAmountOffCents(raw: FormDataEntryValue | null): number | null {
@@ -94,7 +98,17 @@ async function createCouponAction(formData: FormData) {
       },
     });
     if (homeFeatured) {
-      await setCouponHomeFeatured(created.id, true);
+      try {
+        await setCouponHomeFeatured(created.id, true);
+      } catch (error) {
+        if (isHomeFeaturedColumnMissing(error)) {
+          goCoupons({
+            error:
+              "Coupon saved, but Homepage coupon needs D1 migration. Run npm run db:d1:remote, then try again.",
+          });
+        }
+        throw error;
+      }
     }
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Failed to create coupon.";
@@ -141,7 +155,17 @@ async function updateCouponAction(formData: FormData) {
         isActive,
       },
     });
-    await setCouponHomeFeatured(id, homeFeatured);
+    try {
+      await setCouponHomeFeatured(id, homeFeatured);
+    } catch (error) {
+      if (homeFeatured && isHomeFeaturedColumnMissing(error)) {
+        goCoupons({
+          error:
+            "Coupon saved, but Homepage coupon needs D1 migration. Run npm run db:d1:remote, then try again.",
+        });
+      }
+      throw error;
+    }
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Failed to update coupon.";
     goCoupons({ error: msg.includes("Coupon_code_key") ? "Coupon code already exists." : msg });
@@ -168,10 +192,8 @@ export default async function AdminCouponsPage({
 }) {
   await assertAdmin();
   const sp = await searchParams;
-  const [coupons, homepageCoupon] = await Promise.all([
-    prisma.coupon.findMany({
-      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
-    }),
+  const [{ coupons, homeFeaturedSupported }, homepageCoupon] = await Promise.all([
+    listAdminCoupons(),
     getHomepageFeaturedCoupon(),
   ]);
 
@@ -190,6 +212,13 @@ export default async function AdminCouponsPage({
       ) : null}
       {sp.success ? (
         <AdminFlashMessage kind="success" message={sp.success} clearHref={adminPath("/coupons")} />
+      ) : null}
+      {!homeFeaturedSupported ? (
+        <AdminFlashMessage
+          kind="error"
+          message="Database is missing the Homepage coupon column. Run npm run db:d1:remote on your machine (or ask your deploy workflow to apply D1 migrations), then reload this page."
+          clearHref={adminPath("/coupons")}
+        />
       ) : null}
 
       <section className="mt-8 rounded-2xl border border-line bg-white/60 p-5">
@@ -240,7 +269,12 @@ export default async function AdminCouponsPage({
           </label>
           <label className="inline-flex items-center justify-between gap-3 rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink">
             <span>Homepage coupon</span>
-            <input name="homeFeatured" type="checkbox" className="h-4 w-4" />
+            <input
+              name="homeFeatured"
+              type="checkbox"
+              disabled={!homeFeaturedSupported}
+              className="h-4 w-4 disabled:opacity-40"
+            />
           </label>
           <button
             type="submit"
@@ -316,7 +350,8 @@ export default async function AdminCouponsPage({
                     name="homeFeatured"
                     type="checkbox"
                     defaultChecked={c.homeFeatured}
-                    className="h-4 w-4"
+                    disabled={!homeFeaturedSupported}
+                    className="h-4 w-4 disabled:opacity-40"
                   />
                 </label>
                 <p className="md:col-span-7 -mt-1 text-xs text-muted">
