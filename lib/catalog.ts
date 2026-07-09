@@ -50,6 +50,8 @@ export interface Product {
   storefrontCategory?: string;
   storefrontSubcategory?: string;
   storefrontSeries?: string;
+  /** Homepage module directly below hero — set in admin. */
+  homeSpotlight?: boolean;
 }
 
 export function normalizeSeriesSlug(s: string): string {

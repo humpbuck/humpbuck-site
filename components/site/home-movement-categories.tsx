@@ -1,13 +1,11 @@
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { HomeMovementSpotlight } from "@/components/site/home-movement-spotlight";
-import { flagshipCategoryBackgroundWebpUrl } from "@/lib/r2";
+import { getProductMovement } from "@/lib/catalog";
+import { flagshipCategoryBackgroundWebpUrl, mechanicalHeroWebpUrl } from "@/lib/r2";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardImages } from "@/lib/r2-card-image";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
-
-/** Homepage spotlight — single catalog product (not a movement category link). */
-const HOME_SPOTLIGHT_PRODUCT_SLUG = "9253";
 
 export async function HomeMovementCategories() {
   const locale = await getLocale();
@@ -15,9 +13,10 @@ export async function HomeMovementCategories() {
   const messages = await getMessages();
   const sectionBackground = flagshipCategoryBackgroundWebpUrl();
 
-  const raw = (await getMergedCatalogProducts()).find(
-    (p) => p.slug === HOME_SPOTLIGHT_PRODUCT_SLUG,
-  );
+  const all = await getMergedCatalogProducts();
+  const raw =
+    all.find((p) => p.homeSpotlight) ??
+    all.find((p) => getProductMovement(p) === "mechanical");
   const product = raw ? applyStorefrontProductLocale(raw, locale, messages) : null;
   const { cover } = product
     ? await getShopCardImages(
@@ -27,8 +26,7 @@ export async function HomeMovementCategories() {
       )
     : { cover: null };
   const productHref = product ? `/product/${product.slug}` : "/product?movement=mechanical";
-  const productImage = cover ?? product?.image;
-  if (!productImage) return null;
+  const productImage = cover ?? product?.image ?? mechanicalHeroWebpUrl();
 
   return (
     <section

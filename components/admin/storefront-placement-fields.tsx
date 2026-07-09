@@ -235,3 +235,29 @@ export function applyStorefrontSeriesChange(
         : product.categoryLabel,
   };
 }
+
+export function HomeSpotlightField({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-line/80 bg-paper/40 p-4 sm:col-span-2">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+        className="mt-0.5 h-4 w-4 shrink-0 rounded border-line text-ink focus:ring-ink/20"
+      />
+      <span>
+        <span className="text-sm font-medium text-ink">Homepage spotlight (below hero)</span>
+        <span className="mt-1 block text-[11px] leading-relaxed text-muted">
+          Show this product in the homepage module directly under the hero. Only one product can
+          be selected at a time.
+        </span>
+      </span>
+    </label>
+  );
+}

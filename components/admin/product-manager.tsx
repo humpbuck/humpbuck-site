@@ -8,6 +8,7 @@ import {
 } from "@/components/admin/admin-product-sidebar";
 import {
   StorefrontPlacementFields,
+  HomeSpotlightField,
   applyStorefrontPlacementChange,
   applyStorefrontSeriesChange,
   applyStorefrontSubcategoryChange,
@@ -56,6 +57,7 @@ type CatalogProductRecord = {
   storefrontCategory: string | null;
   storefrontSubcategory: string | null;
   storefrontSeries: string | null;
+  homeSpotlight: boolean;
 };
 
 type SpecRow = { label: string; value: string };
@@ -114,6 +116,7 @@ type EditableProduct = {
   storefrontCategory: string;
   storefrontSubcategory: string;
   storefrontSeries: string;
+  homeSpotlight: boolean;
   inventory: Record<string, { quantity: string; lowStockThreshold: string }>;
 };
 
@@ -183,6 +186,7 @@ function buildEditableProduct(
     storefrontCategory: placement.storefrontCategory ?? "",
     storefrontSubcategory: placement.storefrontSubcategory ?? "",
     storefrontSeries: placement.storefrontSeries ?? "",
+    homeSpotlight: Boolean(p.homeSpotlight),
     inventory: map,
   };
 }
@@ -233,6 +237,7 @@ function newProductDraft(): EditableProduct {
     storefrontCategory: "",
     storefrontSubcategory: "",
     storefrontSeries: "",
+    homeSpotlight: false,
     inventory: {
       "style-01": { quantity: "", lowStockThreshold: "5" },
     },
@@ -535,6 +540,7 @@ export function ProductManager({
       storefrontCategory: current.storefrontCategory.trim(),
       storefrontSubcategory: current.storefrontSubcategory.trim(),
       storefrontSeries: current.storefrontSeries.trim(),
+      homeSpotlight: current.homeSpotlight,
       categoryLabel: current.categoryLabel.trim(),
       shortDescription: current.shortDescription.trim(),
       description: current.description.trim(),
@@ -592,19 +598,32 @@ export function ProductManager({
         return;
       }
       const savedSlug = data.slug?.trim() || current.slug.trim();
+      const savedHomeSpotlight = current.homeSpotlight;
       if (!current.id && data.id) {
         setProducts((prev) =>
           prev.map((p, index) => {
-            if (index !== selectedIndex || p.id) return p;
-            return { ...p, id: data.id!, slug: savedSlug, image: mainImage, inStock };
+            if (index !== selectedIndex || p.id) {
+              return savedHomeSpotlight ? { ...p, homeSpotlight: false } : p;
+            }
+            return {
+              ...p,
+              id: data.id!,
+              slug: savedSlug,
+              image: mainImage,
+              inStock,
+              homeSpotlight: savedHomeSpotlight,
+            };
           }),
         );
         setSelected(data.id);
       } else if (current.id) {
         setProducts((prev) =>
-          prev.map((p) =>
-            p.id === current.id ? { ...p, slug: savedSlug, image: mainImage, inStock } : p,
-          ),
+          prev.map((p) => {
+            if (p.id === current.id) {
+              return { ...p, slug: savedSlug, image: mainImage, inStock, homeSpotlight: savedHomeSpotlight };
+            }
+            return savedHomeSpotlight ? { ...p, homeSpotlight: false } : p;
+          }),
         );
       }
       setFlashMessage("✅ Saved successfully.", "success");
@@ -761,6 +780,10 @@ export function ProductManager({
                 onCategoryLabelChange={(categoryLabel) =>
                   updateCurrent((p) => ({ ...p, categoryLabel }))
                 }
+              />
+              <HomeSpotlightField
+                checked={current.homeSpotlight}
+                onChange={(homeSpotlight) => updateCurrent((p) => ({ ...p, homeSpotlight }))}
               />
               <LabeledInput
                 label="Price (USD)"

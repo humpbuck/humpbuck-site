@@ -5,6 +5,10 @@ import {
   migrateCatalogProductSlug,
   normalizeProductSlug,
 } from "@/lib/admin-product-slug";
+import {
+  parseHomeSpotlightInput,
+  syncExclusiveHomeSpotlight,
+} from "@/lib/catalog-home-spotlight";
 import { normalizeSeriesSlug } from "@/lib/catalog";
 import {
   parseStorefrontPlacementPayload,
@@ -70,6 +74,7 @@ function productUpdateData(
     detailJson: serializeDetailBlocksForDb(parseDetailBlocksPayload(body.detail)),
     variantsJson: JSON.stringify(variants),
     promoVideoJson: body.promoVideo ? JSON.stringify(body.promoVideo) : null,
+    homeSpotlight: parseHomeSpotlightInput(body),
     ...parseStorefrontPlacementPayload(body),
   };
 }
@@ -181,15 +186,19 @@ export async function PATCH(
     if (slug !== prev.slug) {
       await prisma.$transaction(async (tx) => {
         await migrateCatalogProductSlug(tx, prev.slug, slug);
+        await syncExclusiveHomeSpotlight(tx, prev.id, data.homeSpotlight);
         await tx.catalogProduct.update({
           where: { id: prev.id },
           data,
         });
       });
     } else {
-      await prisma.catalogProduct.update({
-        where: { id: prev.id },
-        data,
+      await prisma.$transaction(async (tx) => {
+        await syncExclusiveHomeSpotlight(tx, prev.id, data.homeSpotlight);
+        await tx.catalogProduct.update({
+          where: { id: prev.id },
+          data,
+        });
       });
     }
 

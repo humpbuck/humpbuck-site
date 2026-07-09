@@ -202,6 +202,7 @@ model CatalogProduct {
   storefrontCategory    String?
   storefrontSubcategory String?
   storefrontSeries      String?
+  homeSpotlight         Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
