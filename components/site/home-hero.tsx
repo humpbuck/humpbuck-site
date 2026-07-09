@@ -2,11 +2,13 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { HumpbuckSocialLinks } from "@/components/site/humpbuck-social-links";
 import { StorefrontImage } from "@/components/site/storefront-image";
-import { homeHeroWebpUrl } from "@/lib/r2";
+import { homeHeroDesktopWebpUrl, homeHeroMobileWebpUrl } from "@/lib/r2";
 
 export async function HomeHero() {
   const t = await getTranslations("Home");
-  const heroSrc = homeHeroWebpUrl();
+  const heroMobileSrc = homeHeroMobileWebpUrl();
+  const heroDesktopSrc = homeHeroDesktopWebpUrl();
+  const heroAlt = t("mechanicalHeroImageAlt");
 
   return (
     <section
@@ -16,12 +18,21 @@ export async function HomeHero() {
       <div className="absolute inset-0">
         <div className="relative h-full min-h-[min(48vh,507px)] w-full md:min-h-[calc(100vh-var(--site-announcement-h,0px)-80px)]">
           <StorefrontImage
-            src={heroSrc}
-            alt={t("mechanicalHeroImageAlt")}
+            src={heroMobileSrc}
+            alt={heroAlt}
             fill
             priority
             fetchPriority="high"
-            className="object-cover object-[70%_center] sm:object-[center_45%] md:object-center"
+            className="object-cover object-center md:hidden"
+            sizes="100vw"
+          />
+          <StorefrontImage
+            src={heroDesktopSrc}
+            alt={heroAlt}
+            fill
+            priority
+            fetchPriority="high"
+            className="hidden object-cover object-center md:block"
             sizes="100vw"
           />
         </div>

@@ -112,11 +112,13 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 
 **首页 Hero 背景图（2026-07-09）**
 
-- **R2 路径（大小写敏感）：** `Home/humpbuck-hero-Image.webp`（CDN：`https://assets.humpbuck.com/Home/humpbuck-hero-Image.webp`）
-- **换图：** 在 R2 同路径覆盖文件，并在 `.env.local` / 生产环境把 `NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV` 加 1（否则浏览器/CDN 可能仍显示旧图）
-- **代码入口：** `lib/r2.ts` → `homeHeroWebpUrl()`；组件 `components/site/home-hero.tsx`
-- **当前 PC / 手机共用一张图**（`object-cover` 裁切）。推荐导出尺寸：
-  - **首选（一张兼顾两端）：** **2560 × 1440 px**（16∶9），WebP 质量约 80–85%，目标小于 **400 KB**
-  - **最低可接受：** 1920 × 1080 px（普通屏够用；大屏/视网膜可能略软）
-  - **若以后拆成两张：** PC **2560 × 1440**；手机 **1500 × 2000**（竖构图 3∶4，主体偏中上，因手机 `object-position` 偏右/中）
-- **构图注意：** 左侧约 40% 留给白字（badge / 标题 / 描述 / 按钮）；手机会裁切右侧与上下，避免把主体放在最左下角。
+- **R2 路径（大小写敏感）：**
+  - PC：`Home/humpbuck-hero-desktop.webp`（CDN：`https://assets.humpbuck.com/Home/humpbuck-hero-desktop.webp`）
+  - 手机：`Home/humpbuck-hero-mobile.webp`（CDN：`https://assets.humpbuck.com/Home/humpbuck-hero-mobile.webp`）
+- **换图：** 在 R2 同路径覆盖文件，并在 `.env.local` / 生产环境把对应 rev 加 1（否则浏览器/CDN 可能仍显示旧图）：
+  - `NEXT_PUBLIC_R2_HUMPBUCK_HERO_DESKTOP_REV`
+  - `NEXT_PUBLIC_R2_HUMPBUCK_HERO_MOBILE_REV`
+  - 若只设 `NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV`，两端共用同一版本号
+- **代码入口：** `lib/r2.ts` → `homeHeroDesktopWebpUrl()` / `homeHeroMobileWebpUrl()`；OG 默认图用 desktop；组件 `components/site/home-hero.tsx`（`md` 断点切换）
+- **推荐导出尺寸：** PC **2560 × 1440**（16∶9）；手机 **1500 × 2000**（3∶4 竖图，主体偏中上）。WebP 质量约 80–85%，单张目标小于 **400 KB**
+- **构图注意：** 左侧约 40% 留给白字（badge / 标题 / 描述 / 按钮）；手机竖图避免把主体放在最左下角。

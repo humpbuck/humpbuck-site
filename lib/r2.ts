@@ -17,16 +17,34 @@ function r2PublicBaseUrl(): string {
 /** Production CDN for `humpbuck-site` bucket (custom domain). */
 export const R2_ASSETS_PUBLIC_BASE = "https://assets.humpbuck.com" as const;
 
-/**
- * Homepage hero — `Home/humpbuck-hero-Image.webp` on R2 (case-sensitive path).
- * Replace the file in R2 to swap the banner; bump `NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV` after same-name overwrites.
- * Recommended source: 2560×1440 WebP (see `docs/user-conventions.md` §7).
- */
-export function homeHeroWebpUrl(): string {
-  const rev = process.env.NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV?.trim() || "1";
+function homeHeroAssetBase(): string {
   const base = r2PublicBaseUrl();
-  const heroBase = base.includes(".r2.dev") ? R2_ASSETS_PUBLIC_BASE : base;
-  return `${heroBase}/Home/humpbuck-hero-Image.webp?v=${encodeURIComponent(rev)}`;
+  return base.includes(".r2.dev") ? R2_ASSETS_PUBLIC_BASE : base;
+}
+
+/**
+ * Homepage hero — desktop `Home/humpbuck-hero-desktop.webp`, mobile `Home/humpbuck-hero-mobile.webp`.
+ * Bump `NEXT_PUBLIC_R2_HUMPBUCK_HERO_DESKTOP_REV` / `_MOBILE_REV` after same-name overwrites (see `docs/user-conventions.md` §7).
+ */
+export function homeHeroDesktopWebpUrl(): string {
+  const rev =
+    process.env.NEXT_PUBLIC_R2_HUMPBUCK_HERO_DESKTOP_REV?.trim() ||
+    process.env.NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV?.trim() ||
+    "1";
+  return `${homeHeroAssetBase()}/Home/humpbuck-hero-desktop.webp?v=${encodeURIComponent(rev)}`;
+}
+
+export function homeHeroMobileWebpUrl(): string {
+  const rev =
+    process.env.NEXT_PUBLIC_R2_HUMPBUCK_HERO_MOBILE_REV?.trim() ||
+    process.env.NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV?.trim() ||
+    "1";
+  return `${homeHeroAssetBase()}/Home/humpbuck-hero-mobile.webp?v=${encodeURIComponent(rev)}`;
+}
+
+/** Default OG / share image — desktop hero. */
+export function homeHeroWebpUrl(): string {
+  return homeHeroDesktopWebpUrl();
 }
 
 /** @deprecated Use `homeHeroWebpUrl` */
