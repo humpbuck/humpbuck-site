@@ -1,6 +1,5 @@
 import "server-only";
 
-import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import type { Product } from "@/lib/catalog";
 import { normalizeSeriesSlug } from "@/lib/catalog";
@@ -154,8 +153,7 @@ async function fetchMergedCatalogProductBySlug(slug: string): Promise<Product | 
 
 /**
  * Frontend catalog source: admin-managed `CatalogProduct` + inventory.
- * Always loaded from D1 (no list cache) so new admin products appear without redeploy.
- * Per-slug lookups stay tagged/cached in `getMergedCatalogProductBySlug`.
+ * Always loaded from D1 (no cache) so admin edits appear on PDP without redeploy.
  */
 export async function getMergedCatalogProducts(): Promise<Product[]> {
   return loadMergedCatalogProductsUncached();
@@ -164,11 +162,5 @@ export async function getMergedCatalogProducts(): Promise<Product[]> {
 export async function getMergedCatalogProductBySlug(
   slug: string,
 ): Promise<Product | undefined> {
-  return unstable_cache(
-    () => fetchMergedCatalogProductBySlug(slug),
-    ["merged-catalog-product", slug],
-    {
-      tags: ["catalog", `catalog-product-${slug}`],
-    },
-  )();
+  return fetchMergedCatalogProductBySlug(slug);
 }
