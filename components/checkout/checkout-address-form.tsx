@@ -321,10 +321,7 @@ export function CheckoutAddressForm({
           options={countryOptions}
           placeholder={t("countryPlaceholder")}
           autoComplete="country-name"
-          onOpen={() => {
-            setCountryText("");
-            setCountryOpen(true);
-          }}
+          onOpen={() => setCountryOpen(true)}
           onChangeText={(next) => {
             setCountryText(next);
             setCountryOpen(true);
@@ -355,10 +352,7 @@ export function CheckoutAddressForm({
           options={stateOptions}
           placeholder={t("statePlaceholder")}
           autoComplete="address-level1"
-          onOpen={() => {
-            setStateText("");
-            setStateOpen(true);
-          }}
+          onOpen={() => setStateOpen(true)}
           onChangeText={(next) => {
             setStateText(next);
             setStateOpen(true);
@@ -378,10 +372,7 @@ export function CheckoutAddressForm({
           options={cityOptions}
           placeholder={countryIso2 === "AX" ? t("cityPlaceholderMuni") : t("cityPlaceholder")}
           autoComplete="address-level2"
-          onOpen={() => {
-            setCityText("");
-            setCityOpen(true);
-          }}
+          onOpen={() => setCityOpen(true)}
           onChangeText={(next) => {
             setCityText(next);
             setCityOpen(true);
@@ -508,39 +499,61 @@ function PickerField<T extends { [k: string]: string }>({
   onBlur: () => void;
   renderOption: (item: T) => string;
 }) {
+  const listboxId = `${id}-listbox`;
+
   return (
-    <div className="sm:col-span-2 relative">
-      <label className="block">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">{label}</span>
+    <div className="sm:col-span-2">
+      <label htmlFor={id} className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
+        {label}
+      </label>
+      <div className="relative mt-1.5">
         <input
           id={id}
+          role="combobox"
+          aria-expanded={open && options.length > 0}
+          aria-controls={open && options.length > 0 ? listboxId : undefined}
+          aria-autocomplete="list"
           value={value}
-          onClick={onOpen}
-          onFocus={onOpen}
+          onMouseDown={(e) => {
+            if (e.button !== 0) return;
+            onOpen();
+          }}
           onChange={(e) => onChangeText(e.target.value)}
           onBlur={onBlur}
-          className="mt-1.5 w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+          onKeyDown={(e) => {
+            if (e.key === "Escape") {
+              e.preventDefault();
+              (e.currentTarget as HTMLInputElement).blur();
+            }
+          }}
+          className="w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
           placeholder={placeholder}
           autoComplete={autoComplete}
         />
-      </label>
-      {open && options.length > 0 ? (
-        <div className="absolute left-0 right-0 top-full z-60 mt-2 overflow-hidden rounded-2xl border border-line bg-white shadow-lg">
-          <div className="max-h-60 overflow-auto py-2">
-            {options.map((item) => (
-              <button
-                key={renderOption(item)}
-                type="button"
-                className="flex w-full items-center justify-between px-4 py-2.5 text-left text-sm text-ink hover:bg-[#f5f5f5]"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => onSelect(item)}
-              >
-                <span>{renderOption(item)}</span>
-              </button>
-            ))}
+        {open && options.length > 0 ? (
+          <div
+            id={listboxId}
+            role="listbox"
+            className="absolute left-0 right-0 top-full z-60 mt-2 overflow-hidden rounded-2xl border border-line bg-white shadow-lg"
+          >
+            <div className="max-h-60 overflow-auto py-2">
+              {options.map((item) => (
+                <button
+                  key={renderOption(item)}
+                  type="button"
+                  role="option"
+                  aria-selected={renderOption(item) === value}
+                  className="flex w-full items-center justify-between px-4 py-2.5 text-left text-sm text-ink hover:bg-[#f5f5f5]"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => onSelect(item)}
+                >
+                  <span>{renderOption(item)}</span>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      ) : null}
+        ) : null}
+      </div>
     </div>
   );
 }
