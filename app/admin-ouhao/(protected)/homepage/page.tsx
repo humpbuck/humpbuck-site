@@ -136,8 +136,7 @@ export default async function AdminHomepageContentPage({
     aboutHeading: "About",
     aboutParagraph1:
       "I have loved mechanical watches since I was a child. Back then, my family was poor, and I couldn't afford one. However, I was completely fascinated by how the intricate gears interlock and how the complex mechanical structures work together to keep precise time.",
-    aboutParagraph2:
-      "Now, I have built this mechanical watch website. My goal is to offer high-quality, affordable mechanical watches to everyone, while fulfilling my childhood dream of owning one. Keep chasing your dreams.",
+    aboutParagraph2: "",
     aboutImageAlt:
       "Mechanical watch on a wooden post with a child in a rural village in the background",
     aboutImageUrl: defaultAboutImage,
@@ -324,13 +323,6 @@ export default async function AdminHomepageContentPage({
             defaultValue={content.aboutParagraph1}
             multiline
             placeholder="I have loved mechanical watches since I was a child…"
-          />
-          <AdminField
-            label="Paragraph 2"
-            name="aboutParagraph2"
-            defaultValue={content.aboutParagraph2}
-            multiline
-            placeholder="Now, I have built this mechanical watch website…"
           />
           <AdminField
             label="About image alt text"

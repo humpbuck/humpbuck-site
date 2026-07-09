@@ -13,7 +13,6 @@ export async function HomeFounderStorySection() {
   const imageSrc = content.aboutImageUrl || founderStoryHomePoolWebpUrl();
   const heading = content.aboutHeading || tAbout("storyKicker");
   const paragraph1 = content.aboutParagraph1 || tAbout("storyP1");
-  const paragraph2 = content.aboutParagraph2 || tAbout("storyP2");
   const imageAlt = content.aboutImageAlt || tHome("founderStoryImageAlt");
 
   return (
@@ -44,7 +43,6 @@ export async function HomeFounderStorySection() {
           <div className="w-full max-w-[20rem] sm:max-w-[22rem] lg:max-w-[24rem]">
             <div className="space-y-5 text-center text-base leading-relaxed text-muted sm:text-lg sm:leading-relaxed lg:text-left">
               <p>{paragraph1}</p>
-              <p>{paragraph2}</p>
             </div>
           </div>
           </div>
