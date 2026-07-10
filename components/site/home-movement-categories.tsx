@@ -46,7 +46,6 @@ export async function HomeMovementCategories() {
           sizes="100vw"
           className="object-cover object-center"
         />
-        <div className="absolute inset-0 bg-paper/82" />
       </div>
 
       <h2 id="home-movement-categories-heading" className="sr-only">
