@@ -35,7 +35,7 @@ export async function HomeMovementCategories() {
 
   return (
     <section
-      className="relative overflow-hidden border-b border-line"
+      className="relative aspect-[4/1] w-full overflow-hidden border-b border-line"
       aria-labelledby="home-movement-categories-heading"
     >
       <div className="pointer-events-none absolute inset-0" aria-hidden>
@@ -52,7 +52,8 @@ export async function HomeMovementCategories() {
         {t("categoryHeading")}
       </h2>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-9 lg:py-11">
+      <div className="absolute inset-0 z-10 flex items-center px-4 sm:px-6">
+        <div className="mx-auto w-full max-w-7xl">
         <HomeMovementSpotlight
           productHref={productHref}
           productName={product?.name ?? t("categoryMechanicalTitle")}
@@ -63,6 +64,7 @@ export async function HomeMovementCategories() {
           cta={t("heroViewProduct")}
           variantOptions={product?.variantOptions ?? []}
         />
+        </div>
       </div>
     </section>
   );

@@ -30,20 +30,17 @@ export function HomeProductSliderSectionFallback() {
 export function HomeSpotlightSectionFallback() {
   return (
     <section
-      className="border-b border-line bg-paper py-14 sm:py-16"
+      className="relative aspect-[4/1] w-full overflow-hidden border-b border-line bg-paper"
       aria-busy="true"
       aria-label="Loading"
     >
-      <div className="mx-auto flex max-w-7xl animate-pulse flex-col items-center gap-10 px-4 sm:px-6 md:flex-row md:justify-center md:gap-14">
-        <PulseBlock className="aspect-square w-full max-w-[340px] rounded-[24px] bg-ink/[0.06]" />
-        <div className="w-full max-w-xs space-y-4 md:items-start">
-          <PulseBlock className="h-3 w-24" />
-          <PulseBlock className="h-10 w-full" />
-          <PulseBlock className="h-4 w-32" />
-          <div className="flex gap-1.5 pt-1">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <PulseBlock key={i} className="h-7 w-7 rounded-md" />
-            ))}
+      <div className="absolute inset-0 flex items-center px-4 sm:px-6">
+        <div className="mx-auto flex w-full max-w-7xl animate-pulse flex-row items-center justify-center gap-3 sm:gap-14">
+          <PulseBlock className="aspect-square w-[clamp(4.5rem,20vw,20rem)] shrink-0 rounded-xl bg-ink/[0.06]" />
+          <div className="w-full max-w-xs space-y-3">
+            <PulseBlock className="h-3 w-24" />
+            <PulseBlock className="h-8 w-full sm:h-10" />
+            <PulseBlock className="h-3 w-32" />
           </div>
         </div>
       </div>
