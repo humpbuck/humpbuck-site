@@ -3,10 +3,12 @@ import { Link } from "@/i18n/navigation";
 import { CookieSettingsLink } from "@/components/analytics/cookie-settings-link";
 import { HumpbuckSocialLinks } from "@/components/site/humpbuck-social-links";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
+import { StoreContactDetails } from "@/components/site/store-contact-details";
 import { publicSupportEmail } from "@/lib/support-contact";
 
 export async function SiteFooter() {
   const t = await getTranslations("Footer");
+  const tAbout = await getTranslations("AboutPage");
   const supportMail = publicSupportEmail();
   const year = new Date().getFullYear();
 
@@ -85,6 +87,13 @@ export async function SiteFooter() {
               ))}
             </div>
           </div>
+        </div>
+
+        <div className="mt-10 border-t border-line pt-8 sm:mt-12">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-ink/55">
+            {tAbout("contactTitle")}
+          </p>
+          <StoreContactDetails className="mt-4" variant="compact" />
         </div>
 
         <div className="mt-10 space-y-4 border-t border-line pt-7 sm:mt-12 sm:pt-8">
