@@ -8,14 +8,21 @@ export function revalidateSiteAnnouncement(): void {
   revalidateTag("site-announcement", { expire: 0 });
 }
 
-/** Bust cached homepage hero / about content. */
+/** @deprecated Homepage content uses `connection()` + live D1 reads; kept for best-effort ISR bust. */
 export function revalidateSiteHomeContent(): void {
   revalidateTag("site-home-content", { expire: 0 });
 }
 
-/** Bust cached homepage featured coupon code. */
+/** @deprecated Homepage coupon uses `connection()` + live D1 reads; kept for best-effort ISR bust. */
 export function revalidateHomepageFeaturedCoupon(): void {
   revalidateTag("homepage-featured-coupon", { expire: 0 });
+}
+
+/** Best-effort ISR bust after homepage admin saves (catalog sliders may still be cached). */
+export function revalidateStorefrontHomepage(): void {
+  revalidateSiteHomeContent();
+  revalidateHomepageFeaturedCoupon();
+  revalidateStorefrontPath("/");
 }
 
 /** Revalidate a storefront pathname for every `[locale]` segment (`as-needed` + `/es/...`). */

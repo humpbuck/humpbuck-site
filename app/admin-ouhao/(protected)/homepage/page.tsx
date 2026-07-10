@@ -9,10 +9,7 @@ import {
   homeHeroDesktopWebpUrl,
   homeHeroMobileWebpUrl,
 } from "@/lib/r2";
-import {
-  revalidateSiteHomeContent,
-  revalidateStorefrontPath,
-} from "@/lib/revalidate-storefront";
+import { revalidateStorefrontHomepage } from "@/lib/revalidate-storefront";
 import {
   getSiteHomeContentForAdmin,
   saveSiteHomeContent,
@@ -55,9 +52,11 @@ async function saveHomepageContentAction(formData: FormData) {
     goHomepage({ error: note });
   }
 
-  revalidateSiteHomeContent();
-  revalidateStorefrontPath("/");
-  goHomepage({ success: "Homepage hero and about sections saved." });
+  revalidateStorefrontHomepage();
+  goHomepage({
+    success:
+      "Homepage hero, coupon, spotlight, and about sections saved. Changes should appear on the live site immediately.",
+  });
 }
 
 function AdminField({

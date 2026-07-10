@@ -1,4 +1,4 @@
-import { unstable_cache } from "next/cache";
+import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
 import {
   EMPTY_SITE_HOME_CONTENT,
@@ -19,13 +19,14 @@ async function loadSiteHomeContentUncached(): Promise<SiteHomeContentData> {
   return normalizeSiteHomeContent(row);
 }
 
-/** Cached for homepage hero/about; admin save calls `revalidateSiteHomeContent()`. */
+/**
+ * Homepage hero / about / spotlight / coupon copy — always read D1 on request.
+ * `unstable_cache` + `revalidateTag` do not reliably bust on Cloudflare OpenNext;
+ * `connection()` opts these segments out of static prerender so admin saves show immediately.
+ */
 export async function getSiteHomeContent(): Promise<SiteHomeContentData> {
-  return unstable_cache(
-    loadSiteHomeContentUncached,
-    ["site-home-content"],
-    { tags: ["site-home-content"] },
-  )();
+  await connection();
+  return loadSiteHomeContentUncached();
 }
 
 /** Admin editor — always read fresh from DB (never `unstable_cache`). */

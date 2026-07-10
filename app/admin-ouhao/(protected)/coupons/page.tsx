@@ -4,10 +4,7 @@ import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { AdminFlashMessage } from "@/components/admin/admin-flash-message";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
-import {
-  revalidateHomepageFeaturedCoupon,
-  revalidateStorefrontPath,
-} from "@/lib/revalidate-storefront";
+import { revalidateStorefrontHomepage } from "@/lib/revalidate-storefront";
 import {
   getHomepageFeaturedCoupon,
   setCouponHomeFeatured,
@@ -60,8 +57,7 @@ function goCoupons(params?: { error?: string; success?: string }): never {
 
 function revalidateCouponAdminViews(): void {
   revalidatePath(adminPath("/coupons"));
-  revalidateHomepageFeaturedCoupon();
-  revalidateStorefrontPath("/");
+  revalidateStorefrontHomepage();
 }
 
 async function createCouponAction(formData: FormData) {
