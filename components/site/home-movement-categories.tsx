@@ -6,6 +6,7 @@ import { flagshipCategoryBackgroundWebpUrl, mechanicalHeroWebpUrl } from "@/lib/
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardImages } from "@/lib/r2-card-image";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
+import { resolveSpotlightBackgroundUrls } from "@/lib/site-home-content";
 import { getSiteHomeContent } from "@/lib/site-home-content-queries";
 
 export async function HomeMovementCategories() {
@@ -15,8 +16,8 @@ export async function HomeMovementCategories() {
     getMessages(),
     getSiteHomeContent(),
   ]);
-  const sectionBackground =
-    content.spotlightBackgroundImageUrl || flagshipCategoryBackgroundWebpUrl();
+  const { desktop: desktopBackground, mobile: mobileBackground } =
+    resolveSpotlightBackgroundUrls(content, flagshipCategoryBackgroundWebpUrl());
 
   const all = await getMergedCatalogProducts();
   const raw =
@@ -35,12 +36,21 @@ export async function HomeMovementCategories() {
 
   return (
     <section
-      className="relative aspect-[4/1] w-full overflow-hidden border-b border-line"
+      className="relative w-full overflow-hidden border-b border-line md:aspect-[4/1]"
       aria-labelledby="home-movement-categories-heading"
     >
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
+      <div className="pointer-events-none absolute inset-0 md:hidden" aria-hidden>
         <StorefrontImage
-          src={sectionBackground}
+          src={mobileBackground}
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+      </div>
+      <div className="pointer-events-none absolute inset-0 hidden md:block" aria-hidden>
+        <StorefrontImage
+          src={desktopBackground}
           alt=""
           fill
           sizes="100vw"
@@ -52,18 +62,18 @@ export async function HomeMovementCategories() {
         {t("categoryHeading")}
       </h2>
 
-      <div className="absolute inset-0 z-10 flex items-center px-4 sm:px-6">
-        <div className="mx-auto w-full max-w-7xl">
-        <HomeMovementSpotlight
-          productHref={productHref}
-          productName={product?.name ?? t("categoryMechanicalTitle")}
-          imageAlt={product?.name ?? t("categoryMechanicalImageAlt")}
-          baseImage={productImage}
-          kicker={t("categoryMechanicalKicker")}
-          title={product?.name ?? t("categoryMechanicalTitle")}
-          cta={t("heroViewProduct")}
-          variantOptions={product?.variantOptions ?? []}
-        />
+      <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-9 md:absolute md:inset-0 md:flex md:items-center md:py-0 lg:py-0">
+        <div className="w-full md:mx-auto">
+          <HomeMovementSpotlight
+            productHref={productHref}
+            productName={product?.name ?? t("categoryMechanicalTitle")}
+            imageAlt={product?.name ?? t("categoryMechanicalImageAlt")}
+            baseImage={productImage}
+            kicker={t("categoryMechanicalKicker")}
+            title={product?.name ?? t("categoryMechanicalTitle")}
+            cta={t("heroViewProduct")}
+            variantOptions={product?.variantOptions ?? []}
+          />
         </div>
       </div>
     </section>

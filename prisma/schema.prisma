@@ -381,6 +381,7 @@ model SiteHomeContent {
   aboutImageAlt       String   @default("")
   aboutImageUrl       String   @default("")
   spotlightBackgroundImageUrl String @default("")
+  spotlightBackgroundMobileImageUrl String @default("")
   couponTitle             String   @default("")
   couponQuestion          String   @default("")
   couponSuccessMessage    String   @default("")

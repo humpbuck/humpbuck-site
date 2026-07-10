@@ -140,6 +140,7 @@ export default async function AdminHomepageContentPage({
       "Mechanical watch on a wooden post with a child in a rural village in the background",
     aboutImageUrl: defaultAboutImage,
     spotlightBackgroundImageUrl: defaultSpotlightBackground,
+    spotlightBackgroundMobileImageUrl: "",
     couponTitle: "Get a coupon",
     couponQuestion: "What's the most precious thing in life?",
     couponSuccessMessage: "",
@@ -292,16 +293,24 @@ export default async function AdminHomepageContentPage({
             Product spotlight section
           </legend>
           <p className="text-sm text-muted">
-            The featured product block directly below the hero (gear-pattern
-            background). Product selection stays in Products &amp; Inventory →
-            Homepage spotlight.
+            Featured product block below the coupon prompt. Product selection
+            stays in Products &amp; Inventory → Homepage spotlight. Use a wide
+            image (~4:1) for PC and a taller image for mobile (APP); leave mobile
+            blank to reuse the PC URL.
           </p>
           <AdminField
-            label="Background image URL"
+            label="Background image URL (PC)"
             name="spotlightBackgroundImageUrl"
             defaultValue={content.spotlightBackgroundImageUrl}
             placeholder={defaultSpotlightBackground}
-            hint={`Default: ${defaultSpotlightBackground}. Use the plain R2 URL; after each save the storefront adds ?v= from save time so CDN/browser pick up same-path overwrites.`}
+            hint={`PC default: ${defaultSpotlightBackground}. Plain R2 URL; storefront adds ?v= after each save.`}
+          />
+          <AdminField
+            label="Background image URL (mobile / APP)"
+            name="spotlightBackgroundMobileImageUrl"
+            defaultValue={content.spotlightBackgroundMobileImageUrl}
+            placeholder="https://assets.humpbuck.com/…"
+            hint="Optional portrait or square R2 image for phones. Blank = same as PC."
           />
         </fieldset>
 

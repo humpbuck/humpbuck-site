@@ -17,6 +17,7 @@ export type SiteHomeContentData = {
   aboutImageAlt: string;
   aboutImageUrl: string;
   spotlightBackgroundImageUrl: string;
+  spotlightBackgroundMobileImageUrl: string;
   couponTitle: string;
   couponQuestion: string;
   couponSuccessMessage: string;
@@ -41,6 +42,7 @@ export const EMPTY_SITE_HOME_CONTENT: SiteHomeContentData = {
   aboutImageAlt: "",
   aboutImageUrl: "",
   spotlightBackgroundImageUrl: "",
+  spotlightBackgroundMobileImageUrl: "",
   couponTitle: "",
   couponQuestion: "",
   couponSuccessMessage: "",
@@ -82,6 +84,10 @@ export function resolveSiteHomeContentForAdminForm(
       stored.spotlightBackgroundImageUrl,
       fallbacks.spotlightBackgroundImageUrl,
     ),
+    spotlightBackgroundMobileImageUrl: or(
+      stored.spotlightBackgroundMobileImageUrl,
+      fallbacks.spotlightBackgroundMobileImageUrl,
+    ),
     couponTitle: or(stored.couponTitle, fallbacks.couponTitle),
     couponQuestion: or(stored.couponQuestion, fallbacks.couponQuestion),
     couponSuccessMessage: or(stored.couponSuccessMessage, fallbacks.couponSuccessMessage),
@@ -106,6 +112,7 @@ export function applySiteHomeImageCacheRevision(
     heroMobileImageUrl: bust(content.heroMobileImageUrl),
     aboutImageUrl: bust(content.aboutImageUrl),
     spotlightBackgroundImageUrl: bust(content.spotlightBackgroundImageUrl),
+    spotlightBackgroundMobileImageUrl: bust(content.spotlightBackgroundMobileImageUrl),
     couponBackgroundImageUrl: bust(content.couponBackgroundImageUrl),
   };
 }
@@ -130,6 +137,7 @@ export function normalizeSiteHomeContent(
     aboutImageAlt: trimField(input?.aboutImageAlt),
     aboutImageUrl: trimField(input?.aboutImageUrl),
     spotlightBackgroundImageUrl: trimField(input?.spotlightBackgroundImageUrl),
+    spotlightBackgroundMobileImageUrl: trimField(input?.spotlightBackgroundMobileImageUrl),
     couponTitle: trimField(input?.couponTitle),
     couponQuestion: trimField(input?.couponQuestion),
     couponSuccessMessage: trimField(input?.couponSuccessMessage),
@@ -150,6 +158,7 @@ export function validateSiteHomeContent(data: SiteHomeContentData): string | nul
     data.heroMobileImageUrl,
     data.aboutImageUrl,
     data.spotlightBackgroundImageUrl,
+    data.spotlightBackgroundMobileImageUrl,
     data.couponBackgroundImageUrl,
   ];
   for (const url of urls) {
@@ -178,6 +187,7 @@ export function siteHomeContentFromFormData(formData: FormData): SiteHomeContent
     aboutImageAlt: formData.get("aboutImageAlt"),
     aboutImageUrl: formData.get("aboutImageUrl"),
     spotlightBackgroundImageUrl: formData.get("spotlightBackgroundImageUrl"),
+    spotlightBackgroundMobileImageUrl: formData.get("spotlightBackgroundMobileImageUrl"),
     couponTitle: formData.get("couponTitle"),
     couponQuestion: formData.get("couponQuestion"),
     couponSuccessMessage: formData.get("couponSuccessMessage"),
@@ -217,4 +227,14 @@ export function resolveCouponTaglineLines(
     return { line1, line2 };
   }
   return { line1: trimmed, line2: fallbackLine2 };
+}
+
+/** Desktop URL with mobile fallback to desktop, then optional built-in default. */
+export function resolveSpotlightBackgroundUrls(
+  content: SiteHomeContentData,
+  defaultDesktop: string,
+): { desktop: string; mobile: string } {
+  const desktop = content.spotlightBackgroundImageUrl.trim() || defaultDesktop;
+  const mobile = content.spotlightBackgroundMobileImageUrl.trim() || desktop;
+  return { desktop, mobile };
 }
