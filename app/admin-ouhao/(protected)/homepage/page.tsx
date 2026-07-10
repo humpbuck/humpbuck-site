@@ -141,6 +141,7 @@ export default async function AdminHomepageContentPage({
     aboutImageUrl: defaultAboutImage,
     spotlightBackgroundImageUrl: defaultSpotlightBackground,
     spotlightBackgroundMobileImageUrl: "",
+    spotlightProductImageUrl: "",
     couponTitle: "Get a coupon",
     couponQuestion: "What's the most precious thing in life?",
     couponSuccessMessage: "",
@@ -311,6 +312,13 @@ export default async function AdminHomepageContentPage({
             defaultValue={content.spotlightBackgroundMobileImageUrl}
             placeholder="https://assets.humpbuck.com/…"
             hint="Optional portrait or square R2 image for phones. Blank = same as PC."
+          />
+          <AdminField
+            label="Product image URL (transparent WEBP)"
+            name="spotlightProductImageUrl"
+            defaultValue={content.spotlightProductImageUrl}
+            placeholder="https://assets.humpbuck.com/…"
+            hint="Optional cutout with alpha channel for the spotlight watch. Blank = catalog cover image in a glass frame."
           />
         </fieldset>
 

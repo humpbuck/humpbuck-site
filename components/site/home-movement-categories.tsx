@@ -31,8 +31,10 @@ export async function HomeMovementCategories() {
         product.galleryImages ?? product.images,
       )
     : { cover: null };
+  const productCutout = content.spotlightProductImageUrl.trim();
   const productHref = product ? `/product/${product.slug}` : "/product?movement=mechanical";
-  const productImage = cover ?? product?.image ?? mechanicalHeroWebpUrl();
+  const productImage =
+    productCutout || cover || product?.image || mechanicalHeroWebpUrl();
 
   return (
     <section
@@ -69,6 +71,7 @@ export async function HomeMovementCategories() {
             productName={product?.name ?? t("categoryMechanicalTitle")}
             imageAlt={product?.name ?? t("categoryMechanicalImageAlt")}
             baseImage={productImage}
+            productCutout={Boolean(productCutout)}
             kicker={t("categoryMechanicalKicker")}
             title={product?.name ?? t("categoryMechanicalTitle")}
             cta={t("heroViewProduct")}
