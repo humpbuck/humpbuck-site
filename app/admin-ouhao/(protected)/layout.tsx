@@ -107,6 +107,9 @@ export default async function AdminProtectedLayout({
               <Link href={adminPath("/homepage")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
                 HOMEPAGE
               </Link>
+              <Link href={adminPath("/about")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
+                ABOUT
+              </Link>
               <Link href="https://www.humpbuck.com/" className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
                 VIEW SITE
               </Link>

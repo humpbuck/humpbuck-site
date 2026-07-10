@@ -522,3 +522,35 @@ export function resolveMomentsCardImageUrls(
   const mobile = mobileUrl.trim() || desktop;
   return { desktop, mobile };
 }
+
+export type SiteHomeAboutFields = Pick<
+  SiteHomeContentData,
+  "aboutHeading" | "aboutParagraph1" | "aboutImageAlt" | "aboutImageUrl"
+>;
+
+export function siteHomeAboutFromFormData(formData: FormData): SiteHomeAboutFields {
+  return {
+    aboutHeading: trimField(formData.get("aboutHeading")),
+    aboutParagraph1: trimField(formData.get("aboutParagraph1")),
+    aboutImageAlt: trimField(formData.get("aboutImageAlt")),
+    aboutImageUrl: trimField(formData.get("aboutImageUrl")),
+  };
+}
+
+export function validateSiteHomeAboutFields(data: SiteHomeAboutFields): string | null {
+  if (!validateSiteHomeImageUrl(data.aboutImageUrl)) {
+    return "Image URL must start with http:// or https://.";
+  }
+  return null;
+}
+
+export function mergeSiteHomeAboutFields(
+  content: SiteHomeContentData,
+  about: SiteHomeAboutFields,
+): SiteHomeContentData {
+  return normalizeSiteHomeContent({
+    ...content,
+    ...about,
+    aboutParagraph2: "",
+  });
+}

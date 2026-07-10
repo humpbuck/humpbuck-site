@@ -41,14 +41,29 @@ async function saveHomepageContentAction(formData: FormData) {
   "use server";
   await assertAdmin();
 
+  const { content: storedContent } = await getSiteHomeContentForAdmin();
   const data = siteHomeContentFromFormData(formData);
-  const validationError = validateSiteHomeContent(data);
+  const validationError = validateSiteHomeContent({
+    ...data,
+    aboutHeading: storedContent.aboutHeading,
+    aboutParagraph1: storedContent.aboutParagraph1,
+    aboutParagraph2: storedContent.aboutParagraph2,
+    aboutImageAlt: storedContent.aboutImageAlt,
+    aboutImageUrl: storedContent.aboutImageUrl,
+  });
   if (validationError) {
     goHomepage({ error: validationError });
   }
 
   try {
-    await saveSiteHomeContent(data);
+    await saveSiteHomeContent({
+      ...data,
+      aboutHeading: storedContent.aboutHeading,
+      aboutParagraph1: storedContent.aboutParagraph1,
+      aboutParagraph2: storedContent.aboutParagraph2,
+      aboutImageAlt: storedContent.aboutImageAlt,
+      aboutImageUrl: storedContent.aboutImageUrl,
+    });
   } catch (error) {
     const note =
       error instanceof Error ? error.message : "Could not save homepage content.";
@@ -58,7 +73,7 @@ async function saveHomepageContentAction(formData: FormData) {
   revalidateStorefrontHomepage();
   goHomepage({
     success:
-      "Homepage hero, moments, coupon, spotlight, FAQ, and about sections saved. Changes should appear on the live site immediately.",
+      "Homepage hero, moments, coupon, spotlight, and FAQ saved. Changes should appear on the live site immediately.",
   });
 }
 
@@ -150,7 +165,7 @@ export default async function AdminHomepageContentPage({
     momentsCard2MobileImageUrl: "",
     aboutHeading: "About",
     aboutParagraph1:
-      "I have loved mechanical watches since I was a child. Back then, my family was poor, and I couldn't afford one. However, I was completely fascinated by how the intricate gears interlock and how the complex mechanical structures work together to keep precise time.",
+      "Growing up, I watched my father—a master watch repairman—breathe life into countless timepieces after school. As he stayed by my side through my milestones, those watches marked every beat of my journey. That is where our bond was born. Time and companionship are life's most precious gifts. Now, I hope my handcrafted HUMPBUCK watches will stay by your side and bear witness to your most meaningful moments.",
     aboutParagraph2: "",
     aboutImageAlt:
       "Mechanical watch on a wooden post with a child in a rural village in the background",
@@ -199,11 +214,15 @@ export default async function AdminHomepageContentPage({
   return (
     <div>
       <AdminBackLink href={adminPath()} label="Overview" />
-      <h1 className="mt-4 font-serif text-3xl tracking-tight">Homepage hero &amp; about</h1>
+      <h1 className="mt-4 font-serif text-3xl tracking-tight">Homepage content</h1>
       <p className="mt-2 max-w-2xl text-sm text-muted">
-        Edit the homepage hero banner and founder story (about) section. Fields
+        Edit the homepage hero banner, moments, coupon, spotlight, and FAQ. Fields
         show the copy currently live on the site. Clear a field and save to
-        restore the built-in default. Image fields accept full R2 or HTTPS URLs.
+        restore the built-in default. For the founder story, use{" "}
+        <a href={adminPath("/about")} className="font-medium text-ink underline-offset-2 hover:underline">
+          About page
+        </a>
+        .
       </p>
 
       {error ? (
@@ -431,35 +450,6 @@ export default async function AdminHomepageContentPage({
             placeholder="Frequently asked questions"
           />
           <FaqItemsEditor initialItems={faqItemsForAdmin} />
-        </AdminCollapsibleSection>
-
-        <AdminCollapsibleSection title="About section">
-          <AdminField
-            label="Heading"
-            name="aboutHeading"
-            defaultValue={content.aboutHeading}
-            placeholder="About"
-          />
-          <AdminField
-            label="Paragraph 1"
-            name="aboutParagraph1"
-            defaultValue={content.aboutParagraph1}
-            multiline
-            placeholder="I have loved mechanical watches since I was a child…"
-          />
-          <AdminField
-            label="About image alt text"
-            name="aboutImageAlt"
-            defaultValue={content.aboutImageAlt}
-            placeholder="Mechanical watch on a wooden post with a child in a rural village in the background"
-          />
-          <AdminField
-            label="About image URL"
-            name="aboutImageUrl"
-            defaultValue={content.aboutImageUrl}
-            placeholder={defaultAboutImage}
-            hint={`Default: ${defaultAboutImage}`}
-          />
         </AdminCollapsibleSection>
 
         <button
