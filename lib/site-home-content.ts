@@ -233,6 +233,57 @@ export function serializeHomeFaqItems(items: HomeFaqItem[]): string {
   );
 }
 
+/** Parse FAQ JSON submitted from the admin form (must be a JSON array). */
+export function parseFaqItemsFromAdminForm(raw: string): {
+  items: HomeFaqItem[];
+  error: string | null;
+} {
+  const trimmed = raw.trim();
+  if (!trimmed) return { items: [], error: null };
+
+  try {
+    const parsed = JSON.parse(trimmed) as unknown;
+    if (!Array.isArray(parsed)) {
+      return {
+        items: [],
+        error: "FAQ data is invalid. Reload this page and try again.",
+      };
+    }
+
+    const items = parsed.map((item) => ({
+      question: trimField((item as { question?: unknown })?.question),
+      answer: trimField((item as { answer?: unknown })?.answer),
+    }));
+    return { items, error: null };
+  } catch {
+    return {
+      items: [],
+      error:
+        "FAQ data could not be read. Reload this page and try again.",
+    };
+  }
+}
+
+/** Block half-filled rows only; fully empty spacer rows are allowed in admin. */
+export function validateHomeFaqItems(items: HomeFaqItem[]): string | null {
+  for (let index = 0; index < items.length; index += 1) {
+    const question = trimField(items[index]?.question);
+    const answer = trimField(items[index]?.answer);
+    if ((question && !answer) || (!question && answer)) {
+      return `FAQ item ${index + 1} needs both a question and an answer (or clear both fields for a spacer row).`;
+    }
+  }
+  return null;
+}
+
+/** Trim all rows; keep empty spacer rows for admin layout (storefront filters them out). */
+export function normalizeHomeFaqItemsForSave(items: HomeFaqItem[]): HomeFaqItem[] {
+  return items.map((item) => ({
+    question: trimField(item.question),
+    answer: trimField(item.answer),
+  }));
+}
+
 function syncLegacyFaqItemFields(
   items: HomeFaqItem[],
 ): Pick<
@@ -259,12 +310,22 @@ export function resolveHomeFaqItemsForAdmin(
   stored: SiteHomeContentData,
   fallbacks: HomeFaqItem[],
 ): HomeFaqItem[] {
+  const hasJsonList = Boolean(stored.faqItemsJson?.trim());
   const items = parseHomeFaqItemsJson(stored.faqItemsJson, stored);
   const count = Math.max(items.length, fallbacks.length, 1);
 
   return Array.from({ length: count }, (_, index) => {
     const item = items[index];
     const fallback = fallbacks[index];
+
+    // Saved JSON slots (including intentional empty spacers) win over built-in defaults.
+    if (hasJsonList && index < items.length) {
+      return {
+        question: trimField(item?.question),
+        answer: trimField(item?.answer),
+      };
+    }
+
     const question = trimField(item?.question) || trimField(fallback?.question);
     const answer = trimField(item?.answer) || trimField(fallback?.answer);
     return { question, answer };
@@ -423,10 +484,15 @@ export function validateSiteHomeContent(data: SiteHomeContentData): string | nul
   return null;
 }
 
-export function siteHomeContentFromFormData(formData: FormData): SiteHomeContentData {
-  const faqItemsJson = String(formData.get("faqItemsJson") ?? "");
-  const faqItems = parseHomeFaqItemsJson(faqItemsJson);
-  const legacyFaqFields = syncLegacyFaqItemFields(faqItems);
+export function siteHomeContentFromFormData(
+  formData: FormData,
+  faqItemsOverride?: HomeFaqItem[],
+): SiteHomeContentData {
+  const faqItems =
+    faqItemsOverride ??
+    parseHomeFaqItemsJson(String(formData.get("faqItemsJson") ?? ""));
+  const savedFaqItems = normalizeHomeFaqItemsForSave(faqItems);
+  const legacyFaqFields = syncLegacyFaqItemFields(savedFaqItems);
 
   return normalizeSiteHomeContent({
     heroBadge: formData.get("heroBadge"),
@@ -455,7 +521,7 @@ export function siteHomeContentFromFormData(formData: FormData): SiteHomeContent
     certaintyHeading: formData.get("certaintyHeading"),
     certaintyLead: formData.get("certaintyLead"),
     certaintyExtraBlocks: formData.get("certaintyExtraBlocks"),
-    faqItemsJson: serializeHomeFaqItems(faqItems),
+    faqItemsJson: serializeHomeFaqItems(savedFaqItems),
     ...legacyFaqFields,
     momentsHeading: formData.get("momentsHeading"),
     momentsLead: formData.get("momentsLead"),

@@ -35,7 +35,14 @@ export function FaqItemsEditor({
 
   return (
     <div className="space-y-3">
-      <input type="hidden" name="faqItemsJson" value={faqItemsJson} readOnly />
+      <textarea
+        name="faqItemsJson"
+        value={faqItemsJson}
+        readOnly
+        aria-hidden
+        tabIndex={-1}
+        className="pointer-events-none absolute h-0 w-0 overflow-hidden opacity-0"
+      />
 
       <div className="flex items-center justify-end gap-3">
         <button

@@ -17,9 +17,11 @@ import {
   saveSiteHomeContent,
 } from "@/lib/site-home-content-queries";
 import {
+  parseFaqItemsFromAdminForm,
   resolveHomeFaqItemsForAdmin,
   resolveSiteHomeContentForAdminForm,
   siteHomeContentFromFormData,
+  validateHomeFaqItems,
   validateSiteHomeContent,
 } from "@/lib/site-home-content";
 
@@ -37,26 +39,35 @@ function goHomepage(params?: { error?: string; success?: string }): never {
   redirect(`${adminPath("/homepage")}?${qs.toString()}`);
 }
 
+function isNextRedirect(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "digest" in error &&
+    typeof (error as { digest?: unknown }).digest === "string" &&
+    String((error as { digest: string }).digest).startsWith("NEXT_REDIRECT")
+  );
+}
+
 async function saveHomepageContentAction(formData: FormData) {
   "use server";
-  await assertAdmin();
-
-  const { content: storedContent } = await getSiteHomeContentForAdmin();
-  const data = siteHomeContentFromFormData(formData);
-  const validationError = validateSiteHomeContent({
-    ...data,
-    aboutHeading: storedContent.aboutHeading,
-    aboutParagraph1: storedContent.aboutParagraph1,
-    aboutParagraph2: storedContent.aboutParagraph2,
-    aboutImageAlt: storedContent.aboutImageAlt,
-    aboutImageUrl: storedContent.aboutImageUrl,
-  });
-  if (validationError) {
-    goHomepage({ error: validationError });
-  }
-
   try {
-    await saveSiteHomeContent({
+    await assertAdmin();
+
+    const faqRaw = String(formData.get("faqItemsJson") ?? "");
+    const { items: faqItems, error: faqParseError } = parseFaqItemsFromAdminForm(faqRaw);
+    if (faqParseError) {
+      goHomepage({ error: faqParseError });
+    }
+
+    const faqValidationError = validateHomeFaqItems(faqItems);
+    if (faqValidationError) {
+      goHomepage({ error: faqValidationError });
+    }
+
+    const { content: storedContent } = await getSiteHomeContentForAdmin();
+    const data = siteHomeContentFromFormData(formData, faqItems);
+    const validationError = validateSiteHomeContent({
       ...data,
       aboutHeading: storedContent.aboutHeading,
       aboutParagraph1: storedContent.aboutParagraph1,
@@ -64,17 +75,44 @@ async function saveHomepageContentAction(formData: FormData) {
       aboutImageAlt: storedContent.aboutImageAlt,
       aboutImageUrl: storedContent.aboutImageUrl,
     });
+    if (validationError) {
+      goHomepage({ error: validationError });
+    }
+
+    try {
+      await saveSiteHomeContent({
+        ...data,
+        aboutHeading: storedContent.aboutHeading,
+        aboutParagraph1: storedContent.aboutParagraph1,
+        aboutParagraph2: storedContent.aboutParagraph2,
+        aboutImageAlt: storedContent.aboutImageAlt,
+        aboutImageUrl: storedContent.aboutImageUrl,
+        certaintyLead: storedContent.certaintyLead,
+        certaintyExtraBlocks: storedContent.certaintyExtraBlocks,
+        couponSuccessMessage: storedContent.couponSuccessMessage,
+      });
+    } catch (error) {
+      const note =
+        error instanceof Error ? error.message : "Could not save homepage content.";
+      goHomepage({ error: note });
+    }
+
+    try {
+      revalidateStorefrontHomepage();
+    } catch {
+      /* OpenNext on Cloudflare may reject revalidate; D1 reads are live via connection(). */
+    }
+
+    goHomepage({
+      success:
+        "Homepage hero, moments, coupon, spotlight, and FAQ saved. Changes should appear on the live site immediately.",
+    });
   } catch (error) {
+    if (isNextRedirect(error)) throw error;
     const note =
       error instanceof Error ? error.message : "Could not save homepage content.";
     goHomepage({ error: note });
   }
-
-  revalidateStorefrontHomepage();
-  goHomepage({
-    success:
-      "Homepage hero, moments, coupon, spotlight, and FAQ saved. Changes should appear on the live site immediately.",
-  });
 }
 
 function AdminField({
