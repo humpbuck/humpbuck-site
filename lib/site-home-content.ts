@@ -1,3 +1,5 @@
+import { withImageCacheRevision } from "@/lib/r2-public-image";
+
 export type SiteHomeContentData = {
   heroBadge: string;
   heroTitle: string;
@@ -88,6 +90,23 @@ export function resolveSiteHomeContentForAdminForm(
       stored.couponBackgroundImageUrl,
       fallbacks.couponBackgroundImageUrl,
     ),
+  };
+}
+
+/** Storefront-only — bust R2 image caches using `SiteHomeContent.updatedAt` after admin saves. */
+export function applySiteHomeImageCacheRevision(
+  content: SiteHomeContentData,
+  revision: string | null,
+): SiteHomeContentData {
+  if (!revision) return content;
+  const bust = (url: string) => withImageCacheRevision(url, revision);
+  return {
+    ...content,
+    heroDesktopImageUrl: bust(content.heroDesktopImageUrl),
+    heroMobileImageUrl: bust(content.heroMobileImageUrl),
+    aboutImageUrl: bust(content.aboutImageUrl),
+    spotlightBackgroundImageUrl: bust(content.spotlightBackgroundImageUrl),
+    couponBackgroundImageUrl: bust(content.couponBackgroundImageUrl),
   };
 }
 

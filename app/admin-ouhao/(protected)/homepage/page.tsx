@@ -301,7 +301,7 @@ export default async function AdminHomepageContentPage({
             name="spotlightBackgroundImageUrl"
             defaultValue={content.spotlightBackgroundImageUrl}
             placeholder={defaultSpotlightBackground}
-            hint={`Default: ${defaultSpotlightBackground}`}
+            hint={`Default: ${defaultSpotlightBackground}. Use the plain R2 URL; after each save the storefront adds ?v= from save time so CDN/browser pick up same-path overwrites.`}
           />
         </fieldset>
 

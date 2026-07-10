@@ -1,6 +1,7 @@
 import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
 import {
+  applySiteHomeImageCacheRevision,
   EMPTY_SITE_HOME_CONTENT,
   normalizeSiteHomeContent,
   type SiteHomeContentData,
@@ -16,7 +17,8 @@ async function loadSiteHomeContentUncached(): Promise<SiteHomeContentData> {
     .catch(() => null);
 
   if (!row) return EMPTY_SITE_HOME_CONTENT;
-  return normalizeSiteHomeContent(row);
+  const content = normalizeSiteHomeContent(row);
+  return applySiteHomeImageCacheRevision(content, row.updatedAt.toISOString());
 }
 
 /**

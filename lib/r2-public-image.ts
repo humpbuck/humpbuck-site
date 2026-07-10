@@ -18,3 +18,17 @@ export function isR2PublicObjectUrl(url: string): boolean {
   if (base && s.startsWith(base)) return true;
   return false;
 }
+
+/**
+ * Append `?v=` for R2 URLs without one so browser/CDN refetch after same-path overwrites.
+ * Skips URLs that already include `v=` (e.g. admin-entered `?v=2`).
+ */
+export function withImageCacheRevision(url: string, revision: string | null): string {
+  const trimmed = url.trim();
+  if (!trimmed || !revision) return trimmed;
+  if (/[?&]v=/.test(trimmed)) return trimmed;
+  if (!isR2PublicObjectUrl(trimmed)) return trimmed;
+  const sep = trimmed.includes("?") ? "&" : "?";
+  const token = revision.replace(/\D/g, "").slice(0, 14) || revision;
+  return `${trimmed}${sep}v=${encodeURIComponent(token)}`;
+}
