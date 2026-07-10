@@ -25,6 +25,7 @@ type AnnouncementRow = {
   href: string;
   slidesJson?: string | null;
   backgroundColor?: string | null;
+  updatedAt: Date;
 };
 
 function isSlidesJsonUnsupportedError(error: unknown): boolean {
