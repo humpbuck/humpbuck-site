@@ -81,6 +81,40 @@ export async function getSiteAnnouncement(): Promise<SiteAnnouncementData> {
   )();
 }
 
+/** Admin editor — always read fresh from DB (never `unstable_cache`). */
+export async function getSiteAnnouncementForAdmin(): Promise<{
+  announcement: SiteAnnouncementData;
+  updatedAt: string | null;
+}> {
+  if (!prisma.siteAnnouncement) {
+    return { announcement: EMPTY, updatedAt: null };
+  }
+
+  const row = (await prisma.siteAnnouncement
+    .findUnique({ where: { id: DEFAULT_ID } })
+    .catch(() => null)) as AnnouncementRow | null;
+
+  if (!row) {
+    return { announcement: EMPTY, updatedAt: null };
+  }
+
+  const slides = parseAnnouncementSlidesJson(row.slidesJson, {
+    message: row.message,
+    href: row.href,
+  });
+
+  return {
+    announcement: {
+      enabled: row.enabled,
+      slides,
+      backgroundColor:
+        normalizeAnnouncementBackgroundColor(row.backgroundColor) ??
+        DEFAULT_ANNOUNCEMENT_BACKGROUND,
+    },
+    updatedAt: row.updatedAt.toISOString(),
+  };
+}
+
 export async function saveSiteAnnouncement(
   data: SiteAnnouncementData,
 ): Promise<SaveSiteAnnouncementResult> {

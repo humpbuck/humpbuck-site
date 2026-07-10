@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { PrismaClient as PrismaClientType } from "@prisma/client";
 
 const LOG: ("error" | "warn")[] =
@@ -5,7 +6,13 @@ const LOG: ("error" | "warn")[] =
 
 /** SQLite file for Prisma CLI + local scripts (relative to `prisma/schema.prisma`). */
 export function resolveLocalDatabaseUrl(): string {
-  return process.env.DATABASE_URL?.trim() || "file:./dev.db";
+  const configured = process.env.DATABASE_URL?.trim() || "file:./dev.db";
+  // Prisma CLI resolves `file:./dev.db` next to schema.prisma (`prisma/dev.db`).
+  // @libsql/client resolves relative paths from process.cwd() — remap the default URL.
+  if (configured === "file:./dev.db") {
+    return `file:${path.join(process.cwd(), "prisma", "dev.db")}`;
+  }
+  return configured;
 }
 
 /** Local SQLite file — scripts only (`lib/prisma-script.ts`), never imported from app routes. */

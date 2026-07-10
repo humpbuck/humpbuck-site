@@ -3,11 +3,12 @@ import { AnnouncementSlidesEditor } from "@/components/admin/announcement-slides
 import { redirect } from "next/navigation";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { AdminFlashMessage } from "@/components/admin/admin-flash-message";
+import { PendingActionButton } from "@/components/admin/pending-action-button";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import { revalidateStorefrontShell, revalidateSiteAnnouncement } from "@/lib/revalidate-storefront";
 import {
-  getSiteAnnouncement,
+  getSiteAnnouncementForAdmin,
   saveSiteAnnouncement,
 } from "@/lib/site-announcement-queries";
 import {
@@ -90,7 +91,7 @@ export default async function AdminAnnouncementPage({
   searchParams: Promise<{ error?: string; success?: string }>;
 }) {
   await assertAdmin();
-  const announcement = await getSiteAnnouncement();
+  const { announcement, updatedAt } = await getSiteAnnouncementForAdmin();
   const { error, success } = await searchParams;
 
   return (
@@ -118,7 +119,11 @@ export default async function AdminAnnouncementPage({
         />
       ) : null}
 
-      <form action={saveAnnouncementAction} className="mt-8 max-w-2xl space-y-4">
+      <form
+        key={updatedAt ?? "empty"}
+        action={saveAnnouncementAction}
+        className="mt-8 max-w-2xl space-y-4"
+      >
         <label className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white/60 px-4 py-3 text-sm text-ink">
           <span>Show on homepage</span>
           <input
@@ -140,12 +145,11 @@ export default async function AdminAnnouncementPage({
           />
         </label>
 
-        <button
-          type="submit"
+        <PendingActionButton
+          idleLabel="Save announcement"
+          pendingLabel="Saving…"
           className="inline-flex items-center justify-center rounded-xl bg-ink px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
-        >
-          Save announcement
-        </button>
+        />
       </form>
     </div>
   );
