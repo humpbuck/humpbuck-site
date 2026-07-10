@@ -28,19 +28,22 @@ export function HomeProductSliderSectionFallback() {
 }
 
 export function HomeSpotlightSectionFallback() {
+  const spotlightMobileMinH =
+    "min-h-[calc((100svh-var(--site-announcement-h,0px)-72px)*0.85)]";
+
   return (
     <section
-      className="relative w-full overflow-hidden border-b border-line bg-paper py-14 sm:py-16 md:aspect-[4/1] md:py-0"
+      className={`relative flex w-full flex-col overflow-hidden border-b border-line bg-paper ${spotlightMobileMinH} md:min-h-0 md:aspect-[4/1]`}
       aria-busy="true"
       aria-label="Loading"
     >
-      <div className="relative z-10 md:absolute md:inset-0 md:flex md:items-center px-4 sm:px-6">
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col justify-center px-4 py-6 sm:px-6 md:absolute md:inset-0 md:flex md:items-center md:py-0">
         <div className="mx-auto flex w-full max-w-7xl animate-pulse flex-col items-center gap-10 md:flex-row md:justify-center md:gap-14">
-          <PulseBlock className="aspect-square w-full max-w-[240px] shrink-0 rounded-xl bg-ink/[0.06] md:max-w-[280px]" />
-          <div className="w-full max-w-xs space-y-4 md:items-start">
-            <PulseBlock className="h-3 w-24" />
-            <PulseBlock className="h-10 w-full" />
-            <PulseBlock className="h-4 w-32" />
+          <PulseBlock className="aspect-square w-full max-w-[min(82vw,40svh,22rem)] shrink-0 rounded-2xl bg-ink/[0.06] md:max-w-[280px] md:rounded-xl" />
+          <div className="w-full max-w-[min(92vw,22rem)] space-y-4 md:max-w-xs md:items-start">
+            <PulseBlock className="h-3.5 w-28" />
+            <PulseBlock className="h-12 w-full" />
+            <PulseBlock className="h-4 w-36" />
           </div>
         </div>
       </div>

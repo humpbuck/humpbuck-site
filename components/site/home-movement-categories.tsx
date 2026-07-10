@@ -36,9 +36,13 @@ export async function HomeMovementCategories() {
   const productImage =
     productCutout || cover || product?.image || mechanicalHeroWebpUrl();
 
+  /** Match `HomeHero` mobile viewport height (85% svh minus header). */
+  const spotlightMobileMinH =
+    "min-h-[calc((100svh-var(--site-announcement-h,0px)-72px)*0.85)]";
+
   return (
     <section
-      className="relative w-full overflow-hidden border-b border-line md:aspect-[4/1]"
+      className={`relative flex w-full flex-col overflow-hidden border-b border-line ${spotlightMobileMinH} md:min-h-0 md:aspect-[4/1]`}
       aria-labelledby="home-movement-categories-heading"
     >
       <div className="pointer-events-none absolute inset-0 md:hidden" aria-hidden>
@@ -64,7 +68,7 @@ export async function HomeMovementCategories() {
         {t("categoryHeading")}
       </h2>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-9 md:absolute md:inset-0 md:flex md:items-center md:py-0 lg:py-0">
+      <div className="relative z-10 mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col justify-center px-4 py-6 sm:px-6 md:absolute md:inset-0 md:flex md:items-center md:py-0 lg:py-0">
         <div className="w-full md:mx-auto">
           <HomeMovementSpotlight
             productHref={productHref}
