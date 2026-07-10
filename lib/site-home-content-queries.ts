@@ -65,9 +65,19 @@ export async function saveSiteHomeContent(
 
   const normalized = normalizeSiteHomeContent(data);
 
-  await prisma.siteHomeContent.upsert({
-    where: { id: DEFAULT_ID },
-    create: { id: DEFAULT_ID, ...normalized },
-    update: normalized,
-  });
+  try {
+    await prisma.siteHomeContent.upsert({
+      where: { id: DEFAULT_ID },
+      create: { id: DEFAULT_ID, ...normalized },
+      update: normalized,
+    });
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    if (msg.includes("Unknown argument") && /certainty|faqItem|faqItemsJson|moments/.test(msg)) {
+      throw new Error(
+        "Homepage fields are not loaded in this dev session. Run `npm run db:d1:local`, then `npx prisma generate`, restart `npm run dev`, and save again.",
+      );
+    }
+    throw error;
+  }
 }

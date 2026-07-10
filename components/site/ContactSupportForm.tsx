@@ -37,15 +37,19 @@ export function ContactSupportForm({
   onClose,
   defaultSubject = "",
   defaultMessage = "",
+  variant = "default",
 }: {
   onClose?: () => void;
   defaultSubject?: string;
   defaultMessage?: string;
+  /** Inline pages hide intro — shown in the section header column instead. */
+  variant?: "default" | "inline";
 }) {
   const t = useTranslations("ContactForm");
   const locale = useLocale();
   const pathname = usePathname();
   const supportEmail = publicSupportEmail();
+  const isInline = variant === "inline";
 
   const [fromEmail, setFromEmail] = useState("");
   const [subject, setSubject] = useState(defaultSubject);
@@ -120,10 +124,16 @@ export function ContactSupportForm({
 
   return (
     <>
-      <p className="text-sm leading-relaxed text-muted">{t("intro")}</p>
+      {isInline ? null : (
+        <p className="text-sm leading-relaxed text-muted">{t("intro")}</p>
+      )}
 
       <form
-        className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-x-5"
+        className={
+          isInline
+            ? "grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-x-5"
+            : "mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-x-5"
+        }
         onSubmit={onSubmit}
         noValidate
       >

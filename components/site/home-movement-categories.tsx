@@ -72,14 +72,12 @@ export async function HomeMovementCategories() {
         <div className="w-full md:mx-auto">
           <HomeMovementSpotlight
             productHref={productHref}
-            productName={product?.name ?? t("categoryMechanicalTitle")}
             imageAlt={product?.name ?? t("categoryMechanicalImageAlt")}
             baseImage={productImage}
             productCutout={Boolean(productCutout)}
             kicker={t("categoryMechanicalKicker")}
             title={product?.name ?? t("categoryMechanicalTitle")}
             cta={t("heroViewProduct")}
-            variantOptions={product?.variantOptions ?? []}
           />
         </div>
       </div>

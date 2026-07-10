@@ -1,46 +1,26 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import { useSpotlightCardImages } from "@/components/site/use-product-card-images";
 import { Link } from "@/i18n/navigation";
 import { StorefrontImage } from "@/components/site/storefront-image";
-import { ProductCardVariantSwatches } from "@/components/site/product-card-variant-swatches";
-import type { ProductVariantOption } from "@/lib/catalog";
 
 export function HomeMovementSpotlight({
   productHref,
-  productName,
   imageAlt,
   baseImage,
   productCutout = false,
   kicker,
   title,
   cta,
-  variantOptions,
 }: {
   productHref: string;
-  productName: string;
   imageAlt: string;
   baseImage: string;
   productCutout?: boolean;
   kicker: string;
   title: string;
   cta: string;
-  variantOptions: ProductVariantOption[];
 }) {
-  const { variantIndex, onVariantIndexChange, primarySrc: activeImage, variants } =
-    useSpotlightCardImages(baseImage, undefined, variantOptions);
-
-  const swatches =
-    variants.length > 0 ? (
-      <ProductCardVariantSwatches
-        options={variants}
-        productName={productName}
-        selectedIndex={variantIndex}
-        onSelectedIndexChange={onVariantIndexChange}
-      />
-    ) : null;
-
   return (
     <div className="mx-auto flex w-full max-w-[min(92vw,22rem)] flex-col items-center gap-[clamp(1.25rem,4svh,2rem)] md:w-full md:max-w-none md:flex-row md:justify-center md:gap-14 lg:gap-20">
       <div className="flex w-full max-w-[min(82vw,40svh,22rem)] shrink-0 flex-col items-center md:mx-0 md:max-w-[280px] lg:max-w-[320px]">
@@ -49,7 +29,7 @@ export function HomeMovementSpotlight({
           className="group relative block aspect-square w-full overflow-hidden rounded-2xl border border-white/15 bg-white/5 transition duration-300 hover:border-white/25 hover:bg-white/10 md:rounded-xl"
         >
           <StorefrontImage
-            src={activeImage}
+            src={baseImage}
             alt={imageAlt}
             fill
             priority
@@ -61,9 +41,6 @@ export function HomeMovementSpotlight({
             }
           />
         </Link>
-        {swatches ? (
-          <div className="mt-3.5 flex scale-110 justify-center md:hidden">{swatches}</div>
-        ) : null}
       </div>
 
       <div className="flex w-full max-w-[min(92vw,22rem)] flex-col items-center rounded-2xl border border-white/15 bg-white/5 px-6 py-5 text-center sm:px-7 sm:py-6 md:min-w-0 md:max-w-xs md:w-fit md:flex-none md:items-start md:px-6 md:py-5 md:text-left">
@@ -80,7 +57,6 @@ export function HomeMovementSpotlight({
           {cta}
           <ArrowRight className="h-4 w-4 md:h-[15px] md:w-[15px]" strokeWidth={2} aria-hidden />
         </Link>
-        {swatches ? <div className="hidden md:block">{swatches}</div> : null}
       </div>
     </div>
   );

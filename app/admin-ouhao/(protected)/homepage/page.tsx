@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { AdminBackLink } from "@/components/admin/admin-back-link";
+import { AdminCollapsibleSection } from "@/components/admin/admin-collapsible-section";
 import { AdminFlashMessage } from "@/components/admin/admin-flash-message";
+import { FaqItemsEditor } from "@/components/admin/faq-items-editor";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import {
@@ -15,6 +17,7 @@ import {
   saveSiteHomeContent,
 } from "@/lib/site-home-content-queries";
 import {
+  resolveHomeFaqItemsForAdmin,
   resolveSiteHomeContentForAdminForm,
   siteHomeContentFromFormData,
   validateSiteHomeContent,
@@ -55,7 +58,7 @@ async function saveHomepageContentAction(formData: FormData) {
   revalidateStorefrontHomepage();
   goHomepage({
     success:
-      "Homepage hero, coupon, spotlight, and about sections saved. Changes should appear on the live site immediately.",
+      "Homepage hero, moments, coupon, spotlight, FAQ, and about sections saved. Changes should appear on the live site immediately.",
   });
 }
 
@@ -132,6 +135,19 @@ export default async function AdminHomepageContentPage({
     heroImageAlt: "HUMPBUCK homepage hero — handcrafted premium timepieces",
     heroDesktopImageUrl: defaultHeroDesktop,
     heroMobileImageUrl: defaultHeroMobile,
+    momentsHeading: "Moments Worth Remembering",
+    momentsLead:
+      "Some moments change everything. Our timepieces are here for all of them.",
+    momentsCard1Title: "Milestone Moments",
+    momentsCard1Description:
+      "For the decisions, celebrations, and nights worth remembering.",
+    momentsCard1DesktopImageUrl: "",
+    momentsCard1MobileImageUrl: "",
+    momentsCard2Title: "Everyday Memories",
+    momentsCard2Description:
+      "For the journeys, rituals, and little things that stay with you.",
+    momentsCard2DesktopImageUrl: "",
+    momentsCard2MobileImageUrl: "",
     aboutHeading: "About",
     aboutParagraph1:
       "I have loved mechanical watches since I was a child. Back then, my family was poor, and I couldn't afford one. However, I was completely fascinated by how the intricate gears interlock and how the complex mechanical structures work together to keep precise time.",
@@ -147,7 +163,38 @@ export default async function AdminHomepageContentPage({
     couponSuccessMessage: "",
     couponTagline: "Life has no standard answer.\nJust live it your way.",
     couponBackgroundImageUrl: "",
+    certaintyHeading: "Frequently asked questions",
+    certaintyLead: "",
+    certaintyExtraBlocks: "",
+    faqItem1Question: "What currency are prices shown in?",
+    faqItem1Answer:
+      "All prices are listed in US dollars. Use the currency control at the bottom-left of your screen for a live reference conversion. Your card or wallet is charged in USD at checkout.",
+    faqItem2Question: "Do you ship to my country?",
+    faqItem2Answer:
+      "We ship to most countries worldwide. Orders are processed within three business days; tracked delivery typically arrives in 7–21 days depending on your region. Any shipping fee is calculated and shown before you pay.",
+    faqItem3Question: "Which payment methods do you accept?",
+    faqItem3Answer:
+      "Pay with PayPal, major credit and debit cards, Apple Pay, or Google Pay — processed through trusted payment partners with encrypted checkout.",
+    faqItemsJson: "",
   });
+
+  const faqItemsForAdmin = resolveHomeFaqItemsForAdmin(content, [
+    {
+      question: "What currency are prices shown in?",
+      answer:
+        "All prices are listed in US dollars. Use the currency control at the bottom-left of your screen for a live reference conversion. Your card or wallet is charged in USD at checkout.",
+    },
+    {
+      question: "Do you ship to my country?",
+      answer:
+        "We ship to most countries worldwide. Orders are processed within three business days; tracked delivery typically arrives in 7–21 days depending on your region. Any shipping fee is calculated and shown before you pay.",
+    },
+    {
+      question: "Which payment methods do you accept?",
+      answer:
+        "Pay with PayPal, major credit and debit cards, Apple Pay, or Google Pay — processed through trusted payment partners with encrypted checkout.",
+    },
+  ]);
 
   return (
     <div>
@@ -177,13 +224,9 @@ export default async function AdminHomepageContentPage({
       <form
         key={updatedAt ?? "empty"}
         action={saveHomepageContentAction}
-        className="mt-8 max-w-2xl space-y-10"
+        className="mt-8 max-w-2xl space-y-4"
       >
-        <fieldset className="space-y-4 rounded-2xl border border-line bg-white/60 p-5">
-          <legend className="px-1 text-[11px] font-bold uppercase tracking-[0.14em] text-ink">
-            Hero section
-          </legend>
-
+        <AdminCollapsibleSection title="Hero section">
           <AdminField
             label="Badge"
             name="heroBadge"
@@ -249,23 +292,91 @@ export default async function AdminHomepageContentPage({
             placeholder={defaultHeroMobile}
             hint={`Default: ${defaultHeroMobile}`}
           />
-        </fieldset>
+        </AdminCollapsibleSection>
 
-        <fieldset className="space-y-4 rounded-2xl border border-line bg-white/60 p-5">
-          <legend className="px-1 text-[11px] font-bold uppercase tracking-[0.14em] text-ink">
-            Coupon prompt section
-          </legend>
-          <p className="text-sm text-muted">
-            Interactive block directly below the hero. Assign the coupon code
-            under Coupons → Homepage coupon. Leave background blank for the
-            default solid site color.
+        <AdminCollapsibleSection title="Moments section">
+          <AdminField
+            label="Section heading"
+            name="momentsHeading"
+            defaultValue={content.momentsHeading}
+            placeholder="Moments Worth Remembering"
+          />
+          <AdminField
+            label="Section lead"
+            name="momentsLead"
+            defaultValue={content.momentsLead}
+            multiline
+            placeholder="Some moments change everything. Our timepieces are here for all of them."
+          />
+          <p className="text-[11px] leading-relaxed text-muted">
+            Card 1 — Milestone Moments
           </p>
+          <AdminField
+            label="Card 1 title"
+            name="momentsCard1Title"
+            defaultValue={content.momentsCard1Title}
+            placeholder="Milestone Moments"
+          />
+          <AdminField
+            label="Card 1 description"
+            name="momentsCard1Description"
+            defaultValue={content.momentsCard1Description}
+            multiline
+            placeholder="For the decisions, celebrations, and nights worth remembering."
+          />
+          <AdminField
+            label="Card 1 image URL (PC)"
+            name="momentsCard1DesktopImageUrl"
+            defaultValue={content.momentsCard1DesktopImageUrl}
+            placeholder="https://assets.humpbuck.com/…"
+            hint="Wide horizontal image for desktop — text overlays the bottom."
+          />
+          <AdminField
+            label="Card 1 image URL (mobile / APP)"
+            name="momentsCard1MobileImageUrl"
+            defaultValue={content.momentsCard1MobileImageUrl}
+            placeholder="https://assets.humpbuck.com/…"
+            hint="Optional. Vertical card image for mobile. Blank = same as PC."
+          />
+          <p className="pt-2 text-[11px] leading-relaxed text-muted">
+            Card 2 — Everyday Memories
+          </p>
+          <AdminField
+            label="Card 2 title"
+            name="momentsCard2Title"
+            defaultValue={content.momentsCard2Title}
+            placeholder="Everyday Memories"
+          />
+          <AdminField
+            label="Card 2 description"
+            name="momentsCard2Description"
+            defaultValue={content.momentsCard2Description}
+            multiline
+            placeholder="For the journeys, rituals, and little things that stay with you."
+          />
+          <AdminField
+            label="Card 2 image URL (PC)"
+            name="momentsCard2DesktopImageUrl"
+            defaultValue={content.momentsCard2DesktopImageUrl}
+            placeholder="https://assets.humpbuck.com/…"
+            hint="Wide horizontal image for desktop — text overlays the bottom."
+          />
+          <AdminField
+            label="Card 2 image URL (mobile / APP)"
+            name="momentsCard2MobileImageUrl"
+            defaultValue={content.momentsCard2MobileImageUrl}
+            placeholder="https://assets.humpbuck.com/…"
+            hint="Optional. Vertical card image for mobile. Blank = same as PC."
+          />
+        </AdminCollapsibleSection>
+
+        <AdminCollapsibleSection title="Coupon prompt section">
           <AdminField
             label="Background image URL"
             name="couponBackgroundImageUrl"
             defaultValue={content.couponBackgroundImageUrl}
             placeholder="https://assets.humpbuck.com/…"
-            hint="Optional. Full R2 or HTTPS image URL."
+            hint="Optional. Coupon code under Coupons → Homepage coupon."
           />
           <AdminField
             label="Title"
@@ -285,48 +396,44 @@ export default async function AdminHomepageContentPage({
             defaultValue={content.couponTagline}
             multiline
             placeholder={"Life has no standard answer.\nJust live it your way."}
-            hint='Two lines in the popup above "Your Coupon is …". Separate lines with Enter, or use a semicolon. Coupon code comes from Coupons → Homepage coupon.'
           />
-        </fieldset>
+        </AdminCollapsibleSection>
 
-        <fieldset className="space-y-4 rounded-2xl border border-line bg-white/60 p-5">
-          <legend className="px-1 text-[11px] font-bold uppercase tracking-[0.14em] text-ink">
-            Product spotlight section
-          </legend>
-          <p className="text-sm text-muted">
-            Featured product block below the coupon prompt. Product selection
-            stays in Products &amp; Inventory → Homepage spotlight. Use a wide
-            image (~4:1) for PC and a taller image for mobile (APP); leave mobile
-            blank to reuse the PC URL.
-          </p>
+        <AdminCollapsibleSection title="Product spotlight section">
           <AdminField
             label="Background image URL (PC)"
             name="spotlightBackgroundImageUrl"
             defaultValue={content.spotlightBackgroundImageUrl}
             placeholder={defaultSpotlightBackground}
-            hint={`PC default: ${defaultSpotlightBackground}. Plain R2 URL; storefront adds ?v= after each save.`}
+            hint={`Product under Products → Homepage spotlight. PC default: ${defaultSpotlightBackground}`}
           />
           <AdminField
             label="Background image URL (mobile / APP)"
             name="spotlightBackgroundMobileImageUrl"
             defaultValue={content.spotlightBackgroundMobileImageUrl}
             placeholder="https://assets.humpbuck.com/…"
-            hint="Optional portrait or square R2 image for phones. Blank = same as PC."
+            hint="Optional. Blank = same as PC."
           />
           <AdminField
             label="Product image URL (transparent WEBP)"
             name="spotlightProductImageUrl"
             defaultValue={content.spotlightProductImageUrl}
             placeholder="https://assets.humpbuck.com/…"
-            hint="Optional cutout with alpha channel for the spotlight watch. Blank = catalog cover image in a glass frame."
+            hint="Optional cutout. Blank = catalog cover image."
           />
-        </fieldset>
+        </AdminCollapsibleSection>
 
-        <fieldset className="space-y-4 rounded-2xl border border-line bg-white/60 p-5">
-          <legend className="px-1 text-[11px] font-bold uppercase tracking-[0.14em] text-ink">
-            About section
-          </legend>
+        <AdminCollapsibleSection title="FAQ">
+          <AdminField
+            label="Section heading"
+            name="certaintyHeading"
+            defaultValue={content.certaintyHeading}
+            placeholder="Frequently asked questions"
+          />
+          <FaqItemsEditor initialItems={faqItemsForAdmin} />
+        </AdminCollapsibleSection>
 
+        <AdminCollapsibleSection title="About section">
           <AdminField
             label="Heading"
             name="aboutHeading"
@@ -353,7 +460,7 @@ export default async function AdminHomepageContentPage({
             placeholder={defaultAboutImage}
             hint={`Default: ${defaultAboutImage}`}
           />
-        </fieldset>
+        </AdminCollapsibleSection>
 
         <button
           type="submit"

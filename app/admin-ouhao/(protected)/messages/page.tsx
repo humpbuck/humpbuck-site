@@ -455,20 +455,20 @@ export default async function AdminMessagesPage({
                       className="mt-0.5 h-3.5 w-3.5 rounded border-line text-ink focus:ring-ink/30"
                     />
                     <div>
-                    <p>
-                      <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
-                        {adminInboxCategoryLabel(msg.category)}
-                      </span>{" "}
-                      <details className="inline-block max-w-[680px] align-middle open:[&_summary]:overflow-visible open:[&_summary]:whitespace-normal open:[&_summary]:text-clip">
-                        <summary className="max-w-[680px] cursor-pointer list-none truncate font-medium text-ink/90 [&::-webkit-details-marker]:hidden">
-                          {messagePrimaryText({
-                            category: msg.category,
-                            payload,
-                            sourceEmail: msg.sourceEmail,
-                          })}
-                        </summary>
-                      </details>
-                    </p>
+                      <div className="font-medium text-ink/90">
+                        <span className="rounded bg-ink/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/80">
+                          {adminInboxCategoryLabel(msg.category)}
+                        </span>{" "}
+                        <details className="inline-block max-w-[680px] align-middle open:[&_summary]:overflow-visible open:[&_summary]:whitespace-normal open:[&_summary]:text-clip">
+                          <summary className="max-w-[680px] cursor-pointer list-none truncate font-medium text-ink/90 [&::-webkit-details-marker]:hidden">
+                            {messagePrimaryText({
+                              category: msg.category,
+                              payload,
+                              sourceEmail: msg.sourceEmail,
+                            })}
+                          </summary>
+                        </details>
+                      </div>
                     <p className="text-xs text-muted">
                       {msg.createdAt.toLocaleString()}
                       {asText(payload.company) ? ` · Company: ${asText(payload.company)}` : ""}

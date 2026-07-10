@@ -1,0 +1,11 @@
+-- Homepage "Moments Worth Remembering" section (admin-editable copy + PC/APP images)
+ALTER TABLE "SiteHomeContent" ADD COLUMN "momentsHeading" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "SiteHomeContent" ADD COLUMN "momentsLead" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "SiteHomeContent" ADD COLUMN "momentsCard1Title" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "SiteHomeContent" ADD COLUMN "momentsCard1Description" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "SiteHomeContent" ADD COLUMN "momentsCard1DesktopImageUrl" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "SiteHomeContent" ADD COLUMN "momentsCard1MobileImageUrl" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "SiteHomeContent" ADD COLUMN "momentsCard2Title" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "SiteHomeContent" ADD COLUMN "momentsCard2Description" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "SiteHomeContent" ADD COLUMN "momentsCard2DesktopImageUrl" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "SiteHomeContent" ADD COLUMN "momentsCard2MobileImageUrl" TEXT NOT NULL DEFAULT '';

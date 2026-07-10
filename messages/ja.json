@@ -153,7 +153,19 @@
     "socialFacebookAria": "FacebookのHUMPBUCK",
     "socialInstagramAria": "InstagramのHUMPBUCK",
     "socialYoutubeAria": "YouTubeのHUMPBUCK",
-    "socialTiktokAria": "TikTokのHUMPBUCK"
+    "socialTiktokAria": "TikTokのHUMPBUCK",
+    "certaintyKicker": "FAQ",
+    "certaintyTitle": "Frequently asked questions",
+    "certaintyLead": "",
+    "certaintyCurrencyTitle": "What currency are prices shown in?",
+    "certaintyCurrencyBody": "All prices are listed in US dollars. Use the currency control at the bottom-left of your screen for a live reference conversion. Your card or wallet is charged in USD at checkout.",
+    "certaintyShippingTitle": "Do you ship to my country?",
+    "certaintyShippingBody": "We ship to most countries worldwide. Orders are processed within three business days; tracked delivery typically arrives in 7–21 days depending on your region. Any shipping fee is calculated and shown before you pay.",
+    "certaintyShippingLink": "Shipping & tax policy",
+    "certaintyPaymentsTitle": "Which payment methods do you accept?",
+    "certaintyPaymentsBody": "Pay with PayPal, major credit and debit cards, Apple Pay, or Google Pay — processed through trusted payment partners with encrypted checkout.",
+    "certaintySupportPrompt": "Have a question that is not covered here? No problem.",
+    "certaintySupportCta": "Contact our support team"
   },
   "Newsletter": {
     "emailLabel": "メール",
