@@ -4,7 +4,7 @@ import { DM_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/app-providers";
 import { OrganizationJsonLd } from "@/components/seo/organization-json-ld";
-import { R2_PUBLIC_BASE } from "@/lib/r2";
+import { R2_ASSETS_PUBLIC_BASE, R2_PUBLIC_BASE } from "@/lib/r2";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { VercelObservabilityClient } from "@/components/site/vercel-observability";
 
@@ -16,6 +16,7 @@ const fontBody = DM_Sans({
 const fontDisplay = Fraunces({
   subsets: ["latin", "latin-ext"],
   variable: "--font-display",
+  display: "optional",
 });
 
 const siteUrl = getSiteUrl();
@@ -98,6 +99,8 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <link rel="preconnect" href={R2_ASSETS_PUBLIC_BASE} crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href={R2_ASSETS_PUBLIC_BASE} />
         <link rel="preconnect" href={R2_PUBLIC_BASE} crossOrigin="anonymous" />
         <link rel="dns-prefetch" href={R2_PUBLIC_BASE} />
         <link rel="preconnect" href="https://challenges.cloudflare.com" />

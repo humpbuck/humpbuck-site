@@ -32,7 +32,6 @@ export function HomeMovementSpotlight({
             src={baseImage}
             alt={imageAlt}
             fill
-            priority
             sizes="(max-width:768px) 352px, 320px"
             className={
               productCutout

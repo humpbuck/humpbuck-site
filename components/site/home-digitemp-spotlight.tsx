@@ -62,8 +62,6 @@ export function HomeDigitempSpotlight({
             src={activeImage}
             alt={imageAlt}
             fill
-            priority
-            fetchPriority="high"
             quality={68}
             className="object-contain object-center bg-white transition duration-700 group-hover:scale-[1.03]"
             sizes="(max-width:767px) 92vw, 400px"

@@ -74,6 +74,48 @@ export function HomeProductGridSectionFallback() {
   );
 }
 
+export function HomeMomentsSectionFallback() {
+  return (
+    <section
+      className="border-b border-line bg-paper py-14 md:py-16 lg:py-20"
+      aria-busy="true"
+      aria-label="Loading"
+    >
+      <div className="mx-auto max-w-7xl animate-pulse px-4 sm:px-6">
+        <PulseBlock className="mx-auto h-9 w-56" />
+        <PulseBlock className="mx-auto mt-4 h-4 w-80 max-w-full" />
+        <div className="mt-10 hidden gap-6 md:grid md:grid-cols-2">
+          <PulseBlock className="aspect-video w-full rounded-2xl bg-ink/[0.06]" />
+          <PulseBlock className="aspect-video w-full rounded-2xl bg-ink/[0.06]" />
+        </div>
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 md:hidden">
+          <PulseBlock className="aspect-4/5 w-full rounded-2xl bg-ink/[0.06]" />
+          <PulseBlock className="aspect-4/5 w-full rounded-2xl bg-ink/[0.06]" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function HomeCouponSectionFallback() {
+  return (
+    <section
+      className="relative overflow-hidden border-b border-line bg-paper"
+      aria-busy="true"
+      aria-label="Loading"
+    >
+      <div className="mx-auto flex min-h-[min(42vh,420px)] max-w-7xl animate-pulse items-center px-4 py-10 pb-14 sm:px-6 sm:py-12 sm:pb-16 md:py-14 md:pb-16 lg:py-16">
+        <div className="w-full max-w-xl space-y-4">
+          <PulseBlock className="h-3 w-24" />
+          <PulseBlock className="h-10 w-full max-w-md" />
+          <PulseBlock className="h-4 w-56" />
+          <PulseBlock className="mt-4 h-12 w-full max-w-sm rounded-full" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function HomeCategorySlidersFallback() {
   return (
     <>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { HomeHero } from "@/components/site/home-hero";
+import { HomeHeroPreload } from "@/components/site/home-hero-preload";
 import { HomeMomentsSection } from "@/components/site/home-moments-section";
 import { HomeCouponSection } from "@/components/site/home-coupon-section";
 import { HomeMovementCategories } from "@/components/site/home-movement-categories";
@@ -17,6 +18,8 @@ import {
 } from "@/components/site/home-page-async-sections";
 import {
   HomeCategorySlidersFallback,
+  HomeCouponSectionFallback,
+  HomeMomentsSectionFallback,
   HomeProductSliderSectionFallback,
   HomeSpotlightSectionFallback,
 } from "@/components/site/route-section-fallbacks";
@@ -105,11 +108,12 @@ export default async function HomePage({
 
   return (
     <div>
+      <HomeHeroPreload />
       <HomeHero />
-      <Suspense fallback={null}>
+      <Suspense fallback={<HomeMomentsSectionFallback />}>
         <HomeMomentsSection />
       </Suspense>
-      <Suspense fallback={null}>
+      <Suspense fallback={<HomeCouponSectionFallback />}>
         <HomeCouponSection />
       </Suspense>
       <Suspense fallback={<HomeSpotlightSectionFallback />}>
