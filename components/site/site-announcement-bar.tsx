@@ -24,7 +24,13 @@ export function SiteAnnouncementBar({
     activeSlides.length > 0 &&
     isStorefrontAnnouncementPathname(pathname);
 
-  if (!show) return null;
+  if (!show) {
+    return (
+      <style
+        dangerouslySetInnerHTML={{ __html: `:root{--site-announcement-h:0px}` }}
+      />
+    );
+  }
 
   const textColor = announcementBarTextColor(backgroundColor);
 

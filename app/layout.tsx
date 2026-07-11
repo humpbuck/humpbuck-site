@@ -11,6 +11,7 @@ import { VercelObservabilityClient } from "@/components/site/vercel-observabilit
 const fontBody = DM_Sans({
   subsets: ["latin", "latin-ext"],
   variable: "--font-body",
+  display: "optional",
 });
 
 const fontDisplay = Fraunces({

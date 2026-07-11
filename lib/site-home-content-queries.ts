@@ -1,4 +1,5 @@
 import { connection } from "next/server";
+import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import {
   applySiteHomeImageCacheRevision,
@@ -26,10 +27,10 @@ async function loadSiteHomeContentUncached(): Promise<SiteHomeContentData> {
  * `unstable_cache` + `revalidateTag` do not reliably bust on Cloudflare OpenNext;
  * `connection()` opts these segments out of static prerender so admin saves show immediately.
  */
-export async function getSiteHomeContent(): Promise<SiteHomeContentData> {
+export const getSiteHomeContent = cache(async (): Promise<SiteHomeContentData> => {
   await connection();
   return loadSiteHomeContentUncached();
-}
+});
 
 /** Admin editor — always read fresh from DB (never `unstable_cache`). */
 export async function getSiteHomeContentForAdmin(): Promise<{
