@@ -12,6 +12,7 @@ import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { routing } from "@/i18n/routing";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
+import { ProductJsonLd } from "@/components/seo/product-json-ld";
 import { ProductReviewsSection } from "@/components/site/ProductReviewsSection";
 import {
   ProductPdpMainAsyncSection,
@@ -96,6 +97,7 @@ export default async function ProductPage({
 
   return (
     <div>
+      <ProductJsonLd locale={locale} slug={slug} product={product} />
       <div className="mx-auto min-w-0 max-w-7xl py-10 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:pl-[max(1.5rem,env(safe-area-inset-left))] sm:pr-[max(1.5rem,env(safe-area-inset-right))] lg:py-14">
         <Link
           href="/product"
