@@ -687,7 +687,10 @@ async function main() {
         locale,
         {
           name: product.name,
-          movement: getProductMovement(product),
+          movement: getProductMovement({
+            seriesSlug: product.seriesSlug,
+            storefrontCategory: product.storefrontCategory ?? undefined,
+          }),
           profile:
             product.storefrontSubcategory?.trim().toLowerCase() === "ultra-thin"
               ? "ultra-thin"
