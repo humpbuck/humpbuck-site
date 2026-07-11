@@ -15,6 +15,7 @@
     "db:d1:pull": "node scripts/d1-pull-remote-to-local.mjs",
     "audit:i18n": "node scripts/audit-i18n-coverage.mjs",
     "db:seed-reviews": "npx tsx prisma/seed-reviews.ts",
+    "db:seed-reviews:remote": "node scripts/d1-push-seed-reviews.mjs",
     "db:fix-review-avatars": "npx tsx scripts/fix-reviewer-avatars.ts",
     "db:seed-demo-orders": "npx tsx scripts/seed-admin-demo-orders.ts",
     "audit:reviews": "npx tsx scripts/audit-product-reviews-by-slug.ts",

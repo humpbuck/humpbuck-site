@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 import { seriesList } from "@/lib/catalog";
+import { readCatalogBuildSlugs } from "@/lib/catalog-build-slugs";
+import { readBlogBuildSlugs } from "@/lib/blog-build-slugs";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { listPublishedBlogPosts } from "@/lib/blog-posts";
 import { routing } from "@/i18n/routing";
@@ -38,6 +40,41 @@ function localizedSitemapEntries(
   }));
 }
 
+/** Same slug resolution as PDP `generateStaticParams` — D1 first, build JSON when cf-build has no binding. */
+async function resolveProductSlugs(): Promise<string[]> {
+  const slugSet = new Set<string>();
+  try {
+    for (const product of await getMergedCatalogProducts()) {
+      if (product.slug.trim()) slugSet.add(product.slug.trim());
+    }
+  } catch (err) {
+    console.error("[sitemap] catalog load failed.", err);
+  }
+  for (const slug of readCatalogBuildSlugs()) {
+    slugSet.add(slug);
+  }
+  return [...slugSet];
+}
+
+/** Same slug resolution as blog `generateStaticParams`. */
+async function resolveBlogEntries(): Promise<{ slug: string; lastModified: Date }[]> {
+  const bySlug = new Map<string, Date>();
+  const fallbackDate = new Date();
+  try {
+    for (const post of await listPublishedBlogPosts()) {
+      if (post.slug.trim()) {
+        bySlug.set(post.slug.trim(), post.updatedAt);
+      }
+    }
+  } catch (err) {
+    console.error("[sitemap] blog load failed.", err);
+  }
+  for (const slug of readBlogBuildSlugs()) {
+    if (!bySlug.has(slug)) bySlug.set(slug, fallbackDate);
+  }
+  return [...bySlug.entries()].map(([slug, lastModified]) => ({ slug, lastModified }));
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
 
@@ -57,19 +94,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
-  const products = await getMergedCatalogProducts();
-  const productEntries: MetadataRoute.Sitemap = products.flatMap((p) =>
-    localizedSitemapEntries(`/product/${encodeURIComponent(p.slug)}`, {
+  const productSlugs = await resolveProductSlugs();
+  const productEntries: MetadataRoute.Sitemap = productSlugs.flatMap((slug) =>
+    localizedSitemapEntries(`/product/${encodeURIComponent(slug)}`, {
       lastModified,
       changeFrequency: "weekly",
       priority: 0.8,
     }),
   );
 
-  const blogPosts = await listPublishedBlogPosts();
-  const blogEntries: MetadataRoute.Sitemap = blogPosts.flatMap((post) =>
-    localizedSitemapEntries(`/blog/${encodeURIComponent(post.slug)}`, {
-      lastModified: post.updatedAt,
+  const blogEntriesList = await resolveBlogEntries();
+  const blogEntries: MetadataRoute.Sitemap = blogEntriesList.flatMap(({ slug, lastModified: postLastModified }) =>
+    localizedSitemapEntries(`/blog/${encodeURIComponent(slug)}`, {
+      lastModified: postLastModified,
       changeFrequency: "monthly",
       priority: 0.7,
     }),

@@ -49,3 +49,8 @@ export function deterministicReviewCount(
   const span = max - min + 1;
   return min + (hashString(`${productSlug}:count`) % span);
 }
+
+/** Mostly 5 stars (~82%); remainder 4 stars — stable per product + index. */
+export function deterministicRating(productSlug: string, index: number): 4 | 5 {
+  return hashString(`${productSlug}:rating:${index}`) % 100 < 18 ? 4 : 5;
+}

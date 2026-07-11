@@ -13,9 +13,8 @@ export type ReviewSeedLocale =
   | "he"
   | "hu";
 
-export const REVIEW_SEED_LOCALES: ReviewSeedLocale[] = [
-  "en",
-  "en",
+/** All storefront locales — one review body per locale, assigned randomly per product/index. */
+export const REVIEW_SEED_LOCALE_POOL: ReviewSeedLocale[] = [
   "en",
   "de",
   "es",
@@ -29,6 +28,12 @@ export const REVIEW_SEED_LOCALES: ReviewSeedLocale[] = [
   "ar",
   "he",
   "hu",
+];
+
+/** @deprecated Kept for backwards compatibility; prefer `REVIEW_SEED_LOCALE_POOL`. */
+export const REVIEW_SEED_LOCALES: ReviewSeedLocale[] = [
+  ...REVIEW_SEED_LOCALE_POOL,
+  "en",
   "es",
   "de",
   "fr",
@@ -41,12 +46,84 @@ export type ReviewSeedProductContext = {
   categoryLabel?: string;
 };
 
+const FOUR_STAR_NOTES: Record<ReviewSeedLocale, string[]> = {
+  en: [
+    "Only minus: the strap needed one more hole for my wrist.",
+    "Docking one star — a tiny mark on the crystal after week one.",
+    "Great overall; clasp could click a bit more positively.",
+  ],
+  de: [
+    "Ein Stern Abzug: das Armband hätte eine weitere Lochposition gebraucht.",
+    "Sehr gut — nur die Schließe könnte etwas fester einrasten.",
+    "Kleiner Kratzer auf dem Glas nach einer Woche, sonst top.",
+  ],
+  es: [
+    "Le quito una estrella: la correa necesitaba un agujero más.",
+    "Muy bueno; el cierre podría cerrar un poco más firme.",
+    "Pequeña marca en el cristal tras una semana, por lo demás excelente.",
+  ],
+  fr: [
+    "Une étoile en moins : le bracelet aurait gagné un trou de plus.",
+    "Très bien ; la boucle pourrait se fermer un peu plus net.",
+    "Petite trace sur le verre après une semaine, sinon parfait.",
+  ],
+  it: [
+    "Tolgo una stella: il cinturino avrebbe bisogno di un foro in più.",
+    "Ottimo; la chiusura potrebbe scattare un po' più decisa.",
+    "Segnino sul vetro dopo una settimana, per il resto ottimo.",
+  ],
+  pt: [
+    "Tiro uma estrela: a pulseira precisava de mais um furo.",
+    "Muito bom; a fivela poderia fechar um pouco mais firme.",
+    "Marquinha no vidro depois de uma semana, no mais excelente.",
+  ],
+  nl: [
+    "Eén ster minder: de band had nog een gaatje nodig.",
+    "Erg goed; de sluiting kon iets steviger klikken.",
+    "Klein krasje op het glas na een week, verder prima.",
+  ],
+  ru: [
+    "Снимаю звезду: ремешку не хватило одного отверстия.",
+    "Отлично, но застёжка могла бы щёлкать увереннее.",
+    "Мелкая отметина на стекле через неделю, в остальном супер.",
+  ],
+  ja: [
+    "星1つ減らしました。ストラップの穴がもう1つあると完璧でした。",
+    "とても良いですが、バックルのカチッと感がもう少しあると嬉しいです。",
+    "1週間でガラスに小さな跡がつきました。それ以外は満足です。",
+  ],
+  ko: [
+    "별 하나 뺐어요. 스트랩 구멍이 하나 더 있었으면 좋겠습니다.",
+    "아주 좋지만 버클이 조금 더 딱 맞게 닫히면 완벽할 것 같아요.",
+    "일주일 후 유리에 작은 자국이 생겼어요. 그 외에는 만족합니다.",
+  ],
+  ar: [
+    "أنقص نجمة واحدة: السوار يحتاج ثقباً إضافياً.",
+    "ممتاز لكن الإغلاق يمكن أن يكون أكثر ثباتاً.",
+    "علامة صغيرة على الزجاج بعد أسبوع، وإلا فهو رائع.",
+  ],
+  he: [
+    "מוריד כוכב אחד: לרצועה חסר חור נוסף.",
+    "מצוין, אבל הנעילה יכולה להיות מעט יותר הדוקה.",
+    "סימן קטן על הזכוכית אחרי שבוע, חוץ מזה מעולה.",
+  ],
+  hu: [
+    "Egy csillag levonva: a szíjnak kellett volna még egy lyuk.",
+    "Nagyon jó, de a csat egy kicsit szorosabban záródhatna.",
+    "Apró jel az üvegen egy hét után, egyébként kiváló.",
+  ],
+};
+
 export function seedReviewBody(
   locale: ReviewSeedLocale,
   product: ReviewSeedProductContext,
   variant: number,
+  rating: 4 | 5 = 5,
 ): string {
-  return reviewBody(locale, product, variant);
+  const base = reviewBody(locale, product, variant);
+  if (rating === 5) return base;
+  const notes = FOUR_STAR_NOTES[locale] ?? FOUR_STAR_NOTES.en;
+  return `${base} ${notes[variant % notes.length]!}`;
 }
 
 function reviewBody(

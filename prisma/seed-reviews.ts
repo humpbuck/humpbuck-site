@@ -1,27 +1,29 @@
 /**
- * Synthetic buyer reviews for PDP demos: **10–25** five-star reviews per catalog product
+ * Synthetic buyer reviews for PDP demos: **5–15** reviews per catalog product
  * (deterministic count per slug). Each review is one language in `body` only.
  * PDP always shows that text as-is — switching storefront locale does not translate reviews.
+ * Ratings are mostly 5 stars (~82%) with some 4-star reviews.
  * Deterministic output — safe to re-run on production after `npm run db:migrate`.
  *
  * Safe to re-run: deletes prior seed users with `@reviews.seed.humpbuck` and their reviews.
  * Real buyer reviews (any other user email) are **not** deleted.
- * Run: `npm run db:seed-reviews`
+ * Run: `npm run db:seed-reviews` (local) or `npm run db:seed-reviews:remote` (production D1).
  */
 import { randomUUID } from "node:crypto";
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { loadEnvConfig } from "@next/env";
 import { prisma } from "../lib/prisma-script";
-import { fetchMergedCatalogProducts } from "../lib/catalog-db";
+import { getProductMovement } from "../lib/catalog";
 import {
   deterministicReviewCount,
   deterministicReviewDate,
   deterministicReviewerOffset,
+  deterministicRating,
   deterministicShuffle,
+  hashString,
 } from "../lib/review-seed-deterministic";
-import { getProductMovement } from "../lib/catalog";
-import { REVIEW_SEED_LOCALES, seedReviewBody } from "../lib/review-seed-templates";
+import { REVIEW_SEED_LOCALE_POOL, seedReviewBody } from "../lib/review-seed-templates";
 
 loadEnvConfig(process.cwd());
 /** Shell/IDE may set DATABASE_URL to localhost; for this script, `.env.local` wins. */
@@ -39,8 +41,8 @@ if (existsSync(el)) {
 }
 
 const SEED_EMAIL_HOST = "reviews.seed.humpbuck";
-const REVIEWS_MIN_PER_PRODUCT = 10;
-const REVIEWS_MAX_PER_PRODUCT = 25;
+const REVIEWS_MIN_PER_PRODUCT = 5;
+const REVIEWS_MAX_PER_PRODUCT = 15;
 
 type ReviewerProfile = {
   firstName: string;
@@ -648,7 +650,16 @@ async function main() {
   });
   console.log(`Removed ${deleted.count} prior seed reviewer account(s) (reviews cascade).`);
 
-  const catalog = await fetchMergedCatalogProducts();
+  const catalog = await prisma.catalogProduct.findMany({
+    select: {
+      slug: true,
+      name: true,
+      categoryLabel: true,
+      storefrontSubcategory: true,
+      seriesSlug: true,
+      storefrontCategory: true,
+    },
+  });
   if (catalog.length === 0) {
     console.error("No catalog products found — seed catalog first.");
     process.exit(1);
@@ -667,16 +678,25 @@ async function main() {
 
     for (let i = 0; i < reviewCount; i++) {
       const profile = picked[i]!;
-      const locale = REVIEW_SEED_LOCALES[i % REVIEW_SEED_LOCALES.length]!;
-      const body = seedReviewBody(locale, {
-        name: product.name,
-        movement: getProductMovement(product),
-        profile:
-          product.storefrontSubcategory?.trim().toLowerCase() === "ultra-thin"
-            ? "ultra-thin"
-            : null,
-        categoryLabel: product.categoryLabel,
-      }, i + variantBase);
+      const locale =
+        REVIEW_SEED_LOCALE_POOL[
+          hashString(`${product.slug}:loc:${i}`) % REVIEW_SEED_LOCALE_POOL.length
+        ]!;
+      const rating = deterministicRating(product.slug, i);
+      const body = seedReviewBody(
+        locale,
+        {
+          name: product.name,
+          movement: getProductMovement(product),
+          profile:
+            product.storefrontSubcategory?.trim().toLowerCase() === "ultra-thin"
+              ? "ultra-thin"
+              : null,
+          categoryLabel: product.categoryLabel,
+        },
+        i + variantBase,
+        rating,
+      );
 
       const email = `seed-${product.slug}-${i}@${SEED_EMAIL_HOST}`;
 
@@ -696,7 +716,7 @@ async function main() {
           userId: user.id,
           orderId: randomUUID(),
           productSlug: product.slug,
-          rating: 5,
+          rating,
           body,
           imageUrlsJson: "[]",
           status: "approved",
@@ -706,11 +726,11 @@ async function main() {
       reviews++;
     }
 
-    console.log(`  ${product.slug}: ${reviewCount} reviews (mixed locales)`);
+    console.log(`  ${product.slug}: ${reviewCount} reviews (mixed locales, 4–5★)`);
   }
 
   console.log(
-    `Done. ${reviews} five-star reviews across ${catalog.length} product(s) (${REVIEWS_MIN_PER_PRODUCT}–${REVIEWS_MAX_PER_PRODUCT} each).`,
+    `Done. ${reviews} seed reviews across ${catalog.length} product(s) (${REVIEWS_MIN_PER_PRODUCT}–${REVIEWS_MAX_PER_PRODUCT} each, mostly 5★).`,
   );
 }
 
