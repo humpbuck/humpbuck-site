@@ -35,6 +35,61 @@ export async function paypalCreateOrder(
   returnUrl: string,
   cancelUrl: string,
 ): Promise<{ id: string; approvalUrl: string }> {
+  return paypalCreateOrderWithContext(totalUsd, returnUrl, cancelUrl, {
+    user_action: "PAY_NOW",
+    shipping_preference: "NO_SHIPPING",
+  });
+}
+
+/** Cart PayPal Express — collect shipping in PayPal, capture later on checkout. */
+export async function paypalCreateExpressOrder(
+  subtotalUsd: string,
+): Promise<{ id: string }> {
+  const token = await paypalAccessToken();
+  const res = await fetch(`${apiBase()}/v2/checkout/orders`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify({
+      intent: "CAPTURE",
+      purchase_units: [
+        {
+          amount: {
+            currency_code: "USD",
+            value: subtotalUsd,
+          },
+        },
+      ],
+      application_context: {
+        shipping_preference: "GET_FROM_FILE",
+        user_action: "CONTINUE",
+        brand_name: "HUMPBUCK",
+        landing_page: "LOGIN",
+      },
+    }),
+  });
+  const data = (await res.json()) as {
+    id?: string;
+    message?: string;
+  };
+  if (!res.ok || !data.id) {
+    throw new Error(data.message || "PayPal express order creation failed");
+  }
+  return { id: data.id };
+}
+
+async function paypalCreateOrderWithContext(
+  totalUsd: string,
+  returnUrl: string,
+  cancelUrl: string,
+  context: {
+    user_action: "PAY_NOW" | "CONTINUE";
+    shipping_preference: "NO_SHIPPING" | "GET_FROM_FILE";
+  },
+): Promise<{ id: string; approvalUrl: string }> {
   const token = await paypalAccessToken();
   const res = await fetch(`${apiBase()}/v2/checkout/orders`, {
     method: "POST",
@@ -56,7 +111,8 @@ export async function paypalCreateOrder(
       application_context: {
         return_url: returnUrl,
         cancel_url: cancelUrl,
-        user_action: "PAY_NOW",
+        user_action: context.user_action,
+        shipping_preference: context.shipping_preference,
       },
     }),
   });

@@ -10,6 +10,39 @@ function parseJsonRecord(s: string | null | undefined): unknown {
   }
 }
 
+function pickCheckoutName(
+  shippingRaw: unknown,
+  billingRaw: unknown,
+  field: "firstName" | "lastName",
+): string | undefined {
+  for (const raw of [shippingRaw, billingRaw]) {
+    if (!raw || typeof raw !== "object") continue;
+    const value = (raw as Record<string, unknown>)[field];
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return undefined;
+}
+
+async function syncProfileNamesFromOrder(
+  userId: string,
+  shippingJson: string | null | undefined,
+  billingJson: string | null | undefined,
+): Promise<void> {
+  const shippingRaw = parseJsonRecord(shippingJson ?? null);
+  const billingRaw = parseJsonRecord(billingJson ?? null);
+  const firstName = pickCheckoutName(shippingRaw, billingRaw, "firstName");
+  const lastName = pickCheckoutName(shippingRaw, billingRaw, "lastName");
+  if (!firstName && !lastName) return;
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      ...(firstName ? { firstName } : {}),
+      ...(lastName ? { lastName } : {}),
+    },
+  });
+}
+
 /**
  * After a successful purchase, copy billing/shipping from the order into the buyer's
  * saved addresses. No-op when `userId` is missing (guest checkout).
@@ -36,4 +69,6 @@ export async function syncOrderAddressesToUserAccount(
       update: shipping,
     });
   }
+
+  await syncProfileNamesFromOrder(userId, shippingJson, billingJson);
 }

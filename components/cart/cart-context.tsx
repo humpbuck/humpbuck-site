@@ -9,6 +9,8 @@ import {
   useState,
 } from "react";
 import type { CartLine } from "@/lib/cart-types";
+import { preloadStripe } from "@/lib/stripe-browser";
+import { prefetchStripePreviewClientSecret } from "@/lib/stripe-preview-intent";
 
 const STORAGE_KEY = "humpbuck-cart";
 const STORAGE_COOKIE = "humpbuck-cart";
@@ -132,6 +134,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     () => items.reduce((s, i) => s + i.qty, 0),
     [items],
   );
+
+  useEffect(() => {
+    if (itemCount === 0) return;
+    const subtotalUsd = items.reduce(
+      (sum, line) => sum + (line.unitPrice ?? 0) * line.qty,
+      0,
+    );
+    const previewUsd = Math.max(0.5, subtotalUsd);
+    const pk = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.trim();
+    if (pk) preloadStripe(pk);
+    prefetchStripePreviewClientSecret(previewUsd);
+  }, [itemCount, items]);
 
   const addItem = useCallback((line: CartLine) => {
     const normalizedLine = normalizeCartLine(line);

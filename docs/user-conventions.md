@@ -100,6 +100,8 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-06-21 | 约定：**当前 Cursor 工作区是哪个站，说「同步」就只推该站**；两站 remote/SSH 互不串用。 |
 | 2026-06-29 | 增加 Codex 协作默认方式：可直接口语化提需求；Codex 先读约定与现有实现；默认改完停本地，不自动 commit、不自动推送；只有明确说“同步到 GitHub”时才按本文件第 5 节执行推送。 |
 | 2026-07-09 | **全站 SEO 品牌主线**定为 *Meaningful Gifts of Time and Love*。英文标题：`HUMPBUCK Watches - Meaningful Gifts of Time and Love`；英文描述：`Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.` 以后新增/改 SEO 文案以 `scripts/seo-brand-i18n.json` 为准，改后运行 `node scripts/apply-seo-brand-messaging.mjs` 同步到各 `messages/{locale}.json`。 |
+| 2026-07-10 | Checkout 地址：US/CA/AU/BR/MX 州/省 Combobox 必填；其他国家州/省可选文本；城市自由输入。见 `lib/checkout-address-fields.ts`。 |
+| 2026-07-10 | **Checkout 支付**：Stripe 改为站内 Payment Element（卡 / Apple Pay / Google Pay）；购物车与 bag drawer 增加 **PayPal Express**（预填地址后回 checkout 确认运费再付）；PayPal 仍保留 checkout 跳转付款。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 

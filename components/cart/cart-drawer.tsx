@@ -8,6 +8,7 @@ import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import { DisplayPrice } from "@/components/site/DisplayPrice";
 import { UsdChargeNotice } from "@/components/site/usd-charge-notice";
+import { CartCheckoutActions } from "@/components/cart/cart-checkout-actions";
 import { getCartLineImage } from "@/lib/catalog";
 const CART_QTY_MAX = 9999;
 
@@ -225,13 +226,7 @@ export function CartDrawer() {
           )}
           <div className="flex flex-col gap-2">
             {displayItems.length > 0 && (
-              <Link
-                href="/checkout"
-                onClick={closeCartDrawer}
-                className="inline-flex w-full items-center justify-center rounded-2xl bg-ink px-6 py-3.5 text-center text-[12px] font-bold uppercase tracking-[0.14em] text-paper transition hover:bg-ink/90"
-              >
-                {t("checkout")}
-              </Link>
+              <CartCheckoutActions subtotalUsd={subtotal} onCheckoutNavigate={closeCartDrawer} />
             )}
             <Link
               href="/cart"

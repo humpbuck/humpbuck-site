@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Country, State, City } from "country-state-city";
 import type { CheckoutAddressForm as CheckoutAddressFormValue } from "@/lib/checkout-address";
+import { isStateComboboxCountry } from "@/lib/checkout-address-fields";
 import { validateCheckoutPostalCode } from "@/lib/checkout-postal-validation";
 import { SPECIAL_CITY_OPTIONS } from "@/lib/special-city-options";
 import { getTaxIdRule } from "@/lib/tax-id-rules";
@@ -93,11 +94,13 @@ export function CheckoutAddressForm({
   value,
   onChange,
   idPrefix,
+  embedded = false,
 }: {
   title: string;
   value: CheckoutAddressFormValue;
   onChange: (next: CheckoutAddressFormValue) => void;
   idPrefix: string;
+  embedded?: boolean;
 }) {
   const t = useTranslations("CheckoutAddress");
   const tTax = useTranslations("TaxId");
@@ -123,7 +126,7 @@ export function CheckoutAddressForm({
   );
   const [countryOpen, setCountryOpen] = useState(false);
   const [stateOpen, setStateOpen] = useState(false);
-  const [cityOpen, setCityOpen] = useState(false);
+  const [citySuggestOpen, setCitySuggestOpen] = useState(false);
   const [phoneCodeOpen, setPhoneCodeOpen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState(initialPhone.nationalNumber);
 
@@ -132,27 +135,32 @@ export function CheckoutAddressForm({
   const [, setCountryCommitted] = useState(defaultCountryText);
   const [stateText, setStateText] = useState(value.state || "");
   const [, setStateCommitted] = useState(value.state || "");
-  const [cityText, setCityText] = useState(value.city || "");
-  const [, setCityCommitted] = useState(value.city || "");
   const countryRestoreRef = useRef(defaultCountryText);
   const stateRestoreRef = useRef(value.state || "");
-  const cityRestoreRef = useRef(value.city || "");
 
   const [phoneCodeInput, setPhoneCodeInput] = useState(initialPhone.dialCode);
   const phoneNumberInputRef = useRef<HTMLInputElement | null>(null);
 
+  const showStateCombobox = isStateComboboxCountry(countryIso2);
+
   const states = useMemo(
-    () => State.getStatesOfCountry(countryIso2 || DEFAULT_COUNTRY).map((item) => ({ code: item.isoCode, name: item.name })),
-    [countryIso2],
+    () =>
+      showStateCombobox
+        ? State.getStatesOfCountry(countryIso2 || DEFAULT_COUNTRY).map((item) => ({
+            code: item.isoCode,
+            name: item.name,
+          }))
+        : [],
+    [countryIso2, showStateCombobox],
   );
-  const cities = useMemo(
-    () => (countryIso2 && stateCode ? City.getCitiesOfState(countryIso2, stateCode) : []),
-    [countryIso2, stateCode],
-  );
-  const cityCandidates = useMemo(() => {
-    if (countryIso2 === "AX") return SPECIAL_CITY_OPTIONS.AX.map((name) => ({ name }));
-    return cities.map((item) => ({ name: item.name }));
-  }, [countryIso2, cities]);
+
+  const citySuggestionSource = useMemo(() => {
+    if (countryIso2 === "AX") {
+      return SPECIAL_CITY_OPTIONS.AX.map((name) => ({ name }));
+    }
+    if (!showStateCombobox || !stateCode) return [];
+    return City.getCitiesOfState(countryIso2, stateCode).map((item) => ({ name: item.name }));
+  }, [countryIso2, showStateCombobox, stateCode]);
 
   useEffect(() => {
     const parsed = parsePhoneValue(value.phone);
@@ -191,8 +199,6 @@ export function CheckoutAddressForm({
     setStateCode("");
     setStateText("");
     setStateCommitted("");
-    setCityText("");
-    setCityCommitted("");
     setCountryOpen(false);
     onChange({ ...value, country: nextLabel, state: "", city: "" });
   }
@@ -204,9 +210,6 @@ export function CheckoutAddressForm({
     setStateCommitted(nextLabel);
     stateRestoreRef.current = nextLabel;
     setStateText(nextLabel);
-    setCityText("");
-    setCityCommitted("");
-    cityRestoreRef.current = "";
     setStateOpen(false);
     onChange({ ...value, state: nextLabel, city: "" });
   }
@@ -222,9 +225,6 @@ export function CheckoutAddressForm({
     setStateText(trimmed);
     setStateOpen(false);
     if (stateChanged) {
-      setCityText("");
-      setCityCommitted("");
-      cityRestoreRef.current = "";
       onChange({ ...value, state: trimmed, city: "" });
       return;
     }
@@ -236,6 +236,7 @@ export function CheckoutAddressForm({
     const typed = stateText.trim();
     if (!typed) {
       setStateText(stateRestoreRef.current || "");
+      onChange({ ...value, state: stateRestoreRef.current || "" });
       return;
     }
     const match = findStateMatch(states, typed);
@@ -246,28 +247,9 @@ export function CheckoutAddressForm({
     commitStateFreeText(typed);
   }
 
-  function resolveCityOnBlur() {
-    setCityOpen(false);
-    const typed = cityText.trim();
-    if (!typed) {
-      setCityText(cityRestoreRef.current || "");
-      return;
-    }
-    const exactMatch = cityCandidates.find((item) => item.name.toLowerCase() === typed.toLowerCase());
-    commitCity(exactMatch?.name ?? typed);
-  }
-
-  function commitCity(next: string) {
-    setCityCommitted(next);
-    cityRestoreRef.current = next;
-    setCityText(next);
-    setCityOpen(false);
-    onChange({ ...value, city: next });
-  }
-
   const countryQuery = countryText.trim().toLowerCase();
   const stateQuery = stateText.trim().toLowerCase();
-  const cityQuery = cityText.trim().toLowerCase();
+  const cityQuery = value.city.trim().toLowerCase();
 
   const countryOptions = countryOpen
     ? countries.filter((item) => {
@@ -283,12 +265,12 @@ export function CheckoutAddressForm({
         return item.code.toLowerCase().startsWith(stateQuery) || item.name.toLowerCase().startsWith(stateQuery);
       })
     : [];
-  const cityOptions = cityOpen
-    ? cityCandidates.filter((item) => {
-        if (!cityQuery) return true;
-        return item.name.toLowerCase().startsWith(cityQuery);
-      })
-    : [];
+  const citySuggestions = useMemo(() => {
+    if (!cityQuery || citySuggestionSource.length === 0) return [];
+    return citySuggestionSource
+      .filter((item) => item.name.toLowerCase().includes(cityQuery))
+      .slice(0, 8);
+  }, [cityQuery, citySuggestionSource]);
   const phoneCodeQuery = phoneCodeInput.trim().replace(/^\+/, "");
   const taxIdRule = getTaxIdRule(countryIso2);
   const phoneCodeOptions = phoneCodeOpen
@@ -306,9 +288,9 @@ export function CheckoutAddressForm({
   const postalError = postalErrorKey ? t(`validation.${postalErrorKey}`) : null;
 
   return (
-    <div className="rounded-2xl border border-line bg-white/60 p-5">
-      <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">{title}</h2>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+    <div className={embedded ? "" : "rounded-xl border border-line bg-white p-4"}>
+      <h2 className={embedded ? "mb-3 text-sm font-semibold text-ink" : "text-sm font-semibold text-ink"}>{title}</h2>
+      <div className={`grid gap-2.5 sm:grid-cols-2 ${embedded ? "" : "mt-3"}`}>
         <Field id={`${idPrefix}-firstName`} label={t("firstName")} required value={value.firstName} onChange={(v) => onChange({ ...value, firstName: v })} />
         <Field id={`${idPrefix}-lastName`} label={t("lastName")} required value={value.lastName} onChange={(v) => onChange({ ...value, lastName: v })} />
         <Field id={`${idPrefix}-company`} className="sm:col-span-2" label={t("company")} value={value.company} onChange={(v) => onChange({ ...value, company: v })} />
@@ -316,6 +298,7 @@ export function CheckoutAddressForm({
         <PickerField
           id={`${idPrefix}-country`}
           label={t("country")}
+          required
           value={countryText}
           open={countryOpen}
           options={countryOptions}
@@ -341,47 +324,59 @@ export function CheckoutAddressForm({
           renderOption={(item) => `${item.label} (${item.iso2})`}
         />
 
-        <Field id={`${idPrefix}-line1`} className="sm:col-span-2" label={t("street")} required value={value.line1} onChange={(v) => onChange({ ...value, line1: v })} />
-        <Field id={`${idPrefix}-line2`} className="sm:col-span-2" label={t("line2")} value={value.line2} onChange={(v) => onChange({ ...value, line2: v })} />
+        <Field id={`${idPrefix}-line1`} className="sm:col-span-2" label={t("street")} required value={value.line1} onChange={(v) => onChange({ ...value, line1: v })} autoComplete="address-line1" />
+        <Field id={`${idPrefix}-line2`} className="sm:col-span-2" label={t("line2")} value={value.line2} onChange={(v) => onChange({ ...value, line2: v })} autoComplete="address-line2" />
 
-        <PickerField
-          id={`${idPrefix}-state`}
-          label={t("state")}
-          value={stateText}
-          open={stateOpen}
-          options={stateOptions}
-          placeholder={t("statePlaceholder")}
-          autoComplete="address-level1"
-          onOpen={() => setStateOpen(true)}
-          onChangeText={(next) => {
-            setStateText(next);
-            setStateOpen(true);
-          }}
-          onSelect={(item) => commitState(item.code)}
-          onBlur={() => {
-            window.setTimeout(resolveStateOnBlur, 0);
-          }}
-          renderOption={(item) => `${item.name} (${item.code})`}
-        />
+        {showStateCombobox ? (
+          <PickerField
+            id={`${idPrefix}-state`}
+            label={t("state")}
+            required
+            value={stateText}
+            open={stateOpen}
+            options={stateOptions}
+            placeholder={t("statePlaceholder")}
+            autoComplete="address-level1"
+            onOpen={() => setStateOpen(true)}
+            onChangeText={(next) => {
+              setStateText(next);
+              setStateOpen(true);
+            }}
+            onSelect={(item) => commitState(item.code)}
+            onBlur={() => {
+              window.setTimeout(resolveStateOnBlur, 0);
+            }}
+            renderOption={(item) => `${item.name} (${item.code})`}
+          />
+        ) : (
+          <Field
+            id={`${idPrefix}-state`}
+            className="sm:col-span-2"
+            label={t("stateOptional")}
+            value={value.state}
+            onChange={(v) => onChange({ ...value, state: v })}
+            placeholder={t("stateOptionalPlaceholder")}
+            autoComplete="address-level1"
+          />
+        )}
 
-        <PickerField
+        <CityField
           id={`${idPrefix}-city`}
           label={t("city")}
-          value={cityText}
-          open={cityOpen}
-          options={cityOptions}
+          required
+          value={value.city}
           placeholder={countryIso2 === "AX" ? t("cityPlaceholderMuni") : t("cityPlaceholder")}
           autoComplete="address-level2"
-          onOpen={() => setCityOpen(true)}
-          onChangeText={(next) => {
-            setCityText(next);
-            setCityOpen(true);
-          }}
-          onSelect={(item) => commitCity(item.name)}
+          suggestions={citySuggestOpen ? citySuggestions : []}
+          onChange={(v) => onChange({ ...value, city: v })}
+          onFocus={() => setCitySuggestOpen(true)}
           onBlur={() => {
-            window.setTimeout(resolveCityOnBlur, 0);
+            window.setTimeout(() => setCitySuggestOpen(false), 150);
           }}
-          renderOption={(item) => item.name}
+          onSelectSuggestion={(name) => {
+            onChange({ ...value, city: name });
+            setCitySuggestOpen(false);
+          }}
         />
 
         <div className="relative sm:col-span-2">
@@ -458,6 +453,7 @@ export function CheckoutAddressForm({
           value={value.postalCode}
           onChange={(v) => onChange({ ...value, postalCode: v })}
           error={postalError}
+          autoComplete="postal-code"
         />
         <Field
           id={`${idPrefix}-taxId`}
@@ -472,6 +468,82 @@ export function CheckoutAddressForm({
   );
 }
 
+function CityField({
+  id,
+  label,
+  value,
+  placeholder,
+  autoComplete,
+  required,
+  suggestions,
+  onChange,
+  onFocus,
+  onBlur,
+  onSelectSuggestion,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  placeholder: string;
+  autoComplete: string;
+  required?: boolean;
+  suggestions: Array<{ name: string }>;
+  onChange: (next: string) => void;
+  onFocus: () => void;
+  onBlur: () => void;
+  onSelectSuggestion: (name: string) => void;
+}) {
+  const listboxId = `${id}-suggestions`;
+
+  return (
+    <div className="relative sm:col-span-2">
+      <label htmlFor={id} className="block">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
+          {label} {required ? <span className="text-rose-600">*</span> : null}
+        </span>
+        <input
+          id={id}
+          type="text"
+          role="combobox"
+          aria-expanded={suggestions.length > 0}
+          aria-controls={suggestions.length > 0 ? listboxId : undefined}
+          aria-autocomplete="list"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          autoComplete={autoComplete}
+          className="mt-1.5 w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+          placeholder={placeholder}
+        />
+      </label>
+      {suggestions.length > 0 ? (
+        <div
+          id={listboxId}
+          role="listbox"
+          className="absolute left-0 right-0 top-full z-60 mt-2 overflow-hidden rounded-2xl border border-line bg-white shadow-lg"
+        >
+          <div className="max-h-48 overflow-auto py-2">
+            {suggestions.map((item) => (
+              <button
+                key={item.name}
+                type="button"
+                role="option"
+                aria-selected={item.name === value}
+                className="flex w-full px-4 py-2.5 text-left text-sm text-ink hover:bg-[#f5f5f5]"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => onSelectSuggestion(item.name)}
+              >
+                {item.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function PickerField<T extends { [k: string]: string }>({
   id,
   label,
@@ -480,6 +552,7 @@ function PickerField<T extends { [k: string]: string }>({
   options,
   placeholder,
   autoComplete,
+  required,
   onOpen,
   onChangeText,
   onSelect,
@@ -493,6 +566,7 @@ function PickerField<T extends { [k: string]: string }>({
   options: T[];
   placeholder: string;
   autoComplete: string;
+  required?: boolean;
   onOpen: () => void;
   onChangeText: (next: string) => void;
   onSelect: (item: T) => void;
@@ -504,7 +578,7 @@ function PickerField<T extends { [k: string]: string }>({
   return (
     <div className="sm:col-span-2">
       <label htmlFor={id} className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
-        {label}
+        {label} {required ? <span className="text-rose-600">*</span> : null}
       </label>
       <div className="relative mt-1.5">
         <input
@@ -567,6 +641,7 @@ function Field({
   className = "",
   placeholder,
   error,
+  autoComplete,
 }: {
   id: string;
   label: string;
@@ -576,6 +651,7 @@ function Field({
   className?: string;
   placeholder?: string;
   error?: string | null;
+  autoComplete?: string;
 }) {
   return (
     <div className={className}>
@@ -589,6 +665,7 @@ function Field({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           aria-invalid={error ? true : undefined}
+          autoComplete={autoComplete}
           className={`mt-1.5 w-full rounded-xl border bg-paper px-3 py-2.5 text-sm outline-none ring-ink/20 focus:ring-2 ${
             error ? "border-rose-400 focus:ring-rose-200" : "border-line"
           }`}

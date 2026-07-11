@@ -1,14 +1,12 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { notifyCustomerOrderPaid, notifyMerchantOrderPaid } from "@/lib/merchant-order-email";
-import { syncOrderAddressesToUserAccount } from "@/lib/sync-order-addresses-to-user";
-import { decrementInventory } from "@/lib/inventory";
-import { orderItemsFromOrder } from "@/lib/order-item-display";
+import { finalizePaidStripeOrder } from "@/lib/stripe-checkout-finalize";
 import { sendTransactionalEmail } from "@/lib/brevo-mail";
 import { emailPublicBaseUrl } from "@/lib/email-public-base-url";
 import { stripeSessionBuyerEmail } from "@/lib/order-buyer-email";
 import { getStripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import type { Order } from "@prisma/client";
 
 export async function POST(req: Request) {
   const stripe = getStripe();
@@ -16,6 +14,8 @@ export async function POST(req: Request) {
   if (!stripe || !secret) {
     return NextResponse.json({ error: "Not configured" }, { status: 503 });
   }
+
+  const stripeClient = stripe;
 
   const raw = await req.text();
   const sig = (await headers()).get("stripe-signature");
@@ -30,7 +30,24 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  /* ── checkout.session.completed ── */
+  /* ── payment_intent.succeeded (Payment Element) ── */
+  if (event.type === "payment_intent.succeeded") {
+    const pi = event.data.object as {
+      id: string;
+      metadata?: { orderId?: string };
+      receipt_email?: string | null;
+    };
+    const orderId = pi.metadata?.orderId ?? null;
+    if (orderId) {
+      try {
+        await finalizePaidStripeOrder(orderId, pi.id, pi.receipt_email);
+      } catch (e) {
+        console.error("[stripe webhook] payment_intent.succeeded finalize failed:", e);
+      }
+    }
+  }
+
+  /* ── checkout.session.completed (legacy hosted Checkout) ── */
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as {
       id: string;
@@ -38,49 +55,50 @@ export async function POST(req: Request) {
       metadata?: { orderId?: string };
       customer_email?: string | null;
       customer_details?: { email?: string | null } | null;
+      payment_intent?: string | { id?: string } | null;
     };
     const orderId =
       session.client_reference_id ?? session.metadata?.orderId ?? null;
     if (orderId) {
       const stripeBuyerEmail = stripeSessionBuyerEmail(session);
-      const { count } = await prisma.order.updateMany({
-        where: { id: orderId, status: "pending_payment" },
-        data: {
-          status: "paid",
+      const paymentIntentId =
+        typeof session.payment_intent === "string"
+          ? session.payment_intent
+          : session.payment_intent?.id ?? session.id;
+      try {
+        await finalizePaidStripeOrder(orderId, paymentIntentId, stripeBuyerEmail);
+      } catch (e) {
+        console.error("[stripe webhook] checkout.session.completed finalize failed:", e);
+      }
+    }
+  }
+
+  async function findStripeOrderByPaymentIntent(paymentIntentId: string): Promise<Order | null> {
+    const direct = await prisma.order.findFirst({
+      where: {
+        provider: "stripe",
+        providerRef: paymentIntentId,
+        deletedAt: null,
+      },
+    });
+    if (direct) return direct;
+
+    try {
+      const sessions = await stripeClient.checkout.sessions.list({
+        payment_intent: paymentIntentId,
+        limit: 1,
+      });
+      const csId = sessions.data[0]?.id;
+      if (!csId) return null;
+      return prisma.order.findFirst({
+        where: {
           provider: "stripe",
-          providerRef: session.id,
-          ...(stripeBuyerEmail ? { email: stripeBuyerEmail } : {}),
+          providerRef: csId,
+          deletedAt: null,
         },
       });
-      if (count > 0) {
-        const paidOrder = await prisma.order.findFirst({
-          where: { id: orderId, provider: "stripe" },
-          include: {
-            items: true,
-          },
-        });
-        if (paidOrder) {
-          try {
-            const lines = orderItemsFromOrder(paidOrder).map((line) => ({
-              slug: line.slug,
-              qty: line.qty,
-              variantId: line.variantId,
-            }));
-            await decrementInventory(lines);
-          } catch (e) {
-            console.error("[stripe webhook] inventory decrement failed:", e);
-          }
-          if (paidOrder.userId) {
-            await syncOrderAddressesToUserAccount(
-              paidOrder.userId,
-              paidOrder.billingJson,
-              paidOrder.shippingJson,
-            );
-          }
-        }
-        await notifyCustomerOrderPaid(orderId);
-        await notifyMerchantOrderPaid(orderId);
-      }
+    } catch {
+      return null;
     }
   }
 
@@ -93,24 +111,9 @@ export async function POST(req: Request) {
     };
     const pi = charge.payment_intent;
     if (pi && typeof pi === "string") {
-      // Look up the checkout session that used this payment_intent
       try {
-        const sessions = await stripe.checkout.sessions.list({
-          payment_intent: pi,
-          limit: 1,
-        });
-        const csId = sessions.data[0]?.id;
-        if (csId) {
-          // Match the specific order by providerRef (checkout session id)
-          const order = await prisma.order.findFirst({
-            where: {
-              provider: "stripe",
-              providerRef: csId,
-              status: { notIn: ["refunded", "pending_payment"] },
-              deletedAt: null,
-            },
-          });
-          if (order) {
+        const order = await findStripeOrderByPaymentIntent(pi);
+        if (order && order.status !== "refunded" && order.status !== "pending_payment") {
             await prisma.order.update({
               where: { id: order.id },
               data: {
@@ -182,7 +185,6 @@ export async function POST(req: Request) {
             console.log(
               `[stripe webhook] charge.refunded: order ${order.id} marked refunded (PI=${pi})`,
             );
-          }
         }
       } catch (e) {
         console.error("[stripe webhook] charge.refunded lookup failed:", e);
@@ -208,20 +210,10 @@ export async function POST(req: Request) {
     let orderEmail = "";
     if (pi && typeof pi === "string") {
       try {
-        const sessions = await stripe.checkout.sessions.list({
-          payment_intent: pi,
-          limit: 1,
-        });
-        const csId = sessions.data[0]?.id;
-        if (csId) {
-          const order = await prisma.order.findFirst({
-            where: { provider: "stripe", providerRef: csId, deletedAt: null },
-            select: { id: true, email: true, merchantOrderCode: true },
-          });
-          if (order) {
-            orderId = order.id;
-            orderEmail = order.email;
-          }
+        const order = await findStripeOrderByPaymentIntent(pi);
+        if (order) {
+          orderId = order.id;
+          orderEmail = order.email;
         }
       } catch (e) {
         console.error("[stripe webhook] dispute order lookup failed:", e);

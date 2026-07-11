@@ -5,6 +5,7 @@ import {
 import { paypalOrderBuyerEmail } from "@/lib/order-buyer-email";
 import { paypalCaptureOrder, paypalGetOrder } from "@/lib/paypal";
 import { prisma } from "@/lib/prisma";
+import { syncOrderAddressesToUserAccount } from "@/lib/sync-order-addresses-to-user";
 
 /**
  * Capture an approved PayPal Checkout order, mark the HUMPBUCK order paid,
@@ -48,6 +49,18 @@ export async function finalizePaidPayPalOrder(
       ...(buyerEmail ? { email: buyerEmail } : {}),
     },
   });
+
+  const paidOrder = await prisma.order.findFirst({
+    where: { id: orderId, provider: "paypal" },
+  });
+
+  if (paidOrder?.userId) {
+    await syncOrderAddressesToUserAccount(
+      paidOrder.userId,
+      paidOrder.billingJson,
+      paidOrder.shippingJson,
+    );
+  }
 
   await notifyCustomerOrderPaid(orderId);
   await notifyMerchantOrderPaid(orderId);

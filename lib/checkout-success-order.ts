@@ -1,4 +1,5 @@
 import type { Order, OrderItemSnapshot } from "@prisma/client";
+import { verifyStripePaymentIntentForOrder } from "@/lib/stripe";
 import { getStripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 
@@ -28,15 +29,17 @@ async function verifyStripeCheckoutSession(
  * Load an order for the post-payment success page.
  * - Logged-in buyers: must own the order.
  * - Guest checkout: order has no userId (id in URL is the secret).
- * - Stripe return without auth cookie: `session_id` must match the order.
+ * - Stripe return without auth cookie: `payment_intent` or legacy `session_id` must match the order.
  */
 export async function loadCheckoutSuccessOrder(params: {
   orderId: string;
   sessionUserId?: string;
   stripeSessionId?: string;
+  stripePaymentIntentId?: string;
   paypalOrderId?: string;
 }): Promise<CheckoutSuccessOrder | null> {
-  const { orderId, sessionUserId, stripeSessionId, paypalOrderId } = params;
+  const { orderId, sessionUserId, stripeSessionId, stripePaymentIntentId, paypalOrderId } =
+    params;
 
   if (paypalOrderId) {
     return prisma.order.findFirst({
@@ -45,6 +48,15 @@ export async function loadCheckoutSuccessOrder(params: {
         providerRef: paypalOrderId,
         deletedAt: null,
       },
+      include: orderInclude,
+    });
+  }
+
+  if (stripePaymentIntentId) {
+    const ok = await verifyStripePaymentIntentForOrder(stripePaymentIntentId, orderId);
+    if (!ok) return null;
+    return prisma.order.findFirst({
+      where: { id: orderId, deletedAt: null },
       include: orderInclude,
     });
   }

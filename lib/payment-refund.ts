@@ -108,6 +108,15 @@ async function refundStripe(
   }
   const sessionId = order.providerRef!.trim();
   try {
+    if (sessionId.startsWith("pi_")) {
+      await stripe.refunds.create({
+        payment_intent: sessionId,
+        amount: amountCents,
+        reason: "requested_by_customer",
+      });
+      return { ok: true };
+    }
+
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     const pi = session.payment_intent;
     const paymentIntentId =

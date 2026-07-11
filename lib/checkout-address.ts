@@ -1,4 +1,6 @@
+import { isStateRequiredForCountry } from "@/lib/checkout-address-fields";
 import {
+  parseCheckoutCountryIso2,
   validateCheckoutPostalCode,
   type CheckoutPostalValidationErrorKey,
 } from "@/lib/checkout-postal-validation";
@@ -54,12 +56,14 @@ export function formatCheckoutAddressValidationEnglish(
 }
 
 export function isAddressRecordComplete(record: CheckoutAddressRecord): boolean {
+  const countryIso2 = parseCheckoutCountryIso2(record.country ?? "");
+  const stateOk = isStateRequiredForCountry(countryIso2) ? record.state?.trim() : true;
   return Boolean(
     record.firstName?.trim() &&
       record.lastName?.trim() &&
       record.line1?.trim() &&
       record.city?.trim() &&
-      record.state?.trim() &&
+      stateOk &&
       record.postalCode?.trim() &&
       record.country?.trim(),
   );
@@ -82,7 +86,10 @@ export function validateCheckoutAddressForm(
   if (!form.lastName.trim()) return { ok: false, errorKey: "lastNameRequired" };
   if (!form.line1.trim()) return { ok: false, errorKey: "streetRequired" };
   if (!form.city.trim()) return { ok: false, errorKey: "cityRequired" };
-  if (!form.state.trim()) return { ok: false, errorKey: "stateRequired" };
+  const countryIso2 = parseCheckoutCountryIso2(form.country);
+  if (isStateRequiredForCountry(countryIso2) && !form.state.trim()) {
+    return { ok: false, errorKey: "stateRequired" };
+  }
   if (!form.postalCode.trim()) return { ok: false, errorKey: "postalRequired" };
   if (!form.country.trim()) return { ok: false, errorKey: "countryRequired" };
 
@@ -114,12 +121,14 @@ export function addressFormToRecord(form: CheckoutAddressForm): CheckoutAddressR
 }
 
 export function isCheckoutAddressComplete(form: CheckoutAddressForm): boolean {
+  const countryIso2 = parseCheckoutCountryIso2(form.country);
+  const stateOk = isStateRequiredForCountry(countryIso2) ? form.state.trim() : true;
   return Boolean(
     form.firstName.trim() &&
       form.lastName.trim() &&
       form.line1.trim() &&
       form.city.trim() &&
-      form.state.trim() &&
+      stateOk &&
       form.postalCode.trim() &&
       form.country.trim(),
   );

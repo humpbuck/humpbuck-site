@@ -67,4 +67,86 @@ async function createStripeCheckoutSession(params: {
   return { id: data.id, url: data.url ?? null };
 }
 
-export { createStripeCheckoutSession, getStripe };
+type StripePaymentIntentResult = { id: string; clientSecret: string };
+
+/**
+ * Create a Payment Intent via Stripe REST API (Workers-safe).
+ * Enables card, Apple Pay, and Google Pay through Payment Element.
+ */
+async function createStripePaymentIntent(params: {
+  totalUsd: number;
+  orderId: string;
+  customerEmail?: string;
+}): Promise<StripePaymentIntentResult> {
+  const key = getStripeSecretKey();
+  if (!key) {
+    throw new Error("Stripe not configured");
+  }
+
+  const body = new URLSearchParams();
+  body.set("amount", String(Math.round(params.totalUsd * 100)));
+  body.set("currency", "usd");
+  if (params.orderId && params.orderId !== "preview") {
+    body.set("metadata[orderId]", params.orderId);
+  }
+  body.set("automatic_payment_methods[enabled]", "true");
+  if (params.customerEmail?.trim()) {
+    body.set("receipt_email", params.customerEmail.trim());
+  }
+
+  const res = await fetch("https://api.stripe.com/v1/payment_intents", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body,
+  });
+
+  const data = (await res.json()) as {
+    id?: string;
+    client_secret?: string;
+    error?: { message?: string };
+  };
+
+  if (!res.ok || !data.id || !data.client_secret) {
+    throw new Error(data.error?.message || "Stripe payment intent failed");
+  }
+
+  return { id: data.id, clientSecret: data.client_secret };
+}
+
+function getStripePublishableKey(): string | null {
+  return (
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.trim() ||
+    process.env.STRIPE_PUBLISHABLE_KEY?.trim() ||
+    null
+  );
+}
+
+async function verifyStripePaymentIntentForOrder(
+  paymentIntentId: string,
+  orderId: string,
+): Promise<boolean> {
+  const key = getStripeSecretKey();
+  if (!key) return false;
+
+  try {
+    const res = await fetch(
+      `https://api.stripe.com/v1/payment_intents/${encodeURIComponent(paymentIntentId)}`,
+      {
+        headers: { Authorization: `Bearer ${key}` },
+      },
+    );
+    const data = (await res.json()) as {
+      metadata?: { orderId?: string };
+      status?: string;
+    };
+    if (!res.ok) return false;
+    return data.metadata?.orderId === orderId && data.status === "succeeded";
+  } catch {
+    return false;
+  }
+}
+
+export { createStripeCheckoutSession, createStripePaymentIntent, getStripe, getStripePublishableKey, verifyStripePaymentIntentForOrder };

@@ -10,6 +10,7 @@ import { loadCheckoutSuccessOrder } from "@/lib/checkout-success-order";
 import { finalizePaidPayPalOrder } from "@/lib/paypal-checkout-finalize";
 import { intlLocaleFromAppLocale } from "@/lib/site-locale";
 import { CheckoutSuccessClient } from "@/app/[locale]/(site)/checkout/success/CheckoutSuccessClient";
+import { finalizePaidStripeOrder } from "@/lib/stripe-checkout-finalize";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,7 @@ export default async function CheckoutSuccessPage({
     orderId?: string;
     provider?: string;
     session_id?: string;
+    payment_intent?: string;
     token?: string;
   }>;
 }) {
@@ -29,6 +31,17 @@ export default async function CheckoutSuccessPage({
 
   const paypalToken =
     sp.provider === "paypal" ? sp.token?.trim() : undefined;
+  const stripePaymentIntentId =
+    sp.provider === "stripe" ? sp.payment_intent?.trim() : undefined;
+
+  if (stripePaymentIntentId) {
+    try {
+      await finalizePaidStripeOrder(orderId, stripePaymentIntentId);
+    } catch (e) {
+      console.error("[checkout/success] Stripe finalize failed:", e);
+    }
+  }
+
   if (paypalToken) {
     try {
       await finalizePaidPayPalOrder(orderId, paypalToken);
@@ -42,6 +55,7 @@ export default async function CheckoutSuccessPage({
     orderId,
     sessionUserId: session?.user?.id,
     stripeSessionId: sp.session_id?.trim(),
+    stripePaymentIntentId,
     paypalOrderId: paypalToken,
   });
   if (!order) notFound();
@@ -57,7 +71,9 @@ export default async function CheckoutSuccessPage({
   });
 
   const purchaseAllowed = order.status === "paid" || order.status === "processing" || order.status === "shipped";
-  const returnedFromPayment = Boolean(sp.session_id?.trim() || paypalToken);
+  const returnedFromPayment = Boolean(
+    sp.session_id?.trim() || stripePaymentIntentId || paypalToken,
+  );
   const syncCartFromPaidOrder = purchaseAllowed || returnedFromPayment;
   const paidOrderLines = lines.map((line) => ({
     slug: line.slug,

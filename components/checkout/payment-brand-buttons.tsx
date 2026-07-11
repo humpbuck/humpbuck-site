@@ -59,11 +59,15 @@ export function PaymentBrandButtons({
   loading,
   onStripe,
   onPayPal,
+  showStripe = true,
+  showPayPal = true,
 }: {
   disabled: boolean;
   loading: "stripe" | "paypal" | null;
   onStripe: () => void;
   onPayPal: () => void;
+  showStripe?: boolean;
+  showPayPal?: boolean;
 }) {
   const t = useTranslations("Payment");
   const stripeDisabled = disabled || loading === "stripe";
@@ -71,13 +75,17 @@ export function PaymentBrandButtons({
 
   return (
     <div className="space-y-3.5">
-      <ButtonShell tone="stripe" disabled={stripeDisabled} onClick={onStripe}>
-        <StripeLogo subtitle={t("stripeSubtitle")} />
-      </ButtonShell>
+      {showStripe ? (
+        <ButtonShell tone="stripe" disabled={stripeDisabled} onClick={onStripe}>
+          <StripeLogo subtitle={t("stripeSubtitle")} />
+        </ButtonShell>
+      ) : null}
 
-      <ButtonShell tone="paypal" disabled={paypalDisabled} onClick={onPayPal}>
-        <PayPalLogo />
-      </ButtonShell>
+      {showPayPal ? (
+        <ButtonShell tone="paypal" disabled={paypalDisabled} onClick={onPayPal}>
+          <PayPalLogo />
+        </ButtonShell>
+      ) : null}
     </div>
   );
 }

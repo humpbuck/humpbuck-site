@@ -23,5 +23,11 @@ export async function generateMetadata({
 }
 
 export default function CheckoutLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <link rel="preconnect" href="https://js.stripe.com" />
+      <link rel="preconnect" href="https://www.paypal.com" />
+      {children}
+    </>
+  );
 }

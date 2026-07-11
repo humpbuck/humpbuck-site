@@ -10,6 +10,7 @@ import { DisplayPrice } from "@/components/site/DisplayPrice";
 import { UsdChargeNotice } from "@/components/site/usd-charge-notice";
 import { runWhenIdle } from "@/lib/defer-non-critical";
 import { captureTrafficAttribution } from "@/lib/traffic-attribution";
+import { CartCheckoutActions } from "@/components/cart/cart-checkout-actions";
 
 const CART_QTY_MAX = 9999;
 
@@ -159,6 +160,9 @@ export default function CartPage() {
               />
             </div>
             <UsdChargeNotice className="mt-3" />
+            <div className="mt-6">
+              <CartCheckoutActions subtotalUsd={subtotal} />
+            </div>
           </div>
         </>
       )}
