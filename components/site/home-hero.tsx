@@ -1,12 +1,14 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { HumpbuckSocialLinks } from "@/components/site/humpbuck-social-links";
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { homeHeroDesktopWebpUrl, homeHeroMobileWebpUrl } from "@/lib/r2";
+import { resolveHomeCmsText } from "@/lib/site-home-cms-locale";
 import { getSiteHomeContent } from "@/lib/site-home-content-queries";
 
 export async function HomeHero() {
-  const [t, content] = await Promise.all([
+  const [locale, t, content] = await Promise.all([
+    getLocale(),
     getTranslations("Home"),
     getSiteHomeContent(),
   ]);
@@ -15,7 +17,7 @@ export async function HomeHero() {
     content.heroMobileImageUrl || homeHeroMobileWebpUrl();
   const heroDesktopSrc =
     content.heroDesktopImageUrl || homeHeroDesktopWebpUrl();
-  const heroAlt = content.heroImageAlt || t("mechanicalHeroImageAlt");
+  const heroAlt = resolveHomeCmsText(locale, content.heroImageAlt, t("mechanicalHeroImageAlt"));
   const heroMinH =
     "min-h-[calc((100svh-var(--site-announcement-h,0px)-72px)*0.85)] md:min-h-[calc(100vh-var(--site-announcement-h,0px)-80px)]";
 
@@ -64,29 +66,29 @@ export async function HomeHero() {
           {/* Copy block — badge → headline → lead → chips */}
           <div className="flex flex-col">
             <p className="inline-flex w-fit rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/80 md:tracking-[0.2em]">
-              {content.heroBadge || t("mechanicalHeroBadge")}
+              {resolveHomeCmsText(locale, content.heroBadge, t("mechanicalHeroBadge"))}
             </p>
 
             <h1
               id="home-hero-heading"
               className="mt-4 font-serif text-[clamp(1.75rem,5vw+0.5rem,3.25rem)] font-normal leading-[1.15] tracking-[-0.02em] md:mt-5 md:leading-[1.08]"
             >
-              {content.heroTitle || t("mechanicalHeroTitle")}
+              {resolveHomeCmsText(locale, content.heroTitle, t("mechanicalHeroTitle"))}
             </h1>
 
             <p className="mt-5 max-w-[min(100%,24rem)] text-[clamp(0.9375rem,2.5vw,1.0625rem)] leading-[1.75] text-white/86 md:mt-6 md:max-w-prose md:text-lg md:leading-[1.7] md:text-white/82">
-              {content.heroLead || t("mechanicalHeroLead")}
+              {resolveHomeCmsText(locale, content.heroLead, t("mechanicalHeroLead"))}
             </p>
 
             <div className="mt-5 flex flex-wrap gap-2 md:mt-6">
               <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-white/88 md:px-3.5 md:py-1.5 md:text-[10px] md:tracking-[0.14em]">
-                {content.heroChip1 || t("mechanicalHeroChipAutomatic")}
+                {resolveHomeCmsText(locale, content.heroChip1, t("mechanicalHeroChipAutomatic"))}
               </span>
               <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-white/88 md:px-3.5 md:py-1.5 md:text-[10px] md:tracking-[0.14em]">
-                {content.heroChip2 || t("mechanicalHeroChipSkeleton")}
+                {resolveHomeCmsText(locale, content.heroChip2, t("mechanicalHeroChipSkeleton"))}
               </span>
               <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-white/88 md:px-3.5 md:py-1.5 md:text-[10px] md:tracking-[0.14em]">
-                {content.heroChip3 || t("mechanicalHeroChipFinishing")}
+                {resolveHomeCmsText(locale, content.heroChip3, t("mechanicalHeroChipFinishing"))}
               </span>
             </div>
           </div>
@@ -97,7 +99,7 @@ export async function HomeHero() {
               href="/product"
               className="inline-flex items-center justify-center rounded-full bg-white px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#080808] transition hover:bg-white/90 md:px-7 md:py-2.5 md:text-xs"
             >
-              {content.heroCtaShop || t("mechanicalHeroCtaShop")}
+              {resolveHomeCmsText(locale, content.heroCtaShop, t("mechanicalHeroCtaShop"))}
             </Link>
             <HumpbuckSocialLinks
               variant="hero"

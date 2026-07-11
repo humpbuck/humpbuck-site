@@ -116,7 +116,7 @@
     "trustLaunchTitle": "Supporto al lancio",
     "trustLaunchBody": "Programmi di fabbrica per brand orologieri in crescita.",
     "newsletterKicker": "Aggiornamenti",
-    "newsletterTitle": "Rifornimenti DIGI-TEMP e novità RM-TONNEAU",
+    "newsletterTitle": "NUOVI LANCI DI OROLOGI",
     "newsletterBody": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita.",
     "mechanicalHeroBadge": "Regali · Tempo e amore",
     "mechanicalHeroTitle": "HUMPBUCK Watches",
@@ -155,17 +155,49 @@
     "socialYoutubeAria": "HUMPBUCK su YouTube",
     "socialTiktokAria": "HUMPBUCK su TikTok",
     "certaintyKicker": "FAQ",
-    "certaintyTitle": "Frequently asked questions",
+    "certaintyTitle": "Domande frequenti",
     "certaintyLead": "",
-    "certaintyCurrencyTitle": "What currency are prices shown in?",
-    "certaintyCurrencyBody": "All prices are listed in US dollars. Use the currency control at the bottom-left of your screen for a live reference conversion. Your card or wallet is charged in USD at checkout.",
-    "certaintyShippingTitle": "Do you ship to my country?",
-    "certaintyShippingBody": "We ship to most countries worldwide. Orders are processed within three business days; tracked delivery typically arrives in 7–21 days depending on your region. Any shipping fee is calculated and shown before you pay.",
-    "certaintyShippingLink": "Shipping & tax policy",
-    "certaintyPaymentsTitle": "Which payment methods do you accept?",
-    "certaintyPaymentsBody": "Pay with PayPal, major credit and debit cards, Apple Pay, or Google Pay — processed through trusted payment partners with encrypted checkout.",
-    "certaintySupportPrompt": "Have a question that is not covered here? No problem.",
-    "certaintySupportCta": "Contact our support team"
+    "certaintyCurrencyTitle": "In quale valuta sono mostrati i prezzi?",
+    "certaintyCurrencyBody": "Tutti i prezzi sono in dollari USA. Usi il controllo valuta in basso a sinistra sullo schermo per una conversione di riferimento in tempo reale. La sua carta o il portafoglio viene addebitato in USD al checkout.",
+    "certaintyShippingTitle": "Spedite nel mio paese?",
+    "certaintyShippingBody": "Spediamo nella maggior parte dei paesi del mondo. Gli ordini vengono elaborati entro tre giorni lavorativi; la consegna tracciata arriva di solito in 7–21 giorni a seconda della regione. Le spese di spedizione sono calcolate e mostrate prima del pagamento.",
+    "certaintyShippingLink": "Politica di spedizione e tasse",
+    "certaintyPaymentsTitle": "Quali metodi di pagamento accettate?",
+    "certaintyPaymentsBody": "Paghi con PayPal, principali carte di credito e debito, Apple Pay o Google Pay — elaborato da partner di pagamento affidabili con checkout crittografato.",
+    "certaintySupportPrompt": "Ha una domanda non trattata qui? Nessun problema.",
+    "certaintySupportCta": "Contatti il nostro team di supporto",
+    "momentsHeading": "Momenti da ricordare",
+    "momentsLead": "Alcuni momenti cambiano tutto. I nostri segnatempo sono al Suo fianco per tutti.",
+    "momentsCard1Title": "Momenti decisivi",
+    "momentsCard1Description": "Per decisioni, celebrazioni e notti che restano.",
+    "momentsCard2Title": "Ricordi quotidiani",
+    "momentsCard2Description": "Per viaggi, rituali e piccole cose che La accompagnano.",
+    "recommendedAdd": "Aggiungi",
+    "recommendedSliderPrev": "Prodotti precedenti",
+    "recommendedSliderNext": "Prodotti successivi",
+    "recommendedSliderScroll": "Scorri prodotti",
+    "homeBlogTitle": "Dal diario",
+    "homeBlogViewAll": "Leggi tutti gli articoli",
+    "homeBlogCarouselPrevious": "Articoli precedenti",
+    "homeBlogCarouselNext": "Articoli successivi",
+    "allProductsHeading": "Tutti i prodotti",
+    "sectionNoProducts": "Nessun prodotto disponibile.",
+    "categoryRowKicker": "Cerca per",
+    "featuredPrev": "Precedente",
+    "featuredNext": "Successivo",
+    "featuredPage": "Pagina {page} di {total}",
+    "couponTitle": "Ottenga un coupon",
+    "couponKicker": "Riflessione",
+    "couponQuestion": "Qual è la cosa più preziosa nella vita?",
+    "couponInputPlaceholder": "Condivida i Suoi pensieri…",
+    "couponConfirm": "Invia",
+    "couponRewardLabel": "Il Suo coupon",
+    "couponNoCodeMessage": "Il Suo coupon apparirà qui quando un coupon homepage sarà configurato nell'admin.",
+    "couponTaglineLine1": "La vita non ha una risposta standard.",
+    "couponTaglineLine2": "La viva a modo Suo.",
+    "couponModalClose": "Chiudi",
+    "certaintyOrderTitle": "Come viene elaborato il mio ordine?",
+    "certaintyOrderBody": "Dopo il pagamento vedrai una conferma di pagamento riuscito e riceverai un'email con numero d'ordine, dettagli prodotto, indirizzo di spedizione e contatti del servizio clienti.\n\nL'ordine viene di solito spedito entro 1–2 giorni lavorativi. Una volta spedito, riceverai un'altra email con numero di tracking e sito di tracciamento, per seguire il pacco con tranquillità."
   },
   "Newsletter": {
     "emailLabel": "E-mail",
@@ -259,7 +291,8 @@
     "decreaseQtyAria": "Diminuisci quantità",
     "removeFromBagAria": "Rimuovi dalla borsa",
     "increaseQtyAria": "Aumenta quantità",
-    "subtotal": "Subtotale"
+    "subtotal": "Subtotale",
+    "paypalExpressError": "PayPal Express non è disponibile — usi Checkout."
   },
   "Checkout": {
     "loading": "Caricamento checkout…",
@@ -293,7 +326,27 @@
     "draftOrderFailed": "Impossibile creare la bozza d'ordine",
     "orderLine": "{name} × {qty}",
     "billingTitle": "Indirizzo di fatturazione",
-    "shippingTitle": "Indirizzo di spedizione"
+    "shippingTitle": "Indirizzo di spedizione",
+    "billSameAsShipping": "Usa l'indirizzo di spedizione come indirizzo di fatturazione",
+    "contactHeading": "E-mail",
+    "deliveryTitle": "Consegna",
+    "expressCheckout": "Checkout rapido",
+    "orDivider": "OPPURE",
+    "paypalExpressError": "PayPal non è disponibile — provi un altro metodo di pagamento.",
+    "stripePublishableMissing": "Aggiunga NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY (pk_…) al Suo ambiente — la trova in Stripe Dashboard → Developers → API keys.",
+    "payWithCard": "Paga con carta",
+    "payNow": "Paga ora",
+    "loadingPaymentForm": "Caricamento modulo di pagamento sicuro…",
+    "paypalPrefillNotice": "Abbiamo compilato il Suo indirizzo da PayPal. Verifichi spedizione e totale prima di pagare.",
+    "paymentHeading": "Pagamento",
+    "paymentSecureNote": "Tutte le transazioni sono sicure e crittografate.",
+    "paymentCardAndWallets": "Carta di credito",
+    "paymentCardAndWalletsHint": "Carta, Apple Pay o Google Pay",
+    "paymentPayPalHint": "Paga con il saldo PayPal o carta collegata",
+    "paymentPayPalContinueHint": "Accederà a PayPal per confermare pagamento e spedizione.",
+    "paymentPreviewHint": "Può inserire i dati di pagamento ora. Completi l'indirizzo di spedizione sopra prima di pagare.",
+    "completeDetailsToPay": "Completi e-mail, indirizzo di spedizione e metodo di spedizione prima di pagare.",
+    "paymentTimeout": "Timeout del gateway di pagamento — riprovi"
   },
   "CheckoutAddress": {
     "firstName": "Nome",
@@ -322,7 +375,9 @@
       "postalInvalidFormat": "Inserisci un CAP / codice postale valido per il paese selezionato",
       "postalNotFound": "CAP / codice postale non trovato — controlla eventuali errori",
       "postalStateMismatch": "Il CAP / codice postale non corrisponde alla provincia / stato selezionato"
-    }
+    },
+    "stateOptional": "Stato / provincia (facoltativo)",
+    "stateOptionalPlaceholder": "Contea, regione, ecc. (facoltativo)"
   },
   "CheckoutShipping": {
     "feeTitle": "Spese di spedizione",
@@ -370,7 +425,9 @@
     "chatWhatsApp": "Chatta su WhatsApp",
     "chatWhatsAppAbout": "Chatta su WhatsApp su {product}",
     "whatsappPrefillProduct": "Ciao, ho una domanda su {product}:\n{url}",
-    "whatsappPrefillPage": "Ciao, ho una domanda su questa pagina:\n{url}"
+    "whatsappPrefillPage": "Ciao, ho una domanda su questa pagina:\n{url}",
+    "cardAdd": "Aggiungi",
+    "cardFiveStarReviews": "{count} recensioni a cinque stelle"
   },
   "Success": {
     "documentTitle": "Ordine confermato · HUMPBUCK",
@@ -404,7 +461,12 @@
     "reviewPhotoAlt": "Foto recensione — {name}",
     "followUpPhotoAlt": "Foto aggiornamento — {name}",
     "writeReview": "Scrivi una recensione",
-    "writeReviewHint": "(hai un acquisto completato per questo articolo)"
+    "writeReviewHint": "(hai un acquisto completato per questo articolo)",
+    "purchaseRequiredHint": "Solo i clienti che hanno acquistato questo articolo possono inviare una recensione.",
+    "confirmReceiptRequiredHint": "Confermi la ricezione dell'ordine prima di scrivere una recensione.",
+    "reviewAlreadySubmitted": "Ha già inviato una recensione per questo prodotto.",
+    "itemType": "Tipo di articolo:",
+    "showMore": "Mostra altre {count} recensioni"
   },
   "TaxId": {
     "fallback": {
@@ -674,7 +736,12 @@
     "editShipBack": "Indietro",
     "editShipSaving": "Salvataggio…",
     "editShipSave": "Salva indirizzo di spedizione",
-    "editShipCancel": "Annulla"
+    "editShipCancel": "Annulla",
+    "detailReviewPrompt": "Può scrivere una recensione per gli articoli di questo ordine.",
+    "detailReviewButton": "Scrivi recensione",
+    "detailReviewChooseProduct": "Prodotto",
+    "detailReviewConfirmFirstTitle": "Confermi la ricezione prima",
+    "detailReviewConfirmFirstBody": "Confermi di aver ricevuto questo ordine prima di scrivere una recensione."
   },
   "AccountCancel": {
     "whatsappLink": "WhatsApp {display}",
@@ -736,7 +803,9 @@
     "appendPlaceholder": "Ulteriori impressioni dopo l'uso, spedizione, assistenza…",
     "appendPhotosHint": "Le foto facoltative vengono ridimensionate, compresse e salvate in WebP prima del caricamento. Fino a 4 immagini, sotto i 2 MB ciascuna (tipico 0,6–1,5 MB).",
     "appendSubmitting": "Invio…",
-    "appendSubmit": "Pubblica aggiornamento"
+    "appendSubmit": "Pubblica aggiornamento",
+    "thanksPendingBody": "Grazie! La Sua recensione è stata inviata e apparirà sulla pagina prodotto dopo la nostra approvazione.",
+    "emojiLabel": "Aggiungi emoji"
   },
   "AccountSubscribe": {
     "kicker": "Iscrizione",
@@ -800,14 +869,14 @@
     "factoryAsideBefore": "Produzione a",
     "factoryAsideAfter": "— hub per l'assemblaggio OEM di orologi. Verifica la regione sulla mappa oppure apri Google Maps per la navigazione.",
     "factoryRegion": "Canton (Guangzhou), provincia del Guangdong",
-    "mapIframeTitle": "Mappa — Canton, Cina",
-    "mapFallback": "Panoramica regionale di Canton. Usa «Apri in Google Maps» per indicazioni e vista satellite.",
+    "mapIframeTitle": "HUMPBUCK — Zhongshan, Guangdong, Cina",
+    "mapFallback": "Anteprima mappa regionale. Usa «Apri in Google Maps» per indicazioni e vista satellite.",
     "openMapsLabel": "Apri in Google Maps",
     "videoAriaLabel": "Video promozionale fabbrica orologi HUMPBUCK",
     "videoCaption": "Video promozionale fabbrica orologi HUMPBUCK",
     "contactKicker": "Contatto",
-    "contactTitle": "Contattami",
-    "contactLead": "Domande sui prodotti o assistenza ordini — scrivici o contattaci su WhatsApp.",
+    "contactTitle": "Contattaci",
+    "contactLead": "Domande sui prodotti o assistenza ordini — scrivici via e-mail o WhatsApp.",
     "emailButton": "E-mail",
     "whatsappButton": "WhatsApp",
     "b2bKicker": "B2B",
@@ -816,8 +885,16 @@
     "wholesaleLink": "Esplora l'ingrosso",
     "mailSubject": "Domanda su HUMPBUCK",
     "storyKicker": "Chi siamo",
-    "storyP1": "Amo gli orologi meccanici fin da bambino. Allora la mia famiglia era povera e non potevo permettermene uno. Tuttavia, ero completamente affascinato da come gli ingranaggi si incastrano e dalle strutture meccaniche complesse che mantengono l'ora con precisione.",
-    "storyP2": "Ora ho creato questo sito di orologi meccanici. Il mio obiettivo è offrire orologi meccanici di qualità e accessibili a tutti, realizzando il mio sogno d'infanzia di possederne uno. Continua a inseguire i tuoi sogni."
+    "storyP1": "Crescendo, osservavo mio padre — un maestro orologiaio — ridare vita a innumerevoli orologi dopo scuola. Mentre restava al mio fianco nei miei traguardi, quegli orologi segnavano ogni battito del mio cammino. Lì è nato il nostro legame. Tempo e compagnia sono i doni più preziosi della vita. Ora spero che i miei orologi HUMPBUCK artigianali restino al suo fianco e siano testimoni dei suoi momenti più significativi.",
+    "storyP2": "",
+    "addressLabel": "Indirizzo",
+    "telLabel": "Tel.",
+    "emailLabel": "E-mail",
+    "contactTrustNote": "Rispondiamo entro 1–2 giorni lavorativi. Per assistenza urgente sugli ordini, WhatsApp è il più rapido.",
+    "businessHoursLabel": "Orari di apertura",
+    "businessHoursWeekdays": "Lunedì – sabato: 9:00 – 18:00",
+    "businessHoursSunday": "Domenica: chiuso",
+    "businessHoursTimezone": "GMT+8 (ora standard della Cina)"
   },
   "VideoTutorials": {
     "metaTitle": "Tutorial video · HUMPBUCK",
@@ -835,6 +912,22 @@
   },
   "BlogPage": {
     "metaDescription": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita.",
-    "intro": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita."
+    "intro": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita.",
+    "metaTitle": "Blog — HUMPBUCK",
+    "ogTitle": "Blog — HUMPBUCK",
+    "kicker": "Diario",
+    "title": "Blog",
+    "empty": "Nuovi articoli in arrivo. Torni presto.",
+    "readMore": "Leggi articolo"
+  },
+  "DisplayCurrency": {
+    "label": "Valuta di visualizzazione",
+    "usdChargeNotice": "I prezzi sono mostrati in USD. La Sua carta sarà addebitata in USD al checkout."
+  },
+  "BlogArticle": {
+    "kicker": "Diario",
+    "backToBlog": "Torna al blog",
+    "notFoundTitle": "Articolo non trovato",
+    "viewProduct": "Vedi prodotto"
   }
 }

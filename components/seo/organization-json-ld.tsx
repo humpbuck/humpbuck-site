@@ -1,9 +1,31 @@
+import { getLocale, getTranslations } from "next-intl/server";
 import { R2 } from "@/lib/r2";
 import { getSiteUrl } from "@/lib/seo";
 
+function schemaLanguage(locale: string): string {
+  const map: Record<string, string> = {
+    ar: "ar-SA",
+    de: "de-DE",
+    es: "es-ES",
+    fr: "fr-FR",
+    he: "he-IL",
+    hu: "hu-HU",
+    it: "it-IT",
+    ja: "ja-JP",
+    ko: "ko-KR",
+    nl: "nl-NL",
+    pt: "pt-BR",
+    ru: "ru-RU",
+  };
+  return map[locale] ?? "en-US";
+}
+
 /** WebSite + Organization JSON-LD for Google rich context (not a replacement for PDP Product schema). */
-export function OrganizationJsonLd() {
+export async function OrganizationJsonLd() {
+  const locale = await getLocale();
+  const t = await getTranslations({ locale, namespace: "SiteMetadata" });
   const url = getSiteUrl();
+  const description = t("descriptionDefault");
   const data = {
     "@context": "https://schema.org",
     "@graph": [
@@ -12,10 +34,9 @@ export function OrganizationJsonLd() {
         "@id": `${url}/#website`,
         url,
         name: "HUMPBUCK",
-        description:
-          "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
+        description,
         publisher: { "@id": `${url}/#organization` },
-        inLanguage: "en-US",
+        inLanguage: schemaLanguage(locale),
       },
       {
         "@type": "Organization",
@@ -23,8 +44,7 @@ export function OrganizationJsonLd() {
         name: "HUMPBUCK",
         url,
         logo: R2.home.digitemp2301Webp,
-        description:
-          "HUMPBUCK Watches — meaningful gifts of time and love. Handcrafted timepieces for life's meaningful moments.",
+        description: t("titleDefault"),
       },
     ],
   };

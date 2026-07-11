@@ -116,7 +116,7 @@
     "trustLaunchTitle": "תמיכה בהשקה",
     "trustLaunchBody": "תוכניות מפעל למותגי שעונים צומחים.",
     "newsletterKicker": "עדכונים",
-    "newsletterTitle": "מילוי מלאי DIGI-TEMP והשקות RM-TONNEAU",
+    "newsletterTitle": "השקות שעונים חדשות",
     "newsletterBody": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
     "mechanicalHeroBadge": "מתנות · זמן ואהבה",
     "mechanicalHeroTitle": "HUMPBUCK Watches",
@@ -154,18 +154,50 @@
     "socialInstagramAria": "HUMPBUCK ב-Instagram",
     "socialYoutubeAria": "HUMPBUCK ב-YouTube",
     "socialTiktokAria": "HUMPBUCK ב-TikTok",
-    "certaintyKicker": "FAQ",
-    "certaintyTitle": "Frequently asked questions",
+    "certaintyKicker": "שאלות נפוצות",
+    "certaintyTitle": "שאלות שכיחות",
     "certaintyLead": "",
-    "certaintyCurrencyTitle": "What currency are prices shown in?",
-    "certaintyCurrencyBody": "All prices are listed in US dollars. Use the currency control at the bottom-left of your screen for a live reference conversion. Your card or wallet is charged in USD at checkout.",
-    "certaintyShippingTitle": "Do you ship to my country?",
-    "certaintyShippingBody": "We ship to most countries worldwide. Orders are processed within three business days; tracked delivery typically arrives in 7–21 days depending on your region. Any shipping fee is calculated and shown before you pay.",
-    "certaintyShippingLink": "Shipping & tax policy",
-    "certaintyPaymentsTitle": "Which payment methods do you accept?",
-    "certaintyPaymentsBody": "Pay with PayPal, major credit and debit cards, Apple Pay, or Google Pay — processed through trusted payment partners with encrypted checkout.",
-    "certaintySupportPrompt": "Have a question that is not covered here? No problem.",
-    "certaintySupportCta": "Contact our support team"
+    "certaintyCurrencyTitle": "באיזו מטבע מוצגים המחירים?",
+    "certaintyCurrencyBody": "כל המחירים מוצגים בדולר אמריקאי. השתמשו בבקר המטבע בפינה השמאלית התחתונה של המסך להמרה חיה לעיון. הכרטיס או הארנק שלכם יחויבו ב-USD בקופה.",
+    "certaintyShippingTitle": "האם אתם שולחים למדינה שלי?",
+    "certaintyShippingBody": "אנו שולחים לרוב המדינות בעולם. הזמנות מעובדות תוך שלושה ימי עסקים; משלוח עם מעקב מגיע בדרך כלל תוך 7–21 ימים בהתאם לאזורכם. דמי משלוח מחושבים ומוצגים לפני התשלום.",
+    "certaintyShippingLink": "מדיניות משלוח ומסים",
+    "certaintyPaymentsTitle": "אילו אמצעי תשלום אתם מקבלים?",
+    "certaintyPaymentsBody": "שלמו ב-PayPal, כרטיסי אשראי וחיוב מרכזיים, Apple Pay או Google Pay — דרך שותפי תשלום מהימנים עם קופה מוצפנת.",
+    "certaintySupportPrompt": "יש לכם שאלה שלא מכוסה כאן? אין בעיה.",
+    "certaintySupportCta": "צרו קשר עם צוות התמיכה",
+    "momentsHeading": "רגעים ששווה לזכור",
+    "momentsLead": "יש רגעים שמשנים הכול. השעונים שלנו שם לכל אחד מהם.",
+    "momentsCard1Title": "רגעי אבן דרך",
+    "momentsCard1Description": "להחלטות, חגיגות ולילות שכדאי לזכור.",
+    "momentsCard2Title": "זיכרונות יומיומיים",
+    "momentsCard2Description": "למסעות, טקסים ודברים קטנים שנשארים איתכם.",
+    "recommendedAdd": "הוספה",
+    "recommendedSliderPrev": "מוצרים קודמים",
+    "recommendedSliderNext": "מוצרים הבאים",
+    "recommendedSliderScroll": "גלילת מוצרים",
+    "homeBlogTitle": "מהיומן",
+    "homeBlogViewAll": "קראו את כל המאמרים",
+    "homeBlogCarouselPrevious": "מאמרים קודמים",
+    "homeBlogCarouselNext": "מאמרים הבאים",
+    "allProductsHeading": "כל המוצרים",
+    "sectionNoProducts": "אין מוצרים זמינים.",
+    "categoryRowKicker": "חיפוש לפי",
+    "featuredPrev": "הקודם",
+    "featuredNext": "הבא",
+    "featuredPage": "עמוד {page} מתוך {total}",
+    "couponTitle": "קבלו קופון",
+    "couponKicker": "הרהור",
+    "couponQuestion": "מה הדבר היקר ביותר בחיים?",
+    "couponInputPlaceholder": "שתפו את מחשבותיכם…",
+    "couponConfirm": "שליחה",
+    "couponRewardLabel": "הקופון שלכם",
+    "couponNoCodeMessage": "הקופון יופיע כאן לאחר הגדרת קופון דף הבית במנהל.",
+    "couponTaglineLine1": "לחיים אין תשובה סטנדרטית.",
+    "couponTaglineLine2": "חיו אותם בדרך שלכם.",
+    "couponModalClose": "סגירה",
+    "certaintyOrderTitle": "איך מעובדת ההזמנה שלי?",
+    "certaintyOrderBody": "לאחר השלמת התשלום תראו אישור תשלום מוצלח ותקבלו אימייל עם מספר ההזמנה, פרטי המוצר, כתובת המשלוח ופרטי שירות הלקוחות.\n\nההזמנה בדרך כלל נשלחת תוך 1–2 ימי עסקים. לאחר השליחה תקבלו אימייל נוסף עם מספר מעקב וקישור למעקב, כדי שתוכלו לעקוב אחר החבילה בראש שקט."
   },
   "Newsletter": {
     "emailLabel": "אימייל",
@@ -259,7 +291,8 @@
     "decreaseQtyAria": "הקטנת כמות",
     "removeFromBagAria": "הסרה מהסל",
     "increaseQtyAria": "הגדלת כמות",
-    "subtotal": "סכום ביניים"
+    "subtotal": "סכום ביניים",
+    "paypalExpressError": "PayPal Express אינו זמין — השתמשו ב-Checkout במקום."
   },
   "Checkout": {
     "loading": "טוען תשלום…",
@@ -293,7 +326,27 @@
     "draftOrderFailed": "לא ניתן ליצור טיוטת הזמנה",
     "orderLine": "{name} × {qty}",
     "billingTitle": "כתובת לחיוב",
-    "shippingTitle": "כתובת למשלוח"
+    "shippingTitle": "כתובת למשלוח",
+    "billSameAsShipping": "השתמשו בכתובת המשלוח ככתובת לחיוב",
+    "contactHeading": "אימייל",
+    "deliveryTitle": "משלוח",
+    "expressCheckout": "תשלום מהיר",
+    "orDivider": "או",
+    "paypalExpressError": "PayPal אינו זמין — נסו אמצעי תשלום אחר.",
+    "stripePublishableMissing": "הוסיפו NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY (pk_…) לסביבה — מצאו ב-Stripe Dashboard → Developers → API keys.",
+    "payWithCard": "תשלום בכרטיס",
+    "payNow": "שלמו עכשיו",
+    "loadingPaymentForm": "טוען טופס תשלום מאובטח…",
+    "paypalPrefillNotice": "מילאנו את הכתובת מ-PayPal. בדקו משלוח וסכום לפני התשלום.",
+    "paymentHeading": "תשלום",
+    "paymentSecureNote": "כל העסקאות מאובטחות ומוצפנות.",
+    "paymentCardAndWallets": "כרטיס אשראי",
+    "paymentCardAndWalletsHint": "כרטיס, Apple Pay או Google Pay",
+    "paymentPayPalHint": "שלמו מיתרת PayPal או כרטיס מקושר",
+    "paymentPayPalContinueHint": "תתחברו ל-PayPal כדי לאשר תשלום ומשלוח.",
+    "paymentPreviewHint": "ניתן להזין פרטי תשלום כעת. השלימו את כתובת המשלוח למעלה לפני התשלום.",
+    "completeDetailsToPay": "השלימו אימייל, כתובת משלוח ושיטת משלוח לפני התשלום.",
+    "paymentTimeout": "פג תוקף שער התשלום — נסו שוב"
   },
   "CheckoutAddress": {
     "firstName": "שם פרטי",
@@ -322,7 +375,9 @@
       "postalInvalidFormat": "הזינו מיקוד תקין עבור המדינה / האזור שנבחר",
       "postalNotFound": "מיקוד זה לא נמצא — בדקו שגיאות הקלדה",
       "postalStateMismatch": "המיקוד אינו תואם למחוז / המדינה שנבחרו"
-    }
+    },
+    "stateOptional": "מדינה / מחוז (אופציונלי)",
+    "stateOptionalPlaceholder": "מחוז, אזור וכו' (אופציונלי)"
   },
   "CheckoutShipping": {
     "feeTitle": "דמי משלוח",
@@ -370,7 +425,9 @@
     "chatWhatsApp": "צ׳אט ב-WhatsApp",
     "chatWhatsAppAbout": "צ׳אט ב-WhatsApp על {product}",
     "whatsappPrefillProduct": "שלום, יש לי שאלה לגבי {product}:\n{url}",
-    "whatsappPrefillPage": "שלום, יש לי שאלה לגבי דף זה:\n{url}"
+    "whatsappPrefillPage": "שלום, יש לי שאלה לגבי דף זה:\n{url}",
+    "cardAdd": "הוספה",
+    "cardFiveStarReviews": "{count} ביקורות חמש כוכבים"
   },
   "Success": {
     "documentTitle": "הזמנה אושרה · HUMPBUCK",
@@ -404,7 +461,12 @@
     "reviewPhotoAlt": "תמונת ביקורת — {name}",
     "followUpPhotoAlt": "תמונת המשך — {name}",
     "writeReview": "כתיבת ביקורת",
-    "writeReviewHint": "(יש לכם רכישה שהושלמה לפריט זה)"
+    "writeReviewHint": "(יש לכם רכישה שהושלמה לפריט זה)",
+    "purchaseRequiredHint": "רק לקוחות שרכשו פריט זה יכולים לשלוח ביקורת.",
+    "confirmReceiptRequiredHint": "אשרו קבלת ההזמנה לפני כתיבת ביקורת.",
+    "reviewAlreadySubmitted": "כבר שלחתם ביקורת למוצר זה.",
+    "itemType": "סוג פריט:",
+    "showMore": "הצג {count} ביקורות נוספות"
   },
   "TaxId": {
     "fallback": {
@@ -674,7 +736,12 @@
     "editShipBack": "חזרה",
     "editShipSaving": "שומר…",
     "editShipSave": "שמירת כתובת משלוח",
-    "editShipCancel": "ביטול"
+    "editShipCancel": "ביטול",
+    "detailReviewPrompt": "ניתן לכתוב ביקורת על פריטים בהזמנה זו.",
+    "detailReviewButton": "כתיבת ביקורת",
+    "detailReviewChooseProduct": "מוצר",
+    "detailReviewConfirmFirstTitle": "אשרו קבלה תחילה",
+    "detailReviewConfirmFirstBody": "אשרו שקיבלתם הזמנה זו לפני כתיבת ביקורת."
   },
   "AccountCancel": {
     "whatsappLink": "WhatsApp {display}",
@@ -736,7 +803,9 @@
     "appendPlaceholder": "מחשבות נוספות לאחר שימוש נוסף, משלוח, תמיכה…",
     "appendPhotosHint": "תמונות אופציונליות מוקטנות ונשמרות כ-WebP לפני העלאה. עד 4 תמונות, מתחת ל-2 MB כל אחת (בדרך כלל 0.6–1.5 MB).",
     "appendSubmitting": "שולח…",
-    "appendSubmit": "פרסום המשך"
+    "appendSubmit": "פרסום המשך",
+    "thanksPendingBody": "תודה! הביקורת נשלחה ותופיע בדף המוצר לאחר אישור.",
+    "emojiLabel": "הוספת אמוג'י"
   },
   "AccountSubscribe": {
     "kicker": "הרשמה",
@@ -800,14 +869,14 @@
     "factoryAsideBefore": "ייצור ב",
     "factoryAsideAfter": "— מרכז להרכבת שעוני OEM. אמתו את האזור במפה, או פתחו Google Maps לניווט.",
     "factoryRegion": "גואנגג׳ואו, מחוז גואנגדונג",
-    "mapIframeTitle": "מפה — גואנגג׳ואו, סין",
-    "mapFallback": "סקירה אזורית של גואנגג׳ואו. השתמשו ב״פתיחה ב-Google Maps״ להוראות ותצוגת לוויין.",
+    "mapIframeTitle": "HUMPBUCK — ג'ונגשאן, גואנגדונג, סין",
+    "mapFallback": "תצוגה מקדימה של מפה אזורית. השתמשו ב״פתיחה ב-Google Maps״ להוראות ותצוגת לוויין.",
     "openMapsLabel": "פתיחה ב-Google Maps",
     "videoAriaLabel": "סרט קידום HUMPBUCK Watch Factory",
     "videoCaption": "סרט קידום HUMPBUCK Watch Factory",
     "contactKicker": "יצירת קשר",
     "contactTitle": "צרו קשר",
-    "contactLead": "שאלות על מוצרים או עזרה בהזמנה — שלחו מייל או הודעה ב-WhatsApp.",
+    "contactLead": "שאלות על מוצרים או עזרה בהזמנה — שלחו לנו אימייל או הודעה ב-WhatsApp.",
     "emailButton": "אימייל",
     "whatsappButton": "WhatsApp",
     "b2bKicker": "B2B",
@@ -816,8 +885,16 @@
     "wholesaleLink": "לסיטונאות",
     "mailSubject": "שאלה על HUMPBUCK",
     "storyKicker": "אודות",
-    "storyP1": "אהבתי שעונים מכניים מאז ילדותי. אז המשפחה שלי הייתה ענייה ולא יכולתי להרשות לעצמי. עם זאת, נמשכתי לחibur של הגלגלים ולמבנים המכניים המורכבים ששומרים על זמן מדויק.",
-    "storyP2": "עכשיו בניתי את אתר השעונים המכניים הזה. המטרה שלי היא להציע שעונים מכניים איכותיים ונגישים לכולם, ולממש את חלום הילדות שלי ל possess אחד. המשיכו לרדוף אחר החלומות."
+    "storyP1": "בגדילתי, צפיתי באבי — אמן תיקון שעונים — מחזיר חיים לאינספור שעונים אחרי בית הספר. כשהוא נשאר לצידי בכל אבני הדרך, השעונים האלה סימנו כל פעימה במסע שלי. שם נולד הקשר שלנו. זמן וליווי הם המתנות היקרות ביותר בחיים. עכשיו, אני מקווה ששעוני HUMPBUCK המיוצרים בידיי יישארו לצדכם ויעידו על הרגעים המשמעותיים ביותר שלכם.",
+    "storyP2": "",
+    "addressLabel": "כתובת",
+    "telLabel": "טל'",
+    "emailLabel": "אימייל",
+    "contactTrustNote": "אנו משיבים תוך 1–2 ימי עסקים. לעזרה דחופה בהזמנות, WhatsApp הכי מהיר.",
+    "businessHoursLabel": "שעות פעילות",
+    "businessHoursWeekdays": "שני – שבת: 9:00 – 18:00",
+    "businessHoursSunday": "ראשון: סגור",
+    "businessHoursTimezone": "GMT+8 (שעון סין)"
   },
   "VideoTutorials": {
     "metaTitle": "מדריך וידאו",
@@ -835,6 +912,22 @@
   },
   "BlogPage": {
     "metaDescription": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
-    "intro": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים."
+    "intro": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
+    "metaTitle": "בלוג — HUMPBUCK",
+    "ogTitle": "בלוג — HUMPBUCK",
+    "kicker": "יומן",
+    "title": "בלוג",
+    "empty": "פוסטים חדשים בדרך. בדקו שוב בקרוב.",
+    "readMore": "קראו מאמר"
+  },
+  "DisplayCurrency": {
+    "label": "מטבע תצוגה",
+    "usdChargeNotice": "המחירים מוצגים ב-USD. הכרטיס שלכם יחויב ב-USD בקופה."
+  },
+  "BlogArticle": {
+    "kicker": "יומן",
+    "backToBlog": "חזרה לבלוג",
+    "notFoundTitle": "המאמר לא נמצא",
+    "viewProduct": "צפייה במוצר"
   }
 }

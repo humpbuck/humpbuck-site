@@ -19,28 +19,96 @@ type SeriesCopyBlock = {
   description?: string;
 };
 
-/** Catalog titles like "Mechanical 9027" → localized "mechanical watch" + model. */
-const PRODUCT_NAME_PREFIX: Record<string, { mechanical: string; quartz: string }> = {
-  ar: { mechanical: "ساعة ميكانيكية", quartz: "ساعة كوارتز" },
-  de: { mechanical: "Mechanische Uhr", quartz: "Quarzuhr" },
-  es: { mechanical: "Reloj mecánico", quartz: "Reloj de cuarzo" },
-  fr: { mechanical: "Montre mécanique", quartz: "Montre quartz" },
-  he: { mechanical: "שעון מכני", quartz: "שעון קварץ" },
-  hu: { mechanical: "Mechanikus óra", quartz: "Kvartz óra" },
-  it: { mechanical: "Orologio meccanico", quartz: "Orologio al quarzo" },
-  ja: { mechanical: "機械式時計", quartz: "クォーツ時計" },
-  ko: { mechanical: "기계식 시계", quartz: "쿼츠 시계" },
-  nl: { mechanical: "Mechanisch horloge", quartz: "Quarzhorloge" },
-  pt: { mechanical: "Relógio mecânico", quartz: "Relógio de quartzo" },
-  ru: { mechanical: "Механические часы", quartz: "Кварцевые часы" },
+/** Catalog titles like "Mechanical 9027" / "AUTOMATIC 9220" → localized family + model. */
+const PRODUCT_NAME_PREFIX: Record<
+  string,
+  { mechanical: string; quartz: string; automatic: string; ultraThin: string }
+> = {
+  ar: {
+    mechanical: "ساعة ميكانيكية",
+    quartz: "ساعة كوارتز",
+    automatic: "ساعة أوتوماتيك",
+    ultraThin: "فائق النحافة",
+  },
+  de: {
+    mechanical: "Mechanische Uhr",
+    quartz: "Quarzuhr",
+    automatic: "Automatik-Uhr",
+    ultraThin: "Ultradünn",
+  },
+  es: {
+    mechanical: "Reloj mecánico",
+    quartz: "Reloj de cuarzo",
+    automatic: "Reloj automático",
+    ultraThin: "Ultrafino",
+  },
+  fr: {
+    mechanical: "Montre mécanique",
+    quartz: "Montre quartz",
+    automatic: "Montre automatique",
+    ultraThin: "Ultra-fin",
+  },
+  he: {
+    mechanical: "שעון מכני",
+    quartz: "שעון קварץ",
+    automatic: "שעון אוטומטי",
+    ultraThin: "ultra-dun",
+  },
+  hu: {
+    mechanical: "Mechanikus óra",
+    quartz: "Kvartz óra",
+    automatic: "Automata óra",
+    ultraThin: "Ultra-vékony",
+  },
+  it: {
+    mechanical: "Orologio meccanico",
+    quartz: "Orologio al quarzo",
+    automatic: "Orologio automatico",
+    ultraThin: "Ultra-sottile",
+  },
+  ja: {
+    mechanical: "機械式時計",
+    quartz: "クォーツ時計",
+    automatic: "自動巻き",
+    ultraThin: "超薄型",
+  },
+  ko: {
+    mechanical: "기계식 시계",
+    quartz: "쿼츠 시계",
+    automatic: "오토매틱",
+    ultraThin: "울트라-thin",
+  },
+  nl: {
+    mechanical: "Mechanisch horloge",
+    quartz: "Quarzhorloge",
+    automatic: "Automatisch horloge",
+    ultraThin: "Ultradun",
+  },
+  pt: {
+    mechanical: "Relógio mecânico",
+    quartz: "Relógio de quartzo",
+    automatic: "Relógio automático",
+    ultraThin: "Ultrafino",
+  },
+  ru: {
+    mechanical: "Механические часы",
+    quartz: "Кварцевые часы",
+    automatic: "Автоматические часы",
+    ultraThin: "Ультратонкие",
+  },
 };
 
 function localizeCatalogProductName(name: string, locale: string): string {
   const prefix = PRODUCT_NAME_PREFIX[locale];
   if (!prefix) return name;
-  const mechanical = /^Mechanical\s+(.+)$/i.exec(name.trim());
+  const trimmed = name.trim();
+  const ultraThin = /^Ultra-thin\s+(.+)$/i.exec(trimmed);
+  if (ultraThin) return `${prefix.ultraThin} ${ultraThin[1]}`;
+  const automatic = /^(?:AUTOMATIC|Automatic)\s+(.+)$/i.exec(trimmed);
+  if (automatic) return `${prefix.automatic} ${automatic[1]}`;
+  const mechanical = /^Mechanical\s+(.+)$/i.exec(trimmed);
   if (mechanical) return `${prefix.mechanical} ${mechanical[1]}`;
-  const quartz = /^Quartz\s+(.+)$/i.exec(name.trim());
+  const quartz = /^Quartz\s+(.+)$/i.exec(trimmed);
   if (quartz) return `${prefix.quartz} ${quartz[1]}`;
   return name;
 }
@@ -189,16 +257,78 @@ const SPEC_LABEL_ALIASES: Record<string, string> = {
   WEIGHT: "Weight",
   CRYSTAL: "Crystal",
   "CASE MATERIAL": "Case material",
+  MOVEMENT: "Movement",
   "WATER RESISITANCE": "Water resistance",
   "WATER RESISTANCE": "Water resistance",
+  WATERPROOF: "Water resistance",
 };
 
 function resolveSpecLabel(
   labels: Record<string, string>,
   raw: string,
+  locale?: string,
 ): string {
   const key = SPEC_LABEL_ALIASES[raw] ?? raw;
+  if (key === "Movement" && locale && MOVEMENT_SPEC_LABEL[locale]) {
+    return MOVEMENT_SPEC_LABEL[locale];
+  }
   return labels[key] ?? labels[raw] ?? raw;
+}
+
+/** Admin uses ALL CAPS `MOVEMENT` — canonical key is `Movement`. */
+const MOVEMENT_SPEC_LABEL: Record<string, string> = {
+  ar: "الحركة",
+  de: "Uhrwerk",
+  es: "Movimiento",
+  fr: "Mouvement",
+  he: "מנגנון",
+  hu: "Szerkezet",
+  it: "Movimento",
+  ja: "ムーブメント",
+  ko: "무브먼트",
+  nl: "Uurwerk",
+  pt: "Movimento",
+  ru: "Механизм",
+};
+
+const MOVEMENT_SPEC_VALUE: Record<string, Record<string, string>> = {
+  ar: { Mechanical: "ميكانيكي", Automatic: "أوتوماتيك", Quartz: "كوارتز" },
+  de: { Mechanical: "Mechanisch", Automatic: "Automatik", Quartz: "Quarz" },
+  es: { Mechanical: "Mecánico", Automatic: "Automático", Quartz: "Cuarzo" },
+  fr: { Mechanical: "Mécanique", Automatic: "Automatique", Quartz: "Quartz" },
+  he: { Mechanical: "מכני", Automatic: "אוטומטי", Quartz: "קוורץ" },
+  hu: { Mechanical: "Mechanikus", Automatic: "Automata", Quartz: "Kvarc" },
+  it: { Mechanical: "Meccanico", Automatic: "Automatico", Quartz: "Quarzo" },
+  ja: { Mechanical: "機械式", Automatic: "自動巻き", Quartz: "クォーツ" },
+  ko: { Mechanical: "기계식", Automatic: "오토매틱", Quartz: "쿼츠" },
+  nl: { Mechanical: "Mechanisch", Automatic: "Automatisch", Quartz: "Quartz" },
+  pt: { Mechanical: "Mecânico", Automatic: "Automático", Quartz: "Quartz" },
+  ru: { Mechanical: "Механический", Automatic: "Автоматический", Quartz: "Кварцевый" },
+};
+
+const MATERIAL_SPEC_VALUE: Record<string, Record<string, string>> = {
+  ar: { Silicone: "سيليكون", Rubber: "مطاط", Leather: "جلد" },
+  de: { Silicone: "Silikon", Rubber: "Kautschuk", Leather: "Leder" },
+  es: { Silicone: "Silicona", Rubber: "Caucho", Leather: "Cuero" },
+  fr: { Silicone: "Silicone", Rubber: "Caoutchouc", Leather: "Cuir" },
+  he: { Silicone: "סיליקון", Rubber: "גומי", Leather: "עור" },
+  hu: { Silicone: "Szilikon", Rubber: "Gumi", Leather: "Bőr" },
+  it: { Silicone: "Silicone", Rubber: "Gomma", Leather: "Pelle" },
+  ja: { Silicone: "シリコン", Rubber: "ラバー", Leather: "レザー" },
+  ko: { Silicone: "실리콘", Rubber: "러버", Leather: "가죽" },
+  nl: { Silicone: "Silicone", Rubber: "Rubber", Leather: "Leer" },
+  pt: { Silicone: "Silicone", Rubber: "Borracha", Leather: "Couro" },
+  ru: { Silicone: "Силикон", Rubber: "Резина", Leather: "Кожа" },
+};
+
+function resolveSpecValue(value: string, locale: string, specValues: Record<string, string>): string {
+  const trimmed = value.trim();
+  return (
+    specValues[trimmed] ??
+    MOVEMENT_SPEC_VALUE[locale]?.[trimmed] ??
+    MATERIAL_SPEC_VALUE[locale]?.[trimmed] ??
+    trimmed
+  );
 }
 
 const SPEC_VALUES: Record<string, Record<string, string>> = {
@@ -358,14 +488,24 @@ function localizeVariantLabel(label: string, locale: string): string {
   return `${prefix} ${Number(m[1])}`;
 }
 
+function productCopyLookupKeys(slug: string): string[] {
+  const keys = [slug];
+  const last = slug.split("-").pop();
+  if (last && last !== slug) keys.push(last);
+  return keys;
+}
+
 function readProductCopy(
   messages: AbstractIntlMessages,
   slug: string,
 ): ProductCopyBlock | undefined {
   const root = messages.ProductCopy as Record<string, ProductCopyBlock> | undefined;
-  const block = root?.[slug];
-  if (!block || typeof block !== "object") return undefined;
-  return block;
+  if (!root) return undefined;
+  for (const key of productCopyLookupKeys(slug)) {
+    const block = root[key];
+    if (block && typeof block === "object") return block;
+  }
+  return undefined;
 }
 
 function readSeriesCopy(
@@ -440,8 +580,8 @@ export function applyStorefrontProductLocale(
     const specValues = SPEC_VALUES[locale] ?? {};
     next.specs = next.specs.map((row) => ({
       ...row,
-      label: row.label ? resolveSpecLabel(specLabels, row.label) : row.label,
-      value: row.value ? (specValues[row.value] ?? row.value) : row.value,
+      label: row.label ? resolveSpecLabel(specLabels, row.label, locale) : row.label,
+      value: row.value ? resolveSpecValue(row.value, locale, specValues) : row.value,
     }));
   }
 

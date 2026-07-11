@@ -1,7 +1,8 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { HomeCertaintyFaqItem } from "@/components/site/home-certainty-faq-item";
 import { HomeFaqAnswerBody } from "@/components/site/home-faq-answer-body";
 import { HomeCertaintySidebar } from "@/components/site/home-certainty-sidebar";
+import { resolveHomeCmsText } from "@/lib/site-home-cms-locale";
 import { resolveHomeFaqItems } from "@/lib/site-home-content";
 import { getSiteHomeContent } from "@/lib/site-home-content-queries";
 
@@ -11,10 +12,17 @@ const deferredSectionStyle = {
 } as const;
 
 export async function HomeCustomerCertaintySection() {
-  const [t, content] = await Promise.all([getTranslations("Home"), getSiteHomeContent()]);
+  const [locale, t, content] = await Promise.all([
+    getLocale(),
+    getTranslations("Home"),
+    getSiteHomeContent(),
+  ]);
 
-  const heading = content.certaintyHeading.trim() || t("certaintyTitle");
-  const faqItems = resolveHomeFaqItems(content, [
+  const heading =
+    resolveHomeCmsText(locale, content.certaintyHeading, t("certaintyTitle"));
+  const faqItems = resolveHomeFaqItems(
+    content,
+    [
     {
       question: t("certaintyCurrencyTitle"),
       answer: t("certaintyCurrencyBody"),
@@ -27,7 +35,13 @@ export async function HomeCustomerCertaintySection() {
       question: t("certaintyPaymentsTitle"),
       answer: t("certaintyPaymentsBody"),
     },
-  ]);
+    {
+      question: t("certaintyOrderTitle"),
+      answer: t("certaintyOrderBody"),
+    },
+  ],
+    locale,
+  );
 
   return (
     <section

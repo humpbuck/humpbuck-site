@@ -32,7 +32,8 @@
 		{
 			"binding": "DB",
 			"database_name": "humpbuck-site",
-			"database_id": "2bc677db-27b4-4759-8eeb-6eadd0683c73"
+			"database_id": "2bc677db-27b4-4759-8eeb-6eadd0683c73",
+			"remote": true
 		}
 	],
 	"vars": {

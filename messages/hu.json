@@ -116,7 +116,7 @@
     "trustLaunchTitle": "Indulási támogatás",
     "trustLaunchBody": "Gyári programok növekvő óramárkáknak.",
     "newsletterKicker": "Hírek",
-    "newsletterTitle": "DIGI-TEMP utánpótlások és RM-TONNEAU megjelenések",
+    "newsletterTitle": "ÚJ ÓRA MEGJELENÉSEK",
     "newsletterBody": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
     "mechanicalHeroBadge": "Ajándékok · Idő és szeretet",
     "mechanicalHeroTitle": "HUMPBUCK Watches",
@@ -154,18 +154,50 @@
     "socialInstagramAria": "HUMPBUCK az Instagramon",
     "socialYoutubeAria": "HUMPBUCK a YouTube-on",
     "socialTiktokAria": "HUMPBUCK a TikTokon",
-    "certaintyKicker": "FAQ",
-    "certaintyTitle": "Frequently asked questions",
+    "certaintyKicker": "GYIK",
+    "certaintyTitle": "Gyakran ismételt kérdések",
     "certaintyLead": "",
-    "certaintyCurrencyTitle": "What currency are prices shown in?",
-    "certaintyCurrencyBody": "All prices are listed in US dollars. Use the currency control at the bottom-left of your screen for a live reference conversion. Your card or wallet is charged in USD at checkout.",
-    "certaintyShippingTitle": "Do you ship to my country?",
-    "certaintyShippingBody": "We ship to most countries worldwide. Orders are processed within three business days; tracked delivery typically arrives in 7–21 days depending on your region. Any shipping fee is calculated and shown before you pay.",
-    "certaintyShippingLink": "Shipping & tax policy",
-    "certaintyPaymentsTitle": "Which payment methods do you accept?",
-    "certaintyPaymentsBody": "Pay with PayPal, major credit and debit cards, Apple Pay, or Google Pay — processed through trusted payment partners with encrypted checkout.",
-    "certaintySupportPrompt": "Have a question that is not covered here? No problem.",
-    "certaintySupportCta": "Contact our support team"
+    "certaintyCurrencyTitle": "Milyen pénznemben jelennek meg az árak?",
+    "certaintyCurrencyBody": "Minden ár amerikai dollárban van feltüntetve. Használja a képernyő bal alsó sarkában lévő pénznemválasztót élő referencia-átváltáshoz. A kártyáját vagy tárcáját USD-ben terheljük a fizetéskor.",
+    "certaintyShippingTitle": "Szállítanak az országomba?",
+    "certaintyShippingBody": "A világ legtöbb országába szállítunk. A rendeléseket három munkanapon belül feldolgozzuk; a nyomon követhető szállítás általában 7–21 nap alatt érkezik a régiójától függően. A szállítási díjat a fizetés előtt kiszámítjuk és megjelenítjük.",
+    "certaintyShippingLink": "Szállítási és adószabályzat",
+    "certaintyPaymentsTitle": "Milyen fizetési módokat fogadnak el?",
+    "certaintyPaymentsBody": "Fizessen PayPal-lal, nagyobb hitel- és betéti kártyákkal, Apple Pay-jel vagy Google Pay-jel — megbízható fizetési partnereken keresztül, titkosított fizetéssel.",
+    "certaintySupportPrompt": "Van olyan kérdése, amely itt nem szerepel? Semmi gond.",
+    "certaintySupportCta": "Lépjen kapcsolatba ügyfélszolgálatunkkal",
+    "momentsHeading": "Emlékezetes pillanatok",
+    "momentsLead": "Néhány pillanat mindent megváltoztat. Óráink minden ilyen pillanathoz ott vannak.",
+    "momentsCard1Title": "Mérföldkő pillanatok",
+    "momentsCard1Description": "Döntésekhez, ünnepekhez és emlékezetes éjszakákhoz.",
+    "momentsCard2Title": "Mindennapi emlékek",
+    "momentsCard2Description": "Utazásokhoz, rituálékhoz és apró dolgokhoz, amelyek megmaradnak.",
+    "recommendedAdd": "Hozzáadás",
+    "recommendedSliderPrev": "Előző termékek",
+    "recommendedSliderNext": "Következő termékek",
+    "recommendedSliderScroll": "Termékek görgetése",
+    "homeBlogTitle": "A naplóból",
+    "homeBlogViewAll": "Összes cikk olvasása",
+    "homeBlogCarouselPrevious": "Előző cikkek",
+    "homeBlogCarouselNext": "Következő cikkek",
+    "allProductsHeading": "Összes termék",
+    "sectionNoProducts": "Nincs elérhető termék.",
+    "categoryRowKicker": "Keresés",
+    "featuredPrev": "Előző",
+    "featuredNext": "Következő",
+    "featuredPage": "{page}. oldal / {total}",
+    "couponTitle": "Kupon szerzése",
+    "couponKicker": "Elmélkedés",
+    "couponQuestion": "Mi a legértékesebb az életben?",
+    "couponInputPlaceholder": "Ossza meg gondolatait…",
+    "couponConfirm": "Küldés",
+    "couponRewardLabel": "Az Ön kuponja",
+    "couponNoCodeMessage": "A kuponja itt jelenik meg, amint a kezdőlapi kupon beállításra kerül az adminban.",
+    "couponTaglineLine1": "Az életnek nincs standard válasza.",
+    "couponTaglineLine2": "Élje az Ön módján.",
+    "couponModalClose": "Bezárás",
+    "certaintyOrderTitle": "Hogyan dolgozzuk fel a rendelésemet?",
+    "certaintyOrderBody": "A fizetés befejezése után megjelenik a sikeres fizetés visszaigazolása, és e-mailt kap rendelésszámmal, termékadatokkal, szállítási címmel és ügyfélszolgálati elérhetőséggel.\n\nRendelését általában 1–2 munkanapon belül feladjuk. Feladás után újabb e-mail érkezik a nyomkövetési számmal és weboldallal, hogy nyugodtan követhesse csomagját."
   },
   "Newsletter": {
     "emailLabel": "E-mail",
@@ -259,7 +291,8 @@
     "decreaseQtyAria": "Mennyiség csökkentése",
     "removeFromBagAria": "Eltávolítás a kosárból",
     "increaseQtyAria": "Mennyiség növelése",
-    "subtotal": "Részösszeg"
+    "subtotal": "Részösszeg",
+    "paypalExpressError": "A PayPal Express nem elérhető — használja a Checkoutot."
   },
   "Checkout": {
     "loading": "Fizetés betöltése…",
@@ -293,7 +326,27 @@
     "draftOrderFailed": "A rendelés piszkozata nem hozható létre",
     "orderLine": "{name} × {qty}",
     "billingTitle": "Számlázási cím",
-    "shippingTitle": "Szállítási cím"
+    "shippingTitle": "Szállítási cím",
+    "billSameAsShipping": "Szállítási cím használata számlázási címként",
+    "contactHeading": "E-mail",
+    "deliveryTitle": "Szállítás",
+    "expressCheckout": "Expressz fizetés",
+    "orDivider": "VAGY",
+    "paypalExpressError": "A PayPal nem elérhető — próbáljon más fizetési módot.",
+    "stripePublishableMissing": "Adja hozzá a NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY (pk_…) kulcsot a környezethez — megtalálja a Stripe Dashboard → Developers → API keys menüben.",
+    "payWithCard": "Fizetés kártyával",
+    "payNow": "Fizetés most",
+    "loadingPaymentForm": "Biztonságos fizetési űrlap betöltése…",
+    "paypalPrefillNotice": "Kitöltöttük a címét a PayPalból. Ellenőrizze a szállítást és az összeget fizetés előtt.",
+    "paymentHeading": "Fizetés",
+    "paymentSecureNote": "Minden tranzakció biztonságos és titkosított.",
+    "paymentCardAndWallets": "Bankkártya",
+    "paymentCardAndWalletsHint": "Kártya, Apple Pay vagy Google Pay",
+    "paymentPayPalHint": "Fizetés PayPal-egyenleggel vagy összekapcsolt kártyával",
+    "paymentPayPalContinueHint": "Bejelentkezik a PayPalba a fizetés és szállítás megerősítéséhez.",
+    "paymentPreviewHint": "Most megadhatja a fizetési adatokat. Töltse ki a szállítási címet fent fizetés előtt.",
+    "completeDetailsToPay": "Töltse ki az e-mailt, szállítási címet és szállítási módot fizetés előtt.",
+    "paymentTimeout": "A fizetési átjáró időtúllépés — próbálja újra"
   },
   "CheckoutAddress": {
     "firstName": "Keresztnév",
@@ -322,7 +375,9 @@
       "postalInvalidFormat": "Adjon meg érvényes irányítószámot a kiválasztott országhoz",
       "postalNotFound": "Ez az irányítószám nem található — ellenőrizze az elírásokat",
       "postalStateMismatch": "Az irányítószám nem egyezik a kiválasztott megyével / tartománnyal"
-    }
+    },
+    "stateOptional": "Megye / tartomány (opcionális)",
+    "stateOptionalPlaceholder": "Járás, régió stb. (opcionális)"
   },
   "CheckoutShipping": {
     "feeTitle": "Szállítási díj",
@@ -370,7 +425,9 @@
     "chatWhatsApp": "Csevegés WhatsAppon",
     "chatWhatsAppAbout": "WhatsApp csevegés erről: {product}",
     "whatsappPrefillProduct": "Üdvözlöm, kérdésem van a következővel kapcsolatban: {product}:\n{url}",
-    "whatsappPrefillPage": "Üdvözlöm, kérdésem van ezzel az oldallal kapcsolatban:\n{url}"
+    "whatsappPrefillPage": "Üdvözlöm, kérdésem van ezzel az oldallal kapcsolatban:\n{url}",
+    "cardAdd": "Hozzáadás",
+    "cardFiveStarReviews": "{count} ötcsillagos értékelés"
   },
   "Success": {
     "documentTitle": "Rendelés visszaigazolva · HUMPBUCK",
@@ -404,7 +461,12 @@
     "reviewPhotoAlt": "Értékelés fotó — {name}",
     "followUpPhotoAlt": "Követő fotó — {name}",
     "writeReview": "Értékelés írása",
-    "writeReviewHint": "(van befejezett vásárlása ehhez a tételhez)"
+    "writeReviewHint": "(van befejezett vásárlása ehhez a tételhez)",
+    "purchaseRequiredHint": "Csak azok írhatnak értékelést, akik megvásárolták ezt a terméket.",
+    "confirmReceiptRequiredHint": "Erősítse meg a rendelés átvételét értékelés írása előtt.",
+    "reviewAlreadySubmitted": "Már küldött értékelést ehhez a termékhez.",
+    "itemType": "Terméktípus:",
+    "showMore": "További {count} értékelés megjelenítése"
   },
   "TaxId": {
     "fallback": {
@@ -674,7 +736,12 @@
     "editShipBack": "Vissza",
     "editShipSaving": "Mentés…",
     "editShipSave": "Szállítási cím mentése",
-    "editShipCancel": "Mégse"
+    "editShipCancel": "Mégse",
+    "detailReviewPrompt": "Értékelést írhat a rendelés tételeiről.",
+    "detailReviewButton": "Értékelés írása",
+    "detailReviewChooseProduct": "Termék",
+    "detailReviewConfirmFirstTitle": "Először erősítse meg az átvételt",
+    "detailReviewConfirmFirstBody": "Erősítse meg, hogy megkapta ezt a rendelést értékelés írása előtt."
   },
   "AccountCancel": {
     "whatsappLink": "WhatsApp {display}",
@@ -736,7 +803,9 @@
     "appendPlaceholder": "További gondolatok több használat, szállítás vagy támogatás után…",
     "appendPhotosHint": "Az opcionális fotók feltöltés előtt WebP-re tömörítve kerülnek mentésre. Legfeljebb 4 kép, darabonként 2 MB alatt (tipikusan 0,6–1,5 MB).",
     "appendSubmitting": "Küldés…",
-    "appendSubmit": "Követő közzététele"
+    "appendSubmit": "Követő közzététele",
+    "thanksPendingBody": "Köszönjük! Az értékelés elküldve — jóváhagyás után megjelenik a termékoldalon.",
+    "emojiLabel": "Emoji hozzáadása"
   },
   "AccountSubscribe": {
     "kicker": "Feliratkozás",
@@ -800,24 +869,32 @@
     "factoryAsideBefore": "Gyártás:",
     "factoryAsideAfter": "— OEM óra összeszerelés központja. Ellenőrizze a régiót a térképen, vagy nyissa meg a Google Maps-et navigációhoz.",
     "factoryRegion": "Guangzhou, Guangdong tartomány",
-    "mapIframeTitle": "Térkép — Guangzhou, Kína",
-    "mapFallback": "Guangzhou régió áttekintése. Útvonalhoz és műholdképhez használja a «Megnyitás Google Maps-ben» gombot.",
+    "mapIframeTitle": "HUMPBUCK — Zhongshan, Guangdong, Kína",
+    "mapFallback": "Regionális térkép előnézet. Használja a «Megnyitás Google Maps-ben» gombot útvonalhoz és műholdképhez.",
     "openMapsLabel": "Megnyitás Google Maps-ben",
     "videoAriaLabel": "HUMPBUCK Watch Factory promóciós videó",
     "videoCaption": "HUMPBUCK Watch Factory promóciós videó",
     "contactKicker": "Kapcsolat",
-    "contactTitle": "Elérhetőség",
-    "contactLead": "Termékkérdések vagy rendelési segítség — írj emailt vagy üzenj WhatsAppon.",
+    "contactTitle": "Lépjen kapcsolatba velünk",
+    "contactLead": "Termékkérdések vagy rendelési segítség — írjon e-mailt vagy üzenjen WhatsAppon.",
     "emailButton": "E-mail",
     "whatsappButton": "WhatsApp",
     "b2bKicker": "B2B",
     "b2bTitle": "Programok és nagykereskedelem",
     "b2bLead": "Amikor készen áll, itt adhatja meg alapító történetét, gyártási földrajzát, garancia szabályzatát és fenntarthatósági vállalásait.",
     "wholesaleLink": "Nagykereskedelem felfedezése",
-    "mailSubject": "Kérdés a HUMPBUCK-kal kapcsolatban",
+    "mailSubject": "Kérdés a HUMPBUCK-ról",
     "storyKicker": "Rólunk",
-    "storyP1": "Gyerekkorom óta szeretem a mechanikus órákat. Akkor szegények voltunk, és nem engedhettem meg magamnak. Mégis lenyűgözött, hogyan illeszkednek a finom fogaskerekek és hogyan tartják pontosan az időt az összetett mechanikus szerkezetek.",
-    "storyP2": "Most felépítettem ezt a mechanikus óra weboldalt. Célom minőségi, megfizethető mechanikus órákat kínálni mindenkinek, és teljesíteni gyermekkori álmomat, hogy legyen egy sajátom. Ne hagyd abba az álmaid üldözését."
+    "storyP1": "Gyerekként figyeltem apámat — egy mester órajavítót — ahogy iskola után számtalan órát kelt életre. Miközben minden mérföldkövemnél mellettem maradt, ezek az órák útitársaim minden lépését jelölték. Ott született meg a kötelékünk. Az idő és a társaság az élet legértékesebb ajándékai. Most azt remélem, kézműves HUMPBUCK óráim melletted maradnak, és tanúi lesznek legjelentősebb pillanataidnak.",
+    "storyP2": "",
+    "addressLabel": "Cím",
+    "telLabel": "Tel.",
+    "emailLabel": "E-mail",
+    "contactTrustNote": "1–2 munkanapon belül válaszolunk. Sürgős rendelési segítséghez a WhatsApp a leggyorsabb.",
+    "businessHoursLabel": "Nyitvatartás",
+    "businessHoursWeekdays": "Hétfő – szombat: 9:00 – 18:00",
+    "businessHoursSunday": "Vasárnap: zárva",
+    "businessHoursTimezone": "GMT+8 (kínai standard idő)"
   },
   "VideoTutorials": {
     "metaTitle": "Videó útmutató",
@@ -835,6 +912,22 @@
   },
   "BlogPage": {
     "metaDescription": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
-    "intro": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait."
+    "intro": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
+    "metaTitle": "Blog — HUMPBUCK",
+    "ogTitle": "Blog — HUMPBUCK",
+    "kicker": "Napló",
+    "title": "Blog",
+    "empty": "Hamarosan új bejegyzések. Nézzen vissza később.",
+    "readMore": "Cikk olvasása"
+  },
+  "DisplayCurrency": {
+    "label": "Megjelenített pénznem",
+    "usdChargeNotice": "Az árak USD-ben jelennek meg. A kártyáját USD-ben terheljük a fizetéskor."
+  },
+  "BlogArticle": {
+    "kicker": "Napló",
+    "backToBlog": "Vissza a bloghoz",
+    "notFoundTitle": "A cikk nem található",
+    "viewProduct": "Termék megtekintése"
   }
 }

@@ -1,7 +1,9 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { StorefrontImage } from "@/components/site/storefront-image";
+import { resolveHomeCmsText } from "@/lib/site-home-cms-locale";
 import { getSiteHomeContent } from "@/lib/site-home-content-queries";
 import { resolveMomentsCardImageUrls } from "@/lib/site-home-content";
+import { homeMomentsCard1ImageUrls, homeMomentsCard2ImageUrls } from "@/lib/r2";
 
 type MomentsCard = {
   title: string;
@@ -61,7 +63,8 @@ function MomentsMobileCard({ card }: { card: MomentsCard }) {
 }
 
 export async function HomeMomentsSection() {
-  const [t, content] = await Promise.all([
+  const [locale, t, content] = await Promise.all([
+    getLocale(),
     getTranslations("Home"),
     getSiteHomeContent(),
   ]);
@@ -69,31 +72,39 @@ export async function HomeMomentsSection() {
   const card1Images = resolveMomentsCardImageUrls(
     content.momentsCard1DesktopImageUrl,
     content.momentsCard1MobileImageUrl,
+    homeMomentsCard1ImageUrls(),
   );
   const card2Images = resolveMomentsCardImageUrls(
     content.momentsCard2DesktopImageUrl,
     content.momentsCard2MobileImageUrl,
+    homeMomentsCard2ImageUrls(),
   );
 
   const cards: MomentsCard[] = [
     {
-      title: content.momentsCard1Title || t("momentsCard1Title"),
-      description:
-        content.momentsCard1Description || t("momentsCard1Description"),
+      title: resolveHomeCmsText(locale, content.momentsCard1Title, t("momentsCard1Title")),
+      description: resolveHomeCmsText(
+        locale,
+        content.momentsCard1Description,
+        t("momentsCard1Description"),
+      ),
       desktopSrc: card1Images.desktop,
       mobileSrc: card1Images.mobile,
     },
     {
-      title: content.momentsCard2Title || t("momentsCard2Title"),
-      description:
-        content.momentsCard2Description || t("momentsCard2Description"),
+      title: resolveHomeCmsText(locale, content.momentsCard2Title, t("momentsCard2Title")),
+      description: resolveHomeCmsText(
+        locale,
+        content.momentsCard2Description,
+        t("momentsCard2Description"),
+      ),
       desktopSrc: card2Images.desktop,
       mobileSrc: card2Images.mobile,
     },
   ];
 
-  const heading = content.momentsHeading || t("momentsHeading");
-  const lead = content.momentsLead || t("momentsLead");
+  const heading = resolveHomeCmsText(locale, content.momentsHeading, t("momentsHeading"));
+  const lead = resolveHomeCmsText(locale, content.momentsLead, t("momentsLead"));
 
   return (
     <section

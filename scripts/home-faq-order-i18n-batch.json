@@ -1,0 +1,46 @@
+{
+  "de": {
+    "Home.certaintyOrderTitle": "Wie wird meine Bestellung bearbeitet?",
+    "Home.certaintyOrderBody": "Nach Abschluss Ihrer Zahlung sehen Sie eine Bestätigung der erfolgreichen Zahlung und erhalten eine Bestätigungs-E-Mail mit Bestellnummer, Produktdetails, Lieferadresse und Kontakt zum Kundenservice.\n\nIhre Bestellung wird in der Regel innerhalb von 1–2 Werktagen versendet. Sobald sie versendet wurde, erhalten Sie eine weitere E-Mail mit Sendungsverfolgungsnummer und Tracking-Website, damit Sie Ihr Paket jederzeit nachverfolgen können."
+  },
+  "es": {
+    "Home.certaintyOrderTitle": "¿Cómo se procesa mi pedido?",
+    "Home.certaintyOrderBody": "Tras completar el pago, verá una confirmación de pago exitoso y recibirá un correo con su número de pedido, detalles del producto, dirección de envío y contacto de atención al cliente.\n\nSu pedido suele enviarse en 1–2 días laborables. Una vez enviado, recibirá otro correo con el número de seguimiento y el sitio web de tracking para seguir su paquete con tranquilidad."
+  },
+  "fr": {
+    "Home.certaintyOrderTitle": "Comment ma commande est-elle traitée ?",
+    "Home.certaintyOrderBody": "Une fois votre paiement effectué, vous verrez une confirmation de paiement réussi et recevrez un e-mail de confirmation avec votre numéro de commande, les détails du produit, l'adresse de livraison et les coordonnées du service client.\n\nVotre commande est généralement expédiée sous 1 à 2 jours ouvrés. Une fois expédiée, vous recevrez un autre e-mail avec votre numéro de suivi et le site de suivi, pour suivre votre colis en toute sérénité."
+  },
+  "he": {
+    "Home.certaintyOrderTitle": "איך מעובדת ההזמנה שלי?",
+    "Home.certaintyOrderBody": "לאחר השלמת התשלום תראו אישור תשלום מוצלח ותקבלו אימייל עם מספר ההזמנה, פרטי המוצר, כתובת המשלוח ופרטי שירות הלקוחות.\n\nההזמנה בדרך כלל נשלחת תוך 1–2 ימי עסקים. לאחר השליחה תקבלו אימייל נוסף עם מספר מעקב וקישור למעקב, כדי שתוכלו לעקוב אחר החבילה בראש שקט."
+  },
+  "hu": {
+    "Home.certaintyOrderTitle": "Hogyan dolgozzuk fel a rendelésemet?",
+    "Home.certaintyOrderBody": "A fizetés befejezése után megjelenik a sikeres fizetés visszaigazolása, és e-mailt kap rendelésszámmal, termékadatokkal, szállítási címmel és ügyfélszolgálati elérhetőséggel.\n\nRendelését általában 1–2 munkanapon belül feladjuk. Feladás után újabb e-mail érkezik a nyomkövetési számmal és weboldallal, hogy nyugodtan követhesse csomagját."
+  },
+  "it": {
+    "Home.certaintyOrderTitle": "Come viene elaborato il mio ordine?",
+    "Home.certaintyOrderBody": "Dopo il pagamento vedrai una conferma di pagamento riuscito e riceverai un'email con numero d'ordine, dettagli prodotto, indirizzo di spedizione e contatti del servizio clienti.\n\nL'ordine viene di solito spedito entro 1–2 giorni lavorativi. Una volta spedito, riceverai un'altra email con numero di tracking e sito di tracciamento, per seguire il pacco con tranquillità."
+  },
+  "ko": {
+    "Home.certaintyOrderTitle": "주문은 어떻게 처리되나요?",
+    "Home.certaintyOrderBody": "결제가 완료되면 결제 성공 확인 화면이 표시되고, 주문 번호·상품 정보·배송지·고객 지원 연락처가 포함된 확인 이메일을 받습니다.\n\n주문은 보통 1–2영업일 이내에 발송됩니다. 발송 후 추적 번호와 추적 사이트 URL이 담긴 이메일을 보내 드려 배송 상태를 안심하고 확인하실 수 있습니다."
+  },
+  "nl": {
+    "Home.certaintyOrderTitle": "Hoe wordt mijn bestelling verwerkt?",
+    "Home.certaintyOrderBody": "Na uw betaling ziet u een bevestiging van geslaagde betaling en ontvangt u een bevestigingsmail met bestelnummer, productdetails, verzendadres en contactgegevens van de klantenservice.\n\nUw bestelling wordt meestal binnen 1–2 werkdagen verzonden. Na verzending ontvangt u nog een e-mail met trackingnummer en trackingwebsite, zodat u uw pakket rustig kunt volgen."
+  },
+  "pt": {
+    "Home.certaintyOrderTitle": "Como o meu pedido é processado?",
+    "Home.certaintyOrderBody": "Após concluir o pagamento, verá uma confirmação de pagamento bem-sucedido e receberá um e-mail com o número do pedido, detalhes do produto, morada de envio e contacto do apoio ao cliente.\n\nO pedido é normalmente enviado em 1–2 dias úteis. Depois de enviado, receberá outro e-mail com o número de rastreio e o site de tracking, para acompanhar a encomenda com tranquilidade."
+  },
+  "ru": {
+    "Home.certaintyOrderTitle": "Как обрабатывается мой заказ?",
+    "Home.certaintyOrderBody": "После оплаты вы увидите подтверждение успешного платежа и получите письмо с номером заказа, сведениями о товаре, адресом доставки и контактами службы поддержки.\n\nЗаказ обычно отправляется в течение 1–2 рабочих дней. После отправки вы получите ещё одно письмо с номером отслеживания и ссылкой на сайт отслеживания, чтобы спокойно следить за посылкой."
+  },
+  "ar": {
+    "Home.certaintyOrderTitle": "كيف تتم معالجة طلبي؟",
+    "Home.certaintyOrderBody": "بعد إتمام الدفع، ستظهر لك رسالة تأكيد ناجحة وستتلقى بريدًا إلكترونيًا يتضمن رقم الطلب وتفاصيل المنتج وعنوان الشحن وبيانات خدمة العملاء.\n\nيُشحن طلبك عادةً خلال 1–2 أيام عمل. بعد الشحن، ستتلقى بريدًا آخر برقم التتبع وموقع التتبع لمتابعة طردك باطمئنان."
+  }
+}

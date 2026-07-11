@@ -116,7 +116,7 @@
     "trustLaunchTitle": "Поддержка запуска",
     "trustLaunchBody": "Заводские программы для растущих часовых брендов.",
     "newsletterKicker": "Новости",
-    "newsletterTitle": "Пополнения DIGI-TEMP и новинки RM-TONNEAU",
+    "newsletterTitle": "НОВЫЕ ПОСТУПЛЕНИЯ ЧАСОВ",
     "newsletterBody": "Часы ручной работы, созданные быть рядом с вами и свидетельствовать значимые моменты жизни.",
     "mechanicalHeroBadge": "Подарки · Время и любовь",
     "mechanicalHeroTitle": "HUMPBUCK Watches",
@@ -155,17 +155,49 @@
     "socialYoutubeAria": "HUMPBUCK на YouTube",
     "socialTiktokAria": "HUMPBUCK в TikTok",
     "certaintyKicker": "FAQ",
-    "certaintyTitle": "Frequently asked questions",
+    "certaintyTitle": "Часто задаваемые вопросы",
     "certaintyLead": "",
-    "certaintyCurrencyTitle": "What currency are prices shown in?",
-    "certaintyCurrencyBody": "All prices are listed in US dollars. Use the currency control at the bottom-left of your screen for a live reference conversion. Your card or wallet is charged in USD at checkout.",
-    "certaintyShippingTitle": "Do you ship to my country?",
-    "certaintyShippingBody": "We ship to most countries worldwide. Orders are processed within three business days; tracked delivery typically arrives in 7–21 days depending on your region. Any shipping fee is calculated and shown before you pay.",
-    "certaintyShippingLink": "Shipping & tax policy",
-    "certaintyPaymentsTitle": "Which payment methods do you accept?",
-    "certaintyPaymentsBody": "Pay with PayPal, major credit and debit cards, Apple Pay, or Google Pay — processed through trusted payment partners with encrypted checkout.",
-    "certaintySupportPrompt": "Have a question that is not covered here? No problem.",
-    "certaintySupportCta": "Contact our support team"
+    "certaintyCurrencyTitle": "В какой валюте указаны цены?",
+    "certaintyCurrencyBody": "Все цены указаны в долларах США. Используйте переключатель валюты внизу слева экрана для справочного пересчёта в реальном времени. С карты или кошелька при оплате списываются USD.",
+    "certaintyShippingTitle": "Доставляете ли вы в мою страну?",
+    "certaintyShippingBody": "Мы доставляем в большинство стран мира. Заказы обрабатываются в течение трёх рабочих дней; отслеживаемая доставка обычно приходит за 7–21 день в зависимости от региона. Стоимость доставки рассчитывается и показывается до оплаты.",
+    "certaintyShippingLink": "Политика доставки и налогов",
+    "certaintyPaymentsTitle": "Какие способы оплаты вы принимаете?",
+    "certaintyPaymentsBody": "Оплачивайте через PayPal, основные кредитные и дебетовые карты, Apple Pay или Google Pay — через надёжных платёжных партнёров с зашифрованным оформлением заказа.",
+    "certaintySupportPrompt": "Есть вопрос, которого здесь нет? Без проблем.",
+    "certaintySupportCta": "Связаться с поддержкой",
+    "momentsHeading": "Моменты, которые стоит помнить",
+    "momentsLead": "Некоторые моменты меняют всё. Наши часы рядом во всех них.",
+    "momentsCard1Title": "Важные моменты",
+    "momentsCard1Description": "Для решений, праздников и ночей, которые остаются в памяти.",
+    "momentsCard2Title": "Повседневные воспоминания",
+    "momentsCard2Description": "Для путешествий, ритуалов и мелочей, которые остаются с вами.",
+    "recommendedAdd": "Добавить",
+    "recommendedSliderPrev": "Предыдущие товары",
+    "recommendedSliderNext": "Следующие товары",
+    "recommendedSliderScroll": "Прокрутить товары",
+    "homeBlogTitle": "Из журнала",
+    "homeBlogViewAll": "Читать все статьи",
+    "homeBlogCarouselPrevious": "Предыдущие статьи",
+    "homeBlogCarouselNext": "Следующие статьи",
+    "allProductsHeading": "Все товары",
+    "sectionNoProducts": "Нет доступных товаров.",
+    "categoryRowKicker": "Искать по",
+    "featuredPrev": "Назад",
+    "featuredNext": "Далее",
+    "featuredPage": "Страница {page} из {total}",
+    "couponTitle": "Получить купон",
+    "couponKicker": "Размышление",
+    "couponQuestion": "Что самое ценное в жизни?",
+    "couponInputPlaceholder": "Поделитесь своими мыслями…",
+    "couponConfirm": "Отправить",
+    "couponRewardLabel": "Ваш купон",
+    "couponNoCodeMessage": "Ваш купон появится здесь, когда купон на главной странице будет настроен в админке.",
+    "couponTaglineLine1": "У жизни нет стандартного ответа.",
+    "couponTaglineLine2": "Живите по-своему.",
+    "couponModalClose": "Закрыть",
+    "certaintyOrderTitle": "Как обрабатывается мой заказ?",
+    "certaintyOrderBody": "После оплаты вы увидите подтверждение успешного платежа и получите письмо с номером заказа, сведениями о товаре, адресом доставки и контактами службы поддержки.\n\nЗаказ обычно отправляется в течение 1–2 рабочих дней. После отправки вы получите ещё одно письмо с номером отслеживания и ссылкой на сайт отслеживания, чтобы спокойно следить за посылкой."
   },
   "Newsletter": {
     "emailLabel": "Эл. почта",
@@ -259,7 +291,8 @@
     "decreaseQtyAria": "Уменьшить количество",
     "removeFromBagAria": "Удалить из корзины",
     "increaseQtyAria": "Увеличить количество",
-    "subtotal": "Промежуточный итог"
+    "subtotal": "Промежуточный итог",
+    "paypalExpressError": "PayPal Express недоступен — используйте Checkout."
   },
   "Checkout": {
     "loading": "Загрузка оформления заказа…",
@@ -293,7 +326,27 @@
     "draftOrderFailed": "Не удалось создать черновик заказа",
     "orderLine": "{name} × {qty}",
     "billingTitle": "Адрес для счёта",
-    "shippingTitle": "Адрес доставки"
+    "shippingTitle": "Адрес доставки",
+    "billSameAsShipping": "Использовать адрес доставки как платёжный",
+    "contactHeading": "Эл. почта",
+    "deliveryTitle": "Доставка",
+    "expressCheckout": "Экспресс-оплата",
+    "orDivider": "ИЛИ",
+    "paypalExpressError": "PayPal недоступен — попробуйте другой способ оплаты.",
+    "stripePublishableMissing": "Добавьте NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY (pk_…) в окружение — найдите в Stripe Dashboard → Developers → API keys.",
+    "payWithCard": "Оплатить картой",
+    "payNow": "Оплатить сейчас",
+    "loadingPaymentForm": "Загрузка защищённой формы оплаты…",
+    "paypalPrefillNotice": "Мы заполнили ваш адрес из PayPal. Проверьте доставку и итог перед оплатой.",
+    "paymentHeading": "Оплата",
+    "paymentSecureNote": "Все транзакции защищены и зашифрованы.",
+    "paymentCardAndWallets": "Банковская карта",
+    "paymentCardAndWalletsHint": "Карта, Apple Pay или Google Pay",
+    "paymentPayPalHint": "Оплата с баланса PayPal или привязанной карты",
+    "paymentPayPalContinueHint": "Вы войдёте в PayPal, чтобы подтвердить оплату и доставку.",
+    "paymentPreviewHint": "Можно ввести платёжные данные сейчас. Заполните адрес доставки выше перед оплатой.",
+    "completeDetailsToPay": "Заполните эл. почту, адрес доставки и способ доставки перед оплатой.",
+    "paymentTimeout": "Истекло время ожидания платёжного шлюза — попробуйте снова"
   },
   "CheckoutAddress": {
     "firstName": "Имя",
@@ -322,7 +375,9 @@
       "postalInvalidFormat": "Введите действительный почтовый индекс для выбранной страны",
       "postalNotFound": "Почтовый индекс не найден — проверьте опечатки",
       "postalStateMismatch": "Почтовый индекс не соответствует выбранной области / провинции"
-    }
+    },
+    "stateOptional": "Область / провинция (необязательно)",
+    "stateOptionalPlaceholder": "Район, регион и т. д. (необязательно)"
   },
   "CheckoutShipping": {
     "feeTitle": "Стоимость доставки",
@@ -370,7 +425,9 @@
     "chatWhatsApp": "Написать в WhatsApp",
     "chatWhatsAppAbout": "WhatsApp о {product}",
     "whatsappPrefillProduct": "Здравствуйте, у меня вопрос о {product}:\n{url}",
-    "whatsappPrefillPage": "Здравствуйте, у меня вопрос об этой странице:\n{url}"
+    "whatsappPrefillPage": "Здравствуйте, у меня вопрос об этой странице:\n{url}",
+    "cardAdd": "Добавить",
+    "cardFiveStarReviews": "{count} отзывов на пять звёзд"
   },
   "Success": {
     "documentTitle": "Заказ подтверждён · HUMPBUCK",
@@ -404,7 +461,12 @@
     "reviewPhotoAlt": "Фото отзыва — {name}",
     "followUpPhotoAlt": "Фото дополнения — {name}",
     "writeReview": "Написать отзыв",
-    "writeReviewHint": "(у вас есть завершённая покупка этого товара)"
+    "writeReviewHint": "(у вас есть завершённая покупка этого товара)",
+    "purchaseRequiredHint": "Только покупатели этого товара могут оставить отзыв.",
+    "confirmReceiptRequiredHint": "Подтвердите получение заказа перед написанием отзыва.",
+    "reviewAlreadySubmitted": "Вы уже оставили отзыв на этот товар.",
+    "itemType": "Тип товара:",
+    "showMore": "Показать ещё {count} отзывов"
   },
   "TaxId": {
     "fallback": {
@@ -674,7 +736,12 @@
     "editShipBack": "Назад",
     "editShipSaving": "Сохранение…",
     "editShipSave": "Сохранить адрес доставки",
-    "editShipCancel": "Отмена"
+    "editShipCancel": "Отмена",
+    "detailReviewPrompt": "Вы можете написать отзыв о товарах в этом заказе.",
+    "detailReviewButton": "Написать отзыв",
+    "detailReviewChooseProduct": "Товар",
+    "detailReviewConfirmFirstTitle": "Сначала подтвердите получение",
+    "detailReviewConfirmFirstBody": "Подтвердите, что вы получили этот заказ, перед написанием отзыва."
   },
   "AccountCancel": {
     "whatsappLink": "WhatsApp {display}",
@@ -736,7 +803,9 @@
     "appendPlaceholder": "Мысли после дальнейшего использования, доставка, поддержка…",
     "appendPhotosHint": "Необязательные фото изменяются в размере, сжимаются и сохраняются как WebP перед загрузкой. До 4 изображений, до 2 МБ каждое (обычно 0,6–1,5 МБ).",
     "appendSubmitting": "Отправка…",
-    "appendSubmit": "Опубликовать дополнение"
+    "appendSubmit": "Опубликовать дополнение",
+    "thanksPendingBody": "Спасибо! Ваш отзыв отправлен и появится на странице товара после одобрения.",
+    "emojiLabel": "Добавить эмодзи"
   },
   "AccountSubscribe": {
     "kicker": "Подписка",
@@ -800,15 +869,15 @@
     "factoryAsideBefore": "Производство в",
     "factoryAsideAfter": " — хаб OEM-сборки часов. Проверьте регион на карте или откройте Google Maps для маршрута.",
     "factoryRegion": "Гуанчжоу, провинция Гуандун",
-    "mapIframeTitle": "Карта — Гуанчжоу, Китай",
-    "mapFallback": "Обзор региона Гуанчжоу. Используйте «Открыть в Google Maps» для маршрута и спутникового вида.",
+    "mapIframeTitle": "HUMPBUCK — Чжуншань, Гуандун, Китай",
+    "mapFallback": "Предпросмотр региональной карты. Используйте «Открыть в Google Maps» для маршрута и спутникового вида.",
     "openMapsLabel": "Открыть в Google Maps",
     "videoAriaLabel": "Промовидео часового завода HUMPBUCK",
     "videoCaption": "Промовидео часового завода HUMPBUCK",
     "contactKicker": "Контакты",
-    "contactTitle": "Связаться",
-    "contactLead": "Вопросы о товарах или помощь с заказом — напишите на email или в WhatsApp.",
-    "emailButton": "Почта",
+    "contactTitle": "Свяжитесь с нами",
+    "contactLead": "Вопросы о товарах или помощь с заказом — напишите на почту или в WhatsApp.",
+    "emailButton": "E-mail",
     "whatsappButton": "WhatsApp",
     "b2bKicker": "B2B",
     "b2bTitle": "Программы и опт",
@@ -816,8 +885,16 @@
     "wholesaleLink": "Смотреть опт",
     "mailSubject": "Вопрос о HUMPBUCK",
     "storyKicker": "О нас",
-    "storyP1": "Я люблю механические часы с детства. Тогда семья была бедной, и я не мог себе их позволить. Но меня завораживало, как переплетаются шестерни и как сложные механические структуры держат точное время.",
-    "storyP2": "Теперь я создал этот сайт механических часов. Моя цель — предложить качественные доступные механические часы каждому и исполнить детскую мечту иметь свои часы. Продолжайте мечтать."
+    "storyP1": "В детстве я наблюдал, как мой отец — мастер по ремонту часов — после школы возвращал к жизни бесчисленные механизмы. Оставаясь рядом со мной на каждом этапе пути, эти часы отмечали каждый шаг моего путешествия. Там родилась наша связь. Время и сопровождение — самые драгоценные дары жизни. Теперь я надеюсь, что мои часы HUMPBUCK ручной работы останутся рядом с вами и станут свидетелями ваших самых значимых моментов.",
+    "storyP2": "",
+    "addressLabel": "Адрес",
+    "telLabel": "Тел.",
+    "emailLabel": "Эл. почта",
+    "contactTrustNote": "Отвечаем в течение 1–2 рабочих дней. Для срочной помощи с заказом быстрее всего WhatsApp.",
+    "businessHoursLabel": "Часы работы",
+    "businessHoursWeekdays": "Понедельник – суббота: 9:00 – 18:00",
+    "businessHoursSunday": "Воскресенье: выходной",
+    "businessHoursTimezone": "GMT+8 (китайское стандартное время)"
   },
   "VideoTutorials": {
     "metaTitle": "Видеоинструкции",
@@ -835,6 +912,22 @@
   },
   "BlogPage": {
     "metaDescription": "Часы ручной работы, созданные быть рядом с вами и свидетельствовать значимые моменты жизни.",
-    "intro": "Часы ручной работы, созданные быть рядом с вами и свидетельствовать значимые моменты жизни."
+    "intro": "Часы ручной работы, созданные быть рядом с вами и свидетельствовать значимые моменты жизни.",
+    "metaTitle": "Блог — HUMPBUCK",
+    "ogTitle": "Блог — HUMPBUCK",
+    "kicker": "Журнал",
+    "title": "Блог",
+    "empty": "Скоро появятся новые публикации. Загляните позже.",
+    "readMore": "Читать статью"
+  },
+  "DisplayCurrency": {
+    "label": "Валюта отображения",
+    "usdChargeNotice": "Цены указаны в USD. С вашей карты будет списано USD при оформлении заказа."
+  },
+  "BlogArticle": {
+    "kicker": "Журнал",
+    "backToBlog": "Назад к блогу",
+    "notFoundTitle": "Статья не найдена",
+    "viewProduct": "Смотреть товар"
   }
 }

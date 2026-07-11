@@ -116,10 +116,10 @@
     "trustLaunchTitle": "ローンチ支援",
     "trustLaunchBody": "成長中の時計ブランド向け工場プログラム。",
     "newsletterKicker": "最新情報",
-    "newsletterTitle": "DIGI-TEMP 再入荷 & RM-TONNEAU 新着",
+    "newsletterTitle": "新作ウォッチ入荷",
     "newsletterBody": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
     "mechanicalHeroBadge": "ギフト · 時間と愛",
-    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroTitle": "HUMPBUCK ウォッチ",
     "mechanicalHeroLead": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
     "mechanicalHeroChipAutomatic": "クラフトマンシップ",
     "mechanicalHeroChipSkeleton": "マイルストーン",
@@ -155,17 +155,49 @@
     "socialYoutubeAria": "YouTubeのHUMPBUCK",
     "socialTiktokAria": "TikTokのHUMPBUCK",
     "certaintyKicker": "FAQ",
-    "certaintyTitle": "Frequently asked questions",
+    "certaintyTitle": "よくある質問",
     "certaintyLead": "",
-    "certaintyCurrencyTitle": "What currency are prices shown in?",
-    "certaintyCurrencyBody": "All prices are listed in US dollars. Use the currency control at the bottom-left of your screen for a live reference conversion. Your card or wallet is charged in USD at checkout.",
-    "certaintyShippingTitle": "Do you ship to my country?",
-    "certaintyShippingBody": "We ship to most countries worldwide. Orders are processed within three business days; tracked delivery typically arrives in 7–21 days depending on your region. Any shipping fee is calculated and shown before you pay.",
-    "certaintyShippingLink": "Shipping & tax policy",
-    "certaintyPaymentsTitle": "Which payment methods do you accept?",
-    "certaintyPaymentsBody": "Pay with PayPal, major credit and debit cards, Apple Pay, or Google Pay — processed through trusted payment partners with encrypted checkout.",
-    "certaintySupportPrompt": "Have a question that is not covered here? No problem.",
-    "certaintySupportCta": "Contact our support team"
+    "certaintyCurrencyTitle": "価格はどの通貨で表示されますか？",
+    "certaintyCurrencyBody": "すべての価格は米ドルで表示されます。画面左下の通貨コントロールでリアルタイムの参考換算ができます。お支払い時はカードまたはウォレットがUSDで請求されます。",
+    "certaintyShippingTitle": "私の国に配送しますか？",
+    "certaintyShippingBody": "はい — 世界各地へ配送しています。ご注文は3営業日以内に処理し、追跡付き配送は地域により通常7〜21日で届きます。配送料（該当する場合）はお支払い前に計算され、チェックアウト画面に表示されます。多くの地域では標準配送が無料です。\n\n\n• 北米・カリブ — カナダ、コスタリカ、ドミニカ共和国、エルサルバドル、グアテマラ、ホンジュラス、メキシコ、ニカラグア、パナマ、プエルトリコ、トリニダード・トバゴ、アメリカ合衆国\n\n• 南米 — アルゼンチン、ボリビア、ブラジル、チリ、コロンビア、エクアドル、パラグアイ、ペルー、ウルグアイ\n\n• ヨーロッパ — アルバニア、オーストリア、ベルギー、ボスニア・ヘルツェゴビナ、ブルガリア、クロアチア、キプロス、チェコ、デンマーク、エストニア、フィンランド、フランス、ドイツ、ギリシャ、ハンガリー、アイスランド、アイルランド、イタリア、ラトビア、リトアニア、ルクセンブルク、マルタ、モルドバ、モンテネグロ、オランダ、北マケドニア、ノルウェー、ポーランド、ポルトガル、ルーマニア、ロシア、セルビア、スロバキア、スロベニア、スペイン、スウェーデン、スイス、ウクライナ、イギリス\n\n• 中東 — バーレーン、イラク、イスラエル、ヨルダン、クウェート、オマーン、カタール、サウジアラビア、アラブ首長国連邦\n\n• アジア — 香港、インド、日本、カザフスタン、マレーシア、モンゴル、フィリピン、シンガポール、韓国、スリランカ、タイ、ベトナム\n\n• アフリカ — アンゴラ、ガーナ、ケニア、モロッコ、ナイジェリア、レユニオン、ルワンダ、南アフリカ、タンザニア、ウガンダ\n\n• オセアニア — オーストラリア、ニュージーランド\n\n上記にない国でも、チェックアウト時に DHL、FedEx、UPS、USPS などのエクスプレス便が利用できる場合があります。一部地域では追加の通関情報（例：インドの税 ID や KYC 書類）が必要になることがあり、その際はご案内します。",
+    "certaintyShippingLink": "配送・税金ポリシー",
+    "certaintyPaymentsTitle": "どのお支払い方法に対応していますか？",
+    "certaintyPaymentsBody": "PayPal、主要なクレジット・デビットカード、Apple Pay、Google Payでお支払いいただけます — 信頼できる決済パートナーによる暗号化チェックアウトです。",
+    "certaintyOrderTitle": "ご注文はどのように処理されますか？",
+    "certaintyOrderBody": "お支払い完了後、支払い成功の確認画面が表示され、注文番号・商品詳細・配送先・カスタマーサービス連絡先を記載した確認メールが届きます。\n\nご注文は通常1〜2営業日以内に発送します。発送後は追跡番号と追跡サイトのURLを記載したメールをお送りするため、配送状況を安心してご確認いただけます。",
+    "certaintySupportPrompt": "ここにないご質問がありますか？お気軽にどうぞ。",
+    "certaintySupportCta": "サポートチームに連絡",
+    "momentsHeading": "記憶に残る瞬間",
+    "momentsLead": "人生を変える瞬間があります。私たちの時計は、そのすべてに寄り添います。",
+    "momentsCard1Title": "節目の瞬間",
+    "momentsCard1Description": "決断、祝福、そして忘れられない夜のために。",
+    "momentsCard2Title": "日常の思い出",
+    "momentsCard2Description": "旅、習慣、そして心に残る小さなことのために。",
+    "recommendedAdd": "追加",
+    "recommendedSliderPrev": "前の商品",
+    "recommendedSliderNext": "次の商品",
+    "recommendedSliderScroll": "商品をスクロール",
+    "homeBlogTitle": "ジャーナルより",
+    "homeBlogViewAll": "すべての記事を読む",
+    "homeBlogCarouselPrevious": "前の記事",
+    "homeBlogCarouselNext": "次の記事",
+    "allProductsHeading": "すべての商品",
+    "sectionNoProducts": "利用可能な商品はありません。",
+    "categoryRowKicker": "検索",
+    "featuredPrev": "前へ",
+    "featuredNext": "次へ",
+    "featuredPage": "{page} / {total} ページ",
+    "couponTitle": "クーポンを取得",
+    "couponKicker": "思索",
+    "couponQuestion": "人生で最も大切なものは何ですか？",
+    "couponInputPlaceholder": "あなたの考えを共有してください…",
+    "couponConfirm": "送信",
+    "couponRewardLabel": "クーポンコード",
+    "couponNoCodeMessage": "管理画面でホームページ用クーポンが設定されると、ここに表示されます。",
+    "couponTaglineLine1": "人生に標準的な答えはありません。",
+    "couponTaglineLine2": "自分のやり方で生きてください。",
+    "couponModalClose": "閉じる"
   },
   "Newsletter": {
     "emailLabel": "メール",
@@ -259,7 +291,8 @@
     "decreaseQtyAria": "数量を減らす",
     "removeFromBagAria": "バッグから削除",
     "increaseQtyAria": "数量を増やす",
-    "subtotal": "小計"
+    "subtotal": "小計",
+    "paypalExpressError": "PayPal Express は利用できません — Checkout をご利用ください。"
   },
   "Checkout": {
     "loading": "チェックアウトを読み込み中…",
@@ -293,7 +326,27 @@
     "draftOrderFailed": "下書き注文を作成できません",
     "orderLine": "{name} × {qty}",
     "billingTitle": "請求先住所",
-    "shippingTitle": "配送先住所"
+    "shippingTitle": "配送先住所",
+    "billSameAsShipping": "配送先住所を請求先住所として使用",
+    "contactHeading": "メール",
+    "deliveryTitle": "配送",
+    "expressCheckout": "エクスプレス決済",
+    "orDivider": "または",
+    "paypalExpressError": "PayPal は利用できません — 別のお支払い方法をお試しください。",
+    "stripePublishableMissing": "環境に NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY (pk_…) を追加してください — Stripe Dashboard → Developers → API keys で確認できます。",
+    "payWithCard": "カードで支払う",
+    "payNow": "今すぐ支払う",
+    "loadingPaymentForm": "安全な決済フォームを読み込み中…",
+    "paypalPrefillNotice": "PayPal から住所を入力しました。お支払い前に配送と合計をご確認ください。",
+    "paymentHeading": "お支払い",
+    "paymentSecureNote": "すべての取引は安全に暗号化されています。",
+    "paymentCardAndWallets": "クレジットカード",
+    "paymentCardAndWalletsHint": "カード、Apple Pay、Google Pay",
+    "paymentPayPalHint": "PayPal 残高または連携カードで支払い",
+    "paymentPayPalContinueHint": "PayPal にサインインして支払いと配送を確認します。",
+    "paymentPreviewHint": "今すぐお支払い情報を入力できます。お支払い前に上の配送先住所を完了してください。",
+    "completeDetailsToPay": "お支払い前にメール、配送先住所、配送方法を完了してください。",
+    "paymentTimeout": "決済ゲートウェイがタイムアウトしました — もう一度お試しください"
   },
   "CheckoutAddress": {
     "firstName": "名",
@@ -322,7 +375,9 @@
       "postalInvalidFormat": "選択した国に有効な郵便番号を入力してください",
       "postalNotFound": "この郵便番号は見つかりませんでした。入力ミスがないかご確認ください",
       "postalStateMismatch": "この郵便番号は選択した都道府県 / 州と一致しません"
-    }
+    },
+    "stateOptional": "都道府県（任意）",
+    "stateOptionalPlaceholder": "郡、地域など（任意）"
   },
   "CheckoutShipping": {
     "feeTitle": "配送料",
@@ -370,7 +425,9 @@
     "chatWhatsApp": "WhatsApp で相談",
     "chatWhatsAppAbout": "{product} について WhatsApp で相談",
     "whatsappPrefillProduct": "こんにちは、{product} について質問があります：\n{url}",
-    "whatsappPrefillPage": "こんにちは、このページについて質問があります：\n{url}"
+    "whatsappPrefillPage": "こんにちは、このページについて質問があります：\n{url}",
+    "cardAdd": "追加",
+    "cardFiveStarReviews": "星5つのレビュー {count}件"
   },
   "Success": {
     "documentTitle": "注文確認 · HUMPBUCK",
@@ -404,7 +461,12 @@
     "reviewPhotoAlt": "レビュー写真 — {name}",
     "followUpPhotoAlt": "追記写真 — {name}",
     "writeReview": "レビューを書く",
-    "writeReviewHint": "（この商品の購入完了済み）"
+    "writeReviewHint": "（この商品の購入完了済み）",
+    "purchaseRequiredHint": "この商品を購入したお客様のみレビューを投稿できます。",
+    "confirmReceiptRequiredHint": "レビューを書く前に注文の受取を確認してください。",
+    "reviewAlreadySubmitted": "この商品のレビューはすでに投稿済みです。",
+    "itemType": "商品タイプ：",
+    "showMore": "さらに {count} 件のレビューを表示"
   },
   "TaxId": {
     "fallback": {
@@ -674,7 +736,12 @@
     "editShipBack": "戻る",
     "editShipSaving": "保存中…",
     "editShipSave": "配送先住所を保存",
-    "editShipCancel": "キャンセル"
+    "editShipCancel": "キャンセル",
+    "detailReviewPrompt": "この注文の商品についてレビューを書けます。",
+    "detailReviewButton": "レビューを書く",
+    "detailReviewChooseProduct": "商品",
+    "detailReviewConfirmFirstTitle": "まず受取を確認",
+    "detailReviewConfirmFirstBody": "レビューを書く前に、この注文を受け取ったことを確認してください。"
   },
   "AccountCancel": {
     "whatsappLink": "WhatsApp {display}",
@@ -736,7 +803,9 @@
     "appendPlaceholder": "使用後、配送、サポートについての追加コメント…",
     "appendPhotosHint": "任意の写真はアップロード前に WebP に圧縮されます。最大 4 枚、各 2 MB 未満（通常 0.6–1.5 MB）。",
     "appendSubmitting": "送信中…",
-    "appendSubmit": "追記を投稿"
+    "appendSubmit": "追記を投稿",
+    "thanksPendingBody": "ありがとうございます！レビューを送信しました。承認後に商品ページに表示されます。",
+    "emojiLabel": "絵文字を追加"
   },
   "AccountSubscribe": {
     "kicker": "メール登録",
@@ -800,24 +869,32 @@
     "factoryAsideBefore": "製造拠点：",
     "factoryAsideAfter": "— OEM 時計組立のハブ。地図で地域を確認するか、Google マップでナビゲーション。",
     "factoryRegion": "広東省広州市",
-    "mapIframeTitle": "地図 — 中国・広州",
-    "mapFallback": "広州地域の概要。「Google マップで開く」でルートと衛星画像。",
+    "mapIframeTitle": "HUMPBUCK — 中国・広東省中山市",
+    "mapFallback": "地域マップのプレビュー。「Google マップで開く」でルートと衛星画像をご利用ください。",
     "openMapsLabel": "Google マップで開く",
     "videoAriaLabel": "HUMPBUCK Watch Factory プロモーション動画",
     "videoCaption": "HUMPBUCK Watch Factory プロモーション動画",
     "contactKicker": "お問い合わせ",
-    "contactTitle": "連絡先",
-    "contactLead": "商品の質問や注文のサポート — メールまたはWhatsAppでご連絡ください。",
+    "contactTitle": "お問い合わせ",
+    "contactLead": "商品のご質問やご注文のサポート — メールまたは WhatsApp でご連絡ください。",
     "emailButton": "メール",
     "whatsappButton": "WhatsApp",
     "b2bKicker": "B2B",
     "b2bTitle": "プログラムと卸売",
     "b2bLead": "準備ができたら、創業ストーリー、製造拠点、保証ポリシー、サステナビリティへの取り組みをここに追加。",
     "wholesaleLink": "卸売を見る",
-    "mailSubject": "HUMPBUCK についての質問",
-    "storyKicker": "About",
-    "storyP1": "子供の頃からメカニカルウォッチが好きでした。当時、家は貧しく、買う余裕はありませんでした。それでも、精緻な歯車が噛み合い、複雑な機構が正確な時を刻む様子に完全に魅了されました。",
-    "storyP2": "今、このメカニカルウォッチサイトを築きました。高品質で手の届くメカニカルウォッチをすべての人に届け、子供の頃の夢である「一本持つこと」を叶えるのが目標です。夢を追い続けてください。"
+    "mailSubject": "HUMPBUCK に関するご質問",
+    "storyKicker": "ブランドについて",
+    "storyP1": "幼い頃、放課後に父 — 時計修理の名人 — が数えきれないほどの時計に命を吹き込む姿を見ていました。私の節目のたびにそばにいてくれた父と、その時計たちが旅の一歩一歩を刻んでくれました。そこに私たちの絆が生まれました。時間と寄り添いは、人生で最も大切な贈り物です。今、手作りの HUMPBUCK ウォッチがあなたのそばに留まり、最も意味のある瞬間を共に見届けてくれることを願っています。",
+    "storyP2": "",
+    "addressLabel": "住所",
+    "telLabel": "電話",
+    "emailLabel": "メール",
+    "contactTrustNote": "1〜2営業日以内に返信します。緊急の注文サポートは WhatsApp が最速です。",
+    "businessHoursLabel": "営業時間",
+    "businessHoursWeekdays": "月曜 – 土曜：9:00 – 18:00",
+    "businessHoursSunday": "日曜：休業",
+    "businessHoursTimezone": "GMT+8（中国標準時）"
   },
   "VideoTutorials": {
     "metaTitle": "動画ガイド",
@@ -835,6 +912,22 @@
   },
   "BlogPage": {
     "metaDescription": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
-    "intro": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。"
+    "intro": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
+    "metaTitle": "ブログ — HUMPBUCK",
+    "ogTitle": "ブログ — HUMPBUCK",
+    "kicker": "ジャーナル",
+    "title": "ブログ",
+    "empty": "新しい記事を準備中です。しばらくしてからご確認ください。",
+    "readMore": "記事を読む"
+  },
+  "DisplayCurrency": {
+    "label": "表示通貨",
+    "usdChargeNotice": "価格は USD で表示されます。お支払い時にカードへ USD で請求されます。"
+  },
+  "BlogArticle": {
+    "kicker": "ジャーナル",
+    "backToBlog": "ブログに戻る",
+    "notFoundTitle": "記事が見つかりません",
+    "viewProduct": "商品を見る"
   }
 }

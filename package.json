@@ -12,6 +12,8 @@
     "db:migrate": "npx tsx scripts/migrate-with-env.ts",
     "db:d1:remote": "node scripts/d1-apply-migration.mjs",
     "db:d1:local": "node scripts/d1-apply-migration.mjs --local",
+    "db:d1:pull": "node scripts/d1-pull-remote-to-local.mjs",
+    "audit:i18n": "node scripts/audit-i18n-coverage.mjs",
     "db:seed-reviews": "npx tsx prisma/seed-reviews.ts",
     "db:fix-review-avatars": "npx tsx scripts/fix-reviewer-avatars.ts",
     "db:seed-demo-orders": "npx tsx scripts/seed-admin-demo-orders.ts",

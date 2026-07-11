@@ -1,21 +1,24 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { HomeCouponPrompt } from "@/components/site/home-coupon-prompt";
 import { StorefrontImage } from "@/components/site/storefront-image";
+import { routing } from "@/i18n/routing";
+import { resolveHomeCmsText } from "@/lib/site-home-cms-locale";
 import { resolveCouponTaglineLines } from "@/lib/site-home-content";
 import { getHomepageFeaturedCoupon } from "@/lib/homepage-coupon-queries";
 import { getSiteHomeContent } from "@/lib/site-home-content-queries";
 
 export async function HomeCouponSection() {
-  const [t, content, featuredCoupon] = await Promise.all([
+  const [locale, t, content, featuredCoupon] = await Promise.all([
+    getLocale(),
     getTranslations("Home"),
     getSiteHomeContent(),
     getHomepageFeaturedCoupon(),
   ]);
 
-  const title = content.couponTitle || t("couponTitle");
-  const question = content.couponQuestion || t("couponQuestion");
+  const title = resolveHomeCmsText(locale, content.couponTitle, t("couponTitle"));
+  const question = resolveHomeCmsText(locale, content.couponQuestion, t("couponQuestion"));
   const taglineLines = resolveCouponTaglineLines(
-    content.couponTagline,
+    locale === routing.defaultLocale ? content.couponTagline : "",
     t("couponTaglineLine1"),
     t("couponTaglineLine2"),
   );

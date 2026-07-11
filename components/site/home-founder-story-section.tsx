@@ -1,19 +1,21 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { founderStoryHomePoolWebpUrl } from "@/lib/r2";
+import { resolveHomeCmsText } from "@/lib/site-home-cms-locale";
 import { getSiteHomeContent } from "@/lib/site-home-content-queries";
 
 export async function HomeFounderStorySection() {
-  const [tHome, tAbout, content] = await Promise.all([
+  const [locale, tHome, tAbout, content] = await Promise.all([
+    getLocale(),
     getTranslations("Home"),
     getTranslations("AboutPage"),
     getSiteHomeContent(),
   ]);
 
   const imageSrc = content.aboutImageUrl || founderStoryHomePoolWebpUrl();
-  const heading = content.aboutHeading || tAbout("storyKicker");
-  const paragraph1 = content.aboutParagraph1 || tAbout("storyP1");
-  const imageAlt = content.aboutImageAlt || tHome("founderStoryImageAlt");
+  const heading = resolveHomeCmsText(locale, content.aboutHeading, tAbout("storyKicker"));
+  const paragraph1 = resolveHomeCmsText(locale, content.aboutParagraph1, tAbout("storyP1"));
+  const imageAlt = resolveHomeCmsText(locale, content.aboutImageAlt, tHome("founderStoryImageAlt"));
 
   return (
     <section

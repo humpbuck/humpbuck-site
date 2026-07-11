@@ -116,7 +116,7 @@
     "trustLaunchTitle": "Launchsupport",
     "trustLaunchBody": "Fabrieksprogramma's voor groeiende horlogemerken.",
     "newsletterKicker": "Nieuws",
-    "newsletterTitle": "DIGI-TEMP herbevoorrading & RM-TONNEAU drops",
+    "newsletterTitle": "NIEUWE HORLOGE-RELEASES",
     "newsletterBody": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken.",
     "mechanicalHeroBadge": "Geschenken · Tijd en liefde",
     "mechanicalHeroTitle": "HUMPBUCK Watches",
@@ -155,17 +155,49 @@
     "socialYoutubeAria": "HUMPBUCK op YouTube",
     "socialTiktokAria": "HUMPBUCK op TikTok",
     "certaintyKicker": "FAQ",
-    "certaintyTitle": "Frequently asked questions",
+    "certaintyTitle": "Veelgestelde vragen",
     "certaintyLead": "",
-    "certaintyCurrencyTitle": "What currency are prices shown in?",
-    "certaintyCurrencyBody": "All prices are listed in US dollars. Use the currency control at the bottom-left of your screen for a live reference conversion. Your card or wallet is charged in USD at checkout.",
-    "certaintyShippingTitle": "Do you ship to my country?",
-    "certaintyShippingBody": "We ship to most countries worldwide. Orders are processed within three business days; tracked delivery typically arrives in 7–21 days depending on your region. Any shipping fee is calculated and shown before you pay.",
-    "certaintyShippingLink": "Shipping & tax policy",
-    "certaintyPaymentsTitle": "Which payment methods do you accept?",
-    "certaintyPaymentsBody": "Pay with PayPal, major credit and debit cards, Apple Pay, or Google Pay — processed through trusted payment partners with encrypted checkout.",
-    "certaintySupportPrompt": "Have a question that is not covered here? No problem.",
-    "certaintySupportCta": "Contact our support team"
+    "certaintyCurrencyTitle": "In welke valuta worden prijzen getoond?",
+    "certaintyCurrencyBody": "Alle prijzen staan in Amerikaanse dollars. Gebruik de valutakiezer linksonder op uw scherm voor een live referentieconversie. Uw kaart of wallet wordt bij afrekenen in USD belast.",
+    "certaintyShippingTitle": "Leveren jullie in mijn land?",
+    "certaintyShippingBody": "We leveren in de meeste landen wereldwijd. Bestellingen worden binnen drie werkdagen verwerkt; traceerbare levering arriveert meestal binnen 7–21 dagen afhankelijk van uw regio. Verzendkosten worden berekend en getoond vóór u betaalt.",
+    "certaintyShippingLink": "Verzend- en belastingbeleid",
+    "certaintyPaymentsTitle": "Welke betaalmethoden accepteren jullie?",
+    "certaintyPaymentsBody": "Betaal met PayPal, gangbare credit- en debitcards, Apple Pay of Google Pay — verwerkt via betrouwbare betalingspartners met versleutelde checkout.",
+    "certaintySupportPrompt": "Heeft u een vraag die hier niet staat? Geen probleem.",
+    "certaintySupportCta": "Neem contact op met ons supportteam",
+    "momentsHeading": "Momenten om te bewaren",
+    "momentsLead": "Sommige momenten veranderen alles. Onze horloges zijn er voor al die momenten.",
+    "momentsCard1Title": "Mijlpaalmomenten",
+    "momentsCard1Description": "Voor beslissingen, vieringen en nachten die blijven hangen.",
+    "momentsCard2Title": "Alledaagse herinneringen",
+    "momentsCard2Description": "Voor reizen, rituelen en kleine dingen die bij je blijven.",
+    "recommendedAdd": "Toevoegen",
+    "recommendedSliderPrev": "Vorige producten",
+    "recommendedSliderNext": "Volgende producten",
+    "recommendedSliderScroll": "Producten scrollen",
+    "homeBlogTitle": "Uit het journal",
+    "homeBlogViewAll": "Alle artikelen lezen",
+    "homeBlogCarouselPrevious": "Vorige artikelen",
+    "homeBlogCarouselNext": "Volgende artikelen",
+    "allProductsHeading": "Alle producten",
+    "sectionNoProducts": "Geen producten beschikbaar.",
+    "categoryRowKicker": "Zoeken op",
+    "featuredPrev": "Vorige",
+    "featuredNext": "Volgende",
+    "featuredPage": "Pagina {page} van {total}",
+    "couponTitle": "Coupon ontvangen",
+    "couponKicker": "Reflectie",
+    "couponQuestion": "Wat is het kostbaarste in het leven?",
+    "couponInputPlaceholder": "Deel je gedachten…",
+    "couponConfirm": "Versturen",
+    "couponRewardLabel": "Je coupon is",
+    "couponNoCodeMessage": "Je coupon verschijnt hier zodra een homepage-coupon in de admin is ingesteld.",
+    "couponTaglineLine1": "Het leven heeft geen standaardantwoord.",
+    "couponTaglineLine2": "Leef het op jouw manier.",
+    "couponModalClose": "Sluiten",
+    "certaintyOrderTitle": "Hoe wordt mijn bestelling verwerkt?",
+    "certaintyOrderBody": "Na uw betaling ziet u een bevestiging van geslaagde betaling en ontvangt u een bevestigingsmail met bestelnummer, productdetails, verzendadres en contactgegevens van de klantenservice.\n\nUw bestelling wordt meestal binnen 1–2 werkdagen verzonden. Na verzending ontvangt u nog een e-mail met trackingnummer en trackingwebsite, zodat u uw pakket rustig kunt volgen."
   },
   "Newsletter": {
     "emailLabel": "E-mail",
@@ -259,7 +291,8 @@
     "decreaseQtyAria": "Aantal verlagen",
     "removeFromBagAria": "Uit winkelwagen verwijderen",
     "increaseQtyAria": "Aantal verhogen",
-    "subtotal": "Subtotaal"
+    "subtotal": "Subtotaal",
+    "paypalExpressError": "PayPal Express is niet beschikbaar — gebruik Checkout."
   },
   "Checkout": {
     "loading": "Checkout laden…",
@@ -293,7 +326,27 @@
     "draftOrderFailed": "Conceptbestelling kon niet worden aangemaakt",
     "orderLine": "{name} × {qty}",
     "billingTitle": "Factuuradres",
-    "shippingTitle": "Verzendadres"
+    "shippingTitle": "Verzendadres",
+    "billSameAsShipping": "Verzendadres als factuuradres gebruiken",
+    "contactHeading": "E-mail",
+    "deliveryTitle": "Levering",
+    "expressCheckout": "Snel afrekenen",
+    "orDivider": "OF",
+    "paypalExpressError": "PayPal is niet beschikbaar — probeer een andere betaalmethode.",
+    "stripePublishableMissing": "Voeg NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY (pk_…) toe aan je omgeving — vind deze in Stripe Dashboard → Developers → API keys.",
+    "payWithCard": "Betalen met kaart",
+    "payNow": "Nu betalen",
+    "loadingPaymentForm": "Beveiligd betaalformulier laden…",
+    "paypalPrefillNotice": "We hebben je adres ingevuld vanuit PayPal. Controleer verzending en totaal voordat je betaalt.",
+    "paymentHeading": "Betaling",
+    "paymentSecureNote": "Alle transacties zijn veilig en versleuteld.",
+    "paymentCardAndWallets": "Creditcard",
+    "paymentCardAndWalletsHint": "Kaart, Apple Pay of Google Pay",
+    "paymentPayPalHint": "Betaal met je PayPal-saldo of gekoppelde kaart",
+    "paymentPayPalContinueHint": "Je logt in bij PayPal om betaling en verzending te bevestigen.",
+    "paymentPreviewHint": "Je kunt nu betaalgegevens invoeren. Vul eerst het verzendadres hierboven in voordat je betaalt.",
+    "completeDetailsToPay": "Vul e-mail, verzendadres en verzendmethode in voordat je betaalt.",
+    "paymentTimeout": "Betaalgateway time-out — probeer opnieuw"
   },
   "CheckoutAddress": {
     "firstName": "Voornaam",
@@ -322,7 +375,9 @@
       "postalInvalidFormat": "Voer een geldige postcode in voor het geselecteerde land",
       "postalNotFound": "Deze postcode is niet gevonden — controleer op typefouten",
       "postalStateMismatch": "Deze postcode komt niet overeen met de geselecteerde provincie / staat"
-    }
+    },
+    "stateOptional": "Provincie / staat (optioneel)",
+    "stateOptionalPlaceholder": "Gemeente, regio, enz. (optioneel)"
   },
   "CheckoutShipping": {
     "feeTitle": "Verzendkosten",
@@ -370,7 +425,9 @@
     "chatWhatsApp": "Chat op WhatsApp",
     "chatWhatsAppAbout": "Chat op WhatsApp over {product}",
     "whatsappPrefillProduct": "Hallo, ik heb een vraag over {product}:\n{url}",
-    "whatsappPrefillPage": "Hallo, ik heb een vraag over deze pagina:\n{url}"
+    "whatsappPrefillPage": "Hallo, ik heb een vraag over deze pagina:\n{url}",
+    "cardAdd": "Toevoegen",
+    "cardFiveStarReviews": "{count} vijfsterrenbeoordelingen"
   },
   "Success": {
     "documentTitle": "Bestelling bevestigd · HUMPBUCK",
@@ -404,7 +461,12 @@
     "reviewPhotoAlt": "Recensiefoto — {name}",
     "followUpPhotoAlt": "Vervolgfoto — {name}",
     "writeReview": "Recensie schrijven",
-    "writeReviewHint": "(u heeft een voltooide aankoop van dit artikel)"
+    "writeReviewHint": "(u heeft een voltooide aankoop van dit artikel)",
+    "purchaseRequiredHint": "Alleen klanten die dit artikel hebben gekocht kunnen een beoordeling plaatsen.",
+    "confirmReceiptRequiredHint": "Bevestig de ontvangst van je bestelling voordat je een beoordeling schrijft.",
+    "reviewAlreadySubmitted": "Je hebt al een beoordeling voor dit product geplaatst.",
+    "itemType": "Artikeltype:",
+    "showMore": "Toon {count} meer beoordelingen"
   },
   "TaxId": {
     "fallback": {
@@ -674,7 +736,12 @@
     "editShipBack": "Terug",
     "editShipSaving": "Bezig met opslaan…",
     "editShipSave": "Verzendadres opslaan",
-    "editShipCancel": "Annuleren"
+    "editShipCancel": "Annuleren",
+    "detailReviewPrompt": "Je kunt een beoordeling schrijven voor artikelen in deze bestelling.",
+    "detailReviewButton": "Beoordeling schrijven",
+    "detailReviewChooseProduct": "Product",
+    "detailReviewConfirmFirstTitle": "Bevestig eerst ontvangst",
+    "detailReviewConfirmFirstBody": "Bevestig dat je deze bestelling hebt ontvangen voordat je een beoordeling schrijft."
   },
   "AccountCancel": {
     "whatsappLink": "WhatsApp {display}",
@@ -736,7 +803,9 @@
     "appendPlaceholder": "Extra gedachten na langer gebruik, verzending, support…",
     "appendPhotosHint": "Optionele foto's worden vóór upload verkleind, gecomprimeerd en als WebP opgeslagen. Max. 4 afbeeldingen, onder 2 MB elk (typisch 0,6–1,5 MB).",
     "appendSubmitting": "Bezig met indienen…",
-    "appendSubmit": "Vervolg plaatsen"
+    "appendSubmit": "Vervolg plaatsen",
+    "thanksPendingBody": "Bedankt! Je beoordeling is ingediend en verschijnt op de productpagina na goedkeuring.",
+    "emojiLabel": "Emoji toevoegen"
   },
   "AccountSubscribe": {
     "kicker": "Abonneren",
@@ -800,14 +869,14 @@
     "factoryAsideBefore": "Productie in",
     "factoryAsideAfter": "— een hub voor OEM-horloge-assemblage. Controleer de regio op de kaart of open Google Maps voor navigatie.",
     "factoryRegion": "Guangzhou, provincie Guangdong",
-    "mapIframeTitle": "Kaart — Guangzhou, China",
-    "mapFallback": "Regionaal overzicht van Guangzhou. Gebruik «Openen in Google Maps» voor route en satellietbeeld.",
+    "mapIframeTitle": "HUMPBUCK — Zhongshan, Guangdong, China",
+    "mapFallback": "Regionale kaartvoorbeeld. Gebruik «Openen in Google Maps» voor route en satellietbeeld.",
     "openMapsLabel": "Openen in Google Maps",
     "videoAriaLabel": "HUMPBUCK Watch Factory promotievideo",
     "videoCaption": "HUMPBUCK Watch Factory promotievideo",
     "contactKicker": "Contact",
-    "contactTitle": "Bereik me",
-    "contactLead": "Productvragen of orderhulp — mail ons of stuur een WhatsApp-bericht.",
+    "contactTitle": "Neem contact met ons op",
+    "contactLead": "Productvragen of hulp bij bestellingen — mail ons of stuur een bericht via WhatsApp.",
     "emailButton": "E-mail",
     "whatsappButton": "WhatsApp",
     "b2bKicker": "B2B",
@@ -815,9 +884,17 @@
     "b2bLead": "Voeg hier uw oprichtingsverhaal, productielocatie, garantiebeleid en duurzaamheidsbeloften toe wanneer u klaar bent.",
     "wholesaleLink": "Groothandel verkennen",
     "mailSubject": "Vraag over HUMPBUCK",
-    "storyKicker": "Over",
-    "storyP1": "Ik hou al sinds mijn kindertijd van mechanische horloges. Toen was mijn familie arm en kon ik er geen betalen. Toch was ik gefascineerd door hoe de fijne tandwielen in elkaar grijpen en hoe complexe mechanische structuren precies de tijd bijhouden.",
-    "storyP2": "Nu heb ik deze mechanische horlogewebsite gebouwd. Mijn doel is hoogwaardige, betaalbare mechanische horloges voor iedereen aan te bieden en mijn kinderdroom om er een te bezitten te vervullen. Blijf je dromen najagen."
+    "storyKicker": "Over ons",
+    "storyP1": "Als kind keek ik toe hoe mijn vader — een meesterhorlogemaker — na school talloze horloges nieuw leven inblies. Terwijl hij mij door mijn mijlpalen heen vergezelde, markeerden die horloges elke stap van mijn reis. Daar ontstond onze band. Tijd en gezelschap zijn de kostbaarste geschenken van het leven. Nu hoop ik dat mijn handgemaakte HUMPBUCK-horloges aan uw zijde blijven en getuige zijn van uw meest betekenisvolle momenten.",
+    "storyP2": "",
+    "addressLabel": "Adres",
+    "telLabel": "Tel.",
+    "emailLabel": "E-mail",
+    "contactTrustNote": "We reageren binnen 1–2 werkdagen. Voor dringende hulp bij bestellingen is WhatsApp het snelst.",
+    "businessHoursLabel": "Openingstijden",
+    "businessHoursWeekdays": "Maandag – zaterdag: 9:00 – 18:00",
+    "businessHoursSunday": "Zondag: gesloten",
+    "businessHoursTimezone": "GMT+8 (China Standard Time)"
   },
   "VideoTutorials": {
     "metaTitle": "Videohandleiding",
@@ -835,6 +912,22 @@
   },
   "BlogPage": {
     "metaDescription": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken.",
-    "intro": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken."
+    "intro": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken.",
+    "metaTitle": "Blog — HUMPBUCK",
+    "ogTitle": "Blog — HUMPBUCK",
+    "kicker": "Dagboek",
+    "title": "Blog",
+    "empty": "Nieuwe berichten komen eraan. Kom snel terug.",
+    "readMore": "Artikel lezen"
+  },
+  "DisplayCurrency": {
+    "label": "Weergavevaluta",
+    "usdChargeNotice": "Prijzen worden in USD getoond. Je kaart wordt bij het afrekenen in USD belast."
+  },
+  "BlogArticle": {
+    "kicker": "Journal",
+    "backToBlog": "Terug naar blog",
+    "notFoundTitle": "Artikel niet gevonden",
+    "viewProduct": "Product bekijken"
   }
 }

@@ -332,19 +332,25 @@ export function resolveHomeFaqItemsForAdmin(
   });
 }
 
-/** Storefront FAQ — all saved pairs with optional i18n fallbacks per slot. */
+/** Storefront FAQ — saved pairs with optional i18n fallbacks per slot. */
 export function resolveHomeFaqItems(
   content: SiteHomeContentData,
   fallbacks: HomeFaqItem[],
+  locale?: string,
 ): HomeFaqItem[] {
   const items = parseHomeFaqItemsJson(content.faqItemsJson, content);
   const count = Math.max(items.length, fallbacks.length);
+  const preferI18n = locale != null && locale !== "en";
 
   return Array.from({ length: count }, (_, index) => {
     const item = items[index];
     const fallback = fallbacks[index];
-    const question = trimField(item?.question) || trimField(fallback?.question);
-    const answer = trimField(item?.answer) || trimField(fallback?.answer);
+    const cmsQuestion = trimField(item?.question);
+    const cmsAnswer = trimField(item?.answer);
+    const i18nQuestion = trimField(fallback?.question);
+    const i18nAnswer = trimField(fallback?.answer);
+    const question = preferI18n && i18nQuestion ? i18nQuestion : cmsQuestion || i18nQuestion;
+    const answer = preferI18n && i18nAnswer ? i18nAnswer : cmsAnswer || i18nAnswer;
     return { question, answer };
   }).filter((item) => item.question && item.answer);
 }
@@ -579,13 +585,14 @@ export function resolveSpotlightBackgroundUrls(
   return { desktop, mobile };
 }
 
-/** Desktop URL with mobile fallback to desktop. */
+/** Desktop URL with mobile fallback to desktop, then optional built-in defaults. */
 export function resolveMomentsCardImageUrls(
   desktopUrl: string,
   mobileUrl: string,
+  defaults?: { desktop: string; mobile: string },
 ): { desktop: string; mobile: string } {
-  const desktop = desktopUrl.trim();
-  const mobile = mobileUrl.trim() || desktop;
+  const desktop = desktopUrl.trim() || defaults?.desktop.trim() || "";
+  const mobile = mobileUrl.trim() || defaults?.mobile.trim() || desktop;
   return { desktop, mobile };
 }
 

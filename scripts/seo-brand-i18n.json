@@ -25,7 +25,12 @@
     "AboutPage.metaDescription": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
     "BlogPage.metaDescription": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
     "BlogPage.intro": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
-    "Home.recommendedIntro": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments."
+    "Home.recommendedIntro": "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
+    "Home.newsletterTitle": "NEW WATCHES DROPS",
+    "BlogPage.metaTitle": "Blog — HUMPBUCK",
+    "BlogPage.ogTitle": "Blog — HUMPBUCK",
+    "BlogPage.kicker": "Journal",
+    "BlogPage.title": "Blog"
   },
   "de": {
     "SiteMetadata.titleDefault": "HUMPBUCK Uhren – Bedeutungsvolle Geschenke aus Zeit und Liebe",
@@ -53,7 +58,12 @@
     "AboutPage.metaDescription": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
     "BlogPage.metaDescription": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
     "BlogPage.intro": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
-    "Home.recommendedIntro": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben."
+    "Home.recommendedIntro": "Handgefertigte Zeitmesser, die an Ihrer Seite bleiben und die bedeutungsvollen Momente des Lebens miterleben.",
+    "Home.newsletterTitle": "NEUE UHR-RELEASES",
+    "BlogPage.metaTitle": "Blog — HUMPBUCK",
+    "BlogPage.ogTitle": "Blog — HUMPBUCK",
+    "BlogPage.kicker": "Journal",
+    "BlogPage.title": "Blog"
   },
   "es": {
     "SiteMetadata.titleDefault": "HUMPBUCK Watches - Regalos con significado de tiempo y amor",
@@ -81,7 +91,12 @@
     "AboutPage.metaDescription": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
     "BlogPage.metaDescription": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
     "BlogPage.intro": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
-    "Home.recommendedIntro": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida."
+    "Home.recommendedIntro": "Piezas artesanales diseñadas para acompañarte y presenciar los momentos significativos de la vida.",
+    "Home.newsletterTitle": "NUEVOS LANZAMIENTOS DE RELOJES",
+    "BlogPage.metaTitle": "Blog — HUMPBUCK",
+    "BlogPage.ogTitle": "Blog — HUMPBUCK",
+    "BlogPage.kicker": "Diario",
+    "BlogPage.title": "Blog"
   },
   "pt": {
     "SiteMetadata.titleDefault": "HUMPBUCK Watches - Presentes significativos de tempo e amor",
@@ -109,7 +124,12 @@
     "AboutPage.metaDescription": "Peças artesanais feitas para estar ao seu lado e testemunhar os momentos significativos da vida.",
     "BlogPage.metaDescription": "Peças artesanais feitas para estar ao seu lado e testemunhar os momentos significativos da vida.",
     "BlogPage.intro": "Peças artesanais feitas para estar ao seu lado e testemunhar os momentos significativos da vida.",
-    "Home.recommendedIntro": "Peças artesanais feitas para estar ao seu lado e testemunhar os momentos significativos da vida."
+    "Home.recommendedIntro": "Peças artesanais feitas para estar ao seu lado e testemunhar os momentos significativos da vida.",
+    "Home.newsletterTitle": "NOVOS LANÇAMENTOS DE RELÓGIOS",
+    "BlogPage.metaTitle": "Blog — HUMPBUCK",
+    "BlogPage.ogTitle": "Blog — HUMPBUCK",
+    "BlogPage.kicker": "Diário",
+    "BlogPage.title": "Blog"
   },
   "fr": {
     "SiteMetadata.titleDefault": "HUMPBUCK Watches - Cadeaux porteurs de temps et d'amour",
@@ -137,7 +157,12 @@
     "AboutPage.metaDescription": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
     "BlogPage.metaDescription": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
     "BlogPage.intro": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
-    "Home.recommendedIntro": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie."
+    "Home.recommendedIntro": "Garde-temps artisanaux conçus pour rester à vos côtés et témoigner des moments significatifs de la vie.",
+    "Home.newsletterTitle": "NOUVELLES SORTIES DE MONTRES",
+    "BlogPage.metaTitle": "Blog — HUMPBUCK",
+    "BlogPage.ogTitle": "Blog — HUMPBUCK",
+    "BlogPage.kicker": "Journal",
+    "BlogPage.title": "Blog"
   },
   "it": {
     "SiteMetadata.titleDefault": "HUMPBUCK Watches - Regali di tempo e amore con significato",
@@ -165,7 +190,12 @@
     "AboutPage.metaDescription": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita.",
     "BlogPage.metaDescription": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita.",
     "BlogPage.intro": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita.",
-    "Home.recommendedIntro": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita."
+    "Home.recommendedIntro": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita.",
+    "Home.newsletterTitle": "NUOVI LANCI DI OROLOGI",
+    "BlogPage.metaTitle": "Blog — HUMPBUCK",
+    "BlogPage.ogTitle": "Blog — HUMPBUCK",
+    "BlogPage.kicker": "Diario",
+    "BlogPage.title": "Blog"
   },
   "nl": {
     "SiteMetadata.titleDefault": "HUMPBUCK Watches - Betekenisvolle geschenken van tijd en liefde",
@@ -193,7 +223,12 @@
     "AboutPage.metaDescription": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken.",
     "BlogPage.metaDescription": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken.",
     "BlogPage.intro": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken.",
-    "Home.recommendedIntro": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken."
+    "Home.recommendedIntro": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken.",
+    "Home.newsletterTitle": "NIEUWE HORLOGE-RELEASES",
+    "BlogPage.metaTitle": "Blog — HUMPBUCK",
+    "BlogPage.ogTitle": "Blog — HUMPBUCK",
+    "BlogPage.kicker": "Dagboek",
+    "BlogPage.title": "Blog"
   },
   "hu": {
     "SiteMetadata.titleDefault": "HUMPBUCK Watches - Időt és szeretetet hordozó ajándékok",
@@ -221,7 +256,12 @@
     "AboutPage.metaDescription": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
     "BlogPage.metaDescription": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
     "BlogPage.intro": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
-    "Home.recommendedIntro": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait."
+    "Home.recommendedIntro": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
+    "Home.newsletterTitle": "ÚJ ÓRA MEGJELENÉSEK",
+    "BlogPage.metaTitle": "Blog — HUMPBUCK",
+    "BlogPage.ogTitle": "Blog — HUMPBUCK",
+    "BlogPage.kicker": "Napló",
+    "BlogPage.title": "Blog"
   },
   "ko": {
     "SiteMetadata.titleDefault": "HUMPBUCK Watches - 시간과 사랑을 담은 의미 있는 선물",
@@ -249,7 +289,12 @@
     "AboutPage.metaDescription": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
     "BlogPage.metaDescription": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
     "BlogPage.intro": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
-    "Home.recommendedIntro": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스."
+    "Home.recommendedIntro": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
+    "Home.newsletterTitle": "신규 시계 출시",
+    "BlogPage.metaTitle": "블로그 — HUMPBUCK",
+    "BlogPage.ogTitle": "블로그 — HUMPBUCK",
+    "BlogPage.kicker": "저널",
+    "BlogPage.title": "블로그"
   },
   "ja": {
     "SiteMetadata.titleDefault": "HUMPBUCK Watches - 時間と愛を贈る意味あるギフト",
@@ -277,7 +322,12 @@
     "AboutPage.metaDescription": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
     "BlogPage.metaDescription": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
     "BlogPage.intro": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
-    "Home.recommendedIntro": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。"
+    "Home.recommendedIntro": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
+    "Home.newsletterTitle": "新作ウォッチ入荷",
+    "BlogPage.metaTitle": "ブログ — HUMPBUCK",
+    "BlogPage.ogTitle": "ブログ — HUMPBUCK",
+    "BlogPage.kicker": "ジャーナル",
+    "BlogPage.title": "ブログ"
   },
   "ru": {
     "SiteMetadata.titleDefault": "HUMPBUCK Watches - Значимые подарки времени и любви",
@@ -305,7 +355,12 @@
     "AboutPage.metaDescription": "Часы ручной работы, созданные быть рядом с вами и свидетельствовать значимые моменты жизни.",
     "BlogPage.metaDescription": "Часы ручной работы, созданные быть рядом с вами и свидетельствовать значимые моменты жизни.",
     "BlogPage.intro": "Часы ручной работы, созданные быть рядом с вами и свидетельствовать значимые моменты жизни.",
-    "Home.recommendedIntro": "Часы ручной работы, созданные быть рядом с вами и свидетельствовать значимые моменты жизни."
+    "Home.recommendedIntro": "Часы ручной работы, созданные быть рядом с вами и свидетельствовать значимые моменты жизни.",
+    "Home.newsletterTitle": "НОВЫЕ ПОСТУПЛЕНИЯ ЧАСОВ",
+    "BlogPage.metaTitle": "Блог — HUMPBUCK",
+    "BlogPage.ogTitle": "Блог — HUMPBUCK",
+    "BlogPage.kicker": "Журнал",
+    "BlogPage.title": "Блог"
   },
   "he": {
     "SiteMetadata.titleDefault": "HUMPBUCK Watches - מתנות משמעותיות של זמן ואהבה",
@@ -333,7 +388,12 @@
     "AboutPage.metaDescription": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
     "BlogPage.metaDescription": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
     "BlogPage.intro": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
-    "Home.recommendedIntro": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים."
+    "Home.recommendedIntro": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
+    "Home.newsletterTitle": "השקות שעונים חדשות",
+    "BlogPage.metaTitle": "בלוג — HUMPBUCK",
+    "BlogPage.ogTitle": "בלוג — HUMPBUCK",
+    "BlogPage.kicker": "יומן",
+    "BlogPage.title": "בלוג"
   },
   "ar": {
     "SiteMetadata.titleDefault": "HUMPBUCK Watches - هدايا ذات معنى للوقت والحب",
@@ -361,6 +421,11 @@
     "AboutPage.metaDescription": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
     "BlogPage.metaDescription": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
     "BlogPage.intro": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
-    "Home.recommendedIntro": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة."
+    "Home.recommendedIntro": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
+    "Home.newsletterTitle": "إصدارات ساعات جديدة",
+    "BlogPage.metaTitle": "المدونة — HUMPBUCK",
+    "BlogPage.ogTitle": "المدونة — HUMPBUCK",
+    "BlogPage.kicker": "المجلة",
+    "BlogPage.title": "المدونة"
   }
-}
+}\n

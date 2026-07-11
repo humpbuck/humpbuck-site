@@ -160,6 +160,13 @@ const nextConfig: NextConfig = {
 export default withNextIntl(nextConfig);
 
 import("@opennextjs/cloudflare").then(async (m) => {
-  await m.initOpenNextCloudflareForDev();
+  // HUMPBUCK_D1_REMOTE=1 → dev server uses production Cloudflare D1 (not local dev.db).
+  // See .env.example — D1 has no DATABASE_URL connection string.
+  const useRemoteD1 = process.env.HUMPBUCK_D1_REMOTE === "1";
+  await m.initOpenNextCloudflareForDev(
+    useRemoteD1
+      ? { remoteBindings: true, persist: false }
+      : { remoteBindings: false },
+  );
   require("./scripts/load-project-env.mjs").applyLocalDatabaseEnvOverride();
 });

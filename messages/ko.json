@@ -116,7 +116,7 @@
     "trustLaunchTitle": "런칭 지원",
     "trustLaunchBody": "성장하는 시계 브랜드를 위한 공장 프로그램.",
     "newsletterKicker": "소식",
-    "newsletterTitle": "DIGI-TEMP 재입고 & RM-TONNEAU 신제품",
+    "newsletterTitle": "신규 시계 출시",
     "newsletterBody": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
     "mechanicalHeroBadge": "선물 · 시간과 사랑",
     "mechanicalHeroTitle": "HUMPBUCK Watches",
@@ -155,17 +155,49 @@
     "socialYoutubeAria": "YouTube의 HUMPBUCK",
     "socialTiktokAria": "TikTok의 HUMPBUCK",
     "certaintyKicker": "FAQ",
-    "certaintyTitle": "Frequently asked questions",
+    "certaintyTitle": "자주 묻는 질문",
     "certaintyLead": "",
-    "certaintyCurrencyTitle": "What currency are prices shown in?",
-    "certaintyCurrencyBody": "All prices are listed in US dollars. Use the currency control at the bottom-left of your screen for a live reference conversion. Your card or wallet is charged in USD at checkout.",
-    "certaintyShippingTitle": "Do you ship to my country?",
-    "certaintyShippingBody": "We ship to most countries worldwide. Orders are processed within three business days; tracked delivery typically arrives in 7–21 days depending on your region. Any shipping fee is calculated and shown before you pay.",
-    "certaintyShippingLink": "Shipping & tax policy",
-    "certaintyPaymentsTitle": "Which payment methods do you accept?",
-    "certaintyPaymentsBody": "Pay with PayPal, major credit and debit cards, Apple Pay, or Google Pay — processed through trusted payment partners with encrypted checkout.",
-    "certaintySupportPrompt": "Have a question that is not covered here? No problem.",
-    "certaintySupportCta": "Contact our support team"
+    "certaintyCurrencyTitle": "가격은 어떤 통화로 표시되나요?",
+    "certaintyCurrencyBody": "모든 가격은 미국 달러로 표시됩니다. 화면 왼쪽 하단의 통화 컨트롤로 실시간 참고 환율을 확인하세요. 결제 시 카드 또는 지갑에서 USD로 청구됩니다.",
+    "certaintyShippingTitle": "제 국가로 배송하나요?",
+    "certaintyShippingBody": "전 세계 대부분의 국가로 배송합니다. 주문은 영업일 기준 3일 이내에 처리되며, 추적 배송은 지역에 따라 보통 7–21일 소요됩니다. 배송비는 결제 전에 계산되어 표시됩니다.",
+    "certaintyShippingLink": "배송 및 세금 정책",
+    "certaintyPaymentsTitle": "어떤 결제 수단을 사용할 수 있나요?",
+    "certaintyPaymentsBody": "PayPal, 주요 신용·체크카드, Apple Pay, Google Pay로 결제하세요 — 신뢰할 수 있는 결제 파트너의 암호화된 체크아웃을 통해 처리됩니다.",
+    "certaintySupportPrompt": "여기에 없는 질문이 있으신가요? 문제없습니다.",
+    "certaintySupportCta": "고객 지원팀에 문의",
+    "momentsHeading": "기억할 만한 순간들",
+    "momentsLead": "어떤 순간은 모든 것을 바꿉니다. 우리 시계는 그 모든 순간을 함께합니다.",
+    "momentsCard1Title": "이정표 순간",
+    "momentsCard1Description": "결정, 축하, 그리고 오래 남는 밤을 위해.",
+    "momentsCard2Title": "일상의 추억",
+    "momentsCard2Description": "여정, 의식, 그리고 곁에 남는 작은 것들을 위해.",
+    "recommendedAdd": "추가",
+    "recommendedSliderPrev": "이전 상품",
+    "recommendedSliderNext": "다음 상품",
+    "recommendedSliderScroll": "상품 스크롤",
+    "homeBlogTitle": "저널에서",
+    "homeBlogViewAll": "모든 글 읽기",
+    "homeBlogCarouselPrevious": "이전 글",
+    "homeBlogCarouselNext": "다음 글",
+    "allProductsHeading": "모든 상품",
+    "sectionNoProducts": "이용 가능한 상품이 없습니다.",
+    "categoryRowKicker": "검색",
+    "featuredPrev": "이전",
+    "featuredNext": "다음",
+    "featuredPage": "{page} / {total}페이지",
+    "couponTitle": "쿠폰 받기",
+    "couponKicker": "성찰",
+    "couponQuestion": "인생에서 가장 소중한 것은 무엇인가요?",
+    "couponInputPlaceholder": "생각을 나눠 주세요…",
+    "couponConfirm": "제출",
+    "couponRewardLabel": "쿠폰 코드",
+    "couponNoCodeMessage": "관리자에서 홈페이지 쿠폰이 설정되면 여기에 표시됩니다.",
+    "couponTaglineLine1": "인생에는 정해진 답이 없습니다.",
+    "couponTaglineLine2": "자신만의 방식으로 살아가세요.",
+    "couponModalClose": "닫기",
+    "certaintyOrderTitle": "주문은 어떻게 처리되나요?",
+    "certaintyOrderBody": "결제가 완료되면 결제 성공 확인 화면이 표시되고, 주문 번호·상품 정보·배송지·고객 지원 연락처가 포함된 확인 이메일을 받습니다.\n\n주문은 보통 1–2영업일 이내에 발송됩니다. 발송 후 추적 번호와 추적 사이트 URL이 담긴 이메일을 보내 드려 배송 상태를 안심하고 확인하실 수 있습니다."
   },
   "Newsletter": {
     "emailLabel": "이메일",
@@ -259,7 +291,8 @@
     "decreaseQtyAria": "수량 줄이기",
     "removeFromBagAria": "장바구니에서 삭제",
     "increaseQtyAria": "수량 늘리기",
-    "subtotal": "소계"
+    "subtotal": "소계",
+    "paypalExpressError": "PayPal Express를 사용할 수 없습니다 — Checkout을 이용해 주세요."
   },
   "Checkout": {
     "loading": "결제 페이지 로딩 중…",
@@ -293,7 +326,27 @@
     "draftOrderFailed": "임시 주문을 생성할 수 없습니다",
     "orderLine": "{name} × {qty}",
     "billingTitle": "청구지 주소",
-    "shippingTitle": "배송지 주소"
+    "shippingTitle": "배송지 주소",
+    "billSameAsShipping": "배송 주소를 청구 주소로 사용",
+    "contactHeading": "이메일",
+    "deliveryTitle": "배송",
+    "expressCheckout": "빠른 결제",
+    "orDivider": "또는",
+    "paypalExpressError": "PayPal을 사용할 수 없습니다 — 다른 결제 수단을 시도해 주세요.",
+    "stripePublishableMissing": "환경에 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY (pk_…)를 추가하세요 — Stripe Dashboard → Developers → API keys에서 확인할 수 있습니다.",
+    "payWithCard": "카드로 결제",
+    "payNow": "지금 결제",
+    "loadingPaymentForm": "보안 결제 양식 로딩 중…",
+    "paypalPrefillNotice": "PayPal에서 주소를 채웠습니다. 결제 전 배송과 총액을 확인해 주세요.",
+    "paymentHeading": "결제",
+    "paymentSecureNote": "모든 거래는 안전하게 암호화됩니다.",
+    "paymentCardAndWallets": "신용카드",
+    "paymentCardAndWalletsHint": "카드, Apple Pay 또는 Google Pay",
+    "paymentPayPalHint": "PayPal 잔액 또는 연결된 카드로 결제",
+    "paymentPayPalContinueHint": "PayPal에 로그인하여 결제와 배송을 확인합니다.",
+    "paymentPreviewHint": "지금 결제 정보를 입력할 수 있습니다. 결제 전 위의 배송 주소를 완료해 주세요.",
+    "completeDetailsToPay": "결제 전 이메일, 배송 주소, 배송 방법을 완료해 주세요.",
+    "paymentTimeout": "결제 게이트웨이 시간 초과 — 다시 시도해 주세요"
   },
   "CheckoutAddress": {
     "firstName": "이름",
@@ -322,7 +375,9 @@
       "postalInvalidFormat": "선택한 국가에 맞는 올바른 우편번호를 입력해 주세요",
       "postalNotFound": "우편번호를 찾을 수 없습니다. 오타를 확인해 주세요",
       "postalStateMismatch": "우편번호가 선택한 시/도와 일치하지 않습니다"
-    }
+    },
+    "stateOptional": "주/도 (선택)",
+    "stateOptionalPlaceholder": "군, 지역 등 (선택)"
   },
   "CheckoutShipping": {
     "feeTitle": "배송비",
@@ -370,7 +425,9 @@
     "chatWhatsApp": "WhatsApp 문의",
     "chatWhatsAppAbout": "{product} WhatsApp 문의",
     "whatsappPrefillProduct": "안녕하세요, {product}에 대해 문의드립니다:\n{url}",
-    "whatsappPrefillPage": "안녕하세요, 이 페이지에 대해 문의드립니다:\n{url}"
+    "whatsappPrefillPage": "안녕하세요, 이 페이지에 대해 문의드립니다:\n{url}",
+    "cardAdd": "추가",
+    "cardFiveStarReviews": "별 5개 리뷰 {count}개"
   },
   "Success": {
     "documentTitle": "주문 완료 · HUMPBUCK",
@@ -404,7 +461,12 @@
     "reviewPhotoAlt": "리뷰 사진 — {name}",
     "followUpPhotoAlt": "후속 사진 — {name}",
     "writeReview": "리뷰 작성",
-    "writeReviewHint": "(이 상품을 구매 완료하셨습니다)"
+    "writeReviewHint": "(이 상품을 구매 완료하셨습니다)",
+    "purchaseRequiredHint": "이 상품을 구매한 고객만 리뷰를 작성할 수 있습니다.",
+    "confirmReceiptRequiredHint": "리뷰 작성 전 주문 수령을 확인해 주세요.",
+    "reviewAlreadySubmitted": "이 상품에 대한 리뷰를 이미 제출하셨습니다.",
+    "itemType": "상품 유형:",
+    "showMore": "리뷰 {count}개 더 보기"
   },
   "TaxId": {
     "fallback": {
@@ -674,7 +736,12 @@
     "editShipBack": "돌아가기",
     "editShipSaving": "저장 중…",
     "editShipSave": "배송지 주소 저장",
-    "editShipCancel": "취소"
+    "editShipCancel": "취소",
+    "detailReviewPrompt": "이 주문의 상품에 대해 리뷰를 작성할 수 있습니다.",
+    "detailReviewButton": "리뷰 작성",
+    "detailReviewChooseProduct": "상품",
+    "detailReviewConfirmFirstTitle": "먼저 수령 확인",
+    "detailReviewConfirmFirstBody": "리뷰 작성 전 이 주문을 받으셨는지 확인해 주세요."
   },
   "AccountCancel": {
     "whatsappLink": "WhatsApp {display}",
@@ -736,7 +803,9 @@
     "appendPlaceholder": "추가 사용 후 느낀 점, 배송, 고객지원…",
     "appendPhotosHint": "선택 사진은 업로드 전 WebP로 압축됩니다. 최대 4장, 장당 2MB 이하(일반적으로 0.6–1.5MB).",
     "appendSubmitting": "제출 중…",
-    "appendSubmit": "후속 리뷰 등록"
+    "appendSubmit": "후속 리뷰 등록",
+    "thanksPendingBody": "감사합니다! 리뷰가 제출되었으며 승인 후 상품 페이지에 표시됩니다.",
+    "emojiLabel": "이모지 추가"
   },
   "AccountSubscribe": {
     "kicker": "구독",
@@ -800,24 +869,32 @@
     "factoryAsideBefore": "제조 거점:",
     "factoryAsideAfter": " — OEM 시계 조립 허브입니다. 지도에서 지역을 확인하거나 Google 지도에서 길찾기를 여세요.",
     "factoryRegion": "중국 광둥성 광저우",
-    "mapIframeTitle": "지도 — 중국 광저우",
-    "mapFallback": "광저우 지역 개요. «Google 지도에서 열기»로 길찾기 및 위성 보기를 이용하세요.",
+    "mapIframeTitle": "HUMPBUCK — 중국 광둥성 중산시",
+    "mapFallback": "지역 지도 미리보기. «Google 지도에서 열기»로 길찾기 및 위성 보기를 이용하세요.",
     "openMapsLabel": "Google 지도에서 열기",
     "videoAriaLabel": "HUMPBUCK 시계 공장 홍보 영상",
     "videoCaption": "HUMPBUCK 시계 공장 홍보 영상",
     "contactKicker": "문의",
-    "contactTitle": "연락처",
-    "contactLead": "상품 문의 또는 주문 도움 — 이메일 또는 WhatsApp으로 연락해 주세요.",
+    "contactTitle": "문의하기",
+    "contactLead": "제품 문의 또는 주문 도움 — 이메일 또는 WhatsApp으로 연락해 주세요.",
     "emailButton": "이메일",
     "whatsappButton": "WhatsApp",
     "b2bKicker": "B2B",
     "b2bTitle": "프로그램 및 도매",
     "b2bLead": "창업 스토리, 제조 지역, 보증 정책, 지속가능성 약속 등은 준비되면 여기에 추가하세요.",
     "wholesaleLink": "도매 알아보기",
-    "mailSubject": "HUMPBUCK 문의",
-    "storyKicker": "About",
-    "storyP1": "어릴 때부터 기계식 시계를 좋아했습니다. 당시 가정 형편이 어려워 살 수 없었지만, 정교한 기어가 맞물리고 복잡한 기계 구조가 정확한 시간을 유지하는 모습에 완전히 매료되었습니다.",
-    "storyP2": "이제 이 기계식 시계 웹사이트를 만들었습니다. 고품질·합리적인 기계식 시계를 모두에게 제공하고, 어린 시절 꿈이었던 '한 벌 소유'를 이루는 것이 목표입니다. 꿈을 계속 쫓으세요."
+    "mailSubject": "HUMPBUCK 관련 문의",
+    "storyKicker": "소개",
+    "storyP1": "어릴 때, 방과 후 아버지 — 시계 수리의 달인 — 이 수많은 시계에 생명을 불어넣는 모습을 지켜봤습니다. 제 이정표마다 곁에 계시며, 그 시계들이 제 여정의 모든 순간을 기록해 주었습니다. 그곳에서 우리의 유대가 태어났습니다. 시간과 동행은 인생에서 가장 소중한 선물입니다. 이제 제가 손으로 만든 HUMPBUCK 시계가 여러분 곁에 머물며 가장 의미 있는 순간들을 함께 지켜보길 바랍니다.",
+    "storyP2": "",
+    "addressLabel": "주소",
+    "telLabel": "전화",
+    "emailLabel": "이메일",
+    "contactTrustNote": "영업일 기준 1–2일 내 답변드립니다. 긴급 주문 문의는 WhatsApp이 가장 빠릅니다.",
+    "businessHoursLabel": "영업 시간",
+    "businessHoursWeekdays": "월요일 – 토요일: 오전 9:00 – 오후 6:00",
+    "businessHoursSunday": "일요일: 휴무",
+    "businessHoursTimezone": "GMT+8 (중국 표준시)"
   },
   "VideoTutorials": {
     "metaTitle": "동영상 가이드",
@@ -835,6 +912,22 @@
   },
   "BlogPage": {
     "metaDescription": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
-    "intro": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스."
+    "intro": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
+    "metaTitle": "블로그 — HUMPBUCK",
+    "ogTitle": "블로그 — HUMPBUCK",
+    "kicker": "저널",
+    "title": "블로그",
+    "empty": "새 글이 곧 올라옵니다. 잠시 후 다시 확인해 주세요.",
+    "readMore": "글 읽기"
+  },
+  "DisplayCurrency": {
+    "label": "표시 통화",
+    "usdChargeNotice": "가격은 USD로 표시됩니다. 결제 시 카드에서 USD로 청구됩니다."
+  },
+  "BlogArticle": {
+    "kicker": "저널",
+    "backToBlog": "블로그로 돌아가기",
+    "notFoundTitle": "글을 찾을 수 없습니다",
+    "viewProduct": "상품 보기"
   }
 }

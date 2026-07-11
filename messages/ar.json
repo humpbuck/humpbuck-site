@@ -116,7 +116,7 @@
     "trustLaunchTitle": "دعم الإطلاق",
     "trustLaunchBody": "برامج مصنع لعلامات الساعات الناشئة.",
     "newsletterKicker": "التحديثات",
-    "newsletterTitle": "إعادة تخزين DIGI-TEMP وإصدارات RM-TONNEAU",
+    "newsletterTitle": "إصدارات ساعات جديدة",
     "newsletterBody": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
     "mechanicalHeroBadge": "هدايا · الوقت والحب",
     "mechanicalHeroTitle": "HUMPBUCK Watches",
@@ -154,18 +154,50 @@
     "socialInstagramAria": "HUMPBUCK على Instagram",
     "socialYoutubeAria": "HUMPBUCK على YouTube",
     "socialTiktokAria": "HUMPBUCK على TikTok",
-    "certaintyKicker": "FAQ",
-    "certaintyTitle": "Frequently asked questions",
+    "certaintyKicker": "الأسئلة الشائعة",
+    "certaintyTitle": "الأسئلة المتكررة",
     "certaintyLead": "",
-    "certaintyCurrencyTitle": "What currency are prices shown in?",
-    "certaintyCurrencyBody": "All prices are listed in US dollars. Use the currency control at the bottom-left of your screen for a live reference conversion. Your card or wallet is charged in USD at checkout.",
-    "certaintyShippingTitle": "Do you ship to my country?",
-    "certaintyShippingBody": "We ship to most countries worldwide. Orders are processed within three business days; tracked delivery typically arrives in 7–21 days depending on your region. Any shipping fee is calculated and shown before you pay.",
-    "certaintyShippingLink": "Shipping & tax policy",
-    "certaintyPaymentsTitle": "Which payment methods do you accept?",
-    "certaintyPaymentsBody": "Pay with PayPal, major credit and debit cards, Apple Pay, or Google Pay — processed through trusted payment partners with encrypted checkout.",
-    "certaintySupportPrompt": "Have a question that is not covered here? No problem.",
-    "certaintySupportCta": "Contact our support team"
+    "certaintyCurrencyTitle": "بأي عملة تُعرض الأسعار؟",
+    "certaintyCurrencyBody": "جميع الأسعار مدرجة بالدولار الأمريكي. استخدم عنصر التحكم بالعملة في أسفل يسار الشاشة لتحويل مرجعي مباشر. تُخصم بطاقتك أو محفظتك بالدولار الأمريكي عند الدفع.",
+    "certaintyShippingTitle": "هل تشحنون إلى بلدي؟",
+    "certaintyShippingBody": "نشحن إلى معظم دول العالم. تُعالَج الطلبات خلال ثلاثة أيام عمل؛ يصل التتبع عادةً خلال 7–21 يومًا حسب منطقتك. تُحسب رسوم الشحن وتُعرض قبل الدفع.",
+    "certaintyShippingLink": "سياسة الشحن والضرائب",
+    "certaintyPaymentsTitle": "ما طرق الدفع التي تقبلونها؟",
+    "certaintyPaymentsBody": "ادفع عبر PayPal أو بطاقات الائتمان والخصم الرئيسية أو Apple Pay أو Google Pay — عبر شركاء دفع موثوقين مع دفع مشفّر.",
+    "certaintySupportPrompt": "هل لديك سؤال غير مذكور هنا؟ لا مشكلة.",
+    "certaintySupportCta": "تواصل مع فريق الدعم",
+    "momentsHeading": "لحظات تستحق التذكّر",
+    "momentsLead": "بعض اللحظات تغيّر كل شيء. ساعاتنا معكم فيها جميعًا.",
+    "momentsCard1Title": "لحظات فارقة",
+    "momentsCard1Description": "للقرارات والاحتفالات والليالي التي تبقى في الذاكرة.",
+    "momentsCard2Title": "ذكريات يومية",
+    "momentsCard2Description": "للرحلات والطقوس والأشياء الصغيرة التي تبقى معكم.",
+    "recommendedAdd": "إضافة",
+    "recommendedSliderPrev": "المنتجات السابقة",
+    "recommendedSliderNext": "المنتجات التالية",
+    "recommendedSliderScroll": "تمرير المنتجات",
+    "homeBlogTitle": "من المجلة",
+    "homeBlogViewAll": "قراءة جميع المقالات",
+    "homeBlogCarouselPrevious": "المقالات السابقة",
+    "homeBlogCarouselNext": "المقالات التالية",
+    "allProductsHeading": "جميع المنتجات",
+    "sectionNoProducts": "لا توجد منتجات متاحة.",
+    "categoryRowKicker": "البحث حسب",
+    "featuredPrev": "السابق",
+    "featuredNext": "التالي",
+    "featuredPage": "الصفحة {page} من {total}",
+    "couponTitle": "احصل على قسيمة",
+    "couponKicker": "تأمّل",
+    "couponQuestion": "ما أثمن شيء في الحياة؟",
+    "couponInputPlaceholder": "شاركوا أفكاركم…",
+    "couponConfirm": "إرسال",
+    "couponRewardLabel": "قسيمتكم",
+    "couponNoCodeMessage": "ستظهر قسيمتكم هنا بمجرد ضبط قسيمة الصفحة الرئيسية في لوحة الإدارة.",
+    "couponTaglineLine1": "للحياة لا إجابة قياسية.",
+    "couponTaglineLine2": "عيشوها بطريقتكم.",
+    "couponModalClose": "إغلاق",
+    "certaintyOrderTitle": "كيف تتم معالجة طلبي؟",
+    "certaintyOrderBody": "بعد إتمام الدفع، ستظهر لك رسالة تأكيد ناجحة وستتلقى بريدًا إلكترونيًا يتضمن رقم الطلب وتفاصيل المنتج وعنوان الشحن وبيانات خدمة العملاء.\n\nيُشحن طلبك عادةً خلال 1–2 أيام عمل. بعد الشحن، ستتلقى بريدًا آخر برقم التتبع وموقع التتبع لمتابعة طردك باطمئنان."
   },
   "Newsletter": {
     "emailLabel": "البريد الإلكتروني:",
@@ -259,7 +291,8 @@
     "decreaseQtyAria": "تقليل الكمية",
     "removeFromBagAria": "إزالة من الحقيبة:",
     "increaseQtyAria": "زيادة الكمية",
-    "subtotal": "المجموع الفرعي"
+    "subtotal": "المجموع الفرعي",
+    "paypalExpressError": "PayPal Express غير متاح — استخدموا Checkout بدلًا منه."
   },
   "Checkout": {
     "loading": "جارٍ تحميل صفحة الدفع...",
@@ -293,7 +326,27 @@
     "draftOrderFailed": "غير قادر علي إنشاء طلب.",
     "orderLine": "{name} × {qty}",
     "billingTitle": "عنوان إرسال الفواتير",
-    "shippingTitle": "عنوان الشحن"
+    "shippingTitle": "عنوان الشحن",
+    "billSameAsShipping": "استخدام عنوان الشحن كعنوان الفوترة",
+    "contactHeading": "البريد الإلكتروني",
+    "deliveryTitle": "التوصيل",
+    "expressCheckout": "دفع سريع",
+    "orDivider": "أو",
+    "paypalExpressError": "PayPal غير متاح — جرّبوا طريقة دفع أخرى.",
+    "stripePublishableMissing": "أضيفوا NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY (pk_…) إلى بيئتكم — تجدوه في Stripe Dashboard → Developers → API keys.",
+    "payWithCard": "الدفع بالبطاقة",
+    "payNow": "ادفعوا الآن",
+    "loadingPaymentForm": "جارٍ تحميل نموذج الدفع الآمن…",
+    "paypalPrefillNotice": "ملأنا عنوانكم من PayPal. راجعوا الشحن والإجمالي قبل الدفع.",
+    "paymentHeading": "الدفع",
+    "paymentSecureNote": "جميع المعاملات آمنة ومشفّرة.",
+    "paymentCardAndWallets": "بطاقة ائتمان",
+    "paymentCardAndWalletsHint": "بطاقة أو Apple Pay أو Google Pay",
+    "paymentPayPalHint": "ادفعوا من رصيد PayPal أو البطاقة المرتبطة",
+    "paymentPayPalContinueHint": "ستسجّلون الدخول إلى PayPal لتأكيد الدفع والشحن.",
+    "paymentPreviewHint": "يمكنكم إدخال بيانات الدفع الآن. أكملوا عنوان الشحن أعلاه قبل الدفع.",
+    "completeDetailsToPay": "أكملوا البريد الإلكتروني وعنوان الشحن وطريقة الشحن قبل الدفع.",
+    "paymentTimeout": "انتهت مهلة بوابة الدفع — حاولوا مرة أخرى"
   },
   "CheckoutAddress": {
     "firstName": "الاسم",
@@ -322,7 +375,9 @@
       "postalInvalidFormat": "أدخل رمزًا بريديًا صالحًا للبلد / المنطقة المحددة",
       "postalNotFound": "لم يتم العثور على هذا الرمز البريدي — تحقق من الأخطاء",
       "postalStateMismatch": "الرمز البريدي لا يطابق الولاية / المقاطعة المحددة"
-    }
+    },
+    "stateOptional": "الولاية / المحافظة (اختياري)",
+    "stateOptionalPlaceholder": "المقاطعة، المنطقة، إلخ (اختياري)"
   },
   "CheckoutShipping": {
     "feeTitle": "رسوم الشحن",
@@ -370,7 +425,9 @@
     "chatWhatsApp": "الدردشة على واتساب",
     "chatWhatsAppAbout": "دردش على WhatsApp حول {product}",
     "whatsappPrefillProduct": "مرحباً، لدي سؤال حول {product}:\n{url}",
-    "whatsappPrefillPage": "مرحباً، لدي سؤال حول هذه الصفحة:\n{url}"
+    "whatsappPrefillPage": "مرحباً، لدي سؤال حول هذه الصفحة:\n{url}",
+    "cardAdd": "إضافة",
+    "cardFiveStarReviews": "{count} مراجعات بخمس نجوم"
   },
   "Success": {
     "documentTitle": "تم تأكيد الطلب · HUMPBUCK",
@@ -404,7 +461,12 @@
     "reviewPhotoAlt": "مراجعة الصورة — {name}",
     "followUpPhotoAlt": "صورة المتابعة — {name}",
     "writeReview": "اكتب تعليقًا",
-    "writeReviewHint": "(لديك عملية شراء مكتملة لهذا العنصر)"
+    "writeReviewHint": "(لديك عملية شراء مكتملة لهذا العنصر)",
+    "purchaseRequiredHint": "يمكن للعملاء الذين اشتروا هذا المنتج فقط إرسال مراجعة.",
+    "confirmReceiptRequiredHint": "يُرجى تأكيد استلام الطلب قبل كتابة مراجعة.",
+    "reviewAlreadySubmitted": "لقد أرسلتم مراجعة لهذا المنتج مسبقًا.",
+    "itemType": "نوع المنتج:",
+    "showMore": "عرض {count} مراجعات إضافية"
   },
   "TaxId": {
     "fallback": {
@@ -674,7 +736,12 @@
     "editShipBack": "رجوع",
     "editShipSaving": "جارٍ الحفظ…",
     "editShipSave": "حفظ عنوان الشحن",
-    "editShipCancel": "إلغاء"
+    "editShipCancel": "إلغاء",
+    "detailReviewPrompt": "يمكنكم كتابة مراجعة لمنتجات هذا الطلب.",
+    "detailReviewButton": "كتابة مراجعة",
+    "detailReviewChooseProduct": "المنتج",
+    "detailReviewConfirmFirstTitle": "أكّدوا الاستلام أولًا",
+    "detailReviewConfirmFirstBody": "يُرجى تأكيد استلام هذا الطلب قبل كتابة مراجعة."
   },
   "AccountCancel": {
     "whatsappLink": "WhatsApp {display}",
@@ -736,7 +803,9 @@
     "appendPlaceholder": "أفكار إضافية بعد استخدام أطول، الشحن، الدعم…",
     "appendPhotosHint": "الصور الاختيارية تُصغَّر وتُضغَط وتُحفَظ كـ WebP قبل الرفع. حتى 4 صور، أقل من 2 MB لكل صورة (عادةً 0.6–1.5 MB).",
     "appendSubmitting": "جارٍ الإرسال…",
-    "appendSubmit": "نشر المتابعة"
+    "appendSubmit": "نشر المتابعة",
+    "thanksPendingBody": "شكرًا! أُرسلت مراجعتكم وستظهر في صفحة المنتج بعد الموافقة.",
+    "emojiLabel": "إضافة إيموجي"
   },
   "AccountSubscribe": {
     "kicker": "الاشتراك",
@@ -800,15 +869,15 @@
     "factoryAsideBefore": "التصنيع في",
     "factoryAsideAfter": "— مركز لتجميع ساعات OEM. تحقّقوا من المنطقة على الخريطة، أو افتحوا Google Maps للتنقّل.",
     "factoryRegion": "قوانغتشو، مقاطعة قوانغدونغ",
-    "mapIframeTitle": "خريطة — قوانغتشو، الصين",
-    "mapFallback": "نظرة عامة إقليمية على قوانغتشو. استخدموا «الفتح في Google Maps» للاتجاهات وعرض الأقمار الصناعية.",
+    "mapIframeTitle": "HUMPBUCK — تشونغشان، قوانغدونغ، الصين",
+    "mapFallback": "معاينة خريطة إقليمية. استخدم «الفتح في Google Maps» للاتجاهات وعرض الأقمار الصناعية.",
     "openMapsLabel": "الفتح في Google Maps",
     "videoAriaLabel": "فيديو ترويجي لمصنع ساعات HUMPBUCK",
     "videoCaption": "فيديو ترويجي لمصنع ساعات HUMPBUCK",
     "contactKicker": "تواصل",
-    "contactTitle": "تواصل معي",
-    "contactLead": "أسئلة المنتج أو مساعدة الطلب — راسلنا بالبريد أو WhatsApp.",
-    "emailButton": "البريد الإلكتروني",
+    "contactTitle": "تواصل معنا",
+    "contactLead": "أسئلة عن المنتجات أو مساعدة في الطلب — راسلنا عبر البريد أو واتساب.",
+    "emailButton": "بريد إلكتروني",
     "whatsappButton": "WhatsApp",
     "b2bKicker": "B2B",
     "b2bTitle": "البرامج والجملة",
@@ -816,8 +885,16 @@
     "wholesaleLink": "استكشاف الجملة",
     "mailSubject": "سؤال عن HUMPBUCK",
     "storyKicker": "من نحن",
-    "storyP1": "أحببت الساعات الميكانيكية منذ الطفولة. حينها كانت عائلتي فقيرة ولم أستطع شراء واحدة. مع ذلك، أُ fascinat كيف تتشابك التروس الدقيقة وكيف تحافظ الهياكل الميكانيكية المعقدة على الوقت بدقة.",
-    "storyP2": "الآن بنيت هذا الموقع للساعات الميكانيكية. هدفي تقديم ساعات ميكانيكية عالية الجودة وبأسعار مناسبة للجميع، وتحقيق حلم الطفولة بامتلاك واحدة. واصل مطاردة أحلامك."
+    "storyP1": "أثناء نشأتي، راقبت أبي — ساعاتي ماهر — يُعيد الحياة إلى عدد لا يُحصى من الساعات بعد المدرسة. وبينما بقي إلى جانبي في محطات حياتي، سجّلت تلك الساعات كل نبضة في رحلتي. هناك وُلدت رابطتنا. الوقت والصحبة أثمن هدايا الحياة. والآن، آمل أن تبقى ساعات HUMPBUCK المصنوعة يدويًا إلى جانبك وتشهد أهم لحظاتك.",
+    "storyP2": "",
+    "addressLabel": "العنوان",
+    "telLabel": "هاتف",
+    "emailLabel": "البريد الإلكتروني",
+    "contactTrustNote": "نرد خلال 1–2 يوم عمل. للمساعدة العاجلة في الطلبات، WhatsApp هو الأسرع.",
+    "businessHoursLabel": "ساعات العمل",
+    "businessHoursWeekdays": "الاثنين – السبت: 9:00 ص – 6:00 م",
+    "businessHoursSunday": "الأحد: مغلق",
+    "businessHoursTimezone": "GMT+8 (التوقيت الصيني الرسمي)"
   },
   "VideoTutorials": {
     "metaTitle": "دليل فيديو",
@@ -835,6 +912,22 @@
   },
   "BlogPage": {
     "metaDescription": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
-    "intro": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة."
+    "intro": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
+    "metaTitle": "المدونة — HUMPBUCK",
+    "ogTitle": "المدونة — HUMPBUCK",
+    "kicker": "المجلة",
+    "title": "المدونة",
+    "empty": "منشورات جديدة قريبًا. عودوا لاحقًا.",
+    "readMore": "قراءة المقال"
+  },
+  "DisplayCurrency": {
+    "label": "عملة العرض",
+    "usdChargeNotice": "الأسعار معروضة بالدولار الأمريكي. سيتم خصم بطاقتك بالدولار الأمريكي عند الدفع."
+  },
+  "BlogArticle": {
+    "kicker": "المجلة",
+    "backToBlog": "العودة إلى المدونة",
+    "notFoundTitle": "المقال غير موجود",
+    "viewProduct": "عرض المنتج"
   }
 }

@@ -2,11 +2,15 @@ import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { HomeMovementSpotlight } from "@/components/site/home-movement-spotlight";
 import { getProductMovement } from "@/lib/catalog";
-import { flagshipCategoryBackgroundWebpUrl, mechanicalHeroWebpUrl } from "@/lib/r2";
+import {
+  homeSpotlightBackgroundDesktopWebpUrl,
+  homeSpotlightBackgroundMobileWebpUrl,
+  homeSpotlightProductCutoutWebpUrl,
+  mechanicalHeroWebpUrl,
+} from "@/lib/r2";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardImages } from "@/lib/r2-card-image";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
-import { resolveSpotlightBackgroundUrls } from "@/lib/site-home-content";
 import { getSiteHomeContent } from "@/lib/site-home-content-queries";
 
 export async function HomeMovementCategories() {
@@ -16,8 +20,13 @@ export async function HomeMovementCategories() {
     getMessages(),
     getSiteHomeContent(),
   ]);
-  const { desktop: desktopBackground, mobile: mobileBackground } =
-    resolveSpotlightBackgroundUrls(content, flagshipCategoryBackgroundWebpUrl());
+  const desktopBackground =
+    content.spotlightBackgroundImageUrl.trim() ||
+    homeSpotlightBackgroundDesktopWebpUrl();
+  const mobileBackground =
+    content.spotlightBackgroundMobileImageUrl.trim() ||
+    content.spotlightBackgroundImageUrl.trim() ||
+    homeSpotlightBackgroundMobileWebpUrl();
 
   const all = await getMergedCatalogProducts();
   const raw =
@@ -34,7 +43,11 @@ export async function HomeMovementCategories() {
   const productCutout = content.spotlightProductImageUrl.trim();
   const productHref = product ? `/product/${product.slug}` : "/product?movement=mechanical";
   const productImage =
-    productCutout || cover || product?.image || mechanicalHeroWebpUrl();
+    productCutout ||
+    cover ||
+    product?.image ||
+    homeSpotlightProductCutoutWebpUrl() ||
+    mechanicalHeroWebpUrl();
 
   /** Match `HomeHero` mobile viewport height (85% svh minus header). */
   const spotlightMobileMinH =

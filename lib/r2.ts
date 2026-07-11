@@ -75,6 +75,46 @@ export function flagshipCategoryBackgroundWebpUrl(): string {
   return `${heroBase}/Home/humpbuck-home-hero-01.webp?v=${encodeURIComponent(rev)}`;
 }
 
+/** Homepage product spotlight — matches admin CMS defaults on production D1. */
+export function homeSpotlightBackgroundDesktopWebpUrl(): string {
+  const rev = process.env.NEXT_PUBLIC_R2_HUMPBUCK_SPOTLIGHT_BG_REV?.trim() || "1";
+  const base = homeHeroAssetBase();
+  return `${base}/Home/humpbuck-background-001-desktop.webp?v=${encodeURIComponent(rev)}`;
+}
+
+export function homeSpotlightBackgroundMobileWebpUrl(): string {
+  const rev = process.env.NEXT_PUBLIC_R2_HUMPBUCK_SPOTLIGHT_BG_REV?.trim() || "1";
+  const base = homeHeroAssetBase();
+  return `${base}/Home/humpbuck-background-001-mobile.webp?v=${encodeURIComponent(rev)}`;
+}
+
+export function homeSpotlightProductCutoutWebpUrl(): string {
+  const rev = process.env.NEXT_PUBLIC_R2_HUMPBUCK_SPOTLIGHT_PRODUCT_REV?.trim() || "1";
+  const base = homeHeroAssetBase();
+  return `${base}/Home/homepage-9220.webp?v=${encodeURIComponent(rev)}`;
+}
+
+/** Homepage “Moments” cards — same R2 keys as admin Homepage → Moments section. */
+export function homeMomentsCard1ImageUrls(): { desktop: string; mobile: string } {
+  const rev = process.env.NEXT_PUBLIC_R2_HOME_MOMENTS_REV?.trim() || "1";
+  const base = homeHeroAssetBase();
+  const v = `?v=${encodeURIComponent(rev)}`;
+  return {
+    desktop: `${base}/Home/Memorial%20moment-01.webp${v}`,
+    mobile: `${base}/Home/Memorial%20moment-01-1.webp${v}`,
+  };
+}
+
+export function homeMomentsCard2ImageUrls(): { desktop: string; mobile: string } {
+  const rev = process.env.NEXT_PUBLIC_R2_HOME_MOMENTS_REV?.trim() || "1";
+  const base = homeHeroAssetBase();
+  const v = `?v=${encodeURIComponent(rev)}`;
+  return {
+    desktop: `${base}/Home/Memorial%20moment-02.webp${v}`,
+    mobile: `${base}/Home/Memorial%20moment-02-1.webp${v}`,
+  };
+}
+
 /**
  * Same filename on R2 keeps the same URL — browsers/CDN cache the old bytes.
  * Bump `NEXT_PUBLIC_R2_RACING_CAR_REV` in `.env.local` (or the default below) after each replace.
