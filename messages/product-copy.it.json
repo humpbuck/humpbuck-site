@@ -1,5 +1,37 @@
 {
   "ProductCopy": {
+    "2034": {
+      "detailBlocks": [
+        {
+          "title": "Ultra-sottile 3 mm",
+          "body": "Solo 3 mm di spessore. Un design elegante e minimalista che si adatta perfettamente al polso per massimo comfort leggero ed eleganza senza sforzo."
+        },
+        {
+          "title": "Acciaio inox premium",
+          "body": "Realizzato in acciaio inox premium dalla cassa al bracciale. Altamente resistente all'usura e ai graffi, durevole, mantenendo la sua lucentezza dorata per anni."
+        },
+        {
+          "title": "Movimento giapponese 5+ anni",
+          "body": "Alimentato da un movimento al quarzo giapponese di precisione per una cronometria impeccabile. Consumo ultra-basso e durata della batteria superiore a 5 anni senza pensieri."
+        }
+      ]
+    },
+    "2037": {
+      "detailBlocks": [
+        {
+          "title": "Ultra-sottile 3 mm",
+          "body": "Solo 3 mm di spessore. Un design elegante e minimalista che si adatta perfettamente al polso per massimo comfort leggero ed eleganza senza sforzo."
+        },
+        {
+          "title": "Acciaio inox premium",
+          "body": "Realizzato in acciaio inox premium dalla cassa al bracciale. Altamente resistente all'usura e ai graffi, durevole, mantenendo la sua lucentezza dorata per anni."
+        },
+        {
+          "title": "Movimento giapponese 5+ anni",
+          "body": "Alimentato da un movimento al quarzo giapponese di precisione per una cronometria impeccabile. Consumo ultra-basso e durata della batteria superiore a 5 anni senza pensieri."
+        }
+      ]
+    },
     "2301": {
       "categoryLabel": "Quarzo · Uomo · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2301 — orologio ana-digi in acciaio con LCD doppio, sveglia, temperatura esterna e cronometro.",
@@ -10,8 +42,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Multifunzione",
-          "body": "DIGI-TEMP 2301 offre l'esperienza ana-digi completa: due campi digitali per ora/data e 12–24 h, più temperatura e secondi in corsa; la pila di modalità include TIME, DATE, ALM (sveglia), OUT (temperatura esterna) e STW (cronometro). Retroilluminazione e percorso modalità dedicato mantengono l'uso leggibile ogni giorno — in cassa acciaio da 33 mm con vetro minerale e 30 m di resistenza all'acqua."
+          "title": "Stile sci-fi retro-futuristico classico",
+          "body": "Un omaggio senza tempo alle estetiche sci-fi iconiche, che fonde un audace layout meccanico con un cockpit premium a multi-display."
+        },
+        {
+          "title": "5 modalità versatili in 1",
+          "body": "Progettato per un tracking di precisione: ora quotidiana, calendario, sveglie, monitoraggio della temperatura ambiente in tempo reale e cronometro ultra-preciso al 1/1.000 di secondo."
+        },
+        {
+          "title": "Artigianato in acciaio inox premium",
+          "body": "Costruito per durare con cassa e bracciale in acciaio inox di alta qualità, per una sensazione solida e una finitura metallica elegante."
         }
       ]
     },
@@ -102,12 +142,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Vista laterale",
-          "body": "Fusione radiosa di eleganza e maestria meccanica, con quadrante open-worked e accenti dorati, questo orologio è incorniciato in un elegante telaio nero e cinturino nero lussuoso. Ingranaggi visibili e tourbillon evidenziano un'artigianalità squisita — la scelta perfetta per chi cerca un lusso senza tempo. Ordina ora e brilla con questo capolavoro!"
+          "title": "Quadrante scheletrato a stella",
+          "body": "Un sorprendente quadrante open-work con gabbia industriale a forma di stella che espone completamente il movimento automatico intricato e gli ingranaggi rotanti."
         },
         {
-          "title": "CALIBRE 82S0",
-          "body": "Il rendering cattura l'estetica meccanica del movimento MIYOTA 82S0: su sfondo bianco puro, la delicata texture spazzolata del rotore e gli smussi metallici nitidi emanano raffinatezza; 21 cuscinetti a rubino contrastano splendidamente con la ruota del bilanciere color ottone; e i tagli scheletizzati mostrano la bellezza ritmica del design open-heart."
+          "title": "Cassa tonneau in carbonio",
+          "body": "Una silhouette tonneau audace che fonde una lunetta effetto fibra di carbonio con eleganti accenti oro rosa e un resistente cinturino in gomma nera."
+        },
+        {
+          "title": "Movimento giapponese",
+          "body": "Alimentato dal affidabile calibro automatico MIYOTA 82S0, con 21.600 vph, carica manuale e design open-heart ottimizzato per orologi scheletrati."
         }
       ]
     },
@@ -251,8 +295,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Multifunzione",
-          "body": "DIGI-TEMP 2412M offre l'esperienza ana-digi completa: due campi digitali per ora/data e 12–24 h, più temperatura e secondi in corsa; la pila di modalità include TIME, DATE, ALM (sveglia), OUT (temperatura esterna) e STW (cronometro). Retroilluminazione e percorso modalità dedicato mantengono l'uso leggibile ogni giorno — in cassa acciaio da 40 mm con vetro minerale e 30 m di resistenza all'acqua."
+          "title": "Stile sci-fi retro-futuristico classico",
+          "body": "Un omaggio senza tempo alle estetiche sci-fi iconiche, che fonde un audace layout meccanico con un cockpit premium a multi-display."
+        },
+        {
+          "title": "5 modalità versatili in 1",
+          "body": "Progettato per un tracking di precisione: ora quotidiana, calendario, sveglie, monitoraggio della temperatura ambiente in tempo reale e cronometro ultra-preciso al 1/1.000 di secondo."
+        },
+        {
+          "title": "Artigianato in acciaio inox premium",
+          "body": "Costruito per durare con cassa e bracciale in acciaio inox di alta qualità, per una sensazione solida e una finitura metallica elegante."
         }
       ]
     },
@@ -299,6 +351,29 @@
         {
           "title": "CALIBRE 2808",
           "body": "Movimento automatico scheletrato con indicazione dei minuti. Finitura gunmetal, equipaggiato e resistente all'uso quotidiano con design robusto. Diametro 34 mm, spessore 7,18 mm. Riserva oltre 48 ore, a 21.600 vibrazioni all'ora (3 Hz)."
+        }
+      ]
+    },
+    "9207g": {
+      "categoryLabel": "Meccanico · Uomo",
+      "shortDescription": "Con una cassa tonneau completamente trasparente in cristallo TR90, questo orologio scheletrato offre una vista panoramica a 360° del ritmo di ingranaggi e bilanciere. Il movimento finito gunmetal è in un profilo sottile — 34 mm di diametro e soli 7,18 mm di spessore — con forte impatto visivo e portabilità ultraleggera e ipoallergenica. Oltre 48 ore di riserva a 21.600 vph (3 Hz).",
+      "highlights": [
+        "Cassa tonneau TR90 trasparente",
+        "Vista scheletrata 360° · movimento gunmetal",
+        "34 mm · 7,18 mm · riserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "La tela scheletrata a 360°",
+          "body": "Vivi il puro teatro meccanico. Il movimento completamente scheletrato offre una vista a 360 gradi senza ostacoli del suo intricato interno. Dalla danza precisa degli ingranaggi al movimento del bilanciere e del rotore, ogni dettaglio microscopico è visibile da ogni angolo attraverso la cassa tonneau perfettamente trasparente."
+        },
+        {
+          "title": "Ingegneria leggera e ipoallergenica",
+          "body": "Realizzato in cristallo TR90 ultraleggero — lo stesso polimero biocompatibile ad alta tecnologia degli occhiali premium. Comfort assoluto al polso, quasi senza peso e zero irritazione cutanea: il pezzo ideale da indossare tutto il giorno."
+        },
+        {
+          "title": "Precisione ultra-sottile di grado industriale",
+          "body": "Nel cuore batte un calibro scheletrato automatico con finitura gunmetal. Con 34 mm di diametro e soli 7,18 mm di spessore, questo motore robusto resiste all'uso quotidiano. Funziona a 21.600 vibrazioni all'ora (3 Hz) con riserva di carica affidabile superiore a 48 ore."
         }
       ]
     }

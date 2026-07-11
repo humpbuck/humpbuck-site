@@ -1,8 +1,8 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK Watches - מתנות משמעותיות של זמן ואהבה",
+    "titleDefault": "HUMPBUCK שעונים - מתנות משמעותיות של זמן ואהבה",
     "descriptionDefault": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
-    "ogTitle": "HUMPBUCK Watches - מתנות משמעותיות של זמן ואהבה",
+    "ogTitle": "HUMPBUCK שעונים - מתנות משמעותיות של זמן ואהבה",
     "ogDescription": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים."
   },
   "LocaleSwitcher": {
@@ -76,9 +76,9 @@
     "socialTiktokAria": "HUMPBUCK ב-TikTok"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK Watches - מתנות משמעותיות של זמן ואהבה",
+    "metaTitle": "HUMPBUCK שעונים - מתנות משמעותיות של זמן ואהבה",
     "metaDescription": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
-    "ogTitle": "HUMPBUCK Watches - מתנות משמעותיות של זמן ואהבה",
+    "ogTitle": "HUMPBUCK שעונים - מתנות משמעותיות של זמן ואהבה",
     "ogDescription": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
     "heroBadge": "סדרה · DIGI-TEMP",
     "heroLead1": "שעון אנאלוגי-דיגיטלי רב-תכליתי — תצוגה כפולה, מערך תכונות מלא.",
@@ -119,7 +119,7 @@
     "newsletterTitle": "השקות שעונים חדשות",
     "newsletterBody": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
     "mechanicalHeroBadge": "מתנות · זמן ואהבה",
-    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroTitle": "HUMPBUCK שעונים",
     "mechanicalHeroLead": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
     "mechanicalHeroChipAutomatic": "אומנות",
     "mechanicalHeroChipSkeleton": "אבני דרך",
@@ -160,7 +160,7 @@
     "certaintyCurrencyTitle": "באיזו מטבע מוצגים המחירים?",
     "certaintyCurrencyBody": "כל המחירים מוצגים בדולר אמריקאי. השתמשו בבקר המטבע בפינה השמאלית התחתונה של המסך להמרה חיה לעיון. הכרטיס או הארנק שלכם יחויבו ב-USD בקופה.",
     "certaintyShippingTitle": "האם אתם שולחים למדינה שלי?",
-    "certaintyShippingBody": "אנו שולחים לרוב המדינות בעולם. הזמנות מעובדות תוך שלושה ימי עסקים; משלוח עם מעקב מגיע בדרך כלל תוך 7–21 ימים בהתאם לאזורכם. דמי משלוח מחושבים ומוצגים לפני התשלום.",
+    "certaintyShippingBody": "כן — אנו שולחים לכל העולם. הזמנות מעובדות תוך שלושה ימי עסקים. משלוח עם מעקב מגיע בדרך כלל תוך 7–21 ימים, בהתאם לאזורכם. דמי משלוח (אם יש) מחושבים ומוצגים בקופה לפני התשלום; יעדים רבים זכאים למשלוח סטנדרטי חינם.\n\n\n• צפון אמריקה והקריביים — Canada, Costa Rica, Dominican Republic, El Salvador, Guatemala, Honduras, Mexico, Nicaragua, Panama, Puerto Rico, Trinidad and Tobago, United States\n\n• דרום אמריקה — Argentina, Bolivia, Brazil, Chile, Colombia, Ecuador, Paraguay, Peru, Uruguay\n\n• אירופה — Albania, Austria, Belgium, Bosnia and Herzegovina, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Iceland, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Moldova, Montenegro, Netherlands, North Macedonia, Norway, Poland, Portugal, Romania, Russia, Serbia, Slovakia, Slovenia, Spain, Sweden, Switzerland, Ukraine, United Kingdom\n\n• המזרח התיכון — Bahrain, Iraq, Israel, Jordan, Kuwait, Oman, Qatar, Saudi Arabia, United Arab Emirates\n\n• אסיה — Hong Kong, India, Japan, Kazakhstan, Malaysia, Mongolia, Philippines, Singapore, South Korea, Sri Lanka, Thailand, Vietnam\n\n• אפריקה — Angola, Ghana, Kenya, Morocco, Nigeria, Réunion, Rwanda, South Africa, Tanzania, Uganda\n\n• אוקיאניה — Australia, New Zealand\n\nאם המדינה שלכם לא מופיעה למעלה, ייתכן שאפשרויות express (DHL, FedEx, UPS או USPS) עדיין זמינות בקופה. באזורים מסוימים נדרש מידע מכס נוסף (למשל מספר מס או מסמכי KYC להודו) — נדריך אתכם במידת הצורך.",
     "certaintyShippingLink": "מדיניות משלוח ומסים",
     "certaintyPaymentsTitle": "אילו אמצעי תשלום אתם מקבלים?",
     "certaintyPaymentsBody": "שלמו ב-PayPal, כרטיסי אשראי וחיוב מרכזיים, Apple Pay או Google Pay — דרך שותפי תשלום מהימנים עם קופה מוצפנת.",
@@ -346,7 +346,14 @@
     "paymentPayPalContinueHint": "תתחברו ל-PayPal כדי לאשר תשלום ומשלוח.",
     "paymentPreviewHint": "ניתן להזין פרטי תשלום כעת. השלימו את כתובת המשלוח למעלה לפני התשלום.",
     "completeDetailsToPay": "השלימו אימייל, כתובת משלוח ושיטת משלוח לפני התשלום.",
-    "paymentTimeout": "פג תוקף שער התשלום — נסו שוב"
+    "paymentTimeout": "פג תוקף שער התשלום — נסו שוב",
+    "couponRequired": "נדרש קוד קופון.",
+    "couponNotFound": "הקופון לא נמצא.",
+    "couponInactive": "הקופון אינו פעיל.",
+    "couponNotActiveYet": "הקופון עדיין לא פעיל.",
+    "couponExpired": "תוקף הקופון פג.",
+    "couponUsageLimit": "הקופון הגיע למגבלת השימוש.",
+    "couponValidateFailed": "לא ניתן לאמת את הקופון."
   },
   "CheckoutAddress": {
     "firstName": "שם פרטי",
@@ -427,7 +434,9 @@
     "whatsappPrefillProduct": "שלום, יש לי שאלה לגבי {product}:\n{url}",
     "whatsappPrefillPage": "שלום, יש לי שאלה לגבי דף זה:\n{url}",
     "cardAdd": "הוספה",
-    "cardFiveStarReviews": "{count} ביקורות חמש כוכבים"
+    "cardFiveStarReviews": "{count} ביקורות חמש כוכבים",
+    "productShowcase": "תצוגת המוצר",
+    "productShowcaseVideoAria": "סרטון תצוגת המוצר: {product}"
   },
   "Success": {
     "documentTitle": "הזמנה אושרה · HUMPBUCK",
@@ -439,7 +448,9 @@
     "items": "פריטים",
     "qty": "כמות {count}",
     "viewOrders": "צפייה בהזמנות",
-    "continueShopping": "המשך קניות"
+    "continueShopping": "המשך קניות",
+    "providerStripe": "Stripe",
+    "providerPayPal": "PayPal"
   },
   "Series": {
     "metaFallbackTitle": "סדרה",
@@ -613,7 +624,7 @@
   "Account": {
     "overviewKicker": "סקירה",
     "overviewTitle": "החשבון שלי",
-    "overviewIntro": "שלום, {greeting}. נהלו הזמנות, כתובות, כלי שותפים ופרופיל מכאן.",
+    "overviewIntro": "שלום, {greeting}. נהלו הזמנות, כתובות ופרופיל מכאן.",
     "overviewGreetingFallback": "שם",
     "sectionOrders": "הזמנות",
     "ordersCardEmpty": "אין הזמנות עדיין",
@@ -849,7 +860,7 @@
     "backHome": "חזרה לדף הבית"
   },
   "AboutPage": {
-    "metaTitle": "אודות — HUMPBUCK Watches",
+    "metaTitle": "אודות — HUMPBUCK שעונים",
     "metaDescription": "שעוני יוקרה מעשה יד שנוצרו להישאר לצידכם ולהיות עדים לרגעים המשמעותיים בחיים.",
     "kickerBrand": "מותג",
     "heroTitle": "HUMPBUCK — תחילה שימושיות, אחר כך מראה.",
@@ -929,5 +940,8 @@
     "backToBlog": "חזרה לבלוג",
     "notFoundTitle": "המאמר לא נמצא",
     "viewProduct": "צפייה במוצר"
+  },
+  "Announcement": {
+    "message": "שעונים לעדות לרגעים המשמעותיים בחיים."
   }
 }

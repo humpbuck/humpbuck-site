@@ -11,6 +11,10 @@ import {
   emptyCheckoutAddress,
   validateCheckoutAddressForm,
 } from "@/lib/checkout-address";
+import {
+  resolveCheckoutCouponErrorMessage,
+  resolveCheckoutOrderErrorMessage,
+} from "@/lib/checkout-client-errors";
 import { readCheckoutPrefill, clearCheckoutPrefill } from "@/lib/checkout-prefill";
 import { CheckoutAddressForm } from "@/components/checkout/checkout-address-form";
 import { CheckoutExpressSection } from "@/components/checkout/checkout-express-section";
@@ -39,6 +43,7 @@ const CheckoutShippingSection = dynamic(
 
 export default function CheckoutPage() {
   const t = useTranslations("Checkout");
+  const tAddr = useTranslations("CheckoutAddress");
   const searchParams = useSearchParams();
   const [cartReady, setCartReady] = useState(false);
   const { data: session } = useSession();
@@ -258,8 +263,17 @@ export default function CheckoutPage() {
         trafficSource: getTrafficSourceForCheckout(),
       }),
     });
-    const data = (await res.json()) as { ok?: boolean; orderId?: string; error?: string };
-    if (!res.ok || !data.ok || !data.orderId) throw new Error(data.error || t("draftOrderFailed"));
+    const data = (await res.json()) as {
+      ok?: boolean;
+      orderId?: string;
+      error?: string;
+      errorCode?: string;
+      addressScope?: string;
+      validationKey?: string;
+    };
+    if (!res.ok || !data.ok || !data.orderId) {
+      throw new Error(resolveCheckoutOrderErrorMessage(data, t, tAddr));
+    }
     setOrderId(data.orderId);
     return data.orderId;
   }
@@ -449,10 +463,14 @@ export default function CheckoutPage() {
       });
       const data = (await res.json()) as
         | { ok: true; coupon: { code: string; discountAmount: number; currency: string } }
-        | { ok: false; error: string };
+        | { ok: false; error?: string; errorCode?: string };
       if (!res.ok || !data.ok) {
         setAppliedCoupon(null);
-        setCouponError(!data.ok ? data.error : t("couponInvalid"));
+        setCouponError(
+          !data.ok
+            ? resolveCheckoutCouponErrorMessage(data.errorCode, t)
+            : t("couponInvalid"),
+        );
         return;
       }
       setAppliedCoupon({ code: data.coupon.code, discountAmount: data.coupon.discountAmount / 100 });

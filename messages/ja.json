@@ -1,8 +1,8 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK Watches - 時間と愛を贈る意味あるギフト",
+    "titleDefault": "HUMPBUCK ウォッチ - 時間と愛を贈る意味あるギフト",
     "descriptionDefault": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
-    "ogTitle": "HUMPBUCK Watches - 時間と愛を贈る意味あるギフト",
+    "ogTitle": "HUMPBUCK ウォッチ - 時間と愛を贈る意味あるギフト",
     "ogDescription": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。"
   },
   "LocaleSwitcher": {
@@ -76,9 +76,9 @@
     "socialTiktokAria": "TikTokのHUMPBUCK"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK Watches - 時間と愛を贈る意味あるギフト",
+    "metaTitle": "HUMPBUCK ウォッチ - 時間と愛を贈る意味あるギフト",
     "metaDescription": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
-    "ogTitle": "HUMPBUCK Watches - 時間と愛を贈る意味あるギフト",
+    "ogTitle": "HUMPBUCK ウォッチ - 時間と愛を贈る意味あるギフト",
     "ogDescription": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
     "heroBadge": "シリーズ · DIGI-TEMP",
     "heroLead1": "アナデジ多機能時計 — デュアルディスプレイ、フル機能。",
@@ -346,7 +346,14 @@
     "paymentPayPalContinueHint": "PayPal にサインインして支払いと配送を確認します。",
     "paymentPreviewHint": "今すぐお支払い情報を入力できます。お支払い前に上の配送先住所を完了してください。",
     "completeDetailsToPay": "お支払い前にメール、配送先住所、配送方法を完了してください。",
-    "paymentTimeout": "決済ゲートウェイがタイムアウトしました — もう一度お試しください"
+    "paymentTimeout": "決済ゲートウェイがタイムアウトしました — もう一度お試しください",
+    "couponRequired": "クーポンコードは必須です。",
+    "couponNotFound": "クーポンが見つかりません。",
+    "couponInactive": "クーポンは無効です。",
+    "couponNotActiveYet": "クーポンはまだ有効になっていません。",
+    "couponExpired": "クーポンの有効期限が切れています。",
+    "couponUsageLimit": "クーポンの利用上限に達しました。",
+    "couponValidateFailed": "クーポンを検証できません。"
   },
   "CheckoutAddress": {
     "firstName": "名",
@@ -427,7 +434,9 @@
     "whatsappPrefillProduct": "こんにちは、{product} について質問があります：\n{url}",
     "whatsappPrefillPage": "こんにちは、このページについて質問があります：\n{url}",
     "cardAdd": "追加",
-    "cardFiveStarReviews": "星5つのレビュー {count}件"
+    "cardFiveStarReviews": "星5つのレビュー {count}件",
+    "productShowcase": "製品ショーケース",
+    "productShowcaseVideoAria": "製品ショーケース動画：{product}"
   },
   "Success": {
     "documentTitle": "注文確認 · HUMPBUCK",
@@ -439,7 +448,9 @@
     "items": "商品",
     "qty": "数量 {count}",
     "viewOrders": "注文を見る",
-    "continueShopping": "買い物を続ける"
+    "continueShopping": "買い物を続ける",
+    "providerStripe": "Stripe",
+    "providerPayPal": "PayPal"
   },
   "Series": {
     "metaFallbackTitle": "シリーズ",
@@ -613,7 +624,7 @@
   "Account": {
     "overviewKicker": "概要",
     "overviewTitle": "マイアカウント",
-    "overviewIntro": "こんにちは、{greeting}。注文、住所、アフィリエイトツール、プロフィールをここで管理できます。",
+    "overviewIntro": "こんにちは、{greeting}。注文、住所、プロフィールをここで管理できます。",
     "overviewGreetingFallback": "お客様",
     "sectionOrders": "注文",
     "ordersCardEmpty": "注文はまだありません",
@@ -849,7 +860,7 @@
     "backHome": "ホームに戻る"
   },
   "AboutPage": {
-    "metaTitle": "About — HUMPBUCK Watches",
+    "metaTitle": "About — HUMPBUCK ウォッチ",
     "metaDescription": "そばに寄り添い、人生の大切な瞬間を共に見届けるハンドクラフトタイムピース。",
     "kickerBrand": "ブランド",
     "heroTitle": "HUMPBUCK — 実用性を先に、見せ方はその次。",
@@ -929,5 +940,8 @@
     "backToBlog": "ブログに戻る",
     "notFoundTitle": "記事が見つかりません",
     "viewProduct": "商品を見る"
+  },
+  "Announcement": {
+    "message": "人生の大切な瞬間を見届ける時計。"
   }
 }

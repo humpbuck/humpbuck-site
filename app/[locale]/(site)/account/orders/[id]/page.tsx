@@ -23,6 +23,7 @@ import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { prisma } from "@/lib/prisma";
 import { redirectWithLocale } from "@/lib/storefront-redirect";
 import { intlLocaleFromAppLocale } from "@/lib/site-locale";
+import { getTaxIdRule } from "@/lib/tax-id-rules";
 
 export default async function AccountOrderDetailPage({
   params,
@@ -50,6 +51,7 @@ export default async function AccountOrderDetailPage({
   const intlTag = intlLocaleFromAppLocale(locale);
   const tStatus = await getTranslations("OrderStatus");
   const t = await getTranslations("Account");
+  const tTax = await getTranslations("TaxId");
 
   const lines = orderItemsFromOrder(order as { items?: Array<{ productSlug: string; productName: string; productImage: string | null; variantId: string | null; variantLabel: string | null; variantImage: string | null; qty: number; unitPriceCents: number; lineTotalCents: number; currency: string; productSnapshotJson: string | null; }>; itemsJson?: string | null });
   const lineSlugs = [...new Set(lines.map((l) => l.slug))];
@@ -88,8 +90,17 @@ export default async function AccountOrderDetailPage({
     email: t("addressEmail"),
   };
 
-  const shipRows = buyerOrderAddressFieldRows(shipRec, order.email, addressLabels);
-  const billRows = buyerOrderAddressFieldRows(billRec, order.email, addressLabels);
+  const taxIdLabel = (countryIso2: string) => {
+    const rule = getTaxIdRule(countryIso2);
+    return tTax(`${rule.ruleKey}.label`);
+  };
+
+  const shipRows = buyerOrderAddressFieldRows(shipRec, order.email, addressLabels, {
+    taxIdLabel,
+  });
+  const billRows = buyerOrderAddressFieldRows(billRec, order.email, addressLabels, {
+    taxIdLabel,
+  });
 
   const lineItemLabels = {
     reviewSubmitted: t("lineReviewSubmitted"),

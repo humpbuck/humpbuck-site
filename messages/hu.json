@@ -1,8 +1,8 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK Watches - Időt és szeretetet hordozó ajándékok",
+    "titleDefault": "HUMPBUCK Órák - Időt és szeretetet hordozó ajándékok",
     "descriptionDefault": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
-    "ogTitle": "HUMPBUCK Watches - Időt és szeretetet hordozó ajándékok",
+    "ogTitle": "HUMPBUCK Órák - Időt és szeretetet hordozó ajándékok",
     "ogDescription": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait."
   },
   "LocaleSwitcher": {
@@ -76,9 +76,9 @@
     "socialTiktokAria": "HUMPBUCK a TikTokon"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK Watches - Időt és szeretetet hordozó ajándékok",
+    "metaTitle": "HUMPBUCK Órák - Időt és szeretetet hordozó ajándékok",
     "metaDescription": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
-    "ogTitle": "HUMPBUCK Watches - Időt és szeretetet hordozó ajándékok",
+    "ogTitle": "HUMPBUCK Órák - Időt és szeretetet hordozó ajándékok",
     "ogDescription": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
     "heroBadge": "Sorozat · DIGI-TEMP",
     "heroLead1": "Ana-digi multifunkciós óra — kettős kijelző, teljes funkciókészlet.",
@@ -119,7 +119,7 @@
     "newsletterTitle": "ÚJ ÓRA MEGJELENÉSEK",
     "newsletterBody": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
     "mechanicalHeroBadge": "Ajándékok · Idő és szeretet",
-    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroTitle": "HUMPBUCK Órák",
     "mechanicalHeroLead": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
     "mechanicalHeroChipAutomatic": "Kézművesség",
     "mechanicalHeroChipSkeleton": "Mérföldkövek",
@@ -160,7 +160,7 @@
     "certaintyCurrencyTitle": "Milyen pénznemben jelennek meg az árak?",
     "certaintyCurrencyBody": "Minden ár amerikai dollárban van feltüntetve. Használja a képernyő bal alsó sarkában lévő pénznemválasztót élő referencia-átváltáshoz. A kártyáját vagy tárcáját USD-ben terheljük a fizetéskor.",
     "certaintyShippingTitle": "Szállítanak az országomba?",
-    "certaintyShippingBody": "A világ legtöbb országába szállítunk. A rendeléseket három munkanapon belül feldolgozzuk; a nyomon követhető szállítás általában 7–21 nap alatt érkezik a régiójától függően. A szállítási díjat a fizetés előtt kiszámítjuk és megjelenítjük.",
+    "certaintyShippingBody": "Igen — világszerte szállítunk. A rendeléseket három munkanapon belül feldolgozzuk. A nyomon követhető szállítás általában 7–21 nap alatt érkezik a régiójától függően. A szállítási díj (ha van) a fizetés előtt kiszámításra kerül és megjelenik a pénztárnál; sok célállomás jogosult ingyenes standard szállításra.\n\n\n• Észak-Amerika és Karib-térség — Kanada, Costa Rica, Dominikai Köztársaság, El Salvador, Guatemala, Honduras, Mexikó, Nicaragua, Panama, Puerto Rico, Trinidad és Tobago, Egyesült Államok\n\n• Dél-Amerika — Argentína, Bolívia, Brazília, Chile, Kolumbia, Ecuador, Paraguay, Peru, Uruguay\n\n• Európa — Albánia, Ausztria, Belgium, Bosznia-Hercegovina, Bulgária, Horvátország, Ciprus, Csehország, Dánia, Észtország, Finnország, Franciaország, Németország, Görögország, Magyarország, Izland, Írország, Olaszország, Lettország, Litvánia, Luxemburg, Málta, Moldova, Montenegró, Hollandia, Észak-Macedónia, Norvégia, Lengyelország, Portugália, Románia, Oroszország, Szerbia, Szlovákia, Szlovénia, Spanyolország, Svédország, Svájc, Ukrajna, Egyesült Királyság\n\n• Közel-Kelet — Bahrein, Irak, Izrael, Jordánia, Kuvait, Omán, Katar, Szaúd-Arábia, Egyesült Arab Emírségek\n\n• Ázsia — Hongkong, India, Japán, Kazahsztán, Malajzia, Mongólia, Fülöp-szigetek, Szingapúr, Dél-Korea, Srí Lanka, Thaiföld, Vietnám\n\n• Afrika — Angola, Ghána, Kenya, Marokkó, Nigéria, Réunion, Ruanda, Dél-afrikai Köztársaság, Tanzánia, Uganda\n\n• Óceánia — Ausztrália, Új-Zéland\n\nHa az országa nincs fent a listán, a pénztárnál továbbra is elérhetők lehetnek expressz opciók (DHL, FedEx, UPS vagy USPS). Egyes régiókban extra vám információk szükségesek (például adóazonosító vagy KYC dokumentumok Indiához) — szükség esetén segítünk.",
     "certaintyShippingLink": "Szállítási és adószabályzat",
     "certaintyPaymentsTitle": "Milyen fizetési módokat fogadnak el?",
     "certaintyPaymentsBody": "Fizessen PayPal-lal, nagyobb hitel- és betéti kártyákkal, Apple Pay-jel vagy Google Pay-jel — megbízható fizetési partnereken keresztül, titkosított fizetéssel.",
@@ -346,7 +346,14 @@
     "paymentPayPalContinueHint": "Bejelentkezik a PayPalba a fizetés és szállítás megerősítéséhez.",
     "paymentPreviewHint": "Most megadhatja a fizetési adatokat. Töltse ki a szállítási címet fent fizetés előtt.",
     "completeDetailsToPay": "Töltse ki az e-mailt, szállítási címet és szállítási módot fizetés előtt.",
-    "paymentTimeout": "A fizetési átjáró időtúllépés — próbálja újra"
+    "paymentTimeout": "A fizetési átjáró időtúllépés — próbálja újra",
+    "couponRequired": "A kuponkód megadása kötelező.",
+    "couponNotFound": "A kupon nem található.",
+    "couponInactive": "A kupon inaktív.",
+    "couponNotActiveYet": "A kupon még nem aktív.",
+    "couponExpired": "A kupon lejárt.",
+    "couponUsageLimit": "A kupon elérte a felhasználási limitet.",
+    "couponValidateFailed": "A kupon nem ellenőrizhető."
   },
   "CheckoutAddress": {
     "firstName": "Keresztnév",
@@ -427,7 +434,9 @@
     "whatsappPrefillProduct": "Üdvözlöm, kérdésem van a következővel kapcsolatban: {product}:\n{url}",
     "whatsappPrefillPage": "Üdvözlöm, kérdésem van ezzel az oldallal kapcsolatban:\n{url}",
     "cardAdd": "Hozzáadás",
-    "cardFiveStarReviews": "{count} ötcsillagos értékelés"
+    "cardFiveStarReviews": "{count} ötcsillagos értékelés",
+    "productShowcase": "Termékbemutató",
+    "productShowcaseVideoAria": "Termékbemutató videó: {product}"
   },
   "Success": {
     "documentTitle": "Rendelés visszaigazolva · HUMPBUCK",
@@ -439,7 +448,9 @@
     "items": "Tételek",
     "qty": "Db: {count}",
     "viewOrders": "Rendelések megtekintése",
-    "continueShopping": "Vásárlás folytatása"
+    "continueShopping": "Vásárlás folytatása",
+    "providerStripe": "Stripe",
+    "providerPayPal": "PayPal"
   },
   "Series": {
     "metaFallbackTitle": "Sorozat",
@@ -613,7 +624,7 @@
   "Account": {
     "overviewKicker": "Áttekintés",
     "overviewTitle": "Fiókom",
-    "overviewIntro": "Üdv, {greeting}! Innen kezelheti rendeléseit, címeit, partner eszközeit és profilját.",
+    "overviewIntro": "Üdv, {greeting}! Innen kezelheti rendeléseit, címeit és profilját.",
     "overviewGreetingFallback": "Üdv",
     "sectionOrders": "Rendelések",
     "ordersCardEmpty": "Még nincs rendelés",
@@ -849,7 +860,7 @@
     "backHome": "Vissza a kezdőlapra"
   },
   "AboutPage": {
-    "metaTitle": "Rólunk — HUMPBUCK Watches",
+    "metaTitle": "Rólunk — HUMPBUCK Órák",
     "metaDescription": "Kézműves órák, amelyek melletted maradnak és végigkísérik az élet értelmes pillanatait.",
     "kickerBrand": "Márka",
     "heroTitle": "HUMPBUCK — először hasznosság, aztán látvány.",
@@ -929,5 +940,8 @@
     "backToBlog": "Vissza a bloghoz",
     "notFoundTitle": "A cikk nem található",
     "viewProduct": "Termék megtekintése"
+  },
+  "Announcement": {
+    "message": "Órák, amelyek az élet legértékesebb pillanatait őrzik."
   }
 }

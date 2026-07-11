@@ -1,5 +1,37 @@
 {
   "ProductCopy": {
+    "2034": {
+      "detailBlocks": [
+        {
+          "title": "Ultrafino 3 mm",
+          "body": "Solo 3 mm de grosor. Un diseño elegante y minimalista que se asienta perfectamente plano en la muñeca para máxima ligereza y elegancia sin esfuerzo."
+        },
+        {
+          "title": "Acero inoxidable premium",
+          "body": "Elaborado en acero inoxidable premium de la caja a la pulsera. Altamente resistente al desgaste y a los arañazos, duradero, manteniendo su brillo dorado durante años."
+        },
+        {
+          "title": "Movimiento japonés 5+ años",
+          "body": "Impulsado por un movimiento de cuarzo japonés de precisión para una cronometría impecable. Consumo ultrabajo y vida útil de la pila superior a 5 años sin complicaciones."
+        }
+      ]
+    },
+    "2037": {
+      "detailBlocks": [
+        {
+          "title": "Ultrafino 3 mm",
+          "body": "Solo 3 mm de grosor. Un diseño elegante y minimalista que se asienta perfectamente plano en la muñeca para máxima ligereza y elegancia sin esfuerzo."
+        },
+        {
+          "title": "Acero inoxidable premium",
+          "body": "Elaborado en acero inoxidable premium de la caja a la pulsera. Altamente resistente al desgaste y a los arañazos, duradero, manteniendo su brillo dorado durante años."
+        },
+        {
+          "title": "Movimiento japonés 5+ años",
+          "body": "Impulsado por un movimiento de cuarzo japonés de precisión para una cronometría impecable. Consumo ultrabajo y vida útil de la pila superior a 5 años sin complicaciones."
+        }
+      ]
+    },
     "2301": {
       "categoryLabel": "Cuarzo · Hombre · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2301 — reloj ana-digi en acero con doble LCD, alarma, temperatura exterior y cronómetro.",
@@ -10,8 +42,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Multifuncional",
-          "body": "DIGI-TEMP 2301 ofrece la experiencia ana-digi completa: dos campos digitales para hora/fecha y 12–24 h, además de temperatura y segundos en marcha; la pila de modos incluye TIME, DATE, ALM (alarma), OUT (temperatura exterior) y STW (cronómetro). La retroiluminación y un recorrido de modos dedicado mantienen la operación legible en el uso diario — en una caja de acero de 33 mm con cristal mineral y 30 m de resistencia al agua."
+          "title": "Estilo sci-fi retrofuturista clásico",
+          "body": "Un tributo atemporal a la estética sci-fi icónica, que fusiona un audaz diseño mecánico con un cockpit premium de múltiples pantallas."
+        },
+        {
+          "title": "5 modos versátiles en 1",
+          "body": "Diseñado para un seguimiento preciso: hora diaria, calendario, alarmas, monitorización de temperatura ambiente en tiempo real y cronómetro ultrapreciso de 1/1.000 de segundo."
+        },
+        {
+          "title": "Artesanía en acero inoxidable premium",
+          "body": "Construido para durar con caja y pulsera de acero inoxidable de alta calidad, ofreciendo una sensación sólida y un acabado metálico elegante."
         }
       ]
     },
@@ -102,12 +142,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Vista lateral",
-          "body": "Una fusión radiante de elegancia y maestría mecánica, con dial open-worked y acentos dorados, esta pieza se presenta en un marco negro elegante y correa negra lujosa. Los engranajes visibles y el tourbillon destacan una artesanía exquisita — la elección perfecta para quien busca lujo atemporal. ¡Pídelo ahora y brilla con esta obra maestra!"
+          "title": "Esfera esqueleto estrella",
+          "body": "Una llamativa esfera open-work con jaula industrial en forma de estrella que expone por completo el intrincado movimiento automático y los engranajes en rotación."
         },
         {
-          "title": "CALIBRE 82S0",
-          "body": "La imagen captura la estética mecánica del movimiento MIYOTA 82S0: sobre fondo blanco puro, la textura cepillada del rotor y los biselados metálicos nítidos irradian refinamiento; 21 cojinetes de rubí contrastan bellamente con la rueda de escape en tono latón; y los recortes esqueletizados muestran la belleza rítmica del diseño open-heart."
+          "title": "Caja tonneau de carbono",
+          "body": "Una audaz silueta tonneau que combina bisel texturizado efecto fibra de carbono con acentos en oro rosa y una resistente correa de caucho negro."
+        },
+        {
+          "title": "Movimiento japonés",
+          "body": "Impulsado por el fiable calibre automático MIYOTA 82S0, con 21.600 vph, cuerda manual y diseño open-heart optimizado para relojes esqueleto."
         }
       ]
     },
@@ -251,8 +295,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Multifuncional",
-          "body": "DIGI-TEMP 2412M ofrece la experiencia ana-digi completa: dos campos digitales para hora/fecha y 12–24 h, además de temperatura y segundos en marcha; la pila de modos incluye TIME, DATE, ALM (alarma), OUT (temperatura exterior) y STW (cronómetro). La retroiluminación y un recorrido de modos dedicado mantienen la operación legible en el uso diario — en una caja de acero de 40 mm con cristal mineral y 30 m de resistencia al agua."
+          "title": "Estilo sci-fi retrofuturista clásico",
+          "body": "Un tributo atemporal a la estética sci-fi icónica, que fusiona un audaz diseño mecánico con un cockpit premium de múltiples pantallas."
+        },
+        {
+          "title": "5 modos versátiles en 1",
+          "body": "Diseñado para un seguimiento preciso: hora diaria, calendario, alarmas, monitorización de temperatura ambiente en tiempo real y cronómetro ultrapreciso de 1/1.000 de segundo."
+        },
+        {
+          "title": "Artesanía en acero inoxidable premium",
+          "body": "Construido para durar con caja y pulsera de acero inoxidable de alta calidad, ofreciendo una sensación sólida y un acabado metálico elegante."
         }
       ]
     },
@@ -299,6 +351,29 @@
         {
           "title": "CALIBRE 2808",
           "body": "Movimiento automático esqueleto con indicación de minutos. Acabado gunmetal, equipado y resistente al uso diario con un diseño robusto. Diámetro de 34 mm, grosor de 7,18 mm. Reserva superior a 48 horas, a 21.600 vibraciones por hora (3 Hz)."
+        }
+      ]
+    },
+    "9207g": {
+      "categoryLabel": "Mecánico · Hombre",
+      "shortDescription": "Con una caja tonneau totalmente transparente de cristal TR90, este reloj esqueleto ofrece una vista panorámica de 360° del ritmo de engranajes y espiral. El movimiento acabado en gunmetal se aloja en un perfil delgado — 34 mm de diámetro y solo 7,18 mm de grosor — con impacto visual potente y uso ultraligero e hipoalergénico. Más de 48 h de reserva a 21.600 vph (3 Hz).",
+      "highlights": [
+        "Caja tonneau TR90 transparente",
+        "Vista esqueleto 360° · movimiento gunmetal",
+        "34 mm · 7,18 mm · reserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "El lienzo esqueleto desde todos los ángulos",
+          "body": "Viva el teatro mecánico en estado puro. El movimiento totalmente esqueletizado ofrece una vista de 360 grados sin obstáculos de su intrincado interior. Desde la danza precisa de los engranajes hasta el barrido del volante de escape y el rotor, cada detalle microscópico es visible desde cualquier ángulo a través de la impecable caja tonneau transparente."
+        },
+        {
+          "title": "Ingeniería ligera e hipoalergénica",
+          "body": "Elaborado en cristal TR90 ultraligero — el mismo polímero biocompatible de alta tecnología de las gafas premium. Confort absoluto en la muñeca, casi sin peso y cero irritación cutánea: la pieza ideal para llevar todo el día."
+        },
+        {
+          "title": "Precisión ultrafina de grado industrial",
+          "body": "En el corazón late un calibre esqueleto automático con acabado gunmetal. Con 34 mm de diámetro y solo 7,18 mm de grosor, este motor robusto resiste el uso diario. Funciona a 21.600 vibraciones por hora (3 Hz) con una reserva de marcha fiable superior a 48 horas."
         }
       ]
     }

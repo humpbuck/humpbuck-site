@@ -82,9 +82,9 @@ export default async function CheckoutSuccessPage({
   }));
   const providerLabel =
     order.provider === "stripe"
-      ? "Stripe"
+      ? t("providerStripe")
       : order.provider === "paypal"
-        ? "PayPal"
+        ? t("providerPayPal")
         : order.provider;
 
   return (

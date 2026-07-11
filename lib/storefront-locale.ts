@@ -307,26 +307,99 @@ const MOVEMENT_SPEC_VALUE: Record<string, Record<string, string>> = {
 };
 
 const MATERIAL_SPEC_VALUE: Record<string, Record<string, string>> = {
-  ar: { Silicone: "سيليكون", Rubber: "مطاط", Leather: "جلد" },
-  de: { Silicone: "Silikon", Rubber: "Kautschuk", Leather: "Leder" },
-  es: { Silicone: "Silicona", Rubber: "Caucho", Leather: "Cuero" },
-  fr: { Silicone: "Silicone", Rubber: "Caoutchouc", Leather: "Cuir" },
-  he: { Silicone: "סיליקון", Rubber: "גומי", Leather: "עור" },
-  hu: { Silicone: "Szilikon", Rubber: "Gumi", Leather: "Bőr" },
-  it: { Silicone: "Silicone", Rubber: "Gomma", Leather: "Pelle" },
-  ja: { Silicone: "シリコン", Rubber: "ラバー", Leather: "レザー" },
-  ko: { Silicone: "실리콘", Rubber: "러버", Leather: "가죽" },
-  nl: { Silicone: "Silicone", Rubber: "Rubber", Leather: "Leer" },
-  pt: { Silicone: "Silicone", Rubber: "Borracha", Leather: "Couro" },
-  ru: { Silicone: "Силикон", Rubber: "Резина", Leather: "Кожа" },
+  ar: {
+    Silicone: "سيليكون",
+    Rubber: "مطاط",
+    Leather: "جلد",
+    Fluororubber: "مطاط فلوري",
+  },
+  de: {
+    Silicone: "Silikon",
+    Rubber: "Kautschuk",
+    Leather: "Leder",
+    Fluororubber: "Fluorkautschuk",
+  },
+  es: {
+    Silicone: "Silicona",
+    Rubber: "Caucho",
+    Leather: "Cuero",
+    Fluororubber: "Fluorocaucho",
+  },
+  fr: {
+    Silicone: "Silicone",
+    Rubber: "Caoutchouc",
+    Leather: "Cuir",
+    Fluororubber: "Caoutchouc fluoré",
+  },
+  he: {
+    Silicone: "סיליקון",
+    Rubber: "גומי",
+    Leather: "עור",
+    Fluororubber: "גומי פלואור",
+  },
+  hu: {
+    Silicone: "Szilikon",
+    Rubber: "Gumi",
+    Leather: "Bőr",
+    Fluororubber: "Fluorgumi",
+  },
+  it: {
+    Silicone: "Silicone",
+    Rubber: "Gomma",
+    Leather: "Pelle",
+    Fluororubber: "Fluoroelastomero",
+  },
+  ja: {
+    Silicone: "シリコン",
+    Rubber: "ラバー",
+    Leather: "レザー",
+    Fluororubber: "フッ素ゴム",
+  },
+  ko: {
+    Silicone: "실리콘",
+    Rubber: "러버",
+    Leather: "가죽",
+    Fluororubber: "불소 고무",
+  },
+  nl: {
+    Silicone: "Silicone",
+    Rubber: "Rubber",
+    Leather: "Leer",
+    Fluororubber: "Fluorkautschuk",
+  },
+  pt: {
+    Silicone: "Silicone",
+    Rubber: "Borracha",
+    Leather: "Couro",
+    Fluororubber: "Fluorborracha",
+  },
+  ru: {
+    Silicone: "Силикон",
+    Rubber: "Резина",
+    Leather: "Кожа",
+    Fluororubber: "Фторкаучук",
+  },
 };
+
+function lookupSpecMap(
+  value: string,
+  map: Record<string, string> | undefined,
+): string | undefined {
+  if (!map) return undefined;
+  if (map[value]) return map[value];
+  const lower = value.toLowerCase();
+  for (const [key, translated] of Object.entries(map)) {
+    if (key.toLowerCase() === lower) return translated;
+  }
+  return undefined;
+}
 
 function resolveSpecValue(value: string, locale: string, specValues: Record<string, string>): string {
   const trimmed = value.trim();
   return (
-    specValues[trimmed] ??
-    MOVEMENT_SPEC_VALUE[locale]?.[trimmed] ??
-    MATERIAL_SPEC_VALUE[locale]?.[trimmed] ??
+    lookupSpecMap(trimmed, specValues) ??
+    lookupSpecMap(trimmed, MOVEMENT_SPEC_VALUE[locale]) ??
+    lookupSpecMap(trimmed, MATERIAL_SPEC_VALUE[locale]) ??
     trimmed
   );
 }
@@ -335,6 +408,8 @@ const SPEC_VALUES: Record<string, Record<string, string>> = {
   es: {
     "Mineral glass": "Cristal mineral",
     "Stainless steel": "Acero inoxidable",
+    "Japanese quartz": "Cuarzo japonés",
+    "Stainless Steel+Carbon Fiber Bezel": "Acero inoxidable + bisel de fibra de carbono",
     Polycarbonate: "Policarbonato",
     Alloy: "Aleación",
     "Hook buckle": "Hebilla gancho",
@@ -346,6 +421,8 @@ const SPEC_VALUES: Record<string, Record<string, string>> = {
   pt: {
     "Mineral glass": "Vidro mineral",
     "Stainless steel": "Aço inoxidável",
+    "Japanese quartz": "Quartzo japonês",
+    "Stainless Steel+Carbon Fiber Bezel": "Aço inoxidável + bezel em fibra de carbono",
     Polycarbonate: "Policarbonato",
     Alloy: "Liga",
     "Hook buckle": "Fivela gancho",
@@ -357,6 +434,8 @@ const SPEC_VALUES: Record<string, Record<string, string>> = {
   ru: {
     "Mineral glass": "Минеральное стекло",
     "Stainless steel": "Нержавеющая сталь",
+    "Japanese quartz": "Японский кварц",
+    "Stainless Steel+Carbon Fiber Bezel": "Нержавеющая сталь + карбоновый безель",
     Polycarbonate: "Поликарбонат",
     Alloy: "Сплав",
     "Hook buckle": "Крючковая застёжка",
@@ -368,6 +447,8 @@ const SPEC_VALUES: Record<string, Record<string, string>> = {
   fr: {
     "Mineral glass": "Verre minéral",
     "Stainless steel": "Acier inoxydable",
+    "Japanese quartz": "Quartz japonais",
+    "Stainless Steel+Carbon Fiber Bezel": "Acier inoxydable + lunette en fibre de carbone",
     Polycarbonate: "Polycarbonate",
     Alloy: "Alliage",
     "Hook buckle": "Boucle crochet",
@@ -379,6 +460,8 @@ const SPEC_VALUES: Record<string, Record<string, string>> = {
   it: {
     "Mineral glass": "Vetro minerale",
     "Stainless steel": "Acciaio inossidabile",
+    "Japanese quartz": "Quarzo giapponese",
+    "Stainless Steel+Carbon Fiber Bezel": "Acciaio inossidabile + lunetta in fibra di carbonio",
     Polycarbonate: "Policarbonato",
     Alloy: "Lega",
     "Hook buckle": "Fibbia a gancio",
@@ -390,6 +473,8 @@ const SPEC_VALUES: Record<string, Record<string, string>> = {
   nl: {
     "Mineral glass": "Mineraalglas",
     "Stainless steel": "Roestvrij staal",
+    "Japanese quartz": "Japans kwarts",
+    "Stainless Steel+Carbon Fiber Bezel": "Roestvrij staal + carbonfiber lunette",
     Polycarbonate: "Polycarbonaat",
     Alloy: "Legering",
     "Hook buckle": "Haakgesp",
@@ -401,6 +486,8 @@ const SPEC_VALUES: Record<string, Record<string, string>> = {
   hu: {
     "Mineral glass": "Ásványi üveg",
     "Stainless steel": "Rozsdamentes acél",
+    "Japanese quartz": "Japán kvarc",
+    "Stainless Steel+Carbon Fiber Bezel": "Rozsdamentes acél + karbonszál-lunetta",
     Polycarbonate: "Polikarbonát",
     Alloy: "Ötvözet",
     "Hook buckle": "Kampós csat",
@@ -412,6 +499,8 @@ const SPEC_VALUES: Record<string, Record<string, string>> = {
   ko: {
     "Mineral glass": "미네랄 글래스",
     "Stainless steel": "스테인리스 스틸",
+    "Japanese quartz": "일본 쿼츠",
+    "Stainless Steel+Carbon Fiber Bezel": "스테인리스 스틸 + 카본파이버 베젤",
     Polycarbonate: "폴리보네이트",
     Alloy: "합금",
     "Hook buckle": "후크 버클",
@@ -423,6 +512,8 @@ const SPEC_VALUES: Record<string, Record<string, string>> = {
   de: {
     "Mineral glass": "Mineralglas",
     "Stainless steel": "Edelstahl",
+    "Japanese quartz": "Japan-Quarz",
+    "Stainless Steel+Carbon Fiber Bezel": "Edelstahl + Carbonfaser-Lünette",
     Polycarbonate: "Polycarbonat",
     Alloy: "Legierung",
     "Hook buckle": "Hakenschliesse",
@@ -434,6 +525,8 @@ const SPEC_VALUES: Record<string, Record<string, string>> = {
   ja: {
     "Mineral glass": "ミネラルガラス",
     "Stainless steel": "ステンレススチール",
+    "Japanese quartz": "日本製クォーツ",
+    "Stainless Steel+Carbon Fiber Bezel": "ステンレススチール＋カーボンファイバーベゼル",
     Polycarbonate: "ポリカーボネート",
     Alloy: "合金",
     "Hook buckle": "フックバックル",
@@ -445,6 +538,8 @@ const SPEC_VALUES: Record<string, Record<string, string>> = {
   he: {
     "Mineral glass": "זכוכית מינרלית",
     "Stainless steel": "פלדת אל-חלד",
+    "Japanese quartz": "קварץ יפני",
+    "Stainless Steel+Carbon Fiber Bezel": "פלדת אל-חלד + בזל פחמן",
     Polycarbonate: "פוליקרבונט",
     Alloy: "סגסוגת",
     "Hook buckle": "אבזם וו",
@@ -456,6 +551,8 @@ const SPEC_VALUES: Record<string, Record<string, string>> = {
   ar: {
     "Mineral glass": "زجاج معدني",
     "Stainless steel": "فولاذ مقاوم للصدأ",
+    "Japanese quartz": "كوارتز يابانية",
+    "Stainless Steel+Carbon Fiber Bezel": "فولاذ مقاوم للصدأ + إطار ألياف الكربون",
     Polycarbonate: "بولي كربونات",
     Alloy: "سبيكة",
     "Hook buckle": "إبزيم خطاف",

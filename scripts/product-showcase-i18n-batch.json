@@ -1,0 +1,54 @@
+{
+  "en": {
+    "Product.productShowcase": "Product showcase",
+    "Product.productShowcaseVideoAria": "Product showcase video: {product}"
+  },
+  "ja": {
+    "Product.productShowcase": "製品ショーケース",
+    "Product.productShowcaseVideoAria": "製品ショーケース動画：{product}"
+  },
+  "fr": {
+    "Product.productShowcase": "Présentation du produit",
+    "Product.productShowcaseVideoAria": "Vidéo de présentation du produit : {product}"
+  },
+  "de": {
+    "Product.productShowcase": "Produktpräsentation",
+    "Product.productShowcaseVideoAria": "Produktpräsentationsvideo: {product}"
+  },
+  "es": {
+    "Product.productShowcase": "Presentación del producto",
+    "Product.productShowcaseVideoAria": "Vídeo de presentación del producto: {product}"
+  },
+  "it": {
+    "Product.productShowcase": "Vetrina del prodotto",
+    "Product.productShowcaseVideoAria": "Video vetrina del prodotto: {product}"
+  },
+  "pt": {
+    "Product.productShowcase": "Destaque do produto",
+    "Product.productShowcaseVideoAria": "Vídeo de destaque do produto: {product}"
+  },
+  "nl": {
+    "Product.productShowcase": "Productshowcase",
+    "Product.productShowcaseVideoAria": "Productshowcase-video: {product}"
+  },
+  "ko": {
+    "Product.productShowcase": "제품 쇼케이스",
+    "Product.productShowcaseVideoAria": "제품 쇼케이스 영상: {product}"
+  },
+  "ru": {
+    "Product.productShowcase": "Демонстрация товара",
+    "Product.productShowcaseVideoAria": "Видео демонстрации товара: {product}"
+  },
+  "hu": {
+    "Product.productShowcase": "Termékbemutató",
+    "Product.productShowcaseVideoAria": "Termékbemutató videó: {product}"
+  },
+  "he": {
+    "Product.productShowcase": "תצוגת המוצר",
+    "Product.productShowcaseVideoAria": "סרטון תצוגת המוצר: {product}"
+  },
+  "ar": {
+    "Product.productShowcase": "عرض المنتج",
+    "Product.productShowcaseVideoAria": "فيديو عرض المنتج: {product}"
+  }
+}

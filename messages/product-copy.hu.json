@@ -1,5 +1,37 @@
 {
   "ProductCopy": {
+    "2034": {
+      "detailBlocks": [
+        {
+          "title": "3 mm ultravékony",
+          "body": "Mindössze 3 mm vékony. Karcsú, minimalista dizájn, amely tökéletesen simul a csuklóra — végső könnyű kényelem és könnyed elegancia."
+        },
+        {
+          "title": "Prémium rozsdamentes acél",
+          "body": "Prémium rozsdamentes acélból, toktól szíjig. Kopásálló, karcolásálló és tartós — évekig megőrzi arany fényét."
+        },
+        {
+          "title": "5+ éves japán szerkezet",
+          "body": "Precíz japán kvarc szerkezet hibátlan időméréshez. Ultra alacsony fogyasztás és gondtalan, 5 év feletti akkuidő."
+        }
+      ]
+    },
+    "2037": {
+      "detailBlocks": [
+        {
+          "title": "Ultravékony 3 mm",
+          "body": "Mindössze 3 mm vékony. Karcsú, minimalista dizájn, amely tökéletesen simul a csuklóra — végső könnyű kényelem és könnyed elegancia."
+        },
+        {
+          "title": "Prémium rozsdamentes acél",
+          "body": "Prémium rozsdamentes acélból, toktól szíjig. Kopásálló, karcolásálló és tartós — évekig megőrzi arany fényét."
+        },
+        {
+          "title": "5+ éves japán szerkezet",
+          "body": "Precíz japán kvarc szerkezet hibátlan időméréshez. Ultra alacsony fogyasztás és gondtalan, 5 év feletti akkuidő."
+        }
+      ]
+    },
     "2301": {
       "categoryLabel": "Kvarc · Férfi · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2301 — acél ana-digi óra kettős LCD-vel, ébresztővel, külső hőmérséklettel és stopperrel.",
@@ -10,8 +42,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Multifunkciós",
-          "body": "A DIGI-TEMP 2301 a teljes ana-digi élményt nyújtja: két digitális mező az idő/dátum és 12–24 órás formátumhoz, valamint hőmérséklet és futó másodpercek; a módok sorában TIME, DATE, ALM (ébresztő), OUT (külső hőmérséklet) és STW (stopper) szerepel. A háttérvilágítás és a dedikált módváltás a mindennapi használatban is jól olvasható — 33 mm-es acél tokban, ásványi üveggel és 30 m vízállósággal."
+          "title": "Klasszikus retro-futurisztikus sci-fi stílus",
+          "body": "Időtlen tisztelgés az ikonikus sci-fi esztétika előtt — merész mechanikus elrendezés és prémium, többkijelzős cockpit dizájn."
+        },
+        {
+          "title": "5 az 1-ben sokoldalú módok",
+          "body": "Precíz követésre tervezve: napi idő, naptár, ébresztők, valós idejű környezeti hőmérséklet és 1/1000 másodperces ultra-pontos stopperóra."
+        },
+        {
+          "title": "Prémium rozsdamentes acél kidolgozás",
+          "body": "Tartós kivitelezés: kiváló minőségű rozsdamentes acél tok és szíj, masszív érzet és elegáns fémhatású felület."
         }
       ]
     },
@@ -102,12 +142,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Oldalnézet",
-          "body": "Az elegancia és a mechanikus mesterség ragyogó fúziója: open-worked számlap arany kiemelésekkel, karcsú fekete keret és luxus fekete szíj. A látható fogaskerekek és tourbillon kifinomult mesterséget mutatnak — tökéletes választás az időtlen luxust keresőknek. Rendelje meg most, és ragyogjon ezzel a remekművel!"
+          "title": "Csillag csontváz számlap",
+          "body": "Látványos open-work számlap ipari csillag alakú ketreccel, amely teljesen feltárja a bonyolult automata szerkezetet és a forgó fogaskerekeket."
         },
         {
-          "title": "CALIBRE 82S0",
-          "body": "A kép megragadja a MIYOTA 82S0 szerkezet mechanikus esztétikáját: tiszta fehér háttéren a rotor finom kefézett textúrája és éles félelső élek kifinomult hatást keltenek; 21 rubin csapágy gyönyörűen kontrasztál a sárgaréz ingával; a jellegzetes csontvázas kivágások pedig az open-heart dizájn ritmusos szépségét mutatják."
+          "title": "Tonneau karbon tok",
+          "body": "Merész tonneau sziluett: texturált karbonszál-mintás lunetta, elegáns rózsaarany kiemelések és tartós fekete gumis szíj."
+        },
+        {
+          "title": "Japán szerkezet",
+          "body": "Megbízható MIYOTA 82S0 automata kaliber: 21 600 vph, kézi felhúzás és open-heart dizájn, csontváz órákra optimalizálva."
         }
       ]
     },
@@ -251,8 +295,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Multifunkciós",
-          "body": "A DIGI-TEMP 2412M a teljes ana-digi élményt nyújtja: két digitális mező az idő/dátum és 12–24 órás formátumhoz, valamint hőmérséklet és futó másodpercek; a módok sorában TIME, DATE, ALM (ébresztő), OUT (külső hőmérséklet) és STW (stopper) szerepel. A háttérvilágítás és a dedikált módváltás a mindennapi használatban is jól olvasható — 40 mm-es acél tokban, ásványi üveggel és 30 m vízállósággal."
+          "title": "Klasszikus retro-futurisztikus sci-fi stílus",
+          "body": "Időtlen tisztelgés az ikonikus sci-fi esztétika előtt — merész mechanikus elrendezés és prémium, többkijelzős cockpit dizájn."
+        },
+        {
+          "title": "5 az 1-ben sokoldalú módok",
+          "body": "Precíz követésre tervezve: napi idő, naptár, ébresztők, valós idejű környezeti hőmérséklet és 1/1000 másodperces ultra-pontos stopperóra."
+        },
+        {
+          "title": "Prémium rozsdamentes acél kidolgozás",
+          "body": "Tartós kivitelezés: kiváló minőségű rozsdamentes acél tok és szíj, masszív érzet és elegáns fémhatású felület."
         }
       ]
     },
@@ -299,6 +351,29 @@
         {
           "title": "CALIBRE 2808",
           "body": "Automata csontvázas szerkezet percmutatóval. Gunmetal felület, strapabíró, mindennapi használatra tervezve. 34 mm átmérő, 7,18 mm vastagság. 48 óra feletti tartalék, 21 600 rezgés/óra (3 Hz)."
+        }
+      ]
+    },
+    "9207g": {
+      "categoryLabel": "Mechanikus · Férfi",
+      "shortDescription": "Egyedi, teljesen átlátszó TR90 kristály tonneau tokban ez a csontvázas óra 360°-os panorámát nyújt a fogaskerekek és az inga ritmusáról. A gunmetal felületű szerkezet vékony profilban — 34 mm átmérő, mindössze 7,18 mm vastagság — erős vizuális hatást és ultrakönnyű, hipoallergén viselést ad. 48 óra feletti tartalék 21 600 vph-nál (3 Hz).",
+      "highlights": [
+        "TR90 átlátszó tonneau tok",
+        "360° csontváz · gunmetal szerkezet",
+        "34 mm · 7,18 mm · 48h+ tartalék"
+      ],
+      "detailBlocks": [
+        {
+          "title": "A teljes körű csontváz vászon",
+          "body": "Élje át a tiszta mechanikus színházat. A teljesen csontvázas szerkezet akadálytalan 360 fokos kilátást nyújt bonyolult belső részeire. A fogaskerekek precíz táncától az egyensúlykerékig és rotorig minden mikroszkopikus részlet látható bármely szögből a kristálytiszta tonneau tokon át."
+        },
+        {
+          "title": "Súlytalan, hipoallergén mérnöki megoldás",
+          "body": "Ultrakönnyű TR90 kristályból — ugyanabból a biokompatibilis, high-tech polimerből, mint a prémium szemüvegeknél. Abszolút kényelem a csuklón, szinte súlytalan érzet, nulla bőrirritáció — tökéletes egész napos statement darab."
+        },
+        {
+          "title": "Ultravékony, ipari szintű precizitás",
+          "body": "Az óra szívében gunmetal bevonatú automata csontváz kaliber dobog. 34 mm átmérő, mindössze 7,18 mm vastagság — strapabíró motor a mindennapi viseléshez. 21 600 rezgés/óra (3 Hz) és megbízható, 48 óránál hosszabb tartalék."
         }
       ]
     }

@@ -177,7 +177,7 @@
     "certaintyCurrencyTitle": "What currency are prices shown in?",
     "certaintyCurrencyBody": "All prices are listed in US dollars. Use the currency control at the bottom-left of your screen for a live reference conversion. Your card or wallet is charged in USD at checkout.",
     "certaintyShippingTitle": "Do you ship to my country?",
-    "certaintyShippingBody": "We ship to most countries worldwide. Orders are processed within three business days; tracked delivery typically arrives in 7–21 days depending on your region. Any shipping fee is calculated and shown before you pay.",
+    "certaintyShippingBody": "Yes — we ship worldwide. Orders are processed within three business days. Tracked delivery typically arrives in 7–21 days, depending on your region. Shipping fees (if any) are calculated and shown at checkout before you pay; many destinations qualify for free standard shipping.\n\n\n• North America & Caribbean — Canada, Costa Rica, Dominican Republic, El Salvador, Guatemala, Honduras, Mexico, Nicaragua, Panama, Puerto Rico, Trinidad and Tobago, United States\n\n• South America — Argentina, Bolivia, Brazil, Chile, Colombia, Ecuador, Paraguay, Peru, Uruguay\n\n• Europe — Albania, Austria, Belgium, Bosnia and Herzegovina, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Iceland, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Moldova, Montenegro, Netherlands, North Macedonia, Norway, Poland, Portugal, Romania, Russia, Serbia, Slovakia, Slovenia, Spain, Sweden, Switzerland, Ukraine, United Kingdom\n\n• Middle East — Bahrain, Iraq, Israel, Jordan, Kuwait, Oman, Qatar, Saudi Arabia, United Arab Emirates\n\n• Asia — Hong Kong, India, Japan, Kazakhstan, Malaysia, Mongolia, Philippines, Singapore, South Korea, Sri Lanka, Thailand, Vietnam\n\n• Africa — Angola, Ghana, Kenya, Morocco, Nigeria, Réunion, Rwanda, South Africa, Tanzania, Uganda\n\n• Oceania — Australia, New Zealand\n\nIf your country is not listed above, express options (DHL, FedEx, UPS, or USPS) may still be available at checkout. Some regions require extra customs information (for example, tax ID or KYC documents for India) — we will guide you if needed.",
     "certaintyShippingLink": "Shipping & tax policy",
     "certaintyPaymentsTitle": "Which payment methods do you accept?",
     "certaintyPaymentsBody": "Pay with PayPal, major credit and debit cards, Apple Pay, or Google Pay — processed through trusted payment partners with encrypted checkout.",
@@ -342,7 +342,14 @@
     "draftOrderFailed": "Unable to create draft order",
     "orderLine": "{name} × {qty}",
     "billingTitle": "Billing address",
-    "shippingTitle": "Shipping address"
+    "shippingTitle": "Shipping address",
+    "couponRequired": "Coupon code is required.",
+    "couponNotFound": "Coupon not found.",
+    "couponInactive": "Coupon is inactive.",
+    "couponNotActiveYet": "Coupon is not active yet.",
+    "couponExpired": "Coupon has expired.",
+    "couponUsageLimit": "Coupon has reached its usage limit.",
+    "couponValidateFailed": "Unable to validate coupon."
   },
   "CheckoutAddress": {
     "firstName": "First name",
@@ -423,7 +430,9 @@
     "chatWhatsApp": "Chat on WhatsApp",
     "chatWhatsAppAbout": "Chat on WhatsApp about {product}",
     "whatsappPrefillProduct": "Hi, I have a question about {product}:\n{url}",
-    "whatsappPrefillPage": "Hi, I have a question about this page:\n{url}"
+    "whatsappPrefillPage": "Hi, I have a question about this page:\n{url}",
+    "productShowcase": "Product showcase",
+    "productShowcaseVideoAria": "Product showcase video: {product}"
   },
   "Success": {
     "documentTitle": "Order confirmed · HUMPBUCK",
@@ -435,7 +444,9 @@
     "items": "Items",
     "qty": "Qty {count}",
     "viewOrders": "View orders",
-    "continueShopping": "Continue shopping"
+    "continueShopping": "Continue shopping",
+    "providerStripe": "Stripe",
+    "providerPayPal": "PayPal"
   },
   "Series": {
     "metaFallbackTitle": "Series",
@@ -895,5 +906,8 @@
     "backupLinkHint": "If the video above cannot play, open this backup video link:",
     "openBackupVideo": "Open backup video",
     "backupIframeTitleSuffix": "YouTube backup"
+  },
+  "Announcement": {
+    "message": "Timepieces to witness life's meaningful moments."
   }
 }

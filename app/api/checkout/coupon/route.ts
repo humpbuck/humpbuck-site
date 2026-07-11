@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { CHECKOUT_COUPON_ERROR_CODES } from "@/lib/checkout-coupon-errors";
 
 export async function POST(req: Request) {
   try {
@@ -7,7 +8,10 @@ export async function POST(req: Request) {
 
     const code = body?.code?.trim().toUpperCase();
     if (!code) {
-      return NextResponse.json({ ok: false, error: "Coupon code is required." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, errorCode: CHECKOUT_COUPON_ERROR_CODES.REQUIRED },
+        { status: 400 },
+      );
     }
 
     const now = new Date();
@@ -16,19 +20,34 @@ export async function POST(req: Request) {
     });
 
     if (!coupon) {
-      return NextResponse.json({ ok: false, error: "Coupon not found." }, { status: 404 });
+      return NextResponse.json(
+        { ok: false, errorCode: CHECKOUT_COUPON_ERROR_CODES.NOT_FOUND },
+        { status: 404 },
+      );
     }
     if (!coupon.isActive) {
-      return NextResponse.json({ ok: false, error: "Coupon is inactive." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, errorCode: CHECKOUT_COUPON_ERROR_CODES.INACTIVE },
+        { status: 400 },
+      );
     }
     if (coupon.startsAt > now) {
-      return NextResponse.json({ ok: false, error: "Coupon is not active yet." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, errorCode: CHECKOUT_COUPON_ERROR_CODES.NOT_ACTIVE_YET },
+        { status: 400 },
+      );
     }
     if (coupon.endsAt < now) {
-      return NextResponse.json({ ok: false, error: "Coupon has expired." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, errorCode: CHECKOUT_COUPON_ERROR_CODES.EXPIRED },
+        { status: 400 },
+      );
     }
     if (coupon.usedCount >= coupon.quantity) {
-      return NextResponse.json({ ok: false, error: "Coupon has reached its usage limit." }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, errorCode: CHECKOUT_COUPON_ERROR_CODES.USAGE_LIMIT },
+        { status: 400 },
+      );
     }
 
     return NextResponse.json({
@@ -39,9 +58,9 @@ export async function POST(req: Request) {
         currency: "USD",
       },
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
-      { ok: false, error: error instanceof Error ? error.message : "Unable to validate coupon." },
+      { ok: false, errorCode: CHECKOUT_COUPON_ERROR_CODES.VALIDATE_FAILED },
       { status: 500 },
     );
   }

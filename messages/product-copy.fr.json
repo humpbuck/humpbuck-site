@@ -1,5 +1,37 @@
 {
   "ProductCopy": {
+    "2034": {
+      "detailBlocks": [
+        {
+          "title": "Ultra-fin 3 mm",
+          "body": "Seulement 3 mm d'épaisseur. Un design épuré et minimaliste qui épouse parfaitement le poignet pour un confort ultraléger et une élégance sans effort."
+        },
+        {
+          "title": "Acier inoxydable premium",
+          "body": "Conçu en acier inoxydable premium du boîtier au bracelet. Hautement résistant à l'usure et aux rayures, durable, conservant son éclat doré pendant des années."
+        },
+        {
+          "title": "Mouvement japonais 5+ ans",
+          "body": "Animé par un mouvement quartz japonais de précision pour une horlogerie impeccable. Faible consommation d'énergie et autonomie de la pile supérieure à 5 ans sans tracas."
+        }
+      ]
+    },
+    "2037": {
+      "detailBlocks": [
+        {
+          "title": "Ultra-fin 3 mm",
+          "body": "Seulement 3 mm d'épaisseur. Un design épuré et minimaliste qui épouse parfaitement le poignet pour un confort ultraléger et une élégance sans effort."
+        },
+        {
+          "title": "Acier inoxydable premium",
+          "body": "Conçu en acier inoxydable premium du boîtier au bracelet. Hautement résistant à l'usure et aux rayures, durable, conservant son éclat doré pendant des années."
+        },
+        {
+          "title": "Mouvement japonais 5+ ans",
+          "body": "Animé par un mouvement quartz japonais de précision pour une horlogerie impeccable. Faible consommation d'énergie et autonomie de la pile supérieure à 5 ans sans tracas."
+        }
+      ]
+    },
     "2301": {
       "categoryLabel": "Quartz · Homme · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2301 — montre ana-digi en acier avec double LCD, alarme, température extérieure et chronomètre.",
@@ -10,8 +42,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Multifonction",
-          "body": "DIGI-TEMP 2301 offre l'expérience ana-digi complète : deux affichages numériques pour l'heure/la date et 12–24 h, plus la température et les secondes courantes ; la pile de modes couvre TIME, DATE, ALM (alarme), OUT (température extérieure) et STW (chronomètre). Le rétroéclairage et un parcours de modes dédié assurent une lecture claire au quotidien — dans un boîtier acier de 33 mm avec verre minéral et 30 m d'étanchéité."
+          "title": "Style sci-fi rétro-futuriste classique",
+          "body": "Un hommage intemporel aux esthétiques sci-fi iconiques, alliant une audacieuse architecture mécanique à un cockpit multi-affichages premium."
+        },
+        {
+          "title": "5 modes polyvalents en 1",
+          "body": "Conçu pour un suivi de précision : heure quotidienne, calendrier, alarmes, surveillance de la température ambiante en temps réel et chronomètre ultra-précis au 1/1 000e de seconde."
+        },
+        {
+          "title": "Artisanat en acier inoxydable premium",
+          "body": "Conçu pour durer avec un boîtier et un bracelet en acier inoxydable de haute qualité, offrant une sensation solide et une finition métallique élégante."
         }
       ]
     },
@@ -102,12 +142,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Vue latérale",
-          "body": "Fusion radieuse d'élégance et de maîtrise mécanique, avec cadran open-worked et accents dorés, cette montre est encadrée d'un boîtier noir élégant et d'un bracelet noir luxueux. Les rouages visibles et le tourbillon soulignent un savoir-faire exquis — le choix parfait pour une luxe intemporelle. Commandez maintenant et brillez avec ce chef-d'œuvre !"
+          "title": "Cadran squelette étoile",
+          "body": "Un cadran open-work saisissant avec une cage industrielle en forme d'étoile qui expose entièrement le mouvement automatique complexe et les engrenages en rotation."
         },
         {
-          "title": "CALIBRE 82S0",
-          "body": "Le rendu capture l'esthétique mécanique du mouvement MIYOTA 82S0 : sur fond blanc pur, la texture brossée du rotor et les chanfreins métalliques nets dégagent une finesse raffinée ; 21 rubis contrastent magnifiquement avec la roue de balancier dorée ; et les découpes squelettisées révèlent la beauté rythmique du design open-heart."
+          "title": "Boîtier tonneau carbone",
+          "body": "Une silhouette tonneau audacieuse alliant une lunette texturée effet fibre de carbone à des accents or rose élégants et un bracelet caoutchouc noir durable."
+        },
+        {
+          "title": "Mouvement japonais",
+          "body": "Animé par le calibre automatique fiable MIYOTA 82S0, avec une fréquence de 21 600 vph, remontage manuel et un design open-heart optimisé pour les montres squelette."
         }
       ]
     },
@@ -251,8 +295,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Multifonction",
-          "body": "DIGI-TEMP 2412M offre l'expérience ana-digi complète : deux affichages numériques pour l'heure/la date et 12–24 h, plus la température et les secondes courantes ; la pile de modes couvre TIME, DATE, ALM (alarme), OUT (température extérieure) et STW (chronomètre). Le rétroéclairage et un parcours de modes dédié assurent une lecture claire au quotidien — dans un boîtier acier de 40 mm avec verre minéral et 30 m d'étanchéité."
+          "title": "Style sci-fi rétro-futuriste classique",
+          "body": "Un hommage intemporel aux esthétiques sci-fi iconiques, alliant une audacieuse architecture mécanique à un cockpit multi-affichages premium."
+        },
+        {
+          "title": "5 modes polyvalents en 1",
+          "body": "Conçu pour un suivi de précision : heure quotidienne, calendrier, alarmes, surveillance de la température ambiante en temps réel et chronomètre ultra-précis au 1/1 000e de seconde."
+        },
+        {
+          "title": "Artisanat en acier inoxydable premium",
+          "body": "Conçu pour durer avec un boîtier et un bracelet en acier inoxydable de haute qualité, offrant une sensation solide et une finition métallique élégante."
         }
       ]
     },
@@ -299,6 +351,29 @@
         {
           "title": "CALIBRE 2808",
           "body": "Mouvement automatique squelette avec affichage des minutes. Finition gunmetal, équipé et résistant à l'usure quotidienne avec un design robuste. Diamètre 34 mm, épaisseur 7,18 mm. Réserve supérieure à 48 heures, à 21 600 vibrations par heure (3 Hz)."
+        }
+      ]
+    },
+    "9207g": {
+      "categoryLabel": "Mécanique · Homme",
+      "shortDescription": "Avec un boîtier tonneau entièrement transparent en cristal TR90, cette montre squelette offre une vue panoramique à 360° sur le rythme des engrenages et du balancier. Le mouvement fini gunmetal repose dans un profil fin — 34 mm de diamètre, 7,18 mm d'épaisseur — pour un impact visuel fort et un port ultra-léger, hypoallergénique. Plus de 48 h de réserve à 21 600 vph (3 Hz).",
+      "highlights": [
+        "Boîtier tonneau TR90 transparent",
+        "Vue squelette 360° · mouvement gunmetal",
+        "34 mm · 7,18 mm · réserve 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "La toile squelette à 360°",
+          "body": "Vivez un pur théâtre mécanique. Le mouvement entièrement squelettisé offre une vue à 360 degrés sans obstruction de ses rouages complexes. De la danse précise des engrenages au balancier et au rotor, chaque détail microscopique est visible sous tous les angles à travers le boîtier tonneau parfaitement transparent."
+        },
+        {
+          "title": "Ingénierie légère et hypoallergénique",
+          "body": "Conçu en cristal TR90 ultra-léger — le même polymère haute technologie biocompatible que les lunettes premium. Confort absolu au poignet, quasi sans poids, zéro irritation cutanée : la pièce idéale pour un port toute la journée."
+        },
+        {
+          "title": "Précision ultra-fine de grade industriel",
+          "body": "Au cœur de la montre bat un calibre squelette automatique fini gunmetal. D'un diamètre de 34 mm et d'une épaisseur ultra-fine de 7,18 mm, ce moteur robuste résiste à l'usure quotidienne. Il fonctionne à 21 600 vibrations par heure (3 Hz) avec une réserve de marche fiable supérieure à 48 heures."
         }
       ]
     }

@@ -1,5 +1,37 @@
 {
   "ProductCopy": {
+    "2034": {
+      "detailBlocks": [
+        {
+          "title": "3 mm ultradun",
+          "body": "Slechts 3 mm dun. Een strak, minimalistisch ontwerp dat perfect plat op de pols ligt voor ultiem lichtgewicht comfort en moeiteloze elegantie."
+        },
+        {
+          "title": "Premium roestvrij staal",
+          "body": "Vervaardigd met premium roestvrij staal van kast tot band. Zeer slijtvast, krasbestendig en duurzaam, met jarenlang gouden glans."
+        },
+        {
+          "title": "Japans uurwerk 5+ jaar",
+          "body": "Aangedreven door een precies Japans quartz uurwerk voor foutloze tijdmeting. Ultra-laag energieverbruik en batterijduur van meer dan 5 jaar zonder gedoe."
+        }
+      ]
+    },
+    "2037": {
+      "detailBlocks": [
+        {
+          "title": "Ultradun 3 mm",
+          "body": "Slechts 3 mm dun. Een strak, minimalistisch ontwerp dat perfect plat op de pols ligt voor ultiem lichtgewicht comfort en moeiteloze elegantie."
+        },
+        {
+          "title": "Premium roestvrij staal",
+          "body": "Vervaardigd met premium roestvrij staal van kast tot band. Zeer slijtvast, krasbestendig en duurzaam, met jarenlang gouden glans."
+        },
+        {
+          "title": "Japans uurwerk 5+ jaar",
+          "body": "Aangedreven door een precies Japans quartz uurwerk voor foutloze tijdmeting. Ultra-laag energieverbruik en batterijduur van meer dan 5 jaar zonder gedoe."
+        }
+      ]
+    },
     "2301": {
       "categoryLabel": "Quartz · Heren · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2301 — ana-digi stalen horloge met dubbel LCD, alarm, buitentemperatuur en stopwatch.",
@@ -10,8 +42,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Multifunctioneel",
-          "body": "DIGI-TEMP 2301 levert de volledige ana-digi-ervaring: twee digitale velden voor tijd/datum en 12–24 uur, plus temperatuur en lopende seconden; de modusstack omvat TIME, DATE, ALM (wekker), OUT (buitentemperatuur) en STW (stopwatch). Achtergrondverlichting en een dedicated moduspad houden de bediening leesbaar in dagelijks gebruik — in een 33 mm stalen kast met mineraalglas en 30 m waterdichtheid."
+          "title": "Klassieke retro-futuristische sci-fi-stijl",
+          "body": "Een tijdloze ode aan iconische sci-fi-esthetiek, met een gedurfd mechanisch ontwerp en een premium cockpit met meerdere displays."
+        },
+        {
+          "title": "5-in-1 veelzijdige modi",
+          "body": "Ontworpen voor nauwkeurige tracking: dagelijkse tijd, kalender, alarmen, realtime omgevingstemperatuur en een ultraprecieze 1/1.000-seconden stopwatch."
+        },
+        {
+          "title": "Premium roestvrijstalen vakmanschap",
+          "body": "Gebouwd om lang mee te gaan met een hoogwaardige roestvrijstalen kast en band — stevig aanvoelend met een elegante metallic afwerking."
         }
       ]
     },
@@ -102,12 +142,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Zijaanzicht",
-          "body": "Een stralende fusie van elegantie en mechanische meesterschap, met open-worked wijzerplaat en gouden accenten, omlijst door een strak zwart frame en luxe zwarte band. Zichtbare tandwielen en tourbillon benadrukken verfijnd vakmanschap — de perfecte keuze voor wie tijdloze luxe zoekt. Bestel nu en straal met dit meesterwerk!"
+          "title": "Ster-skelet wijzerplaat",
+          "body": "Een opvallende open-work wijzerplaat met een industrieel stervormig kooi dat het ingewikkelde automatische uurwerk en de draaiende tandwielen volledig onthult."
         },
         {
-          "title": "CALIBRE 82S0",
-          "body": "De weergave vangt de mechanische esthetiek van het MIYOTA 82S0-uurwerk: tegen een puur witte achtergrond stralen de fijne geborstelde rotorstructuur en scherpe metalen facetten verfijning uit; 21 robijnlagers contrasteren prachtig met het messingkleurige balanswiel; en de kenmerkende skeletuitsparingen tonen de ritmische schoonheid van het open-heart design."
+          "title": "Tonneau carbon kast",
+          "body": "Een gedurfde tonneau-silhouet met een getextureerde carbonvezel-lunette, elegante roségouden accenten en een duurzame zwarte rubberen band."
+        },
+        {
+          "title": "Japans uurwerk",
+          "body": "Aangedreven door het betrouwbare MIYOTA 82S0 automatische kaliber, met 21.600 vph, handopwinden en een open-heart ontwerp geoptimaliseerd voor skelet horloges."
         }
       ]
     },
@@ -251,8 +295,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Multifunctioneel",
-          "body": "DIGI-TEMP 2412M levert de volledige ana-digi-ervaring: twee digitale velden voor tijd/datum en 12–24 uur, plus temperatuur en lopende seconden; de modusstack omvat TIME, DATE, ALM (wekker), OUT (buitentemperatuur) en STW (stopwatch). Achtergrondverlichting en een dedicated moduspad houden de bediening leesbaar in dagelijks gebruik — in een 40 mm stalen kast met mineraalglas en 30 m waterdichtheid."
+          "title": "Klassieke retro-futuristische sci-fi-stijl",
+          "body": "Een tijdloze ode aan iconische sci-fi-esthetiek, met een gedurfd mechanisch ontwerp en een premium cockpit met meerdere displays."
+        },
+        {
+          "title": "5-in-1 veelzijdige modi",
+          "body": "Ontworpen voor nauwkeurige tracking: dagelijkse tijd, kalender, alarmen, realtime omgevingstemperatuur en een ultraprecieze 1/1.000-seconden stopwatch."
+        },
+        {
+          "title": "Premium roestvrijstalen vakmanschap",
+          "body": "Gebouwd om lang mee te gaan met een hoogwaardige roestvrijstalen kast en band — stevig aanvoelend met een elegante metallic afwerking."
         }
       ]
     },
@@ -299,6 +351,29 @@
         {
           "title": "CALIBRE 2808",
           "body": "Automatisch skeletuurwerk met minutenweergave. Gunmetal-afwerking, robuust en bestand tegen dagelijks gebruik. Diameter 34 mm, dikte 7,18 mm. Gangreserve van meer dan 48 uur, bij 21.600 trillingen per uur (3 Hz)."
+        }
+      ]
+    },
+    "9207g": {
+      "categoryLabel": "Mechanisch · Heren",
+      "shortDescription": "Met een volledig transparante tonneau-kast van TR90-kristal biedt dit skelet horloge een 360° panoramisch zicht op het ritme van tandwielen en balans. Het gunmetal afgewerkte uurwerk zit in een slank profiel — 34 mm diameter, slechts 7,18 mm dik — met krachtige visuele impact en ultralicht, hypoallergeen draagcomfort. Meer dan 48 uur gangreserve bij 21.600 vph (3 Hz).",
+      "highlights": [
+        "TR90 transparante tonneau-kast",
+        "360° skelet · gunmetal uurwerk",
+        "34 mm · 7,18 mm · 48u+ reserve"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Het skelet-canvas vanuit elke hoek",
+          "body": "Beleef puur mechanisch theater. Het volledig geskeletteerde uurwerk biedt een onbelemmerd 360-graden zicht op zijn ingewikkelde binnenwerk. Van de precieze dans van de tandwielen tot de slinger van balans en rotor — elk microscopisch detail is vanuit elke hoek zichtbaar door de kristalheldere tonneau-kast."
+        },
+        {
+          "title": "Gewichtloos en hypoallergeen",
+          "body": "Gemaakt van ultralicht TR90-kristal — hetzelfde biocompatibele hightech-polymeer als bij premium brillen. Absoluut comfort aan de pols, bijna gewichtloos en geen huidirritatie: het perfecte statement-stuk voor de hele dag."
+        },
+        {
+          "title": "Ultradunne precisie op industrieel niveau",
+          "body": "In het hart klopt een automatisch skeletkaliber met gunmetal-afwerking. Met 34 mm diameter en slechts 7,18 mm dikte is deze robuuste motor gebouwd voor dagelijks gebruik. 21.600 trillingen per uur (3 Hz) en betrouwbare gangreserve van meer dan 48 uur."
         }
       ]
     }

@@ -1,8 +1,8 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK Watches - هدايا ذات معنى للوقت والحب",
+    "titleDefault": "HUMPBUCK ساعات - هدايا ذات معنى للوقت والحب",
     "descriptionDefault": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
-    "ogTitle": "HUMPBUCK Watches - هدايا ذات معنى للوقت والحب",
+    "ogTitle": "HUMPBUCK ساعات - هدايا ذات معنى للوقت والحب",
     "ogDescription": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة."
   },
   "LocaleSwitcher": {
@@ -76,9 +76,9 @@
     "socialTiktokAria": "HUMPBUCK على TikTok"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK Watches - هدايا ذات معنى للوقت والحب",
+    "metaTitle": "HUMPBUCK ساعات - هدايا ذات معنى للوقت والحب",
     "metaDescription": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
-    "ogTitle": "HUMPBUCK Watches - هدايا ذات معنى للوقت والحب",
+    "ogTitle": "HUMPBUCK ساعات - هدايا ذات معنى للوقت والحب",
     "ogDescription": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
     "heroBadge": "سلسلة · DIGI-TEMP",
     "heroLead1": "ساعة أنا-ديجي متعددة الوظائف — شاشتان، مجموعة ميزات كاملة.",
@@ -119,7 +119,7 @@
     "newsletterTitle": "إصدارات ساعات جديدة",
     "newsletterBody": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
     "mechanicalHeroBadge": "هدايا · الوقت والحب",
-    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroTitle": "HUMPBUCK ساعات",
     "mechanicalHeroLead": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
     "mechanicalHeroChipAutomatic": "حرفية",
     "mechanicalHeroChipSkeleton": "محطات",
@@ -160,7 +160,7 @@
     "certaintyCurrencyTitle": "بأي عملة تُعرض الأسعار؟",
     "certaintyCurrencyBody": "جميع الأسعار مدرجة بالدولار الأمريكي. استخدم عنصر التحكم بالعملة في أسفل يسار الشاشة لتحويل مرجعي مباشر. تُخصم بطاقتك أو محفظتك بالدولار الأمريكي عند الدفع.",
     "certaintyShippingTitle": "هل تشحنون إلى بلدي؟",
-    "certaintyShippingBody": "نشحن إلى معظم دول العالم. تُعالَج الطلبات خلال ثلاثة أيام عمل؛ يصل التتبع عادةً خلال 7–21 يومًا حسب منطقتك. تُحسب رسوم الشحن وتُعرض قبل الدفع.",
+    "certaintyShippingBody": "نعم — نشحن إلى جميع أنحاء العالم. تُعالَج الطلبات خلال ثلاثة أيام عمل. يصل التتبع عادةً خلال 7–21 يومًا حسب منطقتك. تُحسب رسوم الشحن (إن وُجدت) وتُعرض عند الدفع قبل إتمام الشراء؛ العديد من الوجهات مؤهلة للشحن القياسي المجاني.\n\n\n• أمريكا الشمالية والكاريبي — Canada, Costa Rica, Dominican Republic, El Salvador, Guatemala, Honduras, Mexico, Nicaragua, Panama, Puerto Rico, Trinidad and Tobago, United States\n\n• أمريكا الجنوبية — Argentina, Bolivia, Brazil, Chile, Colombia, Ecuador, Paraguay, Peru, Uruguay\n\n• أوروبا — Albania, Austria, Belgium, Bosnia and Herzegovina, Bulgaria, Croatia, Cyprus, Czech Republic, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Iceland, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Moldova, Montenegro, Netherlands, North Macedonia, Norway, Poland, Portugal, Romania, Russia, Serbia, Slovakia, Slovenia, Spain, Sweden, Switzerland, Ukraine, United Kingdom\n\n• الشرق الأوسط — Bahrain, Iraq, Israel, Jordan, Kuwait, Oman, Qatar, Saudi Arabia, United Arab Emirates\n\n• آسيا — Hong Kong, India, Japan, Kazakhstan, Malaysia, Mongolia, Philippines, Singapore, South Korea, Sri Lanka, Thailand, Vietnam\n\n• أفريقيا — Angola, Ghana, Kenya, Morocco, Nigeria, Réunion, Rwanda, South Africa, Tanzania, Uganda\n\n• أوقيانوسيا — Australia, New Zealand\n\nإذا لم تكن دولتك مذكورة أعلاه، قد تظل خيارات الشحن السريع (DHL أو FedEx أو UPS أو USPS) متاحة عند الدفع. تتطلب بعض المناطق معلومات جمركية إضافية (مثل رقم ضريبي أو مستندات KYC للهند) — سنرشدك عند الحاجة.",
     "certaintyShippingLink": "سياسة الشحن والضرائب",
     "certaintyPaymentsTitle": "ما طرق الدفع التي تقبلونها؟",
     "certaintyPaymentsBody": "ادفع عبر PayPal أو بطاقات الائتمان والخصم الرئيسية أو Apple Pay أو Google Pay — عبر شركاء دفع موثوقين مع دفع مشفّر.",
@@ -346,7 +346,14 @@
     "paymentPayPalContinueHint": "ستسجّلون الدخول إلى PayPal لتأكيد الدفع والشحن.",
     "paymentPreviewHint": "يمكنكم إدخال بيانات الدفع الآن. أكملوا عنوان الشحن أعلاه قبل الدفع.",
     "completeDetailsToPay": "أكملوا البريد الإلكتروني وعنوان الشحن وطريقة الشحن قبل الدفع.",
-    "paymentTimeout": "انتهت مهلة بوابة الدفع — حاولوا مرة أخرى"
+    "paymentTimeout": "انتهت مهلة بوابة الدفع — حاولوا مرة أخرى",
+    "couponRequired": "رمز الكوبون مطلوب.",
+    "couponNotFound": "لم يتم العثور على الكوبون.",
+    "couponInactive": "الكوبون غير نشط.",
+    "couponNotActiveYet": "الكوبون غير نشط بعد.",
+    "couponExpired": "انتهت صلاحية الكوبون.",
+    "couponUsageLimit": "وصل الكوبون إلى حد الاستخدام.",
+    "couponValidateFailed": "يتعذر التحقق من صحة الكوبون."
   },
   "CheckoutAddress": {
     "firstName": "الاسم",
@@ -427,7 +434,9 @@
     "whatsappPrefillProduct": "مرحباً، لدي سؤال حول {product}:\n{url}",
     "whatsappPrefillPage": "مرحباً، لدي سؤال حول هذه الصفحة:\n{url}",
     "cardAdd": "إضافة",
-    "cardFiveStarReviews": "{count} مراجعات بخمس نجوم"
+    "cardFiveStarReviews": "{count} مراجعات بخمس نجوم",
+    "productShowcase": "عرض المنتج",
+    "productShowcaseVideoAria": "فيديو عرض المنتج: {product}"
   },
   "Success": {
     "documentTitle": "تم تأكيد الطلب · HUMPBUCK",
@@ -438,8 +447,10 @@
     "placed": "تم وضعه {date}",
     "items": "البنود",
     "qty": "الكمية {count}",
-    "viewOrders": "بینینی فرۆشەکان",
-    "continueShopping": "مواصلة التسوق"
+    "viewOrders": "عرض الطلبات",
+    "continueShopping": "مواصلة التسوق",
+    "providerStripe": "Stripe",
+    "providerPayPal": "PayPal"
   },
   "Series": {
     "metaFallbackTitle": "تسلسلات",
@@ -451,7 +462,7 @@
   },
   "Reviews": {
     "title": "مراجعات المشتري",
-    "intro": "من عمليات الشراء التي تم التحقق منها. يمكنك أيضًا فتح __ HB0 __ واستخدام __ HB1 __ على عنصر خط مؤهل، أو إضافة متابعة من مراجعتك الخاصة أدناه.",
+    "intro": "من عمليات الشراء الموثقة. يمكنك أيضًا فتح <orderHistory>سجل الطلبات</orderHistory> واستخدام <strong>اكتب مراجعة</strong> على منتج مؤهل، أو إضافة متابعة لمراجعتك أدناه.",
     "loadError": "لا يمكن تحميل المراجعات في الوقت الحالي. يجب أن تستمر بقية هذه الصفحة في العمل — يرجى إعادة المحاولة لاحقًا.",
     "empty": "لا توجد مراجعات حتى الآن لهذا المنتج.",
     "verifiedPurchase": "عملية شراء موثقة",
@@ -613,7 +624,7 @@
   "Account": {
     "overviewKicker": "نظرة عامة",
     "overviewTitle": "حسابي",
-    "overviewIntro": "مرحبًا، {greeting}. أدِر طلباتك وعناوينك وأدوات الشركاء وملفك الشخصي من هنا.",
+    "overviewIntro": "مرحبًا، {greeting}. أدِر طلباتك وعناوينك وملفك الشخصي من هنا.",
     "overviewGreetingFallback": "ضيف",
     "sectionOrders": "الطلبات",
     "ordersCardEmpty": "لا توجد طلبات بعد",
@@ -849,7 +860,7 @@
     "backHome": "العودة إلى الصفحة الرئيسية"
   },
   "AboutPage": {
-    "metaTitle": "من نحن — HUMPBUCK Watches",
+    "metaTitle": "من نحن — HUMPBUCK ساعات",
     "metaDescription": "ساعات مصنوعة يدويًا مصممة لتبقى إلى جانبك وتشهد اللحظات المعنوية في الحياة.",
     "kickerBrand": "العلامة",
     "heroTitle": "HUMPBUCK — المنفعة أولًا، ثم المظهر.",
@@ -929,5 +940,8 @@
     "backToBlog": "العودة إلى المدونة",
     "notFoundTitle": "المقال غير موجود",
     "viewProduct": "عرض المنتج"
+  },
+  "Announcement": {
+    "message": "ساعات تشهد أهم لحظات الحياة."
   }
 }

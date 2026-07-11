@@ -1,8 +1,8 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK Watches - Regali di tempo e amore con significato",
+    "titleDefault": "HUMPBUCK Orologi - Regali di tempo e amore con significato",
     "descriptionDefault": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita.",
-    "ogTitle": "HUMPBUCK Watches - Regali di tempo e amore con significato",
+    "ogTitle": "HUMPBUCK Orologi - Regali di tempo e amore con significato",
     "ogDescription": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita."
   },
   "LocaleSwitcher": {
@@ -76,9 +76,9 @@
     "socialTiktokAria": "HUMPBUCK su TikTok"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK Watches - Regali di tempo e amore con significato",
+    "metaTitle": "HUMPBUCK Orologi - Regali di tempo e amore con significato",
     "metaDescription": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita.",
-    "ogTitle": "HUMPBUCK Watches - Regali di tempo e amore con significato",
+    "ogTitle": "HUMPBUCK Orologi - Regali di tempo e amore con significato",
     "ogDescription": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita.",
     "heroBadge": "Serie · DIGI-TEMP",
     "heroLead1": "Orologio ana-digital multifunzione — doppio display, funzioni complete.",
@@ -119,7 +119,7 @@
     "newsletterTitle": "NUOVI LANCI DI OROLOGI",
     "newsletterBody": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita.",
     "mechanicalHeroBadge": "Regali · Tempo e amore",
-    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroTitle": "HUMPBUCK Orologi",
     "mechanicalHeroLead": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita.",
     "mechanicalHeroChipAutomatic": "Artigianalità",
     "mechanicalHeroChipSkeleton": "Tappe",
@@ -160,7 +160,7 @@
     "certaintyCurrencyTitle": "In quale valuta sono mostrati i prezzi?",
     "certaintyCurrencyBody": "Tutti i prezzi sono in dollari USA. Usi il controllo valuta in basso a sinistra sullo schermo per una conversione di riferimento in tempo reale. La sua carta o il portafoglio viene addebitato in USD al checkout.",
     "certaintyShippingTitle": "Spedite nel mio paese?",
-    "certaintyShippingBody": "Spediamo nella maggior parte dei paesi del mondo. Gli ordini vengono elaborati entro tre giorni lavorativi; la consegna tracciata arriva di solito in 7–21 giorni a seconda della regione. Le spese di spedizione sono calcolate e mostrate prima del pagamento.",
+    "certaintyShippingBody": "Sì — spediamo in tutto il mondo. Gli ordini vengono elaborati entro tre giorni lavorativi. La consegna tracciata arriva di solito in 7–21 giorni, a seconda della regione. Le spese di spedizione (se applicabili) vengono calcolate e mostrate al checkout prima del pagamento; molte destinazioni hanno diritto alla spedizione standard gratuita.\n\n\n• Nord America e Caraibi — Canada, Costa Rica, Repubblica Dominicana, El Salvador, Guatemala, Honduras, Messico, Nicaragua, Panama, Porto Rico, Trinidad e Tobago, Stati Uniti\n\n• Sud America — Argentina, Bolivia, Brasile, Cile, Colombia, Ecuador, Paraguay, Perù, Uruguay\n\n• Europa — Albania, Austria, Belgio, Bosnia ed Erzegovina, Bulgaria, Croazia, Cipro, Repubblica Ceca, Danimarca, Estonia, Finlandia, Francia, Germania, Grecia, Ungheria, Islanda, Irlanda, Italia, Lettonia, Lituania, Lussemburgo, Malta, Moldavia, Montenegro, Paesi Bassi, Macedonia del Nord, Norvegia, Polonia, Portogallo, Romania, Russia, Serbia, Slovacchia, Slovenia, Spagna, Svezia, Svizzera, Ucraina, Regno Unito\n\n• Medio Oriente — Bahrein, Iraq, Israele, Giordania, Kuwait, Oman, Qatar, Arabia Saudita, Emirati Arabi Uniti\n\n• Asia — Hong Kong, India, Giappone, Kazakistan, Malesia, Mongolia, Filippine, Singapore, Corea del Sud, Sri Lanka, Thailandia, Vietnam\n\n• Africa — Angola, Ghana, Kenya, Marocco, Nigeria, Riunione, Ruanda, Sudafrica, Tanzania, Uganda\n\n• Oceania — Australia, Nuova Zelanda\n\nSe il Suo paese non è elencato sopra, opzioni express (DHL, FedEx, UPS o USPS) potrebbero essere disponibili al checkout. Alcune regioni richiedono informazioni doganali aggiuntive (ad esempio, codice fiscale o documenti KYC per l'India) — La guideremo se necessario.",
     "certaintyShippingLink": "Politica di spedizione e tasse",
     "certaintyPaymentsTitle": "Quali metodi di pagamento accettate?",
     "certaintyPaymentsBody": "Paghi con PayPal, principali carte di credito e debito, Apple Pay o Google Pay — elaborato da partner di pagamento affidabili con checkout crittografato.",
@@ -346,7 +346,14 @@
     "paymentPayPalContinueHint": "Accederà a PayPal per confermare pagamento e spedizione.",
     "paymentPreviewHint": "Può inserire i dati di pagamento ora. Completi l'indirizzo di spedizione sopra prima di pagare.",
     "completeDetailsToPay": "Completi e-mail, indirizzo di spedizione e metodo di spedizione prima di pagare.",
-    "paymentTimeout": "Timeout del gateway di pagamento — riprovi"
+    "paymentTimeout": "Timeout del gateway di pagamento — riprovi",
+    "couponRequired": "Il codice coupon è obbligatorio.",
+    "couponNotFound": "Coupon non trovato.",
+    "couponInactive": "Il coupon è inattivo.",
+    "couponNotActiveYet": "Il coupon non è ancora attivo.",
+    "couponExpired": "Il coupon è scaduto.",
+    "couponUsageLimit": "Il coupon ha raggiunto il limite di utilizzo.",
+    "couponValidateFailed": "Impossibile validare il coupon."
   },
   "CheckoutAddress": {
     "firstName": "Nome",
@@ -427,7 +434,9 @@
     "whatsappPrefillProduct": "Ciao, ho una domanda su {product}:\n{url}",
     "whatsappPrefillPage": "Ciao, ho una domanda su questa pagina:\n{url}",
     "cardAdd": "Aggiungi",
-    "cardFiveStarReviews": "{count} recensioni a cinque stelle"
+    "cardFiveStarReviews": "{count} recensioni a cinque stelle",
+    "productShowcase": "Vetrina del prodotto",
+    "productShowcaseVideoAria": "Video vetrina del prodotto: {product}"
   },
   "Success": {
     "documentTitle": "Ordine confermato · HUMPBUCK",
@@ -439,7 +448,9 @@
     "items": "Articoli",
     "qty": "Qtà {count}",
     "viewOrders": "Vedi ordini",
-    "continueShopping": "Continua lo shopping"
+    "continueShopping": "Continua lo shopping",
+    "providerStripe": "Stripe",
+    "providerPayPal": "PayPal"
   },
   "Series": {
     "metaFallbackTitle": "Serie",
@@ -613,7 +624,7 @@
   "Account": {
     "overviewKicker": "Panoramica",
     "overviewTitle": "Il mio account",
-    "overviewIntro": "Ciao, {greeting}. Da qui puoi gestire ordini, indirizzi, strumenti affiliato e profilo.",
+    "overviewIntro": "Ciao, {greeting}. Da qui puoi gestire ordini, indirizzi e profilo.",
     "overviewGreetingFallback": "utente",
     "sectionOrders": "Ordini",
     "ordersCardEmpty": "Nessun ordine ancora",
@@ -849,7 +860,7 @@
     "backHome": "Torna alla home"
   },
   "AboutPage": {
-    "metaTitle": "Chi siamo — HUMPBUCK Watches",
+    "metaTitle": "Chi siamo — HUMPBUCK Orologi",
     "metaDescription": "Segnatempo artigianali pensati per restare al tuo fianco e testimoniare i momenti significativi della vita.",
     "kickerBrand": "Marchio",
     "heroTitle": "HUMPBUCK — utilità prima, poi spettacolo.",
@@ -929,5 +940,8 @@
     "backToBlog": "Torna al blog",
     "notFoundTitle": "Articolo non trovato",
     "viewProduct": "Vedi prodotto"
+  },
+  "Announcement": {
+    "message": "Segnatempo per vivere i momenti più significativi della vita."
   }
 }

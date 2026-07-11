@@ -160,7 +160,7 @@
     "certaintyCurrencyTitle": "In welcher Währung werden die Preise angezeigt?",
     "certaintyCurrencyBody": "Alle Preise sind in US-Dollar angegeben. Nutzen Sie die Währungssteuerung unten links auf dem Bildschirm für eine Live-Umrechnung. Ihre Karte oder Ihr Wallet wird beim Checkout in USD belastet.",
     "certaintyShippingTitle": "Liefern Sie in mein Land?",
-    "certaintyShippingBody": "Wir versenden in die meisten Länder weltweit. Bestellungen werden innerhalb von drei Werktagen bearbeitet; die Sendungsverfolgung dauert in der Regel 7–21 Tage je nach Region. Versandkosten werden vor der Zahlung berechnet und angezeigt.",
+    "certaintyShippingBody": "Ja — wir versenden weltweit. Bestellungen werden innerhalb von drei Werktagen bearbeitet. Die Sendungsverfolgung dauert in der Regel 7–21 Tage, je nach Region. Versandkosten (falls anfallend) werden vor der Zahlung im Checkout berechnet und angezeigt; viele Ziele qualifizieren sich für kostenlosen Standardversand.\n\n\n• Nordamerika & Karibik — Kanada, Costa Rica, Dominikanische Republik, El Salvador, Guatemala, Honduras, Mexiko, Nicaragua, Panama, Puerto Rico, Trinidad und Tobago, Vereinigte Staaten\n\n• Südamerika — Argentinien, Bolivien, Brasilien, Chile, Kolumbien, Ecuador, Paraguay, Peru, Uruguay\n\n• Europa — Albanien, Österreich, Belgien, Bosnien und Herzegowina, Bulgarien, Kroatien, Zypern, Tschechien, Dänemark, Estland, Finnland, Frankreich, Deutschland, Griechenland, Ungarn, Island, Irland, Italien, Lettland, Litauen, Luxemburg, Malta, Moldau, Montenegro, Niederlande, Nordmazedonien, Norwegen, Polen, Portugal, Rumänien, Russland, Serbien, Slowakei, Slowenien, Spanien, Schweden, Schweiz, Ukraine, Vereinigtes Königreich\n\n• Naher Osten — Bahrain, Irak, Israel, Jordanien, Kuwait, Oman, Katar, Saudi-Arabien, Vereinigte Arabische Emirate\n\n• Asien — Hongkong, Indien, Japan, Kasachstan, Malaysia, Mongolei, Philippinen, Singapur, Südkorea, Sri Lanka, Thailand, Vietnam\n\n• Afrika — Angola, Ghana, Kenia, Marokko, Nigeria, Réunion, Ruanda, Südafrika, Tansania, Uganda\n\n• Ozeanien — Australien, Neuseeland\n\nWenn Ihr Land oben nicht aufgeführt ist, stehen beim Checkout möglicherweise Express-Optionen (DHL, FedEx, UPS oder USPS) zur Verfügung. Einige Regionen erfordern zusätzliche Zollinformationen (z. B. Steuer-ID oder KYC-Dokumente für Indien) — wir leiten Sie bei Bedarf an.",
     "certaintyShippingLink": "Versand- und Steuerrichtlinie",
     "certaintyPaymentsTitle": "Welche Zahlungsmethoden akzeptieren Sie?",
     "certaintyPaymentsBody": "Bezahlen Sie mit PayPal, gängigen Kredit- und Debitkarten, Apple Pay oder Google Pay — verarbeitet über vertrauenswürdige Zahlungspartner mit verschlüsseltem Checkout.",
@@ -346,7 +346,14 @@
     "paymentPayPalContinueHint": "Sie melden sich bei PayPal an, um Zahlung und Versand zu bestätigen.",
     "paymentPreviewHint": "Sie können Zahlungsdaten jetzt eingeben. Vervollständigen Sie zuerst die Lieferadresse oben.",
     "completeDetailsToPay": "Bitte vervollständigen Sie E-Mail, Lieferadresse und Versandart vor der Zahlung.",
-    "paymentTimeout": "Zahlungsgateway-Zeitüberschreitung — bitte erneut versuchen"
+    "paymentTimeout": "Zahlungsgateway-Zeitüberschreitung — bitte erneut versuchen",
+    "couponRequired": "Gutscheincode ist erforderlich.",
+    "couponNotFound": "Gutschein nicht gefunden.",
+    "couponInactive": "Gutschein ist inaktiv.",
+    "couponNotActiveYet": "Gutschein ist noch nicht aktiv.",
+    "couponExpired": "Gutschein ist abgelaufen.",
+    "couponUsageLimit": "Das Nutzungslimit des Gutscheins wurde erreicht.",
+    "couponValidateFailed": "Gutschein konnte nicht geprüft werden."
   },
   "CheckoutAddress": {
     "firstName": "Vorname",
@@ -427,7 +434,9 @@
     "whatsappPrefillProduct": "Hallo, ich habe eine Frage zu {product}:\n{url}",
     "whatsappPrefillPage": "Hallo, ich habe eine Frage zu dieser Seite:\n{url}",
     "cardAdd": "Hinzufügen",
-    "cardFiveStarReviews": "{count} Fünf-Sterne-Bewertungen"
+    "cardFiveStarReviews": "{count} Fünf-Sterne-Bewertungen",
+    "productShowcase": "Produktpräsentation",
+    "productShowcaseVideoAria": "Produktpräsentationsvideo: {product}"
   },
   "Success": {
     "documentTitle": "Bestellung bestätigt · HUMPBUCK",
@@ -439,7 +448,9 @@
     "items": "Artikel",
     "qty": "Menge {count}",
     "viewOrders": "Bestellungen ansehen",
-    "continueShopping": "Weiter einkaufen"
+    "continueShopping": "Weiter einkaufen",
+    "providerStripe": "Stripe",
+    "providerPayPal": "PayPal"
   },
   "Series": {
     "metaFallbackTitle": "Serie",
@@ -613,7 +624,7 @@
   "Account": {
     "overviewKicker": "Übersicht",
     "overviewTitle": "Mein Konto",
-    "overviewIntro": "Hallo, {greeting}! Hier verwalten Sie Bestellungen, Adressen, Partner-Tools und Ihr Profil.",
+    "overviewIntro": "Hallo, {greeting}! Hier verwalten Sie Bestellungen, Adressen und Ihr Profil.",
     "overviewGreetingFallback": "Sie",
     "sectionOrders": "Bestellungen",
     "ordersCardEmpty": "Noch keine Bestellungen",
@@ -929,5 +940,8 @@
     "backToBlog": "Zurück zum Blog",
     "notFoundTitle": "Artikel nicht gefunden",
     "viewProduct": "Produkt ansehen"
+  },
+  "Announcement": {
+    "message": "Zeitmesser, die die bedeutungsvollen Momente des Lebens miterleben."
   }
 }

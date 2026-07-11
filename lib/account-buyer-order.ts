@@ -44,6 +44,7 @@ export function buyerOrderAddressFieldRows(
   rec: Record<string, string> | null,
   orderEmail: string,
   labels: BuyerAddressFieldLabels = DEFAULT_BUYER_ADDRESS_FIELD_LABELS,
+  options?: { taxIdLabel?: (countryIso2: string) => string },
 ): BuyerAddressFieldRow[] {
   if (!rec || Object.keys(rec).length === 0) return [];
 
@@ -81,7 +82,7 @@ export function buyerOrderAddressFieldRows(
 
   if (showTaxId) {
     rows.push({
-      label: taxIdFieldLabel(countryIso2),
+      label: options?.taxIdLabel?.(countryIso2) ?? taxIdFieldLabel(countryIso2),
       value: taxIdRaw || "—",
     });
   }

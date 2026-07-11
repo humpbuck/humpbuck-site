@@ -1,8 +1,8 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK Watches - 시간과 사랑을 담은 의미 있는 선물",
+    "titleDefault": "HUMPBUCK 시계 - 시간과 사랑을 담은 의미 있는 선물",
     "descriptionDefault": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
-    "ogTitle": "HUMPBUCK Watches - 시간과 사랑을 담은 의미 있는 선물",
+    "ogTitle": "HUMPBUCK 시계 - 시간과 사랑을 담은 의미 있는 선물",
     "ogDescription": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스."
   },
   "LocaleSwitcher": {
@@ -76,9 +76,9 @@
     "socialTiktokAria": "TikTok의 HUMPBUCK"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK Watches - 시간과 사랑을 담은 의미 있는 선물",
+    "metaTitle": "HUMPBUCK 시계 - 시간과 사랑을 담은 의미 있는 선물",
     "metaDescription": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
-    "ogTitle": "HUMPBUCK Watches - 시간과 사랑을 담은 의미 있는 선물",
+    "ogTitle": "HUMPBUCK 시계 - 시간과 사랑을 담은 의미 있는 선물",
     "ogDescription": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
     "heroBadge": "시리즈 · DIGI-TEMP",
     "heroLead1": "아나로그·디지털 멀티펑션 시계 — 듀얼 디스플레이, 풀 기능.",
@@ -119,7 +119,7 @@
     "newsletterTitle": "신규 시계 출시",
     "newsletterBody": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
     "mechanicalHeroBadge": "선물 · 시간과 사랑",
-    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroTitle": "HUMPBUCK 시계",
     "mechanicalHeroLead": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
     "mechanicalHeroChipAutomatic": "장인 정신",
     "mechanicalHeroChipSkeleton": "이정표",
@@ -160,7 +160,7 @@
     "certaintyCurrencyTitle": "가격은 어떤 통화로 표시되나요?",
     "certaintyCurrencyBody": "모든 가격은 미국 달러로 표시됩니다. 화면 왼쪽 하단의 통화 컨트롤로 실시간 참고 환율을 확인하세요. 결제 시 카드 또는 지갑에서 USD로 청구됩니다.",
     "certaintyShippingTitle": "제 국가로 배송하나요?",
-    "certaintyShippingBody": "전 세계 대부분의 국가로 배송합니다. 주문은 영업일 기준 3일 이내에 처리되며, 추적 배송은 지역에 따라 보통 7–21일 소요됩니다. 배송비는 결제 전에 계산되어 표시됩니다.",
+    "certaintyShippingBody": "네 — 전 세계로 배송합니다. 주문은 영업일 기준 3일 이내에 처리됩니다. 추적 배송은 지역에 따라 보통 7–21일 소요됩니다. 배송비(해당 시)는 결제 전 체크아웃에서 계산되어 표시되며, 많은 목적지는 무료 표준 배송 대상입니다.\n\n\n• 북미 및 카리브 — 캐나다, 코스타리카, 도미니카 공화국, 엘살바도르, 과테말라, 온두라스, 멕시코, 니카라과, 파나마, 푸에르토리코, 트리니다드 토바고, 미국\n\n• 남미 — 아르헨티나, 볼리비아, 브라질, 칠레, 콜롬비아, 에콰도르, 파라과이, 페루, 우루과이\n\n• 유럽 — 알바니아, 오스트리아, 벨기에, 보스니아 헤르체고비나, 불가리아, 크로아티아, 키프로스, 체코, 덴마크, 에스토니아, 핀란드, 프랑스, 독일, 그리스, 헝가리, 아이슬란드, 아일랜드, 이탈리아, 라트비아, 리투아니아, 룩셈부르크, 몰타, 몰도바, 몬테네그로, 네덜란드, 북마케도니아, 노르웨이, 폴란드, 포르투갈, 루마니아, 러시아, 세르비아, 슬로바키아, 슬로베니아, 스페인, 스웨덴, 스위스, 우크라이나, 영국\n\n• 중동 — 바레인, 이라크, 이스라엘, 요르단, 쿠웨이트, 오만, 카타르, 사우디아라비아, 아랍에미리트\n\n• 아시아 — 홍콩, 인도, 일본, 카자흐스탄, 말레이시아, 몽골, 필리핀, 싱가포르, 한국, 스리랑카, 태국, 베트남\n\n• 아프리카 — 앙골라, 가나, 케냐, 모로코, 나이지리아, 레위니옹, 르완다, 남아프리카, 탄자니아, 우간다\n\n• 오세아니아 — 호주, 뉴질랜드\n\n위 목록에 없는 국가도 체크아웃 시 DHL, FedEx, UPS 또는 USPS 특급 옵션을 이용할 수 있는 경우가 있습니다. 일부 지역은 추가 통관 정보(예: 인도의 세금 ID 또는 KYC 서류)가 필요할 수 있으며, 필요 시 안내해 드립니다.",
     "certaintyShippingLink": "배송 및 세금 정책",
     "certaintyPaymentsTitle": "어떤 결제 수단을 사용할 수 있나요?",
     "certaintyPaymentsBody": "PayPal, 주요 신용·체크카드, Apple Pay, Google Pay로 결제하세요 — 신뢰할 수 있는 결제 파트너의 암호화된 체크아웃을 통해 처리됩니다.",
@@ -346,7 +346,14 @@
     "paymentPayPalContinueHint": "PayPal에 로그인하여 결제와 배송을 확인합니다.",
     "paymentPreviewHint": "지금 결제 정보를 입력할 수 있습니다. 결제 전 위의 배송 주소를 완료해 주세요.",
     "completeDetailsToPay": "결제 전 이메일, 배송 주소, 배송 방법을 완료해 주세요.",
-    "paymentTimeout": "결제 게이트웨이 시간 초과 — 다시 시도해 주세요"
+    "paymentTimeout": "결제 게이트웨이 시간 초과 — 다시 시도해 주세요",
+    "couponRequired": "쿠폰 코드는 필수입니다.",
+    "couponNotFound": "쿠폰을 찾을 수 없습니다.",
+    "couponInactive": "쿠폰이 비활성 상태입니다.",
+    "couponNotActiveYet": "쿠폰이 아직 활성화되지 않았습니다.",
+    "couponExpired": "쿠폰이 만료되었습니다.",
+    "couponUsageLimit": "쿠폰 사용 한도에 도달했습니다.",
+    "couponValidateFailed": "쿠폰 확인에 실패했습니다."
   },
   "CheckoutAddress": {
     "firstName": "이름",
@@ -427,7 +434,9 @@
     "whatsappPrefillProduct": "안녕하세요, {product}에 대해 문의드립니다:\n{url}",
     "whatsappPrefillPage": "안녕하세요, 이 페이지에 대해 문의드립니다:\n{url}",
     "cardAdd": "추가",
-    "cardFiveStarReviews": "별 5개 리뷰 {count}개"
+    "cardFiveStarReviews": "별 5개 리뷰 {count}개",
+    "productShowcase": "제품 쇼케이스",
+    "productShowcaseVideoAria": "제품 쇼케이스 영상: {product}"
   },
   "Success": {
     "documentTitle": "주문 완료 · HUMPBUCK",
@@ -439,7 +448,9 @@
     "items": "상품",
     "qty": "수량 {count}",
     "viewOrders": "주문 내역",
-    "continueShopping": "쇼핑 계속"
+    "continueShopping": "쇼핑 계속",
+    "providerStripe": "Stripe",
+    "providerPayPal": "PayPal"
   },
   "Series": {
     "metaFallbackTitle": "시리즈",
@@ -613,7 +624,7 @@
   "Account": {
     "overviewKicker": "개요",
     "overviewTitle": "내 계정",
-    "overviewIntro": "안녕하세요, {greeting}님. 여기에서 주문, 주소, 제휴 도구, 프로필을 관리하세요.",
+    "overviewIntro": "안녕하세요, {greeting}님. 여기에서 주문, 주소, 프로필을 관리하세요.",
     "overviewGreetingFallback": "고객",
     "sectionOrders": "주문",
     "ordersCardEmpty": "아직 주문이 없습니다",
@@ -849,7 +860,7 @@
     "backHome": "홈으로"
   },
   "AboutPage": {
-    "metaTitle": "소개 — HUMPBUCK Watches",
+    "metaTitle": "소개 — HUMPBUCK 시계",
     "metaDescription": "곁에 머무르며 인생의 의미 있는 순간을 함께하는 수공예 타임피스.",
     "kickerBrand": "브랜드",
     "heroTitle": "HUMPBUCK — 실용을 먼저, 그다음 존재감.",
@@ -929,5 +940,8 @@
     "backToBlog": "블로그로 돌아가기",
     "notFoundTitle": "글을 찾을 수 없습니다",
     "viewProduct": "상품 보기"
+  },
+  "Announcement": {
+    "message": "인생의 소중한 순간을 함께하는 시계."
   }
 }

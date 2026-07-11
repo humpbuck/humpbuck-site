@@ -1,5 +1,37 @@
 {
   "ProductCopy": {
+    "2034": {
+      "detailBlocks": [
+        {
+          "title": "3 mm ultradünn",
+          "body": "Nur 3 mm dünn. Ein schlankes, minimalistisches Design, das perfekt flach am Handgelenk liegt — für ultimativen Leichtkomfort und mühelose Eleganz."
+        },
+        {
+          "title": "Premium-Edelstahl",
+          "body": "Vom Gehäuse bis zum Armband aus premium Edelstahl gefertigt. Hoch verschleißfest, kratzfest und langlebig — mit brillantem Goldglanz über Jahre."
+        },
+        {
+          "title": "Japanisches Uhrwerk 5+ Jahre",
+          "body": "Angetrieben von einem präzisen japanischen Quarzwerk für makellose Zeitmessung. Extrem niedriger Energieverbrauch und batteriefreie Laufzeit von über 5 Jahren."
+        }
+      ]
+    },
+    "2037": {
+      "detailBlocks": [
+        {
+          "title": "Ultradünn 3 mm",
+          "body": "Nur 3 mm dünn. Ein schlankes, minimalistisches Design, das perfekt flach am Handgelenk liegt — für ultimativen Leichtkomfort und mühelose Eleganz."
+        },
+        {
+          "title": "Premium-Edelstahl",
+          "body": "Vom Gehäuse bis zum Armband aus premium Edelstahl gefertigt. Hoch verschleißfest, kratzfest und langlebig — mit brillantem Goldglanz über Jahre."
+        },
+        {
+          "title": "Japanisches Uhrwerk 5+ Jahre",
+          "body": "Angetrieben von einem präzisen japanischen Quarzwerk für makellose Zeitmessung. Extrem niedriger Energieverbrauch und batteriefreie Laufzeit von über 5 Jahren."
+        }
+      ]
+    },
     "2301": {
       "categoryLabel": "Quarz · Herren · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2301 — Stahl-Ana-Digi-Uhr mit Dual-LCD, Wecker, Außentemperatur und Stoppuhr.",
@@ -10,8 +42,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Multifunktional",
-          "body": "DIGI-TEMP 2301 bietet das volle Ana-Digi-Erlebnis: zwei digitale Felder für Zeit/Datum und 12–24h plus Temperatur und laufende Sekunden; der Modus-Stack umfasst TIME, DATE, ALM (Wecker), OUT (Außentemperatur) und STW (Stoppuhr). Hintergrundbeleuchtung und ein dedizierter Modusweg sorgen im Alltag für gute Ablesbarkeit — in einem 33 mm Edelstahlgehäuse mit Mineralglas und 30 m Wasserdichtigkeit."
+          "title": "Klassischer Retro-Futurismus Sci-Fi-Stil",
+          "body": "Eine zeitlose Hommage an ikonische Sci-Fi-Ästhetik — mit kühner mechanischer Anordnung und einem premium Cockpit-Design mit mehreren Displays."
+        },
+        {
+          "title": "5-in-1 vielseitige Modi",
+          "body": "Für präzises Tracking entwickelt: tägliche Zeitanzeige, Kalender, Wecker, Echtzeit-Außentemperatur und eine ultraschnelle 1/1.000-Sekunden-Stoppuhr."
+        },
+        {
+          "title": "Premium-Edelstahl-Verarbeitung",
+          "body": "Gebaut für die Ewigkeit mit hochwertigem Edelstahlgehäuse und -armband — robust im Griff und mit eleganter metallischer Optik."
         }
       ]
     },
@@ -102,12 +142,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Seitenansicht",
-          "body": "Eine strahlende Fusion aus Eleganz und mechanischer Meisterschaft: open-worked Zifferblatt mit goldenen Akzenten, schlanker schwarzer Rahmen und luxuriöses schwarzes Band. Sichtbare Zahnräder und Tourbillon unterstreichen exquisite Handwerkskunst — die perfekte Wahl für zeitlose Luxusliebhaber. Jetzt bestellen und mit diesem Meisterwerk glänzen!"
+          "title": "Stern-Skelettzifferblatt",
+          "body": "Ein markantes open-work Zifferblatt mit industriellem sternförmigem Käfig, der das filigrane Automatikwerk und die rotierenden Zahnräder vollständig freilegt."
         },
         {
-          "title": "CALIBRE 82S0",
-          "body": "Die Darstellung fängt die mechanische Ästhetik des MIYOTA 82S0 ein: vor reinweißem Hintergrund zeigen die feine Rotor-Struktur und scharfe Metallfasen raffinierte Textur; 21 Rubinlager kontrastieren wunderschön mit dem messingfarbenen Unruhrad; und die charakteristischen Skelett-Ausschnitte zeigen die rhythmische Schönheit des Open-Heart-Designs."
+          "title": "Tonneau-Karbongehäuse",
+          "body": "Eine kühne Tonneau-Silhouette mit strukturierter Carbonfaser-Lünette, eleganten Roségold-Akzenten und einem strapazierfähigen schwarzen Kautschukband."
+        },
+        {
+          "title": "Japanisches Uhrwerk",
+          "body": "Angetrieben vom zuverlässigen MIYOTA 82S0 Automatikkaliber mit 21.600 vph, Handaufzug und Open-Heart-Design — optimiert für Skelettuhren."
         }
       ]
     },
@@ -251,8 +295,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Multifunktional",
-          "body": "DIGI-TEMP 2412M bietet das volle Ana-Digi-Erlebnis: zwei digitale Felder für Zeit/Datum und 12–24h plus Temperatur und laufende Sekunden; der Modus-Stack umfasst TIME, DATE, ALM (Wecker), OUT (Außentemperatur) und STW (Stoppuhr). Hintergrundbeleuchtung und ein dedizierter Modusweg sorgen im Alltag für gute Ablesbarkeit — in einem 40 mm Edelstahlgehäuse mit Mineralglas und 30 m Wasserdichtigkeit."
+          "title": "Klassischer Retro-Futurismus Sci-Fi-Stil",
+          "body": "Eine zeitlose Hommage an ikonische Sci-Fi-Ästhetik — mit kühner mechanischer Anordnung und einem premium Cockpit-Design mit mehreren Displays."
+        },
+        {
+          "title": "5-in-1 vielseitige Modi",
+          "body": "Für präzises Tracking entwickelt: tägliche Zeitanzeige, Kalender, Wecker, Echtzeit-Außentemperatur und eine ultraschnelle 1/1.000-Sekunden-Stoppuhr."
+        },
+        {
+          "title": "Premium-Edelstahl-Verarbeitung",
+          "body": "Gebaut für die Ewigkeit mit hochwertigem Edelstahlgehäuse und -armband — robust im Griff und mit eleganter metallischer Optik."
         }
       ]
     },
@@ -299,6 +351,29 @@
         {
           "title": "CALIBRE 2808",
           "body": "Automatisches Skelettwerk mit Minutenanzeige. Gunmetal-Finish, robust und alltagstauglich. Durchmesser 34 mm, Höhe 7,18 mm. Gangreserve über 48 Stunden bei 21.600 Schwingungen pro Stunde (3 Hz)."
+        }
+      ]
+    },
+    "9207g": {
+      "categoryLabel": "Mechanisch · Herren",
+      "shortDescription": "Mit einem einzigartigen, vollständig transparenten Tonneau-Gehäuse aus TR90-Kristall bietet diese Skelettuhr einen 360°-Panoramablick auf das rhythmische Spiel von Zahnrädern und Unruh. Das gunmetal-finierte Werk sitzt in einem schlanken Profil — 34 mm Durchmesser, nur 7,18 mm hoch — und liefert starke Optik bei ultraleichtem, hypoallergenem Tragegefühl. Über 48 Stunden Gangreserve bei 21.600 vph (3 Hz).",
+      "highlights": [
+        "TR90 transparentes Tonneau-Gehäuse",
+        "360°-Skelettansicht · gunmetal Werk",
+        "34 mm · 7,18 mm dünn · 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "Das Skelett-Canvas aus jedem Winkel",
+          "body": "Erleben Sie reines mechanisches Theater. Das vollständig skelettierte Werk bietet einen ungehinderten 360-Grad-Blick auf sein filigranes Inneres. Von der präzisen Choreografie der Zahnräder bis zum Schwingen von Unruh und Rotor — jedes mikroskopische Detail ist durch das kristallklare Tonneau-Gehäuse aus jedem Winkel sichtbar."
+        },
+        {
+          "title": "Gewichtslos und hypoallergen",
+          "body": "Gefertigt aus ultraleichtem TR90-Kristall — demselben biokompatiblen Hightech-Polymer wie bei Premium-Brillen. Für absoluten Komfort am Handgelenk, nahezu gewichtslos und ohne Hautreizung — das perfekte Statement-Stück für den ganzen Tag."
+        },
+        {
+          "title": "Ultradünne Präzision in Industriequalität",
+          "body": "Im Herzen schlägt ein automatisches Skelettkaliber in markantem Gunmetal-Finish. Mit 34 mm Durchmesser und nur 7,18 mm Höhe ist dieser robuste Motor für den Alltag gebaut. 21.600 Schwingungen pro Stunde (3 Hz) und zuverlässige Gangreserve über 48 Stunden."
         }
       ]
     }

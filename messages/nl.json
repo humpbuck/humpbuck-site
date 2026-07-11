@@ -1,8 +1,8 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK Watches - Betekenisvolle geschenken van tijd en liefde",
+    "titleDefault": "HUMPBUCK Horloges - Betekenisvolle geschenken van tijd en liefde",
     "descriptionDefault": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken.",
-    "ogTitle": "HUMPBUCK Watches - Betekenisvolle geschenken van tijd en liefde",
+    "ogTitle": "HUMPBUCK Horloges - Betekenisvolle geschenken van tijd en liefde",
     "ogDescription": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken."
   },
   "LocaleSwitcher": {
@@ -76,9 +76,9 @@
     "socialTiktokAria": "HUMPBUCK op TikTok"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK Watches - Betekenisvolle geschenken van tijd en liefde",
+    "metaTitle": "HUMPBUCK Horloges - Betekenisvolle geschenken van tijd en liefde",
     "metaDescription": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken.",
-    "ogTitle": "HUMPBUCK Watches - Betekenisvolle geschenken van tijd en liefde",
+    "ogTitle": "HUMPBUCK Horloges - Betekenisvolle geschenken van tijd en liefde",
     "ogDescription": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken.",
     "heroBadge": "Serie · DIGI-TEMP",
     "heroLead1": "Ana-digi multifunctioneel horloge — dubbele displays, volledige functieset.",
@@ -119,7 +119,7 @@
     "newsletterTitle": "NIEUWE HORLOGE-RELEASES",
     "newsletterBody": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken.",
     "mechanicalHeroBadge": "Geschenken · Tijd en liefde",
-    "mechanicalHeroTitle": "HUMPBUCK Watches",
+    "mechanicalHeroTitle": "HUMPBUCK Horloges",
     "mechanicalHeroLead": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken.",
     "mechanicalHeroChipAutomatic": "Vakmanschap",
     "mechanicalHeroChipSkeleton": "Mijlpalen",
@@ -160,7 +160,7 @@
     "certaintyCurrencyTitle": "In welke valuta worden prijzen getoond?",
     "certaintyCurrencyBody": "Alle prijzen staan in Amerikaanse dollars. Gebruik de valutakiezer linksonder op uw scherm voor een live referentieconversie. Uw kaart of wallet wordt bij afrekenen in USD belast.",
     "certaintyShippingTitle": "Leveren jullie in mijn land?",
-    "certaintyShippingBody": "We leveren in de meeste landen wereldwijd. Bestellingen worden binnen drie werkdagen verwerkt; traceerbare levering arriveert meestal binnen 7–21 dagen afhankelijk van uw regio. Verzendkosten worden berekend en getoond vóór u betaalt.",
+    "certaintyShippingBody": "Ja — we leveren wereldwijd. Bestellingen worden binnen drie werkdagen verwerkt. Traceerbare levering arriveert meestal binnen 7–21 dagen, afhankelijk van uw regio. Verzendkosten (indien van toepassing) worden vóór betaling berekend en getoond bij het afrekenen; veel bestemmingen komen in aanmerking voor gratis standaardverzending.\n\n\n• Noord-Amerika & Caraïben — Canada, Costa Rica, Dominicaanse Republiek, El Salvador, Guatemala, Honduras, Mexico, Nicaragua, Panama, Puerto Rico, Trinidad en Tobago, Verenigde Staten\n\n• Zuid-Amerika — Argentinië, Bolivia, Brazilië, Chili, Colombia, Ecuador, Paraguay, Peru, Uruguay\n\n• Europa — Albanië, Oostenrijk, België, Bosnië en Herzegovina, Bulgarije, Kroatië, Cyprus, Tsjechië, Denemarken, Estland, Finland, Frankrijk, Duitsland, Griekenland, Hongarije, IJsland, Ierland, Italië, Letland, Litouwen, Luxemburg, Malta, Moldavië, Montenegro, Nederland, Noord-Macedonië, Noorwegen, Polen, Portugal, Roemenië, Rusland, Servië, Slowakije, Slovenië, Spanje, Zweden, Zwitserland, Oekraïne, Verenigd Koninkrijk\n\n• Midden-Oosten — Bahrein, Irak, Israël, Jordanië, Koeweit, Oman, Qatar, Saoedi-Arabië, Verenigde Arabische Emiraten\n\n• Azië — Hongkong, India, Japan, Kazachstan, Maleisië, Mongolië, Filipijnen, Singapore, Zuid-Korea, Sri Lanka, Thailand, Vietnam\n\n• Afrika — Angola, Ghana, Kenia, Marokko, Nigeria, Réunion, Rwanda, Zuid-Afrika, Tanzania, Uganda\n\n• Oceanië — Australië, Nieuw-Zeeland\n\nAls uw land hierboven niet staat, zijn expressopties (DHL, FedEx, UPS of USPS) mogelijk nog beschikbaar bij het afrekenen. Sommige regio's vereisen extra douane-informatie (bijvoorbeeld belasting-ID of KYC-documenten voor India) — we begeleiden u indien nodig.",
     "certaintyShippingLink": "Verzend- en belastingbeleid",
     "certaintyPaymentsTitle": "Welke betaalmethoden accepteren jullie?",
     "certaintyPaymentsBody": "Betaal met PayPal, gangbare credit- en debitcards, Apple Pay of Google Pay — verwerkt via betrouwbare betalingspartners met versleutelde checkout.",
@@ -346,7 +346,14 @@
     "paymentPayPalContinueHint": "Je logt in bij PayPal om betaling en verzending te bevestigen.",
     "paymentPreviewHint": "Je kunt nu betaalgegevens invoeren. Vul eerst het verzendadres hierboven in voordat je betaalt.",
     "completeDetailsToPay": "Vul e-mail, verzendadres en verzendmethode in voordat je betaalt.",
-    "paymentTimeout": "Betaalgateway time-out — probeer opnieuw"
+    "paymentTimeout": "Betaalgateway time-out — probeer opnieuw",
+    "couponRequired": "Kortingscode is verplicht.",
+    "couponNotFound": "Kortingscode niet gevonden.",
+    "couponInactive": "Kortingscode is inactief.",
+    "couponNotActiveYet": "Kortingscode is nog niet actief.",
+    "couponExpired": "Kortingscode is verlopen.",
+    "couponUsageLimit": "Kortingscode heeft het gebruikslimiet bereikt.",
+    "couponValidateFailed": "Kortingscode kon niet worden gevalideerd."
   },
   "CheckoutAddress": {
     "firstName": "Voornaam",
@@ -427,7 +434,9 @@
     "whatsappPrefillProduct": "Hallo, ik heb een vraag over {product}:\n{url}",
     "whatsappPrefillPage": "Hallo, ik heb een vraag over deze pagina:\n{url}",
     "cardAdd": "Toevoegen",
-    "cardFiveStarReviews": "{count} vijfsterrenbeoordelingen"
+    "cardFiveStarReviews": "{count} vijfsterrenbeoordelingen",
+    "productShowcase": "Productshowcase",
+    "productShowcaseVideoAria": "Productshowcase-video: {product}"
   },
   "Success": {
     "documentTitle": "Bestelling bevestigd · HUMPBUCK",
@@ -439,7 +448,9 @@
     "items": "Artikelen",
     "qty": "Aantal {count}",
     "viewOrders": "Bestellingen bekijken",
-    "continueShopping": "Verder winkelen"
+    "continueShopping": "Verder winkelen",
+    "providerStripe": "Stripe",
+    "providerPayPal": "PayPal"
   },
   "Series": {
     "metaFallbackTitle": "Serie",
@@ -613,7 +624,7 @@
   "Account": {
     "overviewKicker": "Overzicht",
     "overviewTitle": "Mijn account",
-    "overviewIntro": "Hallo, {greeting}. Beheer hier uw bestellingen, adressen, partner-tools en profiel.",
+    "overviewIntro": "Hallo, {greeting}. Beheer hier uw bestellingen, adressen en profiel.",
     "overviewGreetingFallback": "daar",
     "sectionOrders": "Bestellingen",
     "ordersCardEmpty": "Nog geen bestellingen",
@@ -849,7 +860,7 @@
     "backHome": "Terug naar home"
   },
   "AboutPage": {
-    "metaTitle": "Over — HUMPBUCK Watches",
+    "metaTitle": "Over — HUMPBUCK Horloges",
     "metaDescription": "Handgemaakte timepieces ontworpen om aan je zijde te blijven en de betekenisvolle momenten in het leven mee te maken.",
     "kickerBrand": "Merk",
     "heroTitle": "HUMPBUCK — functionaliteit eerst, dan spektakel.",
@@ -929,5 +940,8 @@
     "backToBlog": "Terug naar blog",
     "notFoundTitle": "Artikel niet gevonden",
     "viewProduct": "Product bekijken"
+  },
+  "Announcement": {
+    "message": "Tijdmeters om getuige te zijn van de betekenisvolle momenten van het leven."
   }
 }

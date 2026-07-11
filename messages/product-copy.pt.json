@@ -1,5 +1,37 @@
 {
   "ProductCopy": {
+    "2034": {
+      "detailBlocks": [
+        {
+          "title": "Ultrafino 3 mm",
+          "body": "Apenas 3 mm de espessura. Um design elegante e minimalista que assenta perfeitamente plano no pulso para máximo conforto leve e elegância sem esforço."
+        },
+        {
+          "title": "Aço inoxidável premium",
+          "body": "Fabricado em aço inoxidável premium da caixa à pulseira. Altamente resistente ao desgaste e a riscos, durável, mantendo o brilho dourado durante anos."
+        },
+        {
+          "title": "Movimento japonês 5+ anos",
+          "body": "Equipado com movimento de quartzo japonês de precisão para cronometragem impecável. Consumo ultra-baixo e vida útil da pilha superior a 5 anos sem complicações."
+        }
+      ]
+    },
+    "2037": {
+      "detailBlocks": [
+        {
+          "title": "Ultrafino 3 mm",
+          "body": "Apenas 3 mm de espessura. Um design elegante e minimalista que assenta perfeitamente plano no pulso para máximo conforto leve e elegância sem esforço."
+        },
+        {
+          "title": "Aço inoxidável premium",
+          "body": "Fabricado em aço inoxidável premium da caixa à pulseira. Altamente resistente ao desgaste e a riscos, durável, mantendo o brilho dourado durante anos."
+        },
+        {
+          "title": "Movimento japonês 5+ anos",
+          "body": "Equipado com movimento de quartzo japonês de precisão para cronometragem impecável. Consumo ultra-baixo e vida útil da pilha superior a 5 anos sem complicações."
+        }
+      ]
+    },
     "2301": {
       "categoryLabel": "Quartz · Homem · DIGI-TEMP",
       "shortDescription": "HUMPBUCK DIGI-TEMP 2301 — relógio ana-digi em aço com LCD duplo, alarme, temperatura externa e cronômetro.",
@@ -10,8 +42,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Multifuncional",
-          "body": "O DIGI-TEMP 2301 oferece a experiência ana-digi completa: dois campos digitais para hora/data e 12–24 h, além de temperatura e segundos em curso; a pilha de modos inclui TIME, DATE, ALM (alarme), OUT (temperatura exterior) e STW (cronómetro). A retroiluminação e um percurso de modos dedicado mantêm a operação legível no uso diário — numa caixa de aço de 33 mm com cristal mineral e 30 m de resistência à água."
+          "title": "Estilo sci-fi retrofuturista clássico",
+          "body": "Uma homenagem intemporal às estéticas sci-fi icónicas, combinando um ousado layout mecânico com um cockpit premium de múltiplos ecrãs."
+        },
+        {
+          "title": "5 modos versáteis em 1",
+          "body": "Concebido para rastreamento de precisão: hora diária, calendário, alarmes, monitorização da temperatura ambiente em tempo real e cronómetro ultra-preciso de 1/1.000 de segundo."
+        },
+        {
+          "title": "Artesanato em aço inoxidável premium",
+          "body": "Construído para durar com caixa e pulseira em aço inoxidável de alta qualidade, oferecendo sensação sólida e acabamento metálico elegante."
         }
       ]
     },
@@ -102,12 +142,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Vista lateral",
-          "body": "Uma fusão radiante de elegância e mestria mecânica, com mostrador open-worked e acentos dourados, este relógio está num elegante moldura preta e pulseira preta luxuosa. Engrenagens visíveis e tourbillon destacam um artesanato requintado — a escolha perfeita para quem procura luxo intemporal. Encomende agora e brilhe com esta obra-prima!"
+          "title": "Mostrador esqueleto estrela",
+          "body": "Um mostrador open-work marcante com gaiola industrial em forma de estrela que expõe totalmente o movimento automático intrincado e as engrenagens em rotação."
         },
         {
-          "title": "CALIBRE 82S0",
-          "body": "A imagem capta a estética mecânica do movimento MIYOTA 82S0: sobre fundo branco puro, a textura escovada do rotor e os chanfros metálicos nítidos exalam refinamento; 21 rolamentos de rubi contrastam lindamente com a roda de balanço em tom latão; e os recortes esqueletizados mostram a beleza rítmica do design open-heart."
+          "title": "Caixa tonneau em carbono",
+          "body": "Uma silhueta tonneau ousada que combina um bezel texturizado efeito fibra de carbono com acentos em ouro rosa e uma pulseira de borracha preta durável."
+        },
+        {
+          "title": "Movimento japonês",
+          "body": "Equipado com o fiável calibre automático MIYOTA 82S0, com 21.600 vph, corda manual e design open-heart otimizado para relógios esqueleto."
         }
       ]
     },
@@ -251,8 +295,16 @@
       ],
       "detailBlocks": [
         {
-          "title": "Multifuncional",
-          "body": "O DIGI-TEMP 2412M oferece a experiência ana-digi completa: dois campos digitais para hora/data e 12–24 h, além de temperatura e segundos em curso; a pilha de modos inclui TIME, DATE, ALM (alarme), OUT (temperatura exterior) e STW (cronómetro). A retroiluminação e um percurso de modos dedicado mantêm a operação legível no uso diário — numa caixa de aço de 40 mm com cristal mineral e 30 m de resistência à água."
+          "title": "Estilo sci-fi retrofuturista clássico",
+          "body": "Uma homenagem intemporal às estéticas sci-fi icónicas, combinando um ousado layout mecânico com um cockpit premium de múltiplos ecrãs."
+        },
+        {
+          "title": "5 modos versáteis em 1",
+          "body": "Concebido para rastreamento de precisão: hora diária, calendário, alarmes, monitorização da temperatura ambiente em tempo real e cronómetro ultra-preciso de 1/1.000 de segundo."
+        },
+        {
+          "title": "Artesanato em aço inoxidável premium",
+          "body": "Construído para durar com caixa e pulseira em aço inoxidável de alta qualidade, oferecendo sensação sólida e acabamento metálico elegante."
         }
       ]
     },
@@ -299,6 +351,29 @@
         {
           "title": "CALIBRE 2808",
           "body": "Movimento automático esqueleto com indicação de minutos. Acabamento gunmetal, equipado e resistente ao uso diário com design robusto. Diâmetro de 34 mm, espessura de 7,18 mm. Reserva superior a 48 horas, a 21.600 vibrações por hora (3 Hz)."
+        }
+      ]
+    },
+    "9207g": {
+      "categoryLabel": "Mecânico · Homem",
+      "shortDescription": "Com uma caixa tonneau totalmente transparente em cristal TR90, este relógio esqueleto oferece vista panorâmica de 360° do ritmo das engrenagens e do balanço. O movimento com acabamento gunmetal repousa num perfil fino — 34 mm de diâmetro e apenas 7,18 mm de espessura — com forte impacto visual e uso ultraleve e hipoalergénico. Reserva superior a 48 h a 21.600 vph (3 Hz).",
+      "highlights": [
+        "Caixa tonneau TR90 transparente",
+        "Vista esqueleto 360° · movimento gunmetal",
+        "34 mm · 7,18 mm · reserva 48h+"
+      ],
+      "detailBlocks": [
+        {
+          "title": "A tela esqueleto de todos os ângulos",
+          "body": "Viva o teatro mecânico puro. O movimento totalmente esqueletizado oferece uma vista de 360 graus sem obstruções do seu intrincado interior. Da dança precisa das engrenagens ao movimento do balanço e do rotor, cada detalhe microscópico é visível de qualquer ângulo através da caixa tonneau perfeitamente transparente."
+        },
+        {
+          "title": "Engenharia leve e hipoalergénica",
+          "body": "Fabricado em cristal TR90 ultraleve — o mesmo polímero biocompatível de alta tecnologia dos óculos premium. Conforto absoluto no pulso, quase sem peso e zero irritação cutânea: a peça ideal para usar o dia todo."
+        },
+        {
+          "title": "Precisão ultra-fina de grau industrial",
+          "body": "No coração bate um calibre esqueleto automático com acabamento gunmetal. Com 34 mm de diâmetro e apenas 7,18 mm de espessura, este motor robusto resiste ao uso diário. Funciona a 21.600 vibrações por hora (3 Hz) com reserva de marcha fiável superior a 48 horas."
         }
       ]
     }

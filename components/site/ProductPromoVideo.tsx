@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 
 function showcaseShellClass(isLandscape: boolean): string {
   return isLandscape
@@ -24,8 +25,10 @@ export function ProductPromoVideo({
   poster?: string;
   embedded?: boolean;
 }) {
+  const t = useTranslations("Product");
   const [aspectRatio, setAspectRatio] = useState<number | null>(null);
   const isLandscape = aspectRatio != null && aspectRatio >= 1;
+  const showcaseLabel = t("productShowcase");
 
   const onLoadedMetadata = useCallback((event: React.SyntheticEvent<HTMLVideoElement>) => {
     const video = event.currentTarget;
@@ -45,7 +48,7 @@ export function ProductPromoVideo({
         playsInline
         preload="metadata"
         poster={poster}
-        aria-label={`Product showcase video: ${productName}`}
+        aria-label={t("productShowcaseVideoAria", { product: productName })}
         onLoadedMetadata={onLoadedMetadata}
       >
         <source src={src} type="video/mp4" />
@@ -59,7 +62,7 @@ export function ProductPromoVideo({
     return (
       <section className="flex w-full shrink-0 flex-col gap-3 pt-0">
         <h2 className="shrink-0 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-muted sm:text-[11px]">
-          Product showcase
+          {showcaseLabel}
         </h2>
         <div className={`flex w-full flex-col ${isLandscape ? "" : "items-center"}`}>
           <div className={shellClass}>{videoBox}</div>
@@ -71,7 +74,7 @@ export function ProductPromoVideo({
   return (
     <section className="mt-16 border-t border-line pt-14">
       <h2 className="text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-muted sm:text-[11px]">
-        Product showcase
+        {showcaseLabel}
       </h2>
       <div className={`mx-auto mt-8 sm:mt-10 ${shellClass}`}>{videoBox}</div>
     </section>

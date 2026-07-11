@@ -2,9 +2,13 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import {
   checkoutFormFromSavedAddress,
-  formatCheckoutAddressValidationEnglish,
   validateCheckoutAddressForm,
+  type CheckoutAddressValidationErrorKey,
 } from "@/lib/checkout-address";
+import {
+  CHECKOUT_ORDER_ERROR_CODES,
+  type CheckoutOrderAddressScope,
+} from "@/lib/checkout-order-errors";
 import { notifyAdminInboxOrderPlaced } from "@/lib/admin-inbox";
 import { notifyMerchantOrderPlaced } from "@/lib/merchant-order-email";
 import { prisma } from "@/lib/prisma";
@@ -47,14 +51,14 @@ function pickNumber(...values: Array<unknown>): number | null {
 
 function validateCheckoutAddressRecord(
   record: Record<string, string> | undefined,
-  label: "Billing" | "Shipping",
-): string | null {
+  addressScope: CheckoutOrderAddressScope,
+): CheckoutAddressValidationErrorKey | null {
   if (!record) return null;
   const form = checkoutFormFromSavedAddress(record);
   if (!form) return null;
   const result = validateCheckoutAddressForm(form);
   if (result.ok) return null;
-  return `${label}: ${formatCheckoutAddressValidationEnglish(result.errorKey)}`;
+  return result.errorKey;
 }
 
 export async function POST(req: Request) {
@@ -75,7 +79,10 @@ export async function POST(req: Request) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
+    return NextResponse.json(
+      { ok: false, errorCode: CHECKOUT_ORDER_ERROR_CODES.INVALID_JSON },
+      { status: 400 },
+    );
   }
 
   if (
@@ -84,14 +91,36 @@ export async function POST(req: Request) {
     !Array.isArray(body.items) ||
     body.items.length === 0
   ) {
-    return NextResponse.json({ ok: false, error: "Missing required fields" }, { status: 400 });
+    return NextResponse.json(
+      { ok: false, errorCode: CHECKOUT_ORDER_ERROR_CODES.MISSING_FIELDS },
+      { status: 400 },
+    );
   }
 
-  const addressError =
-    validateCheckoutAddressRecord(body.shipping, "Shipping") ??
-    validateCheckoutAddressRecord(body.billing, "Billing");
-  if (addressError) {
-    return NextResponse.json({ ok: false, error: addressError }, { status: 400 });
+  const shippingValidationKey = validateCheckoutAddressRecord(body.shipping, "shipping");
+  if (shippingValidationKey) {
+    return NextResponse.json(
+      {
+        ok: false,
+        errorCode: CHECKOUT_ORDER_ERROR_CODES.ADDRESS_INVALID,
+        addressScope: "shipping",
+        validationKey: shippingValidationKey,
+      },
+      { status: 400 },
+    );
+  }
+
+  const billingValidationKey = validateCheckoutAddressRecord(body.billing, "billing");
+  if (billingValidationKey) {
+    return NextResponse.json(
+      {
+        ok: false,
+        errorCode: CHECKOUT_ORDER_ERROR_CODES.ADDRESS_INVALID,
+        addressScope: "billing",
+        validationKey: billingValidationKey,
+      },
+      { status: 400 },
+    );
   }
 
   const session = await auth().catch(() => null);
