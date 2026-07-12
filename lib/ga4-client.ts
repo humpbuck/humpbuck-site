@@ -192,7 +192,7 @@ async function getTrafficSummary(): Promise<Ga4TrafficSummary> {
     metrics: [{ name: "activeUsers" }],
   });
 
-  // 30d: visitors, pageViews, avgSessionDuration, engagementRate, conversions, conversionRate
+  // 30d: visitors, pageViews, avgSessionDuration, engagementRate, conversions, sessions
   const d30Report = await runReport({
     dateRanges: [{ startDate: d30, endDate: today }],
     metrics: [
@@ -201,9 +201,12 @@ async function getTrafficSummary(): Promise<Ga4TrafficSummary> {
       { name: "averageSessionDuration" },
       { name: "engagementRate" },
       { name: "conversions" },
-      { name: "conversionRate" },
+      { name: "sessions" },
     ],
   });
+
+  const sessions30d = firstMetric(d30Report, 5);
+  const conversions30d = firstMetric(d30Report, 4);
 
   return {
     todayVisitors: firstMetric(todayReport, 0),
@@ -212,8 +215,8 @@ async function getTrafficSummary(): Promise<Ga4TrafficSummary> {
     pageViews30d: firstMetric(d30Report, 1),
     avgSessionDuration: firstMetric(d30Report, 2),
     engagementRate: firstMetric(d30Report, 3),
-    conversions30d: firstMetric(d30Report, 4),
-    conversionRate: firstMetric(d30Report, 5),
+    conversions30d,
+    conversionRate: sessions30d > 0 ? conversions30d / sessions30d : 0,
   };
 }
 
