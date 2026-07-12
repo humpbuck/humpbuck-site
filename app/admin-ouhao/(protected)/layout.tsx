@@ -92,6 +92,9 @@ export default async function AdminProtectedLayout({
           <Link href={adminPath("/coupons")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
             COUPONS
           </Link>
+          <Link href={adminPath("/analytics")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
+            ANALYTICS
+          </Link>
           <div className="group relative">
             <button type="button" className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-muted hover:text-ink">
               More
