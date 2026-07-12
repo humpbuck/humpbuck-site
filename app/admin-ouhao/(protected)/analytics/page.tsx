@@ -1,8 +1,9 @@
 import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { adminPath } from "@/lib/admin-path";
 import { isGoogleConfigured, getGoogleServiceAccountEmail } from "@/lib/google-auth";
-import { getGscOverview, type GscOverview } from "@/lib/gsc-client";
-import { getGa4Overview, type Ga4Overview } from "@/lib/ga4-client";
+import { type GscOverview } from "@/lib/gsc-client";
+import { type Ga4Overview } from "@/lib/ga4-client";
+import { getAnalyticsOverview, type AnalyticsFetchResult } from "@/lib/analytics-cache";
 
 export const dynamic = "force-dynamic";
 
@@ -19,23 +20,6 @@ function formatDuration(seconds: number): string {
 
 function truncate(s: string, max: number): string {
   return s.length > max ? `${s.slice(0, max)}…` : s;
-}
-
-type FetchResult = {
-  ga4: Ga4Overview | { error: string };
-  gsc: GscOverview | { error: string };
-};
-
-async function fetchAnalytics(): Promise<FetchResult> {
-  const [ga4, gsc] = await Promise.all([
-    getGa4Overview().catch((err: unknown) => ({
-      error: err instanceof Error ? err.message : "GA4 fetch failed",
-    })),
-    getGscOverview().catch((err: unknown) => ({
-      error: err instanceof Error ? err.message : "GSC fetch failed",
-    })),
-  ]);
-  return { ga4, gsc } as FetchResult;
 }
 
 function isError(v: unknown): v is { error: string } {
@@ -62,7 +46,11 @@ function MetricCard({ label, value, sub }: { label: string; value: string; sub?:
   );
 }
 
-export default async function AdminAnalyticsPage() {
+export default async function AdminAnalyticsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ refresh?: string }>;
+}) {
   const configured = isGoogleConfigured();
   const serviceEmail = getGoogleServiceAccountEmail();
 
@@ -84,9 +72,18 @@ export default async function AdminAnalyticsPage() {
     );
   }
 
-  let result: FetchResult;
+  const sp = await searchParams;
+  const forceRefresh = sp.refresh === "1";
+
+  let result: AnalyticsFetchResult;
+  let fromCache = false;
+  let fetchedAt = "";
+
   try {
-    result = await fetchAnalytics();
+    const cached = await getAnalyticsOverview(forceRefresh);
+    result = cached.data;
+    fromCache = cached.fromCache;
+    fetchedAt = cached.fetchedAt;
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return (
@@ -123,7 +120,7 @@ export default async function AdminAnalyticsPage() {
             </p>
           ) : null}
           <a
-            href={adminPath("/analytics")}
+            href={adminPath("/analytics?refresh=1")}
             className="mt-1 inline-block text-[10px] font-semibold uppercase tracking-widest text-ink/70 hover:text-ink"
           >
             ↻ Refresh
@@ -445,8 +442,11 @@ export default async function AdminAnalyticsPage() {
       ) : null}
 
       <p className="mt-10 text-[10px] text-muted">
-        Data fetched live from Google Analytics 4 Data API + Search Console API.
-        Cached for 15 minutes in Worker memory. No D1 involved.
+        {fromCache
+          ? `Cached data (fetched ${fetchedAt ? new Date(fetchedAt).toLocaleString() : "earlier"}). `
+          : "Fresh data from Google APIs. "}
+        Cached for 30 minutes in Worker memory to stay within Google API quotas. No D1 involved.
+        Click ↻ Refresh to force a fresh pull.
       </p>
     </div>
   );
