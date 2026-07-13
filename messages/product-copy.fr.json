@@ -1,6 +1,8 @@
 {
   "ProductCopy": {
     "2034": {
+      "categoryLabel": "Quartz · Homme · Ultra-fin",
+      "shortDescription": "Avec seulement 3 mm d'épaisseur, cette montre premium en acier inoxydable allie confort minimaliste épuré, résistance durable aux rayures et éclat doré. Animée par un mouvement japonais de précision, elle offre une horlogerie impeccable avec une autonomie de batterie sans souci de plus de 5 ans.",
       "detailBlocks": [
         {
           "title": "Ultra-fin 3 mm",
@@ -17,6 +19,8 @@
       ]
     },
     "2037": {
+      "categoryLabel": "Quartz · Homme · Ultra-fin",
+      "shortDescription": "Avec seulement 3 mm d'épaisseur, cette montre premium en acier inoxydable allie confort minimaliste épuré, résistance durable aux rayures et éclat doré. Animée par un mouvement japonais de précision, elle offre une horlogerie impeccable avec une autonomie de batterie sans souci de plus de 5 ans.",
       "detailBlocks": [
         {
           "title": "Ultra-fin 3 mm",
@@ -54,6 +58,22 @@
           "body": "Conçu pour durer avec un boîtier et un bracelet en acier inoxydable de haute qualité, offrant une sensation solide et une finition métallique élégante."
         }
       ]
+    },
+    "2302": {
+      "categoryLabel": "Quartz · Homme",
+      "shortDescription": "À LIRE AVANT COMMANDE : Ceci est un lien de paiement dédié uniquement aux montres personnalisées. N'achetez pas directement. Contactez d'abord notre service client pour confirmer votre design, quantité et prix final. Une fois convenu, notre équipe vous guidera pour utiliser ce lien et finaliser le paiement. Merci !"
+    },
+    "2303": {
+      "categoryLabel": "Quartz · Homme",
+      "shortDescription": "À LIRE AVANT COMMANDE : Ceci est un lien de paiement dédié uniquement aux montres personnalisées. N'achetez pas directement. Contactez d'abord notre service client pour confirmer votre design, quantité et prix final. Une fois convenu, notre équipe vous guidera pour utiliser ce lien et finaliser le paiement. Merci !"
+    },
+    "2304": {
+      "categoryLabel": "Quartz · Homme",
+      "shortDescription": "À LIRE AVANT COMMANDE : Ceci est un lien de paiement dédié uniquement aux montres personnalisées. N'achetez pas directement. Contactez d'abord notre service client pour confirmer votre design, quantité et prix final. Une fois convenu, notre équipe vous guidera pour utiliser ce lien et finaliser le paiement. Merci !"
+    },
+    "2401": {
+      "categoryLabel": "Quartz · Homme",
+      "shortDescription": "À LIRE AVANT COMMANDE : Ceci est un lien de paiement dédié uniquement aux montres personnalisées. N'achetez pas directement. Contactez d'abord notre service client pour confirmer votre design, quantité et prix final. Une fois convenu, notre équipe vous guidera pour utiliser ce lien et finaliser le paiement. Merci !"
     },
     "6004": {
       "categoryLabel": "Mécanique · Homme",
@@ -376,6 +396,32 @@
           "body": "Au cœur de la montre bat un calibre squelette automatique fini gunmetal. D'un diamètre de 34 mm et d'une épaisseur ultra-fine de 7,18 mm, ce moteur robuste résiste à l'usure quotidienne. Il fonctionne à 21 600 vibrations par heure (3 Hz) avec une réserve de marche fiable supérieure à 48 heures."
         }
       ]
+    },
+    "2411m": {
+      "categoryLabel": "Quartz · Homme",
+      "shortDescription": "À LIRE AVANT COMMANDE : Ceci est un lien de paiement dédié uniquement aux montres personnalisées. N'achetez pas directement. Contactez d'abord notre service client pour confirmer votre design, quantité et prix final. Une fois convenu, notre équipe vous guidera pour utiliser ce lien et finaliser le paiement. Merci !"
+    },
+    "ck2413m": {
+      "categoryLabel": "Quartz · Homme",
+      "shortDescription": "Cette montre adopte un matériau innovant en polycarbonate, ce qui la rend incroyablement légère et confortable au poignet. Elle est également très durable et résistante aux rayures, convenant tant à un usage quotidien qu'aux activités en plein air, tout en gardant un aspect neuf.",
+      "detailBlocks": [
+        {
+          "title": "Design unique",
+          "body": "Cadran style graffiti aux couleurs vibrantes, pour un look jeune et distinctif."
+        },
+        {
+          "title": "Léger & durable",
+          "body": "En polycarbonate : léger, durable et parfait pour un usage quotidien ou en plein air."
+        },
+        {
+          "title": "Style minimaliste",
+          "body": "Lignes épurées et couleurs simples qui mettent en valeur la praticité et l'attrait intemporel."
+        }
+      ]
+    },
+    "custom-watch": {
+      "categoryLabel": "Mécanique · Homme",
+      "shortDescription": "À LIRE AVANT COMMANDE : Ceci est un lien de paiement dédié uniquement aux montres personnalisées. N'achetez pas directement. Contactez d'abord notre service client pour confirmer votre design, quantité et prix final. Une fois convenu, notre équipe vous guidera pour utiliser ce lien et finaliser le paiement. Merci !"
     }
   }
 }

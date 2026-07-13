@@ -1,6 +1,8 @@
 {
   "ProductCopy": {
     "2034": {
+      "categoryLabel": "Quartz · Homem · Ultrafino",
+      "shortDescription": "Com apenas 3 mm de espessura, este relógio premium em aço inoxidável combina conforto minimalista e elegante com resistência duradoura a riscos e brilho dourado. Equipado com um movimento japonês de precisão, oferece cronometragem impecável com uma vida útil da pilha sem complicações de mais de 5 anos.",
       "detailBlocks": [
         {
           "title": "Ultrafino 3 mm",
@@ -17,6 +19,8 @@
       ]
     },
     "2037": {
+      "categoryLabel": "Quartz · Homem · Ultrafino",
+      "shortDescription": "Com apenas 3 mm de espessura, este relógio premium em aço inoxidável combina conforto minimalista e elegante com resistência duradoura a riscos e brilho dourado. Equipado com um movimento japonês de precisão, oferece cronometragem impecável com uma vida útil da pilha sem complicações de mais de 5 anos.",
       "detailBlocks": [
         {
           "title": "Ultrafino 3 mm",
@@ -54,6 +58,22 @@
           "body": "Construído para durar com caixa e pulseira em aço inoxidável de alta qualidade, oferecendo sensação sólida e acabamento metálico elegante."
         }
       ]
+    },
+    "2302": {
+      "categoryLabel": "Quartz · Homem",
+      "shortDescription": "LEIA ANTES DE PEDIR: Este é um link de pagamento dedicado exclusivamente a relógios personalizados. NÃO compre diretamente. Contate primeiro nosso atendimento ao cliente para confirmar seu design, quantidade e preço final. Após o acordo, nossa equipe orientará você a usar este link para concluir o pagamento. Obrigado!"
+    },
+    "2303": {
+      "categoryLabel": "Quartz · Homem",
+      "shortDescription": "LEIA ANTES DE PEDIR: Este é um link de pagamento dedicado exclusivamente a relógios personalizados. NÃO compre diretamente. Contate primeiro nosso atendimento ao cliente para confirmar seu design, quantidade e preço final. Após o acordo, nossa equipe orientará você a usar este link para concluir o pagamento. Obrigado!"
+    },
+    "2304": {
+      "categoryLabel": "Quartz · Homem",
+      "shortDescription": "LEIA ANTES DE PEDIR: Este é um link de pagamento dedicado exclusivamente a relógios personalizados. NÃO compre diretamente. Contate primeiro nosso atendimento ao cliente para confirmar seu design, quantidade e preço final. Após o acordo, nossa equipe orientará você a usar este link para concluir o pagamento. Obrigado!"
+    },
+    "2401": {
+      "categoryLabel": "Quartz · Homem",
+      "shortDescription": "LEIA ANTES DE PEDIR: Este é um link de pagamento dedicado exclusivamente a relógios personalizados. NÃO compre diretamente. Contate primeiro nosso atendimento ao cliente para confirmar seu design, quantidade e preço final. Após o acordo, nossa equipe orientará você a usar este link para concluir o pagamento. Obrigado!"
     },
     "6004": {
       "categoryLabel": "Mecânico · Homem",
@@ -376,6 +396,32 @@
           "body": "No coração bate um calibre esqueleto automático com acabamento gunmetal. Com 34 mm de diâmetro e apenas 7,18 mm de espessura, este motor robusto resiste ao uso diário. Funciona a 21.600 vibrações por hora (3 Hz) com reserva de marcha fiável superior a 48 horas."
         }
       ]
+    },
+    "2411m": {
+      "categoryLabel": "Quartz · Homem",
+      "shortDescription": "LEIA ANTES DE PEDIR: Este é um link de pagamento dedicado exclusivamente a relógios personalizados. NÃO compre diretamente. Contate primeiro nosso atendimento ao cliente para confirmar seu design, quantidade e preço final. Após o acordo, nossa equipe orientará você a usar este link para concluir o pagamento. Obrigado!"
+    },
+    "ck2413m": {
+      "categoryLabel": "Quartz · Homem",
+      "shortDescription": "Este relógio utiliza um material inovador de policarbonato, tornando-o incrivelmente leve e confortável de usar. Ao mesmo tempo é altamente durável e resistente a riscos, servindo tanto para o uso diário quanto para atividades ao ar livre, mantendo aparência de novo.",
+      "detailBlocks": [
+        {
+          "title": "Design exclusivo",
+          "body": "Mostrador estilo grafite com cores vibrantes, para um look jovem e diferenciado."
+        },
+        {
+          "title": "Leve e durável",
+          "body": "Em policarbonato: leve, durável e perfeito para uso diário ou ao ar livre."
+        },
+        {
+          "title": "Estilo minimalista",
+          "body": "Linhas limpas e cores simples que valorizam a praticidade e um apelo atemporal."
+        }
+      ]
+    },
+    "custom-watch": {
+      "categoryLabel": "Mecânico · Homem",
+      "shortDescription": "LEIA ANTES DE PEDIR: Este é um link de pagamento dedicado exclusivamente a relógios personalizados. NÃO compre diretamente. Contate primeiro nosso atendimento ao cliente para confirmar seu design, quantidade e preço final. Após o acordo, nossa equipe orientará você a usar este link para concluir o pagamento. Obrigado!"
     }
   }
 }

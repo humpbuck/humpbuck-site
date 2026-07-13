@@ -1,6 +1,8 @@
 {
   "ProductCopy": {
     "2034": {
+      "categoryLabel": "Kvarc · Férfi · Ultra-vékony",
+      "shortDescription": "Mindössze 3 mm vékony. Ez a prémium rozsdamentes acél óra a karcsú, minimalista kényelmet a tartós karcolásállósággal és arany fényével ötvözi. Precíz japán szerkezete hibátlan időmérést biztosít, gondtalan akkuidővel 5 év felett.",
       "detailBlocks": [
         {
           "title": "3 mm ultravékony",
@@ -17,6 +19,8 @@
       ]
     },
     "2037": {
+      "categoryLabel": "Kvarc · Férfi · Ultra-vékony",
+      "shortDescription": "Mindössze 3 mm vékony. Ez a prémium rozsdamentes acél óra a karcsú, minimalista kényelmet a tartós karcolásállósággal és arany fényével ötvözi. Precíz japán szerkezete hibátlan időmérést biztosít, gondtalan akkuidővel 5 év felett.",
       "detailBlocks": [
         {
           "title": "Ultravékony 3 mm",
@@ -54,6 +58,22 @@
           "body": "Tartós kivitelezés: kiváló minőségű rozsdamentes acél tok és szíj, masszív érzet és elegáns fémhatású felület."
         }
       ]
+    },
+    "2302": {
+      "categoryLabel": "Kvarc · Férfi",
+      "shortDescription": "RENDELÉS ELŐTT OLVASSA EL: Ez egy dedikált fizetési link kizárólag egyedi órákhoz. Kérjük, NE vásároljon közvetlenül. Először vegye fel a kapcsolatot ügyfélszolgálatunkkal a dizájn, mennyiség és végleges ár egyeztetéséhez. Megállapodás után csapatunk végigvezeti a fizetés lebonyolításán ezen a linken. Köszönjük!"
+    },
+    "2303": {
+      "categoryLabel": "Kvarc · Férfi",
+      "shortDescription": "RENDELÉS ELŐTT OLVASSA EL: Ez egy dedikált fizetési link kizárólag egyedi órákhoz. Kérjük, NE vásároljon közvetlenül. Először vegye fel a kapcsolatot ügyfélszolgálatunkkal a dizájn, mennyiség és végleges ár egyeztetéséhez. Megállapodás után csapatunk végigvezeti a fizetés lebonyolításán ezen a linken. Köszönjük!"
+    },
+    "2304": {
+      "categoryLabel": "Kvarc · Férfi",
+      "shortDescription": "RENDELÉS ELŐTT OLVASSA EL: Ez egy dedikált fizetési link kizárólag egyedi órákhoz. Kérjük, NE vásároljon közvetlenül. Először vegye fel a kapcsolatot ügyfélszolgálatunkkal a dizájn, mennyiség és végleges ár egyeztetéséhez. Megállapodás után csapatunk végigvezeti a fizetés lebonyolításán ezen a linken. Köszönjük!"
+    },
+    "2401": {
+      "categoryLabel": "Kvarc · Férfi",
+      "shortDescription": "RENDELÉS ELŐTT OLVASSA EL: Ez egy dedikált fizetési link kizárólag egyedi órákhoz. Kérjük, NE vásároljon közvetlenül. Először vegye fel a kapcsolatot ügyfélszolgálatunkkal a dizájn, mennyiség és végleges ár egyeztetéséhez. Megállapodás után csapatunk végigvezeti a fizetés lebonyolításán ezen a linken. Köszönjük!"
     },
     "6004": {
       "categoryLabel": "Mechanikus · Férfi",
@@ -376,6 +396,32 @@
           "body": "Az óra szívében gunmetal bevonatú automata csontváz kaliber dobog. 34 mm átmérő, mindössze 7,18 mm vastagság — strapabíró motor a mindennapi viseléshez. 21 600 rezgés/óra (3 Hz) és megbízható, 48 óránál hosszabb tartalék."
         }
       ]
+    },
+    "2411m": {
+      "categoryLabel": "Kvarc · Férfi",
+      "shortDescription": "RENDELÉS ELŐTT OLVASSA EL: Ez egy dedikált fizetési link kizárólag egyedi órákhoz. Kérjük, NE vásároljon közvetlenül. Először vegye fel a kapcsolatot ügyfélszolgálatunkkal a dizájn, mennyiség és végleges ár egyeztetéséhez. Megállapodás után csapatunk végigvezeti a fizetés lebonyolításán ezen a linken. Köszönjük!"
+    },
+    "ck2413m": {
+      "categoryLabel": "Kvarc · Férfi",
+      "shortDescription": "Ez az óra innovatív polikarbonát anyagból készült, így hihetetlenül könnyű és kényelmes viselni. Egyben rendkívül tartós és karcolásálló — alkalmas a mindennapi használatra és a szabadtéri tevékenységekre is, miközben megőrzi újszerű megjelenését.",
+      "detailBlocks": [
+        {
+          "title": "Egyedi dizájn",
+          "body": "Graffiti-stílusú számlap élénk színekkel — fiatalos és egyedi megjelenés."
+        },
+        {
+          "title": "Könnyű & tartós",
+          "body": "Polikarbonátból: könnyű, tartós és tökéletes mindennapi vagy szabadtéri használatra."
+        },
+        {
+          "title": "Minimalista stílus",
+          "body": "Tiszta vonalak és egyszerű színek, amelyek a praktikusságot és az időtálló vonzerejét hangsúlyozzák."
+        }
+      ]
+    },
+    "custom-watch": {
+      "categoryLabel": "Mechanikus · Férfi",
+      "shortDescription": "RENDELÉS ELŐTT OLVASSA EL: Ez egy dedikált fizetési link kizárólag egyedi órákhoz. Kérjük, NE vásároljon közvetlenül. Először vegye fel a kapcsolatot ügyfélszolgálatunkkal a dizájn, mennyiség és végleges ár egyeztetéséhez. Megállapodás után csapatunk végigvezeti a fizetés lebonyolításán ezen a linken. Köszönjük!"
     }
   }
 }

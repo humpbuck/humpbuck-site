@@ -1,6 +1,8 @@
 {
   "ProductCopy": {
     "2034": {
+      "categoryLabel": "Quarz · Herren · Ultradünn",
+      "shortDescription": "Nur 3 mm dünn. Diese Premium-Uhr aus Edelstahl verbindet schlanken, minimalistischen Tragekomfort mit dauerhafter Kratzfestigkeit und goldenem Glanz. Angetrieben von einem präzisen japanischen Quarzwerk bietet sie makellose Zeitmessung mit einer sorgenfreien Batterielaufzeit von über 5 Jahren.",
       "detailBlocks": [
         {
           "title": "3 mm ultradünn",
@@ -17,6 +19,8 @@
       ]
     },
     "2037": {
+      "categoryLabel": "Quarz · Herren · Ultradünn",
+      "shortDescription": "Nur 3 mm dünn. Diese Premium-Uhr aus Edelstahl verbindet schlanken, minimalistischen Tragekomfort mit dauerhafter Kratzfestigkeit und goldenem Glanz. Angetrieben von einem präzisen japanischen Quarzwerk bietet sie makellose Zeitmessung mit einer sorgenfreien Batterielaufzeit von über 5 Jahren.",
       "detailBlocks": [
         {
           "title": "Ultradünn 3 mm",
@@ -54,6 +58,22 @@
           "body": "Gebaut für die Ewigkeit mit hochwertigem Edelstahlgehäuse und -armband — robust im Griff und mit eleganter metallischer Optik."
         }
       ]
+    },
+    "2302": {
+      "categoryLabel": "Quarz · Herren",
+      "shortDescription": "VOR DER BESTELLUNG LESEN: Dies ist ein dedizierter Zahlungslink ausschließlich für Custom-Watches. Bitte NICHT direkt kaufen. Kontaktieren Sie zuerst unseren Kundenservice, um Design, Menge und Endpreis zu bestätigen. Nach Absprache führt Sie unser Team durch die Zahlung mit diesem Link. Vielen Dank!"
+    },
+    "2303": {
+      "categoryLabel": "Quarz · Herren",
+      "shortDescription": "VOR DER BESTELLUNG LESEN: Dies ist ein dedizierter Zahlungslink ausschließlich für Custom-Watches. Bitte NICHT direkt kaufen. Kontaktieren Sie zuerst unseren Kundenservice, um Design, Menge und Endpreis zu bestätigen. Nach Absprache führt Sie unser Team durch die Zahlung mit diesem Link. Vielen Dank!"
+    },
+    "2304": {
+      "categoryLabel": "Quarz · Herren",
+      "shortDescription": "VOR DER BESTELLUNG LESEN: Dies ist ein dedizierter Zahlungslink ausschließlich für Custom-Watches. Bitte NICHT direkt kaufen. Kontaktieren Sie zuerst unseren Kundenservice, um Design, Menge und Endpreis zu bestätigen. Nach Absprache führt Sie unser Team durch die Zahlung mit diesem Link. Vielen Dank!"
+    },
+    "2401": {
+      "categoryLabel": "Quarz · Herren",
+      "shortDescription": "VOR DER BESTELLUNG LESEN: Dies ist ein dedizierter Zahlungslink ausschließlich für Custom-Watches. Bitte NICHT direkt kaufen. Kontaktieren Sie zuerst unseren Kundenservice, um Design, Menge und Endpreis zu bestätigen. Nach Absprache führt Sie unser Team durch die Zahlung mit diesem Link. Vielen Dank!"
     },
     "6004": {
       "categoryLabel": "Mechanisch · Herren",
@@ -376,6 +396,32 @@
           "body": "Im Herzen schlägt ein automatisches Skelettkaliber in markantem Gunmetal-Finish. Mit 34 mm Durchmesser und nur 7,18 mm Höhe ist dieser robuste Motor für den Alltag gebaut. 21.600 Schwingungen pro Stunde (3 Hz) und zuverlässige Gangreserve über 48 Stunden."
         }
       ]
+    },
+    "2411m": {
+      "categoryLabel": "Quarz · Herren",
+      "shortDescription": "VOR DER BESTELLUNG LESEN: Dies ist ein dedizierter Zahlungslink ausschließlich für Custom-Watches. Bitte NICHT direkt kaufen. Kontaktieren Sie zuerst unseren Kundenservice, um Design, Menge und Endpreis zu bestätigen. Nach Absprache führt Sie unser Team durch die Zahlung mit diesem Link. Vielen Dank!"
+    },
+    "ck2413m": {
+      "categoryLabel": "Quarz · Herren",
+      "shortDescription": "Diese Uhr verwendet ein innovatives Polycarbonat-Material und ist dadurch extrem leicht und angenehm zu tragen. Zugleich ist sie sehr langlebig und kratzfest — geeignet für den Alltag wie für Outdoor-Aktivitäten, dabei immer wie neu.",
+      "detailBlocks": [
+        {
+          "title": "Einzigartiges Design",
+          "body": "Zifferblatt im Graffiti-Stil mit lebendigen Farben für einen jugendlichen, markanten Look."
+        },
+        {
+          "title": "Leicht & langlebig",
+          "body": "Aus Polycarbonat: leicht, langlebig und ideal für Alltag oder Outdoor."
+        },
+        {
+          "title": "Minimalistischer Stil",
+          "body": "Klare Linien und schlichte Farben betonen Praxisbezug und zeitlosen Reiz."
+        }
+      ]
+    },
+    "custom-watch": {
+      "categoryLabel": "Mechanisch · Herren",
+      "shortDescription": "VOR DER BESTELLUNG LESEN: Dies ist ein dedizierter Zahlungslink ausschließlich für Custom-Watches. Bitte NICHT direkt kaufen. Kontaktieren Sie zuerst unseren Kundenservice, um Design, Menge und Endpreis zu bestätigen. Nach Absprache führt Sie unser Team durch die Zahlung mit diesem Link. Vielen Dank!"
     }
   }
 }

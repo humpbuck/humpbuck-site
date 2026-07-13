@@ -1,6 +1,8 @@
 {
   "ProductCopy": {
     "2034": {
+      "categoryLabel": "Quartz · Heren · Ultradun",
+      "shortDescription": "Met slechts 3 mm dun is dit premium horloge van roestvrij staal een combinatie van strak minimalistisch comfort, blijvende krasvastheid en gouden glans. Aangedreven door een precies Japans uurwerk levert het foutloze tijdmeting met een zorgeloze batterijduur van meer dan 5 jaar.",
       "detailBlocks": [
         {
           "title": "3 mm ultradun",
@@ -17,6 +19,8 @@
       ]
     },
     "2037": {
+      "categoryLabel": "Quartz · Heren · Ultradun",
+      "shortDescription": "Met slechts 3 mm dun is dit premium horloge van roestvrij staal een combinatie van strak minimalistisch comfort, blijvende krasvastheid en gouden glans. Aangedreven door een precies Japans uurwerk levert het foutloze tijdmeting met een zorgeloze batterijduur van meer dan 5 jaar.",
       "detailBlocks": [
         {
           "title": "Ultradun 3 mm",
@@ -54,6 +58,22 @@
           "body": "Gebouwd om lang mee te gaan met een hoogwaardige roestvrijstalen kast en band — stevig aanvoelend met een elegante metallic afwerking."
         }
       ]
+    },
+    "2302": {
+      "categoryLabel": "Quartz · Heren",
+      "shortDescription": "LEES VOOR BESTELLEN: Dit is een speciale betaallink uitsluitend voor custom horloges. KOOP niet direct. Neem eerst contact op met onze klantenservice om je design, aantal en eindprijs te bevestigen. Na akkoord begeleidt ons team je bij het gebruik van deze link om de betaling af te ronden. Bedankt!"
+    },
+    "2303": {
+      "categoryLabel": "Quartz · Heren",
+      "shortDescription": "LEES VOOR BESTELLEN: Dit is een speciale betaallink uitsluitend voor custom horloges. KOOP niet direct. Neem eerst contact op met onze klantenservice om je design, aantal en eindprijs te bevestigen. Na akkoord begeleidt ons team je bij het gebruik van deze link om de betaling af te ronden. Bedankt!"
+    },
+    "2304": {
+      "categoryLabel": "Quartz · Heren",
+      "shortDescription": "LEES VOOR BESTELLEN: Dit is een speciale betaallink uitsluitend voor custom horloges. KOOP niet direct. Neem eerst contact op met onze klantenservice om je design, aantal en eindprijs te bevestigen. Na akkoord begeleidt ons team je bij het gebruik van deze link om de betaling af te ronden. Bedankt!"
+    },
+    "2401": {
+      "categoryLabel": "Quartz · Heren",
+      "shortDescription": "LEES VOOR BESTELLEN: Dit is een speciale betaallink uitsluitend voor custom horloges. KOOP niet direct. Neem eerst contact op met onze klantenservice om je design, aantal en eindprijs te bevestigen. Na akkoord begeleidt ons team je bij het gebruik van deze link om de betaling af te ronden. Bedankt!"
     },
     "6004": {
       "categoryLabel": "Mechanisch · Heren",
@@ -376,6 +396,32 @@
           "body": "In het hart klopt een automatisch skeletkaliber met gunmetal-afwerking. Met 34 mm diameter en slechts 7,18 mm dikte is deze robuuste motor gebouwd voor dagelijks gebruik. 21.600 trillingen per uur (3 Hz) en betrouwbare gangreserve van meer dan 48 uur."
         }
       ]
+    },
+    "2411m": {
+      "categoryLabel": "Quartz · Heren",
+      "shortDescription": "LEES VOOR BESTELLEN: Dit is een speciale betaallink uitsluitend voor custom horloges. KOOP niet direct. Neem eerst contact op met onze klantenservice om je design, aantal en eindprijs te bevestigen. Na akkoord begeleidt ons team je bij het gebruik van deze link om de betaling af te ronden. Bedankt!"
+    },
+    "ck2413m": {
+      "categoryLabel": "Quartz · Heren",
+      "shortDescription": "Dit horloge gebruikt een innovatief polycarbonaatmateriaal, waardoor het ongelooflijk licht en comfortabel draagt. Tegelijk is het zeer duurzaam en krasvast — geschikt voor dagelijks gebruik en outdoor-activiteiten, met steeds een als-nieuw uiterlijk.",
+      "detailBlocks": [
+        {
+          "title": "Uniek design",
+          "body": "Wijzerplaat in graffiti-stijl met levendige kleuren voor een jeugdige, onderscheidende look."
+        },
+        {
+          "title": "Licht & duurzaam",
+          "body": "Van polycarbonaat: licht, duurzaam en perfect voor dagelijks of outdoor-gebruik."
+        },
+        {
+          "title": "Minimalistische stijl",
+          "body": "Strakke lijnen en eenvoudige kleuren benadrukken functionaliteit en tijdloze aantrekkingskracht."
+        }
+      ]
+    },
+    "custom-watch": {
+      "categoryLabel": "Mechanisch · Heren",
+      "shortDescription": "LEES VOOR BESTELLEN: Dit is een speciale betaallink uitsluitend voor custom horloges. KOOP niet direct. Neem eerst contact op met onze klantenservice om je design, aantal en eindprijs te bevestigen. Na akkoord begeleidt ons team je bij het gebruik van deze link om de betaling af te ronden. Bedankt!"
     }
   }
 }

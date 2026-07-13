@@ -1,6 +1,8 @@
 {
   "ProductCopy": {
     "2034": {
+      "categoryLabel": "Quarzo · Uomo · Ultra-sottile",
+      "shortDescription": "Spessa solo 3 mm, questo orologio premium in acciaio inossidabile unisce il comfort minimalista e raffinato a una resistenza durevole ai graffi e a un brillo dorato. Animato da un movimento giapponese di precisione, offre una cronometria impeccabile con una durata della batteria senza pensieri di oltre 5 anni.",
       "detailBlocks": [
         {
           "title": "Ultra-sottile 3 mm",
@@ -17,6 +19,8 @@
       ]
     },
     "2037": {
+      "categoryLabel": "Quarzo · Uomo · Ultra-sottile",
+      "shortDescription": "Spessa solo 3 mm, questo orologio premium in acciaio inossidabile unisce il comfort minimalista e raffinato a una resistenza durevole ai graffi e a un brillo dorato. Animato da un movimento giapponese di precisione, offre una cronometria impeccabile con una durata della batteria senza pensieri di oltre 5 anni.",
       "detailBlocks": [
         {
           "title": "Ultra-sottile 3 mm",
@@ -54,6 +58,22 @@
           "body": "Costruito per durare con cassa e bracciale in acciaio inox di alta qualità, per una sensazione solida e una finitura metallica elegante."
         }
       ]
+    },
+    "2302": {
+      "categoryLabel": "Quarzo · Uomo",
+      "shortDescription": "LEGGI PRIMA DI ORDINARE: Questo è un link di pagamento dedicato esclusivamente agli orologi personalizzati. NON acquistare direttamente. Contatta prima il nostro servizio clienti per confermare design, quantità e prezzo finale. Una volta concordato, il nostro team ti guiderà nell'uso di questo link per completare il pagamento. Grazie!"
+    },
+    "2303": {
+      "categoryLabel": "Quarzo · Uomo",
+      "shortDescription": "LEGGI PRIMA DI ORDINARE: Questo è un link di pagamento dedicato esclusivamente agli orologi personalizzati. NON acquistare direttamente. Contatta prima il nostro servizio clienti per confermare design, quantità e prezzo finale. Una volta concordato, il nostro team ti guiderà nell'uso di questo link per completare il pagamento. Grazie!"
+    },
+    "2304": {
+      "categoryLabel": "Quarzo · Uomo",
+      "shortDescription": "LEGGI PRIMA DI ORDINARE: Questo è un link di pagamento dedicato esclusivamente agli orologi personalizzati. NON acquistare direttamente. Contatta prima il nostro servizio clienti per confermare design, quantità e prezzo finale. Una volta concordato, il nostro team ti guiderà nell'uso di questo link per completare il pagamento. Grazie!"
+    },
+    "2401": {
+      "categoryLabel": "Quarzo · Uomo",
+      "shortDescription": "LEGGI PRIMA DI ORDINARE: Questo è un link di pagamento dedicato esclusivamente agli orologi personalizzati. NON acquistare direttamente. Contatta prima il nostro servizio clienti per confermare design, quantità e prezzo finale. Una volta concordato, il nostro team ti guiderà nell'uso di questo link per completare il pagamento. Grazie!"
     },
     "6004": {
       "categoryLabel": "Meccanico · Uomo",
@@ -376,6 +396,32 @@
           "body": "Nel cuore batte un calibro scheletrato automatico con finitura gunmetal. Con 34 mm di diametro e soli 7,18 mm di spessore, questo motore robusto resiste all'uso quotidiano. Funziona a 21.600 vibrazioni all'ora (3 Hz) con riserva di carica affidabile superiore a 48 ore."
         }
       ]
+    },
+    "2411m": {
+      "categoryLabel": "Quarzo · Uomo",
+      "shortDescription": "LEGGI PRIMA DI ORDINARE: Questo è un link di pagamento dedicato esclusivamente agli orologi personalizzati. NON acquistare direttamente. Contatta prima il nostro servizio clienti per confermare design, quantità e prezzo finale. Una volta concordato, il nostro team ti guiderà nell'uso di questo link per completare il pagamento. Grazie!"
+    },
+    "ck2413m": {
+      "categoryLabel": "Quarzo · Uomo",
+      "shortDescription": "Questo orologio adopera un innovativo materiale in policarbonato, che lo rende incredibilmente leggero e comodo da indossare. È al tempo stesso molto durevole e resistente ai graffi, adatto sia all'uso quotidiano sia alle attività all'aria aperta, mantenendo un aspetto come nuovo.",
+      "detailBlocks": [
+        {
+          "title": "Design unico",
+          "body": "Quadrante stile graffiti con colori vivaci, per un look giovane e distintivo."
+        },
+        {
+          "title": "Leggero & durevole",
+          "body": "In policarbonato: leggero, durevole e perfetto per uso quotidiano o outdoor."
+        },
+        {
+          "title": "Stile minimalista",
+          "body": "Linee pulite e colori semplici che esaltano la praticità e un fascino senza tempo."
+        }
+      ]
+    },
+    "custom-watch": {
+      "categoryLabel": "Meccanico · Uomo",
+      "shortDescription": "LEGGI PRIMA DI ORDINARE: Questo è un link di pagamento dedicato esclusivamente agli orologi personalizzati. NON acquistare direttamente. Contatta prima il nostro servizio clienti per confermare design, quantità e prezzo finale. Una volta concordato, il nostro team ti guiderà nell'uso di questo link per completare il pagamento. Grazie!"
     }
   }
 }
