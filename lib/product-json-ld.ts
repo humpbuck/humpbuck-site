@@ -92,7 +92,7 @@ export function buildProductJsonLd(params: {
         "@type": "Person",
         name: reviewAuthorShortLabel(r),
       },
-      datePublished: r.createdAt.toISOString().slice(0, 10),
+      datePublished: new Date(r.createdAt).toISOString().slice(0, 10),
       reviewRating: {
         "@type": "Rating",
         ratingValue: r.rating,
