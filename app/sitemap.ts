@@ -18,6 +18,7 @@ const STATIC_PATHS: {
     { path: "/", changeFrequency: "weekly", priority: 1 },
     { path: "/product", changeFrequency: "daily", priority: 0.95 },
     { path: "/about", changeFrequency: "monthly", priority: 0.7 },
+    { path: "/oem-odm", changeFrequency: "monthly", priority: 0.75 },
     { path: "/blog", changeFrequency: "weekly", priority: 0.75 },
     { path: "/video-tutorial", changeFrequency: "monthly", priority: 0.65 },
     { path: "/shipping", changeFrequency: "yearly", priority: 0.5 },

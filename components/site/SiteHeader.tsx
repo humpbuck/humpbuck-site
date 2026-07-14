@@ -23,10 +23,22 @@ const SHOP_LINK_CLASS =
 const SHOP_FLYOUT_LINK_CLASS =
   "block px-4 py-2 text-[11px] font-medium uppercase tracking-[0.08em] text-ink/85 transition hover:bg-ink/[0.04]";
 
-const NAV_ITEMS = [
+type NavLinkItem =
+  | { href: string; label: string }
+  | { href: string; labelKey: "blog" | "about" };
+
+const NAV_ITEMS: NavLinkItem[] = [
+  { href: "/oem-odm", label: "OEM/ODM" },
   { labelKey: "blog", href: "/blog" },
   { labelKey: "about", href: "/about" },
-] as const;
+];
+
+function navItemLabel(
+  item: NavLinkItem,
+  t: ReturnType<typeof useTranslations<"Navigation">>,
+): string {
+  return "label" in item ? item.label : t(item.labelKey);
+}
 
 function ShopDropdownLink({
   href,
@@ -304,7 +316,7 @@ export function SiteHeader() {
                 href={item.href}
                 className={NAV_LINK_CLASS}
               >
-                {t(item.labelKey)}
+                {navItemLabel(item, t)}
               </Link>
             ))}
           </nav>
@@ -389,7 +401,7 @@ export function SiteHeader() {
               onClick={() => setOpen(false)}
               className="rounded-xl px-4 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-ink/85 hover:bg-ink/[0.04]"
             >
-              {t(item.labelKey)}
+              {navItemLabel(item, t)}
             </Link>
           ))}
           <Link

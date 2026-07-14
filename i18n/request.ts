@@ -29,6 +29,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       SiteMetadata: { ...enBase.SiteMetadata, ...base.SiteMetadata },
       Shop: { ...enBase.Shop, ...base.Shop },
       AboutPage: { ...enBase.AboutPage, ...base.AboutPage },
+      OemOdmPage: { ...enBase.OemOdmPage, ...base.OemOdmPage },
       BlogPage: { ...enBase.BlogPage, ...base.BlogPage },
     },
   };

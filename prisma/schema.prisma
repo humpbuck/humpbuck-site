@@ -363,6 +363,22 @@ model SiteAnnouncement {
   updatedAt       DateTime @updatedAt
 }
 
+model SiteOemOdmContent {
+  id               String   @id @default("default")
+  promoVideoUrl    String   @default("")
+  bodyText         String   @default("")
+  moqRowsJson        String   @default("")
+  samplePolicyHeading       String   @default("")
+  samplePolicyText          String   @default("")
+  customizationProcessHeading String @default("")
+  customizationProcessText    String @default("")
+  paymentTermsHeading         String @default("")
+  paymentTermsText            String @default("")
+  logisticsShippingHeading    String @default("")
+  logisticsShippingText       String @default("")
+  updatedAt                   DateTime @updatedAt
+}
+
 model SiteHomeContent {
   id                  String   @id @default("default")
   heroBadge           String   @default("")

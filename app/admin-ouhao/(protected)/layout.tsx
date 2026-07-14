@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
-import { ChevronDown, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import {
   ADMIN_INBOX_CATEGORY,
   adminInboxCategoryLabel,
@@ -11,25 +9,21 @@ import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import { prisma } from "@/lib/prisma";
 
-async function LogoutButton({ inMenu = false }: { inMenu?: boolean }) {
-  const navItemClass = inMenu
-    ? "block w-full rounded-lg px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink"
-    : "text-[11px] font-semibold uppercase tracking-[0.12em] text-muted hover:text-ink";
+function LogoutButton() {
   return (
-    <form
-      action="/api/admin/logout"
-      method="post"
-      className={inMenu ? "m-0 block p-0" : "m-0 inline-flex shrink-0 items-center p-0 align-middle"}
-    >
+    <form action="/api/admin/logout" method="post" className="m-0 inline-flex shrink-0 p-0">
       <button
         type="submit"
-        className={`${navItemClass} cursor-pointer border-0 bg-transparent p-0 align-middle leading-none`}
+        className="cursor-pointer border-0 bg-transparent p-0 text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-muted hover:text-ink"
       >
         SIGN OUT
       </button>
     </form>
   );
 }
+
+const NAV_LINK_CLASS =
+  "inline-flex shrink-0 items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink";
 
 export default async function AdminProtectedLayout({
   children,
@@ -68,63 +62,17 @@ export default async function AdminProtectedLayout({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-6">
-        <div>
-          <p className="font-serif text-xl tracking-tight">HUMPBUCK Admin</p>
-          <p className="mt-1 text-xs text-muted">Orders, reviews & fulfillment</p>
-        </div>
-        <nav className="flex flex-wrap items-center gap-x-6 gap-y-2">
-          <Link href={adminPath()} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
-            OVERVIEW
-          </Link>
-          <Link href={adminPath("/orders")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
-            ORDERS
-          </Link>
-          <Link href={adminPath("/reviews")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
-            REVIEWS
-          </Link>
-          <Link href={adminPath("/inventory")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
-            PRODUCTS &amp; INVENTORY
-          </Link>
-          <Link href={adminPath("/customers")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
-            CUSTOMERS
-          </Link>
-          <Link href={adminPath("/coupons")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
-            COUPONS
-          </Link>
-          <Link href={adminPath("/analytics")} className="inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-ink/75 hover:text-ink">
-            ANALYTICS
-          </Link>
-          <div className="group relative">
-            <button type="button" className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.12em] leading-none text-muted hover:text-ink">
-              More
-              <ChevronDown className="h-3 w-3" />
-            </button>
-            <div className="pointer-events-none absolute right-0 top-6 z-20 hidden min-w-44 rounded-xl border border-line bg-white p-2 text-xs text-ink shadow-md group-hover:pointer-events-auto group-hover:block">
-              <Link href={adminPath("/blog")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
-                BLOG
-              </Link>
-              <Link href={adminPath("/announcement")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
-                ANNOUNCEMENT
-              </Link>
-              <Link href={adminPath("/homepage")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
-                HOMEPAGE
-              </Link>
-              <Link href={adminPath("/about")} className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
-                ABOUT
-              </Link>
-              <Link href="https://www.humpbuck.com/" className="block rounded-lg px-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-ink/75 hover:bg-paper hover:text-ink">
-                VIEW SITE
-              </Link>
-              <div className="mt-1 border-t border-line pt-1">
-                <LogoutButton inMenu />
-              </div>
-            </div>
+      <header className="border-b border-line pb-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="font-serif text-xl tracking-tight">HUMPBUCK Admin</p>
+            <p className="mt-1 text-xs text-muted">Orders, reviews & fulfillment</p>
           </div>
-          <div className="group relative">
+
+          <div className="group relative shrink-0">
             <Link
               href={adminPath("/messages")}
-              className="relative inline-flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-white text-ink/80 transition hover:border-ink/20 hover:text-ink"
+              className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-white text-ink/80 transition hover:border-ink/20 hover:text-ink"
               aria-label={`Message inbox ${totalPendingInboxCount} pending`}
               title="Message inbox"
             >
@@ -135,7 +83,7 @@ export default async function AdminProtectedLayout({
                 </span>
               ) : null}
             </Link>
-            <div className="pointer-events-none absolute right-0 top-10 z-20 hidden w-64 rounded-xl border border-line bg-white p-3 text-xs text-ink shadow-md group-hover:block">
+            <div className="pointer-events-none absolute right-0 top-11 z-20 hidden w-64 rounded-xl border border-line bg-white p-3 text-xs text-ink shadow-md group-hover:pointer-events-auto group-hover:block">
               <p className="font-semibold text-ink">Pending messages</p>
               <p className="mt-1 text-muted">Hover summary by category</p>
               <ul className="mt-2 space-y-1 text-ink/90">
@@ -153,7 +101,54 @@ export default async function AdminProtectedLayout({
               </ul>
             </div>
           </div>
-        </nav>
+        </div>
+
+        <div className="mt-4 flex items-center gap-4">
+          <nav className="flex min-w-0 flex-1 flex-nowrap items-center gap-x-5 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden xl:gap-x-6">
+            <Link href={adminPath()} className={NAV_LINK_CLASS}>
+              OVERVIEW
+            </Link>
+            <Link href={adminPath("/analytics")} className={NAV_LINK_CLASS}>
+              ANALYTICS
+            </Link>
+            <Link href={adminPath("/orders")} className={NAV_LINK_CLASS}>
+              ORDERS
+            </Link>
+            <Link href={adminPath("/inventory")} className={NAV_LINK_CLASS}>
+              PRODUCTS
+            </Link>
+            <Link href={adminPath("/coupons")} className={NAV_LINK_CLASS}>
+              COUPONS
+            </Link>
+            <Link href={adminPath("/blog")} className={NAV_LINK_CLASS}>
+              BLOG
+            </Link>
+            <Link href={adminPath("/announcement")} className={NAV_LINK_CLASS}>
+              ANNOUNCEMENT
+            </Link>
+            <Link href={adminPath("/homepage")} className={NAV_LINK_CLASS}>
+              HOMEPAGE
+            </Link>
+            <Link href={adminPath("/about")} className={NAV_LINK_CLASS}>
+              ABOUT
+            </Link>
+            <Link href={adminPath("/reviews")} className={NAV_LINK_CLASS}>
+              REVIEWS
+            </Link>
+            <Link href={adminPath("/customers")} className={NAV_LINK_CLASS}>
+              CUSTOMERS
+            </Link>
+            <Link
+              href="https://www.humpbuck.com/"
+              className={NAV_LINK_CLASS}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              VIEW SITE
+            </Link>
+          </nav>
+          <LogoutButton />
+        </div>
       </header>
       <div className="py-10">{children}</div>
     </div>

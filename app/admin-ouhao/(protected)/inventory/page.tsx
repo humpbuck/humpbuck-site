@@ -17,7 +17,7 @@ export default async function AdminInventoryPage() {
   return (
     <div>
       <AdminBackLink href={adminPath()} label="Overview" />
-      <h1 className="font-serif text-3xl tracking-tight">Products & Inventory</h1>
+      <h1 className="font-serif text-3xl tracking-tight">Products</h1>
       <p className="mt-2 text-sm text-muted">
         Create, update, and delete products. Manage inventory, media, and product copy in one place.
       </p>
