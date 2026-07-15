@@ -220,6 +220,7 @@ export default async function AdminShippingFeesPage({
       ) : null}
 
       {!dbSetupError ? (
+      <>
       <section className="mt-8">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Standard Shipping — add country
@@ -450,6 +451,7 @@ export default async function AdminShippingFeesPage({
           </table>
         </div>
       </section>
+      </>
       ) : null}
     </div>
   );
