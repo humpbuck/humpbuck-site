@@ -1,7 +1,8 @@
 import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
-import { ArrowLeft, Check } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
+import { HomeFaqAnswerBody } from "@/components/site/home-faq-answer-body";
 import {
   normalizeSeriesSlug,
   resolveSeriesInfo,
@@ -22,6 +23,11 @@ import { ProductDetailClient } from "@/components/site/ProductDetailClient";
 import { ProductPdpGallerySyncProvider } from "@/components/site/product-pdp-gallery-sync";
 import { resolvePdpCloserLookBlocks, resolveStorefrontProductMedia } from "@/lib/r2-pdp-media";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
+import { resolveHomeFaqItems } from "@/lib/site-home-content";
+import { getSiteHomeContent } from "@/lib/site-home-content-queries";
+
+const PDP_POLICY_LINK_CLASS =
+  "block text-[12px] text-muted underline-offset-4 hover:underline";
 
 export async function ProductPdpMainAsyncSection({
   locale,
@@ -31,11 +37,38 @@ export async function ProductPdpMainAsyncSection({
   slug: string;
 }) {
   setRequestLocale(locale);
-  const t = await getTranslations("Product");
-  const messages = await getMessages({ locale });
-  const productRaw = await getMergedCatalogProductBySlug(slug);
+  const [t, tHome, messages, productRaw, homeContent] = await Promise.all([
+    getTranslations("Product"),
+    getTranslations("Home"),
+    getMessages({ locale }),
+    getMergedCatalogProductBySlug(slug),
+    getSiteHomeContent(),
+  ]);
   if (!productRaw) notFound();
   const product = applyStorefrontProductLocale(productRaw, locale, messages);
+
+  const faqItems = resolveHomeFaqItems(
+    homeContent,
+    [
+      {
+        question: tHome("certaintyCurrencyTitle"),
+        answer: tHome("certaintyCurrencyBody"),
+      },
+      {
+        question: tHome("certaintyShippingTitle"),
+        answer: tHome("certaintyShippingBody"),
+      },
+      {
+        question: tHome("certaintyPaymentsTitle"),
+        answer: tHome("certaintyPaymentsBody"),
+      },
+      {
+        question: tHome("certaintyOrderTitle"),
+        answer: tHome("certaintyOrderBody"),
+      },
+    ],
+    locale,
+  );
 
   const series = product.seriesSlug.trim()
     ? resolveSeriesInfo(product.seriesSlug, { heroImage: product.image })
@@ -161,12 +194,27 @@ export async function ProductPdpMainAsyncSection({
               </div>
             )}
 
-            <div className="mt-auto flex flex-wrap gap-4 pt-8 text-[12px] text-muted">
-              <Link href="/shipping" className="underline-offset-4 hover:underline">
+            <div className="mt-auto space-y-3 pt-8">
+              {faqItems.map((item, index) => (
+                <details key={`pdp-faq-${index}`} className="group">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-[12px] text-muted marker:content-none [&::-webkit-details-marker]:hidden">
+                    <span>{item.question}</span>
+                    <ChevronDown
+                      size={14}
+                      strokeWidth={1.75}
+                      className="shrink-0 text-muted transition duration-200 group-open:rotate-180"
+                      aria-hidden
+                    />
+                  </summary>
+                  <div className="mt-2 text-[12px] leading-relaxed text-muted">
+                    <HomeFaqAnswerBody text={item.answer} />
+                  </div>
+                </details>
+              ))}
+              <Link href="/shipping" className={PDP_POLICY_LINK_CLASS}>
                 {t("shippingTax")}
               </Link>
-              <span className="text-[color:var(--color-line)]">·</span>
-              <Link href="/refund" className="underline-offset-4 hover:underline">
+              <Link href="/refund" className={PDP_POLICY_LINK_CLASS}>
                 {t("refunds")}
               </Link>
             </div>
