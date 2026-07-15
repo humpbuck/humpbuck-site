@@ -1,6 +1,7 @@
 "use client";
 
 import { StorefrontImage } from "@/components/site/storefront-image";
+import { CenterModal } from "@/components/ui/center-modal";
 import { Link } from "@/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
@@ -269,7 +270,7 @@ export function OemInquiryForm({
   async function uploadLogo(file: File): Promise<{ publicUrl: string; key: string }> {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("inquiryId", inquiryId);
+    formData.append("email", email.trim());
     formData.append("website", website);
 
     const uploadRes = await fetch("/api/oem-inquiry/upload", {
@@ -295,6 +296,13 @@ export function OemInquiryForm({
 
     if (!productSlug) {
       setErrorMessage(t("inquiryErrProductRequired"));
+      setStatus("error");
+      return;
+    }
+
+    const emailTrimmed = email.trim();
+    if (!emailTrimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrimmed)) {
+      setErrorMessage(t("inquiryErrEmailInvalid"));
       setStatus("error");
       return;
     }
@@ -351,20 +359,8 @@ export function OemInquiryForm({
     }
   }
 
-  if (status === "success") {
-    return (
-      <div className="py-2 text-center sm:text-left">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700">
-          {t("inquirySuccessKicker")}
-        </p>
-        <p className="mt-3 text-sm leading-relaxed text-ink/85">
-          {t("inquirySuccessBody")}
-        </p>
-      </div>
-    );
-  }
-
   return (
+    <>
     <form className="space-y-4" onSubmit={onSubmit} noValidate>
       <div>
         <span className={LABEL}>
@@ -572,5 +568,21 @@ export function OemInquiryForm({
         </p>
       ) : null}
     </form>
+
+    {status === "success" ? (
+      <CenterModal
+        title=""
+        accessibleTitle={t("inquirySuccessKicker")}
+        onClose={() => setStatus("idle")}
+      >
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700">
+          {t("inquirySuccessKicker")}
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-ink/85">
+          {t("inquirySuccessBody")}
+        </p>
+      </CenterModal>
+    ) : null}
+    </>
   );
 }

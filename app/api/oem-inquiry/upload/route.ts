@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { checkFormRateLimit, formRateLimitKey } from "@/lib/form-rate-limit";
 import {
   isR2OemInquiryUploadConfigured,
-  normalizeOemInquiryId,
+  normalizeOemInquiryEmailFolder,
   uploadOemInquiryLogoToR2,
 } from "@/lib/r2-oem-inquiry-upload";
 
@@ -41,15 +41,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const inquiryId = normalizeOemInquiryId(String(form.get("inquiryId") ?? ""));
+  const emailFolder = normalizeOemInquiryEmailFolder(String(form.get("email") ?? ""));
   const website = String(form.get("website") ?? "").trim();
   const file = form.get("file");
 
   if (website) {
     return NextResponse.json({ error: "Request rejected." }, { status: 400 });
   }
-  if (!inquiryId) {
-    return NextResponse.json({ error: "Invalid inquiry id." }, { status: 400 });
+  if (!emailFolder) {
+    return NextResponse.json({ error: "Please enter a valid email." }, { status: 400 });
   }
   if (!(file instanceof File)) {
     return NextResponse.json({ error: "Please upload your logo (JPG or PNG)." }, { status: 400 });
@@ -72,7 +72,7 @@ export async function POST(req: Request) {
   try {
     const bytes = new Uint8Array(await file.arrayBuffer());
     const { key, publicUrl } = await uploadOemInquiryLogoToR2(
-      inquiryId,
+      emailFolder,
       contentType,
       bytes,
     );

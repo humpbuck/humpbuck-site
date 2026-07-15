@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { checkFormRateLimit, formRateLimitKey } from "@/lib/form-rate-limit";
 import {
   isR2OemInquiryUploadConfigured,
-  normalizeOemInquiryId,
+  normalizeOemInquiryEmailFolder,
   oemInquiryLogoObjectKeyWithExt,
   presignOemInquiryLogoPut,
   publicUrlForOemInquiryKey,
@@ -34,19 +34,19 @@ export async function POST(req: Request) {
     );
   }
 
-  let body: { inquiryId?: string; contentType?: string; byteSize?: number };
+  let body: { email?: string; contentType?: string; byteSize?: number };
   try {
     body = (await req.json()) as typeof body;
   } catch {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const inquiryId = normalizeOemInquiryId(String(body.inquiryId ?? ""));
+  const emailFolder = normalizeOemInquiryEmailFolder(String(body.email ?? ""));
   const contentType = String(body.contentType ?? "").trim();
   const byteSize = Number(body.byteSize);
 
-  if (!inquiryId) {
-    return NextResponse.json({ error: "Invalid inquiry id." }, { status: 400 });
+  if (!emailFolder) {
+    return NextResponse.json({ error: "Please enter a valid email." }, { status: 400 });
   }
   if (!ALLOWED_TYPES.has(contentType)) {
     return NextResponse.json(
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const key = oemInquiryLogoObjectKeyWithExt(inquiryId, contentType);
+  const key = oemInquiryLogoObjectKeyWithExt(emailFolder, contentType);
   const uploadUrl = await presignOemInquiryLogoPut(key, contentType);
   const publicUrl = publicUrlForOemInquiryKey(key);
   return NextResponse.json({ uploadUrl, publicUrl, key });

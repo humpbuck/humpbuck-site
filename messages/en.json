@@ -965,6 +965,7 @@
     "inquiryProductSearchPlaceholder": "Search models…",
     "inquiryProductAllGroup": "All products",
     "inquiryErrProductRequired": "Please select a product.",
+    "inquiryErrEmailInvalid": "Please enter a valid email.",
     "inquiryLabelUnitPrice": "OEM/ODM unit price",
     "inquiryPriceInquiry": "Inquiry",
     "inquiryLabelMoq": "MOQ",

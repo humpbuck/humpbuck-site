@@ -6,6 +6,7 @@ import { getMergedCatalogProductBySlug } from "@/lib/catalog-db";
 import { publicSupportEmail } from "@/lib/support-contact";
 import {
   isOemInquiryLogoPublicUrl,
+  normalizeOemInquiryEmailFolder,
   normalizeOemInquiryId,
 } from "@/lib/r2-oem-inquiry-upload";
 
@@ -28,9 +29,6 @@ function escapeHtml(value: string): string {
     .replaceAll("'", "&#39;");
 }
 
-function isValidEmail(value: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-}
 
 function customizationLabel(key: string): string {
   if (key === "dial") return "Dial logo";
@@ -49,6 +47,7 @@ export async function POST(req: Request) {
   }
 
   const email = text(body.email).toLowerCase();
+  const emailFolder = normalizeOemInquiryEmailFolder(email);
   const productSlug = text(body.productSlug);
   const inquiryId = normalizeOemInquiryId(text(body.inquiryId));
   const logoUrl = text(body.logoUrl);
@@ -67,7 +66,7 @@ export async function POST(req: Request) {
   if (website) {
     return NextResponse.json({ error: "Request rejected." }, { status: 400 });
   }
-  if (!email || !isValidEmail(email)) {
+  if (!emailFolder) {
     return NextResponse.json({ error: "Please enter a valid email." }, { status: 400 });
   }
   if (!productSlug) {
@@ -82,7 +81,7 @@ export async function POST(req: Request) {
   if (!inquiryId || !logoUrl || !logoKey) {
     return NextResponse.json({ error: "Please upload your logo (JPG or PNG)." }, { status: 400 });
   }
-  if (!isOemInquiryLogoPublicUrl(logoUrl, inquiryId)) {
+  if (!isOemInquiryLogoPublicUrl(logoUrl, emailFolder)) {
     return NextResponse.json({ error: "Invalid logo upload." }, { status: 400 });
   }
 
