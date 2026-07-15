@@ -120,6 +120,9 @@ export default async function AdminProtectedLayout({
             <Link href={adminPath("/coupons")} className={NAV_LINK_CLASS}>
               COUPONS
             </Link>
+            <Link href={adminPath("/shipping-fees")} className={NAV_LINK_CLASS}>
+              SHIPPING FEE
+            </Link>
             <Link href={adminPath("/blog")} className={NAV_LINK_CLASS}>
               BLOG
             </Link>

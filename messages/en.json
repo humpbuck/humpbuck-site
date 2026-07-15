@@ -316,6 +316,8 @@
     "cartEmpty": "Your cart is empty.",
     "subtotal": "Subtotal",
     "shipping": "Shipping",
+    "shippingFee": "Shipping fee",
+    "duty": "Duty / surcharge",
     "shippingDash": "—",
     "coupon": "Coupon",
     "total": "Total",
@@ -338,7 +340,7 @@
     "paymentPayPalHint": "Pay with your PayPal balance or linked card",
     "paymentPayPalContinueHint": "You'll sign in to PayPal to confirm payment and shipping.",
     "paymentPreviewHint": "You can enter payment details now. Complete the shipping address above before paying.",
-    "completeDetailsToPay": "Please complete email, shipping address, and shipping method before paying.",
+    "completeDetailsToPay": "Please complete email, shipping address, and confirm shipping fee before paying.",
     "paymentTimeout": "Payment gateway timed out — please try again",
     "draftOrderFailed": "Unable to create draft order",
     "orderLine": "{name} × {qty}",
@@ -382,6 +384,27 @@
       "postalNotFound": "This postcode / ZIP was not found — check for typos",
       "postalStateMismatch": "This postcode / ZIP does not match the selected state / province"
     }
+  },
+  "CheckoutShippingMethod": {
+    "heading": "Shipping method",
+    "loading": "Loading shipping options…",
+    "notConfigured": "Shipping is not available for this country yet. Choose another country or contact support.",
+    "postalRequired": "Enter your postcode to see shipping options for Australia.",
+    "loadError": "Unable to load shipping options. Please try again.",
+    "unavailable": "Unavailable"
+  },
+  "CheckoutShippingFee": {
+    "heading": "Shipping fee / Duty",
+    "meta": "Rates for {country} are set in the store admin.",
+    "loading": "Loading shipping fee…",
+    "selectCountry": "Select a delivery country to see shipping fee and duty.",
+    "shippingFee": "Shipping fee",
+    "duty": "Duty / surcharge",
+    "shippingAndDuty": "Shipping fee / Duty total",
+    "notConfigured": "Shipping is not available for this country yet. Choose another country or contact support.",
+    "postalRequired": "Enter your postcode to calculate shipping for Australia.",
+    "postalZone": "Postcode zone",
+    "loadError": "Unable to load shipping fee. Please try again."
   },
   "CheckoutShipping": {
     "feeTitle": "Shipping fee",

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdminExchangeRateCard } from "@/components/admin/admin-exchange-rate-card";
 import { adminPath } from "@/lib/admin-path";
 import { prisma } from "@/lib/prisma";
 
@@ -102,10 +103,17 @@ export default async function AdminHomePage() {
 
   return (
     <div>
-      <h1 className="font-serif text-3xl tracking-tight">Overview</h1>
-      <p className="mt-2 text-sm text-muted">
-        Quick stats from your database (all payment providers).
-      </p>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <h1 className="font-serif text-3xl tracking-tight">Overview</h1>
+          <p className="mt-2 text-sm text-muted">
+            Quick stats from your database (all payment providers).
+          </p>
+        </div>
+        <div className="w-full shrink-0 lg:max-w-sm">
+          <AdminExchangeRateCard />
+        </div>
+      </div>
 
       <div className="mt-8">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">

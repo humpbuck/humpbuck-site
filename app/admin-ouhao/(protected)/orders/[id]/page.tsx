@@ -19,12 +19,8 @@ import {
   paymentProviderLabel,
   trafficSourceLabel,
 } from "@/lib/admin/order-ui";
-import { LogisticsReferencePanel } from "@/components/admin/logistics-reference-panel";
-import {
-  CNY_PER_USD,
-  isShippingMethodId,
-  quoteCheckoutShipping,
-} from "@/lib/checkout-shipping-quote";
+import { formatCny } from "@/lib/cny-usd-exchange";
+import { OrderShippingFeePanel } from "@/components/admin/order-shipping-fee-panel";
 import { findPostalZone } from "@/lib/global-postal-zones";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { prisma } from "@/lib/prisma";
@@ -172,46 +168,45 @@ export default async function AdminOrderDetailPage({
   );
 
   const linesSubtotalCents = lines.reduce((s, l) => s + l.lineTotalCents, 0);
-  const orderTotalUnits = lines.reduce((s, l) => s + l.qty, 0);
   const logisticsCountry =
     (shipping?.country ?? billingRaw?.country ?? "").trim() ||
     "United States (US)";
-  const logisticsYanwenZone =
-    (shipping?.logisticsZone ?? "").trim() || null;
   const logisticsPostal =
     (shipping?.postalCode ?? shipping?.zip ?? "").trim() || null;
-  const logisticsState = (shipping?.state ?? "").trim() || null;
-  const shippingIso = shipping?.country?.trim().toUpperCase() || null;
-  const shippingZoneDisplay = shippingIso && logisticsPostal ? findPostalZone(shippingIso, logisticsPostal)?.zone ?? logisticsYanwenZone : logisticsYanwenZone;
-  const checkoutShippingMethodRaw = String(
-    shipping?.shippingMethod ?? "",
-  ).trim();
-  const checkoutShippingMethodParsed = isShippingMethodId(
-    checkoutShippingMethodRaw,
-  )
-    ? checkoutShippingMethodRaw
-    : null;
-  const shippingRecalcQuote =
-    checkoutShippingMethodParsed && orderTotalUnits > 0
-      ? quoteCheckoutShipping({
-          countryLabel: logisticsCountry,
-          totalUnits: orderTotalUnits,
-          method: checkoutShippingMethodParsed,
-          state: logisticsState,
-          postalCode: logisticsPostal,
-          weightKg: orderTotalUnits * 0.2,
-        })
-      : null;
-  const storedShippingEstimateCny = (() => {
-    const raw = shipping?.shippingEstimateCny?.trim();
+  const shippingIso = (() => {
+    const trimmed = logisticsCountry.trim();
+    const match = trimmed.match(/\(([A-Za-z]{2})\)\s*$/);
+    if (match) return match[1].toUpperCase();
+    return /^[A-Z]{2}$/.test(trimmed) ? trimmed : null;
+  })();
+  const parseStoredNumber = (raw: string | undefined): number | null => {
+    const text = raw?.trim();
+    if (!text) return null;
+    const n = Number(text);
+    return Number.isFinite(n) ? Math.round(n) : null;
+  };
+  const storedShippingFeeCnyCents = parseStoredNumber(
+    shipping?.shippingFeeCnyCents ?? shipping?.shippingFeeCents,
+  );
+  const storedSurchargeCnyCents = parseStoredNumber(
+    shipping?.surchargeCnyCents ?? shipping?.surchargeCents,
+  );
+  const storedShippingFeeUsdCents = parseStoredNumber(shipping?.shippingFeeUsdCents);
+  const storedSurchargeUsdCents = parseStoredNumber(shipping?.surchargeUsdCents);
+  const storedCnyPerUsd = (() => {
+    const raw = shipping?.cnyPerUsd?.trim();
     if (!raw) return null;
     const n = Number(raw);
-    return Number.isFinite(n) ? n : null;
+    return Number.isFinite(n) && n > 0 ? n : null;
   })();
+  const storedShippingRateKey = (shipping?.shippingRateKey ?? "").trim() || null;
+  const storedPostalZone = (shipping?.postalZone ?? "").trim() || null;
+  const auPostalZoneDisplay =
+    storedPostalZone ||
+    (shippingIso === "AU" && logisticsPostal
+      ? findPostalZone("AU", logisticsPostal)?.zone ?? null
+      : null);
   const remainderCents = order.totalCents - linesSubtotalCents;
-  const shippingRecalcMismatch =
-    shippingRecalcQuote?.ok === true &&
-    Math.abs(shippingRecalcQuote.shippingUsdCents - remainderCents) > 0;
   const displayId = orderDisplayCode(order);
   const placed = new Date(order.createdAt);
   const refundProviderOk =
@@ -347,8 +342,8 @@ export default async function AdminOrderDetailPage({
               orderEmail={order.email}
               structured={structuredShipping}
               phoneIntl={phoneIntlShipping}
-              includeYanwenZoneRow={Boolean(shippingZoneDisplay)}
-              yanwenZoneValue={shippingZoneDisplay}
+              includeYanwenZoneRow={Boolean(auPostalZoneDisplay)}
+              yanwenZoneValue={auPostalZoneDisplay}
             />
             {!structuredShipping && addressLines.length > 0 ? (
               <address className="mt-4 space-y-0.5 border-t border-line/80 pt-4 not-italic text-xs leading-relaxed text-muted">
@@ -463,40 +458,17 @@ export default async function AdminOrderDetailPage({
                 </dd>
               </div>
             )}
-            {shippingRecalcQuote?.ok ? (
+            {storedShippingFeeCnyCents != null ? (
               <div className="flex justify-between gap-4 text-[13px]">
-                <dt className="text-muted">
-                  Shipping recalc
-                  {checkoutShippingMethodParsed ? (
-                    <span className="mt-0.5 block text-[10px] font-normal normal-case tracking-normal text-muted">
-                      {checkoutShippingMethodParsed} · postcode + tables
-                    </span>
-                  ) : null}
-                </dt>
-                <dd className="tabular-nums text-ink">
-                  {formatPrice(shippingRecalcQuote.shippingUsdCents / 100)}
-                  <span className="mt-0.5 block text-[10px] font-normal text-muted">
-                    ≈ ¥{shippingRecalcQuote.shippingCny.toFixed(2)} top-up
-                  </span>
-                </dd>
+                <dt className="text-muted">Shipping fee (¥ stored)</dt>
+                <dd className="tabular-nums text-ink">{formatCny(storedShippingFeeCnyCents)}</dd>
               </div>
-            ) : shippingRecalcQuote && !shippingRecalcQuote.ok ? (
-              <p className="text-[11px] leading-relaxed text-amber-900">
-                Recalc: {shippingRecalcQuote.error}
-              </p>
             ) : null}
-            {storedShippingEstimateCny != null ? (
-              <p className="text-[11px] text-muted">
-                Stored at checkout: ≈¥{storedShippingEstimateCny.toFixed(2)}{" "}
-                int’l leg (CNY)
-              </p>
-            ) : null}
-            {shippingRecalcMismatch ? (
-              <p className="text-[11px] leading-relaxed text-amber-900">
-                Recalculated shipping differs from the paid remainder — rate
-                table, FX ({CNY_PER_USD} CNY/USD), or
-                order age may explain the gap.
-              </p>
+            {storedSurchargeCnyCents != null ? (
+              <div className="flex justify-between gap-4 text-[13px]">
+                <dt className="text-muted">Duty (¥ stored)</dt>
+                <dd className="tabular-nums text-ink">{formatCny(storedSurchargeCnyCents)}</dd>
+              </div>
             ) : null}
             {remainderCents < 0 && (
               <div className="flex justify-between gap-4">
@@ -554,14 +526,16 @@ export default async function AdminOrderDetailPage({
               disabledReason={refundDisabledReason}
             />
           </div>
-          <LogisticsReferencePanel
+          <OrderShippingFeePanel
             shippingCountryLabel={logisticsCountry}
-            shippingState={logisticsState}
-            totalUnits={orderTotalUnits}
             postalCode={logisticsPostal}
-            yanwenZone={logisticsYanwenZone}
-            effectiveLaneZone={shippingZoneDisplay}
-            checkoutShippingMethod={checkoutShippingMethodRaw || null}
+            shippingRateKey={storedShippingRateKey}
+            shippingFeeCnyCents={storedShippingFeeCnyCents}
+            surchargeCnyCents={storedSurchargeCnyCents}
+            shippingFeeUsdCents={storedShippingFeeUsdCents}
+            surchargeUsdCents={storedSurchargeUsdCents}
+            cnyPerUsd={storedCnyPerUsd}
+            postalZone={storedPostalZone}
           />
         </div>
       </div>

@@ -1,7 +1,6 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
@@ -18,10 +17,12 @@ import {
 import { readCheckoutPrefill, clearCheckoutPrefill } from "@/lib/checkout-prefill";
 import { CheckoutAddressForm } from "@/components/checkout/checkout-address-form";
 import { CheckoutExpressSection } from "@/components/checkout/checkout-express-section";
-import { CheckoutShippingLoading } from "@/components/checkout/checkout-shipping-loading";
 import { CheckoutPaymentSection } from "@/components/checkout/checkout-payment-section";
 import type { PayPalPrefillPayload } from "@/components/cart/paypal-express-button";
-import { getTaxIdRequirement, quoteCheckoutShipping, type ShippingMethodId } from "@/lib/checkout-shipping-quote";
+import { CheckoutShippingMethodSection } from "@/components/checkout/checkout-shipping-method-section";
+import type { CheckoutShippingMethodSelection } from "@/components/checkout/checkout-shipping-method-section";
+import type { ShippingMethodId } from "@/lib/shipping-express-methods";
+import { getTaxIdRequirement } from "@/lib/checkout-shipping-quote";
 import { DisplayPrice } from "@/components/site/DisplayPrice";
 import { UsdChargeNotice } from "@/components/site/usd-charge-notice";
 import { runWhenIdle } from "@/lib/defer-non-critical";
@@ -33,13 +34,7 @@ import {
   prefetchStripePreviewClientSecret,
 } from "@/lib/stripe-preview-intent";
 
-const CheckoutShippingSection = dynamic(
-  () =>
-    import("@/components/checkout/checkout-shipping-section").then(
-      (m) => m.CheckoutShippingSection,
-    ),
-  { loading: () => <CheckoutShippingLoading /> },
-);
+type CheckoutShippingFeeQuote = CheckoutShippingMethodSelection;
 
 export default function CheckoutPage() {
   const t = useTranslations("Checkout");
@@ -102,7 +97,8 @@ export default function CheckoutPage() {
   const [customerEmail, setCustomerEmail] = useState("");
   const [shipping, setShipping] = useState(emptyCheckoutAddress);
   const [billSameAsShipping, setBillSameAsShipping] = useState(true);
-  const [shippingMethod, setShippingMethod] = useState<ShippingMethodId>("cainiao");
+  const [shippingFeeQuote, setShippingFeeQuote] = useState<CheckoutShippingMethodSelection | null>(null);
+  const [shippingMethodId, setShippingMethodId] = useState<ShippingMethodId>("standard");
   const [loading, setLoading] = useState<"stripe" | "paypal" | null>(null);
   const [couponCode, setCouponCode] = useState("");
   const [couponError, setCouponError] = useState<string | null>(null);
@@ -163,8 +159,6 @@ export default function CheckoutPage() {
     setCheckoutOrigin(window.location.origin);
   }, []);
 
-  const totalUnits = useMemo(() => items.reduce((sum, line) => sum + line.qty, 0), [items]);
-
   const subtotal = useMemo(
     () =>
       items.reduce((sum, line) => {
@@ -176,37 +170,25 @@ export default function CheckoutPage() {
 
   const shipAddress = shipping;
   const billingAddress = billSameAsShipping ? shipping : billing;
-  const deferredShipCountry = useDeferredValue(shipAddress.country);
-  const deferredShipState = useDeferredValue(shipAddress.state);
-  const deferredShipPostal = useDeferredValue(shipAddress.postalCode);
-  const deferredTotalUnits = useDeferredValue(totalUnits);
-  const shippingQuote = useMemo(
-    () =>
-      quoteCheckoutShipping({
-        countryLabel: deferredShipCountry,
-        totalUnits: deferredTotalUnits,
-        method: shippingMethod,
-        state: deferredShipState,
-        postalCode: deferredShipPostal,
-        weightKg: deferredTotalUnits * 0.2,
-      }),
-    [
-      deferredShipCountry,
-      deferredShipPostal,
-      deferredShipState,
-      deferredTotalUnits,
-      shippingMethod,
-    ],
-  );
+  const handleShippingSelectionChange = useCallback((selection: CheckoutShippingMethodSelection | null) => {
+    setShippingFeeQuote(selection);
+  }, []);
+
+  const couponDiscountCents = appliedCoupon ? Math.round(appliedCoupon.discountAmount * 100) : 0;
+  const shippingFeeCents = shippingFeeQuote?.shippingFeeUsdCents ?? 0;
+  const surchargeCents = shippingFeeQuote?.surchargeUsdCents ?? 0;
+  const shippingTotalCents = shippingFeeQuote?.totalUsdCents ?? 0;
 
   const addressReady =
     validateCheckoutAddressForm(shipping).ok &&
     (billSameAsShipping || validateCheckoutAddressForm(billing).ok);
   const emailReady = customerEmail.trim().length > 0;
-  const canPay = cartReady && itemCount > 0 && emailReady && addressReady && shippingQuote.ok;
-  const shippingPrice = cartReady && shippingQuote.ok ? shippingQuote.shippingUsdCents / 100 : 0;
-  const couponDiscount = appliedCoupon ? appliedCoupon.discountAmount : 0;
-  const total = Math.max(0, subtotal + shippingPrice - couponDiscount);
+  const canPay = cartReady && itemCount > 0 && emailReady && addressReady && shippingFeeQuote !== null;
+  const shippingPrice = shippingFeeCents / 100;
+  const surchargePrice = surchargeCents / 100;
+  const shippingAndDutyPrice = shippingTotalCents / 100;
+  const couponDiscount = couponDiscountCents / 100;
+  const total = Math.max(0, subtotal + shippingAndDutyPrice - couponDiscount);
   const previewChargeUsd = Math.max(0.5, subtotal - couponDiscount);
   const stripeChargeUsd = canPay ? total : previewChargeUsd;
 
@@ -255,11 +237,21 @@ export default function CheckoutPage() {
           };
         }),
         billing: billingAddress,
-        shipping: shipAddress,
-        shippingMethod,
-        shippingEstimateCny: shippingQuote.ok ? shippingQuote.shippingCny : 0,
+        shipping: {
+          ...shipAddress,
+          shippingFeeCents,
+          surchargeCents,
+          shippingTotalCents,
+          shippingRateKey: shippingFeeQuote?.rateKey ?? null,
+          shippingCountryCode: shipAddress.country,
+          postalZone: shippingFeeQuote?.postalZone ?? null,
+          shippingMethodId,
+        },
+        shippingMethodId,
+        shippingFeeCents,
+        surchargeCents,
         couponCode: appliedCoupon?.code ?? null,
-        discountCents: Math.round(couponDiscount * 100),
+        discountCents: couponDiscountCents,
         trafficSource: getTrafficSourceForCheckout(),
       }),
     });
@@ -570,13 +562,12 @@ export default function CheckoutPage() {
 
           <CheckoutAddressForm title={t("deliveryTitle")} value={shipping} onChange={setShipping} idPrefix="ship" />
 
-          <CheckoutShippingSection
+          <CheckoutShippingMethodSection
             countryLabel={shipAddress.country}
-            shippingState={shipAddress.state}
-            totalUnits={totalUnits}
-            method={shippingMethod}
-            onMethodChange={setShippingMethod}
-            shippingPostalCode={shipAddress.postalCode}
+            postalCode={shipAddress.postalCode}
+            methodId={shippingMethodId}
+            onMethodChange={setShippingMethodId}
+            onSelectionChange={handleShippingSelectionChange}
           />
 
           <CheckoutPaymentSection
@@ -627,20 +618,25 @@ export default function CheckoutPage() {
           <div className="border-t border-line pt-3 text-sm">
             <div className="flex items-center justify-between">
               <span className="text-muted">{t("subtotal")}</span>
-              <DisplayPrice
-                usd={subtotal}
-                stack={false}
-                className="font-medium"
-                referenceClassName="text-[10px] text-muted"
-              />
+              {cartReady ? (
+                <DisplayPrice
+                  usd={subtotal}
+                  stack={false}
+                  className="font-medium"
+                  referenceClassName="text-[10px] text-muted"
+                />
+              ) : (
+                <span className="font-medium text-muted">{t("shippingDash")}</span>
+              )}
             </div>
             <div className="mt-2 flex items-center justify-between">
-              <span className="text-muted">{t("shipping")}</span>
+              <span className="text-muted">{t("shippingFee")}</span>
               <span className="font-medium">
-                {cartReady && shippingQuote.ok ? (
+                {cartReady && shippingFeeQuote ? (
                   <DisplayPrice
                     usd={shippingPrice}
                     stack={false}
+                    hideReference
                     referenceClassName="text-[10px] text-muted"
                   />
                 ) : (
@@ -648,6 +644,23 @@ export default function CheckoutPage() {
                 )}
               </span>
             </div>
+            {shippingMethodId === "standard" && surchargeCents > 0 ? (
+            <div className="mt-2 flex items-center justify-between">
+              <span className="text-muted">{t("duty")}</span>
+              <span className="font-medium">
+                {cartReady && shippingFeeQuote ? (
+                  <DisplayPrice
+                    usd={surchargePrice}
+                    stack={false}
+                    hideReference
+                    referenceClassName="text-[10px] text-muted"
+                  />
+                ) : (
+                  t("shippingDash")
+                )}
+              </span>
+            </div>
+            ) : null}
             {appliedCoupon ? (
               <div className="mt-2 flex items-center justify-between">
                 <span className="text-muted">{t("coupon")}</span>
@@ -663,12 +676,17 @@ export default function CheckoutPage() {
             ) : null}
             <div className="mt-2 flex items-center justify-between border-t border-line pt-3 text-base">
               <span className="font-semibold text-ink">{t("total")}</span>
-              <DisplayPrice
-                usd={total}
-                stack={false}
-                className="font-semibold text-ink"
-                referenceClassName="text-xs text-muted"
-              />
+              {cartReady ? (
+                <DisplayPrice
+                  usd={total}
+                  stack={false}
+                  hideReference
+                  className="font-semibold text-ink"
+                  referenceClassName="text-xs text-muted"
+                />
+              ) : (
+                <span className="font-semibold text-muted">{t("shippingDash")}</span>
+              )}
             </div>
             <UsdChargeNotice className="mt-3" />
           </div>

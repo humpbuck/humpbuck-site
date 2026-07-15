@@ -10,6 +10,13 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 **Stability / change policy:** The repo includes [`.cursor/rules/humpbuck-stability.mdc`](.cursor/rules/humpbuck-stability.mdc) (`alwaysApply: true`). Do **not** change the app unless the user’s current request clearly asks for it; no drive-by refactors; minimal diffs; `docs/user-conventions.md` is the written source of what the site “should be.”
 
+## Local dev — Prisma client
+
+- **`npm run dev`** uses **Wrangler local D1** (via OpenNext), not `prisma/dev.db`. On start: `prisma generate`, `npm run db:d1:local`, then Next.js.
+- **While dev is running**, saving `prisma/schema.prisma` auto-regenerates the client, applies D1 migrations, and restarts Next.
+- **`HUMPBUCK_D1_REMOTE=1`** in `.env.local` → dev reads/writes **production D1**; schema saves run `db:d1:remote` instead.
+- `prisma db push` / `prisma/dev.db` only affect CLI scripts — not the running dev server DB.
+
 ## Product reviews (PDP “Buyer reviews”)
 
 - **Source of truth is the database**, not R2. The UI uses `getProductReviewsWithUsers` → Prisma `ProductReview` (see `lib/product-reviews-queries.ts`). DB is **Cloudflare D1** (SQLite) via Prisma `@prisma/adapter-d1` on Workers; local scripts use `file:./dev.db`.

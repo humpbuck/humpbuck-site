@@ -12,6 +12,11 @@ import {
 import { notifyAdminInboxOrderPlaced } from "@/lib/admin-inbox";
 import { notifyMerchantOrderPlaced } from "@/lib/merchant-order-email";
 import { prisma } from "@/lib/prisma";
+import {
+  computeCheckoutTotalCents,
+  quoteCheckoutShippingMethod,
+} from "@/lib/shipping-fee-rates";
+import { isShippingMethodId } from "@/lib/shipping-express-methods";
 
 type CheckoutItem = {
   slug: string;
@@ -49,6 +54,17 @@ function pickNumber(...values: Array<unknown>): number | null {
   return null;
 }
 
+function addressRecordFromPayload(
+  record: Record<string, string | number | null> | undefined,
+): Record<string, string> | undefined {
+  if (!record) return undefined;
+  const out: Record<string, string> = {};
+  for (const [key, value] of Object.entries(record)) {
+    if (typeof value === "string") out[key] = value;
+  }
+  return out;
+}
+
 function validateCheckoutAddressRecord(
   record: Record<string, string> | undefined,
   addressScope: CheckoutOrderAddressScope,
@@ -67,7 +83,10 @@ export async function POST(req: Request) {
     totalUsd?: number;
     items?: CheckoutItem[];
     billing?: Record<string, string>;
-    shipping?: Record<string, string>;
+    shipping?: Record<string, string | number | null>;
+    shippingFeeCents?: number;
+    surchargeCents?: number;
+    shippingMethodId?: string;
     shippingMethod?: string;
     shippingEstimateCny?: number;
     couponCode?: string | null;
@@ -97,7 +116,10 @@ export async function POST(req: Request) {
     );
   }
 
-  const shippingValidationKey = validateCheckoutAddressRecord(body.shipping, "shipping");
+  const shippingValidationKey = validateCheckoutAddressRecord(
+    addressRecordFromPayload(body.shipping),
+    "shipping",
+  );
   if (shippingValidationKey) {
     return NextResponse.json(
       {
@@ -122,11 +144,6 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
-
-  const session = await auth().catch(() => null);
-  const userId = session?.user?.id ?? null;
-  const totalCents = Math.max(0, Math.round(body.totalUsd * 100));
-  const discountCents = Math.max(0, Math.round(body.discountCents ?? 0));
 
   const normalizedItems = body.items.map((item) => {
     const qty = Math.max(1, Math.floor(pickNumber(item.qty) ?? 1));
@@ -153,6 +170,81 @@ export async function POST(req: Request) {
     };
   });
 
+  const linesSubtotalCents = normalizedItems.reduce((sum, item) => sum + item.lineTotalCents, 0);
+  const discountCents = Math.max(0, Math.round(body.discountCents ?? 0));
+  const countryLabel = pickString(body.shipping?.country) ?? "";
+  const postalCode = pickString(body.shipping?.postalCode, body.shipping?.zip) ?? "";
+  const shippingMethodIdRaw =
+    pickString(body.shippingMethodId, body.shippingMethod, body.shipping?.shippingMethodId as string) ??
+    "standard";
+  if (!isShippingMethodId(shippingMethodIdRaw)) {
+    return NextResponse.json(
+      { ok: false, errorCode: CHECKOUT_ORDER_ERROR_CODES.MISSING_FIELDS, error: "Invalid shipping method." },
+      { status: 400 },
+    );
+  }
+
+  const shippingQuoteResult = await quoteCheckoutShippingMethod(
+    shippingMethodIdRaw,
+    countryLabel,
+    postalCode,
+  );
+  if (!shippingQuoteResult.ok) {
+    return NextResponse.json(
+      { ok: false, errorCode: CHECKOUT_ORDER_ERROR_CODES.MISSING_FIELDS, error: "Shipping is not available for this country." },
+      { status: 400 },
+    );
+  }
+  const shippingQuote = shippingQuoteResult;
+
+  const clientShippingFeeCents = Math.max(0, Math.round(body.shippingFeeCents ?? 0));
+  const clientSurchargeCents = Math.max(0, Math.round(body.surchargeCents ?? 0));
+  if (
+    clientShippingFeeCents !== shippingQuote.shippingFeeUsdCents ||
+    clientSurchargeCents !== shippingQuote.surchargeUsdCents
+  ) {
+    return NextResponse.json(
+      { ok: false, errorCode: CHECKOUT_ORDER_ERROR_CODES.MISSING_FIELDS, error: "Shipping fee changed. Refresh checkout and try again." },
+      { status: 400 },
+    );
+  }
+
+  const expectedTotalCents = computeCheckoutTotalCents({
+    subtotalCents: linesSubtotalCents,
+    shippingFeeUsdCents: shippingQuote.shippingFeeUsdCents,
+    surchargeUsdCents: shippingQuote.surchargeUsdCents,
+    discountCents,
+  });
+  const totalCents = Math.max(0, Math.round(body.totalUsd * 100));
+  if (totalCents !== expectedTotalCents) {
+    return NextResponse.json(
+      { ok: false, errorCode: CHECKOUT_ORDER_ERROR_CODES.MISSING_FIELDS, error: "Order total does not match configured shipping fee." },
+      { status: 400 },
+    );
+  }
+
+  const session = await auth().catch(() => null);
+  const userId = session?.user?.id ?? null;
+
+  const shippingJson = body.shipping
+    ? JSON.stringify({
+        ...body.shipping,
+        shippingFeeCnyCents: shippingQuote.shippingFeeCnyCents,
+        surchargeCnyCents: shippingQuote.surchargeCnyCents,
+        shippingTotalCnyCents: shippingQuote.shippingFeeCnyCents + shippingQuote.surchargeCnyCents,
+        shippingFeeUsdCents: shippingQuote.shippingFeeUsdCents,
+        surchargeUsdCents: shippingQuote.surchargeUsdCents,
+        shippingTotalUsdCents: shippingQuote.totalUsdCents,
+        cnyPerUsd: shippingQuote.cnyPerUsd,
+        shippingRateKey: shippingQuote.rateKey ?? null,
+        shippingCountryCode: countryLabel,
+        postalZone: shippingQuote.postalZone ?? null,
+        shippingMethodId: shippingMethodIdRaw,
+        shippingMethodLabel: shippingQuote.label,
+        deliveryDaysLabel: shippingQuote.deliveryDaysLabel,
+      })
+    : null;
+
   try {
     // D1 does not support interactive `$transaction` callbacks — create order then line items.
     const order = await prisma.order.create({
@@ -164,7 +256,7 @@ export async function POST(req: Request) {
         totalCents,
         currency: "usd",
         billingJson: body.billing ? JSON.stringify(body.billing) : null,
-        shippingJson: body.shipping ? JSON.stringify(body.shipping) : null,
+        shippingJson,
         discountCents,
         trafficSource: typeof body.trafficSource === "string" ? body.trafficSource : "unknown",
         couponCode: body.couponCode ?? null,
