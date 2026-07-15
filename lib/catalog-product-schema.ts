@@ -26,6 +26,7 @@ export async function ensureCatalogProductSchema(): Promise<void> {
         "homeSpotlight",
         "BOOLEAN NOT NULL DEFAULT false",
       );
+      await addCatalogProductColumnIfMissing("oemOdmPrice", "REAL");
     })();
   }
   await catalogProductSchemaReady;

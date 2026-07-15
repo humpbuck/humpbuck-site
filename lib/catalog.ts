@@ -36,6 +36,8 @@ export interface Product {
   description: string;
   price: number;
   compareAtPrice?: number;
+  /** B2B OEM/ODM unit price (USD); undefined = inquiry on OEM/ODM page. */
+  oemOdmPrice?: number;
   image: string;
   images: string[];
   galleryImages?: string[];

@@ -190,6 +190,8 @@ model CatalogProduct {
   description      String
   price            Float
   compareAtPrice   Float?
+  /** B2B OEM/ODM unit price (USD); null = show “Inquiry” on OEM/ODM form. */
+  oemOdmPrice      Float?
   image            String
   status           String   @default("active")
   inStock          Boolean  @default(true)

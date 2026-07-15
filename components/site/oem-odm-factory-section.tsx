@@ -1,5 +1,12 @@
 import { BlogVideoEmbed } from "@/components/site/blog-video-embed";
+import { OemOdmFeaturedModels } from "@/components/site/oem-odm-featured-models";
+import { OemOdmGetStartedSection } from "@/components/site/oem-odm-get-started-section";
+import { resolveOemOdmFeaturedModels } from "@/lib/oem-odm-featured-slugs";
+import { buildOemInquiryProductOptions } from "@/lib/oem-inquiry-products";
 import { OEM_ODM_PROMO_VIDEO_URL } from "@/lib/oem-odm-page-content";
+import { getMergedCatalogProducts } from "@/lib/catalog-db";
+import { getSiteUrl } from "@/lib/seo";
+import { whatsappHrefWithBody } from "@/lib/whatsapp";
 import {
   ClipboardList,
   CreditCard,
@@ -39,9 +46,13 @@ type OemOdmContentSection = {
 function OemOdmServiceCard({
   option,
   recommendedLabel,
+  summaryLine,
+  partnershipNote,
 }: {
   option: OemOdmServiceOption;
   recommendedLabel: string;
+  summaryLine?: string;
+  partnershipNote?: string;
 }) {
   const isRecommended = option.recommended === true;
 
@@ -73,6 +84,16 @@ function OemOdmServiceCard({
       <p className="relative mt-3 text-sm leading-relaxed text-muted sm:text-base sm:leading-relaxed">
         {option.text}
       </p>
+      {summaryLine ? (
+        <p className="relative mt-3 text-xs font-medium tracking-wide text-ink/80 sm:text-sm">
+          {summaryLine}
+        </p>
+      ) : null}
+      {partnershipNote ? (
+        <p className="relative mt-3 text-sm leading-relaxed text-muted">
+          {partnershipNote}
+        </p>
+      ) : null}
     </article>
   );
 }
@@ -345,6 +366,15 @@ function OemOdmSamplePolicySection({ section }: { section: OemOdmContentSection 
 
 export async function OemOdmFactorySection() {
   const t = await getTranslations("OemOdmPage");
+  const catalog = await getMergedCatalogProducts();
+  const featuredModels = resolveOemOdmFeaturedModels(catalog);
+
+  const inquiryProducts = buildOemInquiryProductOptions(catalog);
+
+  const oemOdmPageUrl = `${getSiteUrl()}/oem-odm`;
+  const whatsappHref = whatsappHrefWithBody(
+    `Hi, I have a question about OEM/ODM:\n${oemOdmPageUrl}`,
+  );
 
   const serviceOptions: OemOdmServiceOption[] = [
     { label: t("odmLabel"), recommended: true, text: t("odmText") },
@@ -462,10 +492,14 @@ export async function OemOdmFactorySection() {
                   key={option.label}
                   option={option}
                   recommendedLabel={t("recommendedBadge")}
+                  summaryLine={option.recommended ? t("odmSummaryLine") : undefined}
+                  partnershipNote={option.recommended ? undefined : t("oemPartnershipNote")}
                 />
               ))}
             </div>
           </div>
+
+          <OemOdmFeaturedModels models={featuredModels} />
 
           <OemOdmMoqCards
             kicker={t("moqKicker")}
@@ -490,6 +524,11 @@ export async function OemOdmFactorySection() {
               />
               <OemOdmLogisticsSection section={logistics} />
             </div>
+
+            <OemOdmGetStartedSection
+              products={inquiryProducts}
+              whatsappHref={whatsappHref}
+            />
           </div>
         </div>
       </div>

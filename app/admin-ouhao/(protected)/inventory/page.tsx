@@ -34,6 +34,7 @@ export default async function AdminInventoryPage() {
             description: p.description,
             price: p.price,
             compareAtPrice: p.compareAtPrice,
+            oemOdmPrice: (p as { oemOdmPrice?: number | null }).oemOdmPrice ?? null,
             image: p.image,
             inStock: p.inStock,
             status: p.status,

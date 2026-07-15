@@ -45,6 +45,7 @@ type CatalogProductRecord = {
   description: string;
   price: number;
   compareAtPrice: number | null;
+  oemOdmPrice: number | null;
   image: string;
   inStock: boolean;
   status: string;
@@ -103,6 +104,7 @@ type EditableProduct = {
   description: string;
   price: string;
   compareAtPrice: string;
+  oemOdmPrice: string;
   image: string;
   inStock: boolean;
   status: string;
@@ -172,6 +174,7 @@ function buildEditableProduct(
     description: p.description,
     price: String(p.price),
     compareAtPrice: p.compareAtPrice == null ? "" : String(p.compareAtPrice),
+    oemOdmPrice: p.oemOdmPrice == null ? "" : String(p.oemOdmPrice),
     image: p.image,
     inStock: p.inStock,
     status: p.status === "archived" ? "archived" : "active",
@@ -222,6 +225,7 @@ function newProductDraft(): EditableProduct {
     description: "",
     price: "0",
     compareAtPrice: "",
+    oemOdmPrice: "",
     image: "",
     inStock: true,
     status: "active",
@@ -561,6 +565,10 @@ export function ProductManager({
         current.compareAtPrice.trim() === ""
           ? null
           : Number(current.compareAtPrice) || null,
+      oemOdmPrice:
+        current.oemOdmPrice.trim() === ""
+          ? null
+          : Number(current.oemOdmPrice) || null,
       image: mainImage,
       inStock,
       highlights: current.highlights.filter((s) => s.trim()),
@@ -837,6 +845,11 @@ export function ProductManager({
                 onChange={(v) =>
                   updateCurrent((p) => ({ ...p, compareAtPrice: v }))
                 }
+              />
+              <LabeledInput
+                label="OEM/ODM price (USD, optional)"
+                value={current.oemOdmPrice}
+                onChange={(v) => updateCurrent((p) => ({ ...p, oemOdmPrice: v }))}
               />
             </div>
 

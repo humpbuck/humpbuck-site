@@ -53,6 +53,10 @@ function productUpdateData(
       body.compareAtPrice === null || body.compareAtPrice === undefined
         ? null
         : Number(body.compareAtPrice) || null,
+    oemOdmPrice:
+      body.oemOdmPrice === null || body.oemOdmPrice === undefined || body.oemOdmPrice === ""
+        ? null
+        : Number(body.oemOdmPrice) || null,
     image: asString(body.image),
     status:
       String(body.status ?? prevStatus ?? "active").toLowerCase() === "archived"

@@ -15,6 +15,7 @@ type CatalogProductRow = {
   description: string;
   price: number;
   compareAtPrice: number | null;
+  oemOdmPrice: number | null;
   image: string;
   inStock: boolean;
   highlightsJson: string;
@@ -94,6 +95,10 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
     description: row.description,
     price: Number.isFinite(row.price) ? row.price : 0,
     compareAtPrice: row.compareAtPrice ?? undefined,
+    oemOdmPrice:
+      row.oemOdmPrice != null && Number.isFinite(row.oemOdmPrice)
+        ? row.oemOdmPrice
+        : undefined,
     image: gallery[0] || row.image || "",
     images: gallery,
     galleryImages: gallery,
