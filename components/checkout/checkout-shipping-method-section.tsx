@@ -178,7 +178,8 @@ export function CheckoutShippingMethodSection({
         <div className={`mt-4 space-y-3 ${loading ? "opacity-70" : ""}`}>
           {methods.map((item) => {
             const active = methodId === item.methodId;
-            const priceText = item.available ? formatUsd(item.totalUsdCents) : t("unavailable");
+            const shippingOnlyUsdCents = item.shippingFeeUsdCents;
+            const priceText = item.available ? formatUsd(shippingOnlyUsdCents) : t("unavailable");
             const lineLabel = `${item.label} (${item.deliveryDaysLabel})`;
             return (
               <button
@@ -192,7 +193,7 @@ export function CheckoutShippingMethodSection({
                   <div className="text-sm font-medium text-ink">
                     {lineLabel}
                     {item.available ? (
-                      <span className="text-muted"> — {formatUsd(item.totalUsdCents)}</span>
+                      <span className="text-muted"> — {formatUsd(shippingOnlyUsdCents)}</span>
                     ) : null}
                   </div>
                   {!item.available ? (
