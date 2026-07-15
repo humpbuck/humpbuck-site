@@ -8,7 +8,13 @@ import { fileURLToPath } from "node:url";
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const batchPath = path.join(root, "scripts/oem-odm-i18n.json");
-const batch = JSON.parse(fs.readFileSync(batchPath, "utf8"));
+const extensionPath = path.join(root, "scripts/oem-odm-i18n-extension.json");
+const batch = {
+  ...JSON.parse(fs.readFileSync(batchPath, "utf8")),
+  ...(fs.existsSync(extensionPath)
+    ? JSON.parse(fs.readFileSync(extensionPath, "utf8"))
+    : {}),
+};
 
 function setByDotPath(obj, dotPath, value) {
   const parts = dotPath.split(".");

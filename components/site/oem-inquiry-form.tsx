@@ -267,34 +267,24 @@ export function OemInquiryForm({
   }
 
   async function uploadLogo(file: File): Promise<{ publicUrl: string; key: string }> {
-    const contentType = file.type === "image/png" ? "image/png" : "image/jpeg";
-    const presignRes = await fetch("/api/oem-inquiry/presign", {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("inquiryId", inquiryId);
+    formData.append("website", website);
+
+    const uploadRes = await fetch("/api/oem-inquiry/upload", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        inquiryId,
-        contentType,
-        byteSize: file.size,
-      }),
+      body: formData,
     });
-    const presignData = (await presignRes.json().catch(() => ({}))) as {
-      uploadUrl?: string;
+    const uploadData = (await uploadRes.json().catch(() => ({}))) as {
       publicUrl?: string;
       key?: string;
       error?: string;
     };
-    if (!presignRes.ok || !presignData.uploadUrl || !presignData.publicUrl || !presignData.key) {
-      throw new Error(presignData.error ?? t("inquiryErrUpload"));
+    if (!uploadRes.ok || !uploadData.publicUrl || !uploadData.key) {
+      throw new Error(uploadData.error ?? t("inquiryErrUpload"));
     }
-    const putRes = await fetch(presignData.uploadUrl, {
-      method: "PUT",
-      headers: { "Content-Type": contentType },
-      body: file,
-    });
-    if (!putRes.ok) {
-      throw new Error(t("inquiryErrUpload"));
-    }
-    return { publicUrl: presignData.publicUrl, key: presignData.key };
+    return { publicUrl: uploadData.publicUrl, key: uploadData.key };
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -354,9 +344,10 @@ export function OemInquiryForm({
       }
       setStatus("error");
       setErrorMessage(data.error ?? t("inquiryErrSubmit"));
-    } catch {
+    } catch (err) {
       setStatus("error");
-      setErrorMessage(t("inquiryErrNetwork"));
+      const message = err instanceof Error ? err.message.trim() : "";
+      setErrorMessage(message || t("inquiryErrNetwork"));
     }
   }
 

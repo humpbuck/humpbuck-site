@@ -141,6 +141,8 @@ export async function POST(req: Request) {
     category: ADMIN_INBOX_CATEGORY.emailMockupRequest,
     sourceEmail: email,
     payload,
+  }).catch((err) => {
+    console.error("[oem-inquiry] admin inbox write failed:", err);
   });
 
   const specsHtml = product.specs

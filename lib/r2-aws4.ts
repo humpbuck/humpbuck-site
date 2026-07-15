@@ -45,6 +45,26 @@ export async function presignR2Put(
   return signed.url.toString();
 }
 
+/** Server-side PUT — avoids browser CORS when uploading to R2. */
+export async function putR2Object(
+  key: string,
+  contentType: string,
+  body: Uint8Array | ArrayBuffer,
+): Promise<void> {
+  const { bucket } = r2Credentials();
+  const client = r2AwsClient();
+  const objectUrl = `${r2BaseUrl()}/${bucket}/${encodeR2Key(key)}`;
+  const bytes = Uint8Array.from(body instanceof Uint8Array ? body : new Uint8Array(body));
+  const res = await client.fetch(objectUrl, {
+    method: "PUT",
+    headers: { "Content-Type": contentType },
+    body: new Blob([bytes], { type: contentType }),
+  });
+  if (!res.ok) {
+    throw new Error(`R2 put failed (${res.status})`);
+  }
+}
+
 function encodeR2Key(key: string): string {
   return key
     .split("/")

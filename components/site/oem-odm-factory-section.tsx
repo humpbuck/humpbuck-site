@@ -6,6 +6,7 @@ import { buildOemInquiryProductOptions } from "@/lib/oem-inquiry-products";
 import { OEM_ODM_PROMO_VIDEO_URL } from "@/lib/oem-odm-page-content";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getSiteUrl } from "@/lib/seo";
+import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
 import { whatsappHrefWithBody } from "@/lib/whatsapp";
 import {
   ClipboardList,
@@ -15,7 +16,7 @@ import {
   Sparkles,
   Truck,
 } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 
 type OemOdmServiceOption = {
   label: string;
@@ -365,11 +366,19 @@ function OemOdmSamplePolicySection({ section }: { section: OemOdmContentSection 
 }
 
 export async function OemOdmFactorySection() {
+  const locale = await getLocale();
+  const messages = await getMessages({ locale });
   const t = await getTranslations("OemOdmPage");
-  const catalog = await getMergedCatalogProducts();
+  const catalogRaw = await getMergedCatalogProducts();
+  const catalog = catalogRaw.map((p) =>
+    applyStorefrontProductLocale(p, locale, messages),
+  );
   const featuredModels = resolveOemOdmFeaturedModels(catalog);
 
-  const inquiryProducts = buildOemInquiryProductOptions(catalog);
+  const inquiryProducts = buildOemInquiryProductOptions(catalog, {
+    locale,
+    messages,
+  });
 
   const oemOdmPageUrl = `${getSiteUrl()}/oem-odm`;
   const whatsappHref = whatsappHrefWithBody(

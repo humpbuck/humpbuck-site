@@ -104,7 +104,7 @@ function localizeCatalogProductName(name: string, locale: string): string {
   const trimmed = name.trim();
   const ultraThin = /^Ultra-thin\s+(.+)$/i.exec(trimmed);
   if (ultraThin) return `${prefix.ultraThin} ${ultraThin[1]}`;
-  const automatic = /^(?:AUTOMATIC|Automatic)\s+(.+)$/i.exec(trimmed);
+  const automatic = /^(?:AUTOMATIC|Automatic|AUTOMATCI)\s+(.+)$/i.exec(trimmed);
   if (automatic) return `${prefix.automatic} ${automatic[1]}`;
   const mechanical = /^Mechanical\s+(.+)$/i.exec(trimmed);
   if (mechanical) return `${prefix.mechanical} ${mechanical[1]}`;

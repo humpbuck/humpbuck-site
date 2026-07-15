@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import { presignR2Put } from "@/lib/r2-aws4";
+import { presignR2Put, putR2Object } from "@/lib/r2-aws4";
 import { R2_PUBLIC_BASE } from "@/lib/r2";
 
 const INQUIRY_ID_RE = /^[a-f0-9]{32}$/;
@@ -35,6 +35,16 @@ export async function presignOemInquiryLogoPut(
   contentType: string,
 ): Promise<string> {
   return presignR2Put(key, contentType, 60 * 5);
+}
+
+export async function uploadOemInquiryLogoToR2(
+  inquiryId: string,
+  contentType: string,
+  body: Uint8Array | ArrayBuffer,
+): Promise<{ key: string; publicUrl: string }> {
+  const key = oemInquiryLogoObjectKeyWithExt(inquiryId, contentType);
+  await putR2Object(key, contentType, body);
+  return { key, publicUrl: publicUrlForOemInquiryKey(key) };
 }
 
 export function publicBaseUrlForOemInquiryAssets(): string {

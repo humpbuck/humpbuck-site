@@ -28,6 +28,12 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 - Customer-facing photos from R2: use **`StorefrontImage`** (`components/site/storefront-image.tsx`), not raw `next/image` with manual `unoptimized`. R2 URLs load directly from the CDN (`lib/r2-public-image.ts`). Avatars keep `HeaderUserAvatar` / `ReviewerAvatar`.
 
+## Product i18n (names, specs, copy)
+
+- **Single pipeline for all storefront surfaces** (shop, PDP, home, OEM/ODM inquiry picker, featured models, etc.): load catalog from D1, then **`applyStorefrontProductLocale(product, locale, messages)`** in `lib/storefront-locale.ts`.
+- **Do not** duplicate product names/specs in page-specific message files (`OemOdmPage`, etc.). Page namespaces are for **page chrome only** (headings, form labels, MOQ copy).
+- Translations live in **`messages/product-copy.{locale}.json`** (merged as `ProductCopy` in `i18n/request.ts`) plus built-in spec-label/value maps in `storefront-locale.ts`. English catalog DB text is canonical for `en`.
+
 ## Storefront locale `ar` (Arabic)
 
 - Locale code **`ar`** in `i18n/routing.ts`; RTL with Hebrew (`dir` on `<html>`). Messages: `messages/ar.json`, `messages/policies.ar.json`, `messages/storefront-extra.ar.json`, `messages/product-copy.ar.json`. Rebuild: `node scripts/build-ar-locale.mjs` after editing `scripts/ar-batch*.json` or `scripts/ar-quality-fixes.json` (apply via `node scripts/apply-ar-quality-fixes.mjs`).
