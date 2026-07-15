@@ -178,10 +178,26 @@ export default async function AdminShippingFeesPage({
 }) {
   await assertAdmin();
   const sp = await searchParams;
-  const [rates, expressMethods] = await Promise.all([
-    listShippingFeeRates(),
-    listExpressShippingMethods(),
-  ]);
+
+  let rates: Awaited<ReturnType<typeof listShippingFeeRates>> = [];
+  let expressMethods: Awaited<ReturnType<typeof listExpressShippingMethods>> = [];
+  let dbSetupError: string | null = null;
+
+  try {
+    [rates, expressMethods] = await Promise.all([
+      listShippingFeeRates(),
+      listExpressShippingMethods(),
+    ]);
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Database error";
+    const schemaMissing =
+      /no such table|no such column|ShippingExpressMethod|ShippingFeeRate|deliveryDaysLabel/i.test(
+        message,
+      );
+    dbSetupError = schemaMissing
+      ? "Shipping database tables are not on production D1 yet. Run: npm run db:d1:remote:shipping (requires wrangler login), then reload this page."
+      : message;
+  }
 
   return (
     <div>
@@ -199,7 +215,11 @@ export default async function AdminShippingFeesPage({
       {sp.success ? (
         <AdminFlashMessage kind="success" message={sp.success} clearHref={adminPath("/shipping-fees")} />
       ) : null}
+      {dbSetupError ? (
+        <AdminFlashMessage kind="error" message={dbSetupError} clearHref={adminPath("/shipping-fees")} />
+      ) : null}
 
+      {!dbSetupError ? (
       <section className="mt-8">
         <h2 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
           Standard Shipping — add country
@@ -430,6 +450,7 @@ export default async function AdminShippingFeesPage({
           </table>
         </div>
       </section>
+      ) : null}
     </div>
   );
 }
