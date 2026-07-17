@@ -35,16 +35,7 @@ function ExpressCheckoutInner({
         },
         layout: {
           maxColumns: 1,
-          maxRows: 2,
-          overflow: "auto",
-        },
-        paymentMethods: {
-          link: "auto",
-          applePay: "auto",
-          googlePay: "auto",
-          paypal: "never",
-          amazonPay: "never",
-          klarna: "never",
+          maxRows: 1,
         },
       }}
       onConfirm={async () => {
@@ -117,7 +108,7 @@ export function StripeExpressCheckout({
   };
 
   return (
-    <Elements stripe={stripePromise} options={options} key={`express-${clientSecret}`}>
+    <Elements stripe={stripePromise} options={options} key={clientSecret}>
       <ExpressCheckoutInner
         canSubmit={canSubmit}
         returnUrl={returnUrl}

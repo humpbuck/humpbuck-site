@@ -295,7 +295,7 @@
     "loading": "Loading checkout…",
     "kicker": "Checkout",
     "title": "Complete your order",
-    "subtitle": "Fresh rebuild of checkout. The page is intentionally minimal so you can refine the UI step by step.",
+    "subtitle": "Enter your details to complete your HUMPBUCK order securely.",
     "emailHeading": "Customer email",
     "emailPlaceholder": "Enter email for order receipt",
     "couponHeading": "Coupon code",
