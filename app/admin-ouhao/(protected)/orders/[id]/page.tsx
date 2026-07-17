@@ -179,11 +179,24 @@ export default async function AdminOrderDetailPage({
     if (match) return match[1].toUpperCase();
     return /^[A-Z]{2}$/.test(trimmed) ? trimmed : null;
   })();
-  const parseStoredNumber = (raw: string | undefined): number | null => {
-    const text = raw?.trim();
+  const parseStoredNumber = (
+    raw: string | number | null | undefined,
+  ): number | null => {
+    if (raw == null) return null;
+    if (typeof raw === "number") {
+      return Number.isFinite(raw) ? Math.round(raw) : null;
+    }
+    const text = raw.trim();
     if (!text) return null;
     const n = Number(text);
     return Number.isFinite(n) ? Math.round(n) : null;
+  };
+  const parseStoredRate = (
+    raw: string | number | null | undefined,
+  ): number | null => {
+    if (raw == null) return null;
+    const n = typeof raw === "number" ? raw : Number(raw.trim());
+    return Number.isFinite(n) && n > 0 ? n : null;
   };
   const storedShippingFeeCnyCents = parseStoredNumber(
     shipping?.shippingFeeCnyCents ?? shipping?.shippingFeeCents,
@@ -193,14 +206,19 @@ export default async function AdminOrderDetailPage({
   );
   const storedShippingFeeUsdCents = parseStoredNumber(shipping?.shippingFeeUsdCents);
   const storedSurchargeUsdCents = parseStoredNumber(shipping?.surchargeUsdCents);
-  const storedCnyPerUsd = (() => {
-    const raw = shipping?.cnyPerUsd?.trim();
-    if (!raw) return null;
-    const n = Number(raw);
-    return Number.isFinite(n) && n > 0 ? n : null;
-  })();
-  const storedShippingRateKey = (shipping?.shippingRateKey ?? "").trim() || null;
-  const storedPostalZone = (shipping?.postalZone ?? "").trim() || null;
+  const storedCnyPerUsd = parseStoredRate(shipping?.cnyPerUsd);
+  const storedShippingRateKey =
+    typeof shipping?.shippingRateKey === "string"
+      ? shipping.shippingRateKey.trim() || null
+      : shipping?.shippingRateKey != null
+        ? String(shipping.shippingRateKey).trim() || null
+        : null;
+  const storedPostalZone =
+    typeof shipping?.postalZone === "string"
+      ? shipping.postalZone.trim() || null
+      : shipping?.postalZone != null
+        ? String(shipping.postalZone).trim() || null
+        : null;
   const auPostalZoneDisplay =
     storedPostalZone ||
     (shippingIso === "AU" && logisticsPostal
