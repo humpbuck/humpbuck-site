@@ -89,10 +89,8 @@ async function createStripePaymentIntent(params: {
   if (params.orderId && params.orderId !== "preview") {
     body.set("metadata[orderId]", params.orderId);
   }
-  // Explicit card + Link so Express Checkout / Payment Element can show Link wallets.
-  // (automatic_payment_methods alone can omit Link depending on Dashboard config.)
-  body.append("payment_method_types[]", "card");
-  body.append("payment_method_types[]", "link");
+  // automatic_payment_methods includes Link (when enabled in Dashboard) plus card wallets.
+  body.set("automatic_payment_methods[enabled]", "true");
   if (params.customerEmail?.trim()) {
     body.set("receipt_email", params.customerEmail.trim());
   }
