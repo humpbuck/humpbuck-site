@@ -4,7 +4,7 @@ import { useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { loadPayPalSdk } from "@/lib/paypal-sdk-client";
 import { preloadStripe } from "@/lib/stripe-browser";
-import { peekStripePreviewClientSecret } from "@/lib/stripe-preview-intent";
+import { peekStripePreviewClientSecret, prefetchStripePreviewClientSecret } from "@/lib/stripe-preview-intent";
 import {
   PayPalExpressButton,
   type PayPalCheckoutOrderPayload,
@@ -57,6 +57,11 @@ export function CheckoutExpressSection({
   useEffect(() => {
     if (paypalClientId) void loadPayPalSdk(paypalClientId);
   }, [paypalClientId]);
+
+  useEffect(() => {
+    if (!cartReady || itemCount === 0 || chargeUsd <= 0) return;
+    prefetchStripePreviewClientSecret(chargeUsd);
+  }, [cartReady, itemCount, chargeUsd]);
 
   if (!cartReady || itemCount === 0) return null;
 

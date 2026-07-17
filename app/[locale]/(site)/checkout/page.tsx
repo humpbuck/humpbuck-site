@@ -343,13 +343,15 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (!cartReady || itemCount === 0) return;
-    const cached = peekStripePreviewClientSecret(previewChargeUsd);
+    const cached = peekStripePreviewClientSecret(stripeChargeUsd);
     if (cached) {
       setStripeClientSecret((prev) => prev ?? cached);
       stripeClientSecretRef.current = stripeClientSecretRef.current ?? cached;
+      stripePaymentIntentIdRef.current =
+        stripePaymentIntentIdRef.current ?? paymentIntentIdFromClientSecret(cached);
     }
-    prefetchStripePreviewClientSecret(previewChargeUsd);
-  }, [cartReady, itemCount, previewChargeUsd]);
+    prefetchStripePreviewClientSecret(stripeChargeUsd);
+  }, [cartReady, itemCount, stripeChargeUsd]);
 
   useEffect(() => {
     if (!cartReady || itemCount === 0) {
@@ -369,10 +371,7 @@ export default function CheckoutPage() {
         try {
           if (cancelled) return;
 
-          let clientSecret: string | null = null;
-          if (!canPay) {
-            clientSecret = await fetchStripePreviewClientSecret(stripeChargeUsd);
-          }
+          let clientSecret: string | null = await fetchStripePreviewClientSecret(stripeChargeUsd);
           if (!clientSecret) {
             const res = await checkoutFetch("/api/checkout/stripe", {
               method: "POST",
@@ -394,10 +393,12 @@ export default function CheckoutPage() {
             clientSecret = data.clientSecret;
             if (data.paymentIntentId) {
               stripePaymentIntentIdRef.current = data.paymentIntentId;
-            } else {
-              stripePaymentIntentIdRef.current =
-                paymentIntentIdFromClientSecret(data.clientSecret);
             }
+          }
+          if (clientSecret) {
+            stripePaymentIntentIdRef.current =
+              stripePaymentIntentIdRef.current ??
+              paymentIntentIdFromClientSecret(clientSecret);
           }
           if (!cancelled && clientSecret) {
             setStripeClientSecret(clientSecret);
@@ -405,9 +406,6 @@ export default function CheckoutPage() {
           }
         } catch (e) {
           if (!cancelled && canPay) {
-            setStripeClientSecret(null);
-            stripeClientSecretRef.current = null;
-            stripePaymentIntentIdRef.current = null;
             setPaymentError(e instanceof Error ? e.message : t("stripeError"));
           }
         } finally {
