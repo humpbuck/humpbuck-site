@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { loadPayPalSdk } from "@/lib/paypal-sdk-client";
 import { preloadStripe } from "@/lib/stripe-browser";
-import { peekStripePreviewClientSecret, prefetchStripePreviewClientSecret } from "@/lib/stripe-preview-intent";
+import { prefetchStripePreviewClientSecret } from "@/lib/stripe-preview-intent";
 import {
   PayPalExpressButton,
   type PayPalCheckoutOrderPayload,
@@ -43,11 +43,6 @@ export function CheckoutExpressSection({
   const t = useTranslations("Checkout");
   const { publishableKey } = useStripePublishableKey();
   const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID?.trim() ?? "";
-  const cachedSecret = useMemo(
-    () => peekStripePreviewClientSecret(chargeUsd),
-    [chargeUsd],
-  );
-  const expressClientSecret = stripeClientSecret ?? cachedSecret;
 
   useEffect(() => {
     const pk = publishableKey ?? process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.trim();
@@ -70,9 +65,9 @@ export function CheckoutExpressSection({
       <p className="text-center text-xs text-muted">{t("expressCheckout")}</p>
       <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
         <div className="min-h-[44px]">
-          {publishableKey && expressClientSecret ? (
+          {publishableKey && stripeClientSecret ? (
             <StripeExpressCheckout
-              clientSecret={expressClientSecret}
+              clientSecret={stripeClientSecret}
               publishableKey={publishableKey}
               canSubmit={canPay}
               returnUrl={returnUrlTemplate}

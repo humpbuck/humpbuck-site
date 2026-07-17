@@ -45,9 +45,11 @@ export default function CheckoutPage() {
   const { data: session } = useSession();
   const { items, itemCount } = useCart();
   const [paypalPrefillNotice, setPaypalPrefillNotice] = useState(false);
+  const [expressClientSecret, setExpressClientSecret] = useState<string | null>(null);
   const [stripeClientSecret, setStripeClientSecret] = useState<string | null>(null);
   const [stripeFormLoading, setStripeFormLoading] = useState(false);
   const stripeClientSecretRef = useRef<string | null>(null);
+  const expressClientSecretRef = useRef<string | null>(null);
 
   useEffect(() => {
     const pk = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.trim();
@@ -115,6 +117,7 @@ export default function CheckoutPage() {
   const orderIdRef = useRef<string | null>(null);
   const draftOrderPromiseRef = useRef<Promise<string> | null>(null);
   const stripePaymentIntentIdRef = useRef<string | null>(null);
+  const expressPaymentIntentIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (searchParams.get("from") === "paypal-express") return;
@@ -345,25 +348,27 @@ export default function CheckoutPage() {
     if (!cartReady || itemCount === 0) return;
     const cached = peekStripePreviewClientSecret(stripeChargeUsd);
     if (cached) {
-      setStripeClientSecret((prev) => prev ?? cached);
-      stripeClientSecretRef.current = stripeClientSecretRef.current ?? cached;
-      stripePaymentIntentIdRef.current =
-        stripePaymentIntentIdRef.current ?? paymentIntentIdFromClientSecret(cached);
+      setExpressClientSecret(cached);
+      expressClientSecretRef.current = cached;
+      expressPaymentIntentIdRef.current = paymentIntentIdFromClientSecret(cached);
     }
     prefetchStripePreviewClientSecret(stripeChargeUsd);
   }, [cartReady, itemCount, stripeChargeUsd]);
 
   useEffect(() => {
     if (!cartReady || itemCount === 0) {
+      setExpressClientSecret(null);
       setStripeClientSecret(null);
+      expressClientSecretRef.current = null;
       stripeClientSecretRef.current = null;
+      expressPaymentIntentIdRef.current = null;
       stripePaymentIntentIdRef.current = null;
       setPaymentOrderId(null);
       return;
     }
 
     let cancelled = false;
-    const delay = stripeClientSecretRef.current ? 200 : 0;
+    const delay = expressClientSecretRef.current || stripeClientSecretRef.current ? 200 : 0;
 
     const timer = window.setTimeout(() => {
       void (async () => {
@@ -371,8 +376,9 @@ export default function CheckoutPage() {
         try {
           if (cancelled) return;
 
-          let clientSecret: string | null = await fetchStripePreviewClientSecret(stripeChargeUsd);
-          if (!clientSecret) {
+          // Express Checkout gets its own PaymentIntent (cached preview OK).
+          let expressSecret = await fetchStripePreviewClientSecret(stripeChargeUsd);
+          if (!expressSecret) {
             const res = await checkoutFetch("/api/checkout/stripe", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -390,19 +396,42 @@ export default function CheckoutPage() {
             if (!res.ok || !data.ok || !data.clientSecret) {
               throw new Error(data.error || t("stripeError"));
             }
-            clientSecret = data.clientSecret;
-            if (data.paymentIntentId) {
-              stripePaymentIntentIdRef.current = data.paymentIntentId;
-            }
+            expressSecret = data.clientSecret;
+            expressPaymentIntentIdRef.current =
+              data.paymentIntentId ?? paymentIntentIdFromClientSecret(data.clientSecret);
+          } else {
+            expressPaymentIntentIdRef.current =
+              paymentIntentIdFromClientSecret(expressSecret);
           }
-          if (clientSecret) {
+
+          // Card Payment Element gets a separate PaymentIntent so Link/wallets
+          // are not stolen by a second Elements tree sharing one secret.
+          const payRes = await checkoutFetch("/api/checkout/stripe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              totalUsd: stripeChargeUsd,
+              customerEmail: customerEmail.trim() || undefined,
+            }),
+          });
+          const payData = (await payRes.json()) as {
+            ok?: boolean;
+            clientSecret?: string;
+            paymentIntentId?: string;
+            error?: string;
+          };
+          if (!payRes.ok || !payData.ok || !payData.clientSecret) {
+            throw new Error(payData.error || t("stripeError"));
+          }
+
+          if (!cancelled) {
+            setExpressClientSecret(expressSecret);
+            expressClientSecretRef.current = expressSecret;
+            setStripeClientSecret(payData.clientSecret);
+            stripeClientSecretRef.current = payData.clientSecret;
             stripePaymentIntentIdRef.current =
-              stripePaymentIntentIdRef.current ??
-              paymentIntentIdFromClientSecret(clientSecret);
-          }
-          if (!cancelled && clientSecret) {
-            setStripeClientSecret(clientSecret);
-            stripeClientSecretRef.current = clientSecret;
+              payData.paymentIntentId ??
+              paymentIntentIdFromClientSecret(payData.clientSecret);
           }
         } catch (e) {
           if (!cancelled && canPay) {
@@ -421,14 +450,11 @@ export default function CheckoutPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartReady, itemCount, stripeChargeUsd, canPay, appliedCoupon?.code]);
 
-  async function handleBeforeStripePay() {
+  async function attachPaymentIntentAndCreateOrder(
+    paymentIntentId: string | null,
+  ): Promise<string> {
     if (!canPay) throw new Error(t("completeDetailsToPay"));
     const draftOrderId = await ensureDraftOrder();
-
-    let paymentIntentId = stripePaymentIntentIdRef.current;
-    if (!paymentIntentId && stripeClientSecretRef.current) {
-      paymentIntentId = paymentIntentIdFromClientSecret(stripeClientSecretRef.current);
-    }
     if (paymentIntentId) {
       const res = await checkoutFetch("/api/checkout/stripe", {
         method: "POST",
@@ -444,8 +470,25 @@ export default function CheckoutPage() {
         throw new Error(data.error || t("stripeError"));
       }
     }
-
     return draftOrderId;
+  }
+
+  async function handleBeforeExpressPay() {
+    return attachPaymentIntentAndCreateOrder(
+      expressPaymentIntentIdRef.current ??
+        (expressClientSecretRef.current
+          ? paymentIntentIdFromClientSecret(expressClientSecretRef.current)
+          : null),
+    );
+  }
+
+  async function handleBeforeStripePay() {
+    return attachPaymentIntentAndCreateOrder(
+      stripePaymentIntentIdRef.current ??
+        (stripeClientSecretRef.current
+          ? paymentIntentIdFromClientSecret(stripeClientSecretRef.current)
+          : null),
+    );
   }
 
   function handlePayPalPrefill(payload: PayPalPrefillPayload) {
@@ -557,11 +600,11 @@ export default function CheckoutPage() {
             itemCount={itemCount}
             chargeUsd={stripeChargeUsd}
             subtotalUsd={previewChargeUsd}
-            stripeClientSecret={stripeClientSecret}
+            stripeClientSecret={expressClientSecret}
             canPay={canPay}
             returnUrlTemplate={`${checkoutOrigin}/checkout/success?orderId={ORDER_ID}&provider=stripe&payment_intent={PAYMENT_INTENT_ID}`}
             onError={setPaymentError}
-            onBeforePay={handleBeforeStripePay}
+            onBeforePay={handleBeforeExpressPay}
             onPayPalPrefill={handlePayPalPrefill}
             onCreatePayPalOrder={handleCreatePayPalOrder}
             onCapturePayPalOrder={handleCapturePayPalOrder}

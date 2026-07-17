@@ -7,7 +7,7 @@ type PreviewCacheEntry = {
 };
 
 let previewCache: PreviewCacheEntry | null = null;
-let inflight: Promise<string | null> | null = null;
+const inflightByAmount = new Map<number, Promise<string | null>>();
 
 function amountCentsFromUsd(amountUsd: number): number {
   return Math.max(50, Math.round(amountUsd * 100));
@@ -30,9 +30,10 @@ export async function fetchStripePreviewClientSecret(amountUsd: number): Promise
   const cached = peekStripePreviewClientSecret(amountUsd);
   if (cached) return cached;
 
-  if (inflight) return inflight;
+  const existing = inflightByAmount.get(amountCents);
+  if (existing) return existing;
 
-  inflight = (async () => {
+  const inflight = (async () => {
     try {
       const res = await fetch("/api/checkout/stripe", {
         method: "POST",
@@ -50,10 +51,11 @@ export async function fetchStripePreviewClientSecret(amountUsd: number): Promise
     } catch {
       return null;
     } finally {
-      inflight = null;
+      inflightByAmount.delete(amountCents);
     }
   })();
 
+  inflightByAmount.set(amountCents, inflight);
   return inflight;
 }
 

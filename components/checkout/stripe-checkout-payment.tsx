@@ -69,6 +69,11 @@ function StripePayButton({
             type: "tabs",
             defaultCollapsed: false,
           },
+          wallets: {
+            applePay: "auto",
+            googlePay: "auto",
+            link: "auto",
+          },
         }}
       />
       <button
@@ -117,7 +122,7 @@ export function StripeCheckoutPayment({
   };
 
   return (
-    <Elements stripe={stripePromise} options={options} key={clientSecret}>
+    <Elements stripe={stripePromise} options={options} key={`pay-${clientSecret}`}>
       <StripePayButton
         disabled={disabled || submitting}
         canSubmit={canSubmit}
@@ -143,7 +148,11 @@ export function useStripePublishableKey(): {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (publishableKey) return;
+    if (publishableKey) {
+      void getStripePromise(publishableKey);
+      if (loading) setLoading(false);
+      return;
+    }
 
     let cancelled = false;
     void (async () => {
@@ -166,7 +175,7 @@ export function useStripePublishableKey(): {
     return () => {
       cancelled = true;
     };
-  }, [publishableKey, t]);
+  }, [publishableKey, loading, t]);
 
   return { publishableKey, loading, error };
 }

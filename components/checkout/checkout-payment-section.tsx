@@ -1,18 +1,14 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import type { CheckoutAddressForm as CheckoutAddressFormValue } from "@/lib/checkout-address";
 import { CheckoutAddressForm } from "@/components/checkout/checkout-address-form";
 import { PaymentBrandButtons } from "@/components/checkout/payment-brand-buttons";
-import { useStripePublishableKey } from "@/components/checkout/stripe-checkout-payment";
-
-const StripeCheckoutPayment = dynamic(
-  () =>
-    import("@/components/checkout/stripe-checkout-payment").then((m) => m.StripeCheckoutPayment),
-  { loading: () => <p className="text-sm text-muted">…</p> },
-);
+import {
+  StripeCheckoutPayment,
+  useStripePublishableKey,
+} from "@/components/checkout/stripe-checkout-payment";
 
 type PaymentMethodId = "stripe" | "paypal";
 
@@ -149,11 +145,12 @@ export function CheckoutPaymentSection({
 }) {
   const t = useTranslations("Checkout");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodId>("stripe");
-  const { publishableKey, loading: stripeKeyLoading, error: stripeKeyError } = useStripePublishableKey();
+  const { publishableKey, loading: stripeKeyLoading, error: stripeKeyError } =
+    useStripePublishableKey();
 
   if (!cartReady || itemCount === 0) return null;
 
-  const stripeBlocked = stripeKeyError && !publishableKey;
+  const stripeBlocked = Boolean(stripeKeyError && !publishableKey);
   const stripeSelected = paymentMethod === "stripe";
   const paypalSelected = paymentMethod === "paypal";
 
