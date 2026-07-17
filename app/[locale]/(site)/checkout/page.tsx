@@ -28,6 +28,7 @@ import { UsdChargeNotice } from "@/components/site/usd-charge-notice";
 import { runWhenIdle } from "@/lib/defer-non-critical";
 import { captureTrafficAttribution, getTrafficSourceForCheckout } from "@/lib/traffic-attribution";
 import { preloadStripe } from "@/lib/stripe-browser";
+import { paymentIntentIdFromClientSecret } from "@/lib/stripe";
 import {
   fetchStripePreviewClientSecret,
   peekStripePreviewClientSecret,
@@ -111,6 +112,9 @@ export default function CheckoutPage() {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [paymentOrderId, setPaymentOrderId] = useState<string | null>(null);
   const [checkoutOrigin, setCheckoutOrigin] = useState("");
+  const orderIdRef = useRef<string | null>(null);
+  const draftOrderPromiseRef = useRef<Promise<string> | null>(null);
+  const stripePaymentIntentIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (searchParams.get("from") === "paypal-express") return;
@@ -192,6 +196,30 @@ export default function CheckoutPage() {
   const previewChargeUsd = Math.max(0.5, subtotal - couponDiscount);
   const stripeChargeUsd = canPay ? total : previewChargeUsd;
 
+  const checkoutFingerprint = useMemo(
+    () =>
+      JSON.stringify({
+        itemKeys: items
+          .map((line) => `${line.slug}:${line.variantId ?? ""}:${line.qty}`)
+          .sort(),
+        totalCents: Math.round(total * 100),
+        shippingMethodId,
+        coupon: appliedCoupon?.code ?? null,
+      }),
+    [items, total, shippingMethodId, appliedCoupon?.code],
+  );
+
+  useEffect(() => {
+    orderIdRef.current = null;
+    draftOrderPromiseRef.current = null;
+    setOrderId(null);
+    setPaymentOrderId(null);
+  }, [checkoutFingerprint]);
+
+  function getExistingDraftOrderId(): string | null {
+    return orderIdRef.current ?? orderId;
+  }
+
   async function checkoutFetch(input: string, init: RequestInit) {
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), 30_000);
@@ -211,63 +239,76 @@ export default function CheckoutPage() {
     window.location.replace(url);
   }
 
-  async function ensureDraftOrder() {
-    if (!customerEmail.trim()) throw new Error(t("emailRequired"));
-    const res = await fetch("/api/checkout/order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: customerEmail,
-        totalUsd: total,
-        items: items.map((line) => {
-          const unitPrice = line.unitPrice ?? 0;
-          const lineTotal = unitPrice * line.qty;
-          return {
-            slug: line.slug,
-            name: line.productName ?? line.slug,
-            productName: line.productName ?? line.slug,
-            qty: line.qty,
-            unitPrice,
-            unitAmountCents: Math.round(unitPrice * 100),
-            lineTotal,
-            lineTotalCents: Math.round(lineTotal * 100),
-            variantId: line.variantId,
-            variantLabel: line.variantLabel,
-            variantImage: line.variantImage,
-          };
-        }),
-        billing: billingAddress,
-        shipping: {
-          ...shipAddress,
+  async function ensureDraftOrder(): Promise<string> {
+    const existing = getExistingDraftOrderId();
+    if (existing) return existing;
+    if (draftOrderPromiseRef.current) return draftOrderPromiseRef.current;
+
+    draftOrderPromiseRef.current = (async () => {
+      if (!customerEmail.trim()) throw new Error(t("emailRequired"));
+      const res = await checkoutFetch("/api/checkout/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: customerEmail,
+          totalUsd: total,
+          items: items.map((line) => {
+            const unitPrice = line.unitPrice ?? 0;
+            const lineTotal = unitPrice * line.qty;
+            return {
+              slug: line.slug,
+              name: line.productName ?? line.slug,
+              productName: line.productName ?? line.slug,
+              qty: line.qty,
+              unitPrice,
+              unitAmountCents: Math.round(unitPrice * 100),
+              lineTotal,
+              lineTotalCents: Math.round(lineTotal * 100),
+              variantId: line.variantId,
+              variantLabel: line.variantLabel,
+              variantImage: line.variantImage,
+            };
+          }),
+          billing: billingAddress,
+          shipping: {
+            ...shipAddress,
+            shippingFeeCents,
+            surchargeCents,
+            shippingTotalCents,
+            shippingRateKey: shippingFeeQuote?.rateKey ?? null,
+            shippingCountryCode: shipAddress.country,
+            postalZone: shippingFeeQuote?.postalZone ?? null,
+            shippingMethodId,
+          },
+          shippingMethodId,
           shippingFeeCents,
           surchargeCents,
-          shippingTotalCents,
-          shippingRateKey: shippingFeeQuote?.rateKey ?? null,
-          shippingCountryCode: shipAddress.country,
-          postalZone: shippingFeeQuote?.postalZone ?? null,
-          shippingMethodId,
-        },
-        shippingMethodId,
-        shippingFeeCents,
-        surchargeCents,
-        couponCode: appliedCoupon?.code ?? null,
-        discountCents: couponDiscountCents,
-        trafficSource: getTrafficSourceForCheckout(),
-      }),
-    });
-    const data = (await res.json()) as {
-      ok?: boolean;
-      orderId?: string;
-      error?: string;
-      errorCode?: string;
-      addressScope?: string;
-      validationKey?: string;
-    };
-    if (!res.ok || !data.ok || !data.orderId) {
-      throw new Error(resolveCheckoutOrderErrorMessage(data, t, tAddr));
+          couponCode: appliedCoupon?.code ?? null,
+          discountCents: couponDiscountCents,
+          trafficSource: getTrafficSourceForCheckout(),
+        }),
+      });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        orderId?: string;
+        error?: string;
+        errorCode?: string;
+        addressScope?: string;
+        validationKey?: string;
+      };
+      if (!res.ok || !data.ok || !data.orderId) {
+        throw new Error(resolveCheckoutOrderErrorMessage(data, t, tAddr));
+      }
+      orderIdRef.current = data.orderId;
+      setOrderId(data.orderId);
+      return data.orderId;
+    })();
+
+    try {
+      return await draftOrderPromiseRef.current;
+    } finally {
+      draftOrderPromiseRef.current = null;
     }
-    setOrderId(data.orderId);
-    return data.orderId;
   }
 
   async function beginPayPalCheckout() {
@@ -278,7 +319,7 @@ export default function CheckoutPage() {
     setPaymentError(null);
     setLoading("paypal");
     try {
-      const draftOrderId = orderId ?? (await ensureDraftOrder());
+      const draftOrderId = getExistingDraftOrderId() ?? (await ensureDraftOrder());
       const res = await checkoutFetch("/api/checkout/paypal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -314,6 +355,7 @@ export default function CheckoutPage() {
     if (!cartReady || itemCount === 0) {
       setStripeClientSecret(null);
       stripeClientSecretRef.current = null;
+      stripePaymentIntentIdRef.current = null;
       setPaymentOrderId(null);
       return;
     }
@@ -325,10 +367,6 @@ export default function CheckoutPage() {
       void (async () => {
         setStripeFormLoading(true);
         try {
-          let draftOrderId = orderId;
-          if (canPay) {
-            draftOrderId = orderId ?? (await ensureDraftOrder());
-          }
           if (cancelled) return;
 
           let clientSecret: string | null = null;
@@ -340,7 +378,6 @@ export default function CheckoutPage() {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                orderId: canPay ? draftOrderId : undefined,
                 totalUsd: stripeChargeUsd,
                 customerEmail: customerEmail.trim() || undefined,
               }),
@@ -348,25 +385,30 @@ export default function CheckoutPage() {
             const data = (await res.json()) as {
               ok?: boolean;
               clientSecret?: string;
+              paymentIntentId?: string;
               error?: string;
             };
             if (!res.ok || !data.ok || !data.clientSecret) {
               throw new Error(data.error || t("stripeError"));
             }
             clientSecret = data.clientSecret;
+            if (data.paymentIntentId) {
+              stripePaymentIntentIdRef.current = data.paymentIntentId;
+            } else {
+              stripePaymentIntentIdRef.current =
+                paymentIntentIdFromClientSecret(data.clientSecret);
+            }
           }
           if (!cancelled && clientSecret) {
             setStripeClientSecret(clientSecret);
             stripeClientSecretRef.current = clientSecret;
-            if (draftOrderId) setPaymentOrderId(draftOrderId);
           }
         } catch (e) {
-          if (!cancelled) {
-            if (canPay) {
-              setStripeClientSecret(null);
-              stripeClientSecretRef.current = null;
-              setPaymentError(e instanceof Error ? e.message : t("stripeError"));
-            }
+          if (!cancelled && canPay) {
+            setStripeClientSecret(null);
+            stripeClientSecretRef.current = null;
+            stripePaymentIntentIdRef.current = null;
+            setPaymentError(e instanceof Error ? e.message : t("stripeError"));
           }
         } finally {
           if (!cancelled) setStripeFormLoading(false);
@@ -383,7 +425,29 @@ export default function CheckoutPage() {
 
   async function handleBeforeStripePay() {
     if (!canPay) throw new Error(t("completeDetailsToPay"));
-    return orderId ?? (await ensureDraftOrder());
+    const draftOrderId = await ensureDraftOrder();
+
+    let paymentIntentId = stripePaymentIntentIdRef.current;
+    if (!paymentIntentId && stripeClientSecretRef.current) {
+      paymentIntentId = paymentIntentIdFromClientSecret(stripeClientSecretRef.current);
+    }
+    if (paymentIntentId) {
+      const res = await checkoutFetch("/api/checkout/stripe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "attach",
+          orderId: draftOrderId,
+          paymentIntentId,
+        }),
+      });
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || t("stripeError"));
+      }
+    }
+
+    return draftOrderId;
   }
 
   function handlePayPalPrefill(payload: PayPalPrefillPayload) {
@@ -408,7 +472,7 @@ export default function CheckoutPage() {
 
   async function handleCreatePayPalOrder() {
     if (!customerEmail.trim()) throw new Error(t("emailRequired"));
-    const draftOrderId = orderId ?? (await ensureDraftOrder());
+    const draftOrderId = getExistingDraftOrderId() ?? (await ensureDraftOrder());
     return {
       orderId: draftOrderId,
       totalUsd: total,

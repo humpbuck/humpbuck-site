@@ -124,6 +124,70 @@ function getStripePublishableKey(): string | null {
   );
 }
 
+export function paymentIntentIdFromClientSecret(clientSecret: string): string | null {
+  const marker = "_secret_";
+  const idx = clientSecret.indexOf(marker);
+  if (idx <= 0) return null;
+  return clientSecret.slice(0, idx);
+}
+
+/**
+ * Link an existing Payment Intent to a HUMPBUCK order before the buyer confirms payment.
+ */
+async function attachStripePaymentIntentToOrder(params: {
+  paymentIntentId: string;
+  orderId: string;
+  expectedAmountCents: number;
+}): Promise<void> {
+  const key = getStripeSecretKey();
+  if (!key) {
+    throw new Error("Stripe not configured");
+  }
+
+  const getRes = await fetch(
+    `https://api.stripe.com/v1/payment_intents/${encodeURIComponent(params.paymentIntentId)}`,
+    { headers: { Authorization: `Bearer ${key}` } },
+  );
+  const pi = (await getRes.json()) as {
+    id?: string;
+    amount?: number;
+    status?: string;
+    metadata?: { orderId?: string };
+    error?: { message?: string };
+  };
+  if (!getRes.ok || !pi.id) {
+    throw new Error(pi.error?.message || "Payment intent not found");
+  }
+  if (pi.amount !== params.expectedAmountCents) {
+    throw new Error("Payment amount does not match order total");
+  }
+  if (pi.status === "succeeded" || pi.status === "canceled") {
+    throw new Error("Payment intent is no longer usable");
+  }
+  if (pi.metadata?.orderId === params.orderId) {
+    return;
+  }
+
+  const body = new URLSearchParams();
+  body.set("metadata[orderId]", params.orderId);
+
+  const updateRes = await fetch(
+    `https://api.stripe.com/v1/payment_intents/${encodeURIComponent(params.paymentIntentId)}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body,
+    },
+  );
+  const updated = (await updateRes.json()) as { error?: { message?: string } };
+  if (!updateRes.ok) {
+    throw new Error(updated.error?.message || "Failed to link payment to order");
+  }
+}
+
 async function verifyStripePaymentIntentForOrder(
   paymentIntentId: string,
   orderId: string,
@@ -149,4 +213,11 @@ async function verifyStripePaymentIntentForOrder(
   }
 }
 
-export { createStripeCheckoutSession, createStripePaymentIntent, getStripe, getStripePublishableKey, verifyStripePaymentIntentForOrder };
+export {
+  attachStripePaymentIntentToOrder,
+  createStripeCheckoutSession,
+  createStripePaymentIntent,
+  getStripe,
+  getStripePublishableKey,
+  verifyStripePaymentIntentForOrder,
+};
