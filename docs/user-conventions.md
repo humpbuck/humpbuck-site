@@ -125,6 +125,8 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-25 | **商家后台 Blog** 对齐 watchsourcego：顶部 New/Edit 表单 + TipTap 正文编辑器（标题/对齐/颜色/图视频）+ Related products + 下方文章列表；正文只存 HTML（全新，无旧标记兼容）。 |
 | 2026-07-25 | **首页 Blog carousel 下线**：后台 Blog 去掉 Homepage carousel 字段；前台不再渲染 `HomeBlogCarouselAsyncSection`。 |
 | 2026-07-25 | **首页 SEARCH BY 分类滑块下线**；改为 Featured Ready Stock 商品网格（桌面 4×3=12），顶栏 View all / 底栏 Browse Full Catalog 进 `/product`；该区块文案 13 语种已齐（对齐 watchsourcego）。 |
+| 2026-07-25 | **首页商品卡片不传 PDP gallery**：Recommended / Featured 进客户端前经 `toStorefrontCardProduct` 去掉 `galleryImages` / detail / promo 等，只留封面 + hover 道具 + 色块 `variantOptions`（`lib/storefront-card-product.ts`）。 |
+| 2026-07-25 | **卡片裁剪扩到全站列表**：`/product`、系列页、PDP「You may also like」、博客相关商品同样经 `toStorefrontCardProduct`；保留 `categoryId` 供商店分类筛选；色块图 `loading="lazy"`。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 

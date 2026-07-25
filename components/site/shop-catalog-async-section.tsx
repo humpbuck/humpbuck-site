@@ -6,6 +6,7 @@ import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getAllProductCategories } from "@/lib/product-categories";
 import { prisma } from "@/lib/prisma";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
+import { mapToStorefrontCardProducts } from "@/lib/storefront-card-product";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
 
 function formatShopUpdatedDate(date: Date, locale: string): string {
@@ -50,19 +51,18 @@ export async function ShopCatalogAsyncSection({
   const list = all.map((p) => applyStorefrontProductLocale(p, locale, messages));
   const { covers: cardImages, hovers: cardHoverImages } =
     await mapProductsToShopCardImages(list);
+  const cardProducts = mapToStorefrontCardProducts(list, cardImages);
 
   const cardImagesBySlug: Record<string, string> = {};
   const cardHoverImagesBySlug: Record<string, string> = {};
-  list.forEach((p, i) => {
+  cardProducts.forEach((p, i) => {
     const cover = cardImages[i]?.trim();
     const hover = cardHoverImages[i]?.trim();
     if (cover) cardImagesBySlug[p.slug] = cover;
     if (hover) cardHoverImagesBySlug[p.slug] = hover;
   });
 
-  const gridImageUrls = list.map(
-    (p, i) => cardImages[i]?.trim() || p.image,
-  );
+  const gridImageUrls = cardProducts.map((p) => p.image);
   const updatedDate = formatShopUpdatedDate(
     latestRow?.updatedAt ?? new Date(),
     locale,
@@ -70,10 +70,12 @@ export async function ShopCatalogAsyncSection({
 
   return (
     <>
-      {list.length > 0 ? <PreloadProductGridImages urls={gridImageUrls} /> : null}
+      {cardProducts.length > 0 ? (
+        <PreloadProductGridImages urls={gridImageUrls} />
+      ) : null}
       <Suspense fallback={null}>
         <ShopCatalogClient
-          products={list}
+          products={cardProducts}
           categories={categories.map((c) => ({
             id: c.id,
             name: c.name,

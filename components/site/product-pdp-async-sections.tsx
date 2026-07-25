@@ -23,6 +23,7 @@ import { ProductDetailClient } from "@/components/site/ProductDetailClient";
 import { ProductPdpGallerySyncProvider } from "@/components/site/product-pdp-gallery-sync";
 import { resolvePdpCloserLookBlocks, resolveStorefrontProductMedia } from "@/lib/r2-pdp-media";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
+import { mapToStorefrontCardProducts } from "@/lib/storefront-card-product";
 import { resolveHomeFaqItems } from "@/lib/site-home-content";
 import { getSiteHomeContent } from "@/lib/site-home-content-queries";
 
@@ -261,13 +262,14 @@ export async function ProductPdpRelatedAsyncSection({
   const [{ covers: relatedCardImages, hovers: relatedCardHoverImages }] = await Promise.all([
     mapProductsToShopCardImages(related),
   ]);
+  const relatedCards = mapToStorefrontCardProducts(related, relatedCardImages);
 
   return (
     <section className="border-t border-line bg-paper py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <h2 className="font-serif text-2xl">{t("youMayAlsoLike")}</h2>
         <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
-          {related.map((p, i) => (
+          {relatedCards.map((p, i) => (
             <ProductCard
               key={p.slug}
               product={p}

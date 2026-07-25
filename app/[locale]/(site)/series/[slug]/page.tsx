@@ -7,6 +7,7 @@ import { PreloadProductGridImages } from "@/components/site/preload-product-grid
 import { getSeriesBySlug, normalizeSeriesSlug, resolveSeriesInfo, seriesList } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
+import { mapToStorefrontCardProducts } from "@/lib/storefront-card-product";
 import { routing } from "@/i18n/routing";
 import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
@@ -82,7 +83,8 @@ export default async function SeriesPage({
 
   const { covers: cardImages, hovers: cardHoverImages } =
     await mapProductsToShopCardImages(items);
-  const gridImageUrls = items.map((p, i) => cardImages[i]?.trim() || p.image);
+  const cardItems = mapToStorefrontCardProducts(items, cardImages);
+  const gridImageUrls = cardItems.map((p) => p.image);
 
   const heroClass =
     series.theme === "digital"
@@ -93,7 +95,7 @@ export default async function SeriesPage({
 
   return (
     <div>
-      {items.length > 0 ? <PreloadProductGridImages urls={gridImageUrls} /> : null}
+      {cardItems.length > 0 ? <PreloadProductGridImages urls={gridImageUrls} /> : null}
       <section className={`relative overflow-hidden border-b border-white/10 ${heroClass}`}>
         <div className="pointer-events-none absolute inset-0 opacity-35">
           <StorefrontImage
@@ -136,10 +138,10 @@ export default async function SeriesPage({
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:py-16">
         <h2 className="font-serif text-2xl">{t("models")}</h2>
         <p className="mt-2 text-sm text-muted">
-          {t("piecesInSeries", { count: items.length })}
+          {t("piecesInSeries", { count: cardItems.length })}
         </p>
         <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
-          {items.map((p, i) => (
+          {cardItems.map((p, i) => (
             <ProductCard
               key={p.slug}
               product={p}

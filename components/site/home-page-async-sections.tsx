@@ -7,6 +7,7 @@ import { getProductMovement, type Product } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
 import { R2 } from "@/lib/r2";
+import { mapToStorefrontCardProducts } from "@/lib/storefront-card-product";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
 import { getProductFiveStarReviewCounts } from "@/lib/product-reviews-queries";
 
@@ -46,20 +47,22 @@ export async function HomeRecommendedAsyncSection({ locale }: { locale: string }
   );
   const { covers: recommendedCardImages, hovers: recommendedCardHoverImages } =
     await mapProductsToShopCardImages(recommended);
-  const recommendedImageUrls = recommended.map(
-    (p, i) => recommendedCardImages[i]?.trim() || p.image,
+  const recommendedCards = mapToStorefrontCardProducts(
+    recommended,
+    recommendedCardImages,
   );
+  const recommendedImageUrls = recommendedCards.map((p) => p.image);
   const fiveStarReviewCounts = await fiveStarCountsForSlugs(
-    recommended.map((p) => p.slug),
+    recommendedCards.map((p) => p.slug),
   );
 
   return (
     <>
-      {recommended.length > 0 ? (
+      {recommendedCards.length > 0 ? (
         <PreloadHomeFeaturedImages urls={recommendedImageUrls} />
       ) : null}
       <HomeRecommendedProducts
-        products={recommended}
+        products={recommendedCards}
         cardImages={recommendedCardImages}
         cardHoverImages={recommendedCardHoverImages}
         fiveStarReviewCounts={fiveStarReviewCounts}
@@ -141,16 +144,19 @@ export async function HomeFeaturedAsyncSection({ locale }: { locale: string }) {
     .map((p) => applyStorefrontProductLocale(p, locale, messages));
   const { covers: featuredCardImages, hovers: featuredCardHoverImages } =
     await mapProductsToShopCardImages(featured);
-  const featuredImageUrls = featured.map(
-    (p, i) => featuredCardImages[i]?.trim() || p.image,
+  const featuredCards = mapToStorefrontCardProducts(featured, featuredCardImages);
+  const featuredImageUrls = featuredCards.map((p) => p.image);
+  const fiveStarReviewCounts = await fiveStarCountsForSlugs(
+    featuredCards.map((p) => p.slug),
   );
-  const fiveStarReviewCounts = await fiveStarCountsForSlugs(featured.map((p) => p.slug));
 
   return (
     <>
-      {featured.length > 0 ? <PreloadHomeFeaturedImages urls={featuredImageUrls} /> : null}
+      {featuredCards.length > 0 ? (
+        <PreloadHomeFeaturedImages urls={featuredImageUrls} />
+      ) : null}
       <HomeFeaturedProductsSection
-        products={featured}
+        products={featuredCards}
         cardImages={featuredCardImages}
         cardHoverImages={featuredCardHoverImages}
         fiveStarReviewCounts={fiveStarReviewCounts}

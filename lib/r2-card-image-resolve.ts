@@ -18,7 +18,7 @@ export function resolveShopCardImagesFromGallery(
   };
 }
 
-/** Card tile baseline: gallery first image default, second on hover. */
+/** Card tile baseline: prefer explicit card URLs; else gallery[0]/[1]. */
 export function resolveProductCardDisplayImages(
   product: {
     image: string;
@@ -28,12 +28,16 @@ export function resolveProductCardDisplayImages(
   cardImageUrl?: string,
   cardHoverImageUrl?: string,
 ): { primarySrc: string; hoverSrc?: string } {
+  const cover = cardImageUrl?.trim();
+  const hover = cardHoverImageUrl?.trim();
+  if (cover) {
+    return { primarySrc: cover, hoverSrc: hover || undefined };
+  }
   const fromGallery = resolveShopCardImagesFromGallery(
     product.galleryImages ?? product.images,
   );
-  const primarySrc =
-    cardImageUrl?.trim() || fromGallery.cover?.trim() || product.image.trim();
-  const hoverSrc =
-    cardHoverImageUrl?.trim() || fromGallery.hover?.trim() || undefined;
-  return { primarySrc, hoverSrc };
+  return {
+    primarySrc: fromGallery.cover?.trim() || product.image.trim(),
+    hoverSrc: hover || fromGallery.hover?.trim() || undefined,
+  };
 }

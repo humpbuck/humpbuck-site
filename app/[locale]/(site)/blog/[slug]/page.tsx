@@ -1,7 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { BlogArticleBody } from "@/components/site/blog-article-body";
 import { ProductCard } from "@/components/site/ProductCard";
 import { StorefrontImage } from "@/components/site/storefront-image";
@@ -12,9 +12,12 @@ import {
   listPublishedBlogPosts,
 } from "@/lib/blog-posts";
 import { getMergedCatalogProductsByIds } from "@/lib/catalog-db";
+import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
+import { mapToStorefrontCardProducts } from "@/lib/storefront-card-product";
 import { routing } from "@/i18n/routing";
 import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
+import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
 
 /** Cached until admin blog saves or deploy; no time-based expiry. */
 export const revalidate = false;
@@ -96,7 +99,19 @@ export default async function BlogArticlePage({
   const post = await getPublishedBlogPostBySlug(slug);
   if (!post) notFound();
 
-  const related = await getMergedCatalogProductsByIds(post.productIds);
+  const relatedRaw = await getMergedCatalogProductsByIds(post.productIds);
+  const messages = await getMessages({ locale });
+  const relatedLocalized = relatedRaw.map((p) =>
+    applyStorefrontProductLocale(p, locale, messages),
+  );
+  const { covers: relatedCardImages, hovers: relatedCardHoverImages } =
+    relatedLocalized.length > 0
+      ? await mapProductsToShopCardImages(relatedLocalized)
+      : { covers: [], hovers: [] };
+  const related = mapToStorefrontCardProducts(
+    relatedLocalized,
+    relatedCardImages,
+  );
   const dateLabel = formatBlogPostDate(post.publishedAt, locale);
 
   return (
@@ -153,8 +168,13 @@ export default async function BlogArticlePage({
             {t("relatedProducts")}
           </h2>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {related.map((product) => (
-              <ProductCard key={product.slug} product={product} />
+            {related.map((product, i) => (
+              <ProductCard
+                key={product.slug}
+                product={product}
+                cardImageUrl={relatedCardImages[i] ?? undefined}
+                cardHoverImageUrl={relatedCardHoverImages[i] ?? undefined}
+              />
             ))}
           </div>
         </section>

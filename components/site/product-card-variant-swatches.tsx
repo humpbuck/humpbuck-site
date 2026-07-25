@@ -65,6 +65,8 @@ export function ProductCardVariantSwatches({
                 src={opt.image}
                 alt=""
                 fill
+                loading="lazy"
+                fetchPriority="low"
                 className="object-cover object-center"
                 sizes="28px"
                 onError={() => setImageErrorId((m) => ({ ...m, [opt.id]: true }))}
