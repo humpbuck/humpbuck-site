@@ -116,13 +116,27 @@ export function HomeCouponSectionFallback() {
   );
 }
 
-export function HomeCategorySlidersFallback() {
+/** 4×3 product grid placeholder (desktop); 2-col on small screens. */
+export function HomeFeaturedGridFallback() {
   return (
-    <>
-      {Array.from({ length: 3 }).map((_, i) => (
-        <HomeProductSliderSectionFallback key={i} />
-      ))}
-    </>
+    <section
+      className="border-t border-line bg-paper py-16 sm:py-20"
+      aria-busy="true"
+      aria-label="Loading"
+    >
+      <div className="mx-auto max-w-7xl animate-pulse px-4 sm:px-6">
+        <PulseBlock className="mx-auto h-8 w-48" />
+        <div className="mt-14 grid grid-cols-2 gap-x-3 gap-y-8 sm:mt-16 sm:grid-cols-4 sm:gap-x-4 sm:gap-y-10 lg:mt-20 lg:gap-x-6">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div key={i}>
+              <PulseBlock className="aspect-square w-full rounded-xl bg-ink/[0.06]" />
+              <PulseBlock className="mt-3 h-4 w-full" />
+              <PulseBlock className="mt-2 h-3 w-2/3" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 

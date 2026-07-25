@@ -175,9 +175,9 @@
     "certaintySupportCta": "サポートチームに連絡",
     "momentsHeading": "あらゆるモードのために",
     "momentsLead": "日常のルーティンから新しい冒険まで、ひとつの時計がすべての瞬間に寄り添います。",
-    "momentsCard1Title": "Everyday Mode",
+    "momentsCard1Title": "エブリデイモード",
     "momentsCard1Description": "時刻、日付、アラーム、デュアルタイムで日常のリズムに。",
-    "momentsCard2Title": "Adventure Mode",
+    "momentsCard2Title": "アドベンチャーモード",
     "momentsCard2Description": "ストップウォッチとデュアルタイムで、旅・動き・これからのすべてに。",
     "recommendedAdd": "追加",
     "recommendedSliderPrev": "前の商品",
@@ -202,7 +202,11 @@
     "couponNoCodeMessage": "管理画面でホームページ用クーポンが設定されると、ここに表示されます。",
     "couponTaglineLine1": "人生に標準的な答えはありません。",
     "couponTaglineLine2": "自分のやり方で生きてください。",
-    "couponModalClose": "閉じる"
+    "couponModalClose": "閉じる",
+    "featuredReadyTitle": "注目の在庫ありウォッチ",
+    "featuredReadySubtitle": "取り扱いモデルを見て、時計をクリックすると詳細の確認と卸売価格のお問い合わせができます。",
+    "featuredViewAll": "すべて見る →",
+    "browseFullCatalog": "カタログをすべて見る"
   },
   "Newsletter": {
     "emailLabel": "メール",

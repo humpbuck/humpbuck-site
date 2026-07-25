@@ -173,9 +173,9 @@
     "certaintySupportCta": "Contacte a nuestro equipo de soporte",
     "momentsHeading": "Hechos para cada modo",
     "momentsLead": "De la rutina diaria a nuevas aventuras, un reloj acompaña cada momento.",
-    "momentsCard1Title": "Everyday Mode",
+    "momentsCard1Title": "Modo cotidiano",
     "momentsCard1Description": "Hora, fecha, alarma y hora dual para el ritmo del día a día.",
-    "momentsCard2Title": "Adventure Mode",
+    "momentsCard2Title": "Modo aventura",
     "momentsCard2Description": "Cronómetro y hora dual para viajes, movimiento y lo que viene.",
     "recommendedAdd": "Añadir",
     "recommendedSliderPrev": "Productos anteriores",
@@ -202,7 +202,11 @@
     "couponTaglineLine2": "Vívela a su manera.",
     "couponModalClose": "Cerrar",
     "certaintyOrderTitle": "¿Cómo se procesa mi pedido?",
-    "certaintyOrderBody": "Tras completar el pago, verá una confirmación de pago exitoso y recibirá un correo con su número de pedido, detalles del producto, dirección de envío y contacto de atención al cliente.\n\nSu pedido suele enviarse en 1–2 días laborables. Una vez enviado, recibirá otro correo con el número de seguimiento y el sitio web de tracking para seguir su paquete con tranquilidad."
+    "certaintyOrderBody": "Tras completar el pago, verá una confirmación de pago exitoso y recibirá un correo con su número de pedido, detalles del producto, dirección de envío y contacto de atención al cliente.\n\nSu pedido suele enviarse en 1–2 días laborables. Una vez enviado, recibirá otro correo con el número de seguimiento y el sitio web de tracking para seguir su paquete con tranquilidad.",
+    "featuredReadyTitle": "Relojes destacados en stock",
+    "featuredReadySubtitle": "Explore los estilos disponibles y haga clic en cualquier reloj para ver detalles y consultar precios mayoristas.",
+    "featuredViewAll": "Ver todo →",
+    "browseFullCatalog": "Ver catálogo completo"
   },
   "Newsletter": {
     "emailLabel": "Correo electrónico",

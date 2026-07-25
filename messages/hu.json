@@ -173,9 +173,9 @@
     "certaintySupportCta": "Lépjen kapcsolatba ügyfélszolgálatunkkal",
     "momentsHeading": "Minden módra tervezve",
     "momentsLead": "A mindennapi rutinoktól az új kalandokig egy óra tart lépést minden pillanattal.",
-    "momentsCard1Title": "Everyday Mode",
+    "momentsCard1Title": "Mindennapi mód",
     "momentsCard1Description": "Idő, dátum, ébresztő és dual time a mindennapok ritmusához.",
-    "momentsCard2Title": "Adventure Mode",
+    "momentsCard2Title": "Kaland mód",
     "momentsCard2Description": "Stopper és dual time utazáshoz, mozgáshoz és mindenhez, ami előttünk áll.",
     "recommendedAdd": "Hozzáadás",
     "recommendedSliderPrev": "Előző termékek",
@@ -202,7 +202,11 @@
     "couponTaglineLine2": "Élje az Ön módján.",
     "couponModalClose": "Bezárás",
     "certaintyOrderTitle": "Hogyan dolgozzuk fel a rendelésemet?",
-    "certaintyOrderBody": "A fizetés befejezése után megjelenik a sikeres fizetés visszaigazolása, és e-mailt kap rendelésszámmal, termékadatokkal, szállítási címmel és ügyfélszolgálati elérhetőséggel.\n\nRendelését általában 1–2 munkanapon belül feladjuk. Feladás után újabb e-mail érkezik a nyomkövetési számmal és weboldallal, hogy nyugodtan követhesse csomagját."
+    "certaintyOrderBody": "A fizetés befejezése után megjelenik a sikeres fizetés visszaigazolása, és e-mailt kap rendelésszámmal, termékadatokkal, szállítási címmel és ügyfélszolgálati elérhetőséggel.\n\nRendelését általában 1–2 munkanapon belül feladjuk. Feladás után újabb e-mail érkezik a nyomkövetési számmal és weboldallal, hogy nyugodtan követhesse csomagját.",
+    "featuredReadyTitle": "Kiemelt raktáron lévő órák",
+    "featuredReadySubtitle": "Böngésszen az elérhető modellek között, és kattintson bármely órára a részletekért és a nagykereskedelmi árakért.",
+    "featuredViewAll": "Összes megtekintése →",
+    "browseFullCatalog": "Teljes katalógus böngészése"
   },
   "Newsletter": {
     "emailLabel": "E-mail",

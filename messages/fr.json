@@ -173,9 +173,9 @@
     "certaintySupportCta": "Contacter notre équipe d'assistance",
     "momentsHeading": "Conçues pour chaque mode",
     "momentsLead": "Du quotidien aux nouvelles aventures, une montre suit chaque moment.",
-    "momentsCard1Title": "Everyday Mode",
+    "momentsCard1Title": "Mode quotidien",
     "momentsCard1Description": "Heure, date, alarme et double fuseau pour le rythme du quotidien.",
-    "momentsCard2Title": "Adventure Mode",
+    "momentsCard2Title": "Mode aventure",
     "momentsCard2Description": "Chronomètre et double fuseau pour les voyages, le mouvement et la suite.",
     "recommendedAdd": "Ajouter",
     "recommendedSliderPrev": "Produits précédents",
@@ -202,7 +202,11 @@
     "couponTaglineLine2": "Vivez-la à votre façon.",
     "couponModalClose": "Fermer",
     "certaintyOrderTitle": "Comment ma commande est-elle traitée ?",
-    "certaintyOrderBody": "Une fois votre paiement effectué, vous verrez une confirmation de paiement réussi et recevrez un e-mail de confirmation avec votre numéro de commande, les détails du produit, l'adresse de livraison et les coordonnées du service client.\n\nVotre commande est généralement expédiée sous 1 à 2 jours ouvrés. Une fois expédiée, vous recevrez un autre e-mail avec votre numéro de suivi et le site de suivi, pour suivre votre colis en toute sérénité."
+    "certaintyOrderBody": "Une fois votre paiement effectué, vous verrez une confirmation de paiement réussi et recevrez un e-mail de confirmation avec votre numéro de commande, les détails du produit, l'adresse de livraison et les coordonnées du service client.\n\nVotre commande est généralement expédiée sous 1 à 2 jours ouvrés. Une fois expédiée, vous recevrez un autre e-mail avec votre numéro de suivi et le site de suivi, pour suivre votre colis en toute sérénité.",
+    "featuredReadyTitle": "Montres en stock prêt — sélection",
+    "featuredReadySubtitle": "Parcourez les styles disponibles et cliquez sur une montre pour voir les détails et demander un tarif en gros.",
+    "featuredViewAll": "Tout voir →",
+    "browseFullCatalog": "Parcourir le catalogue complet"
   },
   "Newsletter": {
     "emailLabel": "E-mail",

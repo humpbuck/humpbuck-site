@@ -173,9 +173,9 @@
     "certaintySupportCta": "Neem contact op met ons supportteam",
     "momentsHeading": "Gemaakt voor elke modus",
     "momentsLead": "Van dagelijkse routines tot nieuwe avonturen: één horloge houdt elke moment bij.",
-    "momentsCard1Title": "Everyday Mode",
+    "momentsCard1Title": "Dagelijks modus",
     "momentsCard1Description": "Tijd, datum, alarm en dual time voor het ritme van het dagelijks leven.",
-    "momentsCard2Title": "Adventure Mode",
+    "momentsCard2Title": "Avontuurmodus",
     "momentsCard2Description": "Stopwatch en dual time voor reizen, beweging en alles wat volgt.",
     "recommendedAdd": "Toevoegen",
     "recommendedSliderPrev": "Vorige producten",
@@ -202,7 +202,11 @@
     "couponTaglineLine2": "Leef het op jouw manier.",
     "couponModalClose": "Sluiten",
     "certaintyOrderTitle": "Hoe wordt mijn bestelling verwerkt?",
-    "certaintyOrderBody": "Na uw betaling ziet u een bevestiging van geslaagde betaling en ontvangt u een bevestigingsmail met bestelnummer, productdetails, verzendadres en contactgegevens van de klantenservice.\n\nUw bestelling wordt meestal binnen 1–2 werkdagen verzonden. Na verzending ontvangt u nog een e-mail met trackingnummer en trackingwebsite, zodat u uw pakket rustig kunt volgen."
+    "certaintyOrderBody": "Na uw betaling ziet u een bevestiging van geslaagde betaling en ontvangt u een bevestigingsmail met bestelnummer, productdetails, verzendadres en contactgegevens van de klantenservice.\n\nUw bestelling wordt meestal binnen 1–2 werkdagen verzonden. Na verzending ontvangt u nog een e-mail met trackingnummer en trackingwebsite, zodat u uw pakket rustig kunt volgen.",
+    "featuredReadyTitle": "Uitgelichte horloges uit voorraad",
+    "featuredReadySubtitle": "Bekijk beschikbare stijlen en klik op een horloge voor details en om groothandelsprijzen aan te vragen.",
+    "featuredViewAll": "Alles bekijken →",
+    "browseFullCatalog": "Volledige catalogus bekijken"
   },
   "Newsletter": {
     "emailLabel": "E-mail",

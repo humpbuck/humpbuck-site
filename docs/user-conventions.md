@@ -104,14 +104,14 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-15 | **OEM/ODM 产品文案**：询价表单、精选型号等产品名/规格与商店、PDP 共用 `applyStorefrontProductLocale` + `messages/product-copy.{locale}.json`；页面文案仅放 `OemOdmPage` 等 namespace，不为 OEM 单独维护产品翻译。 |
 | 2026-07-25 | Windows 上 `npm run dev` 风扇狂转：Turbopack `.next` 曾写入错误盘符绝对路径（如 `H:\MY-STORES\…`）；启动时 `purge-corrupt-next-cache` 会清幽灵目录与坏缓存；`turbopack.root` 改为配置文件所在目录。 |
 | 2026-07-25 | **全站 SEO 标题/描述**改为：标题 `HUMPBUCK - Analog-Digital TEMP Multifunctional Watches`；描述 `Discover retro ana-digi watches combining analog precision, digital functions and futuristic design. Distinctive timepieces made for everyday wear.`（英文 SiteMetadata + Home meta/OG；其它语言暂未同步）。 |
-| 2026-07-25 | **首页 Moments 文案**：标题 `Made for Every Mode`；导语 `From everyday routines to new adventures, one watch keeps up with every moment.`；卡片1 `Everyday Mode` / 卡片2 `Adventure Mode`（功能向描述）。 |
+| 2026-07-25 | **首页 Moments 文案**：标题 `Made for Every Mode`；导语 `From everyday routines to new adventures, one watch keeps up with every moment.`；卡片1 `Everyday Mode` / 卡片2 `Adventure Mode`（功能向描述）；各语言标题已本地化（非英文不再显示英文 Mode 名）。 |
 | 2026-07-25 | **Everyday Mode 背景图**：PC `Home/section2/Everyday-Mode-PC.webp`；APP `Home/section2/Everyday-Mode-APP.webp`（CDN `assets.humpbuck.com`）。 |
 | 2026-07-25 | **Adventure Mode 背景图**：PC `Home/section2/Adventure-Mode-PC.webp`；APP `Home/section2/Adventure-Mode-APP.webp`；商家后台顶栏去掉 `HOMEPAGE` 导航项。 |
 | 2026-07-25 | **首页 Hero 背景**：PC `Home/section1/Home-hero-PC.webp`；APP `Home/section1/Home-hero-APP.webp`。 |
 | 2026-07-25 | **首页优惠券区块下线**（不再渲染 `HomeCouponSection`）；商家后台 **COUPONS** 与结账用券逻辑保留，可继续给客户发券。 |
 | 2026-07-25 | **首页机械表 spotlight 横幅下线**（不再渲染 `HomeMovementCategories` / AUTOMATIC 9220 大图区块）。 |
-| 2026-07-25 | **首页区块顺序**：1 Hero → 2 Moments → 3 DIGI-TEMP spotlight → 其后 Recommended 等。 |
-| 2026-07-25 | **分类重命名/顺序**：导航与页脚 `ALL PRODUCTS` / `ANA-DIGI`（原 Quartz）/ `ULTRA-THIN` / `AUTOMATIC`（原 Mechanical）；URL 仍用 `movement=quartz|mechanical` 与 `profile=ultra-thin`。首页滑块顺序：ANA-DIGI → Ultra-thin watches → Automatic watches。 |
+| 2026-07-25 | **首页区块顺序**：1 Hero → 2 Moments → 3 DIGI-TEMP spotlight → Recommended → Featured Ready Stock 网格 → FAQ → Founder → Contact → Newsletter。 |
+| 2026-07-25 | **分类重命名/顺序**：导航与页脚 `ALL PRODUCTS` / `ANA-DIGI`（原 Quartz）/ `ULTRA-THIN` / `AUTOMATIC`（原 Mechanical）；URL 仍用 `movement=quartz|mechanical` 与 `profile=ultra-thin`。 |
 | 2026-07-25 | **首页 Recommended**：后台 Products 左侧多选指定（最多 12，可排序）；有勾选则按后台顺序展示，未勾选时回退 Automatic 优先逻辑。 |
 | 2026-07-25 | **多语言/SEO 对齐 ANA-DIGI**：各 `messages/{locale}.json` 同步站点 title/description、Hero、Moments、分类名、Shop/About/Blog meta；源文件 `scripts/ana-digi-rebrand-i18n.json`，应用 `node scripts/apply-ana-digi-rebrand-i18n.mjs`。英文公告条 fallback 改为 ANA-DIGI 文案（CMS 有自定义 slides 时仍以后台为准）。 |
 | 2026-07-25 | **About 图**：首页与 `/about` 固定用 `Home/humpbuck-homepage-grow.webp`；商家后台 **ABOUT** 编辑页删除。 |
@@ -122,6 +122,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-25 | **通知栏**：前台改为每次请求读 D1（`connection()`），不再依赖 `unstable_cache`/`revalidateTag`（OpenNext 上失效会导致后台改了前台不变）。 |
 | 2026-07-25 | **商家后台 Blog** 对齐 watchsourcego：顶部 New/Edit 表单 + TipTap 正文编辑器（标题/对齐/颜色/图视频）+ Related products + 下方文章列表；正文只存 HTML（全新，无旧标记兼容）。 |
 | 2026-07-25 | **首页 Blog carousel 下线**：后台 Blog 去掉 Homepage carousel 字段；前台不再渲染 `HomeBlogCarouselAsyncSection`。 |
+| 2026-07-25 | **首页 SEARCH BY 分类滑块下线**；改为 Featured Ready Stock 商品网格（桌面 4×3=12），顶栏 View all / 底栏 Browse Full Catalog 进 `/product`；该区块文案 13 语种已齐（对齐 watchsourcego）。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 

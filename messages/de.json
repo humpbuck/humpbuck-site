@@ -173,9 +173,9 @@
     "certaintySupportCta": "Support-Team kontaktieren",
     "momentsHeading": "Für jeden Modus gemacht",
     "momentsLead": "Vom Alltag bis zum Abenteuer – eine Uhr hält mit jedem Moment Schritt.",
-    "momentsCard1Title": "Everyday Mode",
+    "momentsCard1Title": "Alltagsmodus",
     "momentsCard1Description": "Zeit, Datum, Alarm und Dualzeit für den Rhythmus des Alltags.",
-    "momentsCard2Title": "Adventure Mode",
+    "momentsCard2Title": "Abenteuer-Modus",
     "momentsCard2Description": "Stoppuhr und Dualzeit für Reisen, Bewegung und alles, was kommt.",
     "recommendedAdd": "Hinzufügen",
     "recommendedSliderPrev": "Vorherige Produkte",
@@ -202,7 +202,11 @@
     "couponTaglineLine2": "Leben Sie es auf Ihre Weise.",
     "couponModalClose": "Schließen",
     "certaintyOrderTitle": "Wie wird meine Bestellung bearbeitet?",
-    "certaintyOrderBody": "Nach Abschluss Ihrer Zahlung sehen Sie eine Bestätigung der erfolgreichen Zahlung und erhalten eine Bestätigungs-E-Mail mit Bestellnummer, Produktdetails, Lieferadresse und Kontakt zum Kundenservice.\n\nIhre Bestellung wird in der Regel innerhalb von 1–2 Werktagen versendet. Sobald sie versendet wurde, erhalten Sie eine weitere E-Mail mit Sendungsverfolgungsnummer und Tracking-Website, damit Sie Ihr Paket jederzeit nachverfolgen können."
+    "certaintyOrderBody": "Nach Abschluss Ihrer Zahlung sehen Sie eine Bestätigung der erfolgreichen Zahlung und erhalten eine Bestätigungs-E-Mail mit Bestellnummer, Produktdetails, Lieferadresse und Kontakt zum Kundenservice.\n\nIhre Bestellung wird in der Regel innerhalb von 1–2 Werktagen versendet. Sobald sie versendet wurde, erhalten Sie eine weitere E-Mail mit Sendungsverfolgungsnummer und Tracking-Website, damit Sie Ihr Paket jederzeit nachverfolgen können.",
+    "featuredReadyTitle": "Ausgewählte Lagerware-Uhren",
+    "featuredReadySubtitle": "Verfügbare Modelle durchsuchen und auf eine Uhr klicken, um Details zu sehen und Großhandelspreise anzufragen.",
+    "featuredViewAll": "Alle ansehen →",
+    "browseFullCatalog": "Vollständigen Katalog durchsuchen"
   },
   "Newsletter": {
     "emailLabel": "E-Mail",

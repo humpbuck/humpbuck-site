@@ -173,9 +173,9 @@
     "certaintySupportCta": "Contacte a nossa equipa de apoio",
     "momentsHeading": "Feitos para cada modo",
     "momentsLead": "Das rotinas diárias às novas aventuras, um relógio acompanha cada momento.",
-    "momentsCard1Title": "Everyday Mode",
+    "momentsCard1Title": "Modo cotidiano",
     "momentsCard1Description": "Hora, data, alarme e hora dual para o ritmo do dia a dia.",
-    "momentsCard2Title": "Adventure Mode",
+    "momentsCard2Title": "Modo aventura",
     "momentsCard2Description": "Cronógrafo e hora dual para viagens, movimento e o que vem a seguir.",
     "recommendedAdd": "Adicionar",
     "recommendedSliderPrev": "Produtos anteriores",
@@ -202,7 +202,11 @@
     "couponTaglineLine2": "Viva-a à sua maneira.",
     "couponModalClose": "Fechar",
     "certaintyOrderTitle": "Como o meu pedido é processado?",
-    "certaintyOrderBody": "Após concluir o pagamento, verá uma confirmação de pagamento bem-sucedido e receberá um e-mail com o número do pedido, detalhes do produto, morada de envio e contacto do apoio ao cliente.\n\nO pedido é normalmente enviado em 1–2 dias úteis. Depois de enviado, receberá outro e-mail com o número de rastreio e o site de tracking, para acompanhar a encomenda com tranquilidade."
+    "certaintyOrderBody": "Após concluir o pagamento, verá uma confirmação de pagamento bem-sucedido e receberá um e-mail com o número do pedido, detalhes do produto, morada de envio e contacto do apoio ao cliente.\n\nO pedido é normalmente enviado em 1–2 dias úteis. Depois de enviado, receberá outro e-mail com o número de rastreio e o site de tracking, para acompanhar a encomenda com tranquilidade.",
+    "featuredReadyTitle": "Relógios em estoque em destaque",
+    "featuredReadySubtitle": "Explore os estilos disponíveis e clique em qualquer relógio para ver detalhes e consultar preços no atacado.",
+    "featuredViewAll": "Ver tudo →",
+    "browseFullCatalog": "Ver catálogo completo"
   },
   "Newsletter": {
     "emailLabel": "E-mail",

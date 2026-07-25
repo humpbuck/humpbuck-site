@@ -1,29 +1,14 @@
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { HomeDigitempSpotlight } from "@/components/site/home-digitemp-spotlight";
-import { HomeCategoryProductSliders } from "@/components/site/home-category-product-sliders";
 import { HomeFeaturedProductsSection } from "@/components/site/home-featured-products-section";
 import { HomeRecommendedProducts } from "@/components/site/home-recommended-products";
 import { PreloadHomeFeaturedImages } from "@/components/site/preload-home-featured-images";
 import { getProductMovement, type Product } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
-import { resolveHomeWatchSectionProducts } from "@/lib/home-watch-sections";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
 import { R2 } from "@/lib/r2";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
 import { getProductFiveStarReviewCounts } from "@/lib/product-reviews-queries";
-
-async function buildHomeWatchSlider(
-  section: "mechanical" | "quartz" | "ultra-thin",
-  all: Product[],
-  locale: string,
-  messages: Awaited<ReturnType<typeof getMessages>>,
-) {
-  const localized = all.map((p) => applyStorefrontProductLocale(p, locale, messages));
-  const products = resolveHomeWatchSectionProducts(localized, section);
-  const { covers: cardImages, hovers: cardHoverImages } =
-    await mapProductsToShopCardImages(products);
-  return { products, cardImages, cardHoverImages };
-}
 
 async function fiveStarCountsForSlugs(slugs: string[]) {
   if (slugs.length === 0) return {};
@@ -146,16 +131,19 @@ export async function HomeDigitempSpotlightAsyncSection({ locale }: { locale: st
   );
 }
 
+/** Homepage product grid: 4 columns × 3 rows (12 slots). */
 export async function HomeFeaturedAsyncSection({ locale }: { locale: string }) {
   setRequestLocale(locale);
   const all = await getMergedCatalogProducts();
   const messages = await getMessages({ locale });
-  const featured = all.map((p) => applyStorefrontProductLocale(p, locale, messages));
+  const featured = all
+    .slice(0, 12)
+    .map((p) => applyStorefrontProductLocale(p, locale, messages));
   const { covers: featuredCardImages, hovers: featuredCardHoverImages } =
     await mapProductsToShopCardImages(featured);
-  const featuredImageUrls = featured
-    .slice(0, 12)
-    .map((p, i) => featuredCardImages[i]?.trim() || p.image);
+  const featuredImageUrls = featured.map(
+    (p, i) => featuredCardImages[i]?.trim() || p.image,
+  );
   const fiveStarReviewCounts = await fiveStarCountsForSlugs(featured.map((p) => p.slug));
 
   return (
@@ -168,37 +156,5 @@ export async function HomeFeaturedAsyncSection({ locale }: { locale: string }) {
         fiveStarReviewCounts={fiveStarReviewCounts}
       />
     </>
-  );
-}
-
-export async function HomeCategorySlidersAsyncSection({ locale }: { locale: string }) {
-  setRequestLocale(locale);
-  const all = await getMergedCatalogProducts();
-  const messages = await getMessages({ locale });
-  const mechanicalSlider = await buildHomeWatchSlider("mechanical", all, locale, messages);
-  const quartzSlider = await buildHomeWatchSlider("quartz", all, locale, messages);
-  const ultraThinSlider = await buildHomeWatchSlider("ultra-thin", all, locale, messages);
-  const sliderSlugs = [
-    ...new Set([
-      ...mechanicalSlider.products.map((p) => p.slug),
-      ...quartzSlider.products.map((p) => p.slug),
-      ...ultraThinSlider.products.map((p) => p.slug),
-    ]),
-  ];
-  const fiveStarReviewCounts = await fiveStarCountsForSlugs(sliderSlugs);
-
-  return (
-    <HomeCategoryProductSliders
-      mechanicalProducts={mechanicalSlider.products}
-      mechanicalCardImages={mechanicalSlider.cardImages}
-      mechanicalCardHoverImages={mechanicalSlider.cardHoverImages}
-      quartzProducts={quartzSlider.products}
-      quartzCardImages={quartzSlider.cardImages}
-      quartzCardHoverImages={quartzSlider.cardHoverImages}
-      ultraThinProducts={ultraThinSlider.products}
-      ultraThinCardImages={ultraThinSlider.cardImages}
-      ultraThinCardHoverImages={ultraThinSlider.cardHoverImages}
-      fiveStarReviewCounts={fiveStarReviewCounts}
-    />
   );
 }

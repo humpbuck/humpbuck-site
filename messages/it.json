@@ -173,9 +173,9 @@
     "certaintySupportCta": "Contatti il nostro team di supporto",
     "momentsHeading": "Pensati per ogni modalità",
     "momentsLead": "Dalle routine quotidiane alle nuove avventure, un orologio segue ogni momento.",
-    "momentsCard1Title": "Everyday Mode",
+    "momentsCard1Title": "Modalità quotidiana",
     "momentsCard1Description": "Ora, data, sveglia e ora duale per il ritmo della vita quotidiana.",
-    "momentsCard2Title": "Adventure Mode",
+    "momentsCard2Title": "Modalità avventura",
     "momentsCard2Description": "Cronografo e ora duale per viaggi, movimento e tutto ciò che arriva.",
     "recommendedAdd": "Aggiungi",
     "recommendedSliderPrev": "Prodotti precedenti",
@@ -202,7 +202,11 @@
     "couponTaglineLine2": "La viva a modo Suo.",
     "couponModalClose": "Chiudi",
     "certaintyOrderTitle": "Come viene elaborato il mio ordine?",
-    "certaintyOrderBody": "Dopo il pagamento vedrai una conferma di pagamento riuscito e riceverai un'email con numero d'ordine, dettagli prodotto, indirizzo di spedizione e contatti del servizio clienti.\n\nL'ordine viene di solito spedito entro 1–2 giorni lavorativi. Una volta spedito, riceverai un'altra email con numero di tracking e sito di tracciamento, per seguire il pacco con tranquillità."
+    "certaintyOrderBody": "Dopo il pagamento vedrai una conferma di pagamento riuscito e riceverai un'email con numero d'ordine, dettagli prodotto, indirizzo di spedizione e contatti del servizio clienti.\n\nL'ordine viene di solito spedito entro 1–2 giorni lavorativi. Una volta spedito, riceverai un'altra email con numero di tracking e sito di tracciamento, per seguire il pacco con tranquillità.",
+    "featuredReadyTitle": "Orologi pronti a magazzino in evidenza",
+    "featuredReadySubtitle": "Sfoglia gli stili disponibili e clicca su qualsiasi orologio per vedere i dettagli e richiedere i prezzi all'ingrosso.",
+    "featuredViewAll": "Vedi tutti →",
+    "browseFullCatalog": "Sfoglia il catalogo completo"
   },
   "Newsletter": {
     "emailLabel": "E-mail",

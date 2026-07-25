@@ -173,9 +173,9 @@
     "certaintySupportCta": "고객 지원팀에 문의",
     "momentsHeading": "모든 모드를 위해",
     "momentsLead": "일상의 루틴부터 새로운 모험까지, 하나의 시계가 모든 순간을 함께합니다.",
-    "momentsCard1Title": "Everyday Mode",
+    "momentsCard1Title": "일상 모드",
     "momentsCard1Description": "시·분·일, 알람, 듀얼타임으로 일상의 리듬에.",
-    "momentsCard2Title": "Adventure Mode",
+    "momentsCard2Title": "어드벤처 모드",
     "momentsCard2Description": "스톱워치와 듀얼타임으로 여행, 움직임, 앞날을 위해.",
     "recommendedAdd": "추가",
     "recommendedSliderPrev": "이전 상품",
@@ -202,7 +202,11 @@
     "couponTaglineLine2": "자신만의 방식으로 살아가세요.",
     "couponModalClose": "닫기",
     "certaintyOrderTitle": "주문은 어떻게 처리되나요?",
-    "certaintyOrderBody": "결제가 완료되면 결제 성공 확인 화면이 표시되고, 주문 번호·상품 정보·배송지·고객 지원 연락처가 포함된 확인 이메일을 받습니다.\n\n주문은 보통 1–2영업일 이내에 발송됩니다. 발송 후 추적 번호와 추적 사이트 URL이 담긴 이메일을 보내 드려 배송 상태를 안심하고 확인하실 수 있습니다."
+    "certaintyOrderBody": "결제가 완료되면 결제 성공 확인 화면이 표시되고, 주문 번호·상품 정보·배송지·고객 지원 연락처가 포함된 확인 이메일을 받습니다.\n\n주문은 보통 1–2영업일 이내에 발송됩니다. 발송 후 추적 번호와 추적 사이트 URL이 담긴 이메일을 보내 드려 배송 상태를 안심하고 확인하실 수 있습니다.",
+    "featuredReadyTitle": "추천 재고 보유 시계",
+    "featuredReadySubtitle": "판매 중인 스타일을 둘러보고 시계를 클릭해 상세 정보를 확인하고 도매 가격을 문의하세요.",
+    "featuredViewAll": "전체 보기 →",
+    "browseFullCatalog": "전체 카탈로그 보기"
   },
   "Newsletter": {
     "emailLabel": "이메일",
