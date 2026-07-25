@@ -14,8 +14,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 - **`npm run dev`** uses **Wrangler local D1** (via OpenNext), not `prisma/dev.db`. On start: `prisma generate`, `npm run db:d1:local`, then Next.js.
 - **While dev is running**, saving `prisma/schema.prisma` auto-regenerates the client, applies D1 migrations, and restarts Next.
-- **`HUMPBUCK_D1_REMOTE=1`** in `.env.local` → dev reads/writes **production D1**; schema saves run `db:d1:remote` instead.
+- **`HUMPBUCK_D1_REMOTE=1`** in `.env.local` → `initOpenNextCloudflareForDev({ remoteBindings: true })` so the D1 binding (marked `"remote": true` in `wrangler.jsonc`) talks to **production D1**; schema saves run `db:d1:remote` instead. Without the env flag, `remoteBindings: false` keeps **local** D1 even though the binding is remote-eligible.
 - `prisma db push` / `prisma/dev.db` only affect CLI scripts — not the running dev server DB.
+- **Windows fan / high RAM on `npm run dev`:** usually a corrupt `.next` that baked the wrong drive letter into Turbopack paths (e.g. `H:\MY-STORES\…` while the repo is on `D:\`). `scripts/check-local-env.mjs` clears that ghost + `.next` on start; you can also delete `.next` manually and restart.
 
 ## Product reviews (PDP “Buyer reviews”)
 

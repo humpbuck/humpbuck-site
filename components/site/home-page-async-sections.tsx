@@ -36,14 +36,27 @@ export async function HomeRecommendedAsyncSection({ locale }: { locale: string }
   setRequestLocale(locale);
   const all = await getMergedCatalogProducts();
   const messages = await getMessages({ locale });
-  const mechanicalAll = all.filter((p) => getProductMovement(p) === "mechanical");
-  const recommendedRaw =
-    mechanicalAll.length >= 10
-      ? mechanicalAll.slice(0, 10)
-      : [...mechanicalAll, ...all.filter((p) => getProductMovement(p) !== "mechanical")].slice(
-          0,
-          10,
-        );
+  const adminPicked = all
+    .filter((p) => p.homeRecommended)
+    .sort(
+      (a, b) =>
+        (a.homeRecommendedSort ?? 0) - (b.homeRecommendedSort ?? 0) ||
+        a.slug.localeCompare(b.slug),
+    );
+  /** Admin picks win; if none, fall back to Automatic-first fill (legacy). */
+  let recommendedRaw: Product[];
+  if (adminPicked.length > 0) {
+    recommendedRaw = adminPicked.slice(0, 12);
+  } else {
+    const mechanicalAll = all.filter((p) => getProductMovement(p) === "mechanical");
+    recommendedRaw =
+      mechanicalAll.length >= 10
+        ? mechanicalAll.slice(0, 10)
+        : [
+            ...mechanicalAll,
+            ...all.filter((p) => getProductMovement(p) !== "mechanical"),
+          ].slice(0, 10);
+  }
   const recommended = recommendedRaw.map((p) =>
     applyStorefrontProductLocale(p, locale, messages),
   );

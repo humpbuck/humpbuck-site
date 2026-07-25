@@ -4,8 +4,6 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { HomeHero } from "@/components/site/home-hero";
 import { HomeHeroPreload } from "@/components/site/home-hero-preload";
 import { HomeMomentsSection } from "@/components/site/home-moments-section";
-import { HomeCouponSection } from "@/components/site/home-coupon-section";
-import { HomeMovementCategories } from "@/components/site/home-movement-categories";
 import { HomeContactUsSection } from "@/components/site/home-contact-us-section";
 import { HomeFounderStorySection } from "@/components/site/home-founder-story-section";
 import { HomeCustomerCertaintySection } from "@/components/site/home-customer-certainty-section";
@@ -18,7 +16,6 @@ import {
 } from "@/components/site/home-page-async-sections";
 import {
   HomeCategorySlidersFallback,
-  HomeCouponSectionFallback,
   HomeMomentsSectionFallback,
   HomeProductSliderSectionFallback,
   HomeSpotlightSectionFallback,
@@ -113,17 +110,11 @@ export default async function HomePage({
       <Suspense fallback={<HomeMomentsSectionFallback />}>
         <HomeMomentsSection />
       </Suspense>
-      <Suspense fallback={<HomeCouponSectionFallback />}>
-        <HomeCouponSection />
-      </Suspense>
       <Suspense fallback={<HomeSpotlightSectionFallback />}>
-        <HomeMovementCategories />
+        <HomeDigitempSpotlightAsyncSection locale={locale} />
       </Suspense>
       <Suspense fallback={<HomeProductSliderSectionFallback />}>
         <HomeRecommendedAsyncSection locale={locale} />
-      </Suspense>
-      <Suspense fallback={<HomeSpotlightSectionFallback />}>
-        <HomeDigitempSpotlightAsyncSection locale={locale} />
       </Suspense>
       <Suspense fallback={null}>
         <HomeCustomerCertaintySection />

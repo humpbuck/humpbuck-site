@@ -7,6 +7,8 @@ export type SiteHomeContentData = {
   heroChip1: string;
   heroChip2: string;
   heroChip3: string;
+  heroChip4: string;
+  heroChip5: string;
   heroCtaShop: string;
   heroImageAlt: string;
   heroDesktopImageUrl: string;
@@ -58,6 +60,8 @@ export const EMPTY_SITE_HOME_CONTENT: SiteHomeContentData = {
   heroChip1: "",
   heroChip2: "",
   heroChip3: "",
+  heroChip4: "",
+  heroChip5: "",
   heroCtaShop: "",
   heroImageAlt: "",
   heroDesktopImageUrl: "",
@@ -118,6 +122,8 @@ export function resolveSiteHomeContentForAdminForm(
     heroChip1: or(stored.heroChip1, fallbacks.heroChip1),
     heroChip2: or(stored.heroChip2, fallbacks.heroChip2),
     heroChip3: or(stored.heroChip3, fallbacks.heroChip3),
+    heroChip4: or(stored.heroChip4, fallbacks.heroChip4),
+    heroChip5: or(stored.heroChip5, fallbacks.heroChip5),
     heroCtaShop: or(stored.heroCtaShop, fallbacks.heroCtaShop),
     heroImageAlt: or(stored.heroImageAlt, fallbacks.heroImageAlt),
     heroDesktopImageUrl: or(stored.heroDesktopImageUrl, fallbacks.heroDesktopImageUrl),
@@ -422,6 +428,8 @@ export function normalizeSiteHomeContent(
     heroChip1: trimField(input?.heroChip1),
     heroChip2: trimField(input?.heroChip2),
     heroChip3: trimField(input?.heroChip3),
+    heroChip4: trimField(input?.heroChip4),
+    heroChip5: trimField(input?.heroChip5),
     heroCtaShop: trimField(input?.heroCtaShop),
     heroImageAlt: trimField(input?.heroImageAlt),
     heroDesktopImageUrl: trimField(input?.heroDesktopImageUrl),
@@ -507,6 +515,8 @@ export function siteHomeContentFromFormData(
     heroChip1: formData.get("heroChip1"),
     heroChip2: formData.get("heroChip2"),
     heroChip3: formData.get("heroChip3"),
+    heroChip4: formData.get("heroChip4"),
+    heroChip5: formData.get("heroChip5"),
     heroCtaShop: formData.get("heroCtaShop"),
     heroImageAlt: formData.get("heroImageAlt"),
     heroDesktopImageUrl: formData.get("heroDesktopImageUrl"),

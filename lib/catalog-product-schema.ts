@@ -26,6 +26,14 @@ export async function ensureCatalogProductSchema(): Promise<void> {
         "homeSpotlight",
         "BOOLEAN NOT NULL DEFAULT false",
       );
+      await addCatalogProductColumnIfMissing(
+        "homeRecommended",
+        "BOOLEAN NOT NULL DEFAULT false",
+      );
+      await addCatalogProductColumnIfMissing(
+        "homeRecommendedSort",
+        "INTEGER NOT NULL DEFAULT 0",
+      );
       await addCatalogProductColumnIfMissing("oemOdmPrice", "REAL");
     })();
   }

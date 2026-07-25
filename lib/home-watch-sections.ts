@@ -23,8 +23,8 @@ export const HOME_WATCH_SECTION_SLUGS = ["mechanical", "quartz", "ultra-thin"] a
 export type HomeWatchSectionSlug = (typeof HOME_WATCH_SECTION_SLUGS)[number];
 
 export const STOREFRONT_CATEGORY_LABELS: Record<StorefrontCategorySlug, string> = {
-  mechanical: "Mechanical",
-  quartz: "Quartz",
+  mechanical: "Automatic",
+  quartz: "ANA-DIGI",
 };
 
 export const STOREFRONT_SUBCATEGORY_LABELS: Record<StorefrontSubcategorySlug, string> = {

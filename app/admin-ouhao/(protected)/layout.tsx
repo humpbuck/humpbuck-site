@@ -129,9 +129,6 @@ export default async function AdminProtectedLayout({
             <Link href={adminPath("/announcement")} className={NAV_LINK_CLASS}>
               ANNOUNCEMENT
             </Link>
-            <Link href={adminPath("/homepage")} className={NAV_LINK_CLASS}>
-              HOMEPAGE
-            </Link>
             <Link href={adminPath("/about")} className={NAV_LINK_CLASS}>
               ABOUT
             </Link>

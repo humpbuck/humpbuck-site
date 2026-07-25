@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 import { createRequire } from "node:module";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import createNextIntlPlugin from "next-intl/plugin";
 import { routing } from "./i18n/routing";
 import { ADMIN_PATH } from "./lib/admin-path";
@@ -80,10 +82,12 @@ const legacyShopToProductRedirects = routing.locales.map((locale) =>
 
 const cfWorkersBuild = process.env.CF_WORKERS_BUILD === "1";
 const cfEmptyModule = "./lib/cf-empty-module.ts";
+/** Prefer config-file location over `process.cwd()` so Turbopack root stays on this drive. */
+const turbopackRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
   turbopack: {
-    root: process.cwd(),
+    root: turbopackRoot,
     ...(cfWorkersBuild
       ? {
           resolveAlias: {

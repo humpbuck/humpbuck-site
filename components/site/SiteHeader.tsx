@@ -13,9 +13,18 @@ import { storefrontHomePath } from "@/lib/storefront-home-path";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
 
 const SHOP_DROPDOWN_LINKS = [
-  { type: "link" as const, href: "/product", labelKey: "shopAllProducts" },
-  { type: "flyout" as const, movement: "mechanical" as const, labelKey: "shopMechanical" },
-  { type: "flyout" as const, movement: "quartz" as const, labelKey: "shopQuartz" },
+  { type: "link" as const, href: "/product", labelKey: "shopAllProducts" as const },
+  { type: "flyout" as const, movement: "quartz" as const, labelKey: "shopQuartz" as const },
+  {
+    type: "link" as const,
+    href: "/product?profile=ultra-thin",
+    labelKey: "shopUltraThin" as const,
+  },
+  {
+    type: "flyout" as const,
+    movement: "mechanical" as const,
+    labelKey: "shopMechanical" as const,
+  },
 ];
 
 const SHOP_LINK_CLASS =

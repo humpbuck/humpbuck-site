@@ -1,6 +1,8 @@
 import { loadProjectEnv } from "./load-project-env.mjs";
+import { purgeCorruptNextCache } from "./purge-corrupt-next-cache.mjs";
 
 loadProjectEnv();
+purgeCorruptNextCache(process.cwd());
 
 if (!process.env.DATABASE_URL?.trim()) {
   console.warn("[env] DATABASE_URL is not set — defaulting to file:./dev.db (SQLite under prisma/).");

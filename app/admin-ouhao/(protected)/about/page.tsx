@@ -76,6 +76,8 @@ export default async function AdminAboutContentPage({
     heroChip1: "",
     heroChip2: "",
     heroChip3: "",
+    heroChip4: "",
+    heroChip5: "",
     heroCtaShop: "",
     heroImageAlt: "",
     heroDesktopImageUrl: "",

@@ -102,21 +102,41 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-09 | **全站 SEO 品牌主线**定为 *Meaningful Gifts of Time and Love*。英文标题：`HUMPBUCK Watches - Meaningful Gifts of Time and Love`；英文描述：`Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.` 以后新增/改 SEO 文案以 `scripts/seo-brand-i18n.json` 为准，改后运行 `node scripts/apply-seo-brand-messaging.mjs` 同步到各 `messages/{locale}.json`。 |
 | 2026-07-10 | Checkout 地址：US/CA/AU/BR/MX 州/省 Combobox 必填；其他国家州/省可选文本；城市自由输入。见 `lib/checkout-address-fields.ts`。 |
 | 2026-07-15 | **OEM/ODM 产品文案**：询价表单、精选型号等产品名/规格与商店、PDP 共用 `applyStorefrontProductLocale` + `messages/product-copy.{locale}.json`；页面文案仅放 `OemOdmPage` 等 namespace，不为 OEM 单独维护产品翻译。 |
+| 2026-07-25 | Windows 上 `npm run dev` 风扇狂转：Turbopack `.next` 曾写入错误盘符绝对路径（如 `H:\MY-STORES\…`）；启动时 `purge-corrupt-next-cache` 会清幽灵目录与坏缓存；`turbopack.root` 改为配置文件所在目录。 |
+| 2026-07-25 | **全站 SEO 标题/描述**改为：标题 `HUMPBUCK - Analog-Digital TEMP Multifunctional Watches`；描述 `Discover retro ana-digi watches combining analog precision, digital functions and futuristic design. Distinctive timepieces made for everyday wear.`（英文 SiteMetadata + Home meta/OG；其它语言暂未同步）。 |
+| 2026-07-25 | **首页 Moments 文案**：标题 `Made for Every Mode`；导语 `From everyday routines to new adventures, one watch keeps up with every moment.`；卡片1 `Everyday Mode` / 卡片2 `Adventure Mode`（功能向描述）。 |
+| 2026-07-25 | **Everyday Mode 背景图**：PC `Home/section2/Everyday-Mode-PC.webp`；APP `Home/section2/Everyday-Mode-APP.webp`（CDN `assets.humpbuck.com`）。 |
+| 2026-07-25 | **Adventure Mode 背景图**：PC `Home/section2/Adventure-Mode-PC.webp`；APP `Home/section2/Adventure-Mode-APP.webp`；商家后台顶栏去掉 `HOMEPAGE` 导航项。 |
+| 2026-07-25 | **首页 Hero 背景**：PC `Home/section1/Home-hero-PC.webp`；APP `Home/section1/Home-hero-APP.webp`。 |
+| 2026-07-25 | **首页优惠券区块下线**（不再渲染 `HomeCouponSection`）；商家后台 **COUPONS** 与结账用券逻辑保留，可继续给客户发券。 |
+| 2026-07-25 | **首页机械表 spotlight 横幅下线**（不再渲染 `HomeMovementCategories` / AUTOMATIC 9220 大图区块）。 |
+| 2026-07-25 | **首页区块顺序**：1 Hero → 2 Moments → 3 DIGI-TEMP spotlight → 其后 Recommended 等。 |
+| 2026-07-25 | **分类重命名/顺序**：导航与页脚 `ALL PRODUCTS` / `ANA-DIGI`（原 Quartz）/ `ULTRA-THIN` / `AUTOMATIC`（原 Mechanical）；URL 仍用 `movement=quartz|mechanical` 与 `profile=ultra-thin`。首页滑块顺序：ANA-DIGI → Ultra-thin watches → Automatic watches。 |
+| 2026-07-25 | **首页 Recommended**：后台 Products 左侧多选指定（最多 12，可排序）；有勾选则按后台顺序展示，未勾选时回退 Automatic 优先逻辑。 |
+| 2026-07-25 | **多语言/SEO 对齐 ANA-DIGI**：各 `messages/{locale}.json` 同步站点 title/description、Hero、Moments、分类名、Shop/About/Blog meta；源文件 `scripts/ana-digi-rebrand-i18n.json`，应用 `node scripts/apply-ana-digi-rebrand-i18n.mjs`。英文公告条 fallback 改为 ANA-DIGI 文案（CMS 有自定义 slides 时仍以后台为准）。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 
-**SEO 品牌主线（2026-07-09）**
+**SEO 品牌主线（2026-07-25 更新）**
 
-- **英文标题：** `HUMPBUCK Watches - Meaningful Gifts of Time and Love`
-- **英文描述：** `Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.`
-- **维护方式：** 编辑 `scripts/seo-brand-i18n.json` → `node scripts/apply-seo-brand-messaging.mjs`
-- **适用范围：** 全站默认 meta / Open Graph（首页、商品列表、关于、页脚 tagline 等）；商品 PDP、系列页、博客文章仍用各自产品/文章描述，不强行覆盖。
+- **英文标题：** `HUMPBUCK - Analog-Digital TEMP Multifunctional Watches`
+- **英文描述：** `Discover retro ana-digi watches combining analog precision, digital functions and futuristic design. Distinctive timepieces made for everyday wear.`
+- **维护方式：** 编辑 `scripts/seo-brand-i18n.json` → `node scripts/apply-seo-brand-messaging.mjs`（或直接改 `messages/en.json` 的 `SiteMetadata` / `Home` meta）
+- **适用范围：** 全站默认 meta / Open Graph（首页为主）；商品 PDP、系列页、博客文章仍用各自产品/文章描述，不强行覆盖。
+
+**首页 Hero 文案（2026-07-25）**
+
+- **标题：** `ANA-DIGI Temperature`
+- **导语：** `Retro ana-digi watches blending analog precision, digital functions, and futuristic design.`
+- **角标：** `ANA-DIGI · TEMP`
+- **标签：** `TIME` · `DATE` · `ALM` · `DU.T` · `ST.W`
+- **来源：** 英文优先 CMS（`SiteHomeContent` / 后台 Homepage）；空字段回退 `messages/en.json` 的 `Home.mechanicalHero*`。其它语言用各自 messages（标签缩写各语言相同）。
 
 **首页 Hero 背景图（2026-07-09）**
 
 - **R2 路径（大小写敏感）：**
-  - PC：`Home/humpbuck-hero-desktop.webp`（CDN：`https://assets.humpbuck.com/Home/humpbuck-hero-desktop.webp`）
-  - 手机：`Home/humpbuck-hero-mobile.webp`（CDN：`https://assets.humpbuck.com/Home/humpbuck-hero-mobile.webp`）
+  - PC：`Home/section1/Home-hero-PC.webp`（CDN：`https://assets.humpbuck.com/Home/section1/Home-hero-PC.webp`）
+  - 手机：`Home/section1/Home-hero-APP.webp`（CDN：`https://assets.humpbuck.com/Home/section1/Home-hero-APP.webp`）
 - **换图：** 在 R2 同路径覆盖文件，并在 `.env.local` / 生产环境把对应 rev 加 1（否则浏览器/CDN 可能仍显示旧图）：
   - `NEXT_PUBLIC_R2_HUMPBUCK_HERO_DESKTOP_REV`
   - `NEXT_PUBLIC_R2_HUMPBUCK_HERO_MOBILE_REV`

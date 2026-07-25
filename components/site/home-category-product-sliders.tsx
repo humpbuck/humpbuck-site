@@ -31,18 +31,6 @@ export async function HomeCategoryProductSliders({
   return (
     <>
       <HomeProductSliderSection
-        headingId="home-mechanical-watches-heading"
-        kicker={kicker}
-        title={t("mechanicalWatchesTitle")}
-        viewAllHref="/product?movement=mechanical"
-        viewAllLabel={t("mechanicalWatchesShop")}
-        products={mechanicalProducts}
-        cardImages={mechanicalCardImages}
-        cardHoverImages={mechanicalCardHoverImages}
-        fiveStarReviewCounts={fiveStarReviewCounts}
-        cartSource="home_mechanical_row"
-      />
-      <HomeProductSliderSection
         headingId="home-quartz-watches-heading"
         kicker={kicker}
         title={t("quartzWatchesTitle")}
@@ -65,6 +53,18 @@ export async function HomeCategoryProductSliders({
         cardHoverImages={ultraThinCardHoverImages}
         fiveStarReviewCounts={fiveStarReviewCounts}
         cartSource="home_ultra_thin_row"
+      />
+      <HomeProductSliderSection
+        headingId="home-mechanical-watches-heading"
+        kicker={kicker}
+        title={t("mechanicalWatchesTitle")}
+        viewAllHref="/product?movement=mechanical"
+        viewAllLabel={t("mechanicalWatchesShop")}
+        products={mechanicalProducts}
+        cardImages={mechanicalCardImages}
+        cardHoverImages={mechanicalCardHoverImages}
+        fiveStarReviewCounts={fiveStarReviewCounts}
+        cartSource="home_mechanical_row"
       />
     </>
   );

@@ -49,6 +49,9 @@ export default async function AdminInventoryPage() {
               (p as { storefrontSubcategory?: string | null }).storefrontSubcategory ?? "",
             storefrontSeries: (p as { storefrontSeries?: string | null }).storefrontSeries ?? "",
             homeSpotlight: (p as { homeSpotlight?: boolean }).homeSpotlight ?? false,
+            homeRecommended: (p as { homeRecommended?: boolean }).homeRecommended ?? false,
+            homeRecommendedSort:
+              (p as { homeRecommendedSort?: number }).homeRecommendedSort ?? 0,
           }))}
           initialInventory={inventory}
         />

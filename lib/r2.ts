@@ -23,7 +23,7 @@ function homeHeroAssetBase(): string {
 }
 
 /**
- * Homepage hero — desktop `Home/humpbuck-hero-desktop.webp`, mobile `Home/humpbuck-hero-mobile.webp`.
+ * Homepage hero — desktop `Home/section1/Home-hero-PC.webp`, mobile `Home/section1/Home-hero-APP.webp`.
  * Bump `NEXT_PUBLIC_R2_HUMPBUCK_HERO_DESKTOP_REV` / `_MOBILE_REV` after same-name overwrites (see `docs/user-conventions.md` §7).
  */
 export function homeHeroDesktopWebpUrl(): string {
@@ -31,7 +31,7 @@ export function homeHeroDesktopWebpUrl(): string {
     process.env.NEXT_PUBLIC_R2_HUMPBUCK_HERO_DESKTOP_REV?.trim() ||
     process.env.NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV?.trim() ||
     "1";
-  return `${homeHeroAssetBase()}/Home/humpbuck-hero-desktop.webp?v=${encodeURIComponent(rev)}`;
+  return `${homeHeroAssetBase()}/Home/section1/Home-hero-PC.webp?v=${encodeURIComponent(rev)}`;
 }
 
 export function homeHeroMobileWebpUrl(): string {
@@ -39,7 +39,7 @@ export function homeHeroMobileWebpUrl(): string {
     process.env.NEXT_PUBLIC_R2_HUMPBUCK_HERO_MOBILE_REV?.trim() ||
     process.env.NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV?.trim() ||
     "1";
-  return `${homeHeroAssetBase()}/Home/humpbuck-hero-mobile.webp?v=${encodeURIComponent(rev)}`;
+  return `${homeHeroAssetBase()}/Home/section1/Home-hero-APP.webp?v=${encodeURIComponent(rev)}`;
 }
 
 /** Default OG / share image — desktop hero. */
@@ -100,8 +100,8 @@ export function homeMomentsCard1ImageUrls(): { desktop: string; mobile: string }
   const base = homeHeroAssetBase();
   const v = `?v=${encodeURIComponent(rev)}`;
   return {
-    desktop: `${base}/Home/Memorial%20moment-01.webp${v}`,
-    mobile: `${base}/Home/Memorial%20moment-01-1.webp${v}`,
+    desktop: `${base}/Home/section2/Everyday-Mode-PC.webp${v}`,
+    mobile: `${base}/Home/section2/Everyday-Mode-APP.webp${v}`,
   };
 }
 
@@ -110,8 +110,8 @@ export function homeMomentsCard2ImageUrls(): { desktop: string; mobile: string }
   const base = homeHeroAssetBase();
   const v = `?v=${encodeURIComponent(rev)}`;
   return {
-    desktop: `${base}/Home/Memorial%20moment-02.webp${v}`,
-    mobile: `${base}/Home/Memorial%20moment-02-1.webp${v}`,
+    desktop: `${base}/Home/section2/Adventure-Mode-PC.webp${v}`,
+    mobile: `${base}/Home/section2/Adventure-Mode-APP.webp${v}`,
   };
 }
 

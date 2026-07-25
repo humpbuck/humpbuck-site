@@ -54,6 +54,9 @@ export interface Product {
   storefrontSeries?: string;
   /** Homepage module directly below hero — set in admin. */
   homeSpotlight?: boolean;
+  /** Homepage Recommended carousel — set in admin. */
+  homeRecommended?: boolean;
+  homeRecommendedSort?: number;
 }
 
 export function normalizeSeriesSlug(s: string): string {

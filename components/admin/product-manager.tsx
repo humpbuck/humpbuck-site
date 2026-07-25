@@ -7,6 +7,7 @@ import {
   type SidebarListedProduct,
 } from "@/components/admin/admin-product-sidebar";
 import { AdminHomeSpotlightPicker } from "@/components/admin/admin-home-spotlight-picker";
+import { AdminHomeRecommendedPicker } from "@/components/admin/admin-home-recommended-picker";
 import {
   StorefrontPlacementFields,
   applyStorefrontPlacementChange,
@@ -59,6 +60,8 @@ type CatalogProductRecord = {
   storefrontSubcategory: string | null;
   storefrontSeries: string | null;
   homeSpotlight: boolean;
+  homeRecommended: boolean;
+  homeRecommendedSort: number;
 };
 
 type SpecRow = { label: string; value: string };
@@ -330,6 +333,16 @@ export function ProductManager({
     const spotlight = initialProducts.find((p) => p.homeSpotlight && p.id);
     return spotlight?.id ?? null;
   });
+  const [homeRecommendedProductIds, setHomeRecommendedProductIds] = useState<string[]>(() =>
+    [...initialProducts]
+      .filter((p) => p.homeRecommended && p.id)
+      .sort(
+        (a, b) =>
+          (a.homeRecommendedSort ?? 0) - (b.homeRecommendedSort ?? 0) ||
+          a.slug.localeCompare(b.slug),
+      )
+      .map((p) => p.id),
+  );
 
   useEffect(() => {
     return () => {
@@ -673,6 +686,15 @@ export function ProductManager({
           body: JSON.stringify({ productId: null }),
         });
       }
+      if (homeRecommendedProductIds.includes(current.id)) {
+        const nextRecommended = homeRecommendedProductIds.filter((id) => id !== current.id);
+        setHomeRecommendedProductIds(nextRecommended);
+        void fetch("/api/admin/products/home-recommended", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productIds: nextRecommended }),
+        });
+      }
       setFlashMessage("Archived.", "success");
       startTransition(() => router.refresh());
     } catch {
@@ -706,6 +728,30 @@ export function ProductManager({
     }
   }
 
+  async function saveHomeRecommended(productIds: string[]) {
+    setBusy(true);
+    setFlashMessage("");
+    try {
+      const res = await fetch("/api/admin/products/home-recommended", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productIds }),
+      });
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+      if (!res.ok) {
+        setFlashMessage(data.error || "Failed to update homepage recommended.", "error");
+        return;
+      }
+      setHomeRecommendedProductIds(productIds);
+      setFlashMessage("Homepage recommended updated.", "success");
+      startTransition(() => router.refresh());
+    } catch {
+      setFlashMessage("Failed to update homepage recommended.", "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function purgeCurrent() {
     if (!current?.id) return;
     if (current.status !== "archived") return;
@@ -731,6 +777,15 @@ export function ProductManager({
           body: JSON.stringify({ productId: null }),
         });
       }
+      if (homeRecommendedProductIds.includes(current.id)) {
+        const nextRecommended = homeRecommendedProductIds.filter((id) => id !== current.id);
+        setHomeRecommendedProductIds(nextRecommended);
+        void fetch("/api/admin/products/home-recommended", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productIds: nextRecommended }),
+        });
+      }
       setFlashMessage("Deleted forever.", "success");
       startTransition(() => router.refresh());
     } catch {
@@ -748,6 +803,12 @@ export function ProductManager({
           value={homeSpotlightProductId}
           disabled={busy}
           onChange={saveHomeSpotlight}
+        />
+        <AdminHomeRecommendedPicker
+          products={savedProductsForSpotlight}
+          value={homeRecommendedProductIds}
+          disabled={busy || isPending}
+          onChange={saveHomeRecommended}
         />
         <div className="mb-3 flex items-center justify-between">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">

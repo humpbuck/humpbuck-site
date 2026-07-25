@@ -30,6 +30,8 @@
 	],
 	"d1_databases": [
 		{
+			// Eligible for production D1 when next.config passes remoteBindings: true
+			// (HUMPBUCK_D1_REMOTE=1). Default npm run dev uses remoteBindings: false → local D1.
 			"binding": "DB",
 			"database_name": "humpbuck-site",
 			"database_id": "2bc677db-27b4-4759-8eeb-6eadd0683c73",

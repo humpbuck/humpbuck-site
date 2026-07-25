@@ -28,6 +28,8 @@ type CatalogProductRow = {
   storefrontSubcategory: string | null;
   storefrontSeries: string | null;
   homeSpotlight: boolean;
+  homeRecommended: boolean;
+  homeRecommendedSort: number;
 };
 
 type InventoryRow = {
@@ -124,6 +126,10 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
     storefrontSubcategory: row.storefrontSubcategory?.trim() || undefined,
     storefrontSeries: row.storefrontSeries?.trim() || undefined,
     homeSpotlight: Boolean(row.homeSpotlight),
+    homeRecommended: Boolean(row.homeRecommended),
+    homeRecommendedSort: Number.isFinite(row.homeRecommendedSort)
+      ? row.homeRecommendedSort
+      : 0,
   };
 }
 

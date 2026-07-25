@@ -14,11 +14,11 @@ import { getSiteHomeContent } from "@/lib/site-home-content-queries";
 function HomeHeroTextSkeleton() {
   return (
     <div
-      className={`relative z-10 mx-auto flex min-h-0 flex-1 flex-col ${heroMinH} w-full max-w-7xl animate-pulse px-[clamp(1rem,4.5vw,1.75rem)] py-[clamp(1.5rem,4svh,2.5rem)] md:px-6 md:py-0 lg:px-8`}
+      className={`relative z-10 mx-auto flex min-h-0 flex-1 flex-col ${heroMinH} w-full max-w-7xl animate-pulse px-[clamp(1rem,4.5vw,1.75rem)] pt-[clamp(3.5rem,12svh,5.5rem)] pb-[clamp(1.5rem,4svh,2.5rem)] md:px-6 md:py-0 lg:px-8`}
       aria-hidden
     >
       <div className="hidden shrink-0 md:block md:flex-[2]" />
-      <div className="my-auto w-full max-w-xl md:my-0 md:shrink-0">
+      <div className="mt-0 w-full max-w-xl shrink-0 md:my-0">
         <div className="h-7 w-40 rounded-full bg-white/10" />
         <div className="mt-5 h-12 w-full max-w-md rounded bg-white/10 md:mt-6" />
         <div className="mt-6 h-20 w-full max-w-sm rounded bg-white/10" />
@@ -66,11 +66,11 @@ async function HomeHeroForeground() {
         </div>
       ) : null}
       <div
-        className={`relative z-10 mx-auto flex min-h-0 flex-1 flex-col ${heroMinH} w-full max-w-7xl px-[clamp(1rem,4.5vw,1.75rem)] py-[clamp(1.5rem,4svh,2.5rem)] md:px-6 md:py-0 lg:px-8`}
+        className={`relative z-10 mx-auto flex min-h-0 flex-1 flex-col ${heroMinH} w-full max-w-7xl px-[clamp(1rem,4.5vw,1.75rem)] pt-[clamp(3.5rem,12svh,5.5rem)] pb-[clamp(1.5rem,4svh,2.5rem)] md:px-6 md:py-0 lg:px-8`}
       >
         <div className="hidden shrink-0 md:block md:flex-[2]" aria-hidden />
 
-        <div className="my-auto w-full max-w-xl md:my-0 md:shrink-0">
+        <div className="mt-0 w-full max-w-xl shrink-0 md:my-0">
           <div className="flex flex-col">
             <p className="inline-flex w-fit rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/80 md:tracking-[0.2em]">
               {resolveHomeCmsText(
@@ -100,31 +100,26 @@ async function HomeHeroForeground() {
             </p>
 
             <div className="mt-5 flex flex-wrap gap-2 md:mt-6">
-              <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-white/88 md:px-3.5 md:py-1.5 md:text-[10px] md:tracking-[0.14em]">
-                {resolveHomeCmsText(
-                  locale,
-                  content.heroChip1,
-                  t("mechanicalHeroChipAutomatic"),
-                )}
-              </span>
-              <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-white/88 md:px-3.5 md:py-1.5 md:text-[10px] md:tracking-[0.14em]">
-                {resolveHomeCmsText(
-                  locale,
-                  content.heroChip2,
-                  t("mechanicalHeroChipSkeleton"),
-                )}
-              </span>
-              <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-white/88 md:px-3.5 md:py-1.5 md:text-[10px] md:tracking-[0.14em]">
-                {resolveHomeCmsText(
-                  locale,
-                  content.heroChip3,
-                  t("mechanicalHeroChipFinishing"),
-                )}
-              </span>
+              {(
+                [
+                  [content.heroChip1, "mechanicalHeroChipAutomatic"],
+                  [content.heroChip2, "mechanicalHeroChipSkeleton"],
+                  [content.heroChip3, "mechanicalHeroChipFinishing"],
+                  [content.heroChip4, "mechanicalHeroChipDuT"],
+                  [content.heroChip5, "mechanicalHeroChipStW"],
+                ] as const
+              ).map(([cmsValue, messageKey]) => (
+                <span
+                  key={messageKey}
+                  className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-white/88 md:px-3.5 md:py-1.5 md:text-[10px] md:tracking-[0.14em]"
+                >
+                  {resolveHomeCmsText(locale, cmsValue, t(messageKey))}
+                </span>
+              ))}
             </div>
           </div>
 
-          <div className="mt-8 flex flex-col items-start gap-3.5 sm:flex-row sm:flex-wrap sm:items-center md:mt-10 md:gap-5">
+          <div className="mt-[clamp(2.75rem,9svh,4.5rem)] flex flex-col items-start gap-3.5 sm:flex-row sm:flex-wrap sm:items-center md:mt-10 md:gap-5">
             <Link
               href="/product"
               className="inline-flex items-center justify-center rounded-full bg-white px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#080808] transition hover:bg-white/90 md:px-7 md:py-2.5 md:text-xs"

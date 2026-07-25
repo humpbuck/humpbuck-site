@@ -177,30 +177,36 @@ export default async function AdminHomepageContentPage({
   const defaultSpotlightBackground = flagshipCategoryBackgroundWebpUrl();
 
   const content = resolveSiteHomeContentForAdminForm(storedContent, {
-    heroBadge: "Gifts · Time & Love",
-    heroTitle: "HUMPBUCK Watches",
+    heroBadge: "ANA-DIGI · TEMP",
+    heroTitle: "ANA-DIGI Temperature",
     heroLead:
-      "Handcrafted timepieces designed to stay by your side and witness life's meaningful moments.",
-    heroChip1: "Craftsmanship",
-    heroChip2: "Milestones",
-    heroChip3: "Companionship",
+      "Retro ana-digi watches blending analog precision, digital functions, and futuristic design.",
+    heroChip1: "TIME",
+    heroChip2: "DATE",
+    heroChip3: "ALM",
+    heroChip4: "DU.T",
+    heroChip5: "ST.W",
     heroCtaShop: "Shop",
     heroImageAlt: "HUMPBUCK homepage hero — handcrafted premium timepieces",
     heroDesktopImageUrl: defaultHeroDesktop,
     heroMobileImageUrl: defaultHeroMobile,
-    momentsHeading: "Moments Worth Remembering",
+    momentsHeading: "Made for Every Mode",
     momentsLead:
-      "Some moments change everything. Our timepieces are here for all of them.",
-    momentsCard1Title: "Milestone Moments",
+      "From everyday routines to new adventures, one watch keeps up with every moment.",
+    momentsCard1Title: "Everyday Mode",
     momentsCard1Description:
-      "For the decisions, celebrations, and nights worth remembering.",
-    momentsCard1DesktopImageUrl: "",
-    momentsCard1MobileImageUrl: "",
-    momentsCard2Title: "Everyday Memories",
+      "Time, date, alarm, and dual time for the rhythm of daily life.",
+    momentsCard1DesktopImageUrl:
+      "https://assets.humpbuck.com/Home/section2/Everyday-Mode-PC.webp",
+    momentsCard1MobileImageUrl:
+      "https://assets.humpbuck.com/Home/section2/Everyday-Mode-APP.webp",
+    momentsCard2Title: "Adventure Mode",
     momentsCard2Description:
-      "For the journeys, rituals, and little things that stay with you.",
-    momentsCard2DesktopImageUrl: "",
-    momentsCard2MobileImageUrl: "",
+      "Stopwatch and dual time for travel, movement, and everything ahead.",
+    momentsCard2DesktopImageUrl:
+      "https://assets.humpbuck.com/Home/section2/Adventure-Mode-PC.webp",
+    momentsCard2MobileImageUrl:
+      "https://assets.humpbuck.com/Home/section2/Adventure-Mode-APP.webp",
     aboutHeading: "About",
     aboutParagraph1:
       "Growing up, I watched my father—a master watch repairman—breathe life into countless timepieces after school. As he stayed by my side through my milestones, those watches marked every beat of my journey. That is where our bond was born. Time and companionship are life's most precious gifts. Now, I hope my handcrafted HUMPBUCK watches will stay by your side and bear witness to your most meaningful moments.",
@@ -288,39 +294,51 @@ export default async function AdminHomepageContentPage({
             label="Badge"
             name="heroBadge"
             defaultValue={content.heroBadge}
-            placeholder="Gifts · Time & Love"
+            placeholder="ANA-DIGI · TEMP"
           />
           <AdminField
             label="Title"
             name="heroTitle"
             defaultValue={content.heroTitle}
-            placeholder="HUMPBUCK Watches"
+            placeholder="ANA-DIGI Temperature"
           />
           <AdminField
             label="Lead paragraph"
             name="heroLead"
             defaultValue={content.heroLead}
             multiline
-            placeholder="Handcrafted timepieces designed to stay by your side…"
+            placeholder="Retro ana-digi watches blending analog precision…"
           />
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-3 md:grid-cols-5">
             <AdminField
               label="Chip 1"
               name="heroChip1"
               defaultValue={content.heroChip1}
-              placeholder="Craftsmanship"
+              placeholder="TIME"
             />
             <AdminField
               label="Chip 2"
               name="heroChip2"
               defaultValue={content.heroChip2}
-              placeholder="Milestones"
+              placeholder="DATE"
             />
             <AdminField
               label="Chip 3"
               name="heroChip3"
               defaultValue={content.heroChip3}
-              placeholder="Companionship"
+              placeholder="ALM"
+            />
+            <AdminField
+              label="Chip 4"
+              name="heroChip4"
+              defaultValue={content.heroChip4}
+              placeholder="DU.T"
+            />
+            <AdminField
+              label="Chip 5"
+              name="heroChip5"
+              defaultValue={content.heroChip5}
+              placeholder="ST.W"
             />
           </div>
           <AdminField
@@ -356,30 +374,30 @@ export default async function AdminHomepageContentPage({
             label="Section heading"
             name="momentsHeading"
             defaultValue={content.momentsHeading}
-            placeholder="Moments Worth Remembering"
+            placeholder="Made for Every Mode"
           />
           <AdminField
             label="Section lead"
             name="momentsLead"
             defaultValue={content.momentsLead}
             multiline
-            placeholder="Some moments change everything. Our timepieces are here for all of them."
+            placeholder="From everyday routines to new adventures, one watch keeps up with every moment."
           />
           <p className="text-[11px] leading-relaxed text-muted">
-            Card 1 — Milestone Moments
+            Card 1 — Everyday Mode
           </p>
           <AdminField
             label="Card 1 title"
             name="momentsCard1Title"
             defaultValue={content.momentsCard1Title}
-            placeholder="Milestone Moments"
+            placeholder="Everyday Mode"
           />
           <AdminField
             label="Card 1 description"
             name="momentsCard1Description"
             defaultValue={content.momentsCard1Description}
             multiline
-            placeholder="For the decisions, celebrations, and nights worth remembering."
+            placeholder="Time, date, alarm, and dual time for the rhythm of daily life."
           />
           <AdminField
             label="Card 1 image URL (PC)"
@@ -396,20 +414,20 @@ export default async function AdminHomepageContentPage({
             hint="Optional. Vertical card image for mobile. Blank = same as PC."
           />
           <p className="pt-2 text-[11px] leading-relaxed text-muted">
-            Card 2 — Everyday Memories
+            Card 2 — Adventure Mode
           </p>
           <AdminField
             label="Card 2 title"
             name="momentsCard2Title"
             defaultValue={content.momentsCard2Title}
-            placeholder="Everyday Memories"
+            placeholder="Adventure Mode"
           />
           <AdminField
             label="Card 2 description"
             name="momentsCard2Description"
             defaultValue={content.momentsCard2Description}
             multiline
-            placeholder="For the journeys, rituals, and little things that stay with you."
+            placeholder="Stopwatch and dual time for travel, movement, and everything ahead."
           />
           <AdminField
             label="Card 2 image URL (PC)"
