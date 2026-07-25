@@ -119,6 +119,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-25 | 导航 PRODUCTS：`ANA-DIGI` / `AUTOMATIC` 不再展开 Men/Women，直接进入对应 movement 列表。 |
 | 2026-07-25 | **商家后台 Categories**（参考 watchsourcego）：独立建分类 + 拖拽排序；Products 只选 Category；去掉 Subcategory / Series / Category label。前台 PRODUCTS/页脚顺序跟后台分类排序；导航用 `?category=<id>`。 |
 | 2026-07-25 | **Products 页**：分类胶囊（All + 后台分类）+ 型号搜索（slug/名称），逻辑对齐 watchsourcego；兼容旧 `movement` / `profile` 链接。 |
+| 2026-07-25 | **通知栏**：前台改为每次请求读 D1（`connection()`），不再依赖 `unstable_cache`/`revalidateTag`（OpenNext 上失效会导致后台改了前台不变）。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 

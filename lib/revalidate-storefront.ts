@@ -3,7 +3,7 @@ import { routing } from "@/i18n/routing";
 
 /** Storefront pages and DB caches do not time-expire — only admin saves, webhooks, and deploys invalidate them. */
 
-/** Bust cached homepage announcement bar (all storefront layouts). */
+/** @deprecated Announcement uses `connection()` + live D1 reads; kept for best-effort ISR bust. */
 export function revalidateSiteAnnouncement(): void {
   revalidateTag("site-announcement", { expire: 0 });
 }
