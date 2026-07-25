@@ -1,8 +1,9 @@
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { homeHeroDesktopWebpUrl, homeHeroMobileWebpUrl } from "@/lib/r2";
 
+/** APP: full remaining viewport below header; desktop: same idea with 80px header. */
 export const heroMinH =
-  "min-h-[calc((100svh-var(--site-announcement-h,0px)-72px)*0.85)] md:min-h-[calc(100vh-var(--site-announcement-h,0px)-80px)]";
+  "min-h-[calc(100svh-var(--site-announcement-h,0px)-72px)] md:min-h-[calc(100vh-var(--site-announcement-h,0px)-80px)]";
 
 type Props = {
   mobileSrc?: string;

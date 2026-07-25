@@ -108,6 +108,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-25 | **Everyday Mode 背景图**：PC `Home/section2/Everyday-Mode-PC.webp`；APP `Home/section2/Everyday-Mode-APP.webp`（CDN `assets.humpbuck.com`）。 |
 | 2026-07-25 | **Adventure Mode 背景图**：PC `Home/section2/Adventure-Mode-PC.webp`；APP `Home/section2/Adventure-Mode-APP.webp`；商家后台顶栏去掉 `HOMEPAGE` 导航项。 |
 | 2026-07-25 | **首页 Hero 背景**：PC `Home/section1/Home-hero-PC.webp`；APP `Home/section1/Home-hero-APP.webp`。 |
+| 2026-07-25 | **首页 Hero APP 全屏**：手机端第一个模块占满顶栏下方剩余视口（去掉原先 0.85 倍高度）。 |
 | 2026-07-25 | **首页优惠券区块下线**（不再渲染 `HomeCouponSection`）；商家后台 **COUPONS** 与结账用券逻辑保留，可继续给客户发券。 |
 | 2026-07-25 | **首页机械表 spotlight 横幅下线**（不再渲染 `HomeMovementCategories` / AUTOMATIC 9220 大图区块）。 |
 | 2026-07-25 | **首页区块顺序**：1 Hero → 2 Moments → 3 DIGI-TEMP spotlight → Recommended → Featured Ready Stock 网格 → FAQ → Founder → Contact → Newsletter。 |
