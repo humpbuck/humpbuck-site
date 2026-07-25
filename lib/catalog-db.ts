@@ -24,6 +24,7 @@ type CatalogProductRow = {
   detailJson: string;
   variantsJson: string;
   promoVideoJson: string | null;
+  categoryId: string | null;
   storefrontCategory: string | null;
   storefrontSubcategory: string | null;
   storefrontSeries: string | null;
@@ -122,6 +123,7 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
         value: String(s.value ?? "").trim(),
       })),
     inStock: computedInStock,
+    categoryId: row.categoryId?.trim() || undefined,
     storefrontCategory: row.storefrontCategory?.trim() || undefined,
     storefrontSubcategory: row.storefrontSubcategory?.trim() || undefined,
     storefrontSeries: row.storefrontSeries?.trim() || undefined,

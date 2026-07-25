@@ -212,7 +212,7 @@ export default async function AdminHomepageContentPage({
       "Growing up, I watched my father—a master watch repairman—breathe life into countless timepieces after school. As he stayed by my side through my milestones, those watches marked every beat of my journey. That is where our bond was born. Time and companionship are life's most precious gifts. Now, I hope my handcrafted HUMPBUCK watches will stay by your side and bear witness to your most meaningful moments.",
     aboutParagraph2: "",
     aboutImageAlt:
-      "Mechanical watch on a wooden post with a child in a rural village in the background",
+      "Father and young son examining a watch movement together at a watchmaker's workbench",
     aboutImageUrl: defaultAboutImage,
     spotlightBackgroundImageUrl: defaultSpotlightBackground,
     spotlightBackgroundMobileImageUrl: "",
@@ -262,11 +262,7 @@ export default async function AdminHomepageContentPage({
       <p className="mt-2 max-w-2xl text-sm text-muted">
         Edit the homepage hero banner, moments, coupon, spotlight, and FAQ. Fields
         show the copy currently live on the site. Clear a field and save to
-        restore the built-in default. For the founder story, use{" "}
-        <a href={adminPath("/about")} className="font-medium text-ink underline-offset-2 hover:underline">
-          About page
-        </a>
-        .
+        restore the built-in default.
       </p>
 
       {error ? (

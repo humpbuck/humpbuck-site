@@ -6,21 +6,12 @@ import {
   AdminProductSidebar,
   type SidebarListedProduct,
 } from "@/components/admin/admin-product-sidebar";
-import { AdminHomeSpotlightPicker } from "@/components/admin/admin-home-spotlight-picker";
 import { AdminHomeRecommendedPicker } from "@/components/admin/admin-home-recommended-picker";
 import {
   StorefrontPlacementFields,
-  applyStorefrontPlacementChange,
-  applyStorefrontSeriesChange,
-  applyStorefrontSubcategoryChange,
+  type AdminCategoryOption,
 } from "@/components/admin/storefront-placement-fields";
 import { inferSeriesSlugFromProductSlug } from "@/lib/catalog";
-import {
-  categoryHasSubcategories,
-  coalesceStorefrontPlacementFields,
-  normalizeStorefrontCategoryInput,
-  normalizeStorefrontSubcategoryInput,
-} from "@/lib/home-watch-sections";
 import { DetailBlockListEditor } from "@/components/admin/detail-block-list-editor";
 import {
   detailBlocksToImageUrls,
@@ -56,6 +47,7 @@ type CatalogProductRecord = {
   detailJson: string;
   variantsJson: string;
   promoVideoJson: string | null;
+  categoryId: string | null;
   storefrontCategory: string | null;
   storefrontSubcategory: string | null;
   storefrontSeries: string | null;
@@ -118,6 +110,7 @@ type EditableProduct = {
   detailBlocks: ProductDetailBlock[];
   variants: VariantRow[];
   promoVideo: PromoVideo;
+  categoryId: string;
   storefrontCategory: string;
   storefrontSubcategory: string;
   storefrontSeries: string;
@@ -162,11 +155,6 @@ function buildEditableProduct(
     }
   }
   const detailBlocks = parseDetailBlocksJson(p.detailJson);
-  const placement = coalesceStorefrontPlacementFields({
-    storefrontCategory: p.storefrontCategory,
-    storefrontSubcategory: p.storefrontSubcategory,
-    storefrontSeries: p.storefrontSeries,
-  });
   return {
     id: p.id,
     slug: p.slug,
@@ -188,9 +176,10 @@ function buildEditableProduct(
     detailBlocks,
     variants: parseArray<VariantRow>(p.variantsJson, []),
     promoVideo: parseVideo(p.promoVideoJson),
-    storefrontCategory: placement.storefrontCategory ?? "",
-    storefrontSubcategory: placement.storefrontSubcategory ?? "",
-    storefrontSeries: placement.storefrontSeries ?? "",
+    categoryId: p.categoryId?.trim() || "",
+    storefrontCategory: p.storefrontCategory?.trim() || "",
+    storefrontSubcategory: p.storefrontSubcategory?.trim() || "",
+    storefrontSeries: p.storefrontSeries?.trim() || "",
     inventory: map,
   };
 }
@@ -239,6 +228,7 @@ function newProductDraft(): EditableProduct {
     detailBlocks: [],
     variants: [{ id: "style-01", label: "Style 01", image: "", inStock: true }],
     promoVideo: null,
+    categoryId: "",
     storefrontCategory: "",
     storefrontSubcategory: "",
     storefrontSeries: "",
@@ -312,9 +302,11 @@ function productSelectionKey(product: EditableProduct, index: number): string {
 export function ProductManager({
   initialProducts,
   initialInventory,
+  categories,
 }: {
   initialProducts: CatalogProductRecord[];
   initialInventory: InventoryRecord[];
+  categories: AdminCategoryOption[];
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -329,10 +321,6 @@ export function ProductManager({
   const [messageType, setMessageType] = useState<"success" | "error" | "info">("info");
   const [busy, setBusy] = useState(false);
   const [messageTimer, setMessageTimer] = useState<number | null>(null);
-  const [homeSpotlightProductId, setHomeSpotlightProductId] = useState<string | null>(() => {
-    const spotlight = initialProducts.find((p) => p.homeSpotlight && p.id);
-    return spotlight?.id ?? null;
-  });
   const [homeRecommendedProductIds, setHomeRecommendedProductIds] = useState<string[]>(() =>
     [...initialProducts]
       .filter((p) => p.homeRecommended && p.id)
@@ -364,13 +352,11 @@ export function ProductManager({
       selectionKey: productSelectionKey(product, index),
       slug: product.slug,
       name: product.name,
-      storefrontCategory: product.storefrontCategory,
-      storefrontSubcategory: product.storefrontSubcategory,
-      storefrontSeries: product.storefrontSeries,
+      categoryId: product.categoryId,
     }));
   }, [products]);
 
-  const savedProductsForSpotlight = useMemo(
+  const savedProductsForPickers = useMemo(
     () =>
       products
         .filter((product): product is EditableProduct & { id: string } => Boolean(product.id))
@@ -546,17 +532,8 @@ export function ProductManager({
       setFlashMessage("Slug and name are required.", "error");
       return;
     }
-    const placementCategory = normalizeStorefrontCategoryInput(current.storefrontCategory);
-    if (!current.storefrontCategory.trim()) {
-      setFlashMessage("Category is required for the product to appear on the shop.", "error");
-      return;
-    }
-    if (
-      placementCategory &&
-      categoryHasSubcategories(placementCategory) &&
-      !normalizeStorefrontSubcategoryInput(current.storefrontSubcategory)
-    ) {
-      setFlashMessage("Subcategory is required (Men or Women).", "error");
+    if (!current.categoryId.trim()) {
+      setFlashMessage("Category is required.", "error");
       return;
     }
     setBusy(true);
@@ -567,10 +544,7 @@ export function ProductManager({
       slug: current.slug.trim(),
       name: current.name.trim(),
       seriesSlug: inferSeriesSlugFromProductSlug(current.slug.trim()),
-      storefrontCategory: current.storefrontCategory.trim(),
-      storefrontSubcategory: current.storefrontSubcategory.trim(),
-      storefrontSeries: current.storefrontSeries.trim(),
-      categoryLabel: current.categoryLabel.trim(),
+      categoryId: current.categoryId.trim(),
       shortDescription: current.shortDescription.trim(),
       description: current.description.trim(),
       price: Number(current.price) || 0,
@@ -678,14 +652,6 @@ export function ProductManager({
           p.id === current.id ? { ...p, inStock: false, status: "archived" } : p,
         ),
       );
-      if (current.id === homeSpotlightProductId) {
-        setHomeSpotlightProductId(null);
-        void fetch("/api/admin/products/home-spotlight", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productId: null }),
-        });
-      }
       if (homeRecommendedProductIds.includes(current.id)) {
         const nextRecommended = homeRecommendedProductIds.filter((id) => id !== current.id);
         setHomeRecommendedProductIds(nextRecommended);
@@ -699,30 +665,6 @@ export function ProductManager({
       startTransition(() => router.refresh());
     } catch {
       setFlashMessage("Archive failed.", "error");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function saveHomeSpotlight(productId: string | null) {
-    setBusy(true);
-    setFlashMessage("");
-    try {
-      const res = await fetch("/api/admin/products/home-spotlight", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId }),
-      });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
-      if (!res.ok) {
-        setFlashMessage(data.error || "Failed to update homepage spotlight.", "error");
-        return;
-      }
-      setHomeSpotlightProductId(productId);
-      setFlashMessage("Homepage spotlight updated.", "success");
-      startTransition(() => router.refresh());
-    } catch {
-      setFlashMessage("Failed to update homepage spotlight.", "error");
     } finally {
       setBusy(false);
     }
@@ -769,14 +711,6 @@ export function ProductManager({
       }
       setProducts((prev) => prev.filter((_, index) => index !== selectedIndex));
       setSelected(sidebarProducts.find((p) => p.selectionKey !== selected)?.selectionKey ?? null);
-      if (current.id === homeSpotlightProductId) {
-        setHomeSpotlightProductId(null);
-        void fetch("/api/admin/products/home-spotlight", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productId: null }),
-        });
-      }
       if (homeRecommendedProductIds.includes(current.id)) {
         const nextRecommended = homeRecommendedProductIds.filter((id) => id !== current.id);
         setHomeRecommendedProductIds(nextRecommended);
@@ -798,14 +732,8 @@ export function ProductManager({
   return (
     <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
       <aside className="rounded-2xl border border-line bg-white/50 p-4">
-        <AdminHomeSpotlightPicker
-          products={savedProductsForSpotlight}
-          value={homeSpotlightProductId}
-          disabled={busy}
-          onChange={saveHomeSpotlight}
-        />
         <AdminHomeRecommendedPicker
-          products={savedProductsForSpotlight}
+          products={savedProductsForPickers}
           value={homeRecommendedProductIds}
           disabled={busy || isPending}
           onChange={saveHomeRecommended}
@@ -828,6 +756,7 @@ export function ProductManager({
         </div>
         <AdminProductSidebar
           products={sidebarProducts}
+          categories={categories}
           selected={selected}
           onSelect={setSelected}
         />
@@ -869,30 +798,10 @@ export function ProductManager({
                 onChange={(v) => updateCurrent((p) => ({ ...p, name: v }))}
               />
               <StorefrontPlacementFields
-                category={current.storefrontCategory}
-                subcategory={current.storefrontSubcategory}
-                series={current.storefrontSeries}
-                categoryLabel={current.categoryLabel}
-                onCategoryChange={(category) =>
-                  updateCurrent((p) => ({
-                    ...p,
-                    ...applyStorefrontPlacementChange(p, category),
-                  }))
-                }
-                onSubcategoryChange={(subcategory) =>
-                  updateCurrent((p) => ({
-                    ...p,
-                    ...applyStorefrontSubcategoryChange(p, subcategory),
-                  }))
-                }
-                onSeriesChange={(series) =>
-                  updateCurrent((p) => ({
-                    ...p,
-                    ...applyStorefrontSeriesChange(p, series),
-                  }))
-                }
-                onCategoryLabelChange={(categoryLabel) =>
-                  updateCurrent((p) => ({ ...p, categoryLabel }))
+                categoryId={current.categoryId}
+                categories={categories}
+                onCategoryIdChange={(categoryId) =>
+                  updateCurrent((p) => ({ ...p, categoryId }))
                 }
               />
               <LabeledInput

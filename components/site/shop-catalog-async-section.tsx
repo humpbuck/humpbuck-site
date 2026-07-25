@@ -22,6 +22,7 @@ import {
   productMatchesShopSeriesFilter,
   STOREFRONT_SERIES_LABELS,
 } from "@/lib/home-watch-sections";
+import { getAllProductCategories } from "@/lib/product-categories";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
 import { applyStorefrontProductLocale, getLocalizedSeriesFields } from "@/lib/storefront-locale";
 import { shopCatalogFiltersActive } from "@/lib/shop-filter-url";
@@ -32,16 +33,21 @@ export async function ShopCatalogAsyncSection({
   movementParam,
   audienceParam,
   profileParam,
+  categoryParam,
 }: {
   locale: string;
   seriesParam?: string;
   movementParam?: string;
   audienceParam?: string;
   profileParam?: string;
+  categoryParam?: string;
 }) {
   setRequestLocale(locale);
   const t = await getTranslations("Shop");
-  const all = await getMergedCatalogProducts();
+  const [all, categories] = await Promise.all([
+    getMergedCatalogProducts(),
+    getAllProductCategories().catch(() => []),
+  ]);
   const useStorefrontPlacements = hasStorefrontDbPlacements(all);
   const seriesFilters = getShopSeriesFilters(all);
   const filterSlugs = new Set(seriesFilters.map((s) => s.slug));
@@ -53,9 +59,13 @@ export async function ShopCatalogAsyncSection({
   const activeMovement = normalizeShopMovementParam(movementParam);
   const activeAudience = normalizeShopAudienceParam(audienceParam);
   const activeProfile = normalizeShopProfileParam(profileParam);
+  const activeCategorySlug = categoryParam?.trim().toLowerCase() || null;
+  const activeCategory = activeCategorySlug
+    ? categories.find((c) => c.slug === activeCategorySlug) ?? null
+    : null;
   const messages = await getMessages({ locale });
   const list = (
-    active || activeMovement || activeAudience || activeProfile
+    active || activeMovement || activeAudience || activeProfile || activeCategory
       ? all.filter((p) => {
           if (
             active &&
@@ -71,6 +81,7 @@ export async function ShopCatalogAsyncSection({
               : productMatchesUltraThin(p);
             if (!matchesUltraThin) return false;
           }
+          if (activeCategory && p.categoryId !== activeCategory.id) return false;
           return true;
         })
       : all
@@ -101,6 +112,7 @@ export async function ShopCatalogAsyncSection({
         ? t("filterWomen")
         : null,
     activeProfile === "ultra-thin" ? t("filterUltraThin") : null,
+    activeCategory?.name ?? null,
   ].filter(Boolean) as string[];
   const seriesFilterOptions = [{ slug: "digitemp", label: STOREFRONT_SERIES_LABELS.digitemp }];
 
@@ -117,12 +129,13 @@ export async function ShopCatalogAsyncSection({
         seriesOptions={seriesFilterOptions}
       />
 
-      {shopCatalogFiltersActive({
+      {(shopCatalogFiltersActive({
         series: active,
         movement: activeMovement,
         audience: activeAudience,
         profile: activeProfile,
-      }) && (
+      }) ||
+        Boolean(activeCategory)) && (
         <p className="mt-4 text-sm text-muted">
           {t("showingFiltered", {
             filters: activeFilterLabels.join(" · "),

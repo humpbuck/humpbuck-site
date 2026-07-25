@@ -7,9 +7,8 @@ import {
 } from "@/lib/admin-product-slug";
 import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
 import { normalizeSeriesSlug } from "@/lib/catalog";
-import {
-  parseStorefrontPlacementPayload,
-} from "@/lib/home-watch-sections";
+import { resolveCategoryPlacementForSave } from "@/lib/product-categories";
+import { ensureProductCategorySchema } from "@/lib/product-category-schema";
 import {
   parseDetailBlocksPayload,
   serializeDetailBlocksForDb,
@@ -40,12 +39,19 @@ function productUpdateData(
   slug: string,
   name: string,
   variants: ProductVariant[],
+  placement: {
+    categoryId: string;
+    categoryLabel: string;
+    storefrontCategory: string | null;
+    storefrontSubcategory: string | null;
+    storefrontSeries: string | null;
+  },
 ) {
   return {
     slug,
     name,
     seriesSlug: normalizeSeriesSlug(asString(body.seriesSlug)) || "digitemp",
-    categoryLabel: asString(body.categoryLabel).trim(),
+    categoryLabel: placement.categoryLabel,
     shortDescription: asString(body.shortDescription),
     description: asString(body.description),
     price: Number(body.price) || 0,
@@ -75,7 +81,10 @@ function productUpdateData(
     detailJson: serializeDetailBlocksForDb(parseDetailBlocksPayload(body.detail)),
     variantsJson: JSON.stringify(variants),
     promoVideoJson: body.promoVideo ? JSON.stringify(body.promoVideo) : null,
-    ...parseStorefrontPlacementPayload(body),
+    categoryId: placement.categoryId,
+    storefrontCategory: placement.storefrontCategory,
+    storefrontSubcategory: placement.storefrontSubcategory,
+    storefrontSeries: placement.storefrontSeries,
   };
 }
 
@@ -167,6 +176,7 @@ export async function PATCH(
 
   try {
     await ensureCatalogProductSchema();
+    await ensureProductCategorySchema();
     const prev = await prisma.catalogProduct.findUnique({ where: { id } });
     if (!prev) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
@@ -182,7 +192,19 @@ export async function PATCH(
       }
     }
 
-    const data = productUpdateData(body, prev.status, slug, name, variants);
+    const placement = await resolveCategoryPlacementForSave(body.categoryId);
+    if (!placement.ok) {
+      return NextResponse.json({ error: placement.error }, { status: 400 });
+    }
+
+    const data = productUpdateData(
+      body,
+      prev.status,
+      slug,
+      name,
+      variants,
+      placement.data,
+    );
 
     if (slug !== prev.slug) {
       await migrateCatalogProductSlugOnDb(prev.slug, slug);

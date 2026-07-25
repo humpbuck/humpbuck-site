@@ -3,7 +3,8 @@ import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import { isPrismaUniqueViolation, normalizeProductSlug } from "@/lib/admin-product-slug";
 import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
 import { normalizeSeriesSlug } from "@/lib/catalog";
-import { parseStorefrontPlacementPayload } from "@/lib/home-watch-sections";
+import { resolveCategoryPlacementForSave } from "@/lib/product-categories";
+import { ensureProductCategorySchema } from "@/lib/product-category-schema";
 import {
   parseDetailBlocksPayload,
   serializeDetailBlocksForDb,
@@ -108,6 +109,7 @@ export async function POST(req: Request) {
 
   try {
     await ensureCatalogProductSchema();
+    await ensureProductCategorySchema();
     const taken = await prisma.catalogProduct.findUnique({ where: { slug } });
     if (taken) {
       return NextResponse.json(
@@ -116,12 +118,17 @@ export async function POST(req: Request) {
       );
     }
 
+    const placement = await resolveCategoryPlacementForSave(body.categoryId);
+    if (!placement.ok) {
+      return NextResponse.json({ error: placement.error }, { status: 400 });
+    }
+
     const created = await prisma.catalogProduct.create({
       data: {
         slug,
         name,
         seriesSlug: normalizeSeriesSlug(asString(body.seriesSlug)) || "digitemp",
-        categoryLabel: asString(body.categoryLabel).trim(),
+        categoryLabel: placement.data.categoryLabel,
         shortDescription: asString(body.shortDescription),
         description: asString(body.description),
         price: Number(body.price) || 0,
@@ -148,7 +155,10 @@ export async function POST(req: Request) {
         detailJson: serializeDetailBlocksForDb(parseDetailBlocksPayload(body.detail)),
         variantsJson: JSON.stringify(variants),
         promoVideoJson: body.promoVideo ? JSON.stringify(body.promoVideo) : null,
-        ...parseStorefrontPlacementPayload(body),
+        categoryId: placement.data.categoryId,
+        storefrontCategory: placement.data.storefrontCategory,
+        storefrontSubcategory: placement.data.storefrontSubcategory,
+        storefrontSeries: placement.data.storefrontSeries,
       },
     });
 

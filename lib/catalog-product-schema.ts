@@ -1,6 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/prisma";
+import { ensureProductCategorySchema } from "@/lib/product-category-schema";
 
 let catalogProductSchemaReady: Promise<void> | null = null;
 
@@ -35,6 +36,8 @@ export async function ensureCatalogProductSchema(): Promise<void> {
         "INTEGER NOT NULL DEFAULT 0",
       );
       await addCatalogProductColumnIfMissing("oemOdmPrice", "REAL");
+      await addCatalogProductColumnIfMissing("categoryId", "TEXT");
+      await ensureProductCategorySchema();
     })();
   }
   await catalogProductSchemaReady;

@@ -49,10 +49,11 @@ export interface Product {
   specs: { label: string; value: string }[];
   inStock: boolean;
   /** Home “Search by” row (mechanical | quartz | ultra-thin). Set in admin. */
+  categoryId?: string;
   storefrontCategory?: string;
   storefrontSubcategory?: string;
   storefrontSeries?: string;
-  /** Homepage module directly below hero — set in admin. */
+  /** Legacy flag; homepage below-hero spotlight module removed. */
   homeSpotlight?: boolean;
   /** Homepage Recommended carousel — set in admin. */
   homeRecommended?: boolean;

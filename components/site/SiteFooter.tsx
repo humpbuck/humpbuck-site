@@ -6,21 +6,31 @@ import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { StoreContactDetails } from "@/components/site/store-contact-details";
 import { publicSupportEmail } from "@/lib/support-contact";
 
-export async function SiteFooter() {
+export async function SiteFooter({
+  shopCategoryLinks,
+}: {
+  shopCategoryLinks?: { href: string; label: string }[];
+} = {}) {
   const t = await getTranslations("Footer");
   const tAbout = await getTranslations("AboutPage");
   const supportMail = publicSupportEmail();
   const year = new Date().getFullYear();
 
+  const shopLinks = [
+    { label: t("allProducts"), href: "/product" },
+    ...(shopCategoryLinks && shopCategoryLinks.length > 0
+      ? shopCategoryLinks.map((c) => ({ label: c.label, href: c.href }))
+      : [
+          { label: t("linkQuartz"), href: "/product?movement=quartz" },
+          { label: t("linkUltraThin"), href: "/product?profile=ultra-thin" },
+          { label: t("linkMechanical"), href: "/product?movement=mechanical" },
+        ]),
+  ];
+
   const cols = [
     {
       title: t("shopTitle"),
-      links: [
-        { label: t("allProducts"), href: "/product" },
-        { label: t("linkQuartz"), href: "/product?movement=quartz" },
-        { label: t("linkUltraThin"), href: "/product?profile=ultra-thin" },
-        { label: t("linkMechanical"), href: "/product?movement=mechanical" },
-      ],
+      links: shopLinks,
     },
     {
       title: t("companyTitle"),
@@ -37,7 +47,7 @@ export async function SiteFooter() {
         { label: t("termsOfService"), href: "/terms" },
       ],
     },
-  ] as const;
+  ];
 
   return (
     <footer className="border-t border-line bg-paper">

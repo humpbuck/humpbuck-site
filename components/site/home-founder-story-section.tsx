@@ -12,10 +12,10 @@ export async function HomeFounderStorySection() {
     getSiteHomeContent(),
   ]);
 
-  const imageSrc = content.aboutImageUrl || founderStoryHomePoolWebpUrl();
+  const imageSrc = founderStoryHomePoolWebpUrl();
   const heading = resolveHomeCmsText(locale, content.aboutHeading, tAbout("storyKicker"));
   const paragraph1 = resolveHomeCmsText(locale, content.aboutParagraph1, tAbout("storyP1"));
-  const imageAlt = resolveHomeCmsText(locale, content.aboutImageAlt, tHome("founderStoryImageAlt"));
+  const imageAlt = tHome("founderStoryImageAlt");
 
   return (
     <section

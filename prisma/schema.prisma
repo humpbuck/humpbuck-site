@@ -180,6 +180,19 @@ model ProductInventory {
   @@index([productSlug])
 }
 
+/** Admin-managed shop categories (drag order + product assignment). */
+model ProductCategory {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  imageUrl  String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  products  CatalogProduct[]
+
+  @@index([sortOrder])
+}
+
 model CatalogProduct {
   id               String   @id @default(cuid())
   slug             String   @unique
@@ -201,6 +214,9 @@ model CatalogProduct {
   detailJson       String   @default("[]")
   variantsJson     String   @default("[]")
   promoVideoJson   String?
+  /** FK to ProductCategory — preferred over legacy storefront* fields. */
+  categoryId            String?
+  category              ProductCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   storefrontCategory    String?
   storefrontSubcategory String?
   storefrontSeries      String?
@@ -212,6 +228,7 @@ model CatalogProduct {
   updatedAt        DateTime @updatedAt
 
   @@index([homeRecommended, homeRecommendedSort])
+  @@index([categoryId])
 }
 
 enum ProductReviewStatus {

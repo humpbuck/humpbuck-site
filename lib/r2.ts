@@ -53,14 +53,14 @@ export function mechanicalHeroWebpUrl(): string {
 }
 
 /**
- * Homepage founder story — `Home/humpbuck-home-pool.webp` on R2.
+ * Homepage / About founder story — `Home/humpbuck-homepage-grow.webp` on R2.
  * Bump `NEXT_PUBLIC_R2_HUMPBUCK_HOME_POOL_REV` after same-name overwrites.
  */
 export function founderStoryHomePoolWebpUrl(): string {
   const rev = process.env.NEXT_PUBLIC_R2_HUMPBUCK_HOME_POOL_REV?.trim() || "1";
   const base = r2PublicBaseUrl();
   const heroBase = base.includes(".r2.dev") ? R2_ASSETS_PUBLIC_BASE : base;
-  return `${heroBase}/Home/humpbuck-home-pool.webp?v=${encodeURIComponent(rev)}`;
+  return `${heroBase}/Home/humpbuck-homepage-grow.webp?v=${encodeURIComponent(rev)}`;
 }
 
 /**
@@ -461,7 +461,7 @@ export const R2 = {
     /** Homepage hero background — `home/digitemp-background.webp` (`?v=` cache bust). */
     digitempBackgroundWebp: digitempBackgroundWebpUrl(),
     digitempSpaceMp4: digitempSpaceMp4Url(),
-    /** Founder story — `Home/humpbuck-home-pool.webp` (`?v=` cache bust). */
+    /** Founder story — `Home/humpbuck-homepage-grow.webp` (`?v=` cache bust). */
     founderStoryPoolWebp: founderStoryHomePoolWebpUrl(),
   },
   products: {

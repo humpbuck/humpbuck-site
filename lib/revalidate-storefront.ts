@@ -25,13 +25,6 @@ export function revalidateStorefrontHomepage(): void {
   revalidateStorefrontPath("/");
 }
 
-/** Homepage founder story + About page story section. */
-export function revalidateStorefrontAbout(): void {
-  revalidateSiteHomeContent();
-  revalidateStorefrontPath("/");
-  revalidateStorefrontPath("/about");
-}
-
 /** Revalidate a storefront pathname for every `[locale]` segment (`as-needed` + `/es/...`). */
 export function revalidateStorefrontPath(
   pathname: string,

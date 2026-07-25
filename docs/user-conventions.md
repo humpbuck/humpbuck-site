@@ -114,6 +114,10 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-25 | **分类重命名/顺序**：导航与页脚 `ALL PRODUCTS` / `ANA-DIGI`（原 Quartz）/ `ULTRA-THIN` / `AUTOMATIC`（原 Mechanical）；URL 仍用 `movement=quartz|mechanical` 与 `profile=ultra-thin`。首页滑块顺序：ANA-DIGI → Ultra-thin watches → Automatic watches。 |
 | 2026-07-25 | **首页 Recommended**：后台 Products 左侧多选指定（最多 12，可排序）；有勾选则按后台顺序展示，未勾选时回退 Automatic 优先逻辑。 |
 | 2026-07-25 | **多语言/SEO 对齐 ANA-DIGI**：各 `messages/{locale}.json` 同步站点 title/description、Hero、Moments、分类名、Shop/About/Blog meta；源文件 `scripts/ana-digi-rebrand-i18n.json`，应用 `node scripts/apply-ana-digi-rebrand-i18n.mjs`。英文公告条 fallback 改为 ANA-DIGI 文案（CMS 有自定义 slides 时仍以后台为准）。 |
+| 2026-07-25 | **About 图**：首页与 `/about` 固定用 `Home/humpbuck-homepage-grow.webp`；商家后台 **ABOUT** 编辑页删除。 |
+| 2026-07-25 | 商家后台 Products 去掉 **Homepage spotlight (below hero)** 选择器（对应首页模块已下线）。 |
+| 2026-07-25 | 导航 PRODUCTS：`ANA-DIGI` / `AUTOMATIC` 不再展开 Men/Women，直接进入对应 movement 列表。 |
+| 2026-07-25 | **商家后台 Categories**（参考 watchsourcego）：独立建分类 + 拖拽排序；Products 只选 Category；去掉 Subcategory / Series / Category label。前台 PRODUCTS/页脚顺序跟后台分类排序；`quartz` / `ultra-thin` / `mechanical` slug 仍映射原有 shop URL。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 

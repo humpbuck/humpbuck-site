@@ -1,7 +1,7 @@
 "use client";
 
 import { Link, usePathname } from "@/i18n/navigation";
-import { ChevronDown, ChevronRight, Menu, ShoppingBag, X } from "lucide-react";
+import { ChevronDown, Menu, ShoppingBag, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
@@ -12,25 +12,19 @@ import { buildLoginHref } from "@/lib/auth-callback-url";
 import { storefrontHomePath } from "@/lib/storefront-home-path";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
 
-const SHOP_DROPDOWN_LINKS = [
-  { type: "link" as const, href: "/product", labelKey: "shopAllProducts" as const },
-  { type: "flyout" as const, movement: "quartz" as const, labelKey: "shopQuartz" as const },
-  {
-    type: "link" as const,
-    href: "/product?profile=ultra-thin",
-    labelKey: "shopUltraThin" as const,
-  },
-  {
-    type: "flyout" as const,
-    movement: "mechanical" as const,
-    labelKey: "shopMechanical" as const,
-  },
+export type ShopNavCategoryLink = {
+  href: string;
+  label: string;
+};
+
+const FALLBACK_SHOP_CATEGORY_LINKS: ShopNavCategoryLink[] = [
+  { href: "/product?movement=quartz", label: "ANA-DIGI" },
+  { href: "/product?profile=ultra-thin", label: "Ultra-thin" },
+  { href: "/product?movement=mechanical", label: "Automatic" },
 ];
 
 const SHOP_LINK_CLASS =
   "block px-4 py-2.5 text-[12px] font-medium uppercase tracking-[0.08em] text-ink/90 transition hover:bg-ink/[0.04]";
-const SHOP_FLYOUT_LINK_CLASS =
-  "block px-4 py-2 text-[11px] font-medium uppercase tracking-[0.08em] text-ink/85 transition hover:bg-ink/[0.04]";
 
 type NavLinkItem =
   | { href: string; label: string }
@@ -67,55 +61,17 @@ function ShopDropdownLink({
   );
 }
 
-function ShopDropdownFlyout({
-  movement,
-  label,
-  menLabel,
-  womenLabel,
-}: {
-  movement: "mechanical" | "quartz";
-  label: string;
-  menLabel: string;
-  womenLabel: string;
-}) {
-  return (
-    <div className="group/item relative">
-      <Link
-        href={`/product?movement=${movement}`}
-        className={`${SHOP_LINK_CLASS} flex items-center justify-between gap-3 pr-3`}
-      >
-        <span>{label}</span>
-        <ChevronRight size={14} className="shrink-0 opacity-45" aria-hidden />
-      </Link>
-      <div className="pointer-events-none absolute left-full top-0 z-10 pl-1 opacity-0 transition group-hover/item:pointer-events-auto group-hover/item:opacity-100">
-        <div
-          role="menu"
-          aria-label={label}
-          className="min-w-[132px] rounded-2xl border border-line bg-paper/95 py-2 shadow-card backdrop-blur-md"
-        >
-          <Link
-            href={`/product?movement=${movement}&audience=men`}
-            className={SHOP_FLYOUT_LINK_CLASS}
-          >
-            {menLabel}
-          </Link>
-          <Link
-            href={`/product?movement=${movement}&audience=women`}
-            className={SHOP_FLYOUT_LINK_CLASS}
-          >
-            {womenLabel}
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function DesktopShopNav({
   tNav,
+  categoryLinks,
 }: {
   tNav: ReturnType<typeof useTranslations<"Navigation">>;
+  categoryLinks: ShopNavCategoryLink[];
 }) {
+  const links = [
+    { href: "/product", label: tNav("shopAllProducts") },
+    ...categoryLinks,
+  ];
   return (
     <div className="group relative">
       <button
@@ -137,24 +93,14 @@ function DesktopShopNav({
           aria-label={tNav("shop")}
           className="min-w-[200px] overflow-visible rounded-2xl border border-line bg-paper/95 py-2 shadow-card backdrop-blur-md"
         >
-          {SHOP_DROPDOWN_LINKS.map((item) =>
-            item.type === "link" ? (
-              <ShopDropdownLink
-                key={item.href}
-                href={item.href}
-                label={tNav(item.labelKey)}
-                className={SHOP_LINK_CLASS}
-              />
-            ) : (
-              <ShopDropdownFlyout
-                key={item.movement}
-                movement={item.movement}
-                label={tNav(item.labelKey)}
-                menLabel={tNav("shopMen")}
-                womenLabel={tNav("shopWomen")}
-              />
-            ),
-          )}
+          {links.map((item) => (
+            <ShopDropdownLink
+              key={item.href}
+              href={item.href}
+              label={item.label}
+              className={SHOP_LINK_CLASS}
+            />
+          ))}
         </div>
       </div>
     </div>
@@ -163,49 +109,32 @@ function DesktopShopNav({
 
 function MobileShopNav({
   tNav,
+  categoryLinks,
   onNavigate,
 }: {
   tNav: ReturnType<typeof useTranslations<"Navigation">>;
+  categoryLinks: ShopNavCategoryLink[];
   onNavigate: () => void;
 }) {
+  const links = [
+    { href: "/product", label: tNav("shopAllProducts") },
+    ...categoryLinks,
+  ];
   return (
     <div className="rounded-xl">
       <p className="px-4 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-ink/85">
         {tNav("shop")}
       </p>
       <div className="flex flex-col gap-1 pb-1 pl-2">
-        {SHOP_DROPDOWN_LINKS.map((item) =>
-          item.type === "link" ? (
-            <ShopDropdownLink
-              key={item.href}
-              href={item.href}
-              label={tNav(item.labelKey)}
-              onNavigate={onNavigate}
-              className="block rounded-xl px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-ink/[0.04]"
-            />
-          ) : (
-            <div key={item.movement} className="flex flex-col">
-              <ShopDropdownLink
-                href={`/product?movement=${item.movement}`}
-                label={tNav(item.labelKey)}
-                onNavigate={onNavigate}
-                className="block rounded-xl px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-ink/[0.04]"
-              />
-              <ShopDropdownLink
-                href={`/product?movement=${item.movement}&audience=men`}
-                label={tNav("shopMen")}
-                onNavigate={onNavigate}
-                className="block rounded-xl py-2 pl-8 pr-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-ink/60 hover:bg-ink/[0.04]"
-              />
-              <ShopDropdownLink
-                href={`/product?movement=${item.movement}&audience=women`}
-                label={tNav("shopWomen")}
-                onNavigate={onNavigate}
-                className="block rounded-xl py-2 pl-8 pr-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-ink/60 hover:bg-ink/[0.04]"
-              />
-            </div>
-          ),
-        )}
+        {links.map((item) => (
+          <ShopDropdownLink
+            key={item.href}
+            href={item.href}
+            label={item.label}
+            onNavigate={onNavigate}
+            className="block rounded-xl px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-ink/[0.04]"
+          />
+        ))}
       </div>
     </div>
   );
@@ -235,10 +164,16 @@ function HeaderLoginLink({
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({
+  shopCategoryLinks = FALLBACK_SHOP_CATEGORY_LINKS,
+}: {
+  shopCategoryLinks?: ShopNavCategoryLink[];
+} = {}) {
   const t = useTranslations("Navigation");
   const locale = useLocale();
   const signOutCallbackUrl = storefrontHomePath(locale);
+  const categoryLinks =
+    shopCategoryLinks.length > 0 ? shopCategoryLinks : FALLBACK_SHOP_CATEGORY_LINKS;
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [bagBump, setBagBump] = useState(false);
@@ -318,7 +253,7 @@ export function SiteHeader() {
           </div>
 
           <nav className="hidden shrink-0 items-center gap-4 lg:flex xl:gap-6">
-            <DesktopShopNav tNav={t} />
+            <DesktopShopNav tNav={t} categoryLinks={categoryLinks} />
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -402,7 +337,11 @@ export function SiteHeader() {
           </button>
         </div>
         <nav className="flex flex-col p-2">
-          <MobileShopNav tNav={t} onNavigate={() => setOpen(false)} />
+          <MobileShopNav
+            tNav={t}
+            categoryLinks={categoryLinks}
+            onNavigate={() => setOpen(false)}
+          />
           {navItems.map((item) => (
             <Link
               key={item.href}
