@@ -99,9 +99,9 @@ export default async function AdminAnnouncementPage({
       <AdminBackLink href={adminPath()} label="Overview" />
       <h1 className="mt-4 font-serif text-3xl tracking-tight">Homepage announcement</h1>
       <p className="mt-2 max-w-2xl text-sm text-muted">
-        Promo bar at the top of the storefront homepage. Add multiple slides —
-        they rotate automatically like a ticker. Customize bar color without
-        redeploying.
+        Promo bar at the top of the storefront. Add multiple slides — they rotate
+        like a ticker. The same text shows on every language (EN, JA, etc.).
+        Customize bar color without redeploying.
       </p>
 
       {error ? (

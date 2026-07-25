@@ -1,17 +1,16 @@
-import { routing } from "@/i18n/routing";
 import type { SiteAnnouncementData } from "@/lib/site-announcement";
 
-/** CMS stores English; non-default locales prefer `messages/{locale}.json`. */
+/**
+ * Announcement bar is one storefront message for every locale.
+ * Prefer merchant CMS slides; use `Announcement.message` only when CMS is empty.
+ */
 export function resolveAnnouncementMessage(
-  locale: string,
+  _locale: string,
   cmsMessage: string | undefined | null,
   i18nMessage: string,
 ): string {
   const cms = String(cmsMessage ?? "").trim();
   const i18n = String(i18nMessage ?? "").trim();
-  if (locale !== routing.defaultLocale) {
-    return i18n || cms;
-  }
   return cms || i18n;
 }
 
