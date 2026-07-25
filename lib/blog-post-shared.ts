@@ -9,9 +9,8 @@ export type BlogPostRow = {
   excerpt: string;
   body: string;
   coverImageUrl: string;
-  homeCarouselSlot: number | null;
-  homeCarouselImageUrl: string;
-  homeCarouselDescription: string;
+  /** CatalogProduct ids shown as related products under the article. */
+  productIds: string[];
   status: BlogPostStatus;
   sortOrder: number;
   publishedAt: Date | null;
@@ -21,14 +20,7 @@ export type BlogPostRow = {
 
 export type BlogPostCard = Pick<
   BlogPostRow,
-  | "slug"
-  | "title"
-  | "excerpt"
-  | "coverImageUrl"
-  | "homeCarouselSlot"
-  | "homeCarouselImageUrl"
-  | "homeCarouselDescription"
-  | "publishedAt"
+  "slug" | "title" | "excerpt" | "coverImageUrl" | "publishedAt"
 >;
 
 export type BlogPostInput = {
@@ -37,12 +29,34 @@ export type BlogPostInput = {
   excerpt: string;
   body: string;
   coverImageUrl: string;
-  homeCarouselSlot: number | null;
-  homeCarouselImageUrl: string;
-  homeCarouselDescription: string;
+  productIds: string[];
   status: BlogPostStatus;
   sortOrder: number;
 };
+
+export function normalizeBlogProductIds(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  const seen = new Set<string>();
+  const ids: string[] = [];
+  for (const item of raw) {
+    if (typeof item !== "string") continue;
+    const id = item.trim();
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    ids.push(id);
+    if (ids.length >= 24) break;
+  }
+  return ids;
+}
+
+export function parseBlogProductIdsJson(raw: string | null | undefined): string[] {
+  if (!raw?.trim()) return [];
+  try {
+    return normalizeBlogProductIds(JSON.parse(raw));
+  } catch {
+    return [];
+  }
+}
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 

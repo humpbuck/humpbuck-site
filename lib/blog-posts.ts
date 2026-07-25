@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import {
   isBlogPostSlugValid,
   normalizeBlogPostSlug,
+  normalizeBlogProductIds,
+  parseBlogProductIdsJson,
   type BlogPostInput,
   type BlogPostRow,
   type BlogPostStatus,
@@ -19,11 +21,12 @@ export {
   formatBlogPostDate,
   isBlogPostSlugValid,
   normalizeBlogPostSlug,
+  normalizeBlogProductIds,
+  parseBlogProductIdsJson,
 } from "@/lib/blog-post-shared";
 
 const BLOG_SELECT = `
-  "id", "slug", "title", "excerpt", "body", "coverImageUrl",
-  "homeCarouselSlot", "homeCarouselImageUrl", "homeCarouselDescription",
+  "id", "slug", "title", "excerpt", "body", "coverImageUrl", "productIdsJson",
   "status", "sortOrder", "publishedAt", "createdAt", "updatedAt"
 `;
 
@@ -34,9 +37,7 @@ type DbBlogPostRow = {
   excerpt: string;
   body: string;
   coverImageUrl: string;
-  homeCarouselSlot: number | null;
-  homeCarouselImageUrl: string;
-  homeCarouselDescription: string;
+  productIdsJson?: string | null;
   status: string;
   sortOrder: number;
   publishedAt: Date | null;
@@ -71,6 +72,7 @@ async function ensureBlogPostTable(): Promise<void> {
           "excerpt" TEXT NOT NULL DEFAULT '',
           "body" TEXT NOT NULL DEFAULT '',
           "coverImageUrl" TEXT NOT NULL DEFAULT '',
+          "productIdsJson" TEXT NOT NULL DEFAULT '[]',
           "homeCarouselSlot" INTEGER,
           "homeCarouselImageUrl" TEXT NOT NULL DEFAULT '',
           "homeCarouselDescription" TEXT NOT NULL DEFAULT '',
@@ -101,6 +103,10 @@ async function ensureBlogPostTable(): Promise<void> {
         "homeCarouselDescription",
         "TEXT NOT NULL DEFAULT ''",
       );
+      await addBlogPostColumnIfMissing(
+        "productIdsJson",
+        "TEXT NOT NULL DEFAULT '[]'",
+      );
       await prisma.$executeRawUnsafe(`
         CREATE INDEX IF NOT EXISTS "BlogPost_homeCarouselSlot_idx" ON "BlogPost"("homeCarouselSlot")
       `).catch(() => null);
@@ -117,9 +123,7 @@ function rowFromDb(row: DbBlogPostRow): BlogPostRow {
     excerpt: row.excerpt,
     body: row.body,
     coverImageUrl: row.coverImageUrl,
-    homeCarouselSlot: row.homeCarouselSlot,
-    homeCarouselImageUrl: row.homeCarouselImageUrl,
-    homeCarouselDescription: row.homeCarouselDescription,
+    productIds: parseBlogProductIdsJson(row.productIdsJson),
     status: row.status === "published" ? "published" : "draft",
     sortOrder: row.sortOrder,
     publishedAt: row.publishedAt,
@@ -142,8 +146,7 @@ async function queryBlogPosts(sql: string): Promise<BlogPostRow[]> {
 async function queryBlogPostById(id: string): Promise<BlogPostRow | null> {
   await ensureBlogPostTable();
   const rows = (await prisma.$queryRaw`
-    SELECT "id", "slug", "title", "excerpt", "body", "coverImageUrl",
-           "homeCarouselSlot", "homeCarouselImageUrl", "homeCarouselDescription",
+    SELECT "id", "slug", "title", "excerpt", "body", "coverImageUrl", "productIdsJson",
            "status", "sortOrder", "publishedAt", "createdAt", "updatedAt"
     FROM "BlogPost"
     WHERE "id" = ${id}
@@ -165,12 +168,6 @@ function cleanCoverImageUrl(url: string): string {
   return trimmed.slice(0, 2048);
 }
 
-function cleanHomeCarouselSlot(slot: number | null | undefined): number | null {
-  if (typeof slot !== "number" || !Number.isFinite(slot)) return null;
-  const rounded = Math.round(slot);
-  return rounded >= 1 && rounded <= 6 ? rounded : null;
-}
-
 function prepareInput(input: BlogPostInput): BlogPostInput | null {
   const slug = cleanBlogPostSlug(input.slug);
   if (!slug) return null;
@@ -184,9 +181,7 @@ function prepareInput(input: BlogPostInput): BlogPostInput | null {
     excerpt: input.excerpt.trim().slice(0, 500),
     body: body.slice(0, 50000),
     coverImageUrl: cleanCoverImageUrl(input.coverImageUrl),
-    homeCarouselSlot: cleanHomeCarouselSlot(input.homeCarouselSlot),
-    homeCarouselImageUrl: cleanCoverImageUrl(input.homeCarouselImageUrl),
-    homeCarouselDescription: input.homeCarouselDescription.trim().slice(0, 280),
+    productIds: normalizeBlogProductIds(input.productIds),
     status: input.status === "published" ? "published" : "draft",
     sortOrder: Number.isFinite(input.sortOrder) ? Math.round(input.sortOrder) : 0,
   };
@@ -201,30 +196,6 @@ export async function listPublishedBlogPosts(): Promise<BlogPostRow[]> {
   `);
 }
 
-export async function listPublishedHomeCarouselBlogPosts(): Promise<BlogPostRow[]> {
-  const rows = await queryBlogPosts(`
-    SELECT ${BLOG_SELECT}
-    FROM "BlogPost"
-    WHERE "status" = 'published'
-      AND "homeCarouselSlot" BETWEEN 1 AND 6
-      AND (
-        TRIM("homeCarouselImageUrl") <> ''
-        OR TRIM("coverImageUrl") <> ''
-      )
-    ORDER BY "homeCarouselSlot" ASC, "updatedAt" DESC
-  `);
-
-  const deduped = new Map<number, BlogPostRow>();
-  for (const row of rows) {
-    if (row.homeCarouselSlot == null || deduped.has(row.homeCarouselSlot)) continue;
-    deduped.set(row.homeCarouselSlot, row);
-  }
-
-  return [...deduped.values()].sort(
-    (a, b) => (a.homeCarouselSlot ?? 0) - (b.homeCarouselSlot ?? 0),
-  );
-}
-
 export async function getPublishedBlogPostBySlug(
   slug: string,
 ): Promise<BlogPostRow | null> {
@@ -233,8 +204,7 @@ export async function getPublishedBlogPostBySlug(
   try {
     await ensureBlogPostTable();
     const rows = (await prisma.$queryRaw`
-      SELECT "id", "slug", "title", "excerpt", "body", "coverImageUrl",
-             "homeCarouselSlot", "homeCarouselImageUrl", "homeCarouselDescription",
+      SELECT "id", "slug", "title", "excerpt", "body", "coverImageUrl", "productIdsJson",
              "status", "sortOrder", "publishedAt", "createdAt", "updatedAt"
       FROM "BlogPost"
       WHERE "slug" = ${cleaned} AND "status" = 'published'
@@ -262,14 +232,17 @@ export async function createBlogPost(input: BlogPostInput): Promise<BlogPostRow>
   const id = randomUUID();
   const publishedAt = data.status === "published" ? new Date() : null;
   const now = new Date();
+  const productIdsJson = JSON.stringify(data.productIds);
+  // Legacy homeCarousel* columns remain in D1; always clear (feature removed).
   await prisma.$executeRaw`
     INSERT INTO "BlogPost" (
-      "id", "slug", "title", "excerpt", "body", "coverImageUrl",
+      "id", "slug", "title", "excerpt", "body", "coverImageUrl", "productIdsJson",
       "homeCarouselSlot", "homeCarouselImageUrl", "homeCarouselDescription",
       "status", "sortOrder", "publishedAt", "createdAt", "updatedAt"
     ) VALUES (
       ${id}, ${data.slug}, ${data.title}, ${data.excerpt}, ${data.body}, ${data.coverImageUrl},
-      ${data.homeCarouselSlot}, ${data.homeCarouselImageUrl}, ${data.homeCarouselDescription},
+      ${productIdsJson},
+      ${null}, ${""}, ${""},
       ${data.status}, ${data.sortOrder}, ${publishedAt}, ${now}, ${now}
     )
   `;
@@ -291,6 +264,7 @@ export async function updateBlogPost(
     data.status === "published" ? existing.publishedAt ?? new Date() : null;
 
   const updatedAt = new Date();
+  const productIdsJson = JSON.stringify(data.productIds);
   await prisma.$executeRaw`
     UPDATE "BlogPost"
     SET
@@ -299,9 +273,10 @@ export async function updateBlogPost(
       "excerpt" = ${data.excerpt},
       "body" = ${data.body},
       "coverImageUrl" = ${data.coverImageUrl},
-      "homeCarouselSlot" = ${data.homeCarouselSlot},
-      "homeCarouselImageUrl" = ${data.homeCarouselImageUrl},
-      "homeCarouselDescription" = ${data.homeCarouselDescription},
+      "productIdsJson" = ${productIdsJson},
+      "homeCarouselSlot" = ${null},
+      "homeCarouselImageUrl" = ${""},
+      "homeCarouselDescription" = ${""},
       "status" = ${data.status},
       "sortOrder" = ${data.sortOrder},
       "publishedAt" = ${publishedAt},

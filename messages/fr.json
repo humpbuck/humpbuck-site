@@ -944,7 +944,8 @@
     "kicker": "Journal",
     "backToBlog": "Retour au blog",
     "notFoundTitle": "Article introuvable",
-    "viewProduct": "Voir le produit"
+    "viewProduct": "Voir le produit",
+    "relatedProducts": "Produits associés"
   },
   "Announcement": {
     "message": "Montres multifonctions ANA-DIGI TEMP pour le quotidien."

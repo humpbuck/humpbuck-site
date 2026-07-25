@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BlogArticleBody } from "@/components/site/blog-article-body";
+import { ProductCard } from "@/components/site/ProductCard";
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { readBlogBuildSlugs } from "@/lib/blog-build-slugs";
 import {
@@ -10,6 +11,7 @@ import {
   getPublishedBlogPostBySlug,
   listPublishedBlogPosts,
 } from "@/lib/blog-posts";
+import { getMergedCatalogProductsByIds } from "@/lib/catalog-db";
 import { routing } from "@/i18n/routing";
 import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
@@ -46,7 +48,13 @@ export async function generateMetadata({
     return { title: t("notFoundTitle") };
   }
 
-  const description = post.excerpt.trim() || post.body.trim().slice(0, 160);
+  const description =
+    post.excerpt.trim() ||
+    post.body
+      .replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 160);
   const pathPrefix = locale === routing.defaultLocale ? "" : `/${locale}`;
   const path = `${pathPrefix}/blog/${encodeURIComponent(post.slug)}`;
   const og = absoluteOgImageUrl(post.coverImageUrl.trim() || undefined);
@@ -88,6 +96,7 @@ export default async function BlogArticlePage({
   const post = await getPublishedBlogPostBySlug(slug);
   if (!post) notFound();
 
+  const related = await getMergedCatalogProductsByIds(post.productIds);
   const dateLabel = formatBlogPostDate(post.publishedAt, locale);
 
   return (
@@ -137,6 +146,19 @@ export default async function BlogArticlePage({
       <div className="mt-10 border-t border-line pt-10">
         <BlogArticleBody body={post.body} />
       </div>
+
+      {related.length > 0 ? (
+        <section className="mt-14 border-t border-line pt-10">
+          <h2 className="font-serif text-xl tracking-tight text-ink">
+            {t("relatedProducts")}
+          </h2>
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {related.map((product) => (
+              <ProductCard key={product.slug} product={product} />
+            ))}
+          </div>
+        </section>
+      ) : null}
     </article>
   );
 }

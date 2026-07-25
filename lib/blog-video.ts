@@ -1,4 +1,4 @@
-import type { BlogVideoAspectRatio } from "@/lib/blog-article-blocks";
+export type BlogVideoAspectRatio = "16:9" | "9:16" | "auto";
 
 export function youtubeEmbedUrl(raw: string): string | null {
   try {

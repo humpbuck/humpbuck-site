@@ -1,9 +1,9 @@
-import type { BlogVideoAspectRatio } from "@/lib/blog-article-blocks";
 import {
   blogVideoAspectClass,
   isDirectVideoUrl,
   youtubeAspectFallback,
   youtubeEmbedUrl,
+  type BlogVideoAspectRatio,
 } from "@/lib/blog-video";
 
 type BlogVideoEmbedProps = {

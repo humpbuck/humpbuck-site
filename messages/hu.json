@@ -944,7 +944,8 @@
     "kicker": "Napló",
     "backToBlog": "Vissza a bloghoz",
     "notFoundTitle": "A cikk nem található",
-    "viewProduct": "Termék megtekintése"
+    "viewProduct": "Termék megtekintése",
+    "relatedProducts": "Kapcsolódó termékek"
   },
   "Announcement": {
     "message": "ANA-DIGI TEMP multifunkciós órák a mindennapokra."

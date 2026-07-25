@@ -944,7 +944,8 @@
     "kicker": "저널",
     "backToBlog": "블로그로 돌아가기",
     "notFoundTitle": "글을 찾을 수 없습니다",
-    "viewProduct": "상품 보기"
+    "viewProduct": "상품 보기",
+    "relatedProducts": "관련 상품"
   },
   "Announcement": {
     "message": "일상을 위한 ANA-DIGI TEMP 다기능 시계."

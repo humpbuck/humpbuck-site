@@ -382,6 +382,9 @@ model BlogPost {
   excerpt                 String    @default("")
   body                    String    @default("")
   coverImageUrl           String    @default("")
+  /** JSON string array of CatalogProduct ids for related products on the article page. */
+  productIdsJson          String    @default("[]")
+  /** Legacy columns — homepage blog carousel removed; kept for existing D1 tables. */
   homeCarouselSlot        Int?
   homeCarouselImageUrl    String    @default("")
   homeCarouselDescription String    @default("")

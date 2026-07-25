@@ -10,7 +10,6 @@ import { HomeCustomerCertaintySection } from "@/components/site/home-customer-ce
 import { NewsletterSubscribe } from "@/components/site/NewsletterSubscribe";
 import {
   HomeCategorySlidersAsyncSection,
-  HomeBlogCarouselAsyncSection,
   HomeDigitempSpotlightAsyncSection,
   HomeRecommendedAsyncSection,
 } from "@/components/site/home-page-async-sections";
@@ -121,9 +120,6 @@ export default async function HomePage({
       </Suspense>
       <Suspense fallback={<HomeCategorySlidersFallback />}>
         <HomeCategorySlidersAsyncSection locale={locale} />
-      </Suspense>
-      <Suspense fallback={null}>
-        <HomeBlogCarouselAsyncSection locale={locale} />
       </Suspense>
       <Suspense fallback={null}>
         <HomeFounderStorySection />

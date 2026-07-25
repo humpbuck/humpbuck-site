@@ -182,3 +182,36 @@ export async function getMergedCatalogProductBySlug(
 ): Promise<Product | undefined> {
   return fetchMergedCatalogProductBySlug(slug);
 }
+
+/** Load catalog products by id, preserving the requested order. */
+export async function getMergedCatalogProductsByIds(
+  ids: string[],
+): Promise<Product[]> {
+  const unique = [...new Set(ids.map((id) => id.trim()).filter(Boolean))];
+  if (unique.length === 0) return [];
+  try {
+    await ensureCatalogProductSchema();
+    const rows = await prisma.catalogProduct.findMany({
+      where: { id: { in: unique }, status: { not: "archived" } },
+    });
+    const slugs = rows.map((r) => r.slug);
+    const inventory =
+      slugs.length === 0
+        ? []
+        : await prisma.productInventory.findMany({
+            where: { productSlug: { in: slugs } },
+          });
+    const byId = new Map(
+      rows.map((row) => [
+        row.id,
+        toProduct(row as unknown as CatalogProductRow, inventory),
+      ]),
+    );
+    return unique
+      .map((id) => byId.get(id))
+      .filter((p): p is Product => Boolean(p));
+  } catch (e) {
+    console.error("[catalog-db] Failed to load CatalogProduct by ids.", e);
+    return [];
+  }
+}

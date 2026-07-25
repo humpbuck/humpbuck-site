@@ -27,24 +27,19 @@ function parsePayload(body: {
   excerpt?: string;
   body?: string;
   coverImageUrl?: string;
-  homeCarouselSlot?: number | null;
-  homeCarouselImageUrl?: string;
-  homeCarouselDescription?: string;
+  productIds?: unknown;
   status?: string;
   sortOrder?: number;
 }): BlogPostInput {
-  const rawSlot = body.homeCarouselSlot;
-  const homeCarouselSlot =
-    typeof rawSlot === "number" && Number.isFinite(rawSlot) ? rawSlot : null;
   return {
     slug: (body.slug ?? "").trim(),
     title: (body.title ?? "").trim(),
     excerpt: (body.excerpt ?? "").trim(),
     body: (body.body ?? "").trim(),
     coverImageUrl: (body.coverImageUrl ?? "").trim(),
-    homeCarouselSlot,
-    homeCarouselImageUrl: (body.homeCarouselImageUrl ?? "").trim(),
-    homeCarouselDescription: (body.homeCarouselDescription ?? "").trim(),
+    productIds: Array.isArray(body.productIds)
+      ? body.productIds.filter((id): id is string => typeof id === "string")
+      : [],
     status: body.status === "published" ? "published" : "draft",
     sortOrder:
       typeof body.sortOrder === "number" && Number.isFinite(body.sortOrder)
