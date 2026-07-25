@@ -33,7 +33,14 @@ export function legacyPlacementFromCategory(category: {
   };
 }
 
-/** Storefront PRODUCTS menu / shop link for a category slug. */
+/** Storefront PRODUCTS menu / shop link for a category id (All → `/product`). */
+export function shopCategoryHref(categoryId: string | null | undefined): string {
+  const id = categoryId?.trim();
+  if (!id) return "/product";
+  return `/product?category=${encodeURIComponent(id)}`;
+}
+
+/** @deprecated Prefer `shopCategoryHref(categoryId)`. */
 export function shopHrefForCategorySlug(slug: string): string {
   const s = slug.trim().toLowerCase();
   if (s === "quartz") return "/product?movement=quartz";

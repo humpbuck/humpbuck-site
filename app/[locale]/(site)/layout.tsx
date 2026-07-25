@@ -8,7 +8,7 @@ import { SiteClientEnhancements } from "@/components/site/site-client-enhancemen
 import { SiteHeader } from "@/components/site/SiteHeader";
 import {
   getAllProductCategories,
-  shopHrefForCategorySlug,
+  shopCategoryHref,
 } from "@/lib/product-categories";
 
 export default async function SiteLayout({
@@ -20,7 +20,7 @@ export default async function SiteLayout({
   try {
     const categories = await getAllProductCategories();
     shopCategoryLinks = categories.map((c) => ({
-      href: shopHrefForCategorySlug(c.slug),
+      href: shopCategoryHref(c.id),
       label: c.name,
     }));
   } catch {

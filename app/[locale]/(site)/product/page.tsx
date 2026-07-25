@@ -71,14 +71,7 @@ export default async function ProductCatalogPage({
         key={[seriesParam, movementParam, audienceParam, profileParam, categoryParam].join("|")}
         fallback={<ShopProductGridFallback />}
       >
-        <ShopCatalogAsyncSection
-          locale={locale}
-          seriesParam={seriesParam}
-          movementParam={movementParam}
-          audienceParam={audienceParam}
-          profileParam={profileParam}
-          categoryParam={categoryParam}
-        />
+        <ShopCatalogAsyncSection locale={locale} />
       </Suspense>
     </div>
   );
