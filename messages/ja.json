@@ -435,6 +435,7 @@
     "style": "スタイル",
     "variantAria": "{product} — {label}",
     "variantOutAria": "{product} — {label} — 在庫なし",
+    "variantsScrollAria": "{product} のカラーオプションをスクロール",
     "addToBag": "バッグに追加",
     "addedToBag": "バッグに追加しました",
     "addedHint": "パネルでバッグを確認するか、このまま閲覧を続けてください。",

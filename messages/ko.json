@@ -435,6 +435,7 @@
     "style": "스타일",
     "variantAria": "{product} — {label}",
     "variantOutAria": "{product} — {label} (품절)",
+    "variantsScrollAria": "{product} 색상 옵션 스크롤",
     "addToBag": "장바구니에 담기",
     "addedToBag": "장바구니에 담았습니다",
     "addedHint": "패널에서 장바구니를 확인하거나 이 페이지에서 쇼핑을 계속하세요.",

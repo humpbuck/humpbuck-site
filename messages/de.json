@@ -435,6 +435,7 @@
     "style": "Stil",
     "variantAria": "{label} für {product}",
     "variantOutAria": "{label} für {product} — nicht auf Lager",
+    "variantsScrollAria": "Farboptionen für {product} scrollen",
     "addToBag": "In den Warenkorb",
     "addedToBag": "Im Warenkorb",
     "addedHint": "Prüfen Sie Ihren Warenkorb im Panel — oder browsen Sie hier weiter.",

@@ -435,6 +435,7 @@
     "style": "Стиль",
     "variantAria": "{label} для {product}",
     "variantOutAria": "{label} для {product} — нет в наличии",
+    "variantsScrollAria": "Прокрутить варианты цвета для {product}",
     "addToBag": "Добавить в корзину",
     "addedToBag": "Добавлено в корзину",
     "addedHint": "Проверьте корзину в панели — или продолжайте просмотр здесь.",

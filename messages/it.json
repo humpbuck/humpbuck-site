@@ -435,6 +435,7 @@
     "style": "Stile",
     "variantAria": "{label} per {product}",
     "variantOutAria": "{label} per {product} — esaurito",
+    "variantsScrollAria": "Scorri le opzioni colore di {product}",
     "addToBag": "Aggiungi alla borsa",
     "addedToBag": "Aggiunto alla borsa",
     "addedHint": "Controlla la borsa nel pannello — oppure continua a navigare qui.",

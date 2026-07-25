@@ -435,6 +435,7 @@
     "style": "Stílus",
     "variantAria": "{label} — {product}",
     "variantOutAria": "{label} — {product} — nincs raktáron",
+    "variantsScrollAria": "{product} színopcióinak görgetése",
     "addToBag": "Kosárba",
     "addedToBag": "Kosárba helyezve",
     "addedHint": "Ellenőrizze kosarát a panelben — vagy folytassa a böngészést itt.",

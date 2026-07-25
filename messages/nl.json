@@ -435,6 +435,7 @@
     "style": "Stijl",
     "variantAria": "{label} voor {product}",
     "variantOutAria": "{label} voor {product} — niet op voorraad",
+    "variantsScrollAria": "Kleuropties voor {product} scrollen",
     "addToBag": "In winkelwagen",
     "addedToBag": "Toegevoegd aan winkelwagen",
     "addedHint": "Bekijk uw winkelwagen in het paneel — of blijf hier verder winkelen.",

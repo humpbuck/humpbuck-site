@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { ProductCard } from "@/components/site/ProductCard";
+import { SubtleHorizontalScroll } from "@/components/site/subtle-horizontal-scroll";
 import type { Product } from "@/lib/catalog";
 import { shopCategoryHref } from "@/lib/product-category-shared";
 
@@ -135,10 +136,13 @@ export function ShopCatalogClient({
           <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
             {t("filterCategories")}
           </p>
-          <div
-            className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1"
-            role="listbox"
-            aria-label={t("filterCategories")}
+          <SubtleHorizontalScroll
+            scrollLabel={t("filterCategoriesScroll")}
+            scrollerClassName="-mx-1 gap-2 px-1"
+            scrollerProps={{
+              role: "listbox",
+              "aria-label": t("filterCategories"),
+            }}
           >
             <button
               type="button"
@@ -172,7 +176,7 @@ export function ShopCatalogClient({
                 </button>
               );
             })}
-          </div>
+          </SubtleHorizontalScroll>
         </div>
       ) : null}
 

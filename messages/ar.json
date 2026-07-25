@@ -435,6 +435,7 @@
     "style": "النمط",
     "variantAria": "{label} لـ {product}",
     "variantOutAria": "{label} لـ {product} — نفد من المخزون",
+    "variantsScrollAria": "تمرير خيارات الألوان لـ {product}",
     "addToBag": "إضافة إلى حقيبة",
     "addedToBag": "تم إضافة المنتج",
     "addedHint": "راجع حقيبتك في اللوحة — أو استمر في التصفح هنا.",

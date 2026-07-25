@@ -435,6 +435,7 @@
     "style": "סגנון",
     "variantAria": "{label} עבור {product}",
     "variantOutAria": "{label} עבור {product} — אזל מהמלאי",
+    "variantsScrollAria": "גלילת אפשרויות צבע עבור {product}",
     "addToBag": "הוספה לסל",
     "addedToBag": "נוסף לסל",
     "addedHint": "בדקו את הסל בלוח — או המשיכו לגלוש כאן.",

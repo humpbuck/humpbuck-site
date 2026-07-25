@@ -1,6 +1,7 @@
 "use client";
 
 import { StorefrontImage } from "@/components/site/storefront-image";
+import { SubtleHorizontalScroll } from "@/components/site/subtle-horizontal-scroll";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { isVariantOptionSellable, type ProductVariantOption } from "@/lib/catalog";
@@ -23,7 +24,15 @@ export function ProductCardVariantSwatches({
   if (options.length === 0) return null;
 
   return (
-    <div className="mt-2 flex flex-wrap gap-1.5">
+    <SubtleHorizontalScroll
+      className="mt-2"
+      scrollLabel={t("variantsScrollAria", { product: productName })}
+      scrollerClassName="gap-1.5"
+      scrollerProps={{
+        role: "group",
+        "aria-label": t("style"),
+      }}
+    >
       {options.map((opt, i) => {
         const unavailable = !isVariantOptionSellable(opt);
         return (
@@ -64,6 +73,6 @@ export function ProductCardVariantSwatches({
           </button>
         );
       })}
-    </div>
+    </SubtleHorizontalScroll>
   );
 }

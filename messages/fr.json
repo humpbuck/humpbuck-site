@@ -435,6 +435,7 @@
     "style": "Style",
     "variantAria": "{label} pour {product}",
     "variantOutAria": "{label} pour {product} — rupture de stock",
+    "variantsScrollAria": "Faire défiler les options de couleur pour {product}",
     "addToBag": "Ajouter au sac",
     "addedToBag": "Ajouté au sac",
     "addedHint": "Consultez votre sac dans le panneau — ou continuez à parcourir cette page.",
