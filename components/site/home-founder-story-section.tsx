@@ -14,7 +14,11 @@ export async function HomeFounderStorySection() {
 
   const imageSrc = founderStoryHomePoolWebpUrl();
   const heading = resolveHomeCmsText(locale, content.aboutHeading, tAbout("storyKicker"));
-  const paragraph1 = resolveHomeCmsText(locale, content.aboutParagraph1, tAbout("storyP1"));
+  // ABOUT CMS editor was removed; story copy lives in messages (AboutPage.storyP1).
+  const paragraphs = tAbout("storyP1")
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
   const imageAlt = tHome("founderStoryImageAlt");
 
   return (
@@ -44,7 +48,9 @@ export async function HomeFounderStorySection() {
 
           <div className="w-full max-w-[20rem] sm:max-w-[22rem] lg:max-w-[24rem]">
             <div className="space-y-5 text-center text-base leading-relaxed text-muted sm:text-lg sm:leading-relaxed lg:text-left">
-              <p>{paragraph1}</p>
+              {paragraphs.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
             </div>
           </div>
           </div>

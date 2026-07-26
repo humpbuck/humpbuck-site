@@ -870,7 +870,7 @@
   },
   "AboutPage": {
     "metaTitle": "Nosotros — HUMPBUCK",
-    "metaDescription": "Descubre relojes ana-digi retro que combinan precisión analógica, funciones digitales y diseño futurista. Piezas distintivas para el día a día.",
+    "metaDescription": "Descubre cómo un reloj ANA-DIGI de la infancia, regalo de su padre, inspiró la creación de HUMPBUCK, una marca dedicada a relojes ANA-DIGI retrofuturistas y distintivos.",
     "kickerBrand": "Marca",
     "heroTitle": "HUMPBUCK — la utilidad primero, luego el espectáculo.",
     "heroLead": "Combinamos tienda directa y programas de fábrica para que un lanzamiento pueda crecer a producción repetible sin reabastecer cada temporada.",
@@ -905,7 +905,7 @@
     "wholesaleLink": "Ver mayoristas",
     "mailSubject": "Pregunta sobre HUMPBUCK",
     "storyKicker": "Sobre nosotros",
-    "storyP1": "De niño, observé a mi padre — un maestro relojero — devolver la vida a innumerables relojes después del colegio. Mientras permaneció a mi lado en mis hitos, esos relojes marcaron cada latido de mi camino. Ahí nació nuestro vínculo. El tiempo y la compañía son los regalos más preciados de la vida. Ahora, espero que mis relojes HUMPBUCK hechos a mano permanezcan a su lado y sean testigos de sus momentos más significativos.",
+    "storyP1": "Mi fascinación por los relojes ANA-DIGI comenzó con un regalo de mi padre: un reloj ANA-DIGI TEMP con diseño de Star Wars.\n\nEra distinto a cualquier reloj que hubiera visto. La combinación de manecillas analógicas, pantalla digital, funciones de temperatura y una estética futurista hacía que el tiempo se sintiera emocionante y lleno de imaginación. Para mí era más que un reloj; se convirtió en un recuerdo duradero de mi padre y en el inicio de una fascinación de por vida.\n\nAños después, esa misma pasión me inspiró a crear HUMPBUCK.\n\nHUMPBUCK está dedicada a relojes ANA-DIGI que unen carácter retro-futurista, funciones prácticas y un diseño distintivo. Creamos relojes para quienes aprecian piezas diferentes: no solo para decir la hora, sino para expresar personalidad e inspirar curiosidad.\n\nAsí como mi primer reloj ANA-DIGI pasó a formar parte de mi historia, espero que cada reloj HUMPBUCK pueda formar parte de la tuya.",
     "storyP2": "",
     "addressLabel": "Dirección",
     "telLabel": "Tel.",
@@ -918,7 +918,7 @@
   },
   "VideoTutorials": {
     "metaTitle": "Vídeo tutorial",
-    "metaDescription": "Tutoriales prácticos en vídeo para relojes HUMPBUCK. Configuración y uso diario — transmisión principal con respaldo de YouTube.",
+    "metaDescription": "Mira el vídeo tutorial del HUMPBUCK 2301 para aprender a ajustar la correa, poner la hora y usar el reloj correctamente.",
     "pageTitle": "Vídeo tutorial",
     "intro": "Vea el tutorial principal a la izquierda. Si se atasca, use YouTube a la derecha. Pantalla completa para ver en horizontal en el móvil.",
     "primaryR2": "Vídeo principal",

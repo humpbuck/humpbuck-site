@@ -870,7 +870,7 @@
   },
   "AboutPage": {
     "metaTitle": "Rólunk — HUMPBUCK",
-    "metaDescription": "Fedezze fel a retro ana-digi órákat: analóg pontosság, digitális funkciók és futurisztikus dizájn. Jellegzetes darabok a mindennapokra.",
+    "metaDescription": "Ismerje meg, hogyan ihlette egy gyermekkori ANA-DIGI óra — az apja ajándéka — a HUMPBUCK létrehozását, egy jellegzetes retro-futurisztikus ANA-DIGI óráknak szentelt márkát.",
     "kickerBrand": "Márka",
     "heroTitle": "HUMPBUCK — először hasznosság, aztán látvány.",
     "heroLead": "Közvetlen webshopot és gyári programokat üzemeltetünk, hogy egy indulás ismétlhető gyártássá nőhessen anélkül, hogy minden szezonban újra forrást kellene keresni.",
@@ -905,7 +905,7 @@
     "wholesaleLink": "Nagykereskedelem felfedezése",
     "mailSubject": "Kérdés a HUMPBUCK-ról",
     "storyKicker": "Rólunk",
-    "storyP1": "Gyerekként figyeltem apámat — egy mester órajavítót — ahogy iskola után számtalan órát kelt életre. Miközben minden mérföldkövemnél mellettem maradt, ezek az órák útitársaim minden lépését jelölték. Ott született meg a kötelékünk. Az idő és a társaság az élet legértékesebb ajándékai. Most azt remélem, kézműves HUMPBUCK óráim melletted maradnak, és tanúi lesznek legjelentősebb pillanataidnak.",
+    "storyP1": "Az ANA-DIGI órák iránti rajongásom apám ajándékával kezdődött — egy Star Wars dizájnú ANA-DIGI TEMP órával.\n\nMás volt, mint bármelyik óra, amit korábban láttam. Az analóg mutatók, a digitális kijelző, a hőmérséklet-funkciók és a futurisztikus esztétika együtt izgalmassá és képzelettel telivé tették az időt. Számomra több volt óránál; apám tartós emlékévé és egy élethosszig tartó rajongás kezdetévé vált.\n\nÉvekkel később ugyanez a szenvedély inspirált arra, hogy létrehozzam a HUMPBUCK-ot.\n\nA HUMPBUCK olyan ANA-DIGI óráknak szenteli magát, amelyek a retro-futurisztikus karaktert, a gyakorlati funkciókat és a jellegzetes dizájnt egyesítik. Olyan órákat készítünk, amelyek másnak érződnek — nemcsak az időt mutatják, hanem személyiséget fejeznek ki és kíváncsiságot ébresztenek.\n\nAhogy az első ANA-DIGI órám a történetem része lett, remélem, minden HUMPBUCK óra a tiedé lehet.",
     "storyP2": "",
     "addressLabel": "Cím",
     "telLabel": "Tel.",
@@ -918,7 +918,7 @@
   },
   "VideoTutorials": {
     "metaTitle": "Videó útmutató",
-    "metaDescription": "Gyakorlati oktatóvideók a HUMPBUCK órákhoz. Beállítás és mindennapi használat — elsődleges stream YouTube tartalékkal.",
+    "metaDescription": "Nézze meg a HUMPBUCK 2301 oktatóvideóját, és tanulja meg a szíj beállítását, az idő beállítását és az óra helyes használatát.",
     "pageTitle": "Videó útmutató",
     "intro": "Bal oldalon az elsődleges tutorial. Bufferelésnél használd a jobb oldali YouTube-ot. Teljes képernyő fekvő nézethez mobilon.",
     "primaryR2": "Elsődleges videó",

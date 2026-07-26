@@ -137,6 +137,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-25 | **商品图缓存对齐 watchsourcego**：商品 gallery 不加 `?v=`；R2 不用长 `Cache-Control`。已有长缓存用 strip 脚本去掉。 |
 | 2026-07-25 | **商品视频对齐 watchsourcego**：后台多行粘贴 R2/YouTube URL；前台只认已保存链接，去掉同级路径猜测。 |
 | 2026-07-25 | **废除 R2 1 年缓存策略**：删除代码/文档中的 `max-age=31536000` / `immutable` 写入与推荐；统一 `R2_STOREFRONT_CACHE_CONTROL`；商品视频 URL 去掉 `?v=` / `VIDEO_REV`。 |
+| 2026-07-26 | **About / Video tutorial SEO+正文多语言**：About 故事改为父亲赠送 Star Wars ANA-DIGI TEMP 起源（`AboutPage.storyP1`，不再读 CMS `aboutParagraph1`）；About meta 与 Video tutorial meta（2301 表带/对时教程）同步 13 语种；脚本 `scripts/apply-about-video-seo-i18n.mjs`。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 

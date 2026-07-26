@@ -209,7 +209,7 @@ export default async function AdminHomepageContentPage({
       "https://assets.humpbuck.com/Home/section2/Adventure-Mode-APP.webp",
     aboutHeading: "About",
     aboutParagraph1:
-      "Growing up, I watched my father—a master watch repairman—breathe life into countless timepieces after school. As he stayed by my side through my milestones, those watches marked every beat of my journey. That is where our bond was born. Time and companionship are life's most precious gifts. Now, I hope my handcrafted HUMPBUCK watches will stay by your side and bear witness to your most meaningful moments.",
+      "My fascination with ANA-DIGI watches began with a gift from my father—an ANA-DIGI TEMP watch featuring a Star Wars design.\n\nIt was unlike any watch I had seen before. The combination of analog hands, a digital display, temperature functions, and a futuristic aesthetic made time feel exciting and full of imagination. It was more than a watch to me; it became a lasting memory of my father and the beginning of a lifelong fascination.\n\nYears later, that same passion inspired me to create HUMPBUCK.\n\nHUMPBUCK is dedicated to ANA-DIGI watches that bring together retro-futuristic character, practical functions, and distinctive design. We create timepieces for people who appreciate watches that feel different—watches that are not only made to tell time, but also to express personality and inspire curiosity.\n\nJust as my first ANA-DIGI watch became part of my story, I hope every HUMPBUCK watch can become part of yours.",
     aboutParagraph2: "",
     aboutImageAlt:
       "Father and young son examining a watch movement together at a watchmaker's workbench",
