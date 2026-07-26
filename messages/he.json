@@ -203,8 +203,7 @@
     "couponModalClose": "סגירה",
     "certaintyOrderTitle": "איך מעובדת ההזמנה שלי?",
     "certaintyOrderBody": "לאחר השלמת התשלום תראו אישור תשלום מוצלח ותקבלו אימייל עם מספר ההזמנה, פרטי המוצר, כתובת המשלוח ופרטי שירות הלקוחות.\n\nההזמנה בדרך כלל נשלחת תוך 1–2 ימי עסקים. לאחר השליחה תקבלו אימייל נוסף עם מספר מעקב וקישור למעקב, כדי שתוכלו לעקוב אחר החבילה בראש שקט.",
-    "featuredReadyTitle": "שעונים במלאי מומלצים",
-    "featuredReadySubtitle": "עיינו בדגמים הזמינים ולחצו על כל שעון לצפייה בפרטים ולבירור מחירי סיטונאות.",
+    "featuredReadyTitle": "מומלצים",
     "featuredViewAll": "הצג הכל ←",
     "browseFullCatalog": "עיון בקטלוג המלא"
   },
@@ -919,17 +918,13 @@
   },
   "VideoTutorials": {
     "metaTitle": "מדריך וידאו",
-    "metaDescription": "סרטוני הדרכה מעשיים למוצרים מ-HUMPBUCK.",
-    "kicker": "מדריך וידאו",
-    "pageTitle": "מדריכי וידאו למוצרים",
-    "intro": "סרטוני הדרכה מעשיים לכל מוצר. תומך בקישורי R2, YouTube ופלטפורמות הטמעה אחרות.",
-    "empty": "עדיין אין סרטוני הדרכה.",
-    "primaryVideo": "וידאו ראשי",
-    "backupYoutubeHint": "אם הווידאו למעלה לא מתנגן, השתמשו בגיבוי YouTube:",
-    "backupVideo": "וידאו גיבוי",
-    "backupLinkHint": "אם הווידאו למעלה לא מתנגן, פתחו קישור גיבוי:",
-    "openBackupVideo": "פתיחת וידאו גיבוי",
-    "backupIframeTitleSuffix": "גיבוי YouTube"
+    "metaDescription": "סרטוני הדרכה של HUMPBUCK. זרם ראשי ב-CDN; גיבוי YouTube אם הניגון איטי.",
+    "pageTitle": "מדריך וידאו",
+    "intro": "צפו במדריך הראשי בצד שמאל. אם יש תקיעות, השתמשו ב-YouTube בצד ימין. מסך מלא נוח לצפייה לרוחב בטלפון.",
+    "primaryR2": "ראשי (R2)",
+    "backupYoutube": "גיבוי YouTube",
+    "emptyPrimary": "קישור הווידאו הראשי עדיין לא הוגדר.",
+    "emptyBackup": "קישור גיבוי YouTube עדיין לא הוגדר."
   },
   "BlogPage": {
     "metaDescription": "סיפורים והערות מ-HUMPBUCK — שעוני ana-digi רטרו ליום־יום.",

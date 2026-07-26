@@ -203,8 +203,7 @@
     "couponModalClose": "Schließen",
     "certaintyOrderTitle": "Wie wird meine Bestellung bearbeitet?",
     "certaintyOrderBody": "Nach Abschluss Ihrer Zahlung sehen Sie eine Bestätigung der erfolgreichen Zahlung und erhalten eine Bestätigungs-E-Mail mit Bestellnummer, Produktdetails, Lieferadresse und Kontakt zum Kundenservice.\n\nIhre Bestellung wird in der Regel innerhalb von 1–2 Werktagen versendet. Sobald sie versendet wurde, erhalten Sie eine weitere E-Mail mit Sendungsverfolgungsnummer und Tracking-Website, damit Sie Ihr Paket jederzeit nachverfolgen können.",
-    "featuredReadyTitle": "Ausgewählte Lagerware-Uhren",
-    "featuredReadySubtitle": "Verfügbare Modelle durchsuchen und auf eine Uhr klicken, um Details zu sehen und Großhandelspreise anzufragen.",
+    "featuredReadyTitle": "Empfohlen",
     "featuredViewAll": "Alle ansehen →",
     "browseFullCatalog": "Vollständigen Katalog durchsuchen"
   },
@@ -919,17 +918,13 @@
   },
   "VideoTutorials": {
     "metaTitle": "Video-Tutorial",
-    "metaDescription": "Praxisnahe Produkt-Tutorial-Videos von HUMPBUCK.",
-    "kicker": "Video-Tutorial",
-    "pageTitle": "Produkt-Video-Tutorials",
-    "intro": "Praxisnahe Tutorial-Videos für jedes Produkt. Unterstützt R2-Links, YouTube und andere einbettbare Plattformen.",
-    "empty": "Noch keine Tutorial-Videos.",
-    "primaryVideo": "Hauptvideo",
-    "backupYoutubeHint": "Wenn das Video oben nicht abspielt, nutzen Sie dieses YouTube-Backup:",
-    "backupVideo": "Backup-Video",
-    "backupLinkHint": "Wenn das Video oben nicht abspielt, öffnen Sie diesen Backup-Videolink:",
-    "openBackupVideo": "Backup-Video öffnen",
-    "backupIframeTitleSuffix": "YouTube-Backup"
+    "metaDescription": "HUMPBUCK Produkt-Video-Tutorials. Primär über CDN; YouTube als Backup bei langsamer Wiedergabe.",
+    "pageTitle": "Video-Tutorial",
+    "intro": "Links das Haupt-Tutorial. Bei Puffern rechts den YouTube-Player nutzen. Vollbild für Querformat auf dem Handy.",
+    "primaryR2": "Primär (R2)",
+    "backupYoutube": "YouTube-Backup",
+    "emptyPrimary": "Primärer Videolink noch nicht gesetzt.",
+    "emptyBackup": "YouTube-Backup-Link noch nicht gesetzt."
   },
   "BlogPage": {
     "metaDescription": "Geschichten und Notizen von HUMPBUCK — Retro-Ana-Digi-Uhren für den Alltag.",

@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { createLocalFilePrismaClient } from "../lib/prisma-local";
 
-const BASE_MIGRATION = "20260714120000_site_oem_odm_content";
+const BASE_MIGRATION = "20260725190000_init_sqlite";
 
 /** All columns after the base table create (order matters for legacy renames). */
 const OEM_ODM_COLUMNS = [
@@ -47,7 +47,7 @@ async function main() {
     for (const statement of sql
       .split(";")
       .map((s) => s.trim())
-      .filter(Boolean)) {
+      .filter((s) => s.includes("SiteOemOdmContent"))) {
       await p.$executeRawUnsafe(statement);
       console.log("OK:", statement.split("\n")[0].slice(0, 80));
     }

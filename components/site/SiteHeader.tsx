@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { useCart } from "@/components/cart/cart-context";
 import { AccountMenu } from "@/components/site/AccountMenu";
+import { StorefrontImage } from "@/components/site/storefront-image";
 import { buildLoginHref } from "@/lib/auth-callback-url";
 import { storefrontHomePath } from "@/lib/storefront-home-path";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
@@ -15,6 +16,7 @@ import { CART_ADDED_EVENT } from "@/lib/cart-events";
 export type ShopNavCategoryLink = {
   href: string;
   label: string;
+  imageUrl?: string | null;
 };
 
 const FALLBACK_SHOP_CATEGORY_LINKS: ShopNavCategoryLink[] = [
@@ -24,14 +26,15 @@ const FALLBACK_SHOP_CATEGORY_LINKS: ShopNavCategoryLink[] = [
 ];
 
 const SHOP_LINK_CLASS =
-  "block px-4 py-2.5 text-[12px] font-medium uppercase tracking-[0.08em] text-ink/90 transition hover:bg-ink/[0.04]";
+  "flex items-center gap-2.5 px-4 py-2 text-[12px] font-medium uppercase tracking-[0.08em] text-ink/90 transition hover:bg-ink/[0.04]";
 
 type NavLinkItem =
   | { href: string; label: string }
-  | { href: string; labelKey: "blog" | "about" };
+  | { href: string; labelKey: "blog" | "about" | "videoTutorial" };
 
 const NAV_ITEMS: NavLinkItem[] = [
   { href: "/oem-odm", label: "OEM/ODM" },
+  { labelKey: "videoTutorial", href: "/video-tutorial" },
   { labelKey: "blog", href: "/blog" },
   { labelKey: "about", href: "/about" },
 ];
@@ -46,17 +49,31 @@ function navItemLabel(
 function ShopDropdownLink({
   href,
   label,
+  imageUrl,
   className,
   onNavigate,
 }: {
   href: string;
   label: string;
+  imageUrl?: string | null;
   className: string;
   onNavigate?: () => void;
 }) {
+  const thumb = imageUrl?.trim() || "";
   return (
     <Link href={href} onClick={onNavigate} className={className}>
-      {label}
+      {thumb ? (
+        <span className="relative size-8 shrink-0 overflow-hidden rounded-md bg-ink/[0.04]">
+          <StorefrontImage
+            src={thumb}
+            alt=""
+            width={32}
+            height={32}
+            className="size-full object-cover"
+          />
+        </span>
+      ) : null}
+      <span>{label}</span>
     </Link>
   );
 }
@@ -68,7 +85,7 @@ function DesktopShopNav({
   tNav: ReturnType<typeof useTranslations<"Navigation">>;
   categoryLinks: ShopNavCategoryLink[];
 }) {
-  const links = [
+  const links: ShopNavCategoryLink[] = [
     { href: "/product", label: tNav("shopAllProducts") },
     ...categoryLinks,
   ];
@@ -91,13 +108,14 @@ function DesktopShopNav({
         <div
           role="menu"
           aria-label={tNav("shop")}
-          className="min-w-[200px] overflow-visible rounded-2xl border border-line bg-paper/95 py-2 shadow-card backdrop-blur-md"
+          className="min-w-[220px] overflow-visible rounded-2xl border border-line bg-paper/95 py-2 shadow-card backdrop-blur-md"
         >
           {links.map((item) => (
             <ShopDropdownLink
               key={item.href}
               href={item.href}
               label={item.label}
+              imageUrl={item.imageUrl}
               className={SHOP_LINK_CLASS}
             />
           ))}
@@ -116,7 +134,7 @@ function MobileShopNav({
   categoryLinks: ShopNavCategoryLink[];
   onNavigate: () => void;
 }) {
-  const links = [
+  const links: ShopNavCategoryLink[] = [
     { href: "/product", label: tNav("shopAllProducts") },
     ...categoryLinks,
   ];
@@ -131,8 +149,9 @@ function MobileShopNav({
             key={item.href}
             href={item.href}
             label={item.label}
+            imageUrl={item.imageUrl}
             onNavigate={onNavigate}
-            className="block rounded-xl px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-ink/[0.04]"
+            className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink/75 hover:bg-ink/[0.04]"
           />
         ))}
       </div>

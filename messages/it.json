@@ -203,8 +203,7 @@
     "couponModalClose": "Chiudi",
     "certaintyOrderTitle": "Come viene elaborato il mio ordine?",
     "certaintyOrderBody": "Dopo il pagamento vedrai una conferma di pagamento riuscito e riceverai un'email con numero d'ordine, dettagli prodotto, indirizzo di spedizione e contatti del servizio clienti.\n\nL'ordine viene di solito spedito entro 1–2 giorni lavorativi. Una volta spedito, riceverai un'altra email con numero di tracking e sito di tracciamento, per seguire il pacco con tranquillità.",
-    "featuredReadyTitle": "Orologi pronti a magazzino in evidenza",
-    "featuredReadySubtitle": "Sfoglia gli stili disponibili e clicca su qualsiasi orologio per vedere i dettagli e richiedere i prezzi all'ingrosso.",
+    "featuredReadyTitle": "In evidenza",
     "featuredViewAll": "Vedi tutti →",
     "browseFullCatalog": "Sfoglia il catalogo completo"
   },
@@ -918,18 +917,14 @@
     "businessHoursTimezone": "GMT+8 (ora standard della Cina)"
   },
   "VideoTutorials": {
-    "metaTitle": "Tutorial video · HUMPBUCK",
-    "metaDescription": "Video tutorial pratici sui prodotti HUMPBUCK.",
-    "kicker": "Tutorial video",
-    "pageTitle": "Video tutorial prodotti",
-    "intro": "Video tutorial pratici per ogni prodotto. Supporta link R2, YouTube e altre piattaforme incorporabili.",
-    "empty": "Nessun video tutorial ancora.",
-    "primaryVideo": "Video principale",
-    "backupYoutubeHint": "Se il video sopra non si riproduce, usa questo backup YouTube:",
-    "backupVideo": "Video di backup",
-    "backupLinkHint": "Se il video sopra non si riproduce, apri questo link di backup:",
-    "openBackupVideo": "Apri video di backup",
-    "backupIframeTitleSuffix": "backup YouTube"
+    "metaTitle": "Tutorial video",
+    "metaDescription": "Tutorial video HUMPBUCK. Stream principale via CDN; YouTube di backup se è lento.",
+    "pageTitle": "Tutorial video",
+    "intro": "Guarda il tutorial principale a sinistra. Se bufferizza, usa YouTube a destra. Schermo intero per la visualizzazione orizzontale sul telefono.",
+    "primaryR2": "Principale (R2)",
+    "backupYoutube": "Backup YouTube",
+    "emptyPrimary": "Link video principale non ancora impostato.",
+    "emptyBackup": "Link YouTube di backup non ancora impostato."
   },
   "BlogPage": {
     "metaDescription": "Storie e note da HUMPBUCK — orologi ana-digi retrò per ogni giorno.",

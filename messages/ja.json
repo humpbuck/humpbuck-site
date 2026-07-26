@@ -203,8 +203,7 @@
     "couponTaglineLine1": "人生に標準的な答えはありません。",
     "couponTaglineLine2": "自分のやり方で生きてください。",
     "couponModalClose": "閉じる",
-    "featuredReadyTitle": "注目の在庫ありウォッチ",
-    "featuredReadySubtitle": "取り扱いモデルを見て、時計をクリックすると詳細の確認と卸売価格のお問い合わせができます。",
+    "featuredReadyTitle": "注目",
     "featuredViewAll": "すべて見る →",
     "browseFullCatalog": "カタログをすべて見る"
   },
@@ -919,17 +918,13 @@
   },
   "VideoTutorials": {
     "metaTitle": "動画ガイド",
-    "metaDescription": "HUMPBUCK による実践的な商品チュートリアル動画。",
-    "kicker": "動画ガイド",
-    "pageTitle": "商品動画チュートリアル",
-    "intro": "各商品の実践チュートリアル動画。R2 リンク、YouTube、その他埋め込み可能プラットフォームに対応。",
-    "empty": "チュートリアル動画はまだありません。",
-    "primaryVideo": "メイン動画",
-    "backupYoutubeHint": "上記の動画が再生できない場合、この YouTube バックアップを使用：",
-    "backupVideo": "バックアップ動画",
-    "backupLinkHint": "上記の動画が再生できない場合、このバックアップ動画リンクを開いてください：",
-    "openBackupVideo": "バックアップ動画を開く",
-    "backupIframeTitleSuffix": "YouTube バックアップ"
+    "metaDescription": "HUMPBUCK の商品チュートリアル動画。メインは CDN、遅い場合は YouTube バックアップ。",
+    "pageTitle": "動画ガイド",
+    "intro": "左がメイン動画です。再生が重い場合は右の YouTube をご利用ください。スマホは全画面で横向き再生できます。",
+    "primaryR2": "メイン（R2）",
+    "backupYoutube": "YouTube バックアップ",
+    "emptyPrimary": "メイン動画リンクは未設定です。",
+    "emptyBackup": "YouTube バックアップリンクは未設定です。"
   },
   "BlogPage": {
     "metaDescription": "HUMPBUCK のストーリーとノート — 日常のためのレトロ・アナデジウォッチ。",

@@ -203,8 +203,7 @@
     "couponModalClose": "Bezárás",
     "certaintyOrderTitle": "Hogyan dolgozzuk fel a rendelésemet?",
     "certaintyOrderBody": "A fizetés befejezése után megjelenik a sikeres fizetés visszaigazolása, és e-mailt kap rendelésszámmal, termékadatokkal, szállítási címmel és ügyfélszolgálati elérhetőséggel.\n\nRendelését általában 1–2 munkanapon belül feladjuk. Feladás után újabb e-mail érkezik a nyomkövetési számmal és weboldallal, hogy nyugodtan követhesse csomagját.",
-    "featuredReadyTitle": "Kiemelt raktáron lévő órák",
-    "featuredReadySubtitle": "Böngésszen az elérhető modellek között, és kattintson bármely órára a részletekért és a nagykereskedelmi árakért.",
+    "featuredReadyTitle": "Kiemelt",
     "featuredViewAll": "Összes megtekintése →",
     "browseFullCatalog": "Teljes katalógus böngészése"
   },
@@ -919,17 +918,13 @@
   },
   "VideoTutorials": {
     "metaTitle": "Videó útmutató",
-    "metaDescription": "Gyakorlati termék-útmutató videók a HUMPBUCK-tól.",
-    "kicker": "Videó útmutató",
-    "pageTitle": "Termék videó útmutatók",
-    "intro": "Gyakorlati útmutató videók minden termékhez. Támogatja az R2 linkeket, a YouTube-ot és más beágyazható platformokat.",
-    "empty": "Még nincs útmutató videó.",
-    "primaryVideo": "Elsődleges videó",
-    "backupYoutubeHint": "Ha a fenti videó nem játszható le, használja ezt a YouTube tartalékot:",
-    "backupVideo": "Tartalék videó",
-    "backupLinkHint": "Ha a fenti videó nem játszható le, nyissa meg ezt a tartalék videó linket:",
-    "openBackupVideo": "Tartalék videó megnyitása",
-    "backupIframeTitleSuffix": "YouTube tartalék"
+    "metaDescription": "HUMPBUCK terméktutor videók. Elsődleges CDN; YouTube tartalék lassú lejátszásnál.",
+    "pageTitle": "Videó útmutató",
+    "intro": "Bal oldalon az elsődleges tutorial. Bufferelésnél használd a jobb oldali YouTube-ot. Teljes képernyő fekvő nézethez mobilon.",
+    "primaryR2": "Elsődleges (R2)",
+    "backupYoutube": "YouTube tartalék",
+    "emptyPrimary": "Az elsődleges videó linkje még nincs beállítva.",
+    "emptyBackup": "A YouTube tartalék linkje még nincs beállítva."
   },
   "BlogPage": {
     "metaDescription": "Történetek és jegyzetek a HUMPBUCK-tól — retro ana-digi órák a mindennapokra.",

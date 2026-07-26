@@ -46,6 +46,7 @@
 ## 4. 数据库与迁移
 
 - 结构变更用 Prisma 迁移；新环境在跑种子前执行：`npm run db:migrate`（通过 `scripts/migrate-with-env.ts` 加载 `.env` / `.env.local` 中的 `DATABASE_URL`）。
+- **迁移已合并为一条基线**（`20260725190000_init_sqlite`，对应当前 `schema.prisma`）。本地/生产 D1 若表结构已齐，日常 `db:d1:local` / `db:d1:remote` 会跳过该 init；全新空库才用 `--full-init`。之后再改结构时照常新增 migration 即可。
 
 ## 5. Git / GitHub 同步（本机双站独立 SSH）
 
@@ -127,6 +128,8 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-25 | **首页 SEARCH BY 分类滑块下线**；改为 Featured Ready Stock 商品网格（桌面 4×3=12），顶栏 View all / 底栏 Browse Full Catalog 进 `/product`；该区块文案 13 语种已齐（对齐 watchsourcego）。 |
 | 2026-07-25 | **首页商品卡片不传 PDP gallery**：Recommended / Featured 进客户端前经 `toStorefrontCardProduct` 去掉 `galleryImages` / detail / promo 等，只留封面 + hover 道具 + 色块 `variantOptions`（`lib/storefront-card-product.ts`）。 |
 | 2026-07-25 | **卡片裁剪扩到全站列表**：`/product`、系列页、PDP「You may also like」、博客相关商品同样经 `toStorefrontCardProduct`；保留 `categoryId` 供商店分类筛选；色块图 `loading="lazy"`。 |
+| 2026-07-25 | **Prisma 迁移合并**：约 30+ 条小迁移压成一条基线 `20260725190000_init_sqlite`；`db:d1:*` 默认跳过 init，`npm run dev` 启动不再逐条试跑旧 SQL。 |
+| 2026-07-25 | **Video tutorial**：前台菜单 `/video-tutorial`；PC 左右两路 16:9（左 R2/MP4、右 YouTube）；手机上下排列、可全屏；后台 **VIDEO TUTORIAL** 填标题与链接（`SiteVideoTutorial`）。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 

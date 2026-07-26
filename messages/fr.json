@@ -203,8 +203,7 @@
     "couponModalClose": "Fermer",
     "certaintyOrderTitle": "Comment ma commande est-elle traitée ?",
     "certaintyOrderBody": "Une fois votre paiement effectué, vous verrez une confirmation de paiement réussi et recevrez un e-mail de confirmation avec votre numéro de commande, les détails du produit, l'adresse de livraison et les coordonnées du service client.\n\nVotre commande est généralement expédiée sous 1 à 2 jours ouvrés. Une fois expédiée, vous recevrez un autre e-mail avec votre numéro de suivi et le site de suivi, pour suivre votre colis en toute sérénité.",
-    "featuredReadyTitle": "Montres en stock prêt — sélection",
-    "featuredReadySubtitle": "Parcourez les styles disponibles et cliquez sur une montre pour voir les détails et demander un tarif en gros.",
+    "featuredReadyTitle": "Sélection",
     "featuredViewAll": "Tout voir →",
     "browseFullCatalog": "Parcourir le catalogue complet"
   },
@@ -919,17 +918,13 @@
   },
   "VideoTutorials": {
     "metaTitle": "Tutoriel vidéo",
-    "metaDescription": "Vidéos tutoriels produits pratiques de HUMPBUCK.",
-    "kicker": "Tutoriel vidéo",
-    "pageTitle": "Tutoriels vidéo produits",
-    "intro": "Vidéos pratiques pour chaque produit. Prise en charge des liens R2, YouTube et autres plateformes intégrables.",
-    "empty": "Pas encore de tutoriels vidéo.",
-    "primaryVideo": "Vidéo principale",
-    "backupYoutubeHint": "Si la vidéo ci-dessus ne se lit pas, utilisez cette sauvegarde YouTube :",
-    "backupVideo": "Vidéo de secours",
-    "backupLinkHint": "Si la vidéo ci-dessus ne se lit pas, ouvrez ce lien de secours :",
-    "openBackupVideo": "Ouvrir la vidéo de secours",
-    "backupIframeTitleSuffix": "secours YouTube"
+    "metaDescription": "Tutoriels vidéo HUMPBUCK. Flux principal via CDN ; YouTube en secours si la lecture est lente.",
+    "pageTitle": "Tutoriel vidéo",
+    "intro": "Regardez le tutoriel principal à gauche. En cas de buffer, utilisez YouTube à droite. Plein écran pour le mode paysage sur mobile.",
+    "primaryR2": "Principal (R2)",
+    "backupYoutube": "Secours YouTube",
+    "emptyPrimary": "Lien vidéo principal pas encore défini.",
+    "emptyBackup": "Lien YouTube de secours pas encore défini."
   },
   "BlogPage": {
     "metaDescription": "Récits et notes HUMPBUCK — montres ana-digi rétro pour le quotidien.",

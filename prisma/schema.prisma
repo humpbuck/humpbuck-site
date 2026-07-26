@@ -409,6 +409,15 @@ model SiteAnnouncement {
   updatedAt       DateTime @updatedAt
 }
 
+/** Storefront /video-tutorial — one page title + left R2 + right YouTube (16:9). */
+model SiteVideoTutorial {
+  id         String   @id @default("default")
+  title      String   @default("")
+  r2VideoUrl String   @default("")
+  youtubeUrl String   @default("")
+  updatedAt  DateTime @updatedAt
+}
+
 model SiteOemOdmContent {
   id               String   @id @default("default")
   promoVideoUrl    String   @default("")

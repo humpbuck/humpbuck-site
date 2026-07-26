@@ -16,12 +16,17 @@ export default async function SiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let shopCategoryLinks: { href: string; label: string }[] = [];
+  let shopCategoryLinks: {
+    href: string;
+    label: string;
+    imageUrl?: string | null;
+  }[] = [];
   try {
     const categories = await getAllProductCategories();
     shopCategoryLinks = categories.map((c) => ({
       href: shopCategoryHref(c.id),
       label: c.name,
+      imageUrl: c.imageUrl,
     }));
   } catch {
     shopCategoryLinks = [];

@@ -13,6 +13,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## Local dev — Prisma client
 
 - **`npm run dev`** uses **Wrangler local D1** (via OpenNext), not `prisma/dev.db`. On start: `prisma generate`, `npm run db:d1:local`, then Next.js.
+- **Prisma migrations are squashed** into one baseline: `prisma/migrations/20260725190000_init_sqlite`. `db:d1:local` / `db:d1:remote` skip that init (existing D1 already has the schema). Fresh empty D1 only: `node scripts/d1-apply-migration.mjs --local --full-init` (or `--remote`).
 - **While dev is running**, saving `prisma/schema.prisma` auto-regenerates the client, applies D1 migrations, and restarts Next.
 - **`HUMPBUCK_D1_REMOTE=1`** in `.env.local` → `initOpenNextCloudflareForDev({ remoteBindings: true })` so the D1 binding (marked `"remote": true` in `wrangler.jsonc`) talks to **production D1**; schema saves run `db:d1:remote` instead. Without the env flag, `remoteBindings: false` keeps **local** D1 even though the binding is remote-eligible.
 - `prisma db push` / `prisma/dev.db` only affect CLI scripts — not the running dev server DB.

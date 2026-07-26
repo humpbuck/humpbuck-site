@@ -52,7 +52,8 @@
     "accountMenuAria": "Account menu",
     "signOut": "Sign out",
     "accountFallback": "Account",
-    "shopUltraThin": "Ultra-thin"
+    "shopUltraThin": "Ultra-thin",
+    "videoTutorial": "Video tutorial"
   },
   "Footer": {
     "tagline": "Retro ana-digi watches combining analog character, digital function, and distinctive design.",
@@ -151,8 +152,7 @@
     "homeBlogCarouselNext": "Next articles",
     "featuredHeading": "Featured",
     "allProductsHeading": "All products",
-    "featuredReadyTitle": "Featured Ready Stock Watches",
-    "featuredReadySubtitle": "Browse available styles and click any watch to view details and inquire wholesale pricing.",
+    "featuredReadyTitle": "Featured",
     "featuredViewAll": "View all →",
     "browseFullCatalog": "Browse Full Catalog",
     "sectionNoProducts": "No products available.",
@@ -1039,17 +1039,13 @@
   },
   "VideoTutorials": {
     "metaTitle": "Video tutorial",
-    "metaDescription": "Hands-on product tutorial videos from HUMPBUCK.",
-    "kicker": "Video tutorial",
-    "pageTitle": "Product video tutorials",
-    "intro": "Hands-on tutorial videos for each product. Supports R2 links, YouTube, and other embeddable platforms.",
-    "empty": "No tutorial videos yet.",
-    "primaryVideo": "Primary video",
-    "backupYoutubeHint": "If the video above cannot play, use this YouTube backup:",
-    "backupVideo": "Backup video",
-    "backupLinkHint": "If the video above cannot play, open this backup video link:",
-    "openBackupVideo": "Open backup video",
-    "backupIframeTitleSuffix": "YouTube backup"
+    "metaDescription": "Watch HUMPBUCK product video tutorials. Primary stream via CDN; YouTube backup if playback is slow.",
+    "pageTitle": "Video tutorial",
+    "intro": "Watch the primary tutorial on the left. If it buffers, use the YouTube player on the right. Tap fullscreen for landscape viewing on phones.",
+    "primaryR2": "Primary (R2)",
+    "backupYoutube": "YouTube backup",
+    "emptyPrimary": "Primary video link not set yet.",
+    "emptyBackup": "YouTube backup link not set yet."
   },
   "Announcement": {
     "message": "COUPON : HUMPBUCK"

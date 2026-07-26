@@ -203,8 +203,7 @@
     "couponModalClose": "Cerrar",
     "certaintyOrderTitle": "¿Cómo se procesa mi pedido?",
     "certaintyOrderBody": "Tras completar el pago, verá una confirmación de pago exitoso y recibirá un correo con su número de pedido, detalles del producto, dirección de envío y contacto de atención al cliente.\n\nSu pedido suele enviarse en 1–2 días laborables. Una vez enviado, recibirá otro correo con el número de seguimiento y el sitio web de tracking para seguir su paquete con tranquilidad.",
-    "featuredReadyTitle": "Relojes destacados en stock",
-    "featuredReadySubtitle": "Explore los estilos disponibles y haga clic en cualquier reloj para ver detalles y consultar precios mayoristas.",
+    "featuredReadyTitle": "Destacados",
     "featuredViewAll": "Ver todo →",
     "browseFullCatalog": "Ver catálogo completo"
   },
@@ -919,17 +918,13 @@
   },
   "VideoTutorials": {
     "metaTitle": "Vídeo tutorial",
-    "metaDescription": "Vídeos tutoriales prácticos de productos HUMPBUCK.",
-    "kicker": "Vídeo tutorial",
-    "pageTitle": "Tutoriales en vídeo de productos",
-    "intro": "Vídeos prácticos por producto. Admite enlaces R2, YouTube y otras plataformas embebibles.",
-    "empty": "Aún no hay vídeos tutoriales.",
-    "primaryVideo": "Vídeo principal",
-    "backupYoutubeHint": "Si el vídeo de arriba no se reproduce, use este respaldo en YouTube:",
-    "backupVideo": "Vídeo de respaldo",
-    "backupLinkHint": "Si el vídeo de arriba no se reproduce, abra este enlace de respaldo:",
-    "openBackupVideo": "Abrir vídeo de respaldo",
-    "backupIframeTitleSuffix": "respaldo YouTube"
+    "metaDescription": "Tutoriales en vídeo de HUMPBUCK. Transmisión principal por CDN; YouTube de respaldo si va lento.",
+    "pageTitle": "Vídeo tutorial",
+    "intro": "Vea el tutorial principal a la izquierda. Si se atasca, use YouTube a la derecha. Pantalla completa para ver en horizontal en el móvil.",
+    "primaryR2": "Principal (R2)",
+    "backupYoutube": "Respaldo YouTube",
+    "emptyPrimary": "Aún no hay enlace del vídeo principal.",
+    "emptyBackup": "Aún no hay enlace de YouTube de respaldo."
   },
   "BlogPage": {
     "metaDescription": "Historias y notas de HUMPBUCK — relojes ana-digi retro para el día a día.",

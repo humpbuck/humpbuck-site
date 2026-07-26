@@ -156,6 +156,16 @@ CREATE TABLE "ProductInventory" (
 );
 
 -- CreateTable
+CREATE TABLE "ProductCategory" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
+    "imageUrl" TEXT,
+    "sortOrder" INTEGER NOT NULL DEFAULT 0,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CreateTable
 CREATE TABLE "CatalogProduct" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "slug" TEXT NOT NULL,
@@ -166,6 +176,7 @@ CREATE TABLE "CatalogProduct" (
     "description" TEXT NOT NULL,
     "price" REAL NOT NULL,
     "compareAtPrice" REAL,
+    "oemOdmPrice" REAL,
     "image" TEXT NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'active',
     "inStock" BOOLEAN NOT NULL DEFAULT true,
@@ -175,11 +186,16 @@ CREATE TABLE "CatalogProduct" (
     "detailJson" TEXT NOT NULL DEFAULT '[]',
     "variantsJson" TEXT NOT NULL DEFAULT '[]',
     "promoVideoJson" TEXT,
+    "categoryId" TEXT,
     "storefrontCategory" TEXT,
     "storefrontSubcategory" TEXT,
     "storefrontSeries" TEXT,
+    "homeSpotlight" BOOLEAN NOT NULL DEFAULT false,
+    "homeRecommended" BOOLEAN NOT NULL DEFAULT false,
+    "homeRecommendedSort" INTEGER NOT NULL DEFAULT 0,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "CatalogProduct_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "ProductCategory" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -251,10 +267,32 @@ CREATE TABLE "Coupon" (
     "startsAt" DATETIME NOT NULL,
     "endsAt" DATETIME NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "homeFeatured" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
     "quantity" INTEGER NOT NULL DEFAULT 1,
     "usedCount" INTEGER NOT NULL DEFAULT 0
+);
+
+-- CreateTable
+CREATE TABLE "ShippingFeeRate" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "countryCode" TEXT NOT NULL,
+    "countryName" TEXT NOT NULL DEFAULT '',
+    "shippingFeeCents" INTEGER NOT NULL DEFAULT 0,
+    "surchargeCents" INTEGER NOT NULL DEFAULT 0,
+    "deliveryDaysLabel" TEXT NOT NULL DEFAULT '7-14 Business Days',
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "ShippingExpressMethod" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "methodId" TEXT NOT NULL,
+    "feeCents" INTEGER NOT NULL DEFAULT 0,
+    "deliveryDaysLabel" TEXT NOT NULL DEFAULT '3-5 Business Days',
+    "updatedAt" DATETIME NOT NULL
 );
 
 -- CreateTable
@@ -298,6 +336,7 @@ CREATE TABLE "BlogPost" (
     "excerpt" TEXT NOT NULL DEFAULT '',
     "body" TEXT NOT NULL DEFAULT '',
     "coverImageUrl" TEXT NOT NULL DEFAULT '',
+    "productIdsJson" TEXT NOT NULL DEFAULT '[]',
     "homeCarouselSlot" INTEGER,
     "homeCarouselImageUrl" TEXT NOT NULL DEFAULT '',
     "homeCarouselDescription" TEXT NOT NULL DEFAULT '',
@@ -316,6 +355,74 @@ CREATE TABLE "SiteAnnouncement" (
     "href" TEXT NOT NULL DEFAULT '',
     "slidesJson" TEXT NOT NULL DEFAULT '[]',
     "backgroundColor" TEXT NOT NULL DEFAULT '#0f1114',
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "SiteOemOdmContent" (
+    "id" TEXT NOT NULL PRIMARY KEY DEFAULT 'default',
+    "promoVideoUrl" TEXT NOT NULL DEFAULT '',
+    "bodyText" TEXT NOT NULL DEFAULT '',
+    "moqRowsJson" TEXT NOT NULL DEFAULT '',
+    "samplePolicyHeading" TEXT NOT NULL DEFAULT '',
+    "samplePolicyText" TEXT NOT NULL DEFAULT '',
+    "customizationProcessHeading" TEXT NOT NULL DEFAULT '',
+    "customizationProcessText" TEXT NOT NULL DEFAULT '',
+    "paymentTermsHeading" TEXT NOT NULL DEFAULT '',
+    "paymentTermsText" TEXT NOT NULL DEFAULT '',
+    "logisticsShippingHeading" TEXT NOT NULL DEFAULT '',
+    "logisticsShippingText" TEXT NOT NULL DEFAULT '',
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "SiteHomeContent" (
+    "id" TEXT NOT NULL PRIMARY KEY DEFAULT 'default',
+    "heroBadge" TEXT NOT NULL DEFAULT '',
+    "heroTitle" TEXT NOT NULL DEFAULT '',
+    "heroLead" TEXT NOT NULL DEFAULT '',
+    "heroChip1" TEXT NOT NULL DEFAULT '',
+    "heroChip2" TEXT NOT NULL DEFAULT '',
+    "heroChip3" TEXT NOT NULL DEFAULT '',
+    "heroChip4" TEXT NOT NULL DEFAULT '',
+    "heroChip5" TEXT NOT NULL DEFAULT '',
+    "heroCtaShop" TEXT NOT NULL DEFAULT '',
+    "heroImageAlt" TEXT NOT NULL DEFAULT '',
+    "heroDesktopImageUrl" TEXT NOT NULL DEFAULT '',
+    "heroMobileImageUrl" TEXT NOT NULL DEFAULT '',
+    "aboutHeading" TEXT NOT NULL DEFAULT '',
+    "aboutParagraph1" TEXT NOT NULL DEFAULT '',
+    "aboutParagraph2" TEXT NOT NULL DEFAULT '',
+    "aboutImageAlt" TEXT NOT NULL DEFAULT '',
+    "aboutImageUrl" TEXT NOT NULL DEFAULT '',
+    "spotlightBackgroundImageUrl" TEXT NOT NULL DEFAULT '',
+    "spotlightBackgroundMobileImageUrl" TEXT NOT NULL DEFAULT '',
+    "spotlightProductImageUrl" TEXT NOT NULL DEFAULT '',
+    "couponTitle" TEXT NOT NULL DEFAULT '',
+    "couponQuestion" TEXT NOT NULL DEFAULT '',
+    "couponSuccessMessage" TEXT NOT NULL DEFAULT '',
+    "couponTagline" TEXT NOT NULL DEFAULT '',
+    "couponBackgroundImageUrl" TEXT NOT NULL DEFAULT '',
+    "certaintyHeading" TEXT NOT NULL DEFAULT '',
+    "certaintyLead" TEXT NOT NULL DEFAULT '',
+    "certaintyExtraBlocks" TEXT NOT NULL DEFAULT '',
+    "faqItem1Question" TEXT NOT NULL DEFAULT '',
+    "faqItem1Answer" TEXT NOT NULL DEFAULT '',
+    "faqItem2Question" TEXT NOT NULL DEFAULT '',
+    "faqItem2Answer" TEXT NOT NULL DEFAULT '',
+    "faqItem3Question" TEXT NOT NULL DEFAULT '',
+    "faqItem3Answer" TEXT NOT NULL DEFAULT '',
+    "faqItemsJson" TEXT NOT NULL DEFAULT '',
+    "momentsHeading" TEXT NOT NULL DEFAULT '',
+    "momentsLead" TEXT NOT NULL DEFAULT '',
+    "momentsCard1Title" TEXT NOT NULL DEFAULT '',
+    "momentsCard1Description" TEXT NOT NULL DEFAULT '',
+    "momentsCard1DesktopImageUrl" TEXT NOT NULL DEFAULT '',
+    "momentsCard1MobileImageUrl" TEXT NOT NULL DEFAULT '',
+    "momentsCard2Title" TEXT NOT NULL DEFAULT '',
+    "momentsCard2Description" TEXT NOT NULL DEFAULT '',
+    "momentsCard2DesktopImageUrl" TEXT NOT NULL DEFAULT '',
+    "momentsCard2MobileImageUrl" TEXT NOT NULL DEFAULT '',
     "updatedAt" DATETIME NOT NULL
 );
 
@@ -368,7 +475,19 @@ CREATE INDEX "ProductInventory_productSlug_idx" ON "ProductInventory"("productSl
 CREATE UNIQUE INDEX "ProductInventory_productSlug_variantId_key" ON "ProductInventory"("productSlug", "variantId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "ProductCategory_slug_key" ON "ProductCategory"("slug");
+
+-- CreateIndex
+CREATE INDEX "ProductCategory_sortOrder_idx" ON "ProductCategory"("sortOrder");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "CatalogProduct_slug_key" ON "CatalogProduct"("slug");
+
+-- CreateIndex
+CREATE INDEX "CatalogProduct_homeRecommended_homeRecommendedSort_idx" ON "CatalogProduct"("homeRecommended", "homeRecommendedSort");
+
+-- CreateIndex
+CREATE INDEX "CatalogProduct_categoryId_idx" ON "CatalogProduct"("categoryId");
 
 -- CreateIndex
 CREATE INDEX "ProductReview_productSlug_idx" ON "ProductReview"("productSlug");
@@ -399,6 +518,15 @@ CREATE UNIQUE INDEX "Coupon_code_key" ON "Coupon"("code");
 
 -- CreateIndex
 CREATE INDEX "Coupon_isActive_startsAt_endsAt_idx" ON "Coupon"("isActive", "startsAt", "endsAt");
+
+-- CreateIndex
+CREATE INDEX "Coupon_homeFeatured_idx" ON "Coupon"("homeFeatured");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ShippingFeeRate_countryCode_key" ON "ShippingFeeRate"("countryCode");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ShippingExpressMethod_methodId_key" ON "ShippingExpressMethod"("methodId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "AdminInboxMessage_dedupeKey_key" ON "AdminInboxMessage"("dedupeKey");

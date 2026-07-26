@@ -10,12 +10,27 @@ type ProductCategory = {
   sortOrder: number;
 };
 
+function CategoryImagePreview({ url }: { url: string }) {
+  const src = url.trim();
+  if (!src) return null;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- admin paste-URL preview
+    <img
+      src={src}
+      alt=""
+      className="size-12 rounded-lg border border-line object-cover"
+    />
+  );
+}
+
 export function AdminCategoriesPanel() {
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+  const [editImageUrl, setEditImageUrl] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
@@ -46,12 +61,14 @@ export function AdminCategoriesPanel() {
   function startEdit(category: ProductCategory) {
     setEditingId(category.id);
     setEditName(category.name);
+    setEditImageUrl(category.imageUrl ?? "");
     setError("");
   }
 
   function cancelEdit() {
     setEditingId(null);
     setEditName("");
+    setEditImageUrl("");
   }
 
   async function handleCreate(e: React.FormEvent) {
@@ -62,11 +79,15 @@ export function AdminCategoriesPanel() {
       const res = await fetch("/api/admin/categories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({
+          name,
+          imageUrl: imageUrl.trim() || null,
+        }),
       });
       const data = (await res.json()) as { error?: string };
       if (!res.ok) throw new Error(data.error ?? "Save failed");
       setName("");
+      setImageUrl("");
       await load();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Save failed");
@@ -84,7 +105,10 @@ export function AdminCategoriesPanel() {
       const res = await fetch(`/api/admin/categories/${editingId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: editName }),
+        body: JSON.stringify({
+          name: editName,
+          imageUrl: editImageUrl.trim() || null,
+        }),
       });
       const data = (await res.json()) as { error?: string };
       if (!res.ok) throw new Error(data.error ?? "Save failed");
@@ -178,7 +202,8 @@ export function AdminCategoriesPanel() {
         <h2 className="font-serif text-xl tracking-tight">Add category</h2>
         <p className="text-[11px] leading-relaxed text-muted">
           Create a category, then assign it on Products. Drag the list below to set
-          PRODUCTS menu order (after All products).
+          PRODUCTS menu order (after All products). Optional 1:1 image shows in the
+          PRODUCTS dropdown.
         </p>
         <label className="block">
           <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
@@ -190,6 +215,25 @@ export function AdminCategoriesPanel() {
             placeholder="ANA-DIGI, Ultra-thin, Automatic…"
             className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none transition focus:border-ink/25"
           />
+        </label>
+        <label className="block">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+            Image URL (1:1 R2)
+          </span>
+          <input
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            placeholder="https://assets.humpbuck.com/…"
+            className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none transition focus:border-ink/25"
+          />
+          <span className="mt-1 block text-[11px] text-muted">
+            Square crop recommended. Paste the public R2 URL after uploading.
+          </span>
+          {imageUrl.trim() ? (
+            <div className="mt-2">
+              <CategoryImagePreview url={imageUrl} />
+            </div>
+          ) : null}
         </label>
         {error && !editingId ? (
           <p className="text-sm text-red-700">{error}</p>
@@ -239,6 +283,22 @@ export function AdminCategoriesPanel() {
                       onChange={(e) => setEditName(e.target.value)}
                       className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink/25"
                     />
+                    <label className="block">
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+                        Image URL (1:1 R2)
+                      </span>
+                      <input
+                        value={editImageUrl}
+                        onChange={(e) => setEditImageUrl(e.target.value)}
+                        placeholder="https://assets.humpbuck.com/…"
+                        className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink/25"
+                      />
+                      {editImageUrl.trim() ? (
+                        <div className="mt-2">
+                          <CategoryImagePreview url={editImageUrl} />
+                        </div>
+                      ) : null}
+                    </label>
                     <div className="flex gap-2">
                       <button
                         type="submit"
@@ -267,6 +327,16 @@ export function AdminCategoriesPanel() {
                         ⋮⋮
                       </span>
                     ) : null}
+                    {category.imageUrl ? (
+                      <CategoryImagePreview url={category.imageUrl} />
+                    ) : (
+                      <span
+                        className="flex size-12 shrink-0 items-center justify-center rounded-lg border border-dashed border-line text-[9px] uppercase tracking-wider text-muted/60"
+                        aria-hidden
+                      >
+                        1:1
+                      </span>
+                    )}
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-ink">{category.name}</p>
                       <p className="mt-0.5 text-[10px] uppercase tracking-[0.12em] text-muted">

@@ -31,9 +31,6 @@ export async function HomeFeaturedProductsSection({
             >
               {t("featuredReadyTitle")}
             </h2>
-            <p className="mt-2 hidden text-sm leading-relaxed text-muted sm:mt-3 sm:block sm:text-base lg:text-lg">
-              {t("featuredReadySubtitle")}
-            </p>
           </div>
           <Link
             href="/product"

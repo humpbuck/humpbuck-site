@@ -15,7 +15,8 @@ const local = process.argv.includes("--local");
 const fullInit = process.argv.includes("--full-init");
 const flag = local ? "--local" : "--remote";
 const migrationsRoot = path.join("prisma", "migrations");
-const INIT_MIGRATION = "20260708120000_init_sqlite";
+/** Squashed baseline (full schema). Skipped by default — existing D1 already has tables. Fresh DB: pass `--full-init`. */
+const INIT_MIGRATION = "20260725190000_init_sqlite";
 
 const migrationDirs = fs
   .readdirSync(migrationsRoot, { withFileTypes: true })

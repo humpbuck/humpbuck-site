@@ -203,8 +203,7 @@
     "couponModalClose": "Sluiten",
     "certaintyOrderTitle": "Hoe wordt mijn bestelling verwerkt?",
     "certaintyOrderBody": "Na uw betaling ziet u een bevestiging van geslaagde betaling en ontvangt u een bevestigingsmail met bestelnummer, productdetails, verzendadres en contactgegevens van de klantenservice.\n\nUw bestelling wordt meestal binnen 1–2 werkdagen verzonden. Na verzending ontvangt u nog een e-mail met trackingnummer en trackingwebsite, zodat u uw pakket rustig kunt volgen.",
-    "featuredReadyTitle": "Uitgelichte horloges uit voorraad",
-    "featuredReadySubtitle": "Bekijk beschikbare stijlen en klik op een horloge voor details en om groothandelsprijzen aan te vragen.",
+    "featuredReadyTitle": "Uitgelicht",
     "featuredViewAll": "Alles bekijken →",
     "browseFullCatalog": "Volledige catalogus bekijken"
   },
@@ -919,17 +918,13 @@
   },
   "VideoTutorials": {
     "metaTitle": "Videohandleiding",
-    "metaDescription": "Praktische producttutorialvideo's van HUMPBUCK.",
-    "kicker": "Videohandleiding",
-    "pageTitle": "Productvideohandleidingen",
-    "intro": "Praktische handleidingvideo's per product. Ondersteunt R2-links, YouTube en andere embedbare platforms.",
-    "empty": "Nog geen handleidingvideo's.",
-    "primaryVideo": "Primaire video",
-    "backupYoutubeHint": "Als de video hierboven niet afspeelt, gebruik deze YouTube-back-up:",
-    "backupVideo": "Back-upvideo",
-    "backupLinkHint": "Als de video hierboven niet afspeelt, open deze back-uplink:",
-    "openBackupVideo": "Back-upvideo openen",
-    "backupIframeTitleSuffix": "YouTube-back-up"
+    "metaDescription": "HUMPBUCK productvideohandleidingen. Primair via CDN; YouTube als backup bij trage weergave.",
+    "pageTitle": "Videohandleiding",
+    "intro": "Bekijk links de primaire tutorial. Bij bufferen rechts YouTube gebruiken. Volledig scherm voor liggende weergave op de telefoon.",
+    "primaryR2": "Primair (R2)",
+    "backupYoutube": "YouTube-backup",
+    "emptyPrimary": "Primaire videolink nog niet ingesteld.",
+    "emptyBackup": "YouTube-backuplink nog niet ingesteld."
   },
   "BlogPage": {
     "metaDescription": "Verhalen en notities van HUMPBUCK — retro ana-digi horloges voor elke dag.",
