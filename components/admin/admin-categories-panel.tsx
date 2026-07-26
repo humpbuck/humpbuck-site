@@ -44,10 +44,10 @@ export function AdminCategoriesPanel() {
         categories?: ProductCategory[];
         error?: string;
       };
-      if (!res.ok) throw new Error(data.error ?? "Failed to load categories");
+      if (!res.ok) throw new Error(data.error ?? "Failed to load series");
       setCategories(data.categories ?? []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load categories");
+      setError(err instanceof Error ? err.message : "Failed to load series");
       setCategories([]);
     } finally {
       setLoading(false);
@@ -124,7 +124,7 @@ export function AdminCategoriesPanel() {
   async function handleDelete(id: string) {
     if (
       !confirm(
-        "Delete this category? Products in this category will become uncategorized.",
+        "Delete this series? Products in this series will become unassigned.",
       )
     ) {
       return;
@@ -199,9 +199,9 @@ export function AdminCategoriesPanel() {
         onSubmit={handleCreate}
         className="space-y-4 rounded-2xl border border-line bg-white/50 p-5"
       >
-        <h2 className="font-serif text-xl tracking-tight">Add category</h2>
+        <h2 className="font-serif text-xl tracking-tight">Add series</h2>
         <p className="text-[11px] leading-relaxed text-muted">
-          Create a category, then assign it on Products. Drag the list below to set
+          Create a series, then assign it on Products. Drag the list below to set
           PRODUCTS menu order (after All products). Optional 1:1 image shows in the
           PRODUCTS dropdown.
         </p>
@@ -243,13 +243,13 @@ export function AdminCategoriesPanel() {
           disabled={saving || !name.trim()}
           className="rounded-lg bg-ink px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-paper disabled:opacity-50"
         >
-          {saving ? "Saving…" : "Add category"}
+          {saving ? "Saving…" : "Add series"}
         </button>
       </form>
 
       <div className="mt-10">
         <div className="flex items-baseline justify-between gap-3">
-          <h2 className="font-serif text-xl tracking-tight">All categories</h2>
+          <h2 className="font-serif text-xl tracking-tight">All series</h2>
           {categories.length > 1 ? (
             <span className="text-[11px] text-muted">Drag to reorder</span>
           ) : null}
@@ -257,7 +257,7 @@ export function AdminCategoriesPanel() {
         {loading ? (
           <p className="mt-4 text-sm text-muted">Loading…</p>
         ) : categories.length === 0 ? (
-          <p className="mt-4 text-sm text-muted">No categories yet.</p>
+          <p className="mt-4 text-sm text-muted">No series yet.</p>
         ) : (
           <ul className="mt-4 divide-y divide-line rounded-2xl border border-line bg-white/50">
             {categories.map((category, index) => (

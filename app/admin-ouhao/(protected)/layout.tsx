@@ -114,8 +114,8 @@ export default async function AdminProtectedLayout({
             <Link href={adminPath("/orders")} className={NAV_LINK_CLASS}>
               ORDERS
             </Link>
-            <Link href={adminPath("/categories")} className={NAV_LINK_CLASS}>
-              CATEGORIES
+            <Link href={adminPath("/series")} className={NAV_LINK_CLASS}>
+              SERIES
             </Link>
             <Link href={adminPath("/inventory")} className={NAV_LINK_CLASS}>
               PRODUCTS

@@ -37,7 +37,7 @@ export async function PATCH(
       slug: typeof body.slug === "string" ? body.slug : undefined,
     });
     if (!category) {
-      return NextResponse.json({ error: "Category not found." }, { status: 404 });
+      return NextResponse.json({ error: "Series not found." }, { status: 404 });
     }
     return NextResponse.json({ ok: true, category });
   } catch (e) {
@@ -56,7 +56,7 @@ export async function DELETE(
   const { id } = await params;
   const ok = await deleteProductCategory(id);
   if (!ok) {
-    return NextResponse.json({ error: "Category not found." }, { status: 404 });
+    return NextResponse.json({ error: "Series not found." }, { status: 404 });
   }
   return NextResponse.json({ ok: true });
 }

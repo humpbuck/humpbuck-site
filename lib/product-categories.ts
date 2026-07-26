@@ -54,11 +54,11 @@ export async function resolveCategoryPlacementForSave(
   const categoryId =
     typeof categoryIdRaw === "string" ? categoryIdRaw.trim() : "";
   if (!categoryId) {
-    return { ok: false, error: "Category is required." };
+    return { ok: false, error: "Series is required." };
   }
   const category = await getProductCategoryById(categoryId);
   if (!category) {
-    return { ok: false, error: "Selected category was not found." };
+    return { ok: false, error: "Selected series was not found." };
   }
   return {
     ok: true,
@@ -91,7 +91,7 @@ export async function createProductCategory(input: {
 }): Promise<ProductCategoryRow> {
   await ensureProductCategorySchema();
   const name = input.name.trim();
-  if (!name) throw new Error("Category name is required.");
+  if (!name) throw new Error("Series name is required.");
   const imageUrl = input.imageUrl?.trim() || null;
   const slug = await uniqueCategorySlug(input.slug?.trim() || name);
 
@@ -114,7 +114,7 @@ export async function updateProductCategory(
   const data: { name?: string; imageUrl?: string | null; slug?: string } = {};
   if (input.name !== undefined) {
     const name = input.name.trim();
-    if (!name) throw new Error("Category name is required.");
+    if (!name) throw new Error("Series name is required.");
     data.name = name;
   }
   if (input.imageUrl !== undefined) {

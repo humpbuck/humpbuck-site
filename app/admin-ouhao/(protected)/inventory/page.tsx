@@ -24,7 +24,7 @@ export default async function AdminInventoryPage() {
       <h1 className="font-serif text-3xl tracking-tight">Products</h1>
       <p className="mt-2 text-sm text-muted">
         Create, update, and delete products. Manage inventory, media, and product copy in
-        one place. Assign categories from the Categories page.
+        one place. Assign series from the Series page.
       </p>
 
       <div className="mt-8">
