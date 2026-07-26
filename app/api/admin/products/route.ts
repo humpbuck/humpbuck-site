@@ -10,6 +10,10 @@ import {
   serializeDetailBlocksForDb,
 } from "@/lib/product-detail-blocks";
 import { prisma } from "@/lib/prisma";
+import {
+  parseProductPromoVideo,
+  serializeProductPromoVideo,
+} from "@/lib/product-promo-video";
 import { revalidateCatalogStorefront } from "@/lib/revalidate-catalog";
 
 type ProductSpec = { label: string; value: string };
@@ -64,15 +68,7 @@ export async function GET() {
         gallery: parseJsonArray<string>(p.galleryJson, []),
         detail: parseJsonArray<string>(p.detailJson, []),
         variants: parseJsonArray<ProductVariant>(p.variantsJson, []),
-        promoVideo: p.promoVideoJson
-          ? (() => {
-              try {
-                return JSON.parse(p.promoVideoJson) as { src: string; poster?: string };
-              } catch {
-                return null;
-              }
-            })()
-          : null,
+        promoVideo: parseProductPromoVideo(p.promoVideoJson),
       })),
       inventory,
     });
@@ -154,7 +150,9 @@ export async function POST(req: Request) {
         ),
         detailJson: serializeDetailBlocksForDb(parseDetailBlocksPayload(body.detail)),
         variantsJson: JSON.stringify(variants),
-        promoVideoJson: body.promoVideo ? JSON.stringify(body.promoVideo) : null,
+        promoVideoJson: serializeProductPromoVideo(
+          body.promoVideo as { src?: string; poster?: string; videos?: string[] } | null,
+        ),
         categoryId: placement.data.categoryId,
         storefrontCategory: placement.data.storefrontCategory,
         storefrontSubcategory: placement.data.storefrontSubcategory,

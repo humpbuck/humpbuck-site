@@ -16,6 +16,7 @@ import {
   getDiscoveredVariantUrls,
   headOk,
 } from "@/lib/r2-discover-gallery";
+import { parseProductPromoVideo } from "@/lib/product-promo-video";
 
 export type PdpR2Media = {
   /** Resolved URLs; `null` means use static catalog for that section. */
@@ -157,7 +158,7 @@ export type CatalogProductMediaInput = {
   detail?: string[];
   detailBlocks?: ProductDetailBlock[];
   variants?: ProductVariantOption[];
-  promoVideo?: { src?: string; poster?: string } | null;
+  promoVideo?: { src?: string; poster?: string; videos?: string[] } | null;
 };
 
 export type ResolvedStorefrontProductMedia = {
@@ -175,7 +176,8 @@ function trimUrls(urls: string[] | undefined): string[] {
 
 /**
  * Storefront PDP media: **admin URLs win** (`galleryJson`, `detailJson`, `variantsJson`,
- * `promoVideoJson`). R2 bucket discovery only fills sections left empty in the catalog.
+ * `promoVideoJson`). Video follows watchsourcego: only explicit admin URLs (or, when
+ * empty, R2 discovery under `products/{slug}/video/` for catalog specs). No sibling-path guessing.
  */
 export async function resolveStorefrontProductMedia(
   catalog: CatalogProductMediaInput,
@@ -188,6 +190,7 @@ export async function resolveStorefrontProductMedia(
   const detailAdmin =
     detailAdminFromBlocks.length > 0 ? detailAdminFromBlocks : legacyDetailUrls;
   const catalogVariants = catalog.variants ?? [];
+  const adminVideos = parseProductPromoVideo(catalog.promoVideo)?.videos ?? [];
 
   const spec = R2_GALLERY_SPECS_BY_SLUG[catalog.slug];
   const needsR2Gallery = galleryAdmin.length === 0 && !catalog.image?.trim();
@@ -197,7 +200,7 @@ export async function resolveStorefrontProductMedia(
       : detailBlocksAdmin.some((block) => !block.image.trim());
   const needsR2Variants =
     catalogVariants.length > 0 && catalogVariants.some((v) => !v.image?.trim());
-  const needsR2Video = !catalog.promoVideo?.src?.trim();
+  const needsR2Video = adminVideos.length === 0;
   const r2 =
     spec && (needsR2Gallery || needsR2Detail || needsR2Variants || needsR2Video)
       ? await getPdpR2Media(spec)
@@ -241,16 +244,11 @@ export async function resolveStorefrontProductMedia(
     }));
   }
 
-  const poster = gallery[0] ?? catalog.image?.trim();
-  const promoSrc = catalog.promoVideo?.src?.trim();
+  const poster =
+    catalog.promoVideo?.poster?.trim() || gallery[0] || catalog.image?.trim();
   let promoVideos: { src: string; poster?: string }[] | null = null;
-  if (promoSrc) {
-    promoVideos = [
-      {
-        src: promoSrc,
-        poster: catalog.promoVideo?.poster?.trim() || poster,
-      },
-    ];
+  if (adminVideos.length > 0) {
+    promoVideos = adminVideos.map((src) => ({ src, poster }));
   } else if (r2?.videos?.length) {
     promoVideos = r2.videos.map((src) => ({ src, poster }));
   }

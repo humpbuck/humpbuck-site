@@ -43,7 +43,7 @@ export interface Product {
   galleryImages?: string[];
   detailImages?: string[];
   detailBlocks?: ProductDetailBlock[];
-  promoVideo?: { src: string; poster?: string };
+  promoVideo?: { src: string; poster?: string; videos?: string[] };
   variantOptions?: ProductVariantOption[];
   highlights: string[];
   specs: { label: string; value: string }[];

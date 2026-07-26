@@ -14,6 +14,7 @@ import {
   serializeDetailBlocksForDb,
 } from "@/lib/product-detail-blocks";
 import { prisma } from "@/lib/prisma";
+import { serializeProductPromoVideo } from "@/lib/product-promo-video";
 import { revalidateCatalogStorefront } from "@/lib/revalidate-catalog";
 
 type ProductSpec = { label: string; value: string };
@@ -80,7 +81,9 @@ function productUpdateData(
     ),
     detailJson: serializeDetailBlocksForDb(parseDetailBlocksPayload(body.detail)),
     variantsJson: JSON.stringify(variants),
-    promoVideoJson: body.promoVideo ? JSON.stringify(body.promoVideo) : null,
+    promoVideoJson: serializeProductPromoVideo(
+      body.promoVideo as { src?: string; poster?: string; videos?: string[] } | null,
+    ),
     categoryId: placement.categoryId,
     storefrontCategory: placement.storefrontCategory,
     storefrontSubcategory: placement.storefrontSubcategory,

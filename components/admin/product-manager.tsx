@@ -19,6 +19,7 @@ import {
   parseDetailBlocksJson,
   type ProductDetailBlock,
 } from "@/lib/product-detail-blocks";
+import { parseProductPromoVideo } from "@/lib/product-promo-video";
 
 type InventoryRecord = {
   productSlug: string;
@@ -87,8 +88,6 @@ function normalizeProductSpecsForEditor(saved: SpecRow[]): SpecRow[] {
 }
 
 type VariantRow = { id: string; label: string; image: string; inStock?: boolean };
-type PromoVideo = { src: string; poster?: string } | null;
-
 type EditableProduct = {
   id: string | null;
   slug: string;
@@ -109,7 +108,9 @@ type EditableProduct = {
   detail: string[];
   detailBlocks: ProductDetailBlock[];
   variants: VariantRow[];
-  promoVideo: PromoVideo;
+  /** Draft video URLs (may include empty rows while editing). */
+  promoVideos: string[];
+  promoVideoPoster: string;
   categoryId: string;
   storefrontCategory: string;
   storefrontSubcategory: string;
@@ -126,15 +127,10 @@ function parseArray<T>(raw: string, fallback: T[]): T[] {
   }
 }
 
-function parseVideo(raw: string | null): PromoVideo {
-  if (!raw) return null;
-  try {
-    const v = JSON.parse(raw) as { src?: string; poster?: string };
-    if (!v.src) return null;
-    return { src: v.src, poster: v.poster || undefined };
-  } catch {
-    return null;
-  }
+function parseVideoDraft(raw: string | null): { videos: string[]; poster: string } {
+  const parsed = parseProductPromoVideo(raw);
+  if (!parsed) return { videos: [""], poster: "" };
+  return { videos: parsed.videos.length > 0 ? parsed.videos : [""], poster: parsed.poster ?? "" };
 }
 
 function buildEditableProduct(
@@ -155,6 +151,7 @@ function buildEditableProduct(
     }
   }
   const detailBlocks = parseDetailBlocksJson(p.detailJson);
+  const videoDraft = parseVideoDraft(p.promoVideoJson);
   return {
     id: p.id,
     slug: p.slug,
@@ -175,7 +172,8 @@ function buildEditableProduct(
     detail: detailBlocksToImageUrls(detailBlocks),
     detailBlocks,
     variants: parseArray<VariantRow>(p.variantsJson, []),
-    promoVideo: parseVideo(p.promoVideoJson),
+    promoVideos: videoDraft.videos,
+    promoVideoPoster: videoDraft.poster,
     categoryId: p.categoryId?.trim() || "",
     storefrontCategory: p.storefrontCategory?.trim() || "",
     storefrontSubcategory: p.storefrontSubcategory?.trim() || "",
@@ -227,7 +225,8 @@ function newProductDraft(): EditableProduct {
     detail: [],
     detailBlocks: [],
     variants: [{ id: "style-01", label: "Style 01", image: "", inStock: true }],
-    promoVideo: null,
+    promoVideos: [""],
+    promoVideoPoster: "",
     categoryId: "",
     storefrontCategory: "",
     storefrontSubcategory: "",
@@ -506,9 +505,11 @@ export function ProductManager({
           };
         }
         if (section === "video") {
+          const existing = p.promoVideos.map((u) => u.trim()).filter(Boolean);
           return {
             ...p,
-            promoVideo: { src: payload.publicUrl!, poster: p.gallery[0] || undefined },
+            promoVideos: [...existing, payload.publicUrl!],
+            promoVideoPoster: p.promoVideoPoster || p.gallery[0] || "",
           };
         }
         return {
@@ -577,7 +578,15 @@ export function ProductManager({
         image: v.image.trim(),
         inStock: v.inStock !== false,
       })),
-      promoVideo: current.promoVideo?.src ? current.promoVideo : null,
+      promoVideo: (() => {
+        const videos = current.promoVideos.map((u) => u.trim()).filter(Boolean);
+        if (videos.length === 0) return null;
+        return {
+          videos,
+          src: videos[0]!,
+          poster: current.promoVideoPoster.trim() || undefined,
+        };
+      })(),
       inventory: Object.entries(current.inventory).map(([variantId, row]) => ({
         variantId,
         quantity: row.quantity,
@@ -1018,28 +1027,60 @@ export function ProductManager({
 
             <div className="rounded-xl border border-line p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
-                Video (MP4, 720x1280)
+                Video
               </p>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <LabeledInput
-                  label="Video URL"
-                  value={current.promoVideo?.src || ""}
-                  onChange={(v) =>
+              <p className="mt-1 text-[11px] text-muted">
+                R2 video URLs (.mp4, .webm, .mov) or YouTube — same as watchsourcego: paste the
+                exact public URL. Storefront plays only what you save here (no path guessing).
+              </p>
+              <div className="mt-3 space-y-2">
+                {current.promoVideos.map((url, index) => (
+                  <div key={index} className="flex gap-2">
+                    <input
+                      value={url}
+                      onChange={(e) =>
+                        updateCurrent((p) => {
+                          const next = [...p.promoVideos];
+                          next[index] = e.target.value;
+                          return { ...p, promoVideos: next };
+                        })
+                      }
+                      placeholder="https://assets.humpbuck.com/Products/…/Fastrack-001-video.mp4"
+                      className="min-w-0 flex-1 rounded-lg border border-line bg-white px-3 py-2 font-mono text-xs outline-none focus:border-ink"
+                    />
+                    <button
+                      type="button"
+                      disabled={current.promoVideos.length === 1 && !url.trim()}
+                      onClick={() =>
+                        updateCurrent((p) => {
+                          const next = p.promoVideos.filter((_, i) => i !== index);
+                          return { ...p, promoVideos: next.length > 0 ? next : [""] };
+                        })
+                      }
+                      className="shrink-0 rounded-lg border border-line px-3 py-2 text-sm text-muted hover:bg-white disabled:opacity-40"
+                    >
+                      −
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() =>
                     updateCurrent((p) => ({
                       ...p,
-                      promoVideo: { src: v, poster: p.promoVideo?.poster },
+                      promoVideos: [...p.promoVideos, ""],
                     }))
                   }
-                />
+                  className="rounded-lg border border-dashed border-line px-3 py-2 text-sm text-muted hover:border-ink/40 hover:bg-white"
+                >
+                  + Add video URL
+                </button>
+              </div>
+              <div className="mt-3">
                 <LabeledInput
                   label="Poster URL (optional)"
-                  value={current.promoVideo?.poster || ""}
-                  onChange={(v) =>
-                    updateCurrent((p) => ({
-                      ...p,
-                      promoVideo: { src: p.promoVideo?.src || "", poster: v },
-                    }))
-                  }
+                  value={current.promoVideoPoster}
+                  onChange={(v) => updateCurrent((p) => ({ ...p, promoVideoPoster: v }))}
                 />
               </div>
               <div className="mt-3 flex items-center gap-2">
@@ -1058,11 +1099,17 @@ export function ProductManager({
                     }}
                   />
                 </label>
-                {current.promoVideo?.src && (
+                {current.promoVideos.some((u) => u.trim()) && (
                   <button
                     type="button"
                     className="rounded-lg border border-red-200 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-red-700 hover:bg-red-50"
-                    onClick={() => updateCurrent((p) => ({ ...p, promoVideo: null }))}
+                    onClick={() =>
+                      updateCurrent((p) => ({
+                        ...p,
+                        promoVideos: [""],
+                        promoVideoPoster: "",
+                      }))
+                    }
                   >
                     Clear video
                   </button>

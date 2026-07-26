@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { isDirectVideoUrl, youtubeEmbedUrl } from "@/lib/blog-video";
 
 function showcaseShellClass(isLandscape: boolean): string {
   return isLandscape
@@ -10,9 +11,8 @@ function showcaseShellClass(isLandscape: boolean): string {
 }
 
 /**
- * Product showcase video on the PDP left column (portrait or landscape MP4).
- * Aspect ratio is read from the file after metadata loads; portrait stays width-capped,
- * landscape uses the full column width.
+ * Product showcase on the PDP left column.
+ * Supports R2/direct MP4 (aspect from file metadata) and YouTube watch/embed URLs.
  */
 export function ProductPromoVideo({
   productName,
@@ -27,8 +27,13 @@ export function ProductPromoVideo({
 }) {
   const t = useTranslations("Product");
   const [aspectRatio, setAspectRatio] = useState<number | null>(null);
-  const isLandscape = aspectRatio != null && aspectRatio >= 1;
+  const ytEmbed = useMemo(() => youtubeEmbedUrl(src), [src]);
+  const isDirect = useMemo(() => isDirectVideoUrl(src), [src]);
+  const isLandscape = ytEmbed
+    ? true
+    : aspectRatio != null && aspectRatio >= 1;
   const showcaseLabel = t("productShowcase");
+  const aria = t("productShowcaseVideoAria", { product: productName });
 
   const onLoadedMetadata = useCallback((event: React.SyntheticEvent<HTMLVideoElement>) => {
     const video = event.currentTarget;
@@ -37,7 +42,20 @@ export function ProductPromoVideo({
     }
   }, []);
 
-  const videoBox = (
+  const videoBox = ytEmbed ? (
+    <div
+      className="relative isolate w-full overflow-hidden rounded-2xl border border-line bg-[#0a0a0a] shadow-sm"
+      style={{ aspectRatio: 16 / 9 }}
+    >
+      <iframe
+        title={aria}
+        src={ytEmbed}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+        allowFullScreen
+        className="absolute inset-0 z-0 h-full w-full border-0"
+      />
+    </div>
+  ) : (
     <div
       className="relative isolate w-full overflow-hidden rounded-2xl border border-line bg-[#0a0a0a] shadow-sm"
       style={{ aspectRatio: aspectRatio ?? 9 / 16 }}
@@ -48,10 +66,10 @@ export function ProductPromoVideo({
         playsInline
         preload="metadata"
         poster={poster}
-        aria-label={t("productShowcaseVideoAria", { product: productName })}
+        aria-label={aria}
         onLoadedMetadata={onLoadedMetadata}
       >
-        <source src={src} type="video/mp4" />
+        <source src={src} type={isDirect && /\.webm(\?|$)/i.test(src) ? "video/webm" : "video/mp4"} />
       </video>
     </div>
   );

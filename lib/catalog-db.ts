@@ -5,6 +5,7 @@ import type { Product } from "@/lib/catalog";
 import { normalizeSeriesSlug } from "@/lib/catalog";
 import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
 import { parseDetailBlocksJson } from "@/lib/product-detail-blocks";
+import { parseProductPromoVideo } from "@/lib/product-promo-video";
 
 type CatalogProductRow = {
   slug: string;
@@ -64,15 +65,13 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
   >(row.variantsJson, []);
   const specs = parseArray<{ label?: string; value?: string }>(row.specsJson, []);
   const highlights = parseArray<string>(row.highlightsJson, []);
-  const promo = row.promoVideoJson
-    ? (() => {
-        try {
-          const v = JSON.parse(row.promoVideoJson) as { src?: string; poster?: string };
-          return v.src ? { src: v.src, poster: v.poster } : undefined;
-        } catch {
-          return undefined;
-        }
-      })()
+  const promoParsed = parseProductPromoVideo(row.promoVideoJson);
+  const promo = promoParsed
+    ? {
+        src: promoParsed.src,
+        poster: promoParsed.poster,
+        videos: promoParsed.videos,
+      }
     : undefined;
 
   const variantStock = variants.map((v) => {
