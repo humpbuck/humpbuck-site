@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { isDirectVideoUrl, youtubeEmbedUrl } from "@/lib/blog-video";
+import { youtubeEmbedUrl } from "@/lib/blog-video";
 
 function showcaseShellClass(isLandscape: boolean): string {
   return isLandscape
@@ -12,7 +12,8 @@ function showcaseShellClass(isLandscape: boolean): string {
 
 /**
  * Product showcase on the PDP left column.
- * Supports R2/direct MP4 (aspect from file metadata) and YouTube watch/embed URLs.
+ * R2/direct video uses the same pattern as watchsourcego: `<video src=…>` (not nested
+ * `<source type>`), so browsers can load Range/metadata reliably.
  */
 export function ProductPromoVideo({
   productName,
@@ -27,8 +28,8 @@ export function ProductPromoVideo({
 }) {
   const t = useTranslations("Product");
   const [aspectRatio, setAspectRatio] = useState<number | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
   const ytEmbed = useMemo(() => youtubeEmbedUrl(src), [src]);
-  const isDirect = useMemo(() => isDirectVideoUrl(src), [src]);
   const isLandscape = ytEmbed
     ? true
     : aspectRatio != null && aspectRatio >= 1;
@@ -37,9 +38,14 @@ export function ProductPromoVideo({
 
   const onLoadedMetadata = useCallback((event: React.SyntheticEvent<HTMLVideoElement>) => {
     const video = event.currentTarget;
+    setLoadFailed(false);
     if (video.videoWidth > 0 && video.videoHeight > 0) {
       setAspectRatio(video.videoWidth / video.videoHeight);
     }
+  }, []);
+
+  const onError = useCallback(() => {
+    setLoadFailed(true);
   }, []);
 
   const videoBox = ytEmbed ? (
@@ -56,21 +62,32 @@ export function ProductPromoVideo({
       />
     </div>
   ) : (
-    <div
-      className="relative isolate w-full overflow-hidden rounded-2xl border border-line bg-[#0a0a0a] shadow-sm"
-      style={{ aspectRatio: aspectRatio ?? 9 / 16 }}
-    >
-      <video
-        className="absolute inset-0 z-0 block h-full w-full object-contain"
-        controls
-        playsInline
-        preload="metadata"
-        poster={poster}
-        aria-label={aria}
-        onLoadedMetadata={onLoadedMetadata}
+    <div className="w-full">
+      <div
+        className="w-full overflow-hidden rounded-2xl border border-line bg-[#0a0a0a] shadow-sm"
+        style={{ aspectRatio: aspectRatio ?? 9 / 16 }}
       >
-        <source src={src} type={isDirect && /\.webm(\?|$)/i.test(src) ? "video/webm" : "video/mp4"} />
-      </video>
+        {src.trim() ? (
+          <video
+            key={src}
+            src={src}
+            poster={poster}
+            controls
+            playsInline
+            preload="metadata"
+            className="h-full w-full object-contain"
+            aria-label={aria}
+            onLoadedMetadata={onLoadedMetadata}
+            onError={onError}
+          />
+        ) : null}
+      </div>
+      {loadFailed ? (
+        <p className="mt-2 text-center text-[11px] text-muted">
+          Video failed to load. Try opening the R2 URL in a new tab, or clear cache for
+          assets.humpbuck.com.
+        </p>
+      ) : null}
     </div>
   );
 
