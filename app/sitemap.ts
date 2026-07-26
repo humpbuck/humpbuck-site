@@ -1,5 +1,4 @@
 import type { MetadataRoute } from "next";
-import { seriesList } from "@/lib/catalog";
 import { readCatalogBuildSlugs } from "@/lib/catalog-build-slugs";
 import { readBlogBuildSlugs } from "@/lib/blog-build-slugs";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
@@ -20,7 +19,7 @@ const STATIC_PATHS: {
     { path: "/about", changeFrequency: "monthly", priority: 0.7 },
     { path: "/oem-odm", changeFrequency: "monthly", priority: 0.75 },
     { path: "/blog", changeFrequency: "weekly", priority: 0.75 },
-    { path: "/video-tutorial", changeFrequency: "monthly", priority: 0.65 },
+    { path: "/video-tutorial", changeFrequency: "weekly", priority: 0.75 },
     { path: "/shipping", changeFrequency: "yearly", priority: 0.5 },
     { path: "/refund", changeFrequency: "yearly", priority: 0.5 },
     { path: "/terms", changeFrequency: "yearly", priority: 0.4 },
@@ -87,14 +86,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
-  const seriesEntries: MetadataRoute.Sitemap = seriesList.flatMap((s) =>
-    localizedSitemapEntries(`/series/${encodeURIComponent(s.slug)}`, {
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    }),
-  );
-
   const productSlugs = await resolveProductSlugs();
   const productEntries: MetadataRoute.Sitemap = productSlugs.flatMap((slug) =>
     localizedSitemapEntries(`/product/${encodeURIComponent(slug)}`, {
@@ -113,5 +104,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
-  return [...staticEntries, ...seriesEntries, ...productEntries, ...blogEntries];
+  return [...staticEntries, ...productEntries, ...blogEntries];
 }

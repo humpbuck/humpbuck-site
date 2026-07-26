@@ -918,10 +918,10 @@
   },
   "VideoTutorials": {
     "metaTitle": "Tutoriel vidéo",
-    "metaDescription": "Tutoriels vidéo HUMPBUCK. Flux principal via CDN ; YouTube en secours si la lecture est lente.",
+    "metaDescription": "Tutoriels vidéo pratiques pour les montres HUMPBUCK. Installation et usage quotidien — flux principal avec secours YouTube.",
     "pageTitle": "Tutoriel vidéo",
     "intro": "Regardez le tutoriel principal à gauche. En cas de buffer, utilisez YouTube à droite. Plein écran pour le mode paysage sur mobile.",
-    "primaryR2": "Principal (R2)",
+    "primaryR2": "Vidéo principale",
     "backupYoutube": "Secours YouTube",
     "emptyPrimary": "Lien vidéo principal pas encore défini.",
     "emptyBackup": "Lien YouTube de secours pas encore défini."

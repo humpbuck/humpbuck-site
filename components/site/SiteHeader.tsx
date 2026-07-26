@@ -20,9 +20,9 @@ export type ShopNavCategoryLink = {
 };
 
 const FALLBACK_SHOP_CATEGORY_LINKS: ShopNavCategoryLink[] = [
-  { href: "/product?movement=quartz", label: "ANA-DIGI" },
-  { href: "/product?profile=ultra-thin", label: "Ultra-thin" },
-  { href: "/product?movement=mechanical", label: "Automatic" },
+  { href: "/product?series=ana-digi", label: "ANA-DIGI" },
+  { href: "/product?series=ultra-thin", label: "Ultra-thin" },
+  { href: "/product?series=mechanical", label: "Automatic" },
 ];
 
 const SHOP_LINK_CLASS =

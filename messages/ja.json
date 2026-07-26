@@ -918,10 +918,10 @@
   },
   "VideoTutorials": {
     "metaTitle": "動画ガイド",
-    "metaDescription": "HUMPBUCK の商品チュートリアル動画。メインは CDN、遅い場合は YouTube バックアップ。",
+    "metaDescription": "HUMPBUCK ウォッチの実践チュートリアル動画。設定と日常の使い方を、メイン動画と YouTube バックアップで学べます。",
     "pageTitle": "動画ガイド",
     "intro": "左がメイン動画です。再生が重い場合は右の YouTube をご利用ください。スマホは全画面で横向き再生できます。",
-    "primaryR2": "メイン（R2）",
+    "primaryR2": "メイン動画",
     "backupYoutube": "YouTube バックアップ",
     "emptyPrimary": "メイン動画リンクは未設定です。",
     "emptyBackup": "YouTube バックアップリンクは未設定です。"

@@ -918,10 +918,10 @@
   },
   "VideoTutorials": {
     "metaTitle": "Videó útmutató",
-    "metaDescription": "HUMPBUCK terméktutor videók. Elsődleges CDN; YouTube tartalék lassú lejátszásnál.",
+    "metaDescription": "Gyakorlati oktatóvideók a HUMPBUCK órákhoz. Beállítás és mindennapi használat — elsődleges stream YouTube tartalékkal.",
     "pageTitle": "Videó útmutató",
     "intro": "Bal oldalon az elsődleges tutorial. Bufferelésnél használd a jobb oldali YouTube-ot. Teljes képernyő fekvő nézethez mobilon.",
-    "primaryR2": "Elsődleges (R2)",
+    "primaryR2": "Elsődleges videó",
     "backupYoutube": "YouTube tartalék",
     "emptyPrimary": "Az elsődleges videó linkje még nincs beállítva.",
     "emptyBackup": "A YouTube tartalék linkje még nincs beállítva."

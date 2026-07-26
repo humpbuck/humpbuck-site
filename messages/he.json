@@ -918,10 +918,10 @@
   },
   "VideoTutorials": {
     "metaTitle": "מדריך וידאו",
-    "metaDescription": "סרטוני הדרכה של HUMPBUCK. זרם ראשי ב-CDN; גיבוי YouTube אם הניגון איטי.",
+    "metaDescription": "סרטוני הדרכה מעשיים לשעוני HUMPBUCK. הגדרה ושימוש יומיומי — זרם ראשי עם גיבוי YouTube.",
     "pageTitle": "מדריך וידאו",
     "intro": "צפו במדריך הראשי בצד שמאל. אם יש תקיעות, השתמשו ב-YouTube בצד ימין. מסך מלא נוח לצפייה לרוחב בטלפון.",
-    "primaryR2": "ראשי (R2)",
+    "primaryR2": "וידאו ראשי",
     "backupYoutube": "גיבוי YouTube",
     "emptyPrimary": "קישור הווידאו הראשי עדיין לא הוגדר.",
     "emptyBackup": "קישור גיבוי YouTube עדיין לא הוגדר."

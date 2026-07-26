@@ -918,10 +918,10 @@
   },
   "VideoTutorials": {
     "metaTitle": "Vídeo tutorial",
-    "metaDescription": "Tutoriales en vídeo de HUMPBUCK. Transmisión principal por CDN; YouTube de respaldo si va lento.",
+    "metaDescription": "Tutoriales prácticos en vídeo para relojes HUMPBUCK. Configuración y uso diario — transmisión principal con respaldo de YouTube.",
     "pageTitle": "Vídeo tutorial",
     "intro": "Vea el tutorial principal a la izquierda. Si se atasca, use YouTube a la derecha. Pantalla completa para ver en horizontal en el móvil.",
-    "primaryR2": "Principal (R2)",
+    "primaryR2": "Vídeo principal",
     "backupYoutube": "Respaldo YouTube",
     "emptyPrimary": "Aún no hay enlace del vídeo principal.",
     "emptyBackup": "Aún no hay enlace de YouTube de respaldo."

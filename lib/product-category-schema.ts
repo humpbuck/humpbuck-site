@@ -34,7 +34,7 @@ async function seedDefaultCategoriesIfEmpty(): Promise<void> {
       {
         id: "cat_quartz",
         name: "ANA-DIGI",
-        slug: "quartz",
+        slug: "ana-digi",
         sortOrder: 3,
       },
       {
@@ -51,6 +51,15 @@ async function seedDefaultCategoriesIfEmpty(): Promise<void> {
       },
     ],
   });
+}
+
+/** Rename legacy Quartz slug → public ANA-DIGI series slug. */
+async function migrateAnaDigiCategorySlug(): Promise<void> {
+  await prisma.$executeRawUnsafe(`
+    UPDATE "ProductCategory"
+    SET "slug" = 'ana-digi'
+    WHERE "id" = 'cat_quartz' OR lower("slug") = 'quartz'
+  `);
 }
 
 async function backfillProductCategoryIds(): Promise<void> {
@@ -107,6 +116,7 @@ export async function ensureProductCategorySchema(): Promise<void> {
 
       await addCatalogProductColumnIfMissing("categoryId", "TEXT");
       await seedDefaultCategoriesIfEmpty();
+      await migrateAnaDigiCategorySlug();
       await backfillProductCategoryIds();
     })().catch((error) => {
       productCategorySchemaReady = null;

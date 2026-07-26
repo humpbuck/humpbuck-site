@@ -7,7 +7,10 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { ProductCard } from "@/components/site/ProductCard";
 import { SubtleHorizontalScroll } from "@/components/site/subtle-horizontal-scroll";
 import type { Product } from "@/lib/catalog";
-import { shopCategoryHref } from "@/lib/product-category-shared";
+import {
+  normalizeShopSeriesParam,
+  shopSeriesHref,
+} from "@/lib/product-category-shared";
 
 export type ShopCategoryOption = {
   id: string;
@@ -19,23 +22,36 @@ function normalizeSearchQuery(input: string) {
   return input.trim().toLowerCase().replace(/\s+/g, "-");
 }
 
-function resolveActiveCategory(
+function resolveActiveSeries(
   categories: ShopCategoryOption[],
   searchParams: URLSearchParams,
 ): ShopCategoryOption | null {
-  const categoryParam = searchParams.get("category")?.trim() || "";
-  if (categoryParam) {
-    const byId = categories.find((c) => c.id === categoryParam);
-    if (byId) return byId;
+  const seriesRaw =
+    searchParams.get("series")?.trim() ||
+    searchParams.get("category")?.trim() ||
+    "";
+  if (seriesRaw) {
+    const normalized = normalizeShopSeriesParam(seriesRaw) || seriesRaw;
     const bySlug = categories.find(
-      (c) => c.slug.toLowerCase() === categoryParam.toLowerCase(),
+      (c) => c.slug.toLowerCase() === normalized.toLowerCase(),
     );
     if (bySlug) return bySlug;
+    const byId = categories.find((c) => c.id === seriesRaw);
+    if (byId) return byId;
   }
 
   const movement = searchParams.get("movement")?.trim().toLowerCase() || "";
-  if (movement === "quartz" || movement === "mechanical") {
-    return categories.find((c) => c.slug === movement) ?? null;
+  if (movement === "quartz") {
+    return (
+      categories.find((c) => c.slug === "ana-digi" || c.slug === "quartz") ??
+      null
+    );
+  }
+  if (movement === "mechanical") {
+    return (
+      categories.find((c) => c.slug === "mechanical" || c.slug === "automatic") ??
+      null
+    );
   }
 
   const profile = searchParams.get("profile")?.trim().toLowerCase() || "";
@@ -64,15 +80,15 @@ export function ShopCatalogClient({
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const activeCategory = useMemo(
-    () => resolveActiveCategory(categories, searchParams),
+  const activeSeries = useMemo(
+    () => resolveActiveSeries(categories, searchParams),
     [categories, searchParams],
   );
 
   const displayProducts = useMemo(() => {
     let list = products;
-    if (activeCategory) {
-      list = list.filter((p) => p.categoryId === activeCategory.id);
+    if (activeSeries) {
+      list = list.filter((p) => p.categoryId === activeSeries.id);
     }
     const q = normalizeSearchQuery(searchQuery);
     if (!q) return list;
@@ -81,11 +97,11 @@ export function ShopCatalogClient({
       const name = p.name.trim().toLowerCase().replace(/\s+/g, "-");
       return slug.includes(q) || name.includes(q);
     });
-  }, [products, searchQuery, activeCategory]);
+  }, [products, searchQuery, activeSeries]);
 
-  const selectCategory = useCallback(
-    (id: string | null) => {
-      router.push(shopCategoryHref(id));
+  const selectSeries = useCallback(
+    (slug: string | null) => {
+      router.push(shopSeriesHref(slug));
     },
     [router],
   );
@@ -95,10 +111,10 @@ export function ShopCatalogClient({
         count: displayProducts.length,
         query: searchQuery.trim(),
       })
-    : activeCategory
+    : activeSeries
       ? t("filterMatchCount", {
           count: displayProducts.length,
-          filter: activeCategory.name,
+          filter: activeSeries.name,
         })
       : t("updatedCount", { date: updatedDate, count: displayProducts.length });
 
@@ -147,10 +163,10 @@ export function ShopCatalogClient({
             <button
               type="button"
               role="option"
-              aria-selected={!activeCategory}
-              onClick={() => selectCategory(null)}
+              aria-selected={!activeSeries}
+              onClick={() => selectSeries(null)}
               className={`shrink-0 rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] transition ${
-                !activeCategory
+                !activeSeries
                   ? "border-ink bg-ink text-paper"
                   : "border-line bg-white text-ink/80 hover:border-ink/25"
               }`}
@@ -158,14 +174,14 @@ export function ShopCatalogClient({
               {t("filterAll")}
             </button>
             {categories.map((category) => {
-              const selected = activeCategory?.id === category.id;
+              const selected = activeSeries?.id === category.id;
               return (
                 <button
                   key={category.id}
                   type="button"
                   role="option"
                   aria-selected={selected}
-                  onClick={() => selectCategory(category.id)}
+                  onClick={() => selectSeries(category.slug)}
                   className={`shrink-0 rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] transition ${
                     selected
                       ? "border-ink bg-ink text-paper"
@@ -182,7 +198,7 @@ export function ShopCatalogClient({
 
       <div className="max-w-2xl">
         <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-800">
-          {activeCategory?.name ?? t("filterAll")}
+          {activeSeries?.name ?? t("filterAll")}
         </p>
         <p className="mt-2 text-sm text-muted">● {countLabel}</p>
       </div>
@@ -204,10 +220,10 @@ export function ShopCatalogClient({
         <p className="mt-4 rounded-2xl border border-dashed border-line bg-paper/50 px-4 py-10 text-center text-sm text-muted">
           {searchQuery.trim()
             ? t("searchNoResults", { query: searchQuery.trim() })
-            : activeCategory
-              ? t("filterNoResults", { filter: activeCategory.name })
+            : activeSeries
+              ? t("filterNoResults", { filter: activeSeries.name })
               : t("emptyCategory")}{" "}
-          {(searchQuery.trim() || activeCategory) && (
+          {(searchQuery.trim() || activeSeries) && (
             <Link href="/product" className="underline underline-offset-4">
               {t("clearFilter")}
             </Link>

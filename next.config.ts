@@ -36,34 +36,78 @@ function r2PublicImagePatterns(): { protocol: "https"; hostname: string; pathnam
   }));
 }
 
-const legacySeriesAstralRedirects = routing.locales.map((locale) =>
-  locale === routing.defaultLocale
-    ? {
-        source: "/series/astral",
-        destination: "/series/rd-astral",
-        permanent: true as const,
-      }
-    : {
-        source: `/${locale}/series/astral`,
-        destination: `/${locale}/series/rd-astral`,
-        permanent: true as const,
-      },
+/** Old `/series/{slug}` landing pages (digitemp / tonneau / rd-astral era) → shop series filters. */
+const LEGACY_SERIES_PAGE_DEST: Record<string, string> = {
+  digitemp: "/product?series=ana-digi",
+  "digi-temp": "/product?series=ana-digi",
+  tonneau: "/product",
+  "rm-tonneau": "/product",
+  "rd-astral": "/product",
+  astral: "/product",
+};
+
+const legacySeriesPageRedirects = Object.entries(LEGACY_SERIES_PAGE_DEST).flatMap(
+  ([slug, destination]) =>
+    routing.locales.map((locale) =>
+      locale === routing.defaultLocale
+        ? {
+            source: `/series/${slug}`,
+            destination,
+            permanent: true as const,
+          }
+        : {
+            source: `/${locale}/series/${slug}`,
+            destination:
+              destination === "/product"
+                ? `/${locale}/product`
+                : `/${locale}${destination}`,
+            permanent: true as const,
+          },
+    ),
 );
 
-const legacyShopAstralQueryRedirects = routing.locales.map((locale) =>
-  locale === routing.defaultLocale
-    ? {
-        source: "/shop",
-        has: [{ type: "query" as const, key: "series", value: "astral" }],
-        destination: "/product?series=rd-astral",
+/** Legacy shop/query aliases → `?series=ana-digi`. */
+type LegacyQueryRedirect = {
+  path: "/product" | "/shop";
+  key: "series" | "category";
+  value: string;
+  destQuery: string | null;
+};
+
+const legacyShopQueryRedirects: LegacyQueryRedirect[] = [
+  { path: "/product", key: "series", value: "digitemp", destQuery: "ana-digi" },
+  { path: "/product", key: "series", value: "quartz", destQuery: "ana-digi" },
+  { path: "/product", key: "category", value: "cat_quartz", destQuery: "ana-digi" },
+  { path: "/product", key: "category", value: "quartz", destQuery: "ana-digi" },
+  { path: "/product", key: "category", value: "ana-digi", destQuery: "ana-digi" },
+  { path: "/product", key: "category", value: "digitemp", destQuery: "ana-digi" },
+  { path: "/product", key: "category", value: "cat_ultra_thin", destQuery: "ultra-thin" },
+  { path: "/product", key: "category", value: "ultra-thin", destQuery: "ultra-thin" },
+  { path: "/product", key: "category", value: "cat_mechanical", destQuery: "mechanical" },
+  { path: "/product", key: "category", value: "mechanical", destQuery: "mechanical" },
+  { path: "/shop", key: "series", value: "astral", destQuery: null },
+  { path: "/shop", key: "series", value: "digitemp", destQuery: "ana-digi" },
+  { path: "/shop", key: "series", value: "rd-astral", destQuery: null },
+  { path: "/shop", key: "series", value: "tonneau", destQuery: null },
+];
+
+const legacyShopSeriesQueryRedirects = legacyShopQueryRedirects.flatMap(
+  ({ path, key, value, destQuery }) =>
+    routing.locales.map((locale) => {
+      const source = locale === routing.defaultLocale ? path : `/${locale}${path}`;
+      const destPath =
+        destQuery == null
+          ? "/product"
+          : `/product?series=${encodeURIComponent(destQuery)}`;
+      const destination =
+        locale === routing.defaultLocale ? destPath : `/${locale}${destPath}`;
+      return {
+        source,
+        has: [{ type: "query" as const, key, value }],
+        destination,
         permanent: true as const,
-      }
-    : {
-        source: `/${locale}/shop`,
-        has: [{ type: "query" as const, key: "series", value: "astral" }],
-        destination: `/${locale}/product?series=rd-astral`,
-        permanent: true as const,
-      },
+      };
+    }),
 );
 
 const legacyShopToProductRedirects = routing.locales.map((locale) =>
@@ -113,8 +157,8 @@ const nextConfig: NextConfig = {
         destination: `${ADMIN_PATH}/:path*`,
         permanent: true,
       },
-      ...legacySeriesAstralRedirects,
-      ...legacyShopAstralQueryRedirects,
+      ...legacySeriesPageRedirects,
+      ...legacyShopSeriesQueryRedirects,
       ...legacyShopToProductRedirects,
     ];
   },

@@ -18,6 +18,9 @@ export type ProductCategoryRow = {
 
 export {
   legacyPlacementFromCategory,
+  LEGACY_CATALOG_SERIES_REDIRECT,
+  normalizeShopSeriesParam,
+  shopSeriesHref,
   shopCategoryHref,
   shopHrefForCategorySlug,
 } from "@/lib/product-category-shared";

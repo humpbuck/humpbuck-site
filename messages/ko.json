@@ -918,10 +918,10 @@
   },
   "VideoTutorials": {
     "metaTitle": "동영상 가이드",
-    "metaDescription": "HUMPBUCK 제품 튜토리얼 영상. 기본은 CDN, 느리면 YouTube 백업.",
+    "metaDescription": "HUMPBUCK 시계를 위한 실전 튜토리얼 영상. 설정과 일상 사용법 — 기본 스트림과 YouTube 백업.",
     "pageTitle": "동영상 가이드",
     "intro": "왼쪽이 기본 영상입니다. 버퍼링되면 오른쪽 YouTube를 사용하세요. 휴대폰에서는 전체 화면으로 가로 시청할 수 있습니다.",
-    "primaryR2": "기본 (R2)",
+    "primaryR2": "기본 영상",
     "backupYoutube": "YouTube 백업",
     "emptyPrimary": "기본 영상 링크가 아직 없습니다.",
     "emptyBackup": "YouTube 백업 링크가 아직 없습니다."

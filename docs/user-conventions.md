@@ -130,6 +130,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-25 | **卡片裁剪扩到全站列表**：`/product`、系列页、PDP「You may also like」、博客相关商品同样经 `toStorefrontCardProduct`；保留 `categoryId` 供商店分类筛选；色块图 `loading="lazy"`。 |
 | 2026-07-25 | **Prisma 迁移合并**：约 30+ 条小迁移压成一条基线 `20260725190000_init_sqlite`；`db:d1:*` 默认跳过 init，`npm run dev` 启动不再逐条试跑旧 SQL。 |
 | 2026-07-25 | **Video tutorial**：前台菜单 `/video-tutorial`；PC 左右两路 16:9（左 R2/MP4、右 YouTube）；手机上下排列、可全屏；后台 **VIDEO TUTORIAL** 填标题与链接（`SiteVideoTutorial`）。 |
+| 2026-07-25 | **商店「系列」URL**：前台筛选文案 Categories→**Series**；查询参数 `category=`→**`series=`**，值用分类 **slug**（ANA-DIGI=`ana-digi`）。兼容旧 `cat_quartz` / `category=` / `movement=quartz`。旧落地页 `/series/digitemp|tonneau|rd-astral|astral` 301 到对应 `/product?series=…` 或 `/product`，页面已删除。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 

@@ -261,8 +261,8 @@
     "kicker": "Catalog",
     "title": "Discover retro ana-digi watches combining analog precision, digital functions and futuristic design.",
     "filterAll": "All",
-    "filterCategories": "Categories",
-    "filterCategoriesScroll": "Scroll categories",
+    "filterCategories": "Series",
+    "filterCategoriesScroll": "Scroll series",
     "filterPanelTitle": "Filter",
     "filterGroupMovement": "Movement",
     "filterGroupAudience": "Audience",
@@ -1039,10 +1039,10 @@
   },
   "VideoTutorials": {
     "metaTitle": "Video tutorial",
-    "metaDescription": "Watch HUMPBUCK product video tutorials. Primary stream via CDN; YouTube backup if playback is slow.",
+    "metaDescription": "Hands-on tutorial videos for HUMPBUCK watches. Learn setup and everyday use — primary stream with YouTube backup.",
     "pageTitle": "Video tutorial",
     "intro": "Watch the primary tutorial on the left. If it buffers, use the YouTube player on the right. Tap fullscreen for landscape viewing on phones.",
-    "primaryR2": "Primary (R2)",
+    "primaryR2": "Primary video",
     "backupYoutube": "YouTube backup",
     "emptyPrimary": "Primary video link not set yet.",
     "emptyBackup": "YouTube backup link not set yet."

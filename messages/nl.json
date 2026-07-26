@@ -918,10 +918,10 @@
   },
   "VideoTutorials": {
     "metaTitle": "Videohandleiding",
-    "metaDescription": "HUMPBUCK productvideohandleidingen. Primair via CDN; YouTube als backup bij trage weergave.",
+    "metaDescription": "Praktische videotutorials voor HUMPBUCK-horloges. Installatie en dagelijks gebruik — primaire stream met YouTube-backup.",
     "pageTitle": "Videohandleiding",
     "intro": "Bekijk links de primaire tutorial. Bij bufferen rechts YouTube gebruiken. Volledig scherm voor liggende weergave op de telefoon.",
-    "primaryR2": "Primair (R2)",
+    "primaryR2": "Primaire video",
     "backupYoutube": "YouTube-backup",
     "emptyPrimary": "Primaire videolink nog niet ingesteld.",
     "emptyBackup": "YouTube-backuplink nog niet ingesteld."

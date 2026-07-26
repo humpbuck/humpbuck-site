@@ -102,8 +102,8 @@ export async function HomeDigitempSpotlightAsyncSection({ locale }: { locale: st
         {(heroFeatured ?? heroFallback) ? (
           <HomeDigitempSpotlight
             productHref={
-              (heroFeatured ?? heroFallback).slug === "digitemp"
-                ? "/product?series=digitemp"
+              (heroFeatured ?? heroFallback).slug.startsWith("digitemp")
+                ? "/product?series=ana-digi"
                 : `/product/${(heroFeatured ?? heroFallback).slug}`
             }
             productName={(heroFeatured ?? heroFallback).name}

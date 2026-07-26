@@ -12,6 +12,7 @@ export async function SiteFooter({
   shopCategoryLinks?: { href: string; label: string }[];
 } = {}) {
   const t = await getTranslations("Footer");
+  const tNav = await getTranslations("Navigation");
   const tAbout = await getTranslations("AboutPage");
   const supportMail = publicSupportEmail();
   const year = new Date().getFullYear();
@@ -21,9 +22,9 @@ export async function SiteFooter({
     ...(shopCategoryLinks && shopCategoryLinks.length > 0
       ? shopCategoryLinks.map((c) => ({ label: c.label, href: c.href }))
       : [
-          { label: t("linkQuartz"), href: "/product?movement=quartz" },
-          { label: t("linkUltraThin"), href: "/product?profile=ultra-thin" },
-          { label: t("linkMechanical"), href: "/product?movement=mechanical" },
+          { label: t("linkQuartz"), href: "/product?series=ana-digi" },
+          { label: t("linkUltraThin"), href: "/product?series=ultra-thin" },
+          { label: t("linkMechanical"), href: "/product?series=mechanical" },
         ]),
   ];
 
@@ -36,6 +37,7 @@ export async function SiteFooter({
       title: t("companyTitle"),
       links: [
         { label: t("about"), href: "/about" },
+        { label: tNav("videoTutorial"), href: "/video-tutorial" },
       ],
     },
     {
