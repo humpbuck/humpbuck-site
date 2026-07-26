@@ -132,6 +132,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-25 | **Video tutorial**：前台菜单 `/video-tutorial`；PC 左右两路 16:9（左 R2/MP4、右 YouTube）；手机上下排列、可全屏；后台 **VIDEO TUTORIAL** 填标题与链接（`SiteVideoTutorial`）。 |
 | 2026-07-25 | **商店「系列」URL**：前台筛选文案 Categories→**Series**；查询参数 `category=`→**`series=`**，值用分类 **slug**（ANA-DIGI=`ana-digi`）。兼容旧 `cat_quartz` / `category=` / `movement=quartz`。旧落地页 `/series/digitemp|tonneau|rd-astral|astral` 301 到对应 `/product?series=…` 或 `/product`，页面已删除。 |
 | 2026-07-25 | **商家后台**：导航 CATEGORIES→**SERIES**；管理页路径 `/admin…/series`（旧 `/categories` 重定向）；产品表单字段与文案同步为 Series。内部 API `/api/admin/categories` 暂保留。 |
+| 2026-07-25 | **商品图缓存对齐 watchsourcego**：商品 gallery 不加 `?v=`；R2 商品对象不用 `max-age=31536000`。已有长缓存可用 `node scripts/r2-strip-product-cache-control.mjs` 去掉。首页营销图仍可用长缓存 + `?v=`。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 

@@ -31,6 +31,7 @@ type CatalogProductRow = {
   homeSpotlight: boolean;
   homeRecommended: boolean;
   homeRecommendedSort: number;
+  updatedAt?: Date;
 };
 
 type InventoryRow = {
@@ -132,6 +133,7 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
     homeRecommendedSort: Number.isFinite(row.homeRecommendedSort)
       ? row.homeRecommendedSort
       : 0,
+    updatedAt: row.updatedAt instanceof Date ? row.updatedAt : undefined,
   };
 }
 

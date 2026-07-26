@@ -58,6 +58,8 @@ export interface Product {
   /** Homepage Recommended carousel — set in admin. */
   homeRecommended?: boolean;
   homeRecommendedSort?: number;
+  /** Catalog row `updatedAt` — used to bust R2 image URLs after same-path overwrites. */
+  updatedAt?: Date;
 }
 
 export function normalizeSeriesSlug(s: string): string {
