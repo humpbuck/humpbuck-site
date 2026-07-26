@@ -32,6 +32,7 @@
 
 - **商品媒体以管理后台为准**：`gallery` / `detail` / `variants` / `promoVideo` 里填的 R2（或 HTTPS）链接即为前台展示来源（见 `resolveStorefrontProductMedia` in `lib/r2-pdp-media.ts`）。仅当某块在后台**留空**时，才按 `R2_GALLERY_SPECS_BY_SLUG` 对桶做 ListObjects / HEAD 发现补全。
 - **商品视频对齐 watchsourcego**：后台粘贴完整公网 URL（可多条）；前台只播已保存的 URL，**不做**同目录 `-video.mp4` 路径猜测。自定义文件夹（如 `Products/MITINA/...`）请把完整 MP4 链接贴进 Video。
+- **R2 缓存（全站店面资源）**：禁止 1 年 / `immutable` 长缓存。统一短策略 `public, max-age=0, must-revalidate`（`lib/r2-storefront-cache.ts`）。商品图/视频均不加 `?v=`；同 key 覆盖后普通刷新即可。已有长缓存对象：`node scripts/r2-strip-product-cache-control.mjs`。
 - 桶内文件命名约定仍适用于「自动发现」兜底；在配置了 R2 S3 API 凭据时，用 **ListObjects** 列出（凭据同评论上传，见 `.env.example`）。  
 - 部署 **Vercel** 时需在项目环境变量中配置 `DATABASE_URL`、R2 相关变量及（若与默认不同）`NEXT_PUBLIC_R2_PUBLIC_BASE`；公网 R2 若用自有域名，需在 `next.config.ts` 的 `images.remotePatterns` 中允许该 `hostname`，否则 `next/image` 可能不显示。  
 - **前台图片**：凡展示 R2 公网 URL 的模块，应使用 `components/site/storefront-image.tsx` 的 **`StorefrontImage`**（不要用裸 `next/image` + 手写 `unoptimized`）。它会自动对 `isR2PublicObjectUrl` 为真的地址直连 R2，避免部分手机经 `/_next/image` 代理烂图。头像仍用 `ReviewerAvatar` / `HeaderUserAvatar` 等既有逻辑。  
@@ -133,8 +134,9 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-25 | **Video tutorial**：前台菜单 `/video-tutorial`；PC 左右两路 16:9（左 R2/MP4、右 YouTube）；手机上下排列、可全屏；后台 **VIDEO TUTORIAL** 填标题与链接（`SiteVideoTutorial`）。 |
 | 2026-07-25 | **商店「系列」URL**：前台筛选文案 Categories→**Series**；查询参数 `category=`→**`series=`**，值用分类 **slug**（ANA-DIGI=`ana-digi`）。兼容旧 `cat_quartz` / `category=` / `movement=quartz`。旧落地页 `/series/digitemp|tonneau|rd-astral|astral` 301 到对应 `/product?series=…` 或 `/product`，页面已删除。 |
 | 2026-07-25 | **商家后台**：导航 CATEGORIES→**SERIES**；管理页路径 `/admin…/series`（旧 `/categories` 重定向）；产品表单字段与文案同步为 Series。内部 API `/api/admin/categories` 暂保留。 |
-| 2026-07-25 | **商品图缓存对齐 watchsourcego**：商品 gallery 不加 `?v=`；R2 商品对象不用 `max-age=31536000`。已有长缓存可用 `node scripts/r2-strip-product-cache-control.mjs` 去掉。首页营销图仍可用长缓存 + `?v=`。 |
+| 2026-07-25 | **商品图缓存对齐 watchsourcego**：商品 gallery 不加 `?v=`；R2 不用长 `Cache-Control`。已有长缓存用 strip 脚本去掉。 |
 | 2026-07-25 | **商品视频对齐 watchsourcego**：后台多行粘贴 R2/YouTube URL；前台只认已保存链接，去掉同级路径猜测。 |
+| 2026-07-25 | **废除 R2 1 年缓存策略**：删除代码/文档中的 `max-age=31536000` / `immutable` 写入与推荐；统一 `R2_STOREFRONT_CACHE_CONTROL`；商品视频 URL 去掉 `?v=` / `VIDEO_REV`。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 
@@ -158,7 +160,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 - **R2 路径（大小写敏感）：**
   - PC：`Home/section1/Home-hero-PC.webp`（CDN：`https://assets.humpbuck.com/Home/section1/Home-hero-PC.webp`）
   - 手机：`Home/section1/Home-hero-APP.webp`（CDN：`https://assets.humpbuck.com/Home/section1/Home-hero-APP.webp`）
-- **换图：** 在 R2 同路径覆盖文件，并在 `.env.local` / 生产环境把对应 rev 加 1（否则浏览器/CDN 可能仍显示旧图）：
+- **换图：** 在 R2 同路径覆盖文件（对象用短 `Cache-Control`，勿设 1 年缓存）。可选：把对应 rev 加 1 以强制 URL 换新（`?v=`）：
   - `NEXT_PUBLIC_R2_HUMPBUCK_HERO_DESKTOP_REV`
   - `NEXT_PUBLIC_R2_HUMPBUCK_HERO_MOBILE_REV`
   - 若只设 `NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV`，两端共用同一版本号

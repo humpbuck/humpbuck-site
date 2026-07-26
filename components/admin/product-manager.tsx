@@ -457,15 +457,20 @@ export function ProductManager({
       const payload = (await presign.json()) as {
         uploadUrl?: string;
         publicUrl?: string;
+        cacheControl?: string;
         error?: string;
       };
       if (!presign.ok || !payload.uploadUrl || !payload.publicUrl) {
         setFlashMessage(payload.error || "Failed to get upload URL.", "error");
         return;
       }
+      const putHeaders: Record<string, string> = { "Content-Type": file.type };
+      if (payload.cacheControl) {
+        putHeaders["Cache-Control"] = payload.cacheControl;
+      }
       const put = await fetch(payload.uploadUrl, {
         method: "PUT",
-        headers: { "Content-Type": file.type },
+        headers: putHeaders,
         body: file,
       });
       if (!put.ok) {

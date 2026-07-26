@@ -1,5 +1,6 @@
 import { presignR2Put } from "@/lib/r2-aws4";
 import { R2_GALLERY_SPECS_BY_SLUG, R2_PUBLIC_BASE } from "@/lib/r2";
+import { R2_STOREFRONT_CACHE_CONTROL } from "@/lib/r2-storefront-cache";
 
 export function isR2ProductUploadConfigured(): boolean {
   return Boolean(
@@ -77,7 +78,9 @@ export async function presignProductMediaPut(
   key: string,
   contentType: string,
 ): Promise<string> {
-  return presignR2Put(key, contentType, 60 * 5);
+  return presignR2Put(key, contentType, 60 * 5, {
+    cacheControl: R2_STOREFRONT_CACHE_CONTROL,
+  });
 }
 
 function publicBase(): string {

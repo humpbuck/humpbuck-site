@@ -96,7 +96,7 @@ async function main() {
         Key: key,
         Body: buf,
         ContentType: "image/png",
-        CacheControl: "public, max-age=31536000, immutable",
+        CacheControl: "public, max-age=0, must-revalidate",
       }),
     );
     console.log(`OK  ${key}  (${(buf.length / 1024).toFixed(1)} KiB)`);

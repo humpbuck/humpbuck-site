@@ -31,14 +31,19 @@ export async function presignR2Put(
   key: string,
   contentType: string,
   expiresInSeconds: number,
+  options?: { cacheControl?: string },
 ): Promise<string> {
   const { bucket } = r2Credentials();
   const client = r2AwsClient();
   const objectUrl = `${r2BaseUrl()}/${bucket}/${encodeR2Key(key)}?X-Amz-Expires=${expiresInSeconds}`;
+  const headers: Record<string, string> = { "Content-Type": contentType };
+  if (options?.cacheControl) {
+    headers["Cache-Control"] = options.cacheControl;
+  }
   const signed = await client.sign(
     new Request(objectUrl, {
       method: "PUT",
-      headers: { "Content-Type": contentType },
+      headers,
     }),
     { aws: { signQuery: true } },
   );
@@ -50,14 +55,19 @@ export async function putR2Object(
   key: string,
   contentType: string,
   body: Uint8Array | ArrayBuffer,
+  options?: { cacheControl?: string },
 ): Promise<void> {
   const { bucket } = r2Credentials();
   const client = r2AwsClient();
   const objectUrl = `${r2BaseUrl()}/${bucket}/${encodeR2Key(key)}`;
   const bytes = Uint8Array.from(body instanceof Uint8Array ? body : new Uint8Array(body));
+  const headers: Record<string, string> = { "Content-Type": contentType };
+  if (options?.cacheControl) {
+    headers["Cache-Control"] = options.cacheControl;
+  }
   const res = await client.fetch(objectUrl, {
     method: "PUT",
-    headers: { "Content-Type": contentType },
+    headers,
     body: new Blob([bytes], { type: contentType }),
   });
   if (!res.ok) {

@@ -1,7 +1,12 @@
 # https://developers.cloudflare.com/workers/static-assets/headers
 # https://opennext.js.org/cloudflare/caching#static-assets-caching
+#
+# Only content-hashed Next build assets keep a long immutable cache.
+# Overwritable storefront / R2 media must NOT use 1-year Cache-Control
+# (see lib/r2-storefront-cache.ts).
+
 /_next/static/*
   Cache-Control: public,max-age=31536000,immutable
 
 /share/*
-  Cache-Control: public,max-age=31536000,immutable
+  Cache-Control: public,max-age=0,must-revalidate

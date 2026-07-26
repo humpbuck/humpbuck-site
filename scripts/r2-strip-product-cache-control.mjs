@@ -1,6 +1,7 @@
 /**
- * Remove long Cache-Control from product objects in R2 (align with watchsourcego).
- * Copies each key onto itself with metadata REPLACE and no Cache-Control header.
+ * Normalize Cache-Control on storefront R2 objects to short revalidate
+ * (`public, max-age=0, must-revalidate` — same as `lib/r2-storefront-cache.ts`).
+ * Use after legacy uploads that still carry a long-lived Cache-Control.
  *
  * Usage:
  *   node scripts/r2-strip-product-cache-control.mjs
@@ -15,6 +16,9 @@ import { AwsClient } from "aws4fetch";
 
 const require = createRequire(import.meta.url);
 require("./load-project-env.mjs").applyLocalDatabaseEnvOverride();
+
+/** Keep in sync with `lib/r2-storefront-cache.ts`. */
+const STOREFRONT_CACHE_CONTROL = "public, max-age=0, must-revalidate";
 
 const DEFAULT_PREFIXES = ["Products/", "products/"];
 
@@ -81,7 +85,7 @@ async function headContentType(client, baseUrl, bucket, key) {
   return res.headers.get("content-type") || "application/octet-stream";
 }
 
-async function stripCacheControl(client, baseUrl, bucket, key) {
+async function normalizeCacheControl(client, baseUrl, bucket, key) {
   const contentType = await headContentType(client, baseUrl, bucket, key);
   const copySource = `/${bucket}/${encodeR2Key(key)}`;
   const res = await client.fetch(`${baseUrl}/${bucket}/${encodeR2Key(key)}`, {
@@ -90,8 +94,7 @@ async function stripCacheControl(client, baseUrl, bucket, key) {
       "x-amz-copy-source": copySource,
       "x-amz-metadata-directive": "REPLACE",
       "Content-Type": contentType,
-      // Explicit short revalidate — do not use max-age=31536000 / immutable on product media.
-      "Cache-Control": "public, max-age=0, must-revalidate",
+      "Cache-Control": STOREFRONT_CACHE_CONTROL,
     },
   });
   if (!res.ok) {
@@ -138,7 +141,7 @@ async function main() {
       continue;
     }
     try {
-      await stripCacheControl(client, baseUrl, bucket, key);
+      await normalizeCacheControl(client, baseUrl, bucket, key);
       ok += 1;
       if (ok % 25 === 0) console.log(`[ok] ${ok}/${unique.length}`);
     } catch (err) {

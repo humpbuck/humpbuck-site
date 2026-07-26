@@ -20,9 +20,9 @@ export function isR2PublicObjectUrl(url: string): boolean {
 }
 
 /**
- * Append `?v=` for R2 URLs without one so browser/CDN refetch after same-path overwrites.
- * Skips URLs that already include `v=` (e.g. admin-entered `?v=2`).
- * Used for homepage / fixed marketing assets — not product gallery (aligned with watchsourcego).
+ * Optional URL revision (`?v=`) for homepage / fixed marketing assets only.
+ * Product gallery/video must not use this (watchsourcego-aligned; short object Cache-Control).
+ * Skips URLs that already include `v=`.
  */
 export function withImageCacheRevision(url: string, revision: string | null): string {
   const trimmed = url.trim();

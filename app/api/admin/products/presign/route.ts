@@ -7,6 +7,7 @@ import {
   publicUrlForProductMediaKey,
   type ProductMediaSection,
 } from "@/lib/r2-admin-product-upload";
+import { R2_STOREFRONT_CACHE_CONTROL } from "@/lib/r2-storefront-cache";
 
 const ALLOWED_IMAGE_TYPES = new Set(["image/webp"]);
 const ALLOWED_VIDEO_TYPES = new Set(["video/mp4"]);
@@ -90,5 +91,11 @@ export async function POST(req: Request) {
   const uploadUrl = await presignProductMediaPut(key, contentType);
   const publicUrl = publicUrlForProductMediaKey(key);
 
-  return NextResponse.json({ uploadUrl, publicUrl, key });
+  // Client PUT must send the same Cache-Control that was signed into the URL.
+  return NextResponse.json({
+    uploadUrl,
+    publicUrl,
+    key,
+    cacheControl: R2_STOREFRONT_CACHE_CONTROL,
+  });
 }

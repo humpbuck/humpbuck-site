@@ -3,7 +3,7 @@ export const R2_BUCKET_NAME_DEFAULT = "humpbuck-site" as const;
 
 /**
  * Cloudflare R2 public development URL (bucket: `humpbuck-site`).
- * For Lighthouse “cache lifetime” on large media, set per-object `Cache-Control` in R2 (see `.env.example` → R2 public object caching).
+ * Storefront objects use short Cache-Control (see `lib/r2-storefront-cache.ts`) — not long-lived / immutable.
  */
 export const R2_PUBLIC_BASE =
   "https://pub-c8982b0d0821469baad86145989f3f64.r2.dev" as const;
@@ -219,14 +219,7 @@ function pad2(n: number): string {
 }
 
 function productVideoUrl(slugFolder: string, filePrefix: string): string {
-  const perProductKey = `NEXT_PUBLIC_R2_VIDEO_REV_${slugFolder
-    .toUpperCase()
-    .replace(/[^A-Z0-9]+/g, "_")}`;
-  const rev =
-    process.env[perProductKey]?.trim() ||
-    process.env.NEXT_PUBLIC_R2_VIDEO_REV?.trim() ||
-    "1";
-  return `${R2_PUBLIC_BASE}/products/${slugFolder}/video/${filePrefix}-video.mp4?v=${encodeURIComponent(rev)}`;
+  return `${R2_PUBLIC_BASE}/products/${slugFolder}/video/${filePrefix}-video.mp4`;
 }
 
 /**
@@ -322,24 +315,14 @@ export const R2_GALLERY_SPECS_BY_SLUG: Record<string, R2GallerySpec> = {
   },
 };
 
-/**
- * RM-M03 product page — `products/RM-M03/video/HUMPBUCK-RM-M03-video.mp4` (720×1280).
- * Bump `NEXT_PUBLIC_R2_RM_M03_VIDEO_REV` after same-name overwrites on R2.
- */
+/** RM-M03 product page — `products/RM-M03/video/HUMPBUCK-RM-M03-video.mp4` (720×1280). */
 function rmM03VideoUrl(): string {
-  const rev = process.env.NEXT_PUBLIC_R2_RM_M03_VIDEO_REV?.trim() || "2";
-  const path = `${R2_PUBLIC_BASE}/products/${PRMM03_SLUG}/video/${PRMM03_FILE}-video.mp4`;
-  return `${path}?v=${encodeURIComponent(rev)}`;
+  return productVideoUrl(PRMM03_SLUG, PRMM03_FILE);
 }
 
-/**
- * RM-M08 showcase MP4 — bump `NEXT_PUBLIC_R2_RM_M08_VIDEO_REV` after same-name overwrites on R2.
- * PDP poster uses the first carousel image (same as RM-M01).
- */
+/** RM-M08 showcase MP4. PDP poster uses the first carousel image (same as RM-M01). */
 function rmM08VideoUrl(): string {
-  const rev = process.env.NEXT_PUBLIC_R2_RM_M08_VIDEO_REV?.trim() || "1";
-  const path = `${R2_PUBLIC_BASE}/products/RM-M08/video/HUMPBUCK-RM-M08-video.mp4`;
-  return `${path}?v=${encodeURIComponent(rev)}`;
+  return `${R2_PUBLIC_BASE}/products/RM-M08/video/HUMPBUCK-RM-M08-video.mp4`;
 }
 
 function rmM08ProductAssets() {
@@ -355,35 +338,23 @@ function rmM08ProductAssets() {
   return { ...base, video: rmM08VideoUrl() };
 }
 
-/**
- * RM-M04 stills — bump `NEXT_PUBLIC_R2_RM_M04_REV` after same-name overwrites on R2.
- */
+/** RM-M04 stills + video (no `?v=` — product media matches watchsourcego). */
 function rmM04ProductAssets() {
-  const rev =
-    process.env.NEXT_PUBLIC_R2_RM_M04_REV?.trim() || "1";
-  const q = `?v=${encodeURIComponent(rev)}`;
-  const bump = (path: string) => `${path}${q}`;
   return {
     gallery: Array.from(
       { length: 5 },
       (_, i) =>
-        bump(
-          `${R2_PUBLIC_BASE}/products/${PRMM04_SLUG}/gallery/${PRMM04_FILE}-gallery-${pad2(i + 1)}.webp`,
-        ),
+        `${R2_PUBLIC_BASE}/products/${PRMM04_SLUG}/gallery/${PRMM04_FILE}-gallery-${pad2(i + 1)}.webp`,
     ),
     detail: Array.from(
       { length: 20 },
       (_, i) =>
-        bump(
-          `${R2_PUBLIC_BASE}/products/${PRMM04_SLUG}/detail/${PRMM04_FILE}-detail-${pad2(i + 1)}.webp`,
-        ),
+        `${R2_PUBLIC_BASE}/products/${PRMM04_SLUG}/detail/${PRMM04_FILE}-detail-${pad2(i + 1)}.webp`,
     ),
     variants: Array.from(
       { length: 9 },
       (_, i) =>
-        bump(
-          `${R2_PUBLIC_BASE}/products/${PRMM04_SLUG}/variants/${PRMM04_FILE}-style-${pad2(i + 1)}.webp`,
-        ),
+        `${R2_PUBLIC_BASE}/products/${PRMM04_SLUG}/variants/${PRMM04_FILE}-style-${pad2(i + 1)}.webp`,
     ),
     video: productVideoUrl(PRMM04_SLUG, PRMM04_FILE),
   };
@@ -554,7 +525,6 @@ export const R2 = {
         (_, i) =>
           `${R2_PUBLIC_BASE}/products/${PRMM03_SLUG}/variants/${PRMM03_FILE}-style-${pad2(i + 1)}.webp`,
       ),
-      /** Same object key on R2 — URL includes `?v=` cache bust (see `rmM03VideoUrl`). */
       video: rmM03VideoUrl(),
     },
     rmM04: rmM04ProductAssets(),
