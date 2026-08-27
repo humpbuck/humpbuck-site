@@ -29,10 +29,11 @@ export async function DELETE(
       );
     }
 
-    await prisma.$transaction(async (tx) => {
-      await tx.productInventory.deleteMany({ where: { productSlug: product.slug } });
-      await tx.catalogProduct.delete({ where: { id } });
-    });
+    // D1 does not support interactive `$transaction` callbacks — use batch form.
+    await prisma.$transaction([
+      prisma.productInventory.deleteMany({ where: { productSlug: product.slug } }),
+      prisma.catalogProduct.delete({ where: { id } }),
+    ]);
 
     return NextResponse.json({ ok: true, deleted: true });
   } catch (e) {
