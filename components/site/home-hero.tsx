@@ -121,7 +121,7 @@ async function HomeHeroForeground() {
 
           <div className="mt-[clamp(2.75rem,9svh,4.5rem)] flex flex-col items-start gap-3.5 sm:flex-row sm:flex-wrap sm:items-center md:mt-10 md:gap-5">
             <Link
-              href="/product"
+              href="/watches"
               className="inline-flex items-center justify-center rounded-full bg-white px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#080808] transition hover:bg-white/90 md:px-7 md:py-2.5 md:text-xs"
             >
               {resolveHomeCmsText(

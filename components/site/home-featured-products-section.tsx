@@ -33,7 +33,7 @@ export async function HomeFeaturedProductsSection({
             </h2>
           </div>
           <Link
-            href="/product"
+            href="/watches"
             className="shrink-0 self-end text-sm font-medium text-muted transition hover:text-ink sm:self-auto sm:pt-1"
           >
             {t("featuredViewAll")}

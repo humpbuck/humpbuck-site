@@ -20,9 +20,10 @@ export type ShopNavCategoryLink = {
 };
 
 const FALLBACK_SHOP_CATEGORY_LINKS: ShopNavCategoryLink[] = [
-  { href: "/product?series=ana-digi", label: "ANA-DIGI" },
-  { href: "/product?series=ultra-thin", label: "Ultra-thin" },
-  { href: "/product?series=mechanical", label: "Automatic" },
+  { href: "/ana-digi-watches", label: "ANA-DIGI" },
+  { href: "/digital-watches", label: "Digital" },
+  { href: "/analog-watches", label: "Analog" },
+  { href: "/automatic-watches", label: "Automatic" },
 ];
 
 const SHOP_LINK_CLASS =
@@ -86,7 +87,7 @@ function DesktopShopNav({
   categoryLinks: ShopNavCategoryLink[];
 }) {
   const links: ShopNavCategoryLink[] = [
-    { href: "/product", label: tNav("shopAllProducts") },
+    { href: "/watches", label: tNav("shopAllProducts") },
     ...categoryLinks,
   ];
   return (
@@ -135,7 +136,7 @@ function MobileShopNav({
   onNavigate: () => void;
 }) {
   const links: ShopNavCategoryLink[] = [
-    { href: "/product", label: tNav("shopAllProducts") },
+    { href: "/watches", label: tNav("shopAllProducts") },
     ...categoryLinks,
   ];
   return (

@@ -1,12 +1,15 @@
 import { revalidateTag } from "next/cache";
 import { revalidateStorefrontPath, revalidateSitemap } from "@/lib/revalidate-storefront";
+import { STOREFRONT_WATCH_COLLECTION_PATHS } from "@/lib/storefront-watch-categories";
 
 /** Bust catalog cache and key storefront routes after admin catalog changes. */
 export function revalidateCatalogStorefront(opts?: { slug?: string; oldSlug?: string }): void {
   revalidateTag("catalog", { expire: 0 });
   revalidateSitemap();
   revalidateStorefrontPath("/");
-  revalidateStorefrontPath("/product");
+  for (const path of STOREFRONT_WATCH_COLLECTION_PATHS) {
+    revalidateStorefrontPath(path);
+  }
 
   const slugs = new Set<string>();
   if (opts?.slug?.trim()) slugs.add(opts.slug.trim());

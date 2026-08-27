@@ -18,13 +18,14 @@ export async function SiteFooter({
   const year = new Date().getFullYear();
 
   const shopLinks = [
-    { label: t("allProducts"), href: "/product" },
+    { label: t("allProducts"), href: "/watches" },
     ...(shopCategoryLinks && shopCategoryLinks.length > 0
       ? shopCategoryLinks.map((c) => ({ label: c.label, href: c.href }))
       : [
-          { label: t("linkQuartz"), href: "/product?series=ana-digi" },
-          { label: t("linkUltraThin"), href: "/product?series=ultra-thin" },
-          { label: t("linkMechanical"), href: "/product?series=mechanical" },
+          { label: t("linkQuartz"), href: "/ana-digi-watches" },
+          { label: "Digital", href: "/digital-watches" },
+          { label: "Analog", href: "/analog-watches" },
+          { label: t("linkMechanical"), href: "/automatic-watches" },
         ]),
   ];
 

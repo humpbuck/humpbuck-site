@@ -68,7 +68,7 @@ export default async function AccountOverviewPage() {
 
       <p className="mt-10">
         <Link
-          href="/product"
+          href="/watches"
           className="text-[12px] font-semibold uppercase tracking-[0.12em] text-ink/70 underline-offset-4 hover:text-ink hover:underline"
         >
           {t("continueShopping")}

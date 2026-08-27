@@ -1050,5 +1050,104 @@
     "inquiryErrNetwork": "Erro de rede. Tente novamente.",
     "inquirySuccessKicker": "Pedido recebido",
     "inquirySuccessBody": "Obrigado pela confiança. Recebemos o seu pedido e prepararemos um mockup digital (não uma amostra física) o mais breve possível, enviado para o seu e-mail. Para pedidos urgentes, contacte-nos no WhatsApp."
+  },
+  "WatchCollections": {
+    "faqHeading": "Perguntas frequentes",
+    "all": {
+      "metaTitle": "Comprar relógios | ANA-DIGI, digitais e automáticos | HUMPBUCK",
+      "metaDescription": "Compre relógios HUMPBUCK: ANA-DIGI, digitais, analógicos e automáticos. Descubra relógios com carácter, pensados para o dia a dia e o seu estilo.",
+      "kicker": "RELÓGIOS",
+      "h1": "Relógios HUMPBUCK",
+      "subtitle": "Explore relógios ANA-DIGI, digitais, analógicos e automáticos da HUMPBUCK.",
+      "intro": ""
+    },
+    "anaDigi": {
+      "name": "ANA-DIGI",
+      "metaTitle": "Relógios ANA-DIGI | Relógios analógico-digitais retro | HUMPBUCK",
+      "metaDescription": "Compre relógios HUMPBUCK ANA-DIGI com mostradores analógico e digital, design de inspiração retro, hora dual, alarmes, cronógrafo e estilo quotidiano distinto.",
+      "kicker": "COLEÇÃO ANA-DIGI",
+      "h1": "Relógios ANA-DIGI",
+      "subtitle": "Descubra relógios analógico-digitais de inspiração retro que combinam ponteiros clássicos com funções digitais práticas.",
+      "intro": "Descubra os relógios HUMPBUCK ANA-DIGI, que combinam ponteiros analógicos clássicos com displays digitais práticos. Com estilo de inspiração retro e funcionalidade diária, a nossa coleção ANA-DIGI apresenta designs distintos com funções úteis como hora dual, alarmes, cronógrafo e temperatura em modelos selecionados.",
+      "seoHeading": "O que são relógios ANA-DIGI?",
+      "seoParagraphs": [
+        "Os relógios ANA-DIGI combinam um mostrador analógico com um display digital numa só caixa. Este design híbrido oferece o aspeto tradicional dos ponteiros e acrescenta funções digitais úteis como alarmes, hora dual, cronógrafo e calendário.",
+        "A HUMPBUCK concentra-se em relógios ANA-DIGI de inspiração retro, com caixas distintas, funções práticas para o dia a dia e uma forte identidade visual. Modelos selecionados incluem também temperatura, destacando-se dos relógios apenas analógicos ou apenas digitais."
+      ],
+      "whyHeading": "Porquê escolher um relógio HUMPBUCK ANA-DIGI?",
+      "whyParagraphs": [
+        "A nossa coleção ANA-DIGI é pensada para quem gosta do carácter dos relógios digitais vintage, mas quer manter o aspeto familiar dos ponteiros. A combinação cria um estilo versátil para o uso diário, looks casuais e colecionadores que procuram algo diferente.",
+        "Explore a coleção para descobrir formas de caixa, layouts de mostrador, cores e funções, e escolha o relógio ANA-DIGI que melhor combina com o seu estilo."
+      ],
+      "faqs": [
+        {
+          "question": "O que é um relógio ANA-DIGI?",
+          "answer": "Um relógio ANA-DIGI combina ponteiros analógicos e um display digital no mesmo relógio, oferecendo leitura tradicional da hora e funções digitais."
+        },
+        {
+          "question": "Que funções têm os relógios HUMPBUCK ANA-DIGI?",
+          "answer": "As funções variam consoante o modelo e podem incluir hora dual, alarme, cronógrafo, calendário, luz de fundo e temperatura."
+        },
+        {
+          "question": "Os relógios ANA-DIGI são adequados para o uso diário?",
+          "answer": "Sim. Os relógios HUMPBUCK ANA-DIGI são pensados para o dia a dia, com funções práticas e estilo de inspiração retro."
+        },
+        {
+          "question": "Qual é a diferença entre um relógio ANA-DIGI e um digital?",
+          "answer": "Um relógio ANA-DIGI usa ponteiros analógicos e um ecrã digital, enquanto um relógio digital mostra principalmente a hora de forma digital."
+        }
+      ]
+    },
+    "digital": {
+      "name": "Digital",
+      "metaTitle": "Relógios digitais | Relógios digitais retro e do dia a dia | HUMPBUCK",
+      "metaDescription": "Compre relógios digitais HUMPBUCK com design de inspiração retro, funções práticas, alarmes, cronógrafo e um estilo moderno distinto.",
+      "kicker": "COLEÇÃO DIGITAL",
+      "h1": "Relógios digitais",
+      "subtitle": "Explore relógios digitais distintos inspirados no design retro e pensados para o uso diário.",
+      "intro": "Explore os relógios digitais HUMPBUCK, com equilíbrio entre carácter retro e funcionalidade prática. Da leitura diária da hora a alarmes, cronógrafo e displays com personalidade, a nossa coleção digital oferece uma interpretação moderna dos clássicos digitais.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "Os relógios digitais HUMPBUCK são pensados para quem gosta de relógios funcionais com estilo visual próprio. Os displays digitais dão acesso rápido e claro à hora e a outras funções, enquanto caixas e layouts de inspiração retro dão carácter a cada modelo.",
+        "Consoante o modelo, os relógios digitais HUMPBUCK podem incluir alarmes, cronógrafo, calendário, luz de fundo e hora dual. Compare designs, cores e funções na coleção."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    },
+    "analog": {
+      "name": "Analógico",
+      "metaTitle": "Relógios analógicos | Relógios modernos e distintos | HUMPBUCK",
+      "metaDescription": "Descubra relógios analógicos HUMPBUCK com leitura clara, caixas distintas e estilo versátil para entusiastas de relógios modernos.",
+      "kicker": "COLEÇÃO ANALÓGICA",
+      "h1": "Relógios analógicos",
+      "subtitle": "Medição analógica clássica com o design distinto da HUMPBUCK.",
+      "intro": "Descubra os relógios analógicos HUMPBUCK, com ponteiros tradicionais e um estilo contemporâneo distinto. Pensados para uma leitura simples e intuitiva, oferecem opções versáteis para o uso diário.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "Os relógios analógicos continuam a ser uma das formas mais atemporais de mostrar a hora. Com ponteiros de horas, minutos e por vezes segundos, oferecem uma experiência clara e familiar.",
+        "A coleção analógica HUMPBUCK combina a medição tradicional com formas de caixa, mostradores e materiais distintos. Prefira um design minimalista ou mais expressivo — encontre o estilo que se adequa ao seu dia a dia."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    },
+    "automatic": {
+      "name": "Automático",
+      "metaTitle": "Relógios automáticos | Relógios mecânicos | HUMPBUCK",
+      "metaDescription": "Explore relógios automáticos HUMPBUCK com movimentos mecânicos, designs distintos e o carácter da relojoaria tradicional para o uso diário.",
+      "kicker": "COLEÇÃO AUTOMÁTICA",
+      "h1": "Relógios automáticos",
+      "subtitle": "Relógios mecânicos alimentados pelo movimento, com o carácter distinto da HUMPBUCK.",
+      "intro": "Explore os relógios automáticos HUMPBUCK com movimentos mecânicos. Pensados para quem aprecia a mecânica tradicional, a nossa coleção automática une um estilo distinto ao carácter de um relógio de corda automática.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "Os relógios automáticos usam um movimento mecânico que se pode dar corda através do movimento do pulso. Ao contrário dos de quartzo, não dependem de uma pilha convencional para o funcionamento normal.",
+        "Os relógios automáticos HUMPBUCK combinam relojoaria mecânica com designs distintos de caixa e mostrador. Explore a coleção e encontre o automático que se adequa ao seu look diário."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    }
   }
 }

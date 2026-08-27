@@ -19,7 +19,7 @@ export async function HomeRecommendedProducts({
     <HomeProductSliderSection
       headingId="home-recommended-heading"
       title={t("recommendedTitle")}
-      viewAllHref="/product"
+      viewAllHref="/watches"
       viewAllLabel={t("recommendedViewAll")}
       products={products}
       cardImages={cardImages}

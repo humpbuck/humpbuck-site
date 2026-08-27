@@ -15,7 +15,11 @@ const STATIC_PATHS: {
   priority: number;
 }[] = [
     { path: "/", changeFrequency: "weekly", priority: 1 },
-    { path: "/product", changeFrequency: "daily", priority: 0.95 },
+    { path: "/watches", changeFrequency: "daily", priority: 0.95 },
+    { path: "/ana-digi-watches", changeFrequency: "weekly", priority: 0.9 },
+    { path: "/digital-watches", changeFrequency: "weekly", priority: 0.9 },
+    { path: "/analog-watches", changeFrequency: "weekly", priority: 0.9 },
+    { path: "/automatic-watches", changeFrequency: "weekly", priority: 0.9 },
     { path: "/about", changeFrequency: "monthly", priority: 0.7 },
     { path: "/oem-odm", changeFrequency: "monthly", priority: 0.75 },
     { path: "/blog", changeFrequency: "weekly", priority: 0.75 },

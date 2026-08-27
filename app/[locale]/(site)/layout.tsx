@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 import { NavigationProgress } from "@/components/site/navigation-progress";
 import { SiteAnnouncementBarAsync } from "@/components/site/site-announcement-bar-async";
 import { SiteAnnouncementRootStyle } from "@/components/site/site-announcement-root-style";
@@ -7,29 +8,55 @@ import { SiteDisplayCurrencyShell } from "@/components/site/site-display-currenc
 import { SiteClientEnhancements } from "@/components/site/site-client-enhancements";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import {
-  getAllProductCategories,
+  getFixedStorefrontCategories,
   shopSeriesHref,
 } from "@/lib/product-categories";
+import { fixedStorefrontCategoryNavLinks } from "@/lib/product-category-shared";
+import {
+  getWatchCategoryBySlug,
+  STOREFRONT_WATCH_CATEGORIES,
+} from "@/lib/storefront-watch-categories";
 
 export default async function SiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const tWatch = await getTranslations("WatchCollections");
+
   let shopCategoryLinks: {
     href: string;
     label: string;
     imageUrl?: string | null;
   }[] = [];
   try {
-    const categories = await getAllProductCategories();
-    shopCategoryLinks = categories.map((c) => ({
-      href: shopSeriesHref(c.slug),
-      label: c.name,
-      imageUrl: c.imageUrl,
-    }));
+    const categories = await getFixedStorefrontCategories();
+    shopCategoryLinks = categories.map((c) => {
+      const def = getWatchCategoryBySlug(c.slug);
+      const label = def
+        ? tWatch(`${def.messageKey}.name`)
+        : c.name;
+      return {
+        href: shopSeriesHref(c.slug),
+        label,
+        imageUrl: c.imageUrl,
+      };
+    });
   } catch {
-    shopCategoryLinks = [];
+    shopCategoryLinks = STOREFRONT_WATCH_CATEGORIES.map((c) => ({
+      href: c.path,
+      label: tWatch(`${c.messageKey}.name`),
+    }));
+  }
+
+  if (shopCategoryLinks.length === 0) {
+    shopCategoryLinks = fixedStorefrontCategoryNavLinks().map((link) => {
+      const def = STOREFRONT_WATCH_CATEGORIES.find((c) => c.path === link.href);
+      return {
+        ...link,
+        label: def ? tWatch(`${def.messageKey}.name`) : link.label,
+      };
+    });
   }
 
   return (

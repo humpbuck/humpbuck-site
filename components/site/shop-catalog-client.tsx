@@ -1,16 +1,13 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Link, useRouter } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { ProductCard } from "@/components/site/ProductCard";
 import { SubtleHorizontalScroll } from "@/components/site/subtle-horizontal-scroll";
 import type { Product } from "@/lib/catalog";
-import {
-  normalizeShopSeriesParam,
-  shopSeriesHref,
-} from "@/lib/product-category-shared";
+import { shopSeriesHref } from "@/lib/product-category-shared";
+import { WATCHES_PATH } from "@/lib/storefront-watch-categories";
 
 export type ShopCategoryOption = {
   id: string;
@@ -22,68 +19,33 @@ function normalizeSearchQuery(input: string) {
   return input.trim().toLowerCase().replace(/\s+/g, "-");
 }
 
-function resolveActiveSeries(
-  categories: ShopCategoryOption[],
-  searchParams: URLSearchParams,
-): ShopCategoryOption | null {
-  const seriesRaw =
-    searchParams.get("series")?.trim() ||
-    searchParams.get("category")?.trim() ||
-    "";
-  if (seriesRaw) {
-    const normalized = normalizeShopSeriesParam(seriesRaw) || seriesRaw;
-    const bySlug = categories.find(
-      (c) => c.slug.toLowerCase() === normalized.toLowerCase(),
-    );
-    if (bySlug) return bySlug;
-    const byId = categories.find((c) => c.id === seriesRaw);
-    if (byId) return byId;
-  }
-
-  const movement = searchParams.get("movement")?.trim().toLowerCase() || "";
-  if (movement === "quartz") {
-    return (
-      categories.find((c) => c.slug === "ana-digi" || c.slug === "quartz") ??
-      null
-    );
-  }
-  if (movement === "mechanical") {
-    return (
-      categories.find((c) => c.slug === "mechanical" || c.slug === "automatic") ??
-      null
-    );
-  }
-
-  const profile = searchParams.get("profile")?.trim().toLowerCase() || "";
-  if (profile === "ultra-thin") {
-    return categories.find((c) => c.slug === "ultra-thin") ?? null;
-  }
-
-  return null;
-}
-
 export function ShopCatalogClient({
   products,
   categories,
   cardImagesBySlug,
   cardHoverImagesBySlug,
   updatedDate,
+  activeCategorySlug = null,
 }: {
   products: Product[];
   categories: ShopCategoryOption[];
   cardImagesBySlug: Record<string, string>;
   cardHoverImagesBySlug: Record<string, string>;
   updatedDate: string;
+  /** Path-based collection slug; null = all watches. */
+  activeCategorySlug?: string | null;
 }) {
   const t = useTranslations("Shop");
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const activeSeries = useMemo(
-    () => resolveActiveSeries(categories, searchParams),
-    [categories, searchParams],
-  );
+  const activeSeries = useMemo(() => {
+    if (!activeCategorySlug) return null;
+    return (
+      categories.find(
+        (c) => c.slug.toLowerCase() === activeCategorySlug.toLowerCase(),
+      ) ?? null
+    );
+  }, [categories, activeCategorySlug]);
 
   const displayProducts = useMemo(() => {
     let list = products;
@@ -98,13 +60,6 @@ export function ShopCatalogClient({
       return slug.includes(q) || name.includes(q);
     });
   }, [products, searchQuery, activeSeries]);
-
-  const selectSeries = useCallback(
-    (slug: string | null) => {
-      router.push(shopSeriesHref(slug));
-    },
-    [router],
-  );
 
   const countLabel = searchQuery.trim()
     ? t("searchMatchCount", {
@@ -160,11 +115,10 @@ export function ShopCatalogClient({
               "aria-label": t("filterCategories"),
             }}
           >
-            <button
-              type="button"
+            <Link
+              href={WATCHES_PATH}
               role="option"
               aria-selected={!activeSeries}
-              onClick={() => selectSeries(null)}
               className={`shrink-0 rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] transition ${
                 !activeSeries
                   ? "border-ink bg-ink text-paper"
@@ -172,16 +126,15 @@ export function ShopCatalogClient({
               }`}
             >
               {t("filterAll")}
-            </button>
+            </Link>
             {categories.map((category) => {
               const selected = activeSeries?.id === category.id;
               return (
-                <button
+                <Link
                   key={category.id}
-                  type="button"
+                  href={shopSeriesHref(category.slug)}
                   role="option"
                   aria-selected={selected}
-                  onClick={() => selectSeries(category.slug)}
                   className={`shrink-0 rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] transition ${
                     selected
                       ? "border-ink bg-ink text-paper"
@@ -189,7 +142,7 @@ export function ShopCatalogClient({
                   }`}
                 >
                   {category.name}
-                </button>
+                </Link>
               );
             })}
           </SubtleHorizontalScroll>
@@ -224,7 +177,7 @@ export function ShopCatalogClient({
               ? t("filterNoResults", { filter: activeSeries.name })
               : t("emptyCategory")}{" "}
           {(searchQuery.trim() || activeSeries) && (
-            <Link href="/product" className="underline underline-offset-4">
+            <Link href={WATCHES_PATH} className="underline underline-offset-4">
               {t("clearFilter")}
             </Link>
           )}

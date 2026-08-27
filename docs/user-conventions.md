@@ -137,9 +137,19 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-25 | **商品图缓存对齐 watchsourcego**：商品 gallery 不加 `?v=`；R2 不用长 `Cache-Control`。已有长缓存用 strip 脚本去掉。 |
 | 2026-07-25 | **商品视频对齐 watchsourcego**：后台多行粘贴 R2/YouTube URL；前台只认已保存链接，去掉同级路径猜测。 |
 | 2026-07-25 | **废除 R2 1 年缓存策略**：删除代码/文档中的 `max-age=31536000` / `immutable` 写入与推荐；统一 `R2_STOREFRONT_CACHE_CONTROL`；商品视频 URL 去掉 `?v=` / `VIDEO_REV`。 |
-| 2026-07-26 | **About / Video tutorial SEO+正文多语言**：About 故事改为父亲赠送 Star Wars ANA-DIGI TEMP 起源（`AboutPage.storyP1`，不再读 CMS `aboutParagraph1`）；About meta 与 Video tutorial meta（2301 表带/对时教程）同步 13 语种；脚本 `scripts/apply-about-video-seo-i18n.mjs`。 |
+| 2026-08-27 | **商店分类 SEO 静态页**：去掉后台 Series CRUD；固定 ANA-DIGI / Digital / Analog / Automatic。公开 URL：`/watches`、`/ana-digi-watches`、`/digital-watches`、`/analog-watches`、`/automatic-watches`（各自 title/description/canonical/H1/简介/底部 SEO）。旧 `/product` 与 `?series=` 301 到对应路径。商品表单只选这四类。 |
+| 2026-08-27 | **分类页全语种**：`WatchCollections` 写入 13 语 `messages/{locale}.json`；源 `scripts/watch-collections-i18n.json`，应用 `node scripts/apply-watch-collections-i18n.mjs`。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
+
+**商店固定分类与 SEO 落地页（2026-08-27）**
+
+- **固定四类（不可在后台增删）：** ANA-DIGI · Digital · Analog · Automatic  
+- **公开路径：** `/watches`（全部）· `/ana-digi-watches` · `/digital-watches` · `/analog-watches` · `/automatic-watches`  
+- **每页独立：** title、meta description、canonical、H1、subtitle、顶部简介、底部 SEO（ANA-DIGI 另有 FAQ）  
+- **文案源码：** `lib/storefront-watch-categories.ts`（结构）+ `messages/{locale}.json` 的 `WatchCollections`（13 语）；源批 `scripts/watch-collections-i18n.json`，应用 `node scripts/apply-watch-collections-i18n.mjs`  
+- **旧链：** `/product`、`/product?series=…`、legacy `/series/…` → 301 到上面对应路径；PDP 仍为 `/product/{slug}`  
+- **后台：** 无 Series 管理页；Products 表单只选上述四类  
 
 **SEO 品牌主线（2026-07-25 更新）**
 

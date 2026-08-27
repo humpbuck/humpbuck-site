@@ -1050,5 +1050,104 @@
     "inquiryErrNetwork": "Hálózati hiba. Próbálja újra.",
     "inquirySuccessKicker": "Kérelem fogadva",
     "inquirySuccessBody": "Köszönjük a bizalmát. Megkaptuk kérését, és a lehető leghamarabb digitális mockupot (nem fizikai mintát) készítünk, amelyet e-mailben küldünk el. Sürgős esetben keressen minket WhatsAppon."
+  },
+  "WatchCollections": {
+    "faqHeading": "Gyakran ismételt kérdések",
+    "all": {
+      "metaTitle": "Órák vásárlása | ANA-DIGI, digitális és automata | HUMPBUCK",
+      "metaDescription": "Vásároljon HUMPBUCK órákat: ANA-DIGI, digitális, analóg és automata modelleket. Fedezze fel a mindennapi viseletre és egyéni stílusra tervezett, karakteres órákat.",
+      "kicker": "ÓRÁK",
+      "h1": "HUMPBUCK órák",
+      "subtitle": "Fedezze fel a HUMPBUCK ANA-DIGI, digitális, analóg és automata óráit.",
+      "intro": ""
+    },
+    "anaDigi": {
+      "name": "ANA-DIGI",
+      "metaTitle": "ANA-DIGI órák | Retró analóg-digitális órák | HUMPBUCK",
+      "metaDescription": "Vásároljon HUMPBUCK ANA-DIGI órákat analóg és digitális kijelzővel, retró ihletésű dizájnnal, dual time funkcióval, ébresztővel, stoppperrel és jellegzetes mindennapi stílussal.",
+      "kicker": "ANA-DIGI KOLLEKCIÓ",
+      "h1": "ANA-DIGI órák",
+      "subtitle": "Fedezze fel a retró ihletésű analóg-digitális órákat, amelyek a klasszikus mutatókat praktikus digitális funkciókkal ötvözik.",
+      "intro": "Fedezze fel a HUMPBUCK ANA-DIGI órákat, amelyek klasszikus analóg mutatókat kombinálnak praktikus digitális kijelzőkkel. Retró ihletésű stílussal és mindennapi funkcionalitással ANA-DIGI kollekciónk jellegzetes dizájnokat kínál hasznos funkciókkal – dual time, ébresztő, stopper és válogatott modelleken hőmérséklet-kijelzés.",
+      "seoHeading": "Mik azok az ANA-DIGI órák?",
+      "seoParagraphs": [
+        "Az ANA-DIGI órák egy tokban egyesítik az analóg és a digitális kijelzést. Ez a hibrid kialakítás a mutatók hagyományos megjelenését kínálja, miközben hasznos digitális funkciókat ad hozzá: ébresztő, dual time, stopper és naptár.",
+        "A HUMPBUCK retró ihletésű ANA-DIGI órákra fókuszál jellegzetes tokformákkal, praktikus mindennapi funkciókkal és erős vizuális identitással. Válogatott modellek hőmérséklet-kijelzést is tartalmaznak, így kitűnnek a hagyományos analóg vagy digitális órák közül."
+      ],
+      "whyHeading": "Miért válasszon HUMPBUCK ANA-DIGI órát?",
+      "whyParagraphs": [
+        "ANA-DIGI kollekciónk azoknak készült, akik szeretik a vintage digitális órák karakterét, de ragaszkodnak az analóg mutatók ismerős megjelenéséhez. A kombináció sokoldalú stílust teremt a mindennapi viselethez, casual öltözetekhez és a különleges darabokat kereső gyűjtőkhöz.",
+        "Fedezze fel a kollekciót: különböző tokformák, számlap-elrendezések, színek és funkciók közül választhatja ki az Ön stílusához legjobban illő ANA-DIGI órát."
+      ],
+      "faqs": [
+        {
+          "question": "Mi az az ANA-DIGI óra?",
+          "answer": "Az ANA-DIGI óra ugyanabban az órában egyesíti az analóg mutatókat és a digitális kijelzőt – hagyományos időkijelzést és digitális funkciókat kínálva."
+        },
+        {
+          "question": "Milyen funkciói vannak a HUMPBUCK ANA-DIGI óráknak?",
+          "answer": "A funkciók modellfüggők, és tartalmazhatnak dual time-ot, ébresztőt, stoppert, naptárt, háttérvilágítást és hőmérséklet-kijelzést."
+        },
+        {
+          "question": "Alkalmasak az ANA-DIGI órák mindennapi viseletre?",
+          "answer": "Igen. A HUMPBUCK ANA-DIGI órákat mindennapi használatra terveztük praktikus funkciókkal és retró ihletésű stílussal."
+        },
+        {
+          "question": "Mi a különbség az ANA-DIGI és a digitális óra között?",
+          "answer": "Az ANA-DIGI óra analóg mutatókat és digitális kijelzőt egyaránt használ, míg a digitális óra elsősorban digitálisan mutatja az időt."
+        }
+      ]
+    },
+    "digital": {
+      "name": "Digitális",
+      "metaTitle": "Digitális órák | Retró és mindennapi digitális órák | HUMPBUCK",
+      "metaDescription": "Vásároljon HUMPBUCK digitális órákat retró ihletésű dizájnnal, praktikus mindennapi funkciókkal, ébresztővel, stoppperrel és jellegzetes modern stílussal.",
+      "kicker": "DIGITAL KOLLEKCIÓ",
+      "h1": "Digitális órák",
+      "subtitle": "Fedezze fel a retró dizájn által inspirált, praktikus mindennapi funkciókkal készült jellegzetes digitális órákat.",
+      "intro": "Fedezze fel a HUMPBUCK digitális óráit, amelyek a retró karakter és a praktikus funkcionalitás egyensúlyára épülnek. A mindennapi időméréstől az ébresztőn, stoppren és jellegzetes kijelződizájnokon át digitális kollekciónk a klasszikus digitális órák modern értelmezését kínálja.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "A HUMPBUCK digitális órák azoknak készültek, akik funkcionális, mégis jellegzetes megjelenésű órákat keresnek. A digitális kijelzők gyors, tiszta hozzáférést adnak az időhöz és más funkciókhoz, míg a retró ihletésű tokok és elrendezések minden órának saját karaktert adnak.",
+        "Modelltől függően a HUMPBUCK digitális órák tartalmazhatnak ébresztőt, stoppert, naptárt, háttérvilágítást és dual time-ot. Böngéssze a kollekciót, és hasonlítsa össze a dizájnokat, színeket és funkciókat."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    },
+    "analog": {
+      "name": "Analóg",
+      "metaTitle": "Analóg órák | Modern és jellegzetes órák | HUMPBUCK",
+      "metaDescription": "Fedezze fel a HUMPBUCK analóg óráit tiszta időkijelzéssel, jellegzetes tokdizájnnal és sokoldalú mindennapi stílussal a modern órajókedvelőknek.",
+      "kicker": "ANALOG KOLLEKCIÓ",
+      "h1": "Analóg órák",
+      "subtitle": "Klasszikus analóg időmérés jellegzetes HUMPBUCK dizájnnal.",
+      "intro": "Fedezze fel a HUMPBUCK analóg óráit hagyományos mutatókijelzéssel és jellegzetes, kortárs stílussal. Az egyszerű, intuitív időmérésre tervezett analóg óráink sokoldalú választékot kínálnak a mindennapi viselethez.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "Az analóg órák továbbra is az idő megjelenítésének egyik legidőtállóbb módját jelentik. Óra-, perc- és néha másodpercmutatókkal tiszta, ismerős élményt nyújtanak.",
+        "A HUMPBUCK analóg kollekció a hagyományos időmérést jellegzetes tokformákkal, számlapdizájnokkal és anyagokkal ötvözi. Legyen szó minimalista vagy expresszívebb darabról – találja meg a mindennapi ruhatárához illő stílust."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    },
+    "automatic": {
+      "name": "Automata",
+      "metaTitle": "Automata órák | Mechanikus órák | HUMPBUCK",
+      "metaDescription": "Fedezze fel a HUMPBUCK automata óráit mechanikus szerkezetekkel, jellegzetes dizájnnal és a hagyományos órakészítés karakterével a mindennapi viselethez.",
+      "kicker": "AUTOMATIC KOLLEKCIÓ",
+      "h1": "Automata órák",
+      "subtitle": "Mozgás által működtetett mechanikus órák jellegzetes HUMPBUCK karakterrel.",
+      "intro": "Fedezze fel a HUMPBUCK automata óráit mechanikus szerkezetekkel. A hagyományos mechanikát kedvelő órajókedvelőknek automata kollekciónk a jellegzetes stílust a felhúzódó óra karakterével ötvözi.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "Az automata órák mechanikus szerkezetet használnak, amely a csukló mozgása révén képes felhúzni magát. A kvarcórákkal ellentétben a normál időméréshez nem támaszkodnak hagyományos elemre.",
+        "A HUMPBUCK automata órák a mechanikus órakészítést jellegzetes tok- és számlapdizájnokkal ötvözik. Böngéssze a kollekciót, és találja meg a mindennapi megjelenéséhez illő automata órát."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    }
   }
 }

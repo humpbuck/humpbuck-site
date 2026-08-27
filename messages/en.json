@@ -254,20 +254,20 @@
     "successClose": "Close"
   },
   "Shop": {
-    "metaTitle": "Shop ANA-DIGI & Automatic watches",
-    "metaDescription": "Discover retro ana-digi watches combining analog precision, digital functions and futuristic design. Distinctive timepieces made for everyday wear.",
-    "ogTitle": "Shop ANA-DIGI & Automatic watches · HUMPBUCK",
-    "ogDescription": "Discover retro ana-digi watches combining analog precision, digital functions and futuristic design. Distinctive timepieces made for everyday wear.",
-    "kicker": "Catalog",
-    "title": "Discover retro ana-digi watches combining analog precision, digital functions and futuristic design.",
+    "metaTitle": "Shop Watches | ANA-DIGI, Digital & Automatic | HUMPBUCK",
+    "metaDescription": "Shop HUMPBUCK watches including ANA-DIGI, digital, analog and automatic styles. Discover distinctive watches designed for everyday wear and individual style.",
+    "ogTitle": "Shop Watches | ANA-DIGI, Digital & Automatic | HUMPBUCK",
+    "ogDescription": "Shop HUMPBUCK watches including ANA-DIGI, digital, analog and automatic styles. Discover distinctive watches designed for everyday wear and individual style.",
+    "kicker": "WATCHES",
+    "title": "HUMPBUCK Watches",
     "filterAll": "All",
-    "filterCategories": "Series",
-    "filterCategoriesScroll": "Scroll series",
+    "filterCategories": "Categories",
+    "filterCategoriesScroll": "Scroll categories",
     "filterPanelTitle": "Filter",
     "filterGroupMovement": "Movement",
     "filterGroupAudience": "Audience",
     "filterGroupProfile": "Profile",
-    "filterGroupSeries": "Series",
+    "filterGroupSeries": "Categories",
     "filterClearAll": "Clear all",
     "filterSelectCategory": "Filter by",
     "filterSelectSub": "Subcategory",
@@ -1049,5 +1049,104 @@
   },
   "Announcement": {
     "message": "COUPON : HUMPBUCK"
+  },
+  "WatchCollections": {
+    "faqHeading": "Frequently Asked Questions",
+    "all": {
+      "metaTitle": "Shop Watches | ANA-DIGI, Digital & Automatic | HUMPBUCK",
+      "metaDescription": "Shop HUMPBUCK watches including ANA-DIGI, digital, analog and automatic styles. Discover distinctive watches designed for everyday wear and individual style.",
+      "kicker": "WATCHES",
+      "h1": "HUMPBUCK Watches",
+      "subtitle": "Explore ANA-DIGI, digital, analog and automatic watches from HUMPBUCK.",
+      "intro": ""
+    },
+    "anaDigi": {
+      "name": "ANA-DIGI",
+      "metaTitle": "ANA-DIGI Watches | Retro Analog Digital Watches | HUMPBUCK",
+      "metaDescription": "Shop HUMPBUCK ANA-DIGI watches featuring analog and digital displays, retro-inspired design, dual time, alarms, stopwatch functions and distinctive everyday style.",
+      "kicker": "ANA-DIGI COLLECTION",
+      "h1": "ANA-DIGI Watches",
+      "subtitle": "Discover retro-inspired analog digital watches combining classic hands with practical digital functions.",
+      "intro": "Discover HUMPBUCK ANA-DIGI watches, combining classic analog hands with practical digital displays. Designed with retro-inspired styling and everyday functionality, our ANA-DIGI collection features distinctive designs with useful functions such as dual time, alarms, stopwatch and temperature display on selected models.",
+      "seoHeading": "What Are ANA-DIGI Watches?",
+      "seoParagraphs": [
+        "ANA-DIGI watches combine an analog watch display with a digital display in one case. This hybrid design gives you the traditional look of watch hands while adding useful digital functions such as alarms, dual time, stopwatch and calendar features.",
+        "HUMPBUCK focuses on retro-inspired ANA-DIGI watches with distinctive case designs, practical everyday functions and a strong visual identity. Selected models also include temperature display, making them stand out from conventional analog or digital watches."
+      ],
+      "whyHeading": "Why Choose a HUMPBUCK ANA-DIGI Watch?",
+      "whyParagraphs": [
+        "Our ANA-DIGI collection is designed for people who enjoy the character of vintage digital watches but still want the familiar look of analog hands. The combination creates a versatile style that works well for everyday wear, casual outfits and collectors looking for something different.",
+        "Explore the collection to find different case shapes, dial layouts, colors and functions, and choose the ANA-DIGI watch that best matches your style."
+      ],
+      "faqs": [
+        {
+          "question": "What is an ANA-DIGI watch?",
+          "answer": "An ANA-DIGI watch combines analog hands and a digital display in the same watch, offering both traditional time display and digital functions."
+        },
+        {
+          "question": "What functions do HUMPBUCK ANA-DIGI watches have?",
+          "answer": "Functions vary by model and may include dual time, alarm, stopwatch, calendar, backlight and temperature display."
+        },
+        {
+          "question": "Are ANA-DIGI watches suitable for everyday wear?",
+          "answer": "Yes. HUMPBUCK ANA-DIGI watches are designed for everyday use with practical functions and retro-inspired styling."
+        },
+        {
+          "question": "What is the difference between an ANA-DIGI watch and a digital watch?",
+          "answer": "An ANA-DIGI watch uses both analog hands and a digital screen, while a digital watch primarily displays the time digitally."
+        }
+      ]
+    },
+    "digital": {
+      "name": "Digital",
+      "metaTitle": "Digital Watches | Retro & Everyday Digital Watches | HUMPBUCK",
+      "metaDescription": "Shop HUMPBUCK digital watches with retro-inspired designs, practical everyday functions, alarms, stopwatch features and distinctive modern styling.",
+      "kicker": "DIGITAL COLLECTION",
+      "h1": "Digital Watches",
+      "subtitle": "Explore distinctive digital watches inspired by retro design and built with practical everyday functions.",
+      "intro": "Explore HUMPBUCK digital watches designed with a balance of retro character and practical functionality. From everyday timekeeping to alarms, stopwatch functions and distinctive display designs, our digital collection offers a modern interpretation of classic digital watches.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "HUMPBUCK digital watches are designed for customers who enjoy functional watches with a distinctive visual style. Digital displays provide quick and clear access to time and other useful functions, while retro-inspired cases and layouts give each watch its own character.",
+        "Depending on the model, HUMPBUCK digital watches may include features such as alarms, stopwatch, calendar, backlight and dual time. Browse the collection to compare different designs, colors and functions."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    },
+    "analog": {
+      "name": "Analog",
+      "metaTitle": "Analog Watches | Modern & Distinctive Watches | HUMPBUCK",
+      "metaDescription": "Discover HUMPBUCK analog watches featuring clean time displays, distinctive case designs and versatile everyday styling for modern watch enthusiasts.",
+      "kicker": "ANALOG COLLECTION",
+      "h1": "Analog Watches",
+      "subtitle": "Classic analog timekeeping with distinctive HUMPBUCK design.",
+      "intro": "Discover HUMPBUCK analog watches featuring traditional hand displays combined with distinctive contemporary styling. Designed for simple, intuitive timekeeping, our analog watches offer versatile options for everyday wear.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "Analog watches remain one of the most timeless ways to display time. With hour, minute and sometimes second hands, they offer a clean and familiar watch experience.",
+        "The HUMPBUCK analog collection combines traditional timekeeping with distinctive case shapes, dial designs and materials. Whether you prefer a minimal design or a more expressive watch, explore the collection to find a style that fits your everyday wardrobe."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    },
+    "automatic": {
+      "name": "Automatic",
+      "metaTitle": "Automatic Watches | Mechanical Watches | HUMPBUCK",
+      "metaDescription": "Explore HUMPBUCK automatic watches powered by mechanical movements, featuring distinctive designs and traditional watchmaking character for everyday wear.",
+      "kicker": "AUTOMATIC COLLECTION",
+      "h1": "Automatic Watches",
+      "subtitle": "Mechanical watches powered by movement, designed with distinctive HUMPBUCK character.",
+      "intro": "Explore HUMPBUCK automatic watches powered by mechanical movements. Designed for watch enthusiasts who appreciate traditional mechanics, our automatic collection combines distinctive styling with the character of a self-winding watch.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "Automatic watches use a mechanical movement that can wind itself through the motion of the wearer's wrist. Unlike quartz watches, they do not rely on a conventional battery to power normal timekeeping.",
+        "HUMPBUCK automatic watches combine mechanical watchmaking with distinctive case and dial designs. Browse the collection to discover different styles and find an automatic watch suited to your everyday look."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    }
   }
 }

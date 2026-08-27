@@ -3,11 +3,12 @@ import { getMessages, getTranslations, setRequestLocale } from "next-intl/server
 import { PreloadProductGridImages } from "@/components/site/preload-product-grid-images";
 import { ShopCatalogClient } from "@/components/site/shop-catalog-client";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
-import { getAllProductCategories } from "@/lib/product-categories";
+import { getFixedStorefrontCategories } from "@/lib/product-categories";
 import { prisma } from "@/lib/prisma";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
 import { mapToStorefrontCardProducts } from "@/lib/storefront-card-product";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
+import { getWatchCategoryBySlug } from "@/lib/storefront-watch-categories";
 
 function formatShopUpdatedDate(date: Date, locale: string): string {
   try {
@@ -23,22 +24,22 @@ function formatShopUpdatedDate(date: Date, locale: string): string {
 
 export async function ShopCatalogAsyncSection({
   locale,
+  activeCategorySlug = null,
 }: {
   locale: string;
-  /** Kept for Suspense cache keys from the page; filtering is client-side. */
-  seriesParam?: string;
-  movementParam?: string;
-  audienceParam?: string;
-  profileParam?: string;
-  categoryParam?: string;
+  /** Path-based collection slug (`ana-digi` …); null = all watches. */
+  activeCategorySlug?: string | null;
 }) {
   setRequestLocale(locale);
-  const t = await getTranslations("Shop");
+  const [t, tWatch] = await Promise.all([
+    getTranslations("Shop"),
+    getTranslations("WatchCollections"),
+  ]);
   void t;
 
   const [all, categories, latestRow, messages] = await Promise.all([
     getMergedCatalogProducts(),
-    getAllProductCategories().catch(() => []),
+    getFixedStorefrontCategories().catch(() => []),
     prisma.catalogProduct
       .findFirst({
         orderBy: { updatedAt: "desc" },
@@ -68,6 +69,15 @@ export async function ShopCatalogAsyncSection({
     locale,
   );
 
+  const localizedCategories = categories.map((c) => {
+    const def = getWatchCategoryBySlug(c.slug);
+    return {
+      id: c.id,
+      name: def ? tWatch(`${def.messageKey}.name`) : c.name,
+      slug: c.slug,
+    };
+  });
+
   return (
     <>
       {cardProducts.length > 0 ? (
@@ -76,14 +86,11 @@ export async function ShopCatalogAsyncSection({
       <Suspense fallback={null}>
         <ShopCatalogClient
           products={cardProducts}
-          categories={categories.map((c) => ({
-            id: c.id,
-            name: c.name,
-            slug: c.slug,
-          }))}
+          categories={localizedCategories}
           cardImagesBySlug={cardImagesBySlug}
           cardHoverImagesBySlug={cardHoverImagesBySlug}
           updatedDate={updatedDate}
+          activeCategorySlug={activeCategorySlug}
         />
       </Suspense>
     </>

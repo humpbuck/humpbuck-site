@@ -31,6 +31,10 @@ export default getRequestConfig(async ({ requestLocale }) => {
       AboutPage: { ...enBase.AboutPage, ...base.AboutPage },
       OemOdmPage: { ...enBase.OemOdmPage, ...base.OemOdmPage },
       BlogPage: { ...enBase.BlogPage, ...base.BlogPage },
+      WatchCollections: {
+        ...(enBase.WatchCollections ?? {}),
+        ...(base.WatchCollections ?? {}),
+      },
     },
   };
 });

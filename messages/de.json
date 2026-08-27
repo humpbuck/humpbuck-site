@@ -1050,5 +1050,104 @@
     "inquiryErrNetwork": "Netzwerkfehler. Bitte versuchen Sie es erneut.",
     "inquirySuccessKicker": "Anfrage eingegangen",
     "inquirySuccessBody": "Vielen Dank für Ihr Vertrauen. Wir haben Ihre Anfrage erhalten und erstellen so bald wie möglich ein digitales Mock-up (kein physisches Muster), das wir Ihnen per E-Mail zusenden. Bei dringenden Anfragen kontaktieren Sie uns über WhatsApp."
+  },
+  "WatchCollections": {
+    "faqHeading": "Häufig gestellte Fragen",
+    "all": {
+      "metaTitle": "Uhren kaufen | ANA-DIGI, Digital & Automatik | HUMPBUCK",
+      "metaDescription": "Entdecken Sie HUMPBUCK Uhren – ANA-DIGI, Digital, Analog und Automatik. Charakterstarke Zeitmesser für den Alltag und Ihren persönlichen Stil.",
+      "kicker": "UHREN",
+      "h1": "HUMPBUCK Uhren",
+      "subtitle": "Entdecken Sie ANA-DIGI-, Digital-, Analog- und Automatikuhren von HUMPBUCK.",
+      "intro": ""
+    },
+    "anaDigi": {
+      "name": "ANA-DIGI",
+      "metaTitle": "ANA-DIGI Uhren | Retro Analog-Digital Uhren | HUMPBUCK",
+      "metaDescription": "Kaufen Sie HUMPBUCK ANA-DIGI Uhren mit analoger und digitaler Anzeige, retroinspiriertem Design, Dualzeit, Alarm, Stoppuhr und unverwechselbarem Alltagsstil.",
+      "kicker": "ANA-DIGI KOLLEKTION",
+      "h1": "ANA-DIGI Uhren",
+      "subtitle": "Entdecken Sie retroinspirierte Analog-Digital-Uhren, die klassische Zeiger mit praktischen Digitalfunktionen verbinden.",
+      "intro": "Entdecken Sie HUMPBUCK ANA-DIGI Uhren – klassische Analogzeiger kombiniert mit praktischen Digitalanzeigen. Mit retroinspiriertem Styling und Alltagstauglichkeit bietet unsere ANA-DIGI Kollektion charakterstarke Designs mit nützlichen Funktionen wie Dualzeit, Alarm, Stoppuhr und Temperaturanzeige bei ausgewählten Modellen.",
+      "seoHeading": "Was sind ANA-DIGI Uhren?",
+      "seoParagraphs": [
+        "ANA-DIGI Uhren verbinden eine analoge Zeigeranzeige mit einer digitalen Anzeige in einem Gehäuse. Dieses Hybriddesign bietet den klassischen Look von Zeigern und ergänzt ihn um praktische Digitalfunktionen wie Alarm, Dualzeit, Stoppuhr und Kalender.",
+        "HUMPBUCK konzentriert sich auf retroinspirierte ANA-DIGI Uhren mit unverwechselbaren Gehäusen, praktischen Alltagsfunktionen und einer starken visuellen Identität. Ausgewählte Modelle verfügen zusätzlich über eine Temperaturanzeige und heben sich so von herkömmlichen Analog- oder Digitaluhren ab."
+      ],
+      "whyHeading": "Warum eine HUMPBUCK ANA-DIGI Uhr wählen?",
+      "whyParagraphs": [
+        "Unsere ANA-DIGI Kollektion richtet sich an alle, die den Charakter vintage Digitaluhren schätzen und zugleich den vertrauten Look analoger Zeiger möchten. Die Kombination ergibt einen vielseitigen Stil für den Alltag, lässige Outfits und Sammler, die etwas Besonderes suchen.",
+        "Entdecken Sie unterschiedliche Gehäuseformen, Zifferblattlayouts, Farben und Funktionen – und finden Sie die ANA-DIGI Uhr, die am besten zu Ihrem Stil passt."
+      ],
+      "faqs": [
+        {
+          "question": "Was ist eine ANA-DIGI Uhr?",
+          "answer": "Eine ANA-DIGI Uhr kombiniert analoge Zeiger und eine digitale Anzeige in derselben Uhr – für klassische Zeitdarstellung und digitale Funktionen."
+        },
+        {
+          "question": "Welche Funktionen haben HUMPBUCK ANA-DIGI Uhren?",
+          "answer": "Die Funktionen variieren je nach Modell und können Dualzeit, Alarm, Stoppuhr, Kalender, Hintergrundbeleuchtung und Temperaturanzeige umfassen."
+        },
+        {
+          "question": "Sind ANA-DIGI Uhren für den Alltag geeignet?",
+          "answer": "Ja. HUMPBUCK ANA-DIGI Uhren sind für den Alltag gemacht – mit praktischen Funktionen und retroinspiriertem Styling."
+        },
+        {
+          "question": "Worin unterscheiden sich ANA-DIGI und Digitaluhren?",
+          "answer": "Eine ANA-DIGI Uhr nutzt analoge Zeiger und ein Digitaldisplay, während eine Digitaluhr die Zeit vor allem digital anzeigt."
+        }
+      ]
+    },
+    "digital": {
+      "name": "Digital",
+      "metaTitle": "Digitaluhren | Retro & Everyday Digitaluhren | HUMPBUCK",
+      "metaDescription": "Kaufen Sie HUMPBUCK Digitaluhren mit retroinspiriertem Design, praktischen Alltagsfunktionen, Alarm, Stoppuhr und unverwechselbarem modernem Stil.",
+      "kicker": "DIGITAL KOLLEKTION",
+      "h1": "Digitaluhren",
+      "subtitle": "Entdecken Sie charakterstarke Digitaluhren mit Retro-Inspiration und praktischen Alltagsfunktionen.",
+      "intro": "Entdecken Sie HUMPBUCK Digitaluhren mit der Balance aus Retro-Charakter und praktischer Funktionalität. Von der täglichen Zeitmessung über Alarm und Stoppuhr bis hin zu markanten Display-Designs – unsere Digitalkollektion ist eine moderne Interpretation klassischer Digitaluhren.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "HUMPBUCK Digitaluhren sind für Kunden gemacht, die funktionale Uhren mit unverwechselbarem Look schätzen. Digitale Anzeigen bieten schnellen, klaren Zugriff auf Zeit und weitere Funktionen, während retroinspirierte Gehäuse und Layouts jeder Uhr ihren eigenen Charakter geben.",
+        "Je nach Modell können HUMPBUCK Digitaluhren Alarm, Stoppuhr, Kalender, Hintergrundbeleuchtung und Dualzeit bieten. Vergleichen Sie Designs, Farben und Funktionen in der Kollektion."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    },
+    "analog": {
+      "name": "Analog",
+      "metaTitle": "Analoguhren | Moderne & Charakterstarke Uhren | HUMPBUCK",
+      "metaDescription": "Entdecken Sie HUMPBUCK Analoguhren mit klarer Zeitanzeige, markanten Gehäusen und vielseitigem Alltagsstil für moderne Uhrenliebhaber.",
+      "kicker": "ANALOG KOLLEKTION",
+      "h1": "Analoguhren",
+      "subtitle": "Klassische Analogzeitmessung mit unverwechselbarem HUMPBUCK Design.",
+      "intro": "Entdecken Sie HUMPBUCK Analoguhren mit traditioneller Zeigeranzeige und zeitgemäßem, charakterstarkem Styling. Für einfache, intuitive Zeitmessung bieten unsere Analoguhren vielseitige Optionen für den Alltag.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "Analoguhren gehören zu den zeitlosesten Arten, die Zeit anzuzeigen. Mit Stunden-, Minuten- und manchmal Sekundenzeigern bieten sie ein klares, vertrautes Uhrerlebnis.",
+        "Die HUMPBUCK Analogkollektion verbindet traditionelle Zeitmessung mit markanten Gehäuseformen, Zifferblättern und Materialien. Ob minimal oder ausdrucksstark – finden Sie den Stil, der zu Ihrem Alltag passt."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    },
+    "automatic": {
+      "name": "Automatik",
+      "metaTitle": "Automatikuhren | Mechanische Uhren | HUMPBUCK",
+      "metaDescription": "Entdecken Sie HUMPBUCK Automatikuhren mit mechanischen Werken, charakterstarkem Design und klassischem Uhrmacher-Charakter für den Alltag.",
+      "kicker": "AUTOMATIC KOLLEKTION",
+      "h1": "Automatikuhren",
+      "subtitle": "Mechanische Uhren, angetrieben durch Bewegung – mit unverwechselbarem HUMPBUCK Charakter.",
+      "intro": "Entdecken Sie HUMPBUCK Automatikuhren mit mechanischen Werken. Für Uhrenliebhaber, die traditionelle Mechanik schätzen, verbindet unsere Automatikkollektion charakterstarkes Styling mit dem Charme einer selbstaufziehenden Uhr.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "Automatikuhren nutzen ein mechanisches Werk, das sich durch die Bewegung des Handgelenks selbst aufziehen kann. Anders als Quarzuhren benötigen sie keine herkömmliche Batterie für die normale Zeitmessung.",
+        "HUMPBUCK Automatikuhren verbinden mechanische Uhrmacherkunst mit markanten Gehäuse- und Zifferblattdesigns. Entdecken Sie verschiedene Stile und finden Sie die Automatikuhr für Ihren Alltag."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    }
   }
 }

@@ -39,7 +39,16 @@ export function revalidateStorefrontPath(
 }
 
 /** Paths that share the storefront shell (announcement bar + header). */
-const STOREFRONT_SHELL_PATHS = ["/", "/product", "/blog", "/video-tutorial"] as const;
+const STOREFRONT_SHELL_PATHS = [
+  "/",
+  "/watches",
+  "/ana-digi-watches",
+  "/digital-watches",
+  "/analog-watches",
+  "/automatic-watches",
+  "/blog",
+  "/video-tutorial",
+] as const;
 
 /** Revalidate main storefront pages (all locales) after shell-wide changes (e.g. announcement bar). */
 export function revalidateStorefrontShell(): void {

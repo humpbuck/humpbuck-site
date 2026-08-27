@@ -93,7 +93,7 @@ export function ShopProductFiltersDropdown({
 
   const clearFilters = () => {
     setPendingCategory("");
-    router.push("/product");
+    router.push("/watches");
   };
 
   return (
@@ -109,7 +109,7 @@ export function ShopProductFiltersDropdown({
           }
           setPendingCategory(category);
           if (categoryFromUrl) {
-            router.push("/product");
+            router.push("/watches");
           }
         }}
         className={selectClass}
@@ -129,7 +129,7 @@ export function ShopProductFiltersDropdown({
             const next = e.target.value;
             if (!next) {
               setPendingCategory(displayCategory);
-              router.push("/product");
+              router.push("/watches");
               return;
             }
             setPendingCategory("");

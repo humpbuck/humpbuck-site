@@ -1050,5 +1050,104 @@
     "inquiryErrNetwork": "Netwerkfout. Probeer het opnieuw.",
     "inquirySuccessKicker": "Aanvraag ontvangen",
     "inquirySuccessBody": "Bedankt voor uw vertrouwen. We hebben uw aanvraag ontvangen en bereiden zo snel mogelijk een digitale mock-up (geen fysiek monster) voor, verzonden naar uw e-mail. Voor urgente verzoeken kunt u ons bereiken via WhatsApp."
+  },
+  "WatchCollections": {
+    "faqHeading": "Veelgestelde vragen",
+    "all": {
+      "metaTitle": "Horloges kopen | ANA-DIGI, digitaal & automatisch | HUMPBUCK",
+      "metaDescription": "Shop HUMPBUCK-horloges: ANA-DIGI, digitaal, analoog en automatisch. Ontdek karaktervolle horloges voor alledaags gebruik en je eigen stijl.",
+      "kicker": "HORLOGES",
+      "h1": "HUMPBUCK-horloges",
+      "subtitle": "Ontdek ANA-DIGI-, digitale, analoge en automatische horloges van HUMPBUCK.",
+      "intro": ""
+    },
+    "anaDigi": {
+      "name": "ANA-DIGI",
+      "metaTitle": "ANA-DIGI-horloges | Retro analoge digitale horloges | HUMPBUCK",
+      "metaDescription": "Shop HUMPBUCK ANA-DIGI-horloges met analoge en digitale displays, retro-geïnspireerd design, dual time, alarmen, stopwatch en een onderscheidende everyday look.",
+      "kicker": "ANA-DIGI COLLECTIE",
+      "h1": "ANA-DIGI-horloges",
+      "subtitle": "Ontdek retro-geïnspireerde analoge digitale horloges die klassieke wijzers combineren met praktische digitale functies.",
+      "intro": "Ontdek HUMPBUCK ANA-DIGI-horloges die klassieke analoge wijzers combineren met praktische digitale displays. Met retro-geïnspireerde styling en alledaagse functionaliteit biedt onze ANA-DIGI-collectie onderscheidende designs met nuttige functies zoals dual time, alarmen, stopwatch en temperatuurweergave op geselecteerde modellen.",
+      "seoHeading": "Wat zijn ANA-DIGI-horloges?",
+      "seoParagraphs": [
+        "ANA-DIGI-horloges combineren een analoge wijzerplaat met een digitaal display in één kast. Dit hybride ontwerp geeft je de traditionele look van wijzers én nuttige digitale functies zoals alarmen, dual time, stopwatch en kalender.",
+        "HUMPBUCK richt zich op retro-geïnspireerde ANA-DIGI-horloges met onderscheidende kasten, praktische everyday-functies en een sterke visuele identiteit. Geselecteerde modellen hebben ook temperatuurweergave en steken daarmee af tegen conventionele analoge of digitale horloges."
+      ],
+      "whyHeading": "Waarom een HUMPBUCK ANA-DIGI-horloge kiezen?",
+      "whyParagraphs": [
+        "Onze ANA-DIGI-collectie is gemaakt voor wie houdt van het karakter van vintage digitale horloges, maar toch de vertrouwde look van analoge wijzers wil. De combinatie levert een veelzijdige stijl op voor alledaags gebruik, casual outfits en verzamelaars die iets anders zoeken.",
+        "Verken de collectie voor verschillende kastvormen, wijzerplaatlayouts, kleuren en functies, en kies het ANA-DIGI-horloge dat het best bij jouw stijl past."
+      ],
+      "faqs": [
+        {
+          "question": "Wat is een ANA-DIGI-horloge?",
+          "answer": "Een ANA-DIGI-horloge combineert analoge wijzers en een digitaal display in hetzelfde horloge, met zowel traditionele tijdweergave als digitale functies."
+        },
+        {
+          "question": "Welke functies hebben HUMPBUCK ANA-DIGI-horloges?",
+          "answer": "Functies verschillen per model en kunnen dual time, alarm, stopwatch, kalender, backlight en temperatuurweergave omvatten."
+        },
+        {
+          "question": "Zijn ANA-DIGI-horloges geschikt voor alledaags gebruik?",
+          "answer": "Ja. HUMPBUCK ANA-DIGI-horloges zijn ontworpen voor dagelijks gebruik, met praktische functies en retro-geïnspireerde styling."
+        },
+        {
+          "question": "Wat is het verschil tussen een ANA-DIGI- en een digitaal horloge?",
+          "answer": "Een ANA-DIGI-horloge gebruikt zowel analoge wijzers als een digitaal scherm, terwijl een digitaal horloge de tijd vooral digitaal toont."
+        }
+      ]
+    },
+    "digital": {
+      "name": "Digitaal",
+      "metaTitle": "Digitale horloges | Retro & everyday digitale horloges | HUMPBUCK",
+      "metaDescription": "Shop HUMPBUCK digitale horloges met retro-geïnspireerd design, praktische everyday-functies, alarmen, stopwatch en een onderscheidende moderne look.",
+      "kicker": "DIGITAL COLLECTIE",
+      "h1": "Digitale horloges",
+      "subtitle": "Ontdek onderscheidende digitale horloges geïnspireerd door retrodesign en gemaakt met praktische everyday-functies.",
+      "intro": "Ontdek HUMPBUCK digitale horloges met een balans van retrokarakter en praktische functionaliteit. Van alledaagse tijdmeting tot alarmen, stopwatch en opvallende displays: onze digitale collectie is een moderne interpretatie van klassieke digitale horloges.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "HUMPBUCK digitale horloges zijn gemaakt voor wie functionele horloges met een eigen look zoekt. Digitale displays geven snelle, duidelijke toegang tot tijd en andere functies, terwijl retro-geïnspireerde kasten en layouts elk horloge karakter geven.",
+        "Afhankelijk van het model kunnen HUMPBUCK digitale horloges alarmen, stopwatch, kalender, backlight en dual time bieden. Vergelijk designs, kleuren en functies in de collectie."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    },
+    "analog": {
+      "name": "Analoog",
+      "metaTitle": "Analoge horloges | Moderne & onderscheidende horloges | HUMPBUCK",
+      "metaDescription": "Ontdek HUMPBUCK analoge horloges met heldere tijdweergave, onderscheidende kasten en veelzijdige everyday-styling voor moderne horlogeliefhebbers.",
+      "kicker": "ANALOG COLLECTIE",
+      "h1": "Analoge horloges",
+      "subtitle": "Klassieke analoge tijdmeting met onderscheidend HUMPBUCK-design.",
+      "intro": "Ontdek HUMPBUCK analoge horloges met traditionele wijzerweergave en onderscheidende eigentijdse styling. Ontworpen voor eenvoudige, intuïtieve tijdmeting bieden onze analoge horloges veelzijdige opties voor alledaags gebruik.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "Analoge horloges blijven een van de meest tijdloze manieren om de tijd te tonen. Met uur-, minuut- en soms secondewijzers bieden ze een heldere, vertrouwde horloge-ervaring.",
+        "De HUMPBUCK analoge collectie combineert traditionele tijdmeting met onderscheidende kastvormen, wijzerplaten en materialen. Of je nu minimaal of expressiever wilt: vind de stijl die bij je everyday look past."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    },
+    "automatic": {
+      "name": "Automatisch",
+      "metaTitle": "Automatische horloges | Mechanische horloges | HUMPBUCK",
+      "metaDescription": "Ontdek HUMPBUCK automatische horloges met mechanische uurwerken, onderscheidende designs en traditioneel horlogemakerskarakter voor alledaags gebruik.",
+      "kicker": "AUTOMATIC COLLECTIE",
+      "h1": "Automatische horloges",
+      "subtitle": "Mechanische horloges aangedreven door beweging, met onderscheidend HUMPBUCK-karakter.",
+      "intro": "Ontdek HUMPBUCK automatische horloges met mechanische uurwerken. Voor liefhebbers van traditionele mechaniek combineert onze automatische collectie onderscheidende styling met het karakter van een zelfopwindend horloge.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "Automatische horloges gebruiken een mechanisch uurwerk dat zich kan opwinden door de beweging van de pols. In tegenstelling tot quartzhorloges vertrouwen ze niet op een conventionele batterij voor normale tijdmeting.",
+        "HUMPBUCK automatische horloges combineren mechanische horlogemakerij met onderscheidende kast- en wijzerplaatontwerpen. Verken de collectie en vind een automatisch horloge dat bij je everyday look past."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    }
   }
 }

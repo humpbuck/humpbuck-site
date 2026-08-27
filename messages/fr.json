@@ -1050,5 +1050,104 @@
     "inquiryErrNetwork": "Erreur réseau. Veuillez réessayer.",
     "inquirySuccessKicker": "Demande reçue",
     "inquirySuccessBody": "Merci pour votre confiance. Nous avons bien reçu votre demande et préparerons une maquette numérique (pas un échantillon physique) dès que possible, envoyée à votre e-mail. Pour les demandes urgentes, contactez-nous sur WhatsApp."
+  },
+  "WatchCollections": {
+    "faqHeading": "Questions fréquentes",
+    "all": {
+      "metaTitle": "Acheter des montres | ANA-DIGI, digitales et automatiques | HUMPBUCK",
+      "metaDescription": "Découvrez les montres HUMPBUCK : ANA-DIGI, digitales, analogiques et automatiques. Des montres au caractère affirmé pour le quotidien et votre style.",
+      "kicker": "MONTRES",
+      "h1": "Montres HUMPBUCK",
+      "subtitle": "Explorez les montres ANA-DIGI, digitales, analogiques et automatiques HUMPBUCK.",
+      "intro": ""
+    },
+    "anaDigi": {
+      "name": "ANA-DIGI",
+      "metaTitle": "Montres ANA-DIGI | Montres analogiques-digitales rétro | HUMPBUCK",
+      "metaDescription": "Achetez les montres HUMPBUCK ANA-DIGI avec affichages analogique et digital, design d'inspiration rétro, double fuseau, alarmes, chronographe et style quotidien distinctif.",
+      "kicker": "COLLECTION ANA-DIGI",
+      "h1": "Montres ANA-DIGI",
+      "subtitle": "Découvrez des montres analogiques-digitales d'inspiration rétro qui allient aiguilles classiques et fonctions digitales pratiques.",
+      "intro": "Découvrez les montres HUMPBUCK ANA-DIGI, qui associent aiguilles analogiques classiques et affichages digitaux pratiques. Avec un style d'inspiration rétro et une fonctionnalité quotidienne, notre collection ANA-DIGI propose des designs distinctifs avec des fonctions utiles comme le double fuseau, les alarmes, le chronographe et l'affichage de température sur certains modèles.",
+      "seoHeading": "Qu'est-ce qu'une montre ANA-DIGI ?",
+      "seoParagraphs": [
+        "Les montres ANA-DIGI combinent un affichage analogique et un affichage digital dans un seul boîtier. Ce design hybride offre le look traditionnel des aiguilles tout en ajoutant des fonctions digitales utiles : alarmes, double fuseau, chronographe et calendrier.",
+        "HUMPBUCK se concentre sur des montres ANA-DIGI d'inspiration rétro, avec des boîtiers distinctifs, des fonctions pratiques au quotidien et une forte identité visuelle. Certains modèles incluent aussi un affichage de température, qui les distingue des montres uniquement analogiques ou digitales."
+      ],
+      "whyHeading": "Pourquoi choisir une montre HUMPBUCK ANA-DIGI ?",
+      "whyParagraphs": [
+        "Notre collection ANA-DIGI s'adresse à ceux qui aiment le caractère des montres digitales vintage tout en gardant le look familier des aiguilles. Cette combinaison crée un style polyvalent pour le quotidien, les looks décontractés et les collectionneurs en quête de différence.",
+        "Explorez la collection pour découvrir formes de boîtier, dispositions de cadran, couleurs et fonctions, et choisissez la montre ANA-DIGI qui correspond le mieux à votre style."
+      ],
+      "faqs": [
+        {
+          "question": "Qu'est-ce qu'une montre ANA-DIGI ?",
+          "answer": "Une montre ANA-DIGI combine aiguilles analogiques et affichage digital dans la même montre, offrant lecture traditionnelle de l'heure et fonctions digitales."
+        },
+        {
+          "question": "Quelles fonctions ont les montres HUMPBUCK ANA-DIGI ?",
+          "answer": "Les fonctions varient selon le modèle et peuvent inclure double fuseau, alarme, chronographe, calendrier, rétroéclairage et température."
+        },
+        {
+          "question": "Les montres ANA-DIGI conviennent-elles au quotidien ?",
+          "answer": "Oui. Les montres HUMPBUCK ANA-DIGI sont conçues pour un usage quotidien, avec des fonctions pratiques et un style d'inspiration rétro."
+        },
+        {
+          "question": "Quelle différence entre une montre ANA-DIGI et une montre digitale ?",
+          "answer": "Une montre ANA-DIGI utilise à la fois aiguilles analogiques et écran digital, tandis qu'une montre digitale affiche principalement l'heure de façon digitale."
+        }
+      ]
+    },
+    "digital": {
+      "name": "Digitale",
+      "metaTitle": "Montres digitales | Montres digitales rétro & quotidiennes | HUMPBUCK",
+      "metaDescription": "Achetez des montres digitales HUMPBUCK au design d'inspiration rétro, avec fonctions pratiques, alarmes, chronographe et un style moderne distinctif.",
+      "kicker": "COLLECTION DIGITALE",
+      "h1": "Montres digitales",
+      "subtitle": "Explorez des montres digitales distinctives inspirées du design rétro et pensées pour le quotidien.",
+      "intro": "Explorez les montres digitales HUMPBUCK, conçues pour équilibrer caractère rétro et fonctionnalité pratique. De la lecture quotidienne de l'heure aux alarmes, chronographe et affichages expressifs, notre collection digitale propose une interprétation moderne des classiques digitales.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "Les montres digitales HUMPBUCK s'adressent à ceux qui aiment les montres fonctionnelles au style visuel affirmé. Les affichages digitaux donnent un accès rapide et clair à l'heure et aux autres fonctions, tandis que boîtiers et layouts d'inspiration rétro confèrent à chaque montre son caractère.",
+        "Selon le modèle, les montres digitales HUMPBUCK peuvent inclure alarmes, chronographe, calendrier, rétroéclairage et double fuseau. Comparez designs, couleurs et fonctions dans la collection."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    },
+    "analog": {
+      "name": "Analogique",
+      "metaTitle": "Montres analogiques | Montres modernes et distinctives | HUMPBUCK",
+      "metaDescription": "Découvrez les montres analogiques HUMPBUCK : affichage clair, boîtiers distinctifs et style polyvalent pour les passionnés de montres modernes.",
+      "kicker": "COLLECTION ANALOGIQUE",
+      "h1": "Montres analogiques",
+      "subtitle": "Mesure du temps analogique classique avec le design distinctif HUMPBUCK.",
+      "intro": "Découvrez les montres analogiques HUMPBUCK, associant affichage à aiguilles traditionnel et style contemporain distinctif. Conçues pour une lecture simple et intuitive, elles offrent des options polyvalentes pour le quotidien.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "Les montres analogiques restent l'une des façons les plus intemporelles d'afficher l'heure. Avec aiguilles des heures, minutes et parfois secondes, elles offrent une expérience claire et familière.",
+        "La collection analogique HUMPBUCK allie mesure traditionnelle du temps, formes de boîtier, cadrans et matériaux distinctifs. Minimaliste ou plus expressif : trouvez le style qui s'accorde à votre quotidien."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    },
+    "automatic": {
+      "name": "Automatique",
+      "metaTitle": "Montres automatiques | Montres mécaniques | HUMPBUCK",
+      "metaDescription": "Explorez les montres automatiques HUMPBUCK à mouvements mécaniques, designs distinctifs et caractère horloger traditionnel pour le quotidien.",
+      "kicker": "COLLECTION AUTOMATIQUE",
+      "h1": "Montres automatiques",
+      "subtitle": "Montres mécaniques alimentées par le mouvement, au caractère distinctif HUMPBUCK.",
+      "intro": "Explorez les montres automatiques HUMPBUCK à mouvements mécaniques. Pensées pour les passionnés qui apprécient la mécanique traditionnelle, notre collection automatique allie un style distinctif au caractère d'une montre à remontage automatique.",
+      "seoHeading": "",
+      "seoParagraphs": [
+        "Les montres automatiques utilisent un mouvement mécanique qui peut se remonter grâce au mouvement du poignet. Contrairement aux montres à quartz, elles ne dépendent pas d'une pile classique pour le fonctionnement normal.",
+        "Les montres automatiques HUMPBUCK associent horlogerie mécanique et designs de boîtier et de cadran distinctifs. Parcourez la collection pour trouver l'automatique qui convient à votre look quotidien."
+      ],
+      "whyHeading": "",
+      "whyParagraphs": [],
+      "faqs": []
+    }
   }
 }

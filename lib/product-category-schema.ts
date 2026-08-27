@@ -1,6 +1,7 @@
 import "server-only";
 
 import { prisma } from "@/lib/prisma";
+import { STOREFRONT_WATCH_CATEGORIES } from "@/lib/storefront-watch-categories";
 
 let productCategorySchemaReady: Promise<void> | null = null;
 
@@ -30,26 +31,12 @@ async function seedDefaultCategoriesIfEmpty(): Promise<void> {
   if (count > 0) return;
 
   await prisma.productCategory.createMany({
-    data: [
-      {
-        id: "cat_quartz",
-        name: "ANA-DIGI",
-        slug: "ana-digi",
-        sortOrder: 3,
-      },
-      {
-        id: "cat_ultra_thin",
-        name: "Ultra-thin",
-        slug: "ultra-thin",
-        sortOrder: 2,
-      },
-      {
-        id: "cat_mechanical",
-        name: "Automatic",
-        slug: "mechanical",
-        sortOrder: 1,
-      },
-    ],
+    data: STOREFRONT_WATCH_CATEGORIES.map((c) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      sortOrder: c.sortOrder,
+    })),
   });
 }
 
@@ -57,9 +44,58 @@ async function seedDefaultCategoriesIfEmpty(): Promise<void> {
 async function migrateAnaDigiCategorySlug(): Promise<void> {
   await prisma.$executeRawUnsafe(`
     UPDATE "ProductCategory"
-    SET "slug" = 'ana-digi'
+    SET "slug" = 'ana-digi', "name" = 'ANA-DIGI'
     WHERE "id" = 'cat_quartz' OR lower("slug") = 'quartz'
   `);
+}
+
+/** Fixed four storefront collections; Automatic public slug is `automatic` (was `mechanical`). */
+async function ensureFixedWatchCategories(): Promise<void> {
+  await prisma.$executeRawUnsafe(`
+    UPDATE "ProductCategory"
+    SET "slug" = 'automatic', "name" = 'Automatic'
+    WHERE "id" = 'cat_mechanical' OR lower("slug") = 'mechanical'
+  `);
+
+  for (const c of STOREFRONT_WATCH_CATEGORIES) {
+    const existing = await prisma.productCategory.findUnique({
+      where: { id: c.id },
+      select: { id: true },
+    });
+    if (existing) {
+      await prisma.productCategory.update({
+        where: { id: c.id },
+        data: {
+          name: c.name,
+          slug: c.slug,
+          sortOrder: c.sortOrder,
+        },
+      });
+      continue;
+    }
+    const bySlug = await prisma.productCategory.findUnique({
+      where: { slug: c.slug },
+      select: { id: true },
+    });
+    if (bySlug) {
+      await prisma.productCategory.update({
+        where: { id: bySlug.id },
+        data: {
+          name: c.name,
+          sortOrder: c.sortOrder,
+        },
+      });
+      continue;
+    }
+    await prisma.productCategory.create({
+      data: {
+        id: c.id,
+        name: c.name,
+        slug: c.slug,
+        sortOrder: c.sortOrder,
+      },
+    });
+  }
 }
 
 async function backfillProductCategoryIds(): Promise<void> {
@@ -117,6 +153,7 @@ export async function ensureProductCategorySchema(): Promise<void> {
       await addCatalogProductColumnIfMissing("categoryId", "TEXT");
       await seedDefaultCategoriesIfEmpty();
       await migrateAnaDigiCategorySlug();
+      await ensureFixedWatchCategories();
       await backfillProductCategoryIds();
     })().catch((error) => {
       productCategorySchemaReady = null;

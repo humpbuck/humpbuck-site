@@ -6,6 +6,7 @@ import {
   legacyPlacementFromCategory,
 } from "@/lib/product-category-shared";
 import { ensureProductCategorySchema } from "@/lib/product-category-schema";
+import { STOREFRONT_WATCH_CATEGORIES } from "@/lib/storefront-watch-categories";
 
 export type ProductCategoryRow = {
   id: string;
@@ -32,6 +33,39 @@ export async function getAllProductCategories(): Promise<ProductCategoryRow[]> {
   });
 }
 
+/** Fixed public collections only (ANA-DIGI / Digital / Analog / Automatic). */
+export async function getFixedStorefrontCategories(): Promise<
+  ProductCategoryRow[]
+> {
+  await ensureProductCategorySchema();
+  const fixedIds = STOREFRONT_WATCH_CATEGORIES.map((c) => c.id);
+  const fixedSlugs = STOREFRONT_WATCH_CATEGORIES.map((c) => c.slug);
+  const rows = await prisma.productCategory.findMany({
+    where: {
+      OR: [{ id: { in: fixedIds } }, { slug: { in: [...fixedSlugs] } }],
+    },
+    orderBy: [{ sortOrder: "desc" }, { createdAt: "desc" }],
+  });
+  // Prefer canonical id rows; drop duplicates by slug.
+  const bySlug = new Map<string, ProductCategoryRow>();
+  for (const row of rows) {
+    const preferred = STOREFRONT_WATCH_CATEGORIES.find(
+      (c) => c.slug === row.slug || c.id === row.id,
+    );
+    if (!preferred) continue;
+    const existing = bySlug.get(preferred.slug);
+    if (!existing || row.id === preferred.id) {
+      bySlug.set(preferred.slug, {
+        ...row,
+        name: preferred.name,
+        slug: preferred.slug,
+        sortOrder: preferred.sortOrder,
+      });
+    }
+  }
+  return [...bySlug.values()].sort((a, b) => b.sortOrder - a.sortOrder);
+}
+
 export async function getProductCategoryById(
   id: string,
 ): Promise<ProductCategoryRow | null> {
@@ -54,17 +88,31 @@ export async function resolveCategoryPlacementForSave(
   const categoryId =
     typeof categoryIdRaw === "string" ? categoryIdRaw.trim() : "";
   if (!categoryId) {
-    return { ok: false, error: "Series is required." };
+    return { ok: false, error: "Category is required." };
   }
+  const fixed = STOREFRONT_WATCH_CATEGORIES.find((c) => c.id === categoryId);
   const category = await getProductCategoryById(categoryId);
   if (!category) {
-    return { ok: false, error: "Selected series was not found." };
+    return { ok: false, error: "Selected category was not found." };
   }
+  if (!fixed && !STOREFRONT_WATCH_CATEGORIES.some((c) => c.slug === category.slug)) {
+    return {
+      ok: false,
+      error: "Category must be ANA-DIGI, Digital, Analog, or Automatic.",
+    };
+  }
+  const canonical =
+    STOREFRONT_WATCH_CATEGORIES.find(
+      (c) => c.id === category.id || c.slug === category.slug,
+    ) ?? null;
   return {
     ok: true,
     data: {
-      categoryId: category.id,
-      ...legacyPlacementFromCategory(category),
+      categoryId: canonical?.id ?? category.id,
+      ...legacyPlacementFromCategory({
+        name: canonical?.name ?? category.name,
+        slug: canonical?.slug ?? category.slug,
+      }),
     },
   };
 }

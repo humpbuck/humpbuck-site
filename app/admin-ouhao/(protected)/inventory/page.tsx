@@ -2,7 +2,7 @@ import { AdminBackLink } from "@/components/admin/admin-back-link";
 import { ProductManagerLoader } from "@/components/admin/product-manager-loader";
 import { adminPath } from "@/lib/admin-path";
 import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
-import { getAllProductCategories } from "@/lib/product-categories";
+import { getFixedStorefrontCategories } from "@/lib/product-categories";
 import { ensureProductCategorySchema } from "@/lib/product-category-schema";
 import { prisma } from "@/lib/prisma";
 
@@ -16,7 +16,7 @@ export default async function AdminInventoryPage() {
     prisma.productInventory.findMany({
       orderBy: [{ productSlug: "asc" }, { variantId: "asc" }],
     }),
-    getAllProductCategories(),
+    getFixedStorefrontCategories(),
   ]);
   return (
     <div>

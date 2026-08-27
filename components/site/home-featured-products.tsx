@@ -41,7 +41,7 @@ export function HomeFeaturedProductsGrid({
 
       <div className="mt-10 flex justify-center">
         <Link
-          href="/product"
+          href="/watches"
           className="inline-flex min-h-11 items-center justify-center rounded-full border border-line bg-paper px-6 text-[11px] font-semibold uppercase tracking-widest text-ink/85 transition hover:border-ink/20 hover:text-ink"
         >
           {t("browseFullCatalog")}

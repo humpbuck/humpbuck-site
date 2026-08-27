@@ -539,7 +539,7 @@ export function ProductManager({
       return;
     }
     if (!current.categoryId.trim()) {
-      setFlashMessage("Series is required.", "error");
+      setFlashMessage("Category is required.", "error");
       return;
     }
     setBusy(true);
