@@ -87,6 +87,34 @@ export function watchCategorySlugFromCategoryId(
   return LEGACY_WATCH_CATEGORY_IDS[id];
 }
 
+/**
+ * Map stored categoryId / label onto a canonical fixed-collection id
+ * (admin forms + save recovery when a CMS id was deleted).
+ */
+export function canonicalCategoryIdForAdminProduct(input: {
+  categoryId?: string | null;
+  categoryLabel?: string | null;
+}): string {
+  const raw = input.categoryId?.trim() || "";
+  const fromId = watchCategorySlugFromCategoryId(raw);
+  if (fromId) {
+    return getWatchCategoryBySlug(fromId)?.id ?? raw;
+  }
+
+  const label = input.categoryLabel?.trim().toLowerCase() || "";
+  if (label === "digital") return "cat_digital";
+  if (label === "analog") return "cat_analog";
+  if (label === "automatic" || label === "mechanical") return "cat_automatic";
+  if (
+    label === "ana-digi" ||
+    label === "quartz" ||
+    label.includes("ana-digi")
+  ) {
+    return "cat_ana-digi";
+  }
+  return raw;
+}
+
 const BY_SLUG = new Map(
   STOREFRONT_WATCH_CATEGORIES.map((c) => [c.slug, c] as const),
 );

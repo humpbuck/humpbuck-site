@@ -195,7 +195,9 @@ export async function PATCH(
       }
     }
 
-    const placement = await resolveCategoryPlacementForSave(body.categoryId);
+    const placement = await resolveCategoryPlacementForSave(body.categoryId, {
+      categoryLabelHint: prev.categoryLabel,
+    });
     if (!placement.ok) {
       return NextResponse.json({ error: placement.error }, { status: 400 });
     }

@@ -5,6 +5,7 @@ import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
 import { getFixedStorefrontCategories } from "@/lib/product-categories";
 import { ensureProductCategorySchema } from "@/lib/product-category-schema";
 import { prisma } from "@/lib/prisma";
+import { canonicalCategoryIdForAdminProduct } from "@/lib/storefront-watch-categories";
 
 const EMPTY_JSON = JSON.stringify([]);
 
@@ -54,7 +55,10 @@ export default async function AdminInventoryPage() {
             detailJson: p.detailJson ?? EMPTY_JSON,
             variantsJson: p.variantsJson ?? EMPTY_JSON,
             promoVideoJson: p.promoVideoJson,
-            categoryId: (p as { categoryId?: string | null }).categoryId ?? null,
+            categoryId: canonicalCategoryIdForAdminProduct({
+              categoryId: (p as { categoryId?: string | null }).categoryId ?? null,
+              categoryLabel: p.categoryLabel,
+            }),
             storefrontCategory:
               (p as { storefrontCategory?: string | null }).storefrontCategory ?? "",
             storefrontSubcategory:

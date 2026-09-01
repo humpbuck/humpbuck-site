@@ -6,6 +6,25 @@ import { legacyPlacementFromCategory } from "@/lib/product-category-shared";
 
 let productCategorySchemaReady: Promise<void> | null = null;
 
+/**
+ * old ProductCategory.id → canonical id, filled while ensure remaps/deletes rows.
+ * Lets admin saves that still submit a stale CMS / legacy id resolve after ensure.
+ */
+const remappedCategoryIdToCanonical = new Map<string, string>();
+
+export function canonicalCategoryIdAfterRemap(
+  categoryId: string | null | undefined,
+): string | undefined {
+  const id = categoryId?.trim();
+  if (!id) return undefined;
+  return remappedCategoryIdToCanonical.get(id);
+}
+
+function rememberCategoryRemap(fromId: string, toId: string): void {
+  if (!fromId || fromId === toId) return;
+  remappedCategoryIdToCanonical.set(fromId, toId);
+}
+
 /** Legacy ProductCategory.slug values that map to a fixed storefront collection. */
 const LEGACY_SLUGS_BY_CANONICAL: Record<string, readonly string[]> = {
   "ana-digi": ["ana-digi", "quartz", "digitemp", "digi-temp"],
@@ -138,6 +157,7 @@ async function ensureFixedWatchCategories(): Promise<void> {
         c.id,
         renameFrom.id,
       );
+      rememberCategoryRemap(renameFrom.id, c.id);
       canonicalExists = true;
       // Remaining duplicates still need remapping + delete.
       const renamedAway = renameFrom.id;
@@ -197,6 +217,9 @@ async function ensureFixedWatchCategories(): Promise<void> {
     ];
 
     if (duplicateIds.length > 0) {
+      for (const fromId of duplicateIds) {
+        rememberCategoryRemap(fromId, c.id);
+      }
       await prisma.catalogProduct.updateMany({
         where: { categoryId: { in: duplicateIds } },
         data: {

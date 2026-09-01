@@ -13,6 +13,7 @@ import {
 } from "@/components/admin/storefront-placement-fields";
 import { inferSeriesSlugFromProductSlug } from "@/lib/catalog";
 import { productPathCategoryFromCategoryId } from "@/lib/product-path";
+import { canonicalCategoryIdForAdminProduct } from "@/lib/storefront-watch-categories";
 import { DetailBlockListEditor } from "@/components/admin/detail-block-list-editor";
 import {
   detailBlocksToImageUrls,
@@ -175,7 +176,10 @@ function buildEditableProduct(
     variants: parseArray<VariantRow>(p.variantsJson, []),
     promoVideos: videoDraft.videos,
     promoVideoPoster: videoDraft.poster,
-    categoryId: p.categoryId?.trim() || "",
+    categoryId: canonicalCategoryIdForAdminProduct({
+      categoryId: p.categoryId,
+      categoryLabel: p.categoryLabel,
+    }),
     storefrontCategory: p.storefrontCategory?.trim() || "",
     storefrontSubcategory: p.storefrontSubcategory?.trim() || "",
     storefrontSeries: p.storefrontSeries?.trim() || "",

@@ -5,8 +5,16 @@ import { prisma } from "@/lib/prisma";
 import {
   legacyPlacementFromCategory,
 } from "@/lib/product-category-shared";
-import { ensureProductCategorySchema } from "@/lib/product-category-schema";
-import { STOREFRONT_WATCH_CATEGORIES } from "@/lib/storefront-watch-categories";
+import {
+  canonicalCategoryIdForAdminProduct,
+  getWatchCategoryBySlug,
+  STOREFRONT_WATCH_CATEGORIES,
+  watchCategorySlugFromCategoryId,
+} from "@/lib/storefront-watch-categories";
+import {
+  canonicalCategoryIdAfterRemap,
+  ensureProductCategorySchema,
+} from "@/lib/product-category-schema";
 
 export type ProductCategoryRow = {
   id: string;
@@ -72,9 +80,24 @@ export type CategoryPlacementSave = {
   storefrontSeries: string | null;
 };
 
+function placementFromFixed(
+  fixed: (typeof STOREFRONT_WATCH_CATEGORIES)[number],
+): CategoryPlacementSave {
+  return {
+    categoryId: fixed.id,
+    ...legacyPlacementFromCategory({
+      name: fixed.name,
+      slug: fixed.slug,
+    }),
+  };
+}
+
+export { canonicalCategoryIdForAdminProduct };
+
 /** Resolve categoryId from admin product save body into DB placement fields. */
 export async function resolveCategoryPlacementForSave(
   categoryIdRaw: unknown,
+  opts?: { categoryLabelHint?: string | null },
 ): Promise<{ ok: true; data: CategoryPlacementSave } | { ok: false; error: string }> {
   const categoryId =
     typeof categoryIdRaw === "string" ? categoryIdRaw.trim() : "";
@@ -84,42 +107,47 @@ export async function resolveCategoryPlacementForSave(
 
   const fixedById = STOREFRONT_WATCH_CATEGORIES.find((c) => c.id === categoryId);
   if (fixedById) {
-    return {
-      ok: true,
-      data: {
-        categoryId: fixedById.id,
-        ...legacyPlacementFromCategory({
-          name: fixedById.name,
-          slug: fixedById.slug,
-        }),
-      },
-    };
+    return { ok: true, data: placementFromFixed(fixedById) };
+  }
+
+  const legacySlug = watchCategorySlugFromCategoryId(categoryId);
+  if (legacySlug) {
+    const fixed = getWatchCategoryBySlug(legacySlug);
+    if (fixed) return { ok: true, data: placementFromFixed(fixed) };
+  }
+
+  const remappedId = canonicalCategoryIdAfterRemap(categoryId);
+  if (remappedId) {
+    const fixed = STOREFRONT_WATCH_CATEGORIES.find((c) => c.id === remappedId);
+    if (fixed) return { ok: true, data: placementFromFixed(fixed) };
   }
 
   const category = await getProductCategoryById(categoryId);
-  if (!category) {
-    return { ok: false, error: "Selected category was not found." };
+  if (category) {
+    const canonical =
+      STOREFRONT_WATCH_CATEGORIES.find(
+        (c) => c.id === category.id || c.slug === category.slug,
+      ) ?? null;
+    if (!canonical) {
+      return {
+        ok: false,
+        error: "Category must be ANA-DIGI, Digital, Analog, or Automatic.",
+      };
+    }
+    return { ok: true, data: placementFromFixed(canonical) };
   }
-  const canonical =
-    STOREFRONT_WATCH_CATEGORIES.find(
-      (c) => c.id === category.id || c.slug === category.slug,
-    ) ?? null;
-  if (!canonical) {
-    return {
-      ok: false,
-      error: "Category must be ANA-DIGI, Digital, Analog, or Automatic.",
-    };
+
+  // Stale admin tab: ensure already deleted the CMS row; recover from label hint.
+  const fromHint = canonicalCategoryIdForAdminProduct({
+    categoryId: "",
+    categoryLabel: opts?.categoryLabelHint,
+  });
+  if (fromHint) {
+    const fixed = STOREFRONT_WATCH_CATEGORIES.find((c) => c.id === fromHint);
+    if (fixed) return { ok: true, data: placementFromFixed(fixed) };
   }
-  return {
-    ok: true,
-    data: {
-      categoryId: canonical.id,
-      ...legacyPlacementFromCategory({
-        name: canonical.name,
-        slug: canonical.slug,
-      }),
-    },
-  };
+
+  return { ok: false, error: "Selected category was not found." };
 }
 
 async function uniqueCategorySlug(base: string, excludeId?: string): Promise<string> {
