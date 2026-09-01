@@ -112,7 +112,11 @@ export function ProductImageCarousel({
     const el = thumbsRef.current;
     if (!el) return;
     const thumb = el.children[index] as HTMLElement | undefined;
-    thumb?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+    if (!thumb) return;
+    // Scroll only the horizontal thumbs strip — never the document.
+    // scrollIntoView() would jump the page (e.g. when a STYLE pick syncs the gallery).
+    const left = thumb.offsetLeft - (el.clientWidth - thumb.clientWidth) / 2;
+    el.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
   }, []);
 
   const scrollTo = useCallback(
