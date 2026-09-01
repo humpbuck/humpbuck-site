@@ -6,14 +6,17 @@ import { permanentRedirectWithLocale } from "@/lib/storefront-redirect";
 
 /**
  * Legacy PDP: `/product/{slug}` → 308 `/product/{category}/{slug}`.
- * Also recovers renamed compound slugs (e.g. digi-temp-2301 → ana-digi/2301).
+ *
+ * Param must be named `category` to match `product/[category]/[slug]`
+ * (Next.js forbids conflicting dynamic names at the same path depth).
+ * The single segment here is the old model slug, not a category.
  */
 export default async function LegacyProductSlugRedirect({
   params,
 }: {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<{ locale: string; category: string }>;
 }) {
-  const { locale, slug } = await params;
+  const { locale, category: slug } = await params;
   setRequestLocale(locale);
 
   const product = await resolveProductForPdpSlug(slug);
