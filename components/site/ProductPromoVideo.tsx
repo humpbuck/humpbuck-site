@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { Play } from "lucide-react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { youtubeEmbedUrl } from "@/lib/blog-video";
 
@@ -12,8 +13,11 @@ function showcaseShellClass(isLandscape: boolean): string {
 
 /**
  * Product showcase on the PDP left column.
- * R2/direct video uses the same pattern as watchsourcego: `<video src=…>` (not nested
- * `<source type>`), so browsers can load Range/metadata reliably.
+ * R2/direct video uses `<video src=…>` (not nested `<source type>`), so browsers
+ * can load Range/metadata reliably once the shopper starts playback.
+ *
+ * Native `controls` + `preload="metadata"` on first paint can make iOS Safari
+ * scroll the PDP down to this block on entry — keep controls off until play.
  */
 export function ProductPromoVideo({
   productName,
@@ -27,8 +31,10 @@ export function ProductPromoVideo({
   embedded?: boolean;
 }) {
   const t = useTranslations("Product");
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [aspectRatio, setAspectRatio] = useState<number | null>(null);
   const [loadFailed, setLoadFailed] = useState(false);
+  const [showControls, setShowControls] = useState(false);
   const ytEmbed = useMemo(() => youtubeEmbedUrl(src), [src]);
   const isLandscape = ytEmbed
     ? true
@@ -48,9 +54,18 @@ export function ProductPromoVideo({
     setLoadFailed(true);
   }, []);
 
+  const startPlayback = useCallback(() => {
+    setShowControls(true);
+    const video = videoRef.current;
+    if (!video) return;
+    void video.play().catch(() => {
+      /* Autoplay policies / missing gesture — controls remain for manual play. */
+    });
+  }, []);
+
   const videoBox = ytEmbed ? (
     <div
-      className="relative isolate w-full overflow-hidden rounded-2xl border border-line bg-[#0a0a0a] shadow-sm"
+      className="relative isolate w-full overflow-hidden rounded-2xl border border-line bg-[#0a0a0a] shadow-sm [overflow-anchor:none]"
       style={{ aspectRatio: 16 / 9 }}
     >
       <iframe
@@ -59,27 +74,43 @@ export function ProductPromoVideo({
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
         allowFullScreen
         className="absolute inset-0 z-0 h-full w-full border-0"
+        loading="lazy"
       />
     </div>
   ) : (
-    <div className="w-full">
+    <div className="w-full [overflow-anchor:none]">
       <div
-        className="w-full overflow-hidden rounded-2xl border border-line bg-[#0a0a0a] shadow-sm"
-        style={{ aspectRatio: aspectRatio ?? 9 / 16 }}
+        className="relative w-full overflow-hidden rounded-2xl border border-line bg-[#0a0a0a] shadow-sm"
+        style={{ aspectRatio: aspectRatio ?? 1 }}
       >
         {src.trim() ? (
-          <video
-            key={src}
-            src={src}
-            poster={poster}
-            controls
-            playsInline
-            preload="metadata"
-            className="h-full w-full object-contain"
-            aria-label={aria}
-            onLoadedMetadata={onLoadedMetadata}
-            onError={onError}
-          />
+          <>
+            <video
+              key={src}
+              ref={videoRef}
+              src={src}
+              poster={poster}
+              controls={showControls}
+              playsInline
+              preload="none"
+              className="h-full w-full object-contain"
+              aria-label={aria}
+              onLoadedMetadata={onLoadedMetadata}
+              onError={onError}
+            />
+            {!showControls ? (
+              <button
+                type="button"
+                onClick={startPlayback}
+                className="absolute inset-0 z-10 flex items-center justify-center bg-ink/15 transition hover:bg-ink/25"
+                aria-label={aria}
+              >
+                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/95 text-ink shadow-sm">
+                  <Play size={26} strokeWidth={2} className="ml-0.5" fill="currentColor" />
+                </span>
+              </button>
+            ) : null}
+          </>
         ) : null}
       </div>
       {loadFailed ? (
@@ -95,7 +126,7 @@ export function ProductPromoVideo({
 
   if (embedded) {
     return (
-      <section className="flex w-full shrink-0 flex-col gap-3 pt-0">
+      <section className="flex w-full shrink-0 flex-col gap-3 pt-0 [overflow-anchor:none]">
         <h2 className="shrink-0 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-muted sm:text-[11px]">
           {showcaseLabel}
         </h2>
@@ -107,7 +138,7 @@ export function ProductPromoVideo({
   }
 
   return (
-    <section className="mt-16 border-t border-line pt-14">
+    <section className="mt-16 border-t border-line pt-14 [overflow-anchor:none]">
       <h2 className="text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-muted sm:text-[11px]">
         {showcaseLabel}
       </h2>

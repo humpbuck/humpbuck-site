@@ -19,6 +19,7 @@ import { routing } from "@/i18n/routing";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
 import { ProductJsonLd } from "@/components/seo/product-json-ld";
 import { ProductReviewsSection } from "@/components/site/ProductReviewsSection";
+import { ProductPdpScrollTop } from "@/components/site/product-pdp-scroll-top";
 import { SilentErrorBoundary } from "@/components/site/silent-error-boundary";
 import {
   ProductPdpMainAsyncSection,
@@ -143,6 +144,7 @@ export default async function ProductPage({
 
   return (
     <div>
+      <ProductPdpScrollTop />
       <SilentErrorBoundary name="product-json-ld">
         <ProductJsonLd locale={locale} slug={slug} product={product} />
       </SilentErrorBoundary>
