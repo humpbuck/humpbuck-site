@@ -1,6 +1,6 @@
 import type { Product } from "@/lib/catalog";
 import {
-  STOREFRONT_WATCH_CATEGORIES,
+  watchCategorySlugFromCategoryId,
   type StorefrontWatchCategorySlug,
 } from "@/lib/storefront-watch-categories";
 
@@ -75,11 +75,9 @@ export function normalizeProductPathCategory(
 export function productPathCategoryFromCategoryId(
   categoryId: string | null | undefined,
 ): ProductPathCategory | null {
-  const id = categoryId?.trim();
-  if (!id) return null;
-  const fixed = STOREFRONT_WATCH_CATEGORIES.find((c) => c.id === id);
-  if (fixed) return CATEGORY_SLUG_TO_PATH[fixed.slug];
-  return null;
+  const slug = watchCategorySlugFromCategoryId(categoryId);
+  if (!slug) return null;
+  return CATEGORY_SLUG_TO_PATH[slug];
 }
 
 export function productPathCategoryFromProduct(

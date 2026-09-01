@@ -7,7 +7,10 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { SubtleHorizontalScroll } from "@/components/site/subtle-horizontal-scroll";
 import type { Product } from "@/lib/catalog";
 import { shopSeriesHref } from "@/lib/product-category-shared";
-import { WATCHES_PATH } from "@/lib/storefront-watch-categories";
+import {
+  WATCHES_PATH,
+  watchCategorySlugFromCategoryId,
+} from "@/lib/storefront-watch-categories";
 
 export type ShopCategoryOption = {
   id: string;
@@ -17,6 +20,20 @@ export type ShopCategoryOption = {
 
 function normalizeSearchQuery(input: string) {
   return input.trim().toLowerCase().replace(/\s+/g, "-");
+}
+
+function productMatchesCategory(
+  product: Product,
+  active: ShopCategoryOption,
+  categories: ShopCategoryOption[],
+): boolean {
+  if (product.categoryId === active.id) return true;
+  const productId = product.categoryId?.trim();
+  if (!productId) return false;
+  const fromId = watchCategorySlugFromCategoryId(productId);
+  if (fromId) return fromId === active.slug;
+  const fromList = categories.find((c) => c.id === productId);
+  return fromList?.slug === active.slug;
 }
 
 export function ShopCatalogClient({
@@ -50,7 +67,9 @@ export function ShopCatalogClient({
   const displayProducts = useMemo(() => {
     let list = products;
     if (activeSeries) {
-      list = list.filter((p) => p.categoryId === activeSeries.id);
+      list = list.filter((p) =>
+        productMatchesCategory(p, activeSeries, categories),
+      );
     }
     const q = normalizeSearchQuery(searchQuery);
     if (!q) return list;
@@ -59,7 +78,7 @@ export function ShopCatalogClient({
       const name = p.name.trim().toLowerCase().replace(/\s+/g, "-");
       return slug.includes(q) || name.includes(q);
     });
-  }, [products, searchQuery, activeSeries]);
+  }, [products, searchQuery, activeSeries, categories]);
 
   const countLabel = searchQuery.trim()
     ? t("searchMatchCount", {

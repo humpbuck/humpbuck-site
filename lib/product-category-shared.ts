@@ -7,7 +7,7 @@ import {
 
 /**
  * Map admin category → legacy storefront filter fields (shop URLs stay stable).
- * ANA-DIGI uses public slug `ana-digi` (legacy: `quartz` / id `cat_quartz`).
+ * ANA-DIGI uses public slug `ana-digi` (legacy: `quartz` / ids `cat_quartz` → `cat_ana-digi`).
  */
 export function legacyPlacementFromCategory(category: {
   name: string;
@@ -75,6 +75,7 @@ export function normalizeShopSeriesParam(raw: string): string {
   const v = raw.trim().toLowerCase();
   if (!v) return "";
   if (
+    v === "cat_ana-digi" ||
     v === "cat_quartz" ||
     v === "quartz" ||
     v === "digitemp" ||
@@ -82,7 +83,9 @@ export function normalizeShopSeriesParam(raw: string): string {
   ) {
     return "ana-digi";
   }
-  if (v === "cat_mechanical" || v === "mechanical") return "automatic";
+  if (v === "cat_automatic" || v === "cat_mechanical" || v === "mechanical") {
+    return "automatic";
+  }
   if (v === "cat_digital") return "digital";
   if (v === "cat_analog") return "analog";
   if (v === "cat_ultra_thin" || v === "ultra-thin") return "";

@@ -2,8 +2,33 @@ import "server-only";
 
 import { prisma } from "@/lib/prisma";
 import { STOREFRONT_WATCH_CATEGORIES } from "@/lib/storefront-watch-categories";
+import { legacyPlacementFromCategory } from "@/lib/product-category-shared";
 
 let productCategorySchemaReady: Promise<void> | null = null;
+
+/** Legacy ProductCategory.slug values that map to a fixed storefront collection. */
+const LEGACY_SLUGS_BY_CANONICAL: Record<string, readonly string[]> = {
+  "ana-digi": ["ana-digi", "quartz", "digitemp", "digi-temp"],
+  digital: ["digital"],
+  analog: ["analog"],
+  automatic: ["automatic", "mechanical"],
+};
+
+/** Legacy / display names that imply a fixed collection. */
+const LEGACY_NAMES_BY_CANONICAL: Record<string, readonly string[]> = {
+  "ana-digi": ["ana-digi", "quartz", "digi-temp", "digitemp"],
+  digital: ["digital"],
+  analog: ["analog"],
+  automatic: ["automatic", "mechanical"],
+};
+
+/** Former canonical / CMS ids that must remapping onto `cat_{slug}`. */
+const LEGACY_IDS_BY_CANONICAL: Record<string, readonly string[]> = {
+  "ana-digi": ["cat_quartz"],
+  digital: [],
+  analog: [],
+  automatic: ["cat_mechanical"],
+};
 
 async function tableExists(name: string): Promise<boolean> {
   const rows = (await prisma.$queryRawUnsafe(
@@ -40,61 +65,176 @@ async function seedDefaultCategoriesIfEmpty(): Promise<void> {
   });
 }
 
-/** Rename legacy Quartz slug → public ANA-DIGI series slug. */
-async function migrateAnaDigiCategorySlug(): Promise<void> {
+/** Rename legacy Quartz / Mechanical rows toward public ANA-DIGI / Automatic labels. */
+async function migrateLegacyCategoryLabels(): Promise<void> {
   await prisma.$executeRawUnsafe(`
     UPDATE "ProductCategory"
     SET "slug" = 'ana-digi', "name" = 'ANA-DIGI'
-    WHERE "id" = 'cat_quartz' OR lower("slug") = 'quartz'
+    WHERE "id" IN ('cat_quartz', 'cat_ana-digi') OR lower("slug") = 'quartz'
   `);
-}
-
-/** Fixed four storefront collections; Automatic public slug is `automatic` (was `mechanical`). */
-async function ensureFixedWatchCategories(): Promise<void> {
   await prisma.$executeRawUnsafe(`
     UPDATE "ProductCategory"
     SET "slug" = 'automatic', "name" = 'Automatic'
-    WHERE "id" = 'cat_mechanical' OR lower("slug") = 'mechanical'
+    WHERE "id" IN ('cat_mechanical', 'cat_automatic') OR lower("slug") = 'mechanical'
   `);
+}
+
+/**
+ * Ensure each fixed collection has exactly one ProductCategory row at its
+ * canonical id (`cat_ana-digi`, `cat_digital`, `cat_analog`, `cat_automatic`).
+ * Remap CatalogProduct rows off any duplicate / legacy ids, then delete those rows.
+ *
+ * CatalogProduct.categoryId has FK → ProductCategory(id) ON UPDATE CASCADE /
+ * ON DELETE SET NULL, so the canonical row must exist before remapping products.
+ */
+async function ensureFixedWatchCategories(): Promise<void> {
+  const allRows = await prisma.productCategory.findMany({
+    select: { id: true, name: true, slug: true, imageUrl: true },
+  });
 
   for (const c of STOREFRONT_WATCH_CATEGORIES) {
-    const existing = await prisma.productCategory.findUnique({
-      where: { id: c.id },
-      select: { id: true },
+    const slugAliases = new Set(
+      (LEGACY_SLUGS_BY_CANONICAL[c.slug] ?? [c.slug]).map((s) => s.toLowerCase()),
+    );
+    const nameAliases = new Set(
+      (LEGACY_NAMES_BY_CANONICAL[c.slug] ?? [c.name]).map((s) =>
+        s.toLowerCase(),
+      ),
+    );
+    const legacyIds = new Set(LEGACY_IDS_BY_CANONICAL[c.slug] ?? []);
+
+    const duplicates = allRows.filter((row) => {
+      if (row.id === c.id) return false;
+      if (legacyIds.has(row.id)) return true;
+      const slug = row.slug.trim().toLowerCase();
+      const name = row.name.trim().toLowerCase();
+      return slugAliases.has(slug) || nameAliases.has(name);
     });
-    if (existing) {
+
+    const placement = legacyPlacementFromCategory({
+      name: c.name,
+      slug: c.slug,
+    });
+    const placementFields = {
+      categoryLabel: c.name,
+      storefrontCategory: placement.storefrontCategory,
+      storefrontSubcategory: placement.storefrontSubcategory,
+      storefrontSeries: placement.storefrontSeries,
+    };
+
+    const imageUrl =
+      allRows.find((row) => row.id === c.id)?.imageUrl ??
+      duplicates.find((row) => row.imageUrl)?.imageUrl ??
+      null;
+
+    let canonicalExists = allRows.some((row) => row.id === c.id);
+
+    if (!canonicalExists && duplicates.length > 0) {
+      // Prefer renaming a legacy row's primary key (CASCADE updates product FKs).
+      const renameFrom =
+        duplicates.find((row) => legacyIds.has(row.id)) ?? duplicates[0]!;
+      await prisma.$executeRawUnsafe(
+        `UPDATE "ProductCategory" SET "id" = ? WHERE "id" = ?`,
+        c.id,
+        renameFrom.id,
+      );
+      canonicalExists = true;
+      // Remaining duplicates still need remapping + delete.
+      const renamedAway = renameFrom.id;
+      for (let i = duplicates.length - 1; i >= 0; i -= 1) {
+        if (duplicates[i]!.id === renamedAway) duplicates.splice(i, 1);
+      }
+    }
+
+    if (!canonicalExists) {
+      await prisma.productCategory.create({
+        data: {
+          id: c.id,
+          name: c.name,
+          slug: c.slug,
+          sortOrder: c.sortOrder,
+          imageUrl,
+        },
+      });
+      canonicalExists = true;
+    } else {
+      // Slug may still be held by a duplicate until we delete it — free first if needed.
+      const slugHolder = await prisma.productCategory.findUnique({
+        where: { slug: c.slug },
+        select: { id: true },
+      });
+      if (slugHolder && slugHolder.id !== c.id) {
+        await prisma.$executeRawUnsafe(
+          `UPDATE "ProductCategory" SET "slug" = ? WHERE "id" = ?`,
+          `${c.slug}__legacy_${slugHolder.id.slice(-6)}`,
+          slugHolder.id,
+        );
+        if (!duplicates.some((row) => row.id === slugHolder.id)) {
+          duplicates.push({
+            id: slugHolder.id,
+            name: c.name,
+            slug: c.slug,
+            imageUrl: null,
+          });
+        }
+      }
       await prisma.productCategory.update({
         where: { id: c.id },
         data: {
           name: c.name,
           slug: c.slug,
           sortOrder: c.sortOrder,
+          ...(imageUrl != null ? { imageUrl } : {}),
         },
       });
-      continue;
     }
-    const bySlug = await prisma.productCategory.findUnique({
-      where: { slug: c.slug },
-      select: { id: true },
-    });
-    if (bySlug) {
-      await prisma.productCategory.update({
-        where: { id: bySlug.id },
+
+    const duplicateIds = [
+      ...new Set([
+        ...duplicates.map((row) => row.id),
+        ...[...legacyIds].filter((id) => id !== c.id),
+      ]),
+    ];
+
+    if (duplicateIds.length > 0) {
+      await prisma.catalogProduct.updateMany({
+        where: { categoryId: { in: duplicateIds } },
         data: {
-          name: c.name,
-          sortOrder: c.sortOrder,
+          categoryId: c.id,
+          ...placementFields,
         },
       });
-      continue;
+      await prisma.productCategory.deleteMany({
+        where: { id: { in: duplicateIds } },
+      });
     }
-    await prisma.productCategory.create({
-      data: {
-        id: c.id,
-        name: c.name,
-        slug: c.slug,
-        sortOrder: c.sortOrder,
-      },
+
+    await prisma.catalogProduct.updateMany({
+      where: { categoryId: c.id },
+      data: placementFields,
     });
+
+    for (const label of nameAliases) {
+      await prisma.$executeRawUnsafe(
+        `
+        UPDATE "CatalogProduct"
+        SET "categoryId" = ?,
+            "categoryLabel" = ?,
+            "storefrontCategory" = ?,
+            "storefrontSubcategory" = ?,
+            "storefrontSeries" = ?
+        WHERE lower(trim(coalesce("categoryLabel", ''))) = ?
+          AND coalesce("categoryId", '') != ?
+        `,
+        c.id,
+        c.name,
+        placement.storefrontCategory,
+        placement.storefrontSubcategory,
+        placement.storefrontSeries,
+        label,
+        c.id,
+      );
+    }
   }
 }
 
@@ -109,21 +249,53 @@ async function backfillProductCategoryIds(): Promise<void> {
   `);
   await prisma.$executeRawUnsafe(`
     UPDATE "CatalogProduct"
-    SET "categoryId" = 'cat_quartz',
+    SET "categoryId" = 'cat_ana-digi',
         "categoryLabel" = 'ANA-DIGI',
+        "storefrontCategory" = 'quartz',
         "storefrontSubcategory" = NULL,
         "storefrontSeries" = NULL
-    WHERE "categoryId" IS NULL
-      AND lower(coalesce("storefrontCategory", '')) = 'quartz'
+    WHERE "categoryId" = 'cat_quartz'
+       OR (
+         "categoryId" IS NULL
+         AND (
+           lower(coalesce("storefrontCategory", '')) = 'quartz'
+           OR lower(trim(coalesce("categoryLabel", ''))) IN ('ana-digi', 'quartz')
+         )
+       )
   `);
   await prisma.$executeRawUnsafe(`
     UPDATE "CatalogProduct"
-    SET "categoryId" = 'cat_mechanical',
+    SET "categoryId" = 'cat_automatic',
         "categoryLabel" = 'Automatic',
+        "storefrontCategory" = 'mechanical',
+        "storefrontSubcategory" = NULL,
+        "storefrontSeries" = NULL
+    WHERE "categoryId" = 'cat_mechanical'
+       OR (
+         "categoryId" IS NULL
+         AND (
+           lower(coalesce("storefrontCategory", '')) = 'mechanical'
+           OR lower(trim(coalesce("categoryLabel", ''))) IN ('automatic', 'mechanical')
+         )
+       )
+  `);
+  await prisma.$executeRawUnsafe(`
+    UPDATE "CatalogProduct"
+    SET "categoryId" = 'cat_digital',
+        "categoryLabel" = 'Digital',
         "storefrontSubcategory" = NULL,
         "storefrontSeries" = NULL
     WHERE "categoryId" IS NULL
-      AND lower(coalesce("storefrontCategory", '')) = 'mechanical'
+      AND lower(trim(coalesce("categoryLabel", ''))) = 'digital'
+  `);
+  await prisma.$executeRawUnsafe(`
+    UPDATE "CatalogProduct"
+    SET "categoryId" = 'cat_analog',
+        "categoryLabel" = 'Analog',
+        "storefrontSubcategory" = NULL,
+        "storefrontSeries" = NULL
+    WHERE "categoryId" IS NULL
+      AND lower(trim(coalesce("categoryLabel", ''))) = 'analog'
   `);
 }
 
@@ -152,7 +324,7 @@ export async function ensureProductCategorySchema(): Promise<void> {
 
       await addCatalogProductColumnIfMissing("categoryId", "TEXT");
       await seedDefaultCategoriesIfEmpty();
-      await migrateAnaDigiCategorySlug();
+      await migrateLegacyCategoryLabels();
       await ensureFixedWatchCategories();
       await backfillProductCategoryIds();
     })().catch((error) => {

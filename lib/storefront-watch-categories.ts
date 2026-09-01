@@ -29,10 +29,14 @@ export type StorefrontWatchCategoryDef = {
   messageKey: Exclude<WatchCollectionMessageKey, "all">;
 };
 
+/**
+ * Canonical DB ids match `cat_{slug}` (ANA-DIGI → `cat_ana-digi`).
+ * Legacy ids `cat_quartz` / `cat_mechanical` are remapped on ensure.
+ */
 export const STOREFRONT_WATCH_CATEGORIES: readonly StorefrontWatchCategoryDef[] =
   [
     {
-      id: "cat_quartz",
+      id: "cat_ana-digi",
       slug: "ana-digi",
       path: "/ana-digi-watches",
       name: "ANA-DIGI",
@@ -56,7 +60,7 @@ export const STOREFRONT_WATCH_CATEGORIES: readonly StorefrontWatchCategoryDef[] 
       messageKey: "analog",
     },
     {
-      id: "cat_mechanical",
+      id: "cat_automatic",
       slug: "automatic",
       path: "/automatic-watches",
       name: "Automatic",
@@ -64,6 +68,24 @@ export const STOREFRONT_WATCH_CATEGORIES: readonly StorefrontWatchCategoryDef[] 
       messageKey: "automatic",
     },
   ];
+
+/** Former DB ids kept for filters / redirects until every product is remapped. */
+export const LEGACY_WATCH_CATEGORY_IDS: Readonly<
+  Record<string, StorefrontWatchCategorySlug>
+> = {
+  cat_quartz: "ana-digi",
+  cat_mechanical: "automatic",
+};
+
+export function watchCategorySlugFromCategoryId(
+  categoryId: string | null | undefined,
+): StorefrontWatchCategorySlug | undefined {
+  const id = categoryId?.trim();
+  if (!id) return undefined;
+  const fixed = STOREFRONT_WATCH_CATEGORIES.find((c) => c.id === id);
+  if (fixed) return fixed.slug;
+  return LEGACY_WATCH_CATEGORY_IDS[id];
+}
 
 const BY_SLUG = new Map(
   STOREFRONT_WATCH_CATEGORIES.map((c) => [c.slug, c] as const),

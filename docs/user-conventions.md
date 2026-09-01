@@ -140,19 +140,21 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-08-27 | **商店分类 SEO 静态页**：去掉后台 Series CRUD；固定 ANA-DIGI / Digital / Analog / Automatic。公开 URL：`/watches`、`/ana-digi-watches`、`/digital-watches`、`/analog-watches`、`/automatic-watches`（各自 title/description/canonical/H1/简介/底部 SEO）。旧 `/product` 与 `?series=` 301 到对应路径。商品表单只选这四类。 |
 | 2026-08-27 | **分类页全语种**：`WatchCollections` 写入 13 语 `messages/{locale}.json`；源 `scripts/watch-collections-i18n.json`，应用 `node scripts/apply-watch-collections-i18n.mjs`。 |
 | 2026-08-31 | **PDP URL**：`/product/{category}/{model}`（ANA-DIGI→`ana-digi`；其余 digital/analog/automatic）；Slug 填型号；旧 `/product/{slug}` 与 `/product/digi-temp/…` 308 到规范路径。 |
+| 2026-09-01 | **分类 categoryId 规范化**：`cat_ana-digi` / `cat_digital` / `cat_analog` / `cat_automatic`；旧 `cat_quartz`→`cat_ana-digi`、`cat_mechanical`→`cat_automatic`；后台选 Digital 即归入 `/digital-watches`。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 
 **商店固定分类与 SEO 落地页（2026-08-27）**
 
 - **固定四类（不可在后台增删）：** ANA-DIGI · Digital · Analog · Automatic  
+- **规范 categoryId：** `cat_ana-digi` · `cat_digital` · `cat_analog` · `cat_automatic`（旧 `cat_quartz` / `cat_mechanical` 自动迁到新 id）  
 - **公开路径：** `/watches`（全部）· `/ana-digi-watches` · `/digital-watches` · `/analog-watches` · `/automatic-watches`  
 - **每页独立：** title、meta description、canonical、H1、subtitle、顶部简介、底部 SEO（ANA-DIGI 另有 FAQ）  
 - **文案源码：** `lib/storefront-watch-categories.ts`（结构）+ `messages/{locale}.json` 的 `WatchCollections`（13 语）；源批 `scripts/watch-collections-i18n.json`，应用 `node scripts/apply-watch-collections-i18n.mjs`  
-- **旧链：** `/product`、`/product?series=…`、legacy `/series/…` → 301 到上面对应路径  
+- **旧链：** `/product`、`/product?series=…`、`?category=cat_quartz|cat_mechanical|…`、legacy `/series/…` → 301 到上面对应路径  
 - **PDP URL：** `/product/{category}/{model}`，其中 category 路径段为 `ana-digi`（ANA-DIGI）/ `digital` / `analog` / `automatic`，model 为后台 Slug（如 `2301`）。例：`/product/ana-digi/2301`  
 - **旧 PDP：** `/product/{slug}`、误用的 `/product/digi-temp/{model}`（及改短 slug 前的复合 slug）→ **308** 到规范 `/product/{category}/{model}`  
-- **后台：** 无 Series 管理页；Products 表单只选上述四类；Slug 只填型号  
+- **后台：** 无 Series 管理页；Products 表单只选上述四类；选 Digital 即写入 `cat_digital` 并出现在 `/digital-watches`；Slug 只填型号  
 
 **SEO 品牌主线（2026-07-25 更新）**
 
