@@ -31,13 +31,16 @@ export function ProductStyleVariants({
 
   if (options.length === 0) return null;
 
+  const selectedOpt = options[selected];
+  const previewBroken = selectedOpt ? Boolean(imageErrorId[selectedOpt.id]) : true;
+
   return (
     <div className="mt-8 w-full min-w-0">
       <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
         {t("style")}
       </div>
       <p className="mt-1 text-sm font-medium text-ink/90">
-        {options[selected]?.label}
+        {selectedOpt?.label}
       </p>
       <div className="mt-4 grid w-full min-w-0 grid-cols-4 gap-2 sm:grid-cols-6">
         {options.map((opt, i) => {
@@ -79,6 +82,39 @@ export function ProductStyleVariants({
           );
         })}
       </div>
+
+      {/*
+        Mobile/tablet only: selected-variant preview under the thumb grid
+        (above Add to bag) so buyers see the style without scrolling to gallery.
+        Desktop keeps the side-by-side gallery, so this stays lg:hidden.
+      */}
+      {selectedOpt && (
+        <div
+          className="relative mx-auto mt-5 aspect-square w-full max-w-xs overflow-hidden rounded-2xl bg-paper lg:hidden"
+          aria-live="polite"
+        >
+          {previewBroken ? (
+            <div className="absolute inset-0 flex items-center justify-center px-4 text-center text-sm font-medium text-muted">
+              {selectedOpt.label}
+            </div>
+          ) : (
+            <StorefrontImage
+              key={selectedOpt.id}
+              src={selectedOpt.image}
+              alt={t("variantAria", {
+                label: selectedOpt.label,
+                product: productName,
+              })}
+              fill
+              className="object-cover object-center"
+              sizes="320px"
+              onError={() =>
+                setImageErrorId((m) => ({ ...m, [selectedOpt.id]: true }))
+              }
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }
