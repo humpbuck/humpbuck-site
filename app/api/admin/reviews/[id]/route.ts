@@ -3,7 +3,7 @@ import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import { markProductReviewInboxHandled } from "@/lib/admin-inbox";
 import { getProductBySlug } from "@/lib/catalog-server";
 import { prisma } from "@/lib/prisma";
-import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
+import { revalidateProductStorefrontPaths } from "@/lib/revalidate-catalog";
 import { revalidateProductReviews } from "@/lib/revalidate-product-reviews";
 import { isProductReviewStatus } from "@/lib/review-status";
 
@@ -48,7 +48,7 @@ export async function PATCH(
     }
     revalidateProductReviews(review.productSlug);
     if (await getProductBySlug(review.productSlug)) {
-      revalidateStorefrontPath(`/product/${encodeURIComponent(review.productSlug)}`);
+      revalidateProductStorefrontPaths(review.productSlug);
     }
     return NextResponse.json({ ok: true, status });
   }
@@ -96,7 +96,7 @@ export async function DELETE(
   await markProductReviewInboxHandled(id);
   if (review && (await getProductBySlug(review.productSlug))) {
     revalidateProductReviews(review.productSlug);
-    revalidateStorefrontPath(`/product/${encodeURIComponent(review.productSlug)}`);
+    revalidateProductStorefrontPaths(review.productSlug);
   }
 
   return NextResponse.json({ ok: true });

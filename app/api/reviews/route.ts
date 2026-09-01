@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateProductStorefrontPaths } from "@/lib/revalidate-catalog";
 import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
 import { auth } from "@/auth";
 import { notifyAdminInboxProductReview } from "@/lib/admin-inbox";
@@ -128,7 +129,7 @@ export async function POST(req: Request) {
       body: text,
       buyerEmail: session.user.email,
     });
-    revalidateStorefrontPath(`/product/${encodeURIComponent(productSlug)}`);
+    revalidateProductStorefrontPaths(productSlug);
     revalidateStorefrontPath(`/account/orders/${orderId}`);
     return NextResponse.json({ id: review.id, status: review.status });
   } catch {

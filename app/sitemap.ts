@@ -3,6 +3,7 @@ import { readCatalogBuildSlugs } from "@/lib/catalog-build-slugs";
 import { readBlogBuildSlugs } from "@/lib/blog-build-slugs";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { listPublishedBlogPosts } from "@/lib/blog-posts";
+import { productHref } from "@/lib/product-path";
 import { routing } from "@/i18n/routing";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
@@ -44,20 +45,22 @@ function localizedSitemapEntries(
   }));
 }
 
-/** Same slug resolution as PDP `generateStaticParams` — D1 first, build JSON when cf-build has no binding. */
-async function resolveProductSlugs(): Promise<string[]> {
-  const slugSet = new Set<string>();
+/** Same path resolution as PDP `generateStaticParams` — D1 first, build JSON when cf-build has no binding. */
+async function resolveProductPaths(): Promise<string[]> {
+  const paths = new Set<string>();
   try {
     for (const product of await getMergedCatalogProducts()) {
-      if (product.slug.trim()) slugSet.add(product.slug.trim());
+      if (!product.slug.trim()) continue;
+      paths.add(productHref(product));
     }
   } catch (err) {
     console.error("[sitemap] catalog load failed.", err);
   }
   for (const slug of readCatalogBuildSlugs()) {
-    slugSet.add(slug);
+    // Build fallback without categoryId → ana-digi (matches generateStaticParams).
+    paths.add(productHref({ slug }));
   }
-  return [...slugSet];
+  return [...paths];
 }
 
 /** Same slug resolution as blog `generateStaticParams`. */
@@ -90,9 +93,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
-  const productSlugs = await resolveProductSlugs();
-  const productEntries: MetadataRoute.Sitemap = productSlugs.flatMap((slug) =>
-    localizedSitemapEntries(`/product/${encodeURIComponent(slug)}`, {
+  const productPaths = await resolveProductPaths();
+  const productEntries: MetadataRoute.Sitemap = productPaths.flatMap((path) =>
+    localizedSitemapEntries(path, {
       lastModified,
       changeFrequency: "weekly",
       priority: 0.8,

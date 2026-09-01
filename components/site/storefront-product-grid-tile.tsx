@@ -9,6 +9,7 @@ import { ProductCardVariantSwatches } from "@/components/site/product-card-varia
 import { ProductFiveStarRating } from "@/components/site/product-five-star-rating";
 import { DisplayPrice } from "@/components/site/DisplayPrice";
 import { type Product } from "@/lib/catalog";
+import { productHref } from "@/lib/product-path";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
 import {
   canQuickAddProduct,
@@ -71,7 +72,7 @@ export function StorefrontProductGridTile({
   return (
     <article className="flex flex-col">
       <Link
-        href={`/product/${product.slug}`}
+        href={productHref(product)}
         className="group relative aspect-square overflow-hidden rounded-xl border border-line/80 bg-white/50 shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-lg"
       >
         <ProductCardHoverImages
@@ -85,7 +86,7 @@ export function StorefrontProductGridTile({
       </Link>
 
       <Link
-        href={`/product/${product.slug}`}
+        href={productHref(product)}
         className="mt-3 line-clamp-2 text-left font-serif text-sm leading-snug text-ink transition hover:text-ink/80 sm:text-[15px]"
       >
         {product.name}

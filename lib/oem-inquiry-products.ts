@@ -47,6 +47,7 @@ export function buildOemInquiryProductOptions(
     image: p.image,
     specs: p.specs,
     oemOdmPrice: p.oemOdmPrice,
+    ...(p.categoryId ? { categoryId: p.categoryId } : {}),
   }));
 
   for (const seed of OEM_ODM_FEATURED_MODEL_SEEDS) {

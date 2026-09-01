@@ -10,6 +10,7 @@ import {
 } from "@/lib/r2";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getShopCardImages } from "@/lib/r2-card-image";
+import { productHref as catalogProductHref } from "@/lib/product-path";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
 import { getSiteHomeContent } from "@/lib/site-home-content-queries";
 
@@ -41,7 +42,9 @@ export async function HomeMovementCategories() {
       )
     : { cover: null };
   const productCutout = content.spotlightProductImageUrl.trim();
-  const productHref = product ? `/product/${product.slug}` : "/product?movement=mechanical";
+  const productHref = product
+    ? catalogProductHref(product)
+    : "/automatic-watches";
   const productImage =
     productCutout ||
     cover ||

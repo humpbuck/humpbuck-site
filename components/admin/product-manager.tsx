@@ -12,6 +12,7 @@ import {
   type AdminCategoryOption,
 } from "@/components/admin/storefront-placement-fields";
 import { inferSeriesSlugFromProductSlug } from "@/lib/catalog";
+import { productPathCategoryFromCategoryId } from "@/lib/product-path";
 import { DetailBlockListEditor } from "@/components/admin/detail-block-list-editor";
 import {
   detailBlocksToImageUrls,
@@ -802,8 +803,18 @@ export function ProductManager({
                   onChange={(v) => updateCurrent((p) => ({ ...p, slug: v }))}
                 />
                 <p className="mt-1 text-[11px] leading-relaxed text-muted">
-                  URL id for /product/your-slug. Lowercase letters, numbers, and hyphens only.
-                  Saving a new slug updates inventory and reviews; old order links keep the previous slug.
+                  Model id for{" "}
+                  <span className="font-mono text-ink/80">
+                    /product/
+                    {productPathCategoryFromCategoryId(current.categoryId) ??
+                      "…"}
+                    /{current.slug.trim() || "your-model"}
+                  </span>
+                  . Enter the model only (e.g.{" "}
+                  <span className="font-mono">2301</span>) — category comes from
+                  the Category field (ANA-DIGI → ana-digi). Lowercase letters,
+                  numbers, and hyphens only. Saving a new slug updates inventory
+                  and reviews; old URLs 308 to the new path when possible.
                 </p>
               </div>
               <LabeledInput

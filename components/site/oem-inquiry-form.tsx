@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
+import { productHref } from "@/lib/product-path";
 
 export type OemInquiryProductOption = {
   slug: string;
@@ -14,6 +15,7 @@ export type OemInquiryProductOption = {
   image: string;
   specs: { label: string; value: string }[];
   oemOdmPrice?: number;
+  categoryId?: string;
 };
 
 type CustomizationKey = "dial" | "caseBack" | "buckle" | "crown";
@@ -412,7 +414,12 @@ export function OemInquiryForm({
                 </div>
               </dl>
               <Link
-                href={`/product/${selected.slug}`}
+                href={productHref({
+                  slug: selected.slug,
+                  ...(selected.categoryId
+                    ? { categoryId: selected.categoryId }
+                    : {}),
+                })}
                 className="mt-2 inline-block text-xs font-semibold text-digital-dim underline-offset-2 hover:underline"
               >
                 {t("inquiryViewProduct")}

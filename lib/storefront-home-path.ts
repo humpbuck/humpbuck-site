@@ -20,7 +20,7 @@ function stripLocalePrefix(pathname: string): string {
   );
 }
 
-/** Catalog collections + PDP (`/product/[slug]`). */
+/** Catalog collections + PDP (`/product/[category]/[slug]` and legacy `/product/[slug]`). */
 export function isStorefrontProductPathname(pathname: string): boolean {
   const bare = stripLocalePrefix(pathname);
   if (bare === "/product" || bare.startsWith("/product/")) return true;

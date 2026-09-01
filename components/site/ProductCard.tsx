@@ -8,6 +8,7 @@ import { ProductCardHoverImages } from "@/components/site/product-card-hover-ima
 import { ProductCardVariantSwatches } from "@/components/site/product-card-variant-swatches";
 import { DisplayPrice } from "@/components/site/DisplayPrice";
 import { type Product } from "@/lib/catalog";
+import { productHref } from "@/lib/product-path";
 import { CART_ADDED_EVENT } from "@/lib/cart-events";
 import {
   canQuickAddProduct,
@@ -80,7 +81,7 @@ export function ProductCard({
       className="flex flex-col overflow-hidden rounded-2xl border border-line bg-white/60 shadow-card transition hover:-translate-y-0.5 hover:shadow-lg"
     >
       <Link
-        href={`/product/${product.slug}`}
+        href={productHref(product)}
         className="group relative aspect-square overflow-hidden bg-paper"
       >
         <div className="absolute left-3 top-3 z-10 rounded-full bg-ink px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-paper">
@@ -98,7 +99,7 @@ export function ProductCard({
       </Link>
       <div className="flex flex-1 flex-col p-4">
         <Link
-          href={`/product/${product.slug}`}
+          href={productHref(product)}
           className="font-serif text-base leading-snug text-ink transition hover:text-ink/80"
         >
           {product.name}

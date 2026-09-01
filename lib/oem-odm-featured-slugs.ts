@@ -46,12 +46,14 @@ export type OemOdmFeaturedModel = {
   slug: string;
   name: string;
   image: string;
+  categoryId?: string;
 };
 
 type CatalogLike = {
   slug: string;
   name: string;
   image: string;
+  categoryId?: string;
 };
 
 function findCatalogMatch(
@@ -77,6 +79,7 @@ export function resolveOemOdmFeaturedModels(
       slug: fromDb?.slug ?? seed.slug,
       name: fromDb?.name?.trim() || seed.name,
       image: fromDb?.image?.trim() || seed.image,
+      ...(fromDb?.categoryId ? { categoryId: fromDb.categoryId } : {}),
     };
   });
 }

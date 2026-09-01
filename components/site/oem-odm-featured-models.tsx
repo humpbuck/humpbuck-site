@@ -1,6 +1,7 @@
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { Link } from "@/i18n/navigation";
 import type { OemOdmFeaturedModel } from "@/lib/oem-odm-featured-slugs";
+import { productHref } from "@/lib/product-path";
 import { getTranslations } from "next-intl/server";
 
 export async function OemOdmFeaturedModels({
@@ -30,7 +31,10 @@ export async function OemOdmFeaturedModels({
         {models.map((model) => (
           <li key={model.slug}>
             <Link
-              href={`/product/${model.slug}`}
+              href={productHref({
+                slug: model.slug,
+                ...(model.categoryId ? { categoryId: model.categoryId } : {}),
+              })}
               className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-(--shadow-card) transition hover:border-luxe/40"
             >
               <div className="relative aspect-square bg-paper/50">

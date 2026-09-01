@@ -3,6 +3,7 @@ import {
   reviewAuthorShortLabel,
   type ProductReviewWithUser,
 } from "@/lib/product-reviews-queries";
+import { productHref } from "@/lib/product-path";
 import { routing } from "@/i18n/routing";
 import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 
@@ -11,10 +12,10 @@ export type ProductReviewStats = {
   ratingValue: number;
 };
 
-function productPageUrl(locale: string, slug: string): string {
+function productPageUrl(locale: string, product: Product): string {
   const base = getSiteUrl();
   const pathPrefix = locale === routing.defaultLocale ? "" : `/${locale}`;
-  return `${base}${pathPrefix}/product/${encodeURIComponent(slug)}`;
+  return `${base}${pathPrefix}${productHref(product)}`;
 }
 
 function productImages(product: Product): string[] {
@@ -43,7 +44,7 @@ export function buildProductJsonLd(params: {
 }): Record<string, unknown> {
   const { locale, slug, product, stats, reviews } = params;
   const siteUrl = getSiteUrl();
-  const pageUrl = productPageUrl(locale, slug);
+  const pageUrl = productPageUrl(locale, product);
   const images = productImages(product);
   const description =
     product.shortDescription.trim() || product.description.trim() || product.name.trim();

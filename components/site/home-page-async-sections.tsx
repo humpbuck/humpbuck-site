@@ -10,6 +10,7 @@ import { R2 } from "@/lib/r2";
 import { mapToStorefrontCardProducts } from "@/lib/storefront-card-product";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
 import { getProductFiveStarReviewCounts } from "@/lib/product-reviews-queries";
+import { productHref as catalogProductHref } from "@/lib/product-path";
 
 async function fiveStarCountsForSlugs(slugs: string[]) {
   if (slugs.length === 0) return {};
@@ -104,7 +105,7 @@ export async function HomeDigitempSpotlightAsyncSection({ locale }: { locale: st
             productHref={
               (heroFeatured ?? heroFallback).slug.startsWith("digitemp")
                 ? "/ana-digi-watches"
-                : `/product/${(heroFeatured ?? heroFallback).slug}`
+                : catalogProductHref(heroFeatured ?? heroFallback)
             }
             productName={(heroFeatured ?? heroFallback).name}
             baseImage={R2.home.digitemp2301SpotlightWebp}

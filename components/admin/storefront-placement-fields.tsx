@@ -23,8 +23,10 @@ export function StorefrontPlacementFields({
           Category
         </p>
         <p className="mt-1 text-[11px] leading-relaxed text-muted">
-          Assign this product to ANA-DIGI, Digital, Analog, or Automatic. Collection
-          pages are fixed on the storefront.
+          Assign this product to ANA-DIGI, Digital, Analog, or Automatic.
+          Collection pages are fixed on the storefront. PDP URL uses{" "}
+          <span className="font-mono">/product/{"{category}"}/{"{model}"}</span>{" "}
+          (ANA-DIGI → ana-digi).
         </p>
       </div>
       <label className="block">

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
+import { revalidateProductStorefrontPaths } from "@/lib/revalidate-catalog";
 import { revalidateProductReviews } from "@/lib/revalidate-product-reviews";
 import { auth } from "@/auth";
 import {
@@ -82,9 +82,7 @@ export async function POST(req: Request) {
         imageUrlsJson: JSON.stringify(imageUrls),
       },
     });
-    revalidateStorefrontPath(
-      `/product/${encodeURIComponent(review.productSlug)}`,
-    );
+    revalidateProductStorefrontPaths(review.productSlug);
     revalidateProductReviews(review.productSlug);
     return NextResponse.json({ id: row.id });
   } catch {

@@ -36,7 +36,7 @@
 - 桶内文件命名约定仍适用于「自动发现」兜底；在配置了 R2 S3 API 凭据时，用 **ListObjects** 列出（凭据同评论上传，见 `.env.example`）。  
 - 部署 **Vercel** 时需在项目环境变量中配置 `DATABASE_URL`、R2 相关变量及（若与默认不同）`NEXT_PUBLIC_R2_PUBLIC_BASE`；公网 R2 若用自有域名，需在 `next.config.ts` 的 `images.remotePatterns` 中允许该 `hostname`，否则 `next/image` 可能不显示。  
 - **前台图片**：凡展示 R2 公网 URL 的模块，应使用 `components/site/storefront-image.tsx` 的 **`StorefrontImage`**（不要用裸 `next/image` + 手写 `unoptimized`）。它会自动对 `isR2PublicObjectUrl` 为真的地址直连 R2，避免部分手机经 `/_next/image` 代理烂图。头像仍用 `ReviewerAvatar` / `HeaderUserAvatar` 等既有逻辑。  
-- 目录里的 **`slug` 与商品 URL 一致**（如 `digitemp-2301`），与 R2 控制台文件夹名一致即可。
+- 目录里的 **`slug` 为型号**（如 `2301`），公开 PDP 为 `/product/{category}/{slug}`（ANA-DIGI→`ana-digi`）；R2 文件夹名可与 slug 或旧复合名一致。
 
 ## 3. 评论与头像
 
@@ -139,6 +139,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-25 | **废除 R2 1 年缓存策略**：删除代码/文档中的 `max-age=31536000` / `immutable` 写入与推荐；统一 `R2_STOREFRONT_CACHE_CONTROL`；商品视频 URL 去掉 `?v=` / `VIDEO_REV`。 |
 | 2026-08-27 | **商店分类 SEO 静态页**：去掉后台 Series CRUD；固定 ANA-DIGI / Digital / Analog / Automatic。公开 URL：`/watches`、`/ana-digi-watches`、`/digital-watches`、`/analog-watches`、`/automatic-watches`（各自 title/description/canonical/H1/简介/底部 SEO）。旧 `/product` 与 `?series=` 301 到对应路径。商品表单只选这四类。 |
 | 2026-08-27 | **分类页全语种**：`WatchCollections` 写入 13 语 `messages/{locale}.json`；源 `scripts/watch-collections-i18n.json`，应用 `node scripts/apply-watch-collections-i18n.mjs`。 |
+| 2026-08-31 | **PDP URL**：`/product/{category}/{model}`（ANA-DIGI→`ana-digi`；其余 digital/analog/automatic）；Slug 填型号；旧 `/product/{slug}` 与 `/product/digi-temp/…` 308 到规范路径。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 
@@ -148,8 +149,10 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 - **公开路径：** `/watches`（全部）· `/ana-digi-watches` · `/digital-watches` · `/analog-watches` · `/automatic-watches`  
 - **每页独立：** title、meta description、canonical、H1、subtitle、顶部简介、底部 SEO（ANA-DIGI 另有 FAQ）  
 - **文案源码：** `lib/storefront-watch-categories.ts`（结构）+ `messages/{locale}.json` 的 `WatchCollections`（13 语）；源批 `scripts/watch-collections-i18n.json`，应用 `node scripts/apply-watch-collections-i18n.mjs`  
-- **旧链：** `/product`、`/product?series=…`、legacy `/series/…` → 301 到上面对应路径；PDP 仍为 `/product/{slug}`  
-- **后台：** 无 Series 管理页；Products 表单只选上述四类  
+- **旧链：** `/product`、`/product?series=…`、legacy `/series/…` → 301 到上面对应路径  
+- **PDP URL：** `/product/{category}/{model}`，其中 category 路径段为 `ana-digi`（ANA-DIGI）/ `digital` / `analog` / `automatic`，model 为后台 Slug（如 `2301`）。例：`/product/ana-digi/2301`  
+- **旧 PDP：** `/product/{slug}`、误用的 `/product/digi-temp/{model}`（及改短 slug 前的复合 slug）→ **308** 到规范 `/product/{category}/{model}`  
+- **后台：** 无 Series 管理页；Products 表单只选上述四类；Slug 只填型号  
 
 **SEO 品牌主线（2026-07-25 更新）**
 
