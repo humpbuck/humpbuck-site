@@ -1,14 +1,17 @@
 "use client";
 
 import { Play } from "lucide-react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { youtubeEmbedUrl } from "@/lib/blog-video";
 
-function showcaseShellClass(isLandscape: boolean): string {
-  return isLandscape
-    ? "w-full"
-    : "w-full max-w-[min(100%,18rem)] sm:max-w-[min(100%,20rem)] lg:max-w-[min(100%,22rem)]";
+function showcaseShellClass(mode: "unknown" | "landscape" | "portrait"): string {
+  // Portrait only: keep a phone-sized frame. Landscape / unknown use the full column
+  // so resolution can adapt without sitting in a tiny square.
+  if (mode === "portrait") {
+    return "w-full max-w-[min(100%,18rem)] sm:max-w-[min(100%,20rem)] lg:max-w-[min(100%,22rem)]";
+  }
+  return "w-full";
 }
 
 /**
@@ -16,8 +19,9 @@ function showcaseShellClass(isLandscape: boolean): string {
  * R2/direct video uses `<video src=…>` (not nested `<source type>`), so browsers
  * can load Range/metadata reliably once the shopper starts playback.
  *
- * Native `controls` + `preload="metadata"` on first paint can make iOS Safari
- * scroll the PDP down to this block on entry — keep controls off until play.
+ * Frame size follows the file’s real width×height (adaptive aspect ratio).
+ * Metadata is probed off-DOM so we keep `preload="none"` + no early `controls`
+ * on the visible player (avoids iOS Safari scrolling the PDP to this block).
  */
 export function ProductPromoVideo({
   productName,
@@ -36,11 +40,42 @@ export function ProductPromoVideo({
   const [loadFailed, setLoadFailed] = useState(false);
   const [showControls, setShowControls] = useState(false);
   const ytEmbed = useMemo(() => youtubeEmbedUrl(src), [src]);
-  const isLandscape = ytEmbed
-    ? true
-    : aspectRatio != null && aspectRatio >= 1;
+  const layoutMode: "unknown" | "landscape" | "portrait" = ytEmbed
+    ? "landscape"
+    : aspectRatio == null
+      ? "unknown"
+      : aspectRatio >= 1
+        ? "landscape"
+        : "portrait";
   const showcaseLabel = t("productShowcase");
   const aria = t("productShowcaseVideoAria", { product: productName });
+
+  useEffect(() => {
+    if (ytEmbed || !src.trim()) return;
+
+    let cancelled = false;
+    const probe = document.createElement("video");
+    probe.preload = "metadata";
+    probe.muted = true;
+    probe.playsInline = true;
+
+    const applyRatio = () => {
+      if (cancelled) return;
+      if (probe.videoWidth > 0 && probe.videoHeight > 0) {
+        setAspectRatio(probe.videoWidth / probe.videoHeight);
+      }
+    };
+
+    probe.addEventListener("loadedmetadata", applyRatio);
+    probe.src = src;
+
+    return () => {
+      cancelled = true;
+      probe.removeEventListener("loadedmetadata", applyRatio);
+      probe.removeAttribute("src");
+      probe.load();
+    };
+  }, [src, ytEmbed]);
 
   const onLoadedMetadata = useCallback((event: React.SyntheticEvent<HTMLVideoElement>) => {
     const video = event.currentTarget;
@@ -81,7 +116,10 @@ export function ProductPromoVideo({
     <div className="w-full [overflow-anchor:none]">
       <div
         className="relative w-full overflow-hidden rounded-2xl border border-line bg-[#0a0a0a] shadow-sm"
-        style={{ aspectRatio: aspectRatio ?? 1 }}
+        style={{
+          // Until metadata arrives, use a neutral full-width frame; then match the file.
+          aspectRatio: aspectRatio ?? 16 / 9,
+        }}
       >
         {src.trim() ? (
           <>
@@ -122,7 +160,7 @@ export function ProductPromoVideo({
     </div>
   );
 
-  const shellClass = showcaseShellClass(isLandscape);
+  const shellClass = showcaseShellClass(layoutMode);
 
   if (embedded) {
     return (
@@ -130,7 +168,9 @@ export function ProductPromoVideo({
         <h2 className="shrink-0 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-muted sm:text-[11px]">
           {showcaseLabel}
         </h2>
-        <div className={`flex w-full flex-col ${isLandscape ? "" : "items-center"}`}>
+        <div
+          className={`flex w-full flex-col ${layoutMode === "portrait" ? "items-center" : ""}`}
+        >
           <div className={shellClass}>{videoBox}</div>
         </div>
       </section>
