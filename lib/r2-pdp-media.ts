@@ -120,6 +120,26 @@ async function discoverVideosByHead(
   return null;
 }
 
+/** Video folder only — avoids listing gallery/detail/variants when stills are admin-complete. */
+async function getPdpR2VideosImpl(spec: R2GallerySpec): Promise<string[] | null> {
+  const listed = await listVideoFolderUrls(spec);
+  if (listed.length > 0) return listed;
+  return discoverVideosByHead(spec);
+}
+
+export async function getPdpR2Videos(spec: R2GallerySpec): Promise<string[] | null> {
+  const run = unstable_cache(
+    async () => getPdpR2VideosImpl(spec),
+    [
+      "pdp-r2-videos",
+      spec.slugFolder,
+      spec.filePrefix,
+    ],
+    { revalidate: 300 },
+  );
+  return run();
+}
+
 /**
  * Resolves gallery / detail / variant stills and showcase video URLs from R2.
  * When R2 **API** credentials are set, uses `ListObjects` (true bucket sync, any count, gaps in numbering allowed).
@@ -200,11 +220,10 @@ export async function resolveStorefrontProductMedia(
       : detailBlocksAdmin.some((block) => !block.image.trim());
   const needsR2Variants =
     catalogVariants.length > 0 && catalogVariants.some((v) => !v.image?.trim());
-  const needsR2Video = adminVideos.length === 0;
-  const r2 =
-    spec && (needsR2Gallery || needsR2Detail || needsR2Variants || needsR2Video)
-      ? await getPdpR2Media(spec)
-      : null;
+  // Only list still folders when admin media is incomplete — empty promo video
+  // alone must not trigger gallery/detail/variants ListObjects.
+  const needsR2Stills = needsR2Gallery || needsR2Detail || needsR2Variants;
+  const r2 = spec && needsR2Stills ? await getPdpR2Media(spec) : null;
 
   const gallery =
     galleryAdmin.length > 0
@@ -249,8 +268,14 @@ export async function resolveStorefrontProductMedia(
   let promoVideos: { src: string; poster?: string }[] | null = null;
   if (adminVideos.length > 0) {
     promoVideos = adminVideos.map((src) => ({ src, poster }));
-  } else if (r2?.videos?.length) {
-    promoVideos = r2.videos.map((src) => ({ src, poster }));
+  } else {
+    let videoUrls = r2?.videos ?? null;
+    if ((!videoUrls || videoUrls.length === 0) && spec) {
+      videoUrls = await getPdpR2Videos(spec);
+    }
+    if (videoUrls?.length) {
+      promoVideos = videoUrls.map((src) => ({ src, poster }));
+    }
   }
 
   return { gallery, detail, detailBlocks, variantOptions, promoVideos };

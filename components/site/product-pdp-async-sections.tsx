@@ -24,8 +24,6 @@ import { ProductPdpGallerySyncProvider } from "@/components/site/product-pdp-gal
 import { resolvePdpCloserLookBlocks, resolveStorefrontProductMedia } from "@/lib/r2-pdp-media";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
 import { mapToStorefrontCardProducts } from "@/lib/storefront-card-product";
-import { resolveHomeFaqItems } from "@/lib/site-home-content";
-import { getSiteHomeContent } from "@/lib/site-home-content-queries";
 
 const PDP_POLICY_LINK_CLASS =
   "block text-[12px] text-muted underline-offset-4 hover:underline";
@@ -38,38 +36,35 @@ export async function ProductPdpMainAsyncSection({
   slug: string;
 }) {
   setRequestLocale(locale);
-  const [t, tHome, messages, productRaw, homeContent] = await Promise.all([
+  // Skip getSiteHomeContent: it calls connection() and forces the PDP dynamic.
+  // Policy FAQ on PDP uses Home message fallbacks only.
+  const [t, tHome, messages, productRaw] = await Promise.all([
     getTranslations("Product"),
     getTranslations("Home"),
     getMessages({ locale }),
     getMergedCatalogProductBySlug(slug),
-    getSiteHomeContent(),
   ]);
   if (!productRaw) notFound();
   const product = applyStorefrontProductLocale(productRaw, locale, messages);
 
-  const faqItems = resolveHomeFaqItems(
-    homeContent,
-    [
-      {
-        question: tHome("certaintyCurrencyTitle"),
-        answer: tHome("certaintyCurrencyBody"),
-      },
-      {
-        question: tHome("certaintyShippingTitle"),
-        answer: tHome("certaintyShippingBody"),
-      },
-      {
-        question: tHome("certaintyPaymentsTitle"),
-        answer: tHome("certaintyPaymentsBody"),
-      },
-      {
-        question: tHome("certaintyOrderTitle"),
-        answer: tHome("certaintyOrderBody"),
-      },
-    ],
-    locale,
-  );
+  const faqItems = [
+    {
+      question: tHome("certaintyCurrencyTitle"),
+      answer: tHome("certaintyCurrencyBody"),
+    },
+    {
+      question: tHome("certaintyShippingTitle"),
+      answer: tHome("certaintyShippingBody"),
+    },
+    {
+      question: tHome("certaintyPaymentsTitle"),
+      answer: tHome("certaintyPaymentsBody"),
+    },
+    {
+      question: tHome("certaintyOrderTitle"),
+      answer: tHome("certaintyOrderBody"),
+    },
+  ].filter((item) => item.question.trim() && item.answer.trim());
 
   const series = product.seriesSlug.trim()
     ? resolveSeriesInfo(product.seriesSlug, { heroImage: product.image })

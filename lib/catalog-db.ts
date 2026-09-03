@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import type { Product } from "@/lib/catalog";
 import { normalizeSeriesSlug } from "@/lib/catalog";
@@ -176,19 +178,40 @@ async function fetchMergedCatalogProductBySlug(slug: string): Promise<Product | 
   return undefined;
 }
 
+const CATALOG_REVALIDATE_SECONDS = 60;
+
+const getCachedMergedCatalogProducts = unstable_cache(
+  loadMergedCatalogProductsUncached,
+  ["merged-catalog-products"],
+  {
+    tags: ["catalog"],
+    revalidate: CATALOG_REVALIDATE_SECONDS,
+  },
+);
+
 /**
  * Frontend catalog source: admin-managed `CatalogProduct` + inventory.
- * Always loaded from D1 (no cache) so admin edits appear on PDP without redeploy.
+ * Short-lived cache (60s) + `revalidateTag("catalog")` on admin product/inventory saves.
+ * React `cache` dedupes within a single request (PDP page + sections).
  */
-export async function getMergedCatalogProducts(): Promise<Product[]> {
-  return loadMergedCatalogProductsUncached();
-}
+export const getMergedCatalogProducts = cache(async (): Promise<Product[]> => {
+  return getCachedMergedCatalogProducts();
+});
 
-export async function getMergedCatalogProductBySlug(
-  slug: string,
-): Promise<Product | undefined> {
-  return fetchMergedCatalogProductBySlug(slug);
-}
+export const getMergedCatalogProductBySlug = cache(
+  async (slug: string): Promise<Product | undefined> => {
+    const trimmed = slug.trim();
+    if (!trimmed) return undefined;
+    return unstable_cache(
+      () => fetchMergedCatalogProductBySlug(trimmed),
+      ["merged-catalog-product", trimmed],
+      {
+        tags: ["catalog", `catalog-product-${trimmed}`],
+        revalidate: CATALOG_REVALIDATE_SECONDS,
+      },
+    )();
+  },
+);
 
 /** Load catalog products by id, preserving the requested order. */
 export async function getMergedCatalogProductsByIds(

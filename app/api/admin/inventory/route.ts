@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
+import { revalidateCatalogStorefront } from "@/lib/revalidate-catalog";
 
 /** GET — list all inventory records. */
 export async function GET() {
@@ -49,6 +50,7 @@ export async function POST(req: Request) {
     update: { quantity, lowStockThreshold },
   });
 
+  revalidateCatalogStorefront({ slug: productSlug });
   return NextResponse.json(record);
 }
 
@@ -90,6 +92,13 @@ export async function PATCH(req: Request) {
       });
     }),
   );
+
+  const slugs = new Set(
+    body.updates.map((u) => String(u.productSlug).trim()).filter(Boolean),
+  );
+  for (const slug of slugs) {
+    revalidateCatalogStorefront({ slug });
+  }
 
   return NextResponse.json({ ok: true, count: results.length });
 }

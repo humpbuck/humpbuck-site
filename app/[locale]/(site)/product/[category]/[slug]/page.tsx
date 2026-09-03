@@ -112,14 +112,15 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProductPage({
-  params,
+async function ProductPdpResolvedBody({
+  locale,
+  categoryParam,
+  slugParam,
 }: {
-  params: Promise<{ locale: string; category: string; slug: string }>;
+  locale: string;
+  categoryParam: string;
+  slugParam: string;
 }) {
-  const { locale, category: categoryParam, slug: slugParam } = await params;
-  setRequestLocale(locale);
-
   const productRaw = await resolveProductForPdpSlug(slugParam);
   if (!productRaw) notFound();
 
@@ -170,5 +171,38 @@ export default async function ProductPage({
         <ProductPdpRelatedAsyncSection locale={locale} slug={slug} />
       </Suspense>
     </div>
+  );
+}
+
+function ProductPdpPageFallback() {
+  return (
+    <div>
+      <div className="mx-auto min-w-0 max-w-7xl py-10 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:pl-[max(1.5rem,env(safe-area-inset-left))] sm:pr-[max(1.5rem,env(safe-area-inset-right))] lg:py-14">
+        <div className="h-4 w-28 animate-pulse rounded bg-ink/[0.08]" aria-hidden />
+        <ProductPdpMainFallback />
+        <ProductPdpReviewsFallback />
+      </div>
+      <ProductPdpRelatedFallback />
+    </div>
+  );
+}
+
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<{ locale: string; category: string; slug: string }>;
+}) {
+  const { locale, category: categoryParam, slug: slugParam } = await params;
+  setRequestLocale(locale);
+
+  // Return shell immediately; catalog resolve + redirect stay inside Suspense.
+  return (
+    <Suspense fallback={<ProductPdpPageFallback />}>
+      <ProductPdpResolvedBody
+        locale={locale}
+        categoryParam={categoryParam}
+        slugParam={slugParam}
+      />
+    </Suspense>
   );
 }
