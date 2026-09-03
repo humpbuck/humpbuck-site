@@ -32,6 +32,8 @@ type CatalogProductRow = {
   homeSpotlight: boolean;
   homeRecommended: boolean;
   homeRecommendedSort: number;
+  homeFeatured: boolean;
+  homeFeaturedSort: number;
   updatedAt?: Date;
 };
 
@@ -131,6 +133,10 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
     homeRecommended: Boolean(row.homeRecommended),
     homeRecommendedSort: Number.isFinite(row.homeRecommendedSort)
       ? row.homeRecommendedSort
+      : 0,
+    homeFeatured: Boolean(row.homeFeatured),
+    homeFeaturedSort: Number.isFinite(row.homeFeaturedSort)
+      ? row.homeFeaturedSort
       : 0,
     updatedAt: row.updatedAt instanceof Date ? row.updatedAt : undefined,
   };

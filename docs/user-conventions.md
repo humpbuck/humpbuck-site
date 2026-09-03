@@ -117,7 +117,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-25 | **首页机械表 spotlight 横幅下线**（不再渲染 `HomeMovementCategories` / AUTOMATIC 9220 大图区块）。 |
 | 2026-07-25 | **首页区块顺序**：1 Hero → 2 Moments → 3 DIGI-TEMP spotlight → Recommended → Featured Ready Stock 网格 → FAQ → Founder → Contact → Newsletter。 |
 | 2026-07-25 | **分类重命名/顺序**：导航与页脚 `ALL PRODUCTS` / `ANA-DIGI`（原 Quartz）/ `ULTRA-THIN` / `AUTOMATIC`（原 Mechanical）；URL 仍用 `movement=quartz|mechanical` 与 `profile=ultra-thin`。 |
-| 2026-07-25 | **首页 Recommended**：后台 Products 左侧多选指定（最多 12，可排序）；有勾选则按后台顺序展示，未勾选时回退 Automatic 优先逻辑。 |
+| 2026-09-02 | 商家后台去掉 **VIEW SITE**；**PRODUCTS** 悬停展开 **Home product arrange**。Recommended / Featured 在该页拖拽排序（最多各 12），即时写入 D1 并同步首页；Products 左侧旧 Recommended 选择器移除。Featured 新增 `homeFeatured` / `homeFeaturedSort`（空则仍回退目录前 12）。 |
 | 2026-07-25 | **多语言/SEO 对齐 ANA-DIGI**：各 `messages/{locale}.json` 同步站点 title/description、Hero、Moments、分类名、Shop/About/Blog meta；源文件 `scripts/ana-digi-rebrand-i18n.json`，应用 `node scripts/apply-ana-digi-rebrand-i18n.mjs`。英文公告条 fallback 改为 ANA-DIGI 文案（CMS 有自定义 slides 时仍以后台为准）。 |
 | 2026-07-25 | **About 图**：首页与 `/about` 固定用 `Home/humpbuck-homepage-grow.webp`；商家后台 **ABOUT** 编辑页删除。 |
 | 2026-07-25 | 商家后台 Products 去掉 **Homepage spotlight (below hero)** 选择器（对应首页模块已下线）。 |

@@ -221,13 +221,17 @@ model CatalogProduct {
   storefrontSubcategory String?
   storefrontSeries      String?
   homeSpotlight         Boolean  @default(false)
-  /** Homepage “Recommended watches” carousel — set in admin Products. */
+  /** Homepage “Recommended watches” carousel — set in Home product arrange. */
   homeRecommended       Boolean  @default(false)
   homeRecommendedSort   Int      @default(0)
+  /** Homepage Featured Ready Stock grid — set in Home product arrange. */
+  homeFeatured          Boolean  @default(false)
+  homeFeaturedSort      Int      @default(0)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
   @@index([homeRecommended, homeRecommendedSort])
+  @@index([homeFeatured, homeFeaturedSort])
   @@index([categoryId])
 }
 

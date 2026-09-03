@@ -55,9 +55,12 @@ export interface Product {
   storefrontSeries?: string;
   /** Legacy flag; homepage below-hero spotlight module removed. */
   homeSpotlight?: boolean;
-  /** Homepage Recommended carousel — set in admin. */
+  /** Homepage Recommended carousel — set in Home product arrange. */
   homeRecommended?: boolean;
   homeRecommendedSort?: number;
+  /** Homepage Featured Ready Stock grid — set in Home product arrange. */
+  homeFeatured?: boolean;
+  homeFeaturedSort?: number;
   /** Catalog row `updatedAt` — used to bust R2 image URLs after same-path overwrites. */
   updatedAt?: Date;
 }

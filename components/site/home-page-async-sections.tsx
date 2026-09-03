@@ -140,9 +140,19 @@ export async function HomeFeaturedAsyncSection({ locale }: { locale: string }) {
   setRequestLocale(locale);
   const all = await getMergedCatalogProducts();
   const messages = await getMessages({ locale });
-  const featured = all
-    .slice(0, 12)
-    .map((p) => applyStorefrontProductLocale(p, locale, messages));
+  const adminPicked = all
+    .filter((p) => p.homeFeatured)
+    .sort(
+      (a, b) =>
+        (a.homeFeaturedSort ?? 0) - (b.homeFeaturedSort ?? 0) ||
+        a.slug.localeCompare(b.slug),
+    );
+  /** Admin picks win; if none, fall back to first 12 catalog products (legacy). */
+  const featuredRaw =
+    adminPicked.length > 0 ? adminPicked.slice(0, 12) : all.slice(0, 12);
+  const featured = featuredRaw.map((p) =>
+    applyStorefrontProductLocale(p, locale, messages),
+  );
   const { covers: featuredCardImages, hovers: featuredCardHoverImages } =
     await mapProductsToShopCardImages(featured);
   const featuredCards = mapToStorefrontCardProducts(featured, featuredCardImages);

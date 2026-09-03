@@ -100,7 +100,7 @@ export function AdminProductSidebar({
   }
 
   return (
-    <div className="max-h-[min(72vh,720px)] space-y-2 overflow-y-auto pr-1">
+    <div className="space-y-2 pr-1">
       {categories.map((category) => {
         const items = grouped.byCategory.get(category.id) ?? [];
         const expanded = !collapsed.has(category.id);

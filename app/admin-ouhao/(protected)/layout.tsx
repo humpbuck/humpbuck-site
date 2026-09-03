@@ -8,6 +8,7 @@ import {
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
 import { prisma } from "@/lib/prisma";
+import { AdminProductsNavMenu } from "@/components/admin/admin-products-nav-menu";
 
 function LogoutButton() {
   return (
@@ -114,9 +115,7 @@ export default async function AdminProtectedLayout({
             <Link href={adminPath("/orders")} className={NAV_LINK_CLASS}>
               ORDERS
             </Link>
-            <Link href={adminPath("/inventory")} className={NAV_LINK_CLASS}>
-              PRODUCTS
-            </Link>
+            <AdminProductsNavMenu />
             <Link href={adminPath("/coupons")} className={NAV_LINK_CLASS}>
               COUPONS
             </Link>
@@ -137,14 +136,6 @@ export default async function AdminProtectedLayout({
             </Link>
             <Link href={adminPath("/customers")} className={NAV_LINK_CLASS}>
               CUSTOMERS
-            </Link>
-            <Link
-              href="https://www.humpbuck.com/"
-              className={NAV_LINK_CLASS}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              VIEW SITE
             </Link>
           </nav>
           <LogoutButton />

@@ -35,6 +35,14 @@ export async function ensureCatalogProductSchema(): Promise<void> {
         "homeRecommendedSort",
         "INTEGER NOT NULL DEFAULT 0",
       );
+      await addCatalogProductColumnIfMissing(
+        "homeFeatured",
+        "BOOLEAN NOT NULL DEFAULT false",
+      );
+      await addCatalogProductColumnIfMissing(
+        "homeFeaturedSort",
+        "INTEGER NOT NULL DEFAULT 0",
+      );
       await addCatalogProductColumnIfMissing("oemOdmPrice", "REAL");
       await addCatalogProductColumnIfMissing("categoryId", "TEXT");
       await ensureProductCategorySchema();

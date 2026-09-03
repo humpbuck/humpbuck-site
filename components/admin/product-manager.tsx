@@ -6,7 +6,6 @@ import {
   AdminProductSidebar,
   type SidebarListedProduct,
 } from "@/components/admin/admin-product-sidebar";
-import { AdminHomeRecommendedPicker } from "@/components/admin/admin-home-recommended-picker";
 import {
   StorefrontPlacementFields,
   type AdminCategoryOption,
@@ -325,16 +324,6 @@ export function ProductManager({
   const [messageType, setMessageType] = useState<"success" | "error" | "info">("info");
   const [busy, setBusy] = useState(false);
   const [messageTimer, setMessageTimer] = useState<number | null>(null);
-  const [homeRecommendedProductIds, setHomeRecommendedProductIds] = useState<string[]>(() =>
-    [...initialProducts]
-      .filter((p) => p.homeRecommended && p.id)
-      .sort(
-        (a, b) =>
-          (a.homeRecommendedSort ?? 0) - (b.homeRecommendedSort ?? 0) ||
-          a.slug.localeCompare(b.slug),
-      )
-      .map((p) => p.id),
-  );
 
   useEffect(() => {
     return () => {
@@ -359,18 +348,6 @@ export function ProductManager({
       categoryId: product.categoryId,
     }));
   }, [products]);
-
-  const savedProductsForPickers = useMemo(
-    () =>
-      products
-        .filter((product): product is EditableProduct & { id: string } => Boolean(product.id))
-        .map((product) => ({
-          id: product.id,
-          slug: product.slug,
-          name: product.name,
-        })),
-    [products],
-  );
 
   function clearMessageTimer() {
     if (messageTimer != null) {
@@ -671,43 +648,10 @@ export function ProductManager({
           p.id === current.id ? { ...p, inStock: false, status: "archived" } : p,
         ),
       );
-      if (homeRecommendedProductIds.includes(current.id)) {
-        const nextRecommended = homeRecommendedProductIds.filter((id) => id !== current.id);
-        setHomeRecommendedProductIds(nextRecommended);
-        void fetch("/api/admin/products/home-recommended", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productIds: nextRecommended }),
-        });
-      }
       setFlashMessage("Archived.", "success");
       startTransition(() => router.refresh());
     } catch {
       setFlashMessage("Archive failed.", "error");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function saveHomeRecommended(productIds: string[]) {
-    setBusy(true);
-    setFlashMessage("");
-    try {
-      const res = await fetch("/api/admin/products/home-recommended", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productIds }),
-      });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
-      if (!res.ok) {
-        setFlashMessage(data.error || "Failed to update homepage recommended.", "error");
-        return;
-      }
-      setHomeRecommendedProductIds(productIds);
-      setFlashMessage("Homepage recommended updated.", "success");
-      startTransition(() => router.refresh());
-    } catch {
-      setFlashMessage("Failed to update homepage recommended.", "error");
     } finally {
       setBusy(false);
     }
@@ -730,15 +674,6 @@ export function ProductManager({
       }
       setProducts((prev) => prev.filter((_, index) => index !== selectedIndex));
       setSelected(sidebarProducts.find((p) => p.selectionKey !== selected)?.selectionKey ?? null);
-      if (homeRecommendedProductIds.includes(current.id)) {
-        const nextRecommended = homeRecommendedProductIds.filter((id) => id !== current.id);
-        setHomeRecommendedProductIds(nextRecommended);
-        void fetch("/api/admin/products/home-recommended", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productIds: nextRecommended }),
-        });
-      }
       setFlashMessage("Deleted forever.", "success");
       startTransition(() => router.refresh());
     } catch {
@@ -749,14 +684,8 @@ export function ProductManager({
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
-      <aside className="rounded-2xl border border-line bg-white/50 p-4">
-        <AdminHomeRecommendedPicker
-          products={savedProductsForPickers}
-          value={homeRecommendedProductIds}
-          disabled={busy || isPending}
-          onChange={saveHomeRecommended}
-        />
+    <div className="grid items-start gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
+      <aside className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-2xl border border-line bg-white/50 p-4">
         <div className="mb-3 flex items-center justify-between">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
             Products
@@ -781,7 +710,7 @@ export function ProductManager({
         />
       </aside>
 
-      <section className="rounded-2xl border border-line bg-white/50 p-5">
+      <section className="min-w-0 rounded-2xl border border-line bg-white/50 p-5">
         {!current ? (
           <p className="text-sm text-muted">Select or create a product.</p>
         ) : (
@@ -793,7 +722,7 @@ export function ProductManager({
                     ? "border-emerald-200 bg-emerald-50 text-emerald-800"
                     : messageType === "error"
                       ? "border-red-200 bg-red-50 text-red-800"
-                      : "border-line bg-white/70 text-ink/80"
+                      : "border-line bg-white/80 text-ink/80"
                 }`}
               >
                 {message}

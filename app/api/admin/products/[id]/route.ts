@@ -256,7 +256,14 @@ export async function DELETE(
     }
     await prisma.catalogProduct.update({
       where: { id },
-      data: { status: "archived", inStock: false },
+      data: {
+        status: "archived",
+        inStock: false,
+        homeRecommended: false,
+        homeRecommendedSort: 0,
+        homeFeatured: false,
+        homeFeaturedSort: 0,
+      },
     });
     await prisma.productInventory.deleteMany({ where: { productSlug: product.slug } });
     revalidateCatalogStorefront({ slug: product.slug });
