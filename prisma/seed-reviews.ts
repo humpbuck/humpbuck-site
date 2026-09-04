@@ -1,8 +1,9 @@
 /**
- * Synthetic buyer reviews for PDP demos: **5–15** reviews per catalog product
+ * Synthetic buyer reviews for PDP demos: **5–10** reviews per catalog product
  * (deterministic count per slug). Each review is one language in `body` only.
  * PDP always shows that text as-is — switching storefront locale does not translate reviews.
  * Ratings are mostly 5 stars (~82%) with some 4-star reviews.
+ * Dates spread across Jun–Sep of the current seed window (see `lib/review-seed-deterministic.ts`).
  * Deterministic output — safe to re-run on production after `npm run db:migrate`.
  *
  * Safe to re-run: deletes prior seed users with `@reviews.seed.humpbuck` and their reviews.
@@ -42,7 +43,7 @@ if (existsSync(el)) {
 
 const SEED_EMAIL_HOST = "reviews.seed.humpbuck";
 const REVIEWS_MIN_PER_PRODUCT = 5;
-const REVIEWS_MAX_PER_PRODUCT = 15;
+const REVIEWS_MAX_PER_PRODUCT = 10;
 
 type ReviewerProfile = {
   firstName: string;

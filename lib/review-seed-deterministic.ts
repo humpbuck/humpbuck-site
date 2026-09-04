@@ -18,22 +18,28 @@ export function deterministicShuffle<T>(arr: readonly T[], seed: string): T[] {
   return out;
 }
 
-/** Fixed bounds — bump REVIEW_DATE_END when re-seeding so CI/production stay aligned. */
-const REVIEW_DATE_START = new Date("2025-01-01T00:00:00.000Z");
-const REVIEW_DATE_END = new Date("2026-06-30T23:59:59.000Z");
+/** Fixed bounds — bump when re-seeding so CI/production stay aligned. */
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
-function reviewDateDayCount(): number {
-  const start = REVIEW_DATE_START.getTime();
-  const end = REVIEW_DATE_END.getTime();
-  return Math.max(Math.floor((end - start) / MS_PER_DAY) + 1, 1);
-}
+/**
+ * Months to spread seed review dates across (UTC).
+ * September stops at “today” so timestamps stay in the past.
+ */
+const REVIEW_DATE_MONTHS: ReadonlyArray<{ year: number; month: number; lastDay: number }> = [
+  { year: 2026, month: 6, lastDay: 30 },
+  { year: 2026, month: 7, lastDay: 31 },
+  { year: 2026, month: 8, lastDay: 31 },
+  { year: 2026, month: 9, lastDay: 3 },
+];
 
-/** Spread each review across 2025-01 … 2026-06 (day + time-of-day). Uses day index, not ms offset — hash is 32-bit and ms span overflows that. */
+/** Spread each review across Jun–Sep 2026 with roughly even months, then day + time-of-day. */
 export function deterministicReviewDate(productSlug: string, index: number): Date {
-  const dayIndex = hashString(`${productSlug}:date:${index}`) % reviewDateDayCount();
+  const monthMeta =
+    REVIEW_DATE_MONTHS[hashString(`${productSlug}:month:${index}`) % REVIEW_DATE_MONTHS.length]!;
+  const day = 1 + (hashString(`${productSlug}:day:${index}`) % monthMeta.lastDay);
   const timeOfDayMs = hashString(`${productSlug}:time:${index}`) % MS_PER_DAY;
-  return new Date(REVIEW_DATE_START.getTime() + dayIndex * MS_PER_DAY + timeOfDayMs);
+  const iso = `${monthMeta.year}-${String(monthMeta.month).padStart(2, "0")}-${String(day).padStart(2, "0")}T00:00:00.000Z`;
+  return new Date(new Date(iso).getTime() + timeOfDayMs);
 }
 
 export function deterministicReviewerOffset(productSlug: string): number {
