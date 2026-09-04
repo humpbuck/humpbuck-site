@@ -12,7 +12,7 @@ import {
 import {
   HOME_RECOMMENDED_CATEGORY_ORDER,
   homeRecommendedCategoryDefs,
-  homeRecommendedCategorySlugOf,
+  resolveHomeRecommendedCategorySlug,
   type HomeRecommendedCategorySlug,
 } from "@/lib/home-recommended-categories";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
@@ -51,7 +51,7 @@ function groupHomeRecommendedByCategory(
     automatic: [],
   };
   for (const product of products) {
-    const slug = homeRecommendedCategorySlugOf(product.categoryId);
+    const slug = resolveHomeRecommendedCategorySlug(product);
     if (!slug) continue;
     if (buckets[slug].length >= MAX_HOME_RECOMMENDED_PER_CATEGORY) continue;
     buckets[slug].push(product);
@@ -71,7 +71,7 @@ function fallbackHomeRecommendedByCategory(
   };
   for (const slug of HOME_RECOMMENDED_CATEGORY_ORDER) {
     buckets[slug] = all
-      .filter((p) => homeRecommendedCategorySlugOf(p.categoryId) === slug)
+      .filter((p) => resolveHomeRecommendedCategorySlug(p) === slug)
       .slice(0, MAX_HOME_RECOMMENDED_PER_CATEGORY);
   }
   return buckets;

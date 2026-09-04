@@ -9,7 +9,7 @@ import {
 import {
   flattenHomeRecommendedIdsByCategory,
   homeRecommendedCategoryDefs,
-  homeRecommendedCategorySlugOf,
+  resolveHomeRecommendedCategorySlug,
   splitHomeRecommendedIdsByCategory,
   type HomeRecommendedCategorySlug,
 } from "@/lib/home-recommended-categories";
@@ -20,6 +20,7 @@ export type HomeArrangeProduct = {
   name: string;
   image: string;
   categoryId?: string | null;
+  categoryLabel?: string | null;
 };
 
 type SectionKey = "recommended" | "featured";
@@ -280,7 +281,6 @@ export function AdminHomeProductArrange({
     .filter((p): p is HomeArrangeProduct => Boolean(p));
 
   const featuredSelected = new Set(featuredIds);
-  const recommendedSelected = new Set(recommendedIds);
 
   const featuredAvailable = products
     .filter((p) => !featuredSelected.has(p.id))
@@ -404,8 +404,8 @@ export function AdminHomeProductArrange({
           .map((id) => byId.get(id))
           .filter((p): p is HomeArrangeProduct => Boolean(p));
         const available = products
-          .filter((p) => homeRecommendedCategorySlugOf(p.categoryId) === slug)
-          .filter((p) => !recommendedSelected.has(p.id))
+          .filter((p) => resolveHomeRecommendedCategorySlug(p) === slug)
+          .filter((p) => !selectedIds.includes(p.id))
           .sort((a, b) =>
             (a.name.trim() || a.slug).localeCompare(
               b.name.trim() || b.slug,
@@ -418,7 +418,7 @@ export function AdminHomeProductArrange({
           <ArrangeSection
             key={slug}
             title={CATEGORY_SECTION_TITLES[slug]}
-            hint={`Homepage carousel for ${def.name}. Drag to reorder. Up to ${MAX_HOME_RECOMMENDED_PER_CATEGORY} watches in this category. Changes save immediately.`}
+            hint={`Homepage carousel for ${def.name}. Drag to reorder. Up to ${MAX_HOME_RECOMMENDED_PER_CATEGORY} watches in this category (out of stock OK). Changes save immediately.`}
             selected={selected}
             available={available}
             max={MAX_HOME_RECOMMENDED_PER_CATEGORY}
@@ -434,7 +434,22 @@ export function AdminHomeProductArrange({
             onAdd={(id) => {
               if (selectedIds.length >= MAX_HOME_RECOMMENDED_PER_CATEGORY) return;
               if (selectedIds.includes(id)) return;
-              updateCategoryIds(slug, [...selectedIds, id]);
+              // Move here if the product was previously pinned under another category.
+              const next: Record<HomeRecommendedCategorySlug, string[]> = {
+                "ana-digi": [],
+                digital: [],
+                analog: [],
+                automatic: [],
+              };
+              for (const key of Object.keys(
+                recommendedByCategory,
+              ) as HomeRecommendedCategorySlug[]) {
+                next[key] = (recommendedByCategory[key] ?? []).filter(
+                  (x) => x !== id,
+                );
+              }
+              next[slug] = [...selectedIds, id];
+              void persistRecommended(next);
             }}
           />
         );

@@ -6,7 +6,7 @@ import {
   MAX_HOME_RECOMMENDED_PER_CATEGORY,
 } from "@/lib/catalog-home-recommended-limits";
 import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
-import { homeRecommendedCategorySlugOf } from "@/lib/home-recommended-categories";
+import { resolveHomeRecommendedCategorySlug } from "@/lib/home-recommended-categories";
 import { revalidateCatalogStorefront } from "@/lib/revalidate-catalog";
 
 export { MAX_HOME_RECOMMENDED, MAX_HOME_RECOMMENDED_PER_CATEGORY };
@@ -27,7 +27,7 @@ export async function setHomeRecommendedProducts(
   if (uniqueIds.length > 0) {
     const found = await prisma.catalogProduct.findMany({
       where: { id: { in: uniqueIds } },
-      select: { id: true, categoryId: true },
+      select: { id: true, categoryId: true, categoryLabel: true },
     });
     if (found.length !== uniqueIds.length) {
       throw new Error("One or more products were not found.");
@@ -35,7 +35,8 @@ export async function setHomeRecommendedProducts(
 
     const counts: Record<string, number> = {};
     for (const row of found) {
-      const slug = homeRecommendedCategorySlugOf(row.categoryId) ?? "unknown";
+      const slug =
+        resolveHomeRecommendedCategorySlug(row) ?? "unknown";
       counts[slug] = (counts[slug] ?? 0) + 1;
     }
     for (const [slug, count] of Object.entries(counts)) {

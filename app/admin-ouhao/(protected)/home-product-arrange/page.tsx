@@ -23,7 +23,6 @@ function firstGalleryImage(galleryJson: string, fallback: string): string {
 export default async function AdminHomeProductArrangePage() {
   await ensureCatalogProductSchema();
   const products = await prisma.catalogProduct.findMany({
-    where: { status: { not: "archived" } },
     orderBy: [{ slug: "asc" }],
     select: {
       id: true,
@@ -32,6 +31,7 @@ export default async function AdminHomeProductArrangePage() {
       image: true,
       galleryJson: true,
       categoryId: true,
+      categoryLabel: true,
       homeRecommended: true,
       homeRecommendedSort: true,
       homeFeatured: true,
@@ -45,6 +45,7 @@ export default async function AdminHomeProductArrangePage() {
     name: p.name,
     image: firstGalleryImage(p.galleryJson, p.image),
     categoryId: p.categoryId,
+    categoryLabel: p.categoryLabel,
   }));
 
   const initialRecommendedIds = [...products]

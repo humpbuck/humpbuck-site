@@ -1,5 +1,6 @@
 import {
   STOREFRONT_WATCH_CATEGORIES,
+  canonicalCategoryIdForAdminProduct,
   watchCategorySlugFromCategoryId,
   type StorefrontWatchCategoryDef,
   type StorefrontWatchCategorySlug,
@@ -38,6 +39,18 @@ export function homeRecommendedCategorySlugOf(
     : undefined;
 }
 
+/** Same category resolution as Products admin (id + label fallback). */
+export function resolveHomeRecommendedCategorySlug(product: {
+  categoryId?: string | null;
+  categoryLabel?: string | null;
+}): HomeRecommendedCategorySlug | undefined {
+  const canonical = canonicalCategoryIdForAdminProduct({
+    categoryId: product.categoryId,
+    categoryLabel: product.categoryLabel,
+  });
+  return homeRecommendedCategorySlugOf(canonical || null);
+}
+
 /** Flatten per-category id lists into one ordered list (category order × within-section). */
 export function flattenHomeRecommendedIdsByCategory(
   byCategory: Record<HomeRecommendedCategorySlug, string[]>,
@@ -55,9 +68,13 @@ export function flattenHomeRecommendedIdsByCategory(
   return out;
 }
 
-/** Split a flat ordered id list into per-category buckets using each product's categoryId. */
+/** Split a flat ordered id list into per-category buckets using each product's category. */
 export function splitHomeRecommendedIdsByCategory<
-  T extends { id: string; categoryId?: string | null },
+  T extends {
+    id: string;
+    categoryId?: string | null;
+    categoryLabel?: string | null;
+  },
 >(
   orderedIds: string[],
   products: T[],
@@ -72,7 +89,7 @@ export function splitHomeRecommendedIdsByCategory<
   for (const id of orderedIds) {
     const product = byId.get(id);
     if (!product) continue;
-    const slug = homeRecommendedCategorySlugOf(product.categoryId);
+    const slug = resolveHomeRecommendedCategorySlug(product);
     if (!slug) continue;
     buckets[slug].push(id);
   }
