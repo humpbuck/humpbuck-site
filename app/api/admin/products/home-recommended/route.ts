@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAdminToken, verifyAdminSession } from "@/lib/admin-auth";
 import {
   MAX_HOME_RECOMMENDED,
+  MAX_HOME_RECOMMENDED_PER_CATEGORY,
   setHomeRecommendedProducts,
 } from "@/lib/catalog-home-recommended";
 
@@ -32,7 +33,9 @@ export async function PATCH(req: Request) {
 
   if (productIds.length > MAX_HOME_RECOMMENDED) {
     return NextResponse.json(
-      { error: `Select at most ${MAX_HOME_RECOMMENDED} products.` },
+      {
+        error: `Select at most ${MAX_HOME_RECOMMENDED_PER_CATEGORY} products per category (${MAX_HOME_RECOMMENDED} total).`,
+      },
       { status: 400 },
     );
   }

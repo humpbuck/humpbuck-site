@@ -72,7 +72,7 @@ export default async function AdminHomeProductArrangePage() {
       </h1>
       <p className="mt-2 max-w-2xl text-sm text-muted">
         Drag to set the order for homepage ANA-DIGI / Digital / Analog /
-        Automatic carousels (max 12 watches total) and Featured. The live
+        Automatic carousels (up to 12 watches each) and Featured. The live
         homepage follows this order after each save.
       </p>
 

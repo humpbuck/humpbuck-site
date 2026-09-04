@@ -5,7 +5,10 @@ import { HomeRecommendedProducts } from "@/components/site/home-recommended-prod
 import { PreloadHomeFeaturedImages } from "@/components/site/preload-home-featured-images";
 import type { Product } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
-import { MAX_HOME_RECOMMENDED } from "@/lib/catalog-home-recommended-limits";
+import {
+  MAX_HOME_RECOMMENDED,
+  MAX_HOME_RECOMMENDED_PER_CATEGORY,
+} from "@/lib/catalog-home-recommended-limits";
 import {
   HOME_RECOMMENDED_CATEGORY_ORDER,
   homeRecommendedCategoryDefs,
@@ -50,12 +53,13 @@ function groupHomeRecommendedByCategory(
   for (const product of products) {
     const slug = homeRecommendedCategorySlugOf(product.categoryId);
     if (!slug) continue;
+    if (buckets[slug].length >= MAX_HOME_RECOMMENDED_PER_CATEGORY) continue;
     buckets[slug].push(product);
   }
   return buckets;
 }
 
-/** When admin has no picks, fill up to MAX across the four categories. */
+/** When admin has no picks, fill up to per-category max for each carousel. */
 function fallbackHomeRecommendedByCategory(
   all: Product[],
 ): Record<HomeRecommendedCategorySlug, Product[]> {
@@ -65,31 +69,10 @@ function fallbackHomeRecommendedByCategory(
     analog: [],
     automatic: [],
   };
-  let remaining = MAX_HOME_RECOMMENDED;
-  const perCategory = Math.max(
-    1,
-    Math.floor(MAX_HOME_RECOMMENDED / HOME_RECOMMENDED_CATEGORY_ORDER.length),
-  );
   for (const slug of HOME_RECOMMENDED_CATEGORY_ORDER) {
-    if (remaining <= 0) break;
-    const take = Math.min(perCategory, remaining);
-    const picked = all
+    buckets[slug] = all
       .filter((p) => homeRecommendedCategorySlugOf(p.categoryId) === slug)
-      .slice(0, take);
-    buckets[slug] = picked;
-    remaining -= picked.length;
-  }
-  if (remaining > 0) {
-    for (const slug of HOME_RECOMMENDED_CATEGORY_ORDER) {
-      if (remaining <= 0) break;
-      const already = new Set(buckets[slug].map((p) => p.slug));
-      const extra = all
-        .filter((p) => homeRecommendedCategorySlugOf(p.categoryId) === slug)
-        .filter((p) => !already.has(p.slug))
-        .slice(0, remaining);
-      buckets[slug] = [...buckets[slug], ...extra];
-      remaining -= extra.length;
-    }
+      .slice(0, MAX_HOME_RECOMMENDED_PER_CATEGORY);
   }
   return buckets;
 }

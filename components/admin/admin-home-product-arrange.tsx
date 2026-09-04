@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import {
   MAX_HOME_FEATURED,
   MAX_HOME_RECOMMENDED,
+  MAX_HOME_RECOMMENDED_PER_CATEGORY,
 } from "@/lib/catalog-home-recommended-limits";
 import {
   flattenHomeRecommendedIdsByCategory,
@@ -292,13 +293,17 @@ export function AdminHomeProductArrange({
   async function persistRecommended(
     nextByCategory: Record<HomeRecommendedCategorySlug, string[]>,
   ) {
-    const nextIds = flattenHomeRecommendedIdsByCategory(nextByCategory);
-    if (nextIds.length > MAX_HOME_RECOMMENDED) {
-      setMessageType("error");
-      setMessage(`Select at most ${MAX_HOME_RECOMMENDED} homepage watches across all four categories.`);
-      return;
+    for (const slug of Object.keys(nextByCategory) as HomeRecommendedCategorySlug[]) {
+      if ((nextByCategory[slug] ?? []).length > MAX_HOME_RECOMMENDED_PER_CATEGORY) {
+        setMessageType("error");
+        setMessage(
+          `Select at most ${MAX_HOME_RECOMMENDED_PER_CATEGORY} watches per category.`,
+        );
+        return;
+      }
     }
 
+    const nextIds = flattenHomeRecommendedIdsByCategory(nextByCategory);
     const previous = recommendedByCategory;
     setRecommendedByCategory(nextByCategory);
     setBusySection("recommended");
@@ -381,11 +386,15 @@ export function AdminHomeProductArrange({
       ) : null}
 
       <div className="rounded-2xl border border-line bg-paper/40 px-4 py-3 text-sm text-muted">
-        Homepage category carousels:{" "}
+        Each category has{" "}
+        <span className="font-semibold text-ink">
+          {MAX_HOME_RECOMMENDED_PER_CATEGORY}
+        </span>{" "}
+        slots (
         <span className="font-semibold text-ink">
           {recommendedIds.length}/{MAX_HOME_RECOMMENDED}
         </span>{" "}
-        watches total across ANA-DIGI / Digital / Analog / Automatic.
+        selected across ANA-DIGI / Digital / Analog / Automatic).
       </div>
 
       {CATEGORY_DEFS.map((def) => {
@@ -404,21 +413,15 @@ export function AdminHomeProductArrange({
               { sensitivity: "base" },
             ),
           );
-        const remainingSlots = Math.max(
-          0,
-          MAX_HOME_RECOMMENDED - recommendedIds.length,
-        );
-        const sectionMax = selected.length + remainingSlots;
 
         return (
           <ArrangeSection
             key={slug}
             title={CATEGORY_SECTION_TITLES[slug]}
-            hint={`Homepage carousel for ${def.name}. Drag to reorder. Shared cap: ${MAX_HOME_RECOMMENDED} watches across all four categories. Changes save immediately.`}
+            hint={`Homepage carousel for ${def.name}. Drag to reorder. Up to ${MAX_HOME_RECOMMENDED_PER_CATEGORY} watches in this category. Changes save immediately.`}
             selected={selected}
             available={available}
-            max={sectionMax}
-            selectedCountLabel={`${selected.length} in section · ${recommendedIds.length}/${MAX_HOME_RECOMMENDED} total`}
+            max={MAX_HOME_RECOMMENDED_PER_CATEGORY}
             layout="carousel"
             disabled={busySection !== null}
             onReorder={(ids) => updateCategoryIds(slug, ids)}
@@ -429,7 +432,7 @@ export function AdminHomeProductArrange({
               )
             }
             onAdd={(id) => {
-              if (recommendedIds.length >= MAX_HOME_RECOMMENDED) return;
+              if (selectedIds.length >= MAX_HOME_RECOMMENDED_PER_CATEGORY) return;
               if (selectedIds.includes(id)) return;
               updateCategoryIds(slug, [...selectedIds, id]);
             }}
