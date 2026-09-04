@@ -205,7 +205,11 @@
     "certaintyOrderBody": "A fizetés befejezése után megjelenik a sikeres fizetés visszaigazolása, és e-mailt kap rendelésszámmal, termékadatokkal, szállítási címmel és ügyfélszolgálati elérhetőséggel.\n\nRendelését általában 1–2 munkanapon belül feladjuk. Feladás után újabb e-mail érkezik a nyomkövetési számmal és weboldallal, hogy nyugodtan követhesse csomagját.",
     "featuredReadyTitle": "Kiemelt",
     "featuredViewAll": "Összes megtekintése →",
-    "browseFullCatalog": "Teljes katalógus böngészése"
+    "browseFullCatalog": "Teljes katalógus böngészése",
+    "homeSectionAnaDigi": "ANA-DIGI ÓRÁK",
+    "homeSectionDigital": "DIGITÁLIS ÓRÁK",
+    "homeSectionAnalog": "ANALÓG ÓRÁK",
+    "homeSectionAutomatic": "AUTOMATA ÓRÁK"
   },
   "Newsletter": {
     "emailLabel": "E-mail",

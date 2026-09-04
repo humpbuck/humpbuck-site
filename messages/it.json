@@ -205,7 +205,11 @@
     "certaintyOrderBody": "Dopo il pagamento vedrai una conferma di pagamento riuscito e riceverai un'email con numero d'ordine, dettagli prodotto, indirizzo di spedizione e contatti del servizio clienti.\n\nL'ordine viene di solito spedito entro 1–2 giorni lavorativi. Una volta spedito, riceverai un'altra email con numero di tracking e sito di tracciamento, per seguire il pacco con tranquillità.",
     "featuredReadyTitle": "In evidenza",
     "featuredViewAll": "Vedi tutti →",
-    "browseFullCatalog": "Sfoglia il catalogo completo"
+    "browseFullCatalog": "Sfoglia il catalogo completo",
+    "homeSectionAnaDigi": "OROLOGI ANA-DIGI",
+    "homeSectionDigital": "OROLOGI DIGITALI",
+    "homeSectionAnalog": "OROLOGI ANALOGICI",
+    "homeSectionAutomatic": "OROLOGI AUTOMATICI"
   },
   "Newsletter": {
     "emailLabel": "E-mail",

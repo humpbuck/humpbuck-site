@@ -204,7 +204,11 @@
     "couponNoCodeMessage": "Your coupon will appear here once a homepage coupon is configured in admin.",
     "couponTaglineLine1": "Life has no standard answer.",
     "couponTaglineLine2": "Just live it your way.",
-    "couponModalClose": "Close"
+    "couponModalClose": "Close",
+    "homeSectionAnaDigi": "ANA-DIGI WATCHES",
+    "homeSectionDigital": "DIGITAL WATCHES",
+    "homeSectionAnalog": "ANALOG WATCHES",
+    "homeSectionAutomatic": "AUTOMATIC WATCHES"
   },
   "Newsletter": {
     "emailLabel": "Email",

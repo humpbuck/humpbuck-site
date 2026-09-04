@@ -3,8 +3,15 @@ import { HomeDigitempSpotlight } from "@/components/site/home-digitemp-spotlight
 import { HomeFeaturedProductsSection } from "@/components/site/home-featured-products-section";
 import { HomeRecommendedProducts } from "@/components/site/home-recommended-products";
 import { PreloadHomeFeaturedImages } from "@/components/site/preload-home-featured-images";
-import { getProductMovement, type Product } from "@/lib/catalog";
+import type { Product } from "@/lib/catalog";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
+import { MAX_HOME_RECOMMENDED } from "@/lib/catalog-home-recommended-limits";
+import {
+  HOME_RECOMMENDED_CATEGORY_ORDER,
+  homeRecommendedCategoryDefs,
+  homeRecommendedCategorySlugOf,
+  type HomeRecommendedCategorySlug,
+} from "@/lib/home-recommended-categories";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
 import { R2 } from "@/lib/r2";
 import { mapToStorefrontCardProducts } from "@/lib/storefront-card-product";
@@ -18,8 +25,78 @@ async function fiveStarCountsForSlugs(slugs: string[]) {
   return Object.fromEntries(map.entries());
 }
 
+const HOME_SECTION_TITLE_KEYS: Record<
+  HomeRecommendedCategorySlug,
+  | "homeSectionAnaDigi"
+  | "homeSectionDigital"
+  | "homeSectionAnalog"
+  | "homeSectionAutomatic"
+> = {
+  "ana-digi": "homeSectionAnaDigi",
+  digital: "homeSectionDigital",
+  analog: "homeSectionAnalog",
+  automatic: "homeSectionAutomatic",
+};
+
+function groupHomeRecommendedByCategory(
+  products: Product[],
+): Record<HomeRecommendedCategorySlug, Product[]> {
+  const buckets: Record<HomeRecommendedCategorySlug, Product[]> = {
+    "ana-digi": [],
+    digital: [],
+    analog: [],
+    automatic: [],
+  };
+  for (const product of products) {
+    const slug = homeRecommendedCategorySlugOf(product.categoryId);
+    if (!slug) continue;
+    buckets[slug].push(product);
+  }
+  return buckets;
+}
+
+/** When admin has no picks, fill up to MAX across the four categories. */
+function fallbackHomeRecommendedByCategory(
+  all: Product[],
+): Record<HomeRecommendedCategorySlug, Product[]> {
+  const buckets: Record<HomeRecommendedCategorySlug, Product[]> = {
+    "ana-digi": [],
+    digital: [],
+    analog: [],
+    automatic: [],
+  };
+  let remaining = MAX_HOME_RECOMMENDED;
+  const perCategory = Math.max(
+    1,
+    Math.floor(MAX_HOME_RECOMMENDED / HOME_RECOMMENDED_CATEGORY_ORDER.length),
+  );
+  for (const slug of HOME_RECOMMENDED_CATEGORY_ORDER) {
+    if (remaining <= 0) break;
+    const take = Math.min(perCategory, remaining);
+    const picked = all
+      .filter((p) => homeRecommendedCategorySlugOf(p.categoryId) === slug)
+      .slice(0, take);
+    buckets[slug] = picked;
+    remaining -= picked.length;
+  }
+  if (remaining > 0) {
+    for (const slug of HOME_RECOMMENDED_CATEGORY_ORDER) {
+      if (remaining <= 0) break;
+      const already = new Set(buckets[slug].map((p) => p.slug));
+      const extra = all
+        .filter((p) => homeRecommendedCategorySlugOf(p.categoryId) === slug)
+        .filter((p) => !already.has(p.slug))
+        .slice(0, remaining);
+      buckets[slug] = [...buckets[slug], ...extra];
+      remaining -= extra.length;
+    }
+  }
+  return buckets;
+}
+
 export async function HomeRecommendedAsyncSection({ locale }: { locale: string }) {
   setRequestLocale(locale);
+  const t = await getTranslations("Home");
   const all = await getMergedCatalogProducts();
   const messages = await getMessages({ locale });
   const adminPicked = all
@@ -28,46 +105,47 @@ export async function HomeRecommendedAsyncSection({ locale }: { locale: string }
       (a, b) =>
         (a.homeRecommendedSort ?? 0) - (b.homeRecommendedSort ?? 0) ||
         a.slug.localeCompare(b.slug),
+    )
+    .slice(0, MAX_HOME_RECOMMENDED);
+
+  const byCategory =
+    adminPicked.length > 0
+      ? groupHomeRecommendedByCategory(adminPicked)
+      : fallbackHomeRecommendedByCategory(all);
+
+  const categoryDefs = homeRecommendedCategoryDefs();
+  const sections = [];
+
+  for (const def of categoryDefs) {
+    const slug = def.slug as HomeRecommendedCategorySlug;
+    const raw = byCategory[slug] ?? [];
+    if (raw.length === 0) continue;
+    const localized = raw.map((p) =>
+      applyStorefrontProductLocale(p, locale, messages),
     );
-  /** Admin picks win; if none, fall back to Automatic-first fill (legacy). */
-  let recommendedRaw: Product[];
-  if (adminPicked.length > 0) {
-    recommendedRaw = adminPicked.slice(0, 12);
-  } else {
-    const mechanicalAll = all.filter((p) => getProductMovement(p) === "mechanical");
-    recommendedRaw =
-      mechanicalAll.length >= 10
-        ? mechanicalAll.slice(0, 10)
-        : [
-            ...mechanicalAll,
-            ...all.filter((p) => getProductMovement(p) !== "mechanical"),
-          ].slice(0, 10);
+    const { covers, hovers } = await mapProductsToShopCardImages(localized);
+    const cards = mapToStorefrontCardProducts(localized, covers);
+    const fiveStarReviewCounts = await fiveStarCountsForSlugs(
+      cards.map((p) => p.slug),
+    );
+    sections.push({
+      category: def,
+      title: t(HOME_SECTION_TITLE_KEYS[slug]),
+      products: cards,
+      cardImages: covers,
+      cardHoverImages: hovers,
+      fiveStarReviewCounts,
+    });
   }
-  const recommended = recommendedRaw.map((p) =>
-    applyStorefrontProductLocale(p, locale, messages),
-  );
-  const { covers: recommendedCardImages, hovers: recommendedCardHoverImages } =
-    await mapProductsToShopCardImages(recommended);
-  const recommendedCards = mapToStorefrontCardProducts(
-    recommended,
-    recommendedCardImages,
-  );
-  const recommendedImageUrls = recommendedCards.map((p) => p.image);
-  const fiveStarReviewCounts = await fiveStarCountsForSlugs(
-    recommendedCards.map((p) => p.slug),
-  );
+
+  const preloadUrls = sections.flatMap((s) => s.products.map((p) => p.image));
 
   return (
     <>
-      {recommendedCards.length > 0 ? (
-        <PreloadHomeFeaturedImages urls={recommendedImageUrls} />
+      {preloadUrls.length > 0 ? (
+        <PreloadHomeFeaturedImages urls={preloadUrls} />
       ) : null}
-      <HomeRecommendedProducts
-        products={recommendedCards}
-        cardImages={recommendedCardImages}
-        cardHoverImages={recommendedCardHoverImages}
-        fiveStarReviewCounts={fiveStarReviewCounts}
-      />
+      <HomeRecommendedProducts sections={sections} />
     </>
   );
 }

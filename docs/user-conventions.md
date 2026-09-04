@@ -141,6 +141,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-08-27 | **分类页全语种**：`WatchCollections` 写入 13 语 `messages/{locale}.json`；源 `scripts/watch-collections-i18n.json`，应用 `node scripts/apply-watch-collections-i18n.mjs`。 |
 | 2026-08-31 | **PDP URL**：`/product/{category}/{model}`（ANA-DIGI→`ana-digi`；其余 digital/analog/automatic）；Slug 填型号；旧 `/product/{slug}` 与 `/product/digi-temp/…` 308 到规范路径。 |
 | 2026-09-01 | **分类 categoryId 规范化**：`cat_ana-digi` / `cat_digital` / `cat_analog` / `cat_automatic`；旧 `cat_quartz`→`cat_ana-digi`、`cat_mechanical`→`cat_automatic`；后台选 Digital 即归入 `/digital-watches`。 |
+| 2026-09-03 | **首页 Recommended → 四分类轮播**：ANA-DIGI / DIGITAL / ANALOG / AUTOMATIC（空分类不显示）；合计最多 12 款；商家后台 Home product arrange 对应四个分类（仍保留 Featured）；Shop all 链到各分类落地页。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 

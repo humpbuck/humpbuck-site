@@ -205,7 +205,11 @@
     "certaintyOrderBody": "לאחר השלמת התשלום תראו אישור תשלום מוצלח ותקבלו אימייל עם מספר ההזמנה, פרטי המוצר, כתובת המשלוח ופרטי שירות הלקוחות.\n\nההזמנה בדרך כלל נשלחת תוך 1–2 ימי עסקים. לאחר השליחה תקבלו אימייל נוסף עם מספר מעקב וקישור למעקב, כדי שתוכלו לעקוב אחר החבילה בראש שקט.",
     "featuredReadyTitle": "מומלצים",
     "featuredViewAll": "הצג הכל ←",
-    "browseFullCatalog": "עיון בקטלוג המלא"
+    "browseFullCatalog": "עיון בקטלוג המלא",
+    "homeSectionAnaDigi": "שעוני ANA-DIGI",
+    "homeSectionDigital": "שעונים דיגיטליים",
+    "homeSectionAnalog": "שעונים אנלוגיים",
+    "homeSectionAutomatic": "שעונים אוטומטיים"
   },
   "Newsletter": {
     "emailLabel": "אימייל",

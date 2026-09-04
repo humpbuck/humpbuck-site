@@ -205,7 +205,11 @@
     "certaintyOrderBody": "Une fois votre paiement effectué, vous verrez une confirmation de paiement réussi et recevrez un e-mail de confirmation avec votre numéro de commande, les détails du produit, l'adresse de livraison et les coordonnées du service client.\n\nVotre commande est généralement expédiée sous 1 à 2 jours ouvrés. Une fois expédiée, vous recevrez un autre e-mail avec votre numéro de suivi et le site de suivi, pour suivre votre colis en toute sérénité.",
     "featuredReadyTitle": "Sélection",
     "featuredViewAll": "Tout voir →",
-    "browseFullCatalog": "Parcourir le catalogue complet"
+    "browseFullCatalog": "Parcourir le catalogue complet",
+    "homeSectionAnaDigi": "MONTRES ANA-DIGI",
+    "homeSectionDigital": "MONTRES DIGITALES",
+    "homeSectionAnalog": "MONTRES ANALOGIQUES",
+    "homeSectionAutomatic": "MONTRES AUTOMATIQUES"
   },
   "Newsletter": {
     "emailLabel": "E-mail",

@@ -31,6 +31,7 @@ export default async function AdminHomeProductArrangePage() {
       name: true,
       image: true,
       galleryJson: true,
+      categoryId: true,
       homeRecommended: true,
       homeRecommendedSort: true,
       homeFeatured: true,
@@ -43,6 +44,7 @@ export default async function AdminHomeProductArrangePage() {
     slug: p.slug,
     name: p.name,
     image: firstGalleryImage(p.galleryJson, p.image),
+    categoryId: p.categoryId,
   }));
 
   const initialRecommendedIds = [...products]
@@ -69,8 +71,9 @@ export default async function AdminHomeProductArrangePage() {
         Home product arrange
       </h1>
       <p className="mt-2 max-w-2xl text-sm text-muted">
-        Drag to set the order for homepage Recommended watches and Featured.
-        The live homepage follows this order after each save.
+        Drag to set the order for homepage ANA-DIGI / Digital / Analog /
+        Automatic carousels (max 12 watches total) and Featured. The live
+        homepage follows this order after each save.
       </p>
 
       <div className="mt-8">

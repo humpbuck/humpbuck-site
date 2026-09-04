@@ -205,7 +205,11 @@
     "certaintyOrderBody": "결제가 완료되면 결제 성공 확인 화면이 표시되고, 주문 번호·상품 정보·배송지·고객 지원 연락처가 포함된 확인 이메일을 받습니다.\n\n주문은 보통 1–2영업일 이내에 발송됩니다. 발송 후 추적 번호와 추적 사이트 URL이 담긴 이메일을 보내 드려 배송 상태를 안심하고 확인하실 수 있습니다.",
     "featuredReadyTitle": "추천",
     "featuredViewAll": "전체 보기 →",
-    "browseFullCatalog": "전체 카탈로그 보기"
+    "browseFullCatalog": "전체 카탈로그 보기",
+    "homeSectionAnaDigi": "ANA-DIGI 워치",
+    "homeSectionDigital": "디지털 워치",
+    "homeSectionAnalog": "아날로그 워치",
+    "homeSectionAutomatic": "오토매틱 워치"
   },
   "Newsletter": {
     "emailLabel": "이메일",

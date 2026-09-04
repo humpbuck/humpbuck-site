@@ -5,15 +5,32 @@ import {
   MAX_HOME_FEATURED,
   MAX_HOME_RECOMMENDED,
 } from "@/lib/catalog-home-recommended-limits";
+import {
+  flattenHomeRecommendedIdsByCategory,
+  homeRecommendedCategoryDefs,
+  homeRecommendedCategorySlugOf,
+  splitHomeRecommendedIdsByCategory,
+  type HomeRecommendedCategorySlug,
+} from "@/lib/home-recommended-categories";
 
 export type HomeArrangeProduct = {
   id: string;
   slug: string;
   name: string;
   image: string;
+  categoryId?: string | null;
 };
 
 type SectionKey = "recommended" | "featured";
+
+const CATEGORY_DEFS = homeRecommendedCategoryDefs();
+
+const CATEGORY_SECTION_TITLES: Record<HomeRecommendedCategorySlug, string> = {
+  "ana-digi": "ANA-DIGI WATCHES",
+  digital: "DIGITAL WATCHES",
+  analog: "ANALOG WATCHES",
+  automatic: "AUTOMATIC WATCHES",
+};
 
 function coverUrl(product: HomeArrangeProduct): string {
   return product.image.trim();
@@ -45,6 +62,7 @@ function ArrangeSection({
   selected,
   available,
   max,
+  selectedCountLabel,
   layout,
   disabled,
   onReorder,
@@ -56,6 +74,7 @@ function ArrangeSection({
   selected: HomeArrangeProduct[];
   available: HomeArrangeProduct[];
   max: number;
+  selectedCountLabel?: string;
   layout: "carousel" | "grid";
   disabled: boolean;
   onReorder: (nextIds: string[]) => void;
@@ -121,7 +140,7 @@ function ArrangeSection({
           </p>
         </div>
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
-          {selected.length}/{max}
+          {selectedCountLabel ?? `${selected.length}/${max}`}
         </p>
       </div>
 
@@ -242,29 +261,26 @@ export function AdminHomeProductArrange({
     [products],
   );
 
-  const [recommendedIds, setRecommendedIds] = useState(initialRecommendedIds);
+  const [recommendedByCategory, setRecommendedByCategory] = useState(() =>
+    splitHomeRecommendedIdsByCategory(initialRecommendedIds, products),
+  );
   const [featuredIds, setFeaturedIds] = useState(initialFeaturedIds);
   const [busySection, setBusySection] = useState<SectionKey | null>(null);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error">("success");
 
-  const recommended = recommendedIds
-    .map((id) => byId.get(id))
-    .filter((p): p is HomeArrangeProduct => Boolean(p));
+  const recommendedIds = useMemo(
+    () => flattenHomeRecommendedIdsByCategory(recommendedByCategory),
+    [recommendedByCategory],
+  );
+
   const featured = featuredIds
     .map((id) => byId.get(id))
     .filter((p): p is HomeArrangeProduct => Boolean(p));
 
-  const recommendedSelected = new Set(recommendedIds);
   const featuredSelected = new Set(featuredIds);
+  const recommendedSelected = new Set(recommendedIds);
 
-  const recommendedAvailable = products
-    .filter((p) => !recommendedSelected.has(p.id))
-    .sort((a, b) =>
-      (a.name.trim() || a.slug).localeCompare(b.name.trim() || b.slug, undefined, {
-        sensitivity: "base",
-      }),
-    );
   const featuredAvailable = products
     .filter((p) => !featuredSelected.has(p.id))
     .sort((a, b) =>
@@ -273,46 +289,81 @@ export function AdminHomeProductArrange({
       }),
     );
 
-  async function persist(section: SectionKey, nextIds: string[]) {
-    const endpoint =
-      section === "recommended"
-        ? "/api/admin/products/home-recommended"
-        : "/api/admin/products/home-featured";
-    const previous =
-      section === "recommended" ? recommendedIds : featuredIds;
-    if (section === "recommended") setRecommendedIds(nextIds);
-    else setFeaturedIds(nextIds);
+  async function persistRecommended(
+    nextByCategory: Record<HomeRecommendedCategorySlug, string[]>,
+  ) {
+    const nextIds = flattenHomeRecommendedIdsByCategory(nextByCategory);
+    if (nextIds.length > MAX_HOME_RECOMMENDED) {
+      setMessageType("error");
+      setMessage(`Select at most ${MAX_HOME_RECOMMENDED} homepage watches across all four categories.`);
+      return;
+    }
 
-    setBusySection(section);
+    const previous = recommendedByCategory;
+    setRecommendedByCategory(nextByCategory);
+    setBusySection("recommended");
     setMessage("");
     try {
-      const res = await fetch(endpoint, {
+      const res = await fetch("/api/admin/products/home-recommended", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productIds: nextIds }),
       });
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok) {
-        if (section === "recommended") setRecommendedIds(previous);
-        else setFeaturedIds(previous);
+        setRecommendedByCategory(previous);
         setMessageType("error");
         setMessage(data.error || "Save failed.");
         return;
       }
       setMessageType("success");
       setMessage(
-        section === "recommended"
-          ? "Recommended watches order saved. Homepage will match this order."
-          : "Featured order saved. Homepage will match this order.",
+        "Homepage category order saved. Empty categories are hidden on the storefront.",
       );
     } catch {
-      if (section === "recommended") setRecommendedIds(previous);
-      else setFeaturedIds(previous);
+      setRecommendedByCategory(previous);
       setMessageType("error");
       setMessage("Save failed.");
     } finally {
       setBusySection(null);
     }
+  }
+
+  async function persistFeatured(nextIds: string[]) {
+    const previous = featuredIds;
+    setFeaturedIds(nextIds);
+    setBusySection("featured");
+    setMessage("");
+    try {
+      const res = await fetch("/api/admin/products/home-featured", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productIds: nextIds }),
+      });
+      const data = (await res.json()) as { ok?: boolean; error?: string };
+      if (!res.ok) {
+        setFeaturedIds(previous);
+        setMessageType("error");
+        setMessage(data.error || "Save failed.");
+        return;
+      }
+      setMessageType("success");
+      setMessage("Featured order saved. Homepage will match this order.");
+    } catch {
+      setFeaturedIds(previous);
+      setMessageType("error");
+      setMessage("Save failed.");
+    } finally {
+      setBusySection(null);
+    }
+  }
+
+  function updateCategoryIds(
+    category: HomeRecommendedCategorySlug,
+    nextIds: string[],
+  ) {
+    const next = { ...recommendedByCategory, [category]: nextIds };
+    void persistRecommended(next);
   }
 
   return (
@@ -329,27 +380,62 @@ export function AdminHomeProductArrange({
         </p>
       ) : null}
 
-      <ArrangeSection
-        title="Recommended watches"
-        hint="Homepage carousel. Drag cards to set display order. Changes save immediately."
-        selected={recommended}
-        available={recommendedAvailable}
-        max={MAX_HOME_RECOMMENDED}
-        layout="carousel"
-        disabled={busySection !== null}
-        onReorder={(ids) => void persist("recommended", ids)}
-        onRemove={(id) =>
-          void persist(
-            "recommended",
-            recommendedIds.filter((x) => x !== id),
-          )
-        }
-        onAdd={(id) => {
-          if (recommendedIds.length >= MAX_HOME_RECOMMENDED) return;
-          if (recommendedIds.includes(id)) return;
-          void persist("recommended", [...recommendedIds, id]);
-        }}
-      />
+      <div className="rounded-2xl border border-line bg-paper/40 px-4 py-3 text-sm text-muted">
+        Homepage category carousels:{" "}
+        <span className="font-semibold text-ink">
+          {recommendedIds.length}/{MAX_HOME_RECOMMENDED}
+        </span>{" "}
+        watches total across ANA-DIGI / Digital / Analog / Automatic.
+      </div>
+
+      {CATEGORY_DEFS.map((def) => {
+        const slug = def.slug as HomeRecommendedCategorySlug;
+        const selectedIds = recommendedByCategory[slug] ?? [];
+        const selected = selectedIds
+          .map((id) => byId.get(id))
+          .filter((p): p is HomeArrangeProduct => Boolean(p));
+        const available = products
+          .filter((p) => homeRecommendedCategorySlugOf(p.categoryId) === slug)
+          .filter((p) => !recommendedSelected.has(p.id))
+          .sort((a, b) =>
+            (a.name.trim() || a.slug).localeCompare(
+              b.name.trim() || b.slug,
+              undefined,
+              { sensitivity: "base" },
+            ),
+          );
+        const remainingSlots = Math.max(
+          0,
+          MAX_HOME_RECOMMENDED - recommendedIds.length,
+        );
+        const sectionMax = selected.length + remainingSlots;
+
+        return (
+          <ArrangeSection
+            key={slug}
+            title={CATEGORY_SECTION_TITLES[slug]}
+            hint={`Homepage carousel for ${def.name}. Drag to reorder. Shared cap: ${MAX_HOME_RECOMMENDED} watches across all four categories. Changes save immediately.`}
+            selected={selected}
+            available={available}
+            max={sectionMax}
+            selectedCountLabel={`${selected.length} in section · ${recommendedIds.length}/${MAX_HOME_RECOMMENDED} total`}
+            layout="carousel"
+            disabled={busySection !== null}
+            onReorder={(ids) => updateCategoryIds(slug, ids)}
+            onRemove={(id) =>
+              updateCategoryIds(
+                slug,
+                selectedIds.filter((x) => x !== id),
+              )
+            }
+            onAdd={(id) => {
+              if (recommendedIds.length >= MAX_HOME_RECOMMENDED) return;
+              if (selectedIds.includes(id)) return;
+              updateCategoryIds(slug, [...selectedIds, id]);
+            }}
+          />
+        );
+      })}
 
       <ArrangeSection
         title="Featured"
@@ -359,17 +445,14 @@ export function AdminHomeProductArrange({
         max={MAX_HOME_FEATURED}
         layout="grid"
         disabled={busySection !== null}
-        onReorder={(ids) => void persist("featured", ids)}
+        onReorder={(ids) => void persistFeatured(ids)}
         onRemove={(id) =>
-          void persist(
-            "featured",
-            featuredIds.filter((x) => x !== id),
-          )
+          void persistFeatured(featuredIds.filter((x) => x !== id))
         }
         onAdd={(id) => {
           if (featuredIds.length >= MAX_HOME_FEATURED) return;
           if (featuredIds.includes(id)) return;
-          void persist("featured", [...featuredIds, id]);
+          void persistFeatured([...featuredIds, id]);
         }}
       />
     </div>

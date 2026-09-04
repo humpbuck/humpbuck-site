@@ -205,7 +205,11 @@
     "couponModalClose": "閉じる",
     "featuredReadyTitle": "注目",
     "featuredViewAll": "すべて見る →",
-    "browseFullCatalog": "カタログをすべて見る"
+    "browseFullCatalog": "カタログをすべて見る",
+    "homeSectionAnaDigi": "ANA-DIGI ウォッチ",
+    "homeSectionDigital": "デジタルウォッチ",
+    "homeSectionAnalog": "アナログウォッチ",
+    "homeSectionAutomatic": "オートマチックウォッチ"
   },
   "Newsletter": {
     "emailLabel": "メール",

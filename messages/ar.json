@@ -205,7 +205,11 @@
     "certaintyOrderBody": "بعد إتمام الدفع، ستظهر لك رسالة تأكيد ناجحة وستتلقى بريدًا إلكترونيًا يتضمن رقم الطلب وتفاصيل المنتج وعنوان الشحن وبيانات خدمة العملاء.\n\nيُشحن طلبك عادةً خلال 1–2 أيام عمل. بعد الشحن، ستتلقى بريدًا آخر برقم التتبع وموقع التتبع لمتابعة طردك باطمئنان.",
     "featuredReadyTitle": "مميز",
     "featuredViewAll": "عرض الكل ←",
-    "browseFullCatalog": "تصفح الكتالوج الكامل"
+    "browseFullCatalog": "تصفح الكتالوج الكامل",
+    "homeSectionAnaDigi": "ساعات ANA-DIGI",
+    "homeSectionDigital": "ساعات رقمية",
+    "homeSectionAnalog": "ساعات تناظرية",
+    "homeSectionAutomatic": "ساعات أوتوماتيكية"
   },
   "Newsletter": {
     "emailLabel": "البريد الإلكتروني:",

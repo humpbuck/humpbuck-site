@@ -205,7 +205,11 @@
     "certaintyOrderBody": "Na uw betaling ziet u een bevestiging van geslaagde betaling en ontvangt u een bevestigingsmail met bestelnummer, productdetails, verzendadres en contactgegevens van de klantenservice.\n\nUw bestelling wordt meestal binnen 1–2 werkdagen verzonden. Na verzending ontvangt u nog een e-mail met trackingnummer en trackingwebsite, zodat u uw pakket rustig kunt volgen.",
     "featuredReadyTitle": "Uitgelicht",
     "featuredViewAll": "Alles bekijken →",
-    "browseFullCatalog": "Volledige catalogus bekijken"
+    "browseFullCatalog": "Volledige catalogus bekijken",
+    "homeSectionAnaDigi": "ANA-DIGI HORLOGES",
+    "homeSectionDigital": "DIGITALE HORLOGES",
+    "homeSectionAnalog": "ANALOGE HORLOGES",
+    "homeSectionAutomatic": "AUTOMATISCHE HORLOGES"
   },
   "Newsletter": {
     "emailLabel": "E-mail",

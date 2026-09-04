@@ -205,7 +205,11 @@
     "certaintyOrderBody": "Tras completar el pago, verá una confirmación de pago exitoso y recibirá un correo con su número de pedido, detalles del producto, dirección de envío y contacto de atención al cliente.\n\nSu pedido suele enviarse en 1–2 días laborables. Una vez enviado, recibirá otro correo con el número de seguimiento y el sitio web de tracking para seguir su paquete con tranquilidad.",
     "featuredReadyTitle": "Destacados",
     "featuredViewAll": "Ver todo →",
-    "browseFullCatalog": "Ver catálogo completo"
+    "browseFullCatalog": "Ver catálogo completo",
+    "homeSectionAnaDigi": "RELOJES ANA-DIGI",
+    "homeSectionDigital": "RELOJES DIGITALES",
+    "homeSectionAnalog": "RELOJES ANALÓGICOS",
+    "homeSectionAutomatic": "RELOJES AUTOMÁTICOS"
   },
   "Newsletter": {
     "emailLabel": "Correo electrónico",
