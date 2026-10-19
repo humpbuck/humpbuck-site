@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - Montres multifonctions Analog-Digital TEMP",
-    "descriptionDefault": "Découvrez des montres ana-digi rétro alliant précision analogique, fonctions numériques et design futuriste. Des garde-temps distinctifs pour le quotidien.",
-    "ogTitle": "HUMPBUCK - Montres multifonctions Analog-Digital TEMP",
-    "ogDescription": "Découvrez des montres ana-digi rétro alliant précision analogique, fonctions numériques et design futuriste. Des garde-temps distinctifs pour le quotidien."
+    "titleDefault": "HUMPBUCK - Montres automatiques | Saphir et acier 316L",
+    "descriptionDefault": "Découvrez des montres automatiques haut de gamme en acier inoxydable 316L avec verre saphir. Des garde-temps de luxe pour le quotidien.",
+    "ogTitle": "HUMPBUCK - Montres automatiques | Saphir et acier 316L",
+    "ogDescription": "Découvrez des montres automatiques haut de gamme en acier inoxydable 316L avec verre saphir. Des garde-temps de luxe pour le quotidien."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -53,7 +53,7 @@
     "shopUltraThin": "Ultra-thin"
   },
   "Footer": {
-    "tagline": "Montres ana-digi rétro alliant caractère analogique, fonction numérique et design distinctif.",
+    "tagline": "Montres automatiques en acier inoxydable 316L avec verre saphir — des garde-temps de luxe de haute qualité.",
     "highlights": "Paiements sécurisés · Livraison mondiale · Assistance 24h/24",
     "copyright": "© {year} HUMPBUCK. Tous droits réservés.",
     "disclaimer": "Les prix, taxes et frais de livraison sont confirmés au paiement. Pour la livraison, les remboursements, la confidentialité et les conditions, consultez Assistance ci-dessus. Questions :",
@@ -79,10 +79,10 @@
     "linkUltraThin": "Ultra-thin"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - Montres multifonctions Analog-Digital TEMP",
-    "metaDescription": "Découvrez des montres ana-digi rétro alliant précision analogique, fonctions numériques et design futuriste. Des garde-temps distinctifs pour le quotidien.",
-    "ogTitle": "HUMPBUCK - Montres multifonctions Analog-Digital TEMP",
-    "ogDescription": "Découvrez des montres ana-digi rétro alliant précision analogique, fonctions numériques et design futuriste. Des garde-temps distinctifs pour le quotidien.",
+    "metaTitle": "HUMPBUCK - Montres automatiques | Saphir et acier 316L",
+    "metaDescription": "Découvrez des montres automatiques haut de gamme en acier inoxydable 316L avec verre saphir. Des garde-temps de luxe pour le quotidien.",
+    "ogTitle": "HUMPBUCK - Montres automatiques | Saphir et acier 316L",
+    "ogDescription": "Découvrez des montres automatiques haut de gamme en acier inoxydable 316L avec verre saphir. Des garde-temps de luxe pour le quotidien.",
     "heroBadge": "Série · DIGI-TEMP",
     "heroLead1": "Montre ana-digital multifonction — double affichage, fonctions complètes.",
     "heroLead2": "Heure, date, alarme, température extérieure et chronomètre dans un boîtier compact en acier inoxydable — une lisibilité nette au quotidien.",
@@ -120,7 +120,7 @@
     "trustLaunchBody": "Programmes usine pour les marques horlogères en croissance.",
     "newsletterKicker": "Actualités",
     "newsletterTitle": "NOUVELLES SORTIES DE MONTRES",
-    "newsletterBody": "Découvrez des montres ana-digi rétro alliant précision analogique, fonctions numériques et design futuriste.",
+    "newsletterBody": "Découvrez des montres automatiques haut de gamme en acier inoxydable 316L avec verre saphir. Des garde-temps de luxe pour le quotidien.",
     "mechanicalHeroBadge": "ANA-DIGI · TEMP",
     "mechanicalHeroTitle": "ANA-DIGI Temperature",
     "mechanicalHeroLead": "Montres ana-digi rétro alliant précision analogique, fonctions numériques et design futuriste.",
@@ -145,7 +145,7 @@
     "categoryQuartzImageAlt": "Montre quartz ana-digi HUMPBUCK au poignet",
     "recommendedKicker": "Rechercher par",
     "recommendedTitle": "Montres recommandées",
-    "recommendedIntro": "Découvrez des montres ana-digi rétro alliant précision analogique, fonctions numériques et design futuriste.",
+    "recommendedIntro": "Découvrez des montres automatiques haut de gamme en acier inoxydable 316L avec verre saphir. Des garde-temps de luxe pour le quotidien.",
     "recommendedViewAll": "Tout voir",
     "mechanicalWatchesTitle": "Automatic watches",
     "mechanicalWatchesShop": "Voir automatic",
@@ -209,7 +209,17 @@
     "homeSectionAnaDigi": "MONTRES ANA-DIGI",
     "homeSectionDigital": "MONTRES DIGITALES",
     "homeSectionAnalog": "MONTRES ANALOGIQUES",
-    "homeSectionAutomatic": "MONTRES AUTOMATIQUES"
+    "homeSectionAutomatic": "MONTRES AUTOMATIQUES",
+    "automaticHeroBadge": "AUTOMATIQUE · SQUELETTE",
+    "automaticHeroTitle": "MINBER Automatique squelette",
+    "automaticHeroLead": "Mouvement automatique en acier inoxydable 316L avec verre saphir.",
+    "automaticHeroChipAutomatic": "AUTOMATIQUE",
+    "automaticHeroChipSteel": "316L",
+    "automaticHeroChipSapphire": "SAPHIR",
+    "automaticHeroCtaShop": "Boutique",
+    "automaticHeroImageAlt": "HUMPBUCK MINBER automatic skeleton watch — 316L steel and sapphire crystal",
+    "heroCarouselLabel": "Homepage featured watches",
+    "heroCarouselGoTo": "Go to slide"
   },
   "Newsletter": {
     "emailLabel": "E-mail",
@@ -259,9 +269,9 @@
     "successClose": "Fermer"
   },
   "Shop": {
-    "metaTitle": "Acheter montres ANA-DIGI & Automatic",
-    "metaDescription": "Découvrez des montres ana-digi rétro alliant précision analogique, fonctions numériques et design futuriste. Des garde-temps distinctifs pour le quotidien.",
-    "ogTitle": "Acheter montres ANA-DIGI & Automatic · HUMPBUCK",
+    "metaTitle": "Acheter des montres automatiques | Saphir et 316L | HUMPBUCK",
+    "metaDescription": "Achetez des montres automatiques HUMPBUCK en acier inoxydable 316L avec verre saphir. Des garde-temps de luxe pour le quotidien.",
+    "ogTitle": "Acheter des montres automatiques | Saphir et 316L | HUMPBUCK",
     "kicker": "Catalogue",
     "title": "Découvrez des montres ana-digi rétro alliant précision analogique, fonctions numériques et design futuriste.",
     "intro": "Parcourez par collection : DIGI-TEMP (phare ana-digital), RM-TONNEAU (quartz tonneau) et RD-ASTRAL. Les filtres se synchronisent avec l'URL pour le partage.",
@@ -269,7 +279,7 @@
     "showingSeries": "Affichage : {series} ({count, plural, one {# article} other {# articles}})",
     "emptyCategory": "Rien pour l'instant.",
     "clearFilter": "Effacer le filtre",
-    "ogDescription": "Découvrez des montres ana-digi rétro alliant précision analogique, fonctions numériques et design futuriste. Des garde-temps distinctifs pour le quotidien.",
+    "ogDescription": "Achetez des montres automatiques HUMPBUCK en acier inoxydable 316L avec verre saphir. Des garde-temps de luxe pour le quotidien.",
     "filterPanelTitle": "Filtrer",
     "filterGroupMovement": "Mouvement",
     "filterGroupAudience": "Public",
@@ -931,8 +941,8 @@
     "emptyBackup": "Lien YouTube de secours pas encore défini."
   },
   "BlogPage": {
-    "metaDescription": "Récits et notes HUMPBUCK — montres ana-digi rétro pour le quotidien.",
-    "intro": "Récits et notes HUMPBUCK — montres ana-digi rétro pour le quotidien.",
+    "metaDescription": "Récits et notes HUMPBUCK — montres automatiques en acier 316L avec verre saphir.",
+    "intro": "Récits et notes HUMPBUCK — montres automatiques en acier 316L avec verre saphir.",
     "metaTitle": "Blog — HUMPBUCK",
     "ogTitle": "Blog — HUMPBUCK",
     "kicker": "Journal",
@@ -1058,8 +1068,8 @@
   "WatchCollections": {
     "faqHeading": "Questions fréquentes",
     "all": {
-      "metaTitle": "Acheter des montres | ANA-DIGI, digitales et automatiques | HUMPBUCK",
-      "metaDescription": "Découvrez les montres HUMPBUCK : ANA-DIGI, digitales, analogiques et automatiques. Des montres au caractère affirmé pour le quotidien et votre style.",
+      "metaTitle": "Acheter des montres automatiques | Saphir et 316L | HUMPBUCK",
+      "metaDescription": "Achetez des montres automatiques HUMPBUCK en acier inoxydable 316L avec verre saphir. Des garde-temps de luxe pour le quotidien.",
       "kicker": "MONTRES",
       "h1": "Montres HUMPBUCK",
       "subtitle": "Explorez les montres ANA-DIGI, digitales, analogiques et automatiques HUMPBUCK.",
@@ -1138,8 +1148,8 @@
     },
     "automatic": {
       "name": "Automatique",
-      "metaTitle": "Montres automatiques | Montres mécaniques | HUMPBUCK",
-      "metaDescription": "Explorez les montres automatiques HUMPBUCK à mouvements mécaniques, designs distinctifs et caractère horloger traditionnel pour le quotidien.",
+      "metaTitle": "Montres automatiques | Saphir et acier 316L | HUMPBUCK",
+      "metaDescription": "Achetez des montres automatiques HUMPBUCK en acier inoxydable 316L avec verre saphir. Des garde-temps mécaniques de luxe pour le quotidien.",
       "kicker": "COLLECTION AUTOMATIQUE",
       "h1": "Montres automatiques",
       "subtitle": "Montres mécaniques alimentées par le mouvement, au caractère distinctif HUMPBUCK.",

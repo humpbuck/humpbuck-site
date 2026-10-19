@@ -42,6 +42,27 @@ export function homeHeroMobileWebpUrl(): string {
   return `${homeHeroAssetBase()}/Home/section1/Home-hero-APP.webp?v=${encodeURIComponent(rev)}`;
 }
 
+const HOME_HERO_AUTOMATIC_DESKTOP =
+  "Home-hero-MINBER Automatic-Skeleton-Watch-PC.webp";
+const HOME_HERO_AUTOMATIC_MOBILE =
+  "Home-hero-MINBER Automatic-Skeleton-Watch-APP.webp";
+
+/**
+ * Homepage hero slide 2 — MINBER automatic skeleton.
+ * Bump `NEXT_PUBLIC_R2_HUMPBUCK_HERO_AUTOMATIC_REV` after same-name overwrites.
+ */
+export function homeHeroAutomaticDesktopWebpUrl(): string {
+  const rev =
+    process.env.NEXT_PUBLIC_R2_HUMPBUCK_HERO_AUTOMATIC_REV?.trim() || "1";
+  return `${homeHeroAssetBase()}/Home/section1/${encodeURIComponent(HOME_HERO_AUTOMATIC_DESKTOP)}?v=${encodeURIComponent(rev)}`;
+}
+
+export function homeHeroAutomaticMobileWebpUrl(): string {
+  const rev =
+    process.env.NEXT_PUBLIC_R2_HUMPBUCK_HERO_AUTOMATIC_REV?.trim() || "1";
+  return `${homeHeroAssetBase()}/Home/section1/${encodeURIComponent(HOME_HERO_AUTOMATIC_MOBILE)}?v=${encodeURIComponent(rev)}`;
+}
+
 /** Default OG / share image — desktop hero. */
 export function homeHeroWebpUrl(): string {
   return homeHeroDesktopWebpUrl();

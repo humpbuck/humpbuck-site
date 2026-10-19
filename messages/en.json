@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - Analog-Digital TEMP Multifunctional Watches",
-    "descriptionDefault": "Discover retro ana-digi watches combining analog precision, digital functions and futuristic design. Distinctive timepieces made for everyday wear.",
-    "ogTitle": "HUMPBUCK - Analog-Digital TEMP Multifunctional Watches",
-    "ogDescription": "Discover retro ana-digi watches combining analog precision, digital functions and futuristic design. Distinctive timepieces made for everyday wear."
+    "titleDefault": "HUMPBUCK - Automatic Watches | Sapphire Crystal & 316L",
+    "descriptionDefault": "Discover high-quality automatic watches in 316L stainless steel with sapphire crystal. Premium luxury timepieces made for lasting everyday wear.",
+    "ogTitle": "HUMPBUCK - Automatic Watches | Sapphire Crystal & 316L",
+    "ogDescription": "Discover high-quality automatic watches in 316L stainless steel with sapphire crystal. Premium luxury timepieces made for lasting everyday wear."
   },
   "DisplayCurrency": {
     "label": "Display currency",
@@ -56,7 +56,7 @@
     "videoTutorial": "Video tutorial"
   },
   "Footer": {
-    "tagline": "Retro ana-digi watches combining analog character, digital function, and distinctive design.",
+    "tagline": "Automatic watches in 316L stainless steel with sapphire crystal — high-quality luxury timepieces.",
     "highlights": "Secure payments · Global shipping · 24/7 support",
     "socialFacebookAria": "HUMPBUCK on Facebook",
     "socialInstagramAria": "HUMPBUCK on Instagram",
@@ -78,10 +78,10 @@
     "linkUltraThin": "Ultra-thin"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - Analog-Digital TEMP Multifunctional Watches",
-    "metaDescription": "Discover retro ana-digi watches combining analog precision, digital functions and futuristic design. Distinctive timepieces made for everyday wear.",
-    "ogTitle": "HUMPBUCK - Analog-Digital TEMP Multifunctional Watches",
-    "ogDescription": "Discover retro ana-digi watches combining analog precision, digital functions and futuristic design. Distinctive timepieces made for everyday wear.",
+    "metaTitle": "HUMPBUCK - Automatic Watches | Sapphire Crystal & 316L",
+    "metaDescription": "Discover high-quality automatic watches in 316L stainless steel with sapphire crystal. Premium luxury timepieces made for lasting everyday wear.",
+    "ogTitle": "HUMPBUCK - Automatic Watches | Sapphire Crystal & 316L",
+    "ogDescription": "Discover high-quality automatic watches in 316L stainless steel with sapphire crystal. Premium luxury timepieces made for lasting everyday wear.",
     "mechanicalHeroBadge": "ANA-DIGI · TEMP",
     "mechanicalHeroTitle": "ANA-DIGI Temperature",
     "mechanicalHeroLead": "Retro ana-digi watches blending analog precision, digital functions, and futuristic design.",
@@ -92,6 +92,16 @@
     "mechanicalHeroChipStW": "ST.W",
     "mechanicalHeroCtaShop": "Shop",
     "mechanicalHeroImageAlt": "HUMPBUCK homepage hero — handcrafted premium timepieces",
+    "automaticHeroBadge": "AUTOMATIC · SKELETON",
+    "automaticHeroTitle": "MINBER Automatic Skeleton",
+    "automaticHeroLead": "Automatic movement in 316L stainless steel with sapphire crystal.",
+    "automaticHeroChipAutomatic": "AUTOMATIC",
+    "automaticHeroChipSteel": "316L",
+    "automaticHeroChipSapphire": "SAPPHIRE",
+    "automaticHeroCtaShop": "Shop",
+    "automaticHeroImageAlt": "HUMPBUCK MINBER automatic skeleton watch — 316L steel and sapphire crystal",
+    "heroCarouselLabel": "Homepage featured watches",
+    "heroCarouselGoTo": "Go to slide",
     "momentsHeading": "Made for Every Mode",
     "momentsLead": "From everyday routines to new adventures, one watch keeps up with every moment.",
     "momentsCard1Title": "Everyday Mode",
@@ -140,7 +150,7 @@
     "viewWatches": "View watches",
     "recommendedKicker": "Search by",
     "recommendedTitle": "Recommended watches",
-    "recommendedIntro": "Discover retro ana-digi watches combining analog precision, digital functions and futuristic design.",
+    "recommendedIntro": "Discover high-quality automatic watches in 316L stainless steel with sapphire crystal.",
     "recommendedViewAll": "Shop all",
     "recommendedAdd": "Add",
     "recommendedSliderPrev": "Previous products",
@@ -194,7 +204,7 @@
     "certaintyOrderBody": "After your payment is completed, you will see a successful payment confirmation and receive a confirmation email with your order number, product details, shipping address, and customer service contact information.\n\nYour order will usually be shipped within 1–2 business days. Once it has been shipped, you will receive another email with your tracking number and tracking website, so you can follow your package every step of the way with peace of mind.",
     "newsletterKicker": "Updates",
     "newsletterTitle": "NEW WATCHES DROPS",
-    "newsletterBody": "Discover retro ana-digi watches combining analog precision, digital functions and futuristic design.",
+    "newsletterBody": "Discover high-quality automatic watches in 316L stainless steel with sapphire crystal.",
     "couponTitle": "Get a coupon",
     "couponKicker": "Reflection",
     "couponQuestion": "What's the most precious thing in life?",
@@ -258,10 +268,10 @@
     "successClose": "Close"
   },
   "Shop": {
-    "metaTitle": "Shop Watches | ANA-DIGI, Digital & Automatic | HUMPBUCK",
-    "metaDescription": "Shop HUMPBUCK watches including ANA-DIGI, digital, analog and automatic styles. Discover distinctive watches designed for everyday wear and individual style.",
-    "ogTitle": "Shop Watches | ANA-DIGI, Digital & Automatic | HUMPBUCK",
-    "ogDescription": "Shop HUMPBUCK watches including ANA-DIGI, digital, analog and automatic styles. Discover distinctive watches designed for everyday wear and individual style.",
+    "metaTitle": "Shop Automatic Watches | Sapphire Crystal & 316L | HUMPBUCK",
+    "metaDescription": "Shop HUMPBUCK automatic watches in 316L stainless steel with sapphire crystal. High-quality luxury timepieces for everyday wear.",
+    "ogTitle": "Shop Automatic Watches | Sapphire Crystal & 316L | HUMPBUCK",
+    "ogDescription": "Shop HUMPBUCK automatic watches in 316L stainless steel with sapphire crystal. High-quality luxury timepieces for everyday wear.",
     "kicker": "WATCHES",
     "title": "HUMPBUCK Watches",
     "filterAll": "All",
@@ -900,11 +910,11 @@
   },
   "BlogPage": {
     "metaTitle": "Blog — HUMPBUCK",
-    "metaDescription": "Stories and notes from HUMPBUCK — retro ana-digi watches for everyday wear.",
+    "metaDescription": "Stories and notes from HUMPBUCK — automatic watches in 316L steel with sapphire crystal.",
     "ogTitle": "Blog — HUMPBUCK",
     "kicker": "Journal",
     "title": "Blog",
-    "intro": "Stories and notes from HUMPBUCK — retro ana-digi watches for everyday wear.",
+    "intro": "Stories and notes from HUMPBUCK — automatic watches in 316L steel with sapphire crystal.",
     "empty": "New posts are on the way. Check back soon.",
     "readMore": "Read article"
   },
@@ -1057,8 +1067,8 @@
   "WatchCollections": {
     "faqHeading": "Frequently Asked Questions",
     "all": {
-      "metaTitle": "Shop Watches | ANA-DIGI, Digital & Automatic | HUMPBUCK",
-      "metaDescription": "Shop HUMPBUCK watches including ANA-DIGI, digital, analog and automatic styles. Discover distinctive watches designed for everyday wear and individual style.",
+      "metaTitle": "Shop Automatic Watches | Sapphire Crystal & 316L | HUMPBUCK",
+      "metaDescription": "Shop HUMPBUCK automatic watches in 316L stainless steel with sapphire crystal. High-quality luxury timepieces for everyday wear.",
       "kicker": "WATCHES",
       "h1": "HUMPBUCK Watches",
       "subtitle": "Explore ANA-DIGI, digital, analog and automatic watches from HUMPBUCK.",
@@ -1137,8 +1147,8 @@
     },
     "automatic": {
       "name": "Automatic",
-      "metaTitle": "Automatic Watches | Mechanical Watches | HUMPBUCK",
-      "metaDescription": "Explore HUMPBUCK automatic watches powered by mechanical movements, featuring distinctive designs and traditional watchmaking character for everyday wear.",
+      "metaTitle": "Automatic Watches | Sapphire Crystal & 316L Steel | HUMPBUCK",
+      "metaDescription": "Shop HUMPBUCK automatic watches in 316L stainless steel with sapphire crystal. High-quality luxury mechanical timepieces for everyday wear.",
       "kicker": "AUTOMATIC COLLECTION",
       "h1": "Automatic Watches",
       "subtitle": "Mechanical watches powered by movement, designed with distinctive HUMPBUCK character.",

@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - Analog-Digital TEMP 다기능 시계",
-    "descriptionDefault": "아날로그 정밀함, 디지털 기능, 미래적 디자인을 결합한 레트로 아나디지 시계. 일상을 위한 개성 있는 타임피스.",
-    "ogTitle": "HUMPBUCK - Analog-Digital TEMP 다기능 시계",
-    "ogDescription": "아날로그 정밀함, 디지털 기능, 미래적 디자인을 결합한 레트로 아나디지 시계. 일상을 위한 개성 있는 타임피스."
+    "titleDefault": "HUMPBUCK - 오토매틱 워치 | 사파이어 크리스탈 & 316L",
+    "descriptionDefault": "316L 스테인리스와 사파이어 글라스를 사용한 고품질 오토매틱 워치. 일상을 위한 프리미엄 럭셔리 타임피스.",
+    "ogTitle": "HUMPBUCK - 오토매틱 워치 | 사파이어 크리스탈 & 316L",
+    "ogDescription": "316L 스테인리스와 사파이어 글라스를 사용한 고품질 오토매틱 워치. 일상을 위한 프리미엄 럭셔리 타임피스."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -53,7 +53,7 @@
     "shopUltraThin": "Ultra-thin"
   },
   "Footer": {
-    "tagline": "아날로그 개성, 디지털 기능, 독특한 디자인을 결합한 레트로 아나디지 시계.",
+    "tagline": "316L 스테인리스와 사파이어 글라스의 오토매틱 워치 — 고품질 럭셔리 타임피스.",
     "highlights": "안전 결제 · 전 세계 배송 · 24시간 지원",
     "copyright": "© {year} HUMPBUCK. 모든 권리 보유.",
     "disclaimer": "가격, 세금, 배송비는 결제 시 확정됩니다. 배송, 환불, 개인정보, 이용약관은 위 고객지원을 참고하세요. 문의:",
@@ -79,10 +79,10 @@
     "linkUltraThin": "Ultra-thin"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - Analog-Digital TEMP 다기능 시계",
-    "metaDescription": "아날로그 정밀함, 디지털 기능, 미래적 디자인을 결합한 레트로 아나디지 시계. 일상을 위한 개성 있는 타임피스.",
-    "ogTitle": "HUMPBUCK - Analog-Digital TEMP 다기능 시계",
-    "ogDescription": "아날로그 정밀함, 디지털 기능, 미래적 디자인을 결합한 레트로 아나디지 시계. 일상을 위한 개성 있는 타임피스.",
+    "metaTitle": "HUMPBUCK - 오토매틱 워치 | 사파이어 크리스탈 & 316L",
+    "metaDescription": "316L 스테인리스와 사파이어 글라스를 사용한 고품질 오토매틱 워치. 일상을 위한 프리미엄 럭셔리 타임피스.",
+    "ogTitle": "HUMPBUCK - 오토매틱 워치 | 사파이어 크리스탈 & 316L",
+    "ogDescription": "316L 스테인리스와 사파이어 글라스를 사용한 고품질 오토매틱 워치. 일상을 위한 프리미엄 럭셔리 타임피스.",
     "heroBadge": "시리즈 · DIGI-TEMP",
     "heroLead1": "아나로그·디지털 멀티펑션 시계 — 듀얼 디스플레이, 풀 기능.",
     "heroLead2": "시간, 날짜, 알람, 외부 온도, 스톱워치 모드를 컴팩트한 스테인리스 케이스에 — 일상에서도 선명한 가독성.",
@@ -120,7 +120,7 @@
     "trustLaunchBody": "성장하는 시계 브랜드를 위한 공장 프로그램.",
     "newsletterKicker": "소식",
     "newsletterTitle": "신규 시계 출시",
-    "newsletterBody": "아날로그 정밀함, 디지털 기능, 미래적 디자인을 결합한 레트로 아나디지 시계.",
+    "newsletterBody": "316L 스테인리스와 사파이어 글라스를 사용한 고품질 오토매틱 워치. 일상을 위한 프리미엄 럭셔리 타임피스.",
     "mechanicalHeroBadge": "ANA-DIGI · TEMP",
     "mechanicalHeroTitle": "ANA-DIGI Temperature",
     "mechanicalHeroLead": "아날로그 정밀함, 디지털 기능, 미래적 디자인을 결합한 레트로 아나디지 시계.",
@@ -145,7 +145,7 @@
     "categoryQuartzImageAlt": "손목의 HUMPBUCK 쿼츠 아나디지 시계",
     "recommendedKicker": "검색",
     "recommendedTitle": "추천 시계",
-    "recommendedIntro": "아날로그 정밀함, 디지털 기능, 미래적 디자인을 결합한 레트로 아나디지 시계.",
+    "recommendedIntro": "316L 스테인리스와 사파이어 글라스를 사용한 고품질 오토매틱 워치. 일상을 위한 프리미엄 럭셔리 타임피스.",
     "recommendedViewAll": "전체 보기",
     "mechanicalWatchesTitle": "Automatic watches",
     "mechanicalWatchesShop": "Automatic 쇼핑",
@@ -209,7 +209,17 @@
     "homeSectionAnaDigi": "ANA-DIGI 워치",
     "homeSectionDigital": "디지털 워치",
     "homeSectionAnalog": "아날로그 워치",
-    "homeSectionAutomatic": "오토매틱 워치"
+    "homeSectionAutomatic": "오토매틱 워치",
+    "automaticHeroBadge": "오토매틱 · 스켈레톤",
+    "automaticHeroTitle": "MINBER 오토매틱 스켈레톤",
+    "automaticHeroLead": "316L 스테인리스와 사파이어 글라스를 사용한 오토매틱 워치.",
+    "automaticHeroChipAutomatic": "오토매틱",
+    "automaticHeroChipSteel": "316L",
+    "automaticHeroChipSapphire": "사파이어",
+    "automaticHeroCtaShop": "쇼핑",
+    "automaticHeroImageAlt": "HUMPBUCK MINBER automatic skeleton watch — 316L steel and sapphire crystal",
+    "heroCarouselLabel": "Homepage featured watches",
+    "heroCarouselGoTo": "Go to slide"
   },
   "Newsletter": {
     "emailLabel": "이메일",
@@ -259,9 +269,9 @@
     "successClose": "닫기"
   },
   "Shop": {
-    "metaTitle": "ANA-DIGI & Automatic 시계 쇼핑",
-    "metaDescription": "아날로그 정밀함, 디지털 기능, 미래적 디자인을 결합한 레트로 아나디지 시계. 일상을 위한 개성 있는 타임피스.",
-    "ogTitle": "ANA-DIGI & Automatic 시계 쇼핑 · HUMPBUCK",
+    "metaTitle": "오토매틱 워치 쇼핑 | 사파이어 & 316L | HUMPBUCK",
+    "metaDescription": "316L 스테인리스와 사파이어 글라스를 사용한 HUMPBUCK 오토매틱 워치. 일상을 위한 고품질 럭셔리 타임피스.",
+    "ogTitle": "오토매틱 워치 쇼핑 | 사파이어 & 316L | HUMPBUCK",
     "kicker": "카탈로그",
     "title": "아날로그 정밀함, 디지털 기능, 미래적 디자인을 결합한 레트로 아나디지 시계.",
     "intro": "컬렉션별로 둘러보세요: DIGI-TEMP(아나로그·디지털 플래그십), RM-TONNEAU(토노 쿼츠), RD-ASTRAL. 필터는 URL과 동기화되어 공유하기 쉽습니다.",
@@ -269,7 +279,7 @@
     "showingSeries": "{series} 표시 중 ({count, plural, other {#개}})",
     "emptyCategory": "아직 상품이 없습니다.",
     "clearFilter": "필터 초기화",
-    "ogDescription": "아날로그 정밀함, 디지털 기능, 미래적 디자인을 결합한 레트로 아나디지 시계. 일상을 위한 개성 있는 타임피스.",
+    "ogDescription": "316L 스테인리스와 사파이어 글라스를 사용한 HUMPBUCK 오토매틱 워치. 일상을 위한 고품질 럭셔리 타임피스.",
     "filterPanelTitle": "필터",
     "filterGroupMovement": "무브먼트",
     "filterGroupAudience": "대상",
@@ -931,8 +941,8 @@
     "emptyBackup": "YouTube 백업 링크가 아직 없습니다."
   },
   "BlogPage": {
-    "metaDescription": "HUMPBUCK 스토리와 노트 — 일상을 위한 레트로 아나디지 시계.",
-    "intro": "HUMPBUCK 스토리와 노트 — 일상을 위한 레트로 아나디지 시계.",
+    "metaDescription": "HUMPBUCK 스토리와 노트 — 316L 스틸과 사파이어 글라스의 오토매틱 워치.",
+    "intro": "HUMPBUCK 스토리와 노트 — 316L 스틸과 사파이어 글라스의 오토매틱 워치.",
     "metaTitle": "블로그 — HUMPBUCK",
     "ogTitle": "블로그 — HUMPBUCK",
     "kicker": "저널",
@@ -1058,8 +1068,8 @@
   "WatchCollections": {
     "faqHeading": "자주 묻는 질문",
     "all": {
-      "metaTitle": "시계 쇼핑 | ANA-DIGI, 디지털 & 오토매틱 | HUMPBUCK",
-      "metaDescription": "HUMPBUCK 시계를 만나보세요. ANA-DIGI, 디지털, 아날로그, 오토매틱. 일상과 나만의 스타일을 위한 개성 있는 시계를 만나보세요.",
+      "metaTitle": "오토매틱 워치 쇼핑 | 사파이어 & 316L | HUMPBUCK",
+      "metaDescription": "316L 스테인리스와 사파이어 글라스를 사용한 HUMPBUCK 오토매틱 워치. 일상을 위한 고품질 럭셔리 타임피스.",
       "kicker": "WATCHES",
       "h1": "HUMPBUCK 시계",
       "subtitle": "HUMPBUCK의 ANA-DIGI, 디지털, 아날로그, 오토매틱 시계를 살펴보세요.",
@@ -1138,8 +1148,8 @@
     },
     "automatic": {
       "name": "오토매틱",
-      "metaTitle": "오토매틱 시계 | 메커니컬 시계 | HUMPBUCK",
-      "metaDescription": "기계식 무브먼트로 구동되는 HUMPBUCK 오토매틱 시계. 개성 있는 디자인과 전통적인 시계 제작의 매력을 일상에서.",
+      "metaTitle": "오토매틱 워치 | 사파이어 크리스탈 & 316L | HUMPBUCK",
+      "metaDescription": "316L 스테인리스와 사파이어 글라스를 사용한 HUMPBUCK 오토매틱 워치. 일상을 위한 고품질 기계식 럭셔리 타임피스.",
       "kicker": "AUTOMATIC 컬렉션",
       "h1": "오토매틱 시계",
       "subtitle": "움직임으로 구동되는 메커니컬 워치, HUMPBUCK만의 개성을 담아.",

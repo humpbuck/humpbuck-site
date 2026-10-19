@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - Analog-Digital TEMP multifunctionele horloges",
-    "descriptionDefault": "Ontdek retro ana-digi horloges die analoge precisie, digitale functies en futuristisch design combineren. Ultieme timepieces voor elke dag.",
-    "ogTitle": "HUMPBUCK - Analog-Digital TEMP multifunctionele horloges",
-    "ogDescription": "Ontdek retro ana-digi horloges die analoge precisie, digitale functies en futuristisch design combineren. Ultieme timepieces voor elke dag."
+    "titleDefault": "HUMPBUCK - Automatische horloges | Saffierglas & 316L",
+    "descriptionDefault": "Ontdek hoogwaardige automatische horloges in 316L-roestvrij staal met saffierglas. Luxe timepieces voor elke dag.",
+    "ogTitle": "HUMPBUCK - Automatische horloges | Saffierglas & 316L",
+    "ogDescription": "Ontdek hoogwaardige automatische horloges in 316L-roestvrij staal met saffierglas. Luxe timepieces voor elke dag."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -53,7 +53,7 @@
     "shopUltraThin": "Ultra-thin"
   },
   "Footer": {
-    "tagline": "Retro ana-digi horloges die analoge karakter, digitale functie en een onderscheidend design combineren.",
+    "tagline": "Automatische horloges in 316L-roestvrij staal met saffierglas — hoogwaardige luxe timepieces.",
     "highlights": "Veilige betalingen · Wereldwijde verzending · 24/7 support",
     "copyright": "© {year} HUMPBUCK. Alle rechten voorbehouden.",
     "disclaimer": "Prijzen, belastingen en verzending worden bevestigd bij het afrekenen. Voor verzending, retouren, privacy en voorwaarden: zie Support hierboven. Vragen:",
@@ -79,10 +79,10 @@
     "linkUltraThin": "Ultra-thin"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - Analog-Digital TEMP multifunctionele horloges",
-    "metaDescription": "Ontdek retro ana-digi horloges die analoge precisie, digitale functies en futuristisch design combineren. Ultieme timepieces voor elke dag.",
-    "ogTitle": "HUMPBUCK - Analog-Digital TEMP multifunctionele horloges",
-    "ogDescription": "Ontdek retro ana-digi horloges die analoge precisie, digitale functies en futuristisch design combineren. Ultieme timepieces voor elke dag.",
+    "metaTitle": "HUMPBUCK - Automatische horloges | Saffierglas & 316L",
+    "metaDescription": "Ontdek hoogwaardige automatische horloges in 316L-roestvrij staal met saffierglas. Luxe timepieces voor elke dag.",
+    "ogTitle": "HUMPBUCK - Automatische horloges | Saffierglas & 316L",
+    "ogDescription": "Ontdek hoogwaardige automatische horloges in 316L-roestvrij staal met saffierglas. Luxe timepieces voor elke dag.",
     "heroBadge": "Serie · DIGI-TEMP",
     "heroLead1": "Ana-digi multifunctioneel horloge — dubbele displays, volledige functieset.",
     "heroLead2": "Tijd, datum, alarm, buitentemperatuur en stopwatch in een compact roestvrijstalen kast — cockpit-heldere afleesbaarheid voor dagelijks gebruik.",
@@ -120,7 +120,7 @@
     "trustLaunchBody": "Fabrieksprogramma's voor groeiende horlogemerken.",
     "newsletterKicker": "Nieuws",
     "newsletterTitle": "NIEUWE HORLOGE-RELEASES",
-    "newsletterBody": "Ontdek retro ana-digi horloges die analoge precisie, digitale functies en futuristisch design combineren.",
+    "newsletterBody": "Ontdek hoogwaardige automatische horloges in 316L-roestvrij staal met saffierglas. Luxe timepieces voor elke dag.",
     "mechanicalHeroBadge": "ANA-DIGI · TEMP",
     "mechanicalHeroTitle": "ANA-DIGI Temperature",
     "mechanicalHeroLead": "Retro ana-digi horloges die analoge precisie, digitale functies en futuristisch design combineren.",
@@ -145,7 +145,7 @@
     "categoryQuartzImageAlt": "HUMPBUCK quartz ana-digi horloge om de pols",
     "recommendedKicker": "Zoek op",
     "recommendedTitle": "Aanbevolen horloges",
-    "recommendedIntro": "Ontdek retro ana-digi horloges die analoge precisie, digitale functies en futuristisch design combineren.",
+    "recommendedIntro": "Ontdek hoogwaardige automatische horloges in 316L-roestvrij staal met saffierglas. Luxe timepieces voor elke dag.",
     "recommendedViewAll": "Shop alles",
     "mechanicalWatchesTitle": "Automatic watches",
     "mechanicalWatchesShop": "Shop automatic",
@@ -209,7 +209,17 @@
     "homeSectionAnaDigi": "ANA-DIGI HORLOGES",
     "homeSectionDigital": "DIGITALE HORLOGES",
     "homeSectionAnalog": "ANALOGE HORLOGES",
-    "homeSectionAutomatic": "AUTOMATISCHE HORLOGES"
+    "homeSectionAutomatic": "AUTOMATISCHE HORLOGES",
+    "automaticHeroBadge": "AUTOMATISCH · SKELETON",
+    "automaticHeroTitle": "MINBER Automatisch skeleton",
+    "automaticHeroLead": "Automatisch uurwerk in 316L-roestvrij staal met saffierglas.",
+    "automaticHeroChipAutomatic": "AUTOMATISCH",
+    "automaticHeroChipSteel": "316L",
+    "automaticHeroChipSapphire": "SAFFIER",
+    "automaticHeroCtaShop": "Shop",
+    "automaticHeroImageAlt": "HUMPBUCK MINBER automatic skeleton watch — 316L steel and sapphire crystal",
+    "heroCarouselLabel": "Homepage featured watches",
+    "heroCarouselGoTo": "Go to slide"
   },
   "Newsletter": {
     "emailLabel": "E-mail",
@@ -259,9 +269,9 @@
     "successClose": "Sluiten"
   },
   "Shop": {
-    "metaTitle": "Shop ANA-DIGI & Automatic horloges",
-    "metaDescription": "Ontdek retro ana-digi horloges die analoge precisie, digitale functies en futuristisch design combineren. Ultieme timepieces voor elke dag.",
-    "ogTitle": "Shop ANA-DIGI & Automatic horloges · HUMPBUCK",
+    "metaTitle": "Shop automatische horloges | Saffierglas & 316L | HUMPBUCK",
+    "metaDescription": "Shop HUMPBUCK automatische horloges in 316L-roestvrij staal met saffierglas. Luxe timepieces voor elke dag.",
+    "ogTitle": "Shop automatische horloges | Saffierglas & 316L | HUMPBUCK",
     "kicker": "Catalogus",
     "title": "Ontdek retro ana-digi horloges die analoge precisie, digitale functies en futuristisch design combineren.",
     "intro": "Blader per collectie: DIGI-TEMP (ana-digi vlaggenschip), RM-TONNEAU (tonneau-quartz) en RD-ASTRAL. Filters worden gesynchroniseerd met de URL om te delen.",
@@ -269,7 +279,7 @@
     "showingSeries": "{series} wordt getoond ({count, plural, one {# artikel} other {# artikelen}})",
     "emptyCategory": "Hier is nog niets.",
     "clearFilter": "Filter wissen",
-    "ogDescription": "Ontdek retro ana-digi horloges die analoge precisie, digitale functies en futuristisch design combineren. Ultieme timepieces voor elke dag.",
+    "ogDescription": "Shop HUMPBUCK automatische horloges in 316L-roestvrij staal met saffierglas. Luxe timepieces voor elke dag.",
     "filterPanelTitle": "Filter",
     "filterGroupMovement": "Uurwerk",
     "filterGroupAudience": "Doelgroep",
@@ -931,8 +941,8 @@
     "emptyBackup": "YouTube-backuplink nog niet ingesteld."
   },
   "BlogPage": {
-    "metaDescription": "Verhalen en notities van HUMPBUCK — retro ana-digi horloges voor elke dag.",
-    "intro": "Verhalen en notities van HUMPBUCK — retro ana-digi horloges voor elke dag.",
+    "metaDescription": "Verhalen en notities van HUMPBUCK — automatische horloges in 316L-staal met saffierglas.",
+    "intro": "Verhalen en notities van HUMPBUCK — automatische horloges in 316L-staal met saffierglas.",
     "metaTitle": "Blog — HUMPBUCK",
     "ogTitle": "Blog — HUMPBUCK",
     "kicker": "Dagboek",
@@ -1058,8 +1068,8 @@
   "WatchCollections": {
     "faqHeading": "Veelgestelde vragen",
     "all": {
-      "metaTitle": "Horloges kopen | ANA-DIGI, digitaal & automatisch | HUMPBUCK",
-      "metaDescription": "Shop HUMPBUCK-horloges: ANA-DIGI, digitaal, analoog en automatisch. Ontdek karaktervolle horloges voor alledaags gebruik en je eigen stijl.",
+      "metaTitle": "Shop automatische horloges | Saffierglas & 316L | HUMPBUCK",
+      "metaDescription": "Shop HUMPBUCK automatische horloges in 316L-roestvrij staal met saffierglas. Luxe timepieces voor elke dag.",
       "kicker": "HORLOGES",
       "h1": "HUMPBUCK-horloges",
       "subtitle": "Ontdek ANA-DIGI-, digitale, analoge en automatische horloges van HUMPBUCK.",
@@ -1138,8 +1148,8 @@
     },
     "automatic": {
       "name": "Automatisch",
-      "metaTitle": "Automatische horloges | Mechanische horloges | HUMPBUCK",
-      "metaDescription": "Ontdek HUMPBUCK automatische horloges met mechanische uurwerken, onderscheidende designs en traditioneel horlogemakerskarakter voor alledaags gebruik.",
+      "metaTitle": "Automatische horloges | Saffierglas & 316L-staal | HUMPBUCK",
+      "metaDescription": "Shop HUMPBUCK automatische horloges in 316L-roestvrij staal met saffierglas. Mechanische luxe timepieces voor elke dag.",
       "kicker": "AUTOMATIC COLLECTIE",
       "h1": "Automatische horloges",
       "subtitle": "Mechanische horloges aangedreven door beweging, met onderscheidend HUMPBUCK-karakter.",

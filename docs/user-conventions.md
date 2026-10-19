@@ -143,6 +143,8 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-09-01 | **分类 categoryId 规范化**：`cat_ana-digi` / `cat_digital` / `cat_analog` / `cat_automatic`；旧 `cat_quartz`→`cat_ana-digi`、`cat_mechanical`→`cat_automatic`；后台选 Digital 即归入 `/digital-watches`。 |
 | 2026-09-03 | **首页 Recommended → 四分类轮播**：ANA-DIGI / DIGITAL / ANALOG / AUTOMATIC（空分类不显示）；**每类最多 12 款**；商家后台 Home product arrange 对应四个分类（仍保留 Featured）；Shop all 链到各分类落地页。 |
 | 2026-10-18 | **降 Workers CPU**：前台去掉 `connection()` 强制动态。通知栏 / 首页 CMS / 首页优惠券 / 视频教程 / 顶栏四分类 均改 `unstable_cache` 60s + tag；后台保存仍 `revalidateTag` + 对应 path。通知栏首屏高度不再读 `headers()`。文案规则不变（公告全语言以后台 CMS slides 为准）。 |
+| 2026-10-18 | **首页 Hero 改为两张轮播**：第 1 张保持 ANA-DIGI（`Home-hero-PC/APP.webp`）；第 2 张 MINBER 自动表（`Home-hero-MINBER Automatic-Skeleton-Watch-PC/APP.webp`）。文案：Automatic / 316L / Sapphire。 |
+| 2026-10-18 | **全站 SEO 品牌主线**改为自动手表：标题 `HUMPBUCK - Automatic Watches | Sapphire Crystal & 316L`；描述强调 316L 精钢、蓝宝石玻璃、高品质高端自动表。源文件仍是 `scripts/seo-brand-i18n.json`。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 
@@ -158,12 +160,12 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 - **旧 PDP：** `/product/{slug}`、误用的 `/product/digi-temp/{model}`（及改短 slug 前的复合 slug）→ **308** 到规范 `/product/{category}/{model}`  
 - **后台：** 无 Series 管理页；Products 表单只选上述四类；选 Digital 即写入 `cat_digital` 并出现在 `/digital-watches`；Slug 只填型号  
 
-**SEO 品牌主线（2026-07-25 更新）**
+**SEO 品牌主线（2026-10-18 更新）**
 
-- **英文标题：** `HUMPBUCK - Analog-Digital TEMP Multifunctional Watches`
-- **英文描述：** `Discover retro ana-digi watches combining analog precision, digital functions and futuristic design. Distinctive timepieces made for everyday wear.`
+- **英文标题：** `HUMPBUCK - Automatic Watches | Sapphire Crystal & 316L`
+- **英文描述：** `Discover high-quality automatic watches in 316L stainless steel with sapphire crystal. Premium luxury timepieces made for lasting everyday wear.`
 - **维护方式：** 编辑 `scripts/seo-brand-i18n.json` → `node scripts/apply-seo-brand-messaging.mjs`（或直接改 `messages/en.json` 的 `SiteMetadata` / `Home` meta）
-- **适用范围：** 全站默认 meta / Open Graph（首页为主）；商品 PDP、系列页、博客文章仍用各自产品/文章描述，不强行覆盖。
+- **适用范围：** 全站默认 meta / Open Graph（首页为主）；商品 PDP、ANA-DIGI / Digital / Analog 分类页、博客文章仍用各自产品/文章描述，不强行覆盖。 `/watches` 与 `/automatic-watches` 的 title/description 已对齐自动表 + 316L + 蓝宝石。
 
 **首页 Hero 文案（2026-07-25）**
 
@@ -173,15 +175,20 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 - **标签：** `TIME` · `DATE` · `ALM` · `DU.T` · `ST.W`
 - **来源：** 英文优先 CMS（`SiteHomeContent` / 后台 Homepage）；空字段回退 `messages/en.json` 的 `Home.mechanicalHero*`。其它语言用各自 messages（标签缩写各语言相同）。
 
-**首页 Hero 背景图（2026-07-09）**
+**首页 Hero 背景图（2026-10-18 更新为两张轮播）**
 
-- **R2 路径（大小写敏感）：**
-  - PC：`Home/section1/Home-hero-PC.webp`（CDN：`https://assets.humpbuck.com/Home/section1/Home-hero-PC.webp`）
-  - 手机：`Home/section1/Home-hero-APP.webp`（CDN：`https://assets.humpbuck.com/Home/section1/Home-hero-APP.webp`）
+- **第 1 张（ANA-DIGI，保持不动）：**
+  - PC：`Home/section1/Home-hero-PC.webp`
+  - 手机：`Home/section1/Home-hero-APP.webp`
+- **第 2 张（MINBER 自动骨架表）：**
+  - PC：`Home/section1/Home-hero-MINBER Automatic-Skeleton-Watch-PC.webp`
+  - 手机：`Home/section1/Home-hero-MINBER Automatic-Skeleton-Watch-APP.webp`
+  - 文案：品牌名 `MINBER` 不翻译；标题其余部分、导语、角标、AUTOMATIC/SAPPHIRE 标签按各语言翻译；`316L` 保持原样。英文：`MINBER Automatic Skeleton`。Shop 进 `/automatic-watches`
 - **换图：** 在 R2 同路径覆盖文件（对象用短 `Cache-Control`，勿设 1 年缓存）。可选：把对应 rev 加 1 以强制 URL 换新（`?v=`）：
   - `NEXT_PUBLIC_R2_HUMPBUCK_HERO_DESKTOP_REV`
   - `NEXT_PUBLIC_R2_HUMPBUCK_HERO_MOBILE_REV`
   - 若只设 `NEXT_PUBLIC_R2_HUMPBUCK_HERO_REV`，两端共用同一版本号
-- **代码入口：** `lib/r2.ts` → `homeHeroDesktopWebpUrl()` / `homeHeroMobileWebpUrl()`；OG 默认图用 desktop；组件 `components/site/home-hero.tsx`（`md` 断点切换）
+  - 第 2 张：`NEXT_PUBLIC_R2_HUMPBUCK_HERO_AUTOMATIC_REV`
+- **代码入口：** `lib/r2.ts` → `homeHeroDesktopWebpUrl()` / `homeHeroMobileWebpUrl()` / `homeHeroAutomaticDesktopWebpUrl()` / `homeHeroAutomaticMobileWebpUrl()`；组件 `components/site/home-hero.tsx` + `home-hero-carousel.tsx`（约 3s 自动轮播，可滑动）
 - **推荐导出尺寸：** PC **2560 × 1440**（16∶9）；手机 **1500 × 2000**（3∶4 竖图，主体偏中上）。WebP 质量约 80–85%，单张目标小于 **400 KB**
 - **构图注意：** 左侧约 40% 留给白字（badge / 标题 / 描述 / 按钮）；手机竖图避免把主体放在最左下角。

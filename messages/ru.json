@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - Многофункциональные часы Analog-Digital TEMP",
-    "descriptionDefault": "Откройте ретро ana-digi часы: аналоговая точность, цифровые функции и футуристичный дизайн. Характерные модели на каждый день.",
-    "ogTitle": "HUMPBUCK - Многофункциональные часы Analog-Digital TEMP",
-    "ogDescription": "Откройте ретро ana-digi часы: аналоговая точность, цифровые функции и футуристичный дизайн. Характерные модели на каждый день."
+    "titleDefault": "HUMPBUCK - Автоматические часы | Сапфир и сталь 316L",
+    "descriptionDefault": "Откройте высококачественные автоматические часы из стали 316L с сапфировым стеклом. Премиальные модели на каждый день.",
+    "ogTitle": "HUMPBUCK - Автоматические часы | Сапфир и сталь 316L",
+    "ogDescription": "Откройте высококачественные автоматические часы из стали 316L с сапфировым стеклом. Премиальные модели на каждый день."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -53,7 +53,7 @@
     "shopUltraThin": "Ultra-thin"
   },
   "Footer": {
-    "tagline": "Ретро ana-digi часы: аналоговый характер, цифровая функция и выразительный дизайн.",
+    "tagline": "Автоматические часы из стали 316L с сапфировым стеклом — качественные люксовые модели.",
     "highlights": "Безопасная оплата · Доставка по миру · Поддержка 24/7",
     "copyright": "© {year} HUMPBUCK. Все права защищены.",
     "disclaimer": "Цены, налоги и доставка подтверждаются при оформлении. По доставке, возвратам, конфиденциальности и условиям см. раздел Поддержка выше. Вопросы:",
@@ -79,10 +79,10 @@
     "linkUltraThin": "Ultra-thin"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - Многофункциональные часы Analog-Digital TEMP",
-    "metaDescription": "Откройте ретро ana-digi часы: аналоговая точность, цифровые функции и футуристичный дизайн. Характерные модели на каждый день.",
-    "ogTitle": "HUMPBUCK - Многофункциональные часы Analog-Digital TEMP",
-    "ogDescription": "Откройте ретро ana-digi часы: аналоговая точность, цифровые функции и футуристичный дизайн. Характерные модели на каждый день.",
+    "metaTitle": "HUMPBUCK - Автоматические часы | Сапфир и сталь 316L",
+    "metaDescription": "Откройте высококачественные автоматические часы из стали 316L с сапфировым стеклом. Премиальные модели на каждый день.",
+    "ogTitle": "HUMPBUCK - Автоматические часы | Сапфир и сталь 316L",
+    "ogDescription": "Откройте высококачественные автоматические часы из стали 316L с сапфировым стеклом. Премиальные модели на каждый день.",
     "heroBadge": "Серия · DIGI-TEMP",
     "heroLead1": "Многофункциональные ana-digi часы — двойной дисплей и полный набор функций.",
     "heroLead2": "Время, дата, будильник, наружная температура и секундомер в компактном стальном корпусе — чёткое чтение на каждый день.",
@@ -120,7 +120,7 @@
     "trustLaunchBody": "Заводские программы для растущих часовых брендов.",
     "newsletterKicker": "Новости",
     "newsletterTitle": "НОВЫЕ ПОСТУПЛЕНИЯ ЧАСОВ",
-    "newsletterBody": "Откройте ретро ana-digi часы: аналоговая точность, цифровые функции и футуристичный дизайн.",
+    "newsletterBody": "Откройте высококачественные автоматические часы из стали 316L с сапфировым стеклом. Премиальные модели на каждый день.",
     "mechanicalHeroBadge": "ANA-DIGI · TEMP",
     "mechanicalHeroTitle": "ANA-DIGI Temperature",
     "mechanicalHeroLead": "Ретро ana-digi часы: аналоговая точность, цифровые функции и футуристичный дизайн.",
@@ -145,7 +145,7 @@
     "categoryQuartzImageAlt": "Кварцевые ana-digi часы HUMPBUCK на запястье",
     "recommendedKicker": "Искать по",
     "recommendedTitle": "Рекомендуемые часы",
-    "recommendedIntro": "Откройте ретро ana-digi часы: аналоговая точность, цифровые функции и футуристичный дизайн.",
+    "recommendedIntro": "Откройте высококачественные автоматические часы из стали 316L с сапфировым стеклом. Премиальные модели на каждый день.",
     "recommendedViewAll": "Смотреть все",
     "mechanicalWatchesTitle": "Automatic watches",
     "mechanicalWatchesShop": "Смотреть Automatic",
@@ -209,7 +209,17 @@
     "homeSectionAnaDigi": "ЧАСЫ ANA-DIGI",
     "homeSectionDigital": "ЦИФРОВЫЕ ЧАСЫ",
     "homeSectionAnalog": "АНАЛОГОВЫЕ ЧАСЫ",
-    "homeSectionAutomatic": "АВТОМАТИЧЕСКИЕ ЧАСЫ"
+    "homeSectionAutomatic": "АВТОМАТИЧЕСКИЕ ЧАСЫ",
+    "automaticHeroBadge": "АВТОМАТИЧЕСКИЕ · СКЕЛЕТОН",
+    "automaticHeroTitle": "MINBER Автоматический скелетон",
+    "automaticHeroLead": "Автоматический механизм в корпусе из стали 316L с сапфировым стеклом.",
+    "automaticHeroChipAutomatic": "АВТОМАТИЧЕСКИЕ",
+    "automaticHeroChipSteel": "316L",
+    "automaticHeroChipSapphire": "САПФИР",
+    "automaticHeroCtaShop": "Магазин",
+    "automaticHeroImageAlt": "HUMPBUCK MINBER automatic skeleton watch — 316L steel and sapphire crystal",
+    "heroCarouselLabel": "Homepage featured watches",
+    "heroCarouselGoTo": "Go to slide"
   },
   "Newsletter": {
     "emailLabel": "Эл. почта",
@@ -259,9 +269,9 @@
     "successClose": "Закрыть"
   },
   "Shop": {
-    "metaTitle": "Купить часы ANA-DIGI и Automatic",
-    "metaDescription": "Откройте ретро ana-digi часы: аналоговая точность, цифровые функции и футуристичный дизайн. Характерные модели на каждый день.",
-    "ogTitle": "Купить часы ANA-DIGI и Automatic · HUMPBUCK",
+    "metaTitle": "Купить автоматические часы | Сапфир и 316L | HUMPBUCK",
+    "metaDescription": "Купите автоматические часы HUMPBUCK из стали 316L с сапфировым стеклом. Качественные люксовые модели на каждый день.",
+    "ogTitle": "Купить автоматические часы | Сапфир и 316L | HUMPBUCK",
     "kicker": "Каталог",
     "title": "Откройте ретро ana-digi часы: аналоговая точность, цифровые функции и футуристичный дизайн.",
     "intro": "Просмотр по коллекциям: DIGI-TEMP (флагман ana-digi), RM-TONNEAU (кварцевые tonneau) и RD-ASTRAL. Фильтры синхронизируются с URL для удобного обмена.",
@@ -269,7 +279,7 @@
     "showingSeries": "Показано: {series} ({count, plural, one {# товар} other {# товаров}})",
     "emptyCategory": "Здесь пока ничего нет.",
     "clearFilter": "Сбросить фильтр",
-    "ogDescription": "Откройте ретро ana-digi часы: аналоговая точность, цифровые функции и футуристичный дизайн. Характерные модели на каждый день.",
+    "ogDescription": "Купите автоматические часы HUMPBUCK из стали 316L с сапфировым стеклом. Качественные люксовые модели на каждый день.",
     "filterPanelTitle": "Фильтр",
     "filterGroupMovement": "Механизм",
     "filterGroupAudience": "Аудитория",
@@ -931,8 +941,8 @@
     "emptyBackup": "Ссылка на резервный YouTube ещё не задана."
   },
   "BlogPage": {
-    "metaDescription": "Истории и заметки HUMPBUCK — ретро ana-digi часы на каждый день.",
-    "intro": "Истории и заметки HUMPBUCK — ретро ana-digi часы на каждый день.",
+    "metaDescription": "Истории и заметки HUMPBUCK — автоматические часы из стали 316L с сапфировым стеклом.",
+    "intro": "Истории и заметки HUMPBUCK — автоматические часы из стали 316L с сапфировым стеклом.",
     "metaTitle": "Блог — HUMPBUCK",
     "ogTitle": "Блог — HUMPBUCK",
     "kicker": "Журнал",
@@ -1058,8 +1068,8 @@
   "WatchCollections": {
     "faqHeading": "Часто задаваемые вопросы",
     "all": {
-      "metaTitle": "Купить часы | ANA-DIGI, цифровые и автоматические | HUMPBUCK",
-      "metaDescription": "Часы HUMPBUCK: ANA-DIGI, цифровые, аналоговые и автоматические. Характерные модели для повседневной носки и вашего индивидуального стиля.",
+      "metaTitle": "Купить автоматические часы | Сапфир и 316L | HUMPBUCK",
+      "metaDescription": "Купите автоматические часы HUMPBUCK из стали 316L с сапфировым стеклом. Качественные люксовые модели на каждый день.",
       "kicker": "ЧАСЫ",
       "h1": "Часы HUMPBUCK",
       "subtitle": "Откройте для себя часы ANA-DIGI, цифровые, аналоговые и автоматические от HUMPBUCK.",
@@ -1138,8 +1148,8 @@
     },
     "automatic": {
       "name": "Автоматические",
-      "metaTitle": "Автоматические часы | Механические часы | HUMPBUCK",
-      "metaDescription": "Автоматические часы HUMPBUCK с механическими калибрами, выразительным дизайном и характером традиционного часового дела для повседневной носки.",
+      "metaTitle": "Автоматические часы | Сапфир и сталь 316L | HUMPBUCK",
+      "metaDescription": "Купите автоматические часы HUMPBUCK из стали 316L с сапфировым стеклом. Механические люксовые модели на каждый день.",
       "kicker": "АВТОМАТИЧЕСКАЯ КОЛЛЕКЦИЯ",
       "h1": "Автоматические часы",
       "subtitle": "Механические часы, работающие от движения, с выразительным характером HUMPBUCK.",

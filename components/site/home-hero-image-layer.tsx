@@ -9,6 +9,7 @@ type Props = {
   mobileSrc?: string;
   desktopSrc?: string;
   alt?: string;
+  priority?: boolean;
 };
 
 /** LCP image layer — no DB; defaults stream before CMS copy. */
@@ -16,6 +17,7 @@ export function HomeHeroImageLayer({
   mobileSrc = homeHeroMobileWebpUrl(),
   desktopSrc = homeHeroDesktopWebpUrl(),
   alt = "",
+  priority = true,
 }: Props) {
   return (
     <div className={`relative h-full w-full ${heroMinH}`}>
@@ -23,8 +25,8 @@ export function HomeHeroImageLayer({
         src={mobileSrc}
         alt={alt}
         fill
-        priority
-        fetchPriority="high"
+        priority={priority}
+        fetchPriority={priority ? "high" : "auto"}
         className="object-cover object-center md:hidden"
         sizes="100vw"
       />
@@ -32,6 +34,7 @@ export function HomeHeroImageLayer({
         src={desktopSrc}
         alt={alt}
         fill
+        priority={priority}
         className="hidden object-cover object-center md:block"
         sizes="100vw"
       />

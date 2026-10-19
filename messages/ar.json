@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - ساعات Analog-Digital TEMP متعددة الوظائف",
-    "descriptionDefault": "اكتشف ساعات ana-digi كلاسيكية تجمع الدقة التناظرية والوظائف الرقمية والتصميم المستقبلي. قطع مميزة للارتداء اليومي.",
-    "ogTitle": "HUMPBUCK - ساعات Analog-Digital TEMP متعددة الوظائف",
-    "ogDescription": "اكتشف ساعات ana-digi كلاسيكية تجمع الدقة التناظرية والوظائف الرقمية والتصميم المستقبلي. قطع مميزة للارتداء اليومي."
+    "titleDefault": "HUMPBUCK - ساعات أوتوماتيكية | ياقوت وفولاذ 316L",
+    "descriptionDefault": "اكتشف ساعات أوتوماتيكية عالية الجودة من الفولاذ المقاوم للصدأ 316L مع بلورة ياقوت. قطع فاخرة للارتداء اليومي.",
+    "ogTitle": "HUMPBUCK - ساعات أوتوماتيكية | ياقوت وفولاذ 316L",
+    "ogDescription": "اكتشف ساعات أوتوماتيكية عالية الجودة من الفولاذ المقاوم للصدأ 316L مع بلورة ياقوت. قطع فاخرة للارتداء اليومي."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -53,7 +53,7 @@
     "shopUltraThin": "Ultra-thin"
   },
   "Footer": {
-    "tagline": "ساعات ana-digi كلاسيكية تجمع الطابع التناظري والوظيفة الرقمية والتصميم المميز.",
+    "tagline": "ساعات أوتوماتيكية من الفولاذ المقاوم للصدأ 316L مع بلورة ياقوت — قطع فاخرة عالية الجودة.",
     "highlights": "مدفوعات آمنة · شحن عالمي · دعم على مدار الساعة طوال أيام الأسبوع",
     "copyright": "© {year} HUMPBUCK. جميع الحقوق محفوظة.",
     "disclaimer": "يتم تأكيد الأسعار والضرائب والشحن عند الدفع. للشحن والمبالغ المستردة والخصوصية والشروط، انظر الدعم أعلاه. الأسئلة:",
@@ -79,10 +79,10 @@
     "linkUltraThin": "Ultra-thin"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - ساعات Analog-Digital TEMP متعددة الوظائف",
-    "metaDescription": "اكتشف ساعات ana-digi كلاسيكية تجمع الدقة التناظرية والوظائف الرقمية والتصميم المستقبلي. قطع مميزة للارتداء اليومي.",
-    "ogTitle": "HUMPBUCK - ساعات Analog-Digital TEMP متعددة الوظائف",
-    "ogDescription": "اكتشف ساعات ana-digi كلاسيكية تجمع الدقة التناظرية والوظائف الرقمية والتصميم المستقبلي. قطع مميزة للارتداء اليومي.",
+    "metaTitle": "HUMPBUCK - ساعات أوتوماتيكية | ياقوت وفولاذ 316L",
+    "metaDescription": "اكتشف ساعات أوتوماتيكية عالية الجودة من الفولاذ المقاوم للصدأ 316L مع بلورة ياقوت. قطع فاخرة للارتداء اليومي.",
+    "ogTitle": "HUMPBUCK - ساعات أوتوماتيكية | ياقوت وفولاذ 316L",
+    "ogDescription": "اكتشف ساعات أوتوماتيكية عالية الجودة من الفولاذ المقاوم للصدأ 316L مع بلورة ياقوت. قطع فاخرة للارتداء اليومي.",
     "heroBadge": "سلسلة · DIGI-TEMP",
     "heroLead1": "ساعة أنا-ديجي متعددة الوظائف — شاشتان، مجموعة ميزات كاملة.",
     "heroLead2": "الوقت والتاريخ والمنبّه ودرجة الحرارة الخارجية وأوضاع ساعة التوقيت في علبة فولاذ مقاوم للصدأ مدمجة — وضوح قراءة كقمرة قيادة للارتداء اليومي.",
@@ -120,7 +120,7 @@
     "trustLaunchBody": "برامج مصنع لعلامات الساعات الناشئة.",
     "newsletterKicker": "التحديثات",
     "newsletterTitle": "إصدارات ساعات جديدة",
-    "newsletterBody": "اكتشف ساعات ana-digi كلاسيكية تجمع الدقة التناظرية والوظائف الرقمية والتصميم المستقبلي.",
+    "newsletterBody": "اكتشف ساعات أوتوماتيكية عالية الجودة من الفولاذ المقاوم للصدأ 316L مع بلورة ياقوت. قطع فاخرة للارتداء اليومي.",
     "mechanicalHeroBadge": "ANA-DIGI · TEMP",
     "mechanicalHeroTitle": "ANA-DIGI Temperature",
     "mechanicalHeroLead": "ساعات ana-digi كلاسيكية تجمع الدقة التناظرية والوظائف الرقمية والتصميم المستقبلي.",
@@ -145,7 +145,7 @@
     "categoryQuartzImageAlt": "ساعة HUMPBUCK ana-digi كوارتز على المعصم",
     "recommendedKicker": "ابحث حسب",
     "recommendedTitle": "ساعات موصى بها",
-    "recommendedIntro": "اكتشف ساعات ana-digi كلاسيكية تجمع الدقة التناظرية والوظائف الرقمية والتصميم المستقبلي.",
+    "recommendedIntro": "اكتشف ساعات أوتوماتيكية عالية الجودة من الفولاذ المقاوم للصدأ 316L مع بلورة ياقوت. قطع فاخرة للارتداء اليومي.",
     "recommendedViewAll": "تسوق الكل",
     "mechanicalWatchesTitle": "Automatic watches",
     "mechanicalWatchesShop": "تسوق Automatic",
@@ -209,7 +209,17 @@
     "homeSectionAnaDigi": "ساعات ANA-DIGI",
     "homeSectionDigital": "ساعات رقمية",
     "homeSectionAnalog": "ساعات تناظرية",
-    "homeSectionAutomatic": "ساعات أوتوماتيكية"
+    "homeSectionAutomatic": "ساعات أوتوماتيكية",
+    "automaticHeroBadge": "أوتوماتيك · هيكل مفتوح",
+    "automaticHeroTitle": "MINBER أوتوماتيك هيكل مفتوح",
+    "automaticHeroLead": "حركة أوتوماتيكية من الفولاذ المقاوم للصدأ 316L مع بلورة ياقوت.",
+    "automaticHeroChipAutomatic": "أوتوماتيك",
+    "automaticHeroChipSteel": "316L",
+    "automaticHeroChipSapphire": "ياقوت",
+    "automaticHeroCtaShop": "تسوق",
+    "automaticHeroImageAlt": "HUMPBUCK MINBER automatic skeleton watch — 316L steel and sapphire crystal",
+    "heroCarouselLabel": "Homepage featured watches",
+    "heroCarouselGoTo": "Go to slide"
   },
   "Newsletter": {
     "emailLabel": "البريد الإلكتروني:",
@@ -259,9 +269,9 @@
     "successClose": "إغلاق"
   },
   "Shop": {
-    "metaTitle": "تسوق ساعات ANA-DIGI وAutomatic",
-    "metaDescription": "اكتشف ساعات ana-digi كلاسيكية تجمع الدقة التناظرية والوظائف الرقمية والتصميم المستقبلي. قطع مميزة للارتداء اليومي.",
-    "ogTitle": "تسوق ساعات ANA-DIGI وAutomatic · HUMPBUCK",
+    "metaTitle": "تسوق ساعات أوتوماتيكية | ياقوت و316L | HUMPBUCK",
+    "metaDescription": "تسوق ساعات HUMPBUCK الأوتوماتيكية من الفولاذ المقاوم للصدأ 316L مع بلورة ياقوت. قطع فاخرة للارتداء اليومي.",
+    "ogTitle": "تسوق ساعات أوتوماتيكية | ياقوت و316L | HUMPBUCK",
     "kicker": "الكتالوج ",
     "title": "اكتشف ساعات ana-digi كلاسيكية تجمع الدقة التناظرية والوظائف الرقمية والتصميم المستقبلي.",
     "intro": "تصفّح حسب المجموعة: DIGI-TEMP (السلسلة الرئيسية أنالوج-رقمية)، RM-TONNEAU (كوارتز barrel) وRD-ASTRAL. تُزامَن عوامل التصفية مع عنوان URL للمشاركة.",
@@ -269,7 +279,7 @@
     "showingSeries": "عرض {series} ({count, plural, one {عنصر #} other {# عناصر}})",
     "emptyCategory": "لا شيء هنا حتى الآن. ",
     "clearFilter": "مسح عامل التصفية",
-    "ogDescription": "اكتشف ساعات ana-digi كلاسيكية تجمع الدقة التناظرية والوظائف الرقمية والتصميم المستقبلي. قطع مميزة للارتداء اليومي.",
+    "ogDescription": "تسوق ساعات HUMPBUCK الأوتوماتيكية من الفولاذ المقاوم للصدأ 316L مع بلورة ياقوت. قطع فاخرة للارتداء اليومي.",
     "filterPanelTitle": "تصفية",
     "filterGroupMovement": "الحركة",
     "filterGroupAudience": "الجمهور",
@@ -931,8 +941,8 @@
     "emptyBackup": "رابط YouTube الاحتياطي غير مضبوط بعد."
   },
   "BlogPage": {
-    "metaDescription": "قصص وملاحظات من HUMPBUCK — ساعات ana-digi كلاسيكية للاستخدام اليومي.",
-    "intro": "قصص وملاحظات من HUMPBUCK — ساعات ana-digi كلاسيكية للاستخدام اليومي.",
+    "metaDescription": "قصص وملاحظات من HUMPBUCK — ساعات أوتوماتيكية من فولاذ 316L مع بلورة ياقوت.",
+    "intro": "قصص وملاحظات من HUMPBUCK — ساعات أوتوماتيكية من فولاذ 316L مع بلورة ياقوت.",
     "metaTitle": "المدونة — HUMPBUCK",
     "ogTitle": "المدونة — HUMPBUCK",
     "kicker": "المجلة",
@@ -1058,8 +1068,8 @@
   "WatchCollections": {
     "faqHeading": "الأسئلة الشائعة",
     "all": {
-      "metaTitle": "تسوق الساعات | ANA-DIGI ورقمية وأوتوماتيكية | HUMPBUCK",
-      "metaDescription": "تسوق ساعات HUMPBUCK بما في ذلك ANA-DIGI والرقمية والتناظرية والأوتوماتيكية. اكتشف ساعات مميزة مصممة للارتداء اليومي وأسلوبك الخاص.",
+      "metaTitle": "تسوق ساعات أوتوماتيكية | ياقوت و316L | HUMPBUCK",
+      "metaDescription": "تسوق ساعات HUMPBUCK الأوتوماتيكية من الفولاذ المقاوم للصدأ 316L مع بلورة ياقوت. قطع فاخرة للارتداء اليومي.",
       "kicker": "ساعات",
       "h1": "ساعات HUMPBUCK",
       "subtitle": "استكشف ساعات ANA-DIGI والرقمية والتناظرية والأوتوماتيكية من HUMPBUCK.",
@@ -1138,8 +1148,8 @@
     },
     "automatic": {
       "name": "أوتوماتيكية",
-      "metaTitle": "ساعات أوتوماتيكية | ساعات ميكانيكية | HUMPBUCK",
-      "metaDescription": "استكشف ساعات HUMPBUCK الأوتوماتيكية بحركات ميكانيكية وتصاميم مميزة وطابع صناعة الساعات التقليدي للارتداء اليومي.",
+      "metaTitle": "ساعات أوتوماتيكية | ياقوت وفولاذ 316L | HUMPBUCK",
+      "metaDescription": "تسوق ساعات HUMPBUCK الأوتوماتيكية من الفولاذ المقاوم للصدأ 316L مع بلورة ياقوت. قطع ميكانيكية فاخرة للارتداء اليومي.",
       "kicker": "مجموعة AUTOMATIC",
       "h1": "ساعات أوتوماتيكية",
       "subtitle": "ساعات ميكانيكية تعمل بالحركة، بشخصية HUMPBUCK المميزة.",
