@@ -124,7 +124,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-07-25 | 导航 PRODUCTS：`ANA-DIGI` / `AUTOMATIC` 不再展开 Men/Women，直接进入对应 movement 列表。 |
 | 2026-07-25 | **商家后台 Categories**（参考 watchsourcego）：独立建分类 + 拖拽排序；Products 只选 Category；去掉 Subcategory / Series / Category label。前台 PRODUCTS/页脚顺序跟后台分类排序；导航用 `?category=<id>`。 |
 | 2026-07-25 | **Products 页**：分类胶囊（All + 后台分类）+ 型号搜索（slug/名称），逻辑对齐 watchsourcego；兼容旧 `movement` / `profile` 链接。 |
-| 2026-07-25 | **通知栏**：前台每次请求读 D1；**全语言统一**以后台 CMS slides 为准（加新 slide 也一样），CMS 为空才回退 `Announcement.message`。 |
+| 2026-07-25 | **通知栏**：前台每次请求读 D1；**全语言统一**以后台 CMS slides 为准（加新 slide 也一样），CMS 为空才回退 `Announcement.message`。（2026-10-18 改为缓存，见下） |
 | 2026-07-25 | **商家后台 Blog** 对齐 watchsourcego：顶部 New/Edit 表单 + TipTap 正文编辑器（标题/对齐/颜色/图视频）+ Related products + 下方文章列表；正文只存 HTML（全新，无旧标记兼容）。 |
 | 2026-07-25 | **首页 Blog carousel 下线**：后台 Blog 去掉 Homepage carousel 字段；前台不再渲染 `HomeBlogCarouselAsyncSection`。 |
 | 2026-07-25 | **首页 SEARCH BY 分类滑块下线**；改为 Featured Ready Stock 商品网格（桌面 4×3=12），顶栏 View all / 底栏 Browse Full Catalog 进 `/product`；该区块文案 13 语种已齐（对齐 watchsourcego）。 |
@@ -142,6 +142,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-08-31 | **PDP URL**：`/product/{category}/{model}`（ANA-DIGI→`ana-digi`；其余 digital/analog/automatic）；Slug 填型号；旧 `/product/{slug}` 与 `/product/digi-temp/…` 308 到规范路径。 |
 | 2026-09-01 | **分类 categoryId 规范化**：`cat_ana-digi` / `cat_digital` / `cat_analog` / `cat_automatic`；旧 `cat_quartz`→`cat_ana-digi`、`cat_mechanical`→`cat_automatic`；后台选 Digital 即归入 `/digital-watches`。 |
 | 2026-09-03 | **首页 Recommended → 四分类轮播**：ANA-DIGI / DIGITAL / ANALOG / AUTOMATIC（空分类不显示）；**每类最多 12 款**；商家后台 Home product arrange 对应四个分类（仍保留 Featured）；Shop all 链到各分类落地页。 |
+| 2026-10-18 | **降 Workers CPU**：前台去掉 `connection()` 强制动态。通知栏 / 首页 CMS / 首页优惠券 / 视频教程 / 顶栏四分类 均改 `unstable_cache` 60s + tag；后台保存仍 `revalidateTag` + 对应 path。通知栏首屏高度不再读 `headers()`。文案规则不变（公告全语言以后台 CMS slides 为准）。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 

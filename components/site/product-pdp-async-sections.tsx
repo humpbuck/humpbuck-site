@@ -36,8 +36,7 @@ export async function ProductPdpMainAsyncSection({
   slug: string;
 }) {
   setRequestLocale(locale);
-  // Skip getSiteHomeContent: it calls connection() and forces the PDP dynamic.
-  // Policy FAQ on PDP uses Home message fallbacks only.
+  // Policy FAQ on PDP uses Home message fallbacks only (not homepage CMS).
   const [t, tHome, messages, productRaw] = await Promise.all([
     getTranslations("Product"),
     getTranslations("Home"),

@@ -1,4 +1,5 @@
-import { connection } from "next/server";
+import { unstable_cache } from "next/cache";
+import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 
 export type HomepageFeaturedCoupon = {
@@ -33,11 +34,23 @@ async function loadHomepageFeaturedCouponUncached(): Promise<HomepageFeaturedCou
   return { code: coupon.code };
 }
 
-/** Homepage coupon code — always read D1 on request (see `getSiteHomeContent`). */
-export async function getHomepageFeaturedCoupon(): Promise<HomepageFeaturedCoupon | null> {
-  await connection();
-  return loadHomepageFeaturedCouponUncached();
-}
+const HOMEPAGE_COUPON_REVALIDATE_SECONDS = 60;
+
+const getCachedHomepageFeaturedCoupon = unstable_cache(
+  loadHomepageFeaturedCouponUncached,
+  ["homepage-featured-coupon"],
+  {
+    tags: ["homepage-featured-coupon"],
+    revalidate: HOMEPAGE_COUPON_REVALIDATE_SECONDS,
+  },
+);
+
+/** Homepage coupon code — 60s cache; validity is re-checked on miss. */
+export const getHomepageFeaturedCoupon = cache(
+  async (): Promise<HomepageFeaturedCoupon | null> => {
+    return getCachedHomepageFeaturedCoupon();
+  },
+);
 
 /** Ensure at most one coupon is marked for the homepage prompt. */
 export async function setCouponHomeFeatured(

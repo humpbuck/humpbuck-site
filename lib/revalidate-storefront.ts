@@ -3,22 +3,32 @@ import { routing } from "@/i18n/routing";
 
 /** Storefront pages and DB caches do not time-expire — only admin saves, webhooks, and deploys invalidate them. */
 
-/** @deprecated Announcement uses `connection()` + live D1 reads; kept for best-effort ISR bust. */
+/** Bust the storefront announcement data cache after admin save. */
 export function revalidateSiteAnnouncement(): void {
   revalidateTag("site-announcement", { expire: 0 });
 }
 
-/** @deprecated Homepage content uses `connection()` + live D1 reads; kept for best-effort ISR bust. */
+/** Bust homepage CMS copy cache after admin save. */
 export function revalidateSiteHomeContent(): void {
   revalidateTag("site-home-content", { expire: 0 });
 }
 
-/** @deprecated Homepage coupon uses `connection()` + live D1 reads; kept for best-effort ISR bust. */
+/** Bust homepage featured-coupon cache after admin coupon save. */
 export function revalidateHomepageFeaturedCoupon(): void {
   revalidateTag("homepage-featured-coupon", { expire: 0 });
 }
 
-/** Best-effort ISR bust after homepage admin saves (catalog sliders may still be cached). */
+/** Bust storefront video tutorial CMS cache after admin save. */
+export function revalidateSiteVideoTutorial(): void {
+  revalidateTag("site-video-tutorial", { expire: 0 });
+}
+
+/** Bust header/footer collection nav cache. */
+export function revalidateStorefrontCategories(): void {
+  revalidateTag("storefront-categories", { expire: 0 });
+}
+
+/** ISR + data-cache bust after homepage admin saves. */
 export function revalidateStorefrontHomepage(): void {
   revalidateSiteHomeContent();
   revalidateHomepageFeaturedCoupon();
@@ -52,6 +62,7 @@ const STOREFRONT_SHELL_PATHS = [
 
 /** Revalidate main storefront pages (all locales) after shell-wide changes (e.g. announcement bar). */
 export function revalidateStorefrontShell(): void {
+  revalidateStorefrontCategories();
   for (const pathname of STOREFRONT_SHELL_PATHS) {
     // Announcement bar lives in `(site)/layout.tsx` — must bust layout cache, not page-only.
     revalidateStorefrontPath(pathname, "layout");

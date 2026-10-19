@@ -22,6 +22,7 @@ export function revalidateCatalogStorefront(opts?: {
   oldSlug?: string;
 }): void {
   revalidateTag("catalog", { expire: 0 });
+  revalidateTag("storefront-categories", { expire: 0 });
   revalidateSitemap();
   revalidateStorefrontPath("/");
   for (const path of STOREFRONT_WATCH_COLLECTION_PATHS) {

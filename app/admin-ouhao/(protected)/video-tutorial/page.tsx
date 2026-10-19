@@ -4,7 +4,10 @@ import { AdminFlashMessage } from "@/components/admin/admin-flash-message";
 import { PendingActionButton } from "@/components/admin/pending-action-button";
 import { assertAdmin } from "@/lib/admin-auth";
 import { adminPath } from "@/lib/admin-path";
-import { revalidateStorefrontPath } from "@/lib/revalidate-storefront";
+import {
+  revalidateSiteVideoTutorial,
+  revalidateStorefrontPath,
+} from "@/lib/revalidate-storefront";
 import {
   getSiteVideoTutorialForAdmin,
   saveSiteVideoTutorial,
@@ -40,6 +43,7 @@ async function saveVideoTutorialAction(formData: FormData) {
     goVideoTutorial({ error: note });
   }
 
+  revalidateSiteVideoTutorial();
   revalidateStorefrontPath("/video-tutorial");
   goVideoTutorial({ success: "Video tutorial page saved." });
 }

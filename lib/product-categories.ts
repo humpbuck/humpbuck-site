@@ -1,5 +1,7 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
+import { cache } from "react";
 import { normalizeProductSlug } from "@/lib/admin-product-slug";
 import { prisma } from "@/lib/prisma";
 import {
@@ -41,9 +43,14 @@ export async function getAllProductCategories(): Promise<ProductCategoryRow[]> {
   });
 }
 
-/** Fixed public collections only (ANA-DIGI / Digital / Analog / Automatic). */
-export async function getFixedStorefrontCategories(): Promise<
-  ProductCategoryRow[]
+type CachedProductCategoryRow = Omit<ProductCategoryRow, "createdAt"> & {
+  createdAt: string;
+};
+
+const STOREFRONT_CATEGORIES_REVALIDATE_SECONDS = 60;
+
+async function loadFixedStorefrontCategoriesUncached(): Promise<
+  CachedProductCategoryRow[]
 > {
   await ensureProductCategorySchema();
   const fixedIds = STOREFRONT_WATCH_CATEGORIES.map((c) => c.id);
@@ -60,10 +67,30 @@ export async function getFixedStorefrontCategories(): Promise<
       slug: c.slug,
       imageUrl: row?.imageUrl ?? null,
       sortOrder: c.sortOrder,
-      createdAt: row?.createdAt ?? new Date(0),
+      createdAt: (row?.createdAt ?? new Date(0)).toISOString(),
     };
   }).sort((a, b) => b.sortOrder - a.sortOrder);
 }
+
+const getCachedFixedStorefrontCategories = unstable_cache(
+  loadFixedStorefrontCategoriesUncached,
+  ["storefront-categories"],
+  {
+    tags: ["storefront-categories"],
+    revalidate: STOREFRONT_CATEGORIES_REVALIDATE_SECONDS,
+  },
+);
+
+/** Fixed public collections only (ANA-DIGI / Digital / Analog / Automatic). */
+export const getFixedStorefrontCategories = cache(
+  async (): Promise<ProductCategoryRow[]> => {
+    const rows = await getCachedFixedStorefrontCategories();
+    return rows.map((row) => ({
+      ...row,
+      createdAt: new Date(row.createdAt),
+    }));
+  },
+);
 
 export async function getProductCategoryById(
   id: string,

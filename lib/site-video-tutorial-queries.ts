@@ -1,6 +1,6 @@
 import "server-only";
 
-import { connection } from "next/server";
+import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 
@@ -51,13 +51,21 @@ async function loadUncached(): Promise<SiteVideoTutorialData> {
   };
 }
 
-/**
- * Storefront video tutorial page — live D1 read (same pattern as announcement).
- */
+const VIDEO_TUTORIAL_REVALIDATE_SECONDS = 60;
+
+const getCachedSiteVideoTutorial = unstable_cache(
+  loadUncached,
+  ["site-video-tutorial"],
+  {
+    tags: ["site-video-tutorial"],
+    revalidate: VIDEO_TUTORIAL_REVALIDATE_SECONDS,
+  },
+);
+
+/** Storefront video tutorial page — shared data cache (same pattern as announcement). */
 export const getSiteVideoTutorial = cache(
   async (): Promise<SiteVideoTutorialData> => {
-    await connection();
-    return loadUncached();
+    return getCachedSiteVideoTutorial();
   },
 );
 

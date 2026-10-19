@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { connection } from "next/server";
+import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import {
@@ -72,14 +72,25 @@ async function loadSiteAnnouncementUncached(): Promise<SiteAnnouncementData> {
   };
 }
 
+const ANNOUNCEMENT_REVALIDATE_SECONDS = 60;
+
+const getCachedSiteAnnouncement = unstable_cache(
+  loadSiteAnnouncementUncached,
+  ["site-announcement"],
+  {
+    tags: ["site-announcement"],
+    revalidate: ANNOUNCEMENT_REVALIDATE_SECONDS,
+  },
+);
+
 /**
- * Storefront announcement bar — always read D1 on request.
- * `unstable_cache` + `revalidateTag` do not reliably bust on Cloudflare OpenNext;
- * `connection()` opts this segment out of static prerender so admin saves show immediately.
+ * Storefront announcement bar — shared data cache (same pattern as catalog).
+ * Admin save calls `revalidateTag("site-announcement")` + layout revalidate.
+ * 60s is a safety net if OpenNext tag bust is delayed. Do not use `connection()`
+ * here: it forces every storefront page dynamic and burns Workers CPU.
  */
 export const getSiteAnnouncement = cache(async (): Promise<SiteAnnouncementData> => {
-  await connection();
-  return loadSiteAnnouncementUncached();
+  return getCachedSiteAnnouncement();
 });
 
 /** Admin editor — always read fresh from DB (never `unstable_cache`). */

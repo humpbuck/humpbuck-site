@@ -100,7 +100,7 @@ async function saveHomepageContentAction(formData: FormData) {
     try {
       revalidateStorefrontHomepage();
     } catch {
-      /* OpenNext on Cloudflare may reject revalidate; D1 reads are live via connection(). */
+      /* OpenNext may reject revalidate; 60s data-cache TTL is the fallback. */
     }
 
     goHomepage({
