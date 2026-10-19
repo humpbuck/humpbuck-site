@@ -48,7 +48,7 @@ const HOME_HERO_AUTOMATIC_MOBILE =
   "Home-hero-MINBER Automatic-Skeleton-Watch-APP.webp";
 
 /**
- * Homepage hero slide 2 — MINBER automatic skeleton.
+ * Homepage hero slide 1 / LCP — MINBER automatic skeleton.
  * Bump `NEXT_PUBLIC_R2_HUMPBUCK_HERO_AUTOMATIC_REV` after same-name overwrites.
  */
 export function homeHeroAutomaticDesktopWebpUrl(): string {

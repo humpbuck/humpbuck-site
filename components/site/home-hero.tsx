@@ -9,12 +9,7 @@ import {
   HomeHeroCarousel,
   type HomeHeroSlide,
 } from "@/components/site/home-hero-carousel";
-import {
-  homeHeroAutomaticDesktopWebpUrl,
-  homeHeroAutomaticMobileWebpUrl,
-  homeHeroDesktopWebpUrl,
-  homeHeroMobileWebpUrl,
-} from "@/lib/r2";
+import { homeHeroDesktopWebpUrl, homeHeroMobileWebpUrl } from "@/lib/r2";
 import { resolveHomeCmsText } from "@/lib/site-home-cms-locale";
 import { getSiteHomeContent } from "@/lib/site-home-content-queries";
 
@@ -48,11 +43,25 @@ async function HomeHeroForeground() {
     getSiteHomeContent(),
   ]);
 
-  const slide1CmsMobile = content.heroMobileImageUrl?.trim() ?? "";
-  const slide1CmsDesktop = content.heroDesktopImageUrl?.trim() ?? "";
-  const cmsOverridesImages = Boolean(slide1CmsMobile || slide1CmsDesktop);
+  const anaDigiCmsMobile = content.heroMobileImageUrl?.trim() ?? "";
+  const anaDigiCmsDesktop = content.heroDesktopImageUrl?.trim() ?? "";
 
   const slides: HomeHeroSlide[] = [
+    {
+      id: "automatic",
+      badge: t("automaticHeroBadge"),
+      title: t("automaticHeroTitle"),
+      lead: t("automaticHeroLead"),
+      chips: [
+        t("automaticHeroChipAutomatic"),
+        t("automaticHeroChipSteel"),
+        t("automaticHeroChipSapphire"),
+      ],
+      cta: t("automaticHeroCtaShop"),
+      ctaHref: "/automatic-watches",
+      alt: t("automaticHeroImageAlt"),
+      headingAs: "h1",
+    },
     {
       id: "ana-digi",
       badge: resolveHomeCmsText(
@@ -92,29 +101,8 @@ async function HomeHeroForeground() {
         content.heroImageAlt,
         t("mechanicalHeroImageAlt"),
       ),
-      mobileSrc: cmsOverridesImages
-        ? slide1CmsMobile || homeHeroMobileWebpUrl()
-        : undefined,
-      desktopSrc: cmsOverridesImages
-        ? slide1CmsDesktop || homeHeroDesktopWebpUrl()
-        : undefined,
-      headingAs: "h1",
-    },
-    {
-      id: "automatic",
-      badge: t("automaticHeroBadge"),
-      title: t("automaticHeroTitle"),
-      lead: t("automaticHeroLead"),
-      chips: [
-        t("automaticHeroChipAutomatic"),
-        t("automaticHeroChipSteel"),
-        t("automaticHeroChipSapphire"),
-      ],
-      cta: t("automaticHeroCtaShop"),
-      ctaHref: "/automatic-watches",
-      alt: t("automaticHeroImageAlt"),
-      mobileSrc: homeHeroAutomaticMobileWebpUrl(),
-      desktopSrc: homeHeroAutomaticDesktopWebpUrl(),
+      mobileSrc: anaDigiCmsMobile || homeHeroMobileWebpUrl(),
+      desktopSrc: anaDigiCmsDesktop || homeHeroDesktopWebpUrl(),
       headingAs: "h2",
     },
   ];

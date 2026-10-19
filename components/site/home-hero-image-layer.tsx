@@ -1,5 +1,8 @@
 import { StorefrontImage } from "@/components/site/storefront-image";
-import { homeHeroDesktopWebpUrl, homeHeroMobileWebpUrl } from "@/lib/r2";
+import {
+  homeHeroAutomaticDesktopWebpUrl,
+  homeHeroAutomaticMobileWebpUrl,
+} from "@/lib/r2";
 
 /** APP: full remaining viewport below header; desktop: same idea with 80px header. */
 export const heroMinH =
@@ -14,8 +17,8 @@ type Props = {
 
 /** LCP image layer — no DB; defaults stream before CMS copy. */
 export function HomeHeroImageLayer({
-  mobileSrc = homeHeroMobileWebpUrl(),
-  desktopSrc = homeHeroDesktopWebpUrl(),
+  mobileSrc = homeHeroAutomaticMobileWebpUrl(),
+  desktopSrc = homeHeroAutomaticDesktopWebpUrl(),
   alt = "",
   priority = true,
 }: Props) {

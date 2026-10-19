@@ -145,6 +145,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-10-18 | **降 Workers CPU**：前台去掉 `connection()` 强制动态。通知栏 / 首页 CMS / 首页优惠券 / 视频教程 / 顶栏四分类 均改 `unstable_cache` 60s + tag；后台保存仍 `revalidateTag` + 对应 path。通知栏首屏高度不再读 `headers()`。文案规则不变（公告全语言以后台 CMS slides 为准）。 |
 | 2026-10-18 | **首页 Hero 改为两张轮播**：第 1 张保持 ANA-DIGI（`Home-hero-PC/APP.webp`）；第 2 张 MINBER 自动表（`Home-hero-MINBER Automatic-Skeleton-Watch-PC/APP.webp`）。文案：Automatic / 316L / Sapphire。 |
 | 2026-10-18 | **全站 SEO 品牌主线**改为自动手表：标题 `HUMPBUCK - Automatic Watches | Sapphire Crystal & 316L`；描述强调 316L 精钢、蓝宝石玻璃、高品质高端自动表。源文件仍是 `scripts/seo-brand-i18n.json`。 |
+| 2026-10-18 | **首页 Hero 对调**：第 1 张 / H1 为 MINBER 自动机械表；第 2 张为 ANA-DIGI。LCP/preload 用 MINBER 图。品牌以后走高端机械表。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 
@@ -167,23 +168,24 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 - **维护方式：** 编辑 `scripts/seo-brand-i18n.json` → `node scripts/apply-seo-brand-messaging.mjs`（或直接改 `messages/en.json` 的 `SiteMetadata` / `Home` meta）
 - **适用范围：** 全站默认 meta / Open Graph（首页为主）；商品 PDP、ANA-DIGI / Digital / Analog 分类页、博客文章仍用各自产品/文章描述，不强行覆盖。 `/watches` 与 `/automatic-watches` 的 title/description 已对齐自动表 + 316L + 蓝宝石。
 
-**首页 Hero 文案（2026-07-25）**
+**首页 Hero 文案（2026-10-18 更新：第 1 张 / H1 = 自动机械表）**
 
-- **标题：** `ANA-DIGI Temperature`
-- **导语：** `Retro ana-digi watches blending analog precision, digital functions, and futuristic design.`
-- **角标：** `ANA-DIGI · TEMP`
-- **标签：** `TIME` · `DATE` · `ALM` · `DU.T` · `ST.W`
-- **来源：** 英文优先 CMS（`SiteHomeContent` / 后台 Homepage）；空字段回退 `messages/en.json` 的 `Home.mechanicalHero*`。其它语言用各自 messages（标签缩写各语言相同）。
+- **第 1 张 H1：** `MINBER Automatic Skeleton`（品牌名 MINBER 不翻译；其余按语言翻译）
+- **导语：** `Automatic movement in 316L stainless steel with sapphire crystal.`
+- **角标：** `AUTOMATIC · SKELETON`
+- **标签：** `AUTOMATIC` · `316L` · `SAPPHIRE`
+- **第 2 张：** 仍是 ANA-DIGI Temperature（CMS 可覆盖这张的文案/图）
+- **来源：** 第 1 张用 `Home.automaticHero*`；第 2 张英文优先 CMS，空字段回退 `Home.mechanicalHero*`。
 
 **首页 Hero 背景图（2026-10-18 更新为两张轮播）**
 
-- **第 1 张（ANA-DIGI，保持不动）：**
-  - PC：`Home/section1/Home-hero-PC.webp`
-  - 手机：`Home/section1/Home-hero-APP.webp`
-- **第 2 张（MINBER 自动骨架表）：**
+- **第 1 张（MINBER 自动机械表，H1 / LCP）：**
   - PC：`Home/section1/Home-hero-MINBER Automatic-Skeleton-Watch-PC.webp`
   - 手机：`Home/section1/Home-hero-MINBER Automatic-Skeleton-Watch-APP.webp`
-  - 文案：品牌名 `MINBER` 不翻译；标题其余部分、导语、角标、AUTOMATIC/SAPPHIRE 标签按各语言翻译；`316L` 保持原样。英文：`MINBER Automatic Skeleton`。Shop 进 `/automatic-watches`
+  - 文案：品牌名 `MINBER` 不翻译；标题其余部分、导语、角标、AUTOMATIC/SAPPHIRE 标签按各语言翻译；`316L` 保持原样。Shop 进 `/automatic-watches`
+- **第 2 张（ANA-DIGI）：**
+  - PC：`Home/section1/Home-hero-PC.webp`
+  - 手机：`Home/section1/Home-hero-APP.webp`
 - **换图：** 在 R2 同路径覆盖文件（对象用短 `Cache-Control`，勿设 1 年缓存）。可选：把对应 rev 加 1 以强制 URL 换新（`?v=`）：
   - `NEXT_PUBLIC_R2_HUMPBUCK_HERO_DESKTOP_REV`
   - `NEXT_PUBLIC_R2_HUMPBUCK_HERO_MOBILE_REV`
