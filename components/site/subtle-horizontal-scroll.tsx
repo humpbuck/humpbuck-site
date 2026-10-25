@@ -30,6 +30,8 @@ type Props = {
   railClassName?: string;
   scrollLabel: string;
   scrollerProps?: HTMLAttributes<HTMLDivElement>;
+  /** Mouse/pen can drag the content sideways (touch keeps native swipe). */
+  dragToScroll?: boolean;
 };
 
 /** Horizontal scroller with a thin rail so overflow is obvious on touch devices. */
@@ -40,6 +42,7 @@ export function SubtleHorizontalScroll({
   railClassName,
   scrollLabel,
   scrollerProps,
+  dragToScroll = false,
 }: Props) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -48,12 +51,22 @@ export function SubtleHorizontalScroll({
     startX: number;
     startOffset: number;
   } | null>(null);
+  const contentDragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startScroll: number;
+    moved: boolean;
+  } | null>(null);
+  const contentDragRafRef = useRef<number | null>(null);
+  const pendingThumbOffsetRef = useRef<number | null>(null);
+  const suppressClickRef = useRef(false);
   const [metrics, setMetrics] = useState<ScrollMetrics>({
     canScroll: false,
     thumbRatio: 1,
     thumbOffset: 0,
   });
   const [dragging, setDragging] = useState(false);
+  const [contentDragging, setContentDragging] = useState(false);
 
   const readMetrics = useCallback((el: HTMLElement): ScrollMetrics => {
     const overflow = el.scrollWidth - el.clientWidth;
@@ -67,7 +80,8 @@ export function SubtleHorizontalScroll({
 
   const updateMetrics = useCallback(() => {
     const el = scrollerRef.current;
-    if (!el || dragRef.current) return;
+    // Skip while dragging content/rail — live offset is written by the drag handlers.
+    if (!el || dragRef.current || contentDragRef.current?.moved) return;
     setMetrics(readMetrics(el));
   }, [readMetrics]);
 
@@ -103,6 +117,79 @@ export function SubtleHorizontalScroll({
   useEffect(() => {
     updateMetrics();
   }, [children, updateMetrics]);
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el || !dragToScroll) return;
+    const onClickCapture = (event: MouseEvent) => {
+      if (!suppressClickRef.current) return;
+      event.preventDefault();
+      event.stopPropagation();
+      suppressClickRef.current = false;
+    };
+    el.addEventListener("click", onClickCapture, true);
+    return () => el.removeEventListener("click", onClickCapture, true);
+  }, [dragToScroll]);
+
+  const onContentPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (!dragToScroll || event.pointerType === "touch" || event.button !== 0) {
+      return;
+    }
+    const el = scrollerRef.current;
+    if (!el || el.scrollWidth - el.clientWidth <= 2) return;
+    contentDragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startScroll: el.scrollLeft,
+      moved: false,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const onContentPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = contentDragRef.current;
+    const el = scrollerRef.current;
+    if (!drag || !el || drag.pointerId !== event.pointerId) return;
+    const dx = event.clientX - drag.startX;
+    if (!drag.moved && Math.abs(dx) < 4) return;
+    if (!drag.moved) {
+      drag.moved = true;
+      setContentDragging(true);
+    }
+    event.preventDefault();
+    const overflow = el.scrollWidth - el.clientWidth;
+    const next = Math.max(0, Math.min(overflow, drag.startScroll - dx));
+    el.scrollLeft = next;
+    if (overflow <= 0) return;
+    pendingThumbOffsetRef.current = next / overflow;
+    if (contentDragRafRef.current != null) return;
+    contentDragRafRef.current = requestAnimationFrame(() => {
+      contentDragRafRef.current = null;
+      const thumbOffset = pendingThumbOffsetRef.current;
+      if (thumbOffset == null) return;
+      setMetrics((prev) =>
+        Math.abs(prev.thumbOffset - thumbOffset) < 0.001
+          ? prev
+          : { ...prev, thumbOffset },
+      );
+    });
+  };
+
+  const endContentDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = contentDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    if (drag.moved) suppressClickRef.current = true;
+    contentDragRef.current = null;
+    if (contentDragRafRef.current != null) {
+      cancelAnimationFrame(contentDragRafRef.current);
+      contentDragRafRef.current = null;
+    }
+    setContentDragging(false);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    updateMetrics();
+  };
 
   const visualRatio = Math.max(metrics.thumbRatio, MIN_THUMB_RATIO);
   const thumbWidthPct = visualRatio * 100;
@@ -168,6 +255,11 @@ export function SubtleHorizontalScroll({
 
   const {
     className: scrollerPropClassName,
+    onPointerDown,
+    onPointerMove,
+    onPointerUp,
+    onPointerCancel,
+    onDragStart,
     ...restScrollerProps
   } = scrollerProps ?? {};
 
@@ -176,7 +268,33 @@ export function SubtleHorizontalScroll({
       <div
         ref={scrollerRef}
         {...restScrollerProps}
-        className={`flex overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${scrollerClassName ?? ""} ${scrollerPropClassName ?? ""}`}
+        onPointerDown={(event) => {
+          onPointerDown?.(event);
+          onContentPointerDown(event);
+        }}
+        onPointerMove={(event) => {
+          onPointerMove?.(event);
+          onContentPointerMove(event);
+        }}
+        onPointerUp={(event) => {
+          endContentDrag(event);
+          onPointerUp?.(event);
+        }}
+        onPointerCancel={(event) => {
+          endContentDrag(event);
+          onPointerCancel?.(event);
+        }}
+        onDragStart={(event) => {
+          event.preventDefault();
+          onDragStart?.(event);
+        }}
+        className={`flex touch-pan-x overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&_img]:[-webkit-user-drag:none] ${
+          dragToScroll && metrics.canScroll
+            ? contentDragging
+              ? "cursor-grabbing select-none"
+              : "cursor-grab"
+            : ""
+        } ${scrollerClassName ?? ""} ${scrollerPropClassName ?? ""}`}
       >
         {children}
       </div>

@@ -146,6 +146,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-10-18 | **首页 Hero 改为两张轮播**：第 1 张保持 ANA-DIGI（`Home-hero-PC/APP.webp`）；第 2 张 MINBER 自动表（`Home-hero-MINBER Automatic-Skeleton-Watch-PC/APP.webp`）。文案：Automatic / 316L / Sapphire。 |
 | 2026-10-18 | **全站 SEO 品牌主线**改为自动手表：标题 `HUMPBUCK - Automatic Watches | Sapphire Crystal & 316L`；描述强调 316L 精钢、蓝宝石玻璃、高品质高端自动表。源文件仍是 `scripts/seo-brand-i18n.json`。 |
 | 2026-10-18 | **首页 Hero 对调**：第 1 张 / H1 为 MINBER 自动机械表；第 2 张为 ANA-DIGI。LCP/preload 用 MINBER 图。品牌以后走高端机械表。 |
+| 2026-10-25 | **PDP 变体缩略图**：PC / APP 都固定两行；每行独立左右滑并漏出半个，每行下方各有一条细滑杆；可拖缩略图区（`SubtleHorizontalScroll` + `dragToScroll`）。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 
