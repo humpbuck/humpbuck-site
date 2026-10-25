@@ -137,13 +137,13 @@ export function SubtleHorizontalScroll({
     }
     const el = scrollerRef.current;
     if (!el || el.scrollWidth - el.clientWidth <= 2) return;
+    // Do not capture yet — immediate capture steals clicks from child buttons.
     contentDragRef.current = {
       pointerId: event.pointerId,
       startX: event.clientX,
       startScroll: el.scrollLeft,
       moved: false,
     };
-    event.currentTarget.setPointerCapture(event.pointerId);
   };
 
   const onContentPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -151,10 +151,12 @@ export function SubtleHorizontalScroll({
     const el = scrollerRef.current;
     if (!drag || !el || drag.pointerId !== event.pointerId) return;
     const dx = event.clientX - drag.startX;
-    if (!drag.moved && Math.abs(dx) < 4) return;
+    // Keep threshold high enough that a normal click still selects.
+    if (!drag.moved && Math.abs(dx) < 8) return;
     if (!drag.moved) {
       drag.moved = true;
       setContentDragging(true);
+      event.currentTarget.setPointerCapture(event.pointerId);
     }
     event.preventDefault();
     const overflow = el.scrollWidth - el.clientWidth;
