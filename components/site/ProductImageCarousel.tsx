@@ -89,7 +89,10 @@ export function ProductImageCarousel({
     if (programmaticTimerRef.current) {
       clearTimeout(programmaticTimerRef.current);
     }
-    const ms = behavior === "smooth" ? 450 : 0;
+    // Instant scrolls still emit scroll events after the call stack. If we clear
+    // the flag at 0ms, onScroll can fight STYLE→gallery sync and snap back to
+    // the previous slide (feels like "need a second click").
+    const ms = behavior === "smooth" ? 450 : 150;
     programmaticTimerRef.current = setTimeout(() => {
       programmaticScrollRef.current = false;
       programmaticTimerRef.current = null;
@@ -171,11 +174,29 @@ export function ProductImageCarousel({
       skipControlledSyncRef.current = false;
       return;
     }
-    if (controlledIndex === lastSyncedIndexRef.current) return;
+    const el = scrollerRef.current;
+    const w = Math.max(el?.clientWidth ?? 1, 1);
+    const visualIndex = el
+      ? Math.min(Math.round(el.scrollLeft / w), Math.max(images.length - 1, 0))
+      : lastSyncedIndexRef.current;
+    // Same controlled index can still be visually wrong after a raced onScroll.
+    if (
+      controlledIndex === lastSyncedIndexRef.current &&
+      controlledIndex === visualIndex
+    ) {
+      return;
+    }
     lastSyncedIndexRef.current = controlledIndex!;
     scrollMainTo(controlledIndex!, "auto");
     scrollThumbIntoView(controlledIndex!);
-  }, [controlled, controlledIndex, imagesKey, scrollMainTo, scrollThumbIntoView]);
+  }, [
+    controlled,
+    controlledIndex,
+    images.length,
+    imagesKey,
+    scrollMainTo,
+    scrollThumbIntoView,
+  ]);
 
   useEffect(
     () => () => {

@@ -147,6 +147,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-10-18 | **全站 SEO 品牌主线**改为自动手表：标题 `HUMPBUCK - Automatic Watches | Sapphire Crystal & 316L`；描述强调 316L 精钢、蓝宝石玻璃、高品质高端自动表。源文件仍是 `scripts/seo-brand-i18n.json`。 |
 | 2026-10-18 | **首页 Hero 对调**：第 1 张 / H1 为 MINBER 自动机械表；第 2 张为 ANA-DIGI。LCP/preload 用 MINBER 图。品牌以后走高端机械表。 |
 | 2026-10-25 | **PDP 变体缩略图**：PC / APP 都固定两行；每行独立左右滑并漏出半个，每行下方各有一条细滑杆；可拖缩略图区（`SubtleHorizontalScroll` + `dragToScroll`）。 |
+| 2026-10-25 | **PDP 选变体大图偶发不同步**：`ProductImageCarousel` 程序化滚动在 `behavior:"auto"` 时过早放开 scroll 监听，`onScroll` 会把索引抢回旧图，看起来要再点一次；已延长忽略窗口并在视觉索引不一致时强制再滚。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 
