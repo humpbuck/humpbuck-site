@@ -1,7 +1,14 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ImageLightbox } from "@/components/site/image-lightbox";
 import { StorefrontImage } from "@/components/site/storefront-image";
 import { useTapWithoutDrag } from "@/components/site/use-tap-without-drag";
@@ -51,6 +58,7 @@ export function ProductImageCarousel({
   themeGlowClass,
   activeIndex: controlledIndex,
   onActiveIndexChange,
+  onBrowseGallery,
   activeSlideOverride,
 }: {
   alt: string;
@@ -58,6 +66,8 @@ export function ProductImageCarousel({
   themeGlowClass: string;
   activeIndex?: number;
   onActiveIndexChange?: (index: number) => void;
+  /** Thumb/arrow/user-swipe: clear STYLE hero and show gallery still. */
+  onBrowseGallery?: (index: number, force?: boolean) => void;
   activeSlideOverride?: string | null;
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -67,6 +77,11 @@ export function ProductImageCarousel({
   const programmaticTargetRef = useRef<number | null>(null);
   const skipControlledSyncRef = useRef(false);
   const lastSyncedIndexRef = useRef(0);
+  /** True while the shopper is dragging the main gallery (not STYLE sync scroll). */
+  const userGalleryGestureRef = useRef(false);
+  const userGalleryGestureTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const [internalActive, setInternalActive] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxStartIndex, setLightboxStartIndex] = useState(0);
@@ -75,15 +90,30 @@ export function ProductImageCarousel({
   const active = controlled ? controlledIndex! : internalActive;
 
   const setActive = useCallback(
-    (index: number) => {
+    (index: number, browse = false, forceBrowse = false) => {
       const n = images.length;
       if (n === 0) return;
       const i = ((index % n) + n) % n;
-      onActiveIndexChange?.(i);
+      if (browse && onBrowseGallery) {
+        onBrowseGallery(i, forceBrowse);
+      } else {
+        onActiveIndexChange?.(i);
+      }
       if (!controlled) setInternalActive(i);
     },
-    [controlled, images.length, onActiveIndexChange],
+    [controlled, images.length, onActiveIndexChange, onBrowseGallery],
   );
+
+  const markUserGalleryGesture = useCallback(() => {
+    userGalleryGestureRef.current = true;
+    if (userGalleryGestureTimerRef.current) {
+      clearTimeout(userGalleryGestureTimerRef.current);
+    }
+    userGalleryGestureTimerRef.current = setTimeout(() => {
+      userGalleryGestureRef.current = false;
+      userGalleryGestureTimerRef.current = null;
+    }, 400);
+  }, []);
 
   const beginProgrammaticScroll = useCallback(
     (behavior: ScrollBehavior, targetIndex: number) => {
@@ -147,7 +177,8 @@ export function ProductImageCarousel({
       skipControlledSyncRef.current = true;
       lastSyncedIndexRef.current = i;
       scrollMainTo(i, behavior);
-      setActive(i);
+      // forceBrowse: thumb/arrow must clear STYLE pin even inside the lock window.
+      setActive(i, true, true);
       scrollThumbIntoView(i);
     },
     [images.length, scrollMainTo, scrollThumbIntoView, setActive],
@@ -170,7 +201,9 @@ export function ProductImageCarousel({
     programmaticTargetRef.current = null;
     if (next === active) return;
     lastSyncedIndexRef.current = next;
-    setActive(next);
+    // Only a real gallery drag/swipe should dismiss the STYLE hero. Residual
+    // scroll after STYLE sync must keep the pinned variant image.
+    setActive(next, userGalleryGestureRef.current);
   }, [active, images.length, setActive]);
 
   useEffect(() => {
@@ -193,7 +226,8 @@ export function ProductImageCarousel({
     });
   }, [imagesKey, setActive]);
 
-  useEffect(() => {
+  // Layout (not paint) so STYLE→gallery scroll lands before the shopper sees a frame.
+  useLayoutEffect(() => {
     if (!controlled) return;
     if (skipControlledSyncRef.current) {
       skipControlledSyncRef.current = false;
@@ -223,10 +257,24 @@ export function ProductImageCarousel({
     scrollThumbIntoView,
   ]);
 
+  // STYLE pin: drop any lingering gallery-drag flag so residual scroll cannot
+  // call browseGallery and wipe the hero on the first click after a drag.
+  useLayoutEffect(() => {
+    if (!activeSlideOverride?.trim()) return;
+    userGalleryGestureRef.current = false;
+    if (userGalleryGestureTimerRef.current) {
+      clearTimeout(userGalleryGestureTimerRef.current);
+      userGalleryGestureTimerRef.current = null;
+    }
+  }, [activeSlideOverride]);
+
   useEffect(
     () => () => {
       if (programmaticTimerRef.current) {
         clearTimeout(programmaticTimerRef.current);
+      }
+      if (userGalleryGestureTimerRef.current) {
+        clearTimeout(userGalleryGestureTimerRef.current);
       }
     },
     [],
@@ -236,10 +284,13 @@ export function ProductImageCarousel({
     preloadImageUrls(images);
   }, [imagesKey, images]);
 
+  // While STYLE pins the hero, paint that image on every slide so a lagging
+  // scroll position (active updated, track still on the old still) never shows
+  // the wrong watch. Cleared when the shopper browses the gallery.
   const slideSrc = useCallback(
-    (index: number, src: string) =>
-      index === active && activeSlideOverride?.trim() ? activeSlideOverride.trim() : src,
-    [active, activeSlideOverride],
+    (_index: number, src: string) =>
+      activeSlideOverride?.trim() ? activeSlideOverride.trim() : src,
+    [activeSlideOverride],
   );
 
   const lightboxImages = useMemo(() => {
@@ -258,6 +309,7 @@ export function ProductImageCarousel({
         <div className="relative">
           <div
             ref={scrollerRef}
+            onPointerDown={markUserGalleryGesture}
             className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {images.map((src, i) => (

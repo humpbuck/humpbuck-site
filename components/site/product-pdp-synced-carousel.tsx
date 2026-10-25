@@ -27,6 +27,7 @@ export function ProductPdpSyncedCarousel({
       themeGlowClass={themeGlowClass}
       activeIndex={sync.galleryIndex}
       onActiveIndexChange={sync.setGalleryIndex}
+      onBrowseGallery={sync.browseGallery}
       activeSlideOverride={sync.variantHeroSrc}
     />
   );

@@ -147,7 +147,8 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-10-18 | **全站 SEO 品牌主线**改为自动手表：标题 `HUMPBUCK - Automatic Watches | Sapphire Crystal & 316L`；描述强调 316L 精钢、蓝宝石玻璃、高品质高端自动表。源文件仍是 `scripts/seo-brand-i18n.json`。 |
 | 2026-10-18 | **首页 Hero 对调**：第 1 张 / H1 为 MINBER 自动机械表；第 2 张为 ANA-DIGI。LCP/preload 用 MINBER 图。品牌以后走高端机械表。 |
 | 2026-10-25 | **PDP 变体缩略图**：PC / APP 都固定两行；每行独立左右滑并漏出半个，每行下方各有一条细滑杆；可拖缩略图区（`SubtleHorizontalScroll` + `dragToScroll`）。 |
-| 2026-10-25 | **PDP 选变体大图偶发不同步**：根因是画廊 `onScroll` 在 STYLE 同步过程中清掉 `variantHeroSrc`，大图回到旧 gallery 帧。已改为选变体时始终钉住变体主图，并在短锁定期内忽略会清主图的 gallery 更新。 |
+| 2026-10-25 | **PDP 选变体大图偶发不同步**：根因是画廊滚动余波/`onScroll` 清掉 `variantHeroSrc`。已拆成 `setGalleryIndex`（只改索引、保留变体主图）与 `browseGallery`（缩略图/箭头/用户拖画廊才清主图）；选 STYLE 始终钉住变体图。 |
+| 2026-10-25 | **PDP 刷新后先拖画廊再第一次点变体大图不变**：钉主图后短暂忽略残留 scroll 的 browse 清图；缩略图/箭头仍 `force` 清除；STYLE 钉定时把变体图画到全部 slide，避免 scroll 未跟上时仍显示旧图。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 

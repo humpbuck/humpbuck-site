@@ -4,7 +4,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -18,7 +17,13 @@ import {
 type ProductPdpGallerySyncContextValue = {
   galleryIndex: number;
   variantHeroSrc: string | null;
+  /** Update gallery index without clearing the STYLE hero (scroll echoes). */
   setGalleryIndex: (index: number) => void;
+  /**
+   * User browsed the gallery. Pass `force` for thumb/arrow clicks so the STYLE
+   * pin clears even inside the post-select residual-scroll lock window.
+   */
+  browseGallery: (index: number, force?: boolean) => void;
   syncGalleryToVariant: (variantIndex: number) => void;
 };
 
@@ -73,35 +78,19 @@ export function ProductPdpGallerySyncProvider({
 }) {
   const [galleryIndex, setGalleryIndexState] = useState(0);
   const [variantHeroSrc, setVariantHeroSrc] = useState<string | null>(null);
+  /** Ignore browse-clear briefly after STYLE pin (residual scroll race). */
+  const stylePinAtRef = useRef(0);
   const options = variantOptions ?? [];
-  /** While STYLE sync settles, ignore gallery scroll/thumb updates that clear the hero. */
-  const styleSyncLockRef = useRef(false);
-  const styleSyncUnlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const beginStyleSyncLock = useCallback(() => {
-    styleSyncLockRef.current = true;
-    if (styleSyncUnlockTimerRef.current) {
-      clearTimeout(styleSyncUnlockTimerRef.current);
-    }
-    styleSyncUnlockTimerRef.current = setTimeout(() => {
-      styleSyncLockRef.current = false;
-      styleSyncUnlockTimerRef.current = null;
-    }, 280);
-  }, []);
-
-  useEffect(
-    () => () => {
-      if (styleSyncUnlockTimerRef.current) {
-        clearTimeout(styleSyncUnlockTimerRef.current);
-      }
-    },
-    [],
-  );
 
   const setGalleryIndex = useCallback((index: number) => {
-    // STYLE→gallery sync scrolls the carousel; those scroll events must not wipe
-    // the selected variant hero, or the big image snaps back to the wrong still.
-    if (styleSyncLockRef.current) {
+    setGalleryIndexState(index);
+  }, []);
+
+  const browseGallery = useCallback((index: number, force = false) => {
+    // Gallery drag → STYLE click: residual scroll can still look like a
+    // "user gesture" and wipe the pin on the first click only. Thumb/arrow
+    // passes force=true and always clears.
+    if (!force && Date.now() - stylePinAtRef.current < 400) {
       setGalleryIndexState(index);
       return;
     }
@@ -115,20 +104,33 @@ export function ProductPdpGallerySyncProvider({
       const img = option?.image?.trim();
       if (!img) return;
 
-      beginStyleSyncLock();
-      // Always pin the hero to the selected style image. Gallery index is only a
-      // hint for which thumb to highlight; scroll races must not hide this.
+      // Pin hero to the selected style. Residual gallery scroll must not clear this
+      // (see browseGallery vs setGalleryIndex) or the first STYLE click after a
+      // gallery drag looks like it "didn't take."
+      stylePinAtRef.current = Date.now();
       setVariantHeroSrc(img);
 
       const idx = findGalleryIndexForVariant(option, gallerySlides);
       setGalleryIndexState(idx >= 0 ? idx : 0);
     },
-    [beginStyleSyncLock, gallerySlides, options],
+    [gallerySlides, options],
   );
 
   const value = useMemo(
-    () => ({ galleryIndex, variantHeroSrc, setGalleryIndex, syncGalleryToVariant }),
-    [galleryIndex, variantHeroSrc, setGalleryIndex, syncGalleryToVariant],
+    () => ({
+      galleryIndex,
+      variantHeroSrc,
+      setGalleryIndex,
+      browseGallery,
+      syncGalleryToVariant,
+    }),
+    [
+      galleryIndex,
+      variantHeroSrc,
+      setGalleryIndex,
+      browseGallery,
+      syncGalleryToVariant,
+    ],
   );
 
   return (
