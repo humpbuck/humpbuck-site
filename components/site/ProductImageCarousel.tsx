@@ -64,6 +64,7 @@ export function ProductImageCarousel({
   const thumbsRef = useRef<HTMLDivElement>(null);
   const programmaticScrollRef = useRef(false);
   const programmaticTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const programmaticTargetRef = useRef<number | null>(null);
   const skipControlledSyncRef = useRef(false);
   const lastSyncedIndexRef = useRef(0);
   const [internalActive, setInternalActive] = useState(0);
@@ -84,20 +85,36 @@ export function ProductImageCarousel({
     [controlled, images.length, onActiveIndexChange],
   );
 
-  const beginProgrammaticScroll = useCallback((behavior: ScrollBehavior) => {
-    programmaticScrollRef.current = true;
-    if (programmaticTimerRef.current) {
-      clearTimeout(programmaticTimerRef.current);
-    }
-    // Instant scrolls still emit scroll events after the call stack. If we clear
-    // the flag at 0ms, onScroll can fight STYLE→gallery sync and snap back to
-    // the previous slide (feels like "need a second click").
-    const ms = behavior === "smooth" ? 450 : 150;
-    programmaticTimerRef.current = setTimeout(() => {
-      programmaticScrollRef.current = false;
-      programmaticTimerRef.current = null;
-    }, ms);
-  }, []);
+  const beginProgrammaticScroll = useCallback(
+    (behavior: ScrollBehavior, targetIndex: number) => {
+      programmaticScrollRef.current = true;
+      programmaticTargetRef.current = targetIndex;
+      if (programmaticTimerRef.current) {
+        clearTimeout(programmaticTimerRef.current);
+      }
+      // Instant scrolls still emit scroll events after the call stack. If we clear
+      // the flag too soon, onScroll can fight STYLE→gallery sync and snap back.
+      const ms = behavior === "smooth" ? 450 : 200;
+      programmaticTimerRef.current = setTimeout(() => {
+        programmaticScrollRef.current = false;
+        programmaticTimerRef.current = null;
+        const el = scrollerRef.current;
+        if (!el || images.length === 0) {
+          programmaticTargetRef.current = null;
+          return;
+        }
+        const w = Math.max(el.clientWidth, 1);
+        const visual = Math.min(
+          Math.round(el.scrollLeft / w),
+          images.length - 1,
+        );
+        if (visual === targetIndex) {
+          programmaticTargetRef.current = null;
+        }
+      }, ms);
+    },
+    [images.length],
+  );
 
   const scrollMainTo = useCallback(
     (index: number, behavior: ScrollBehavior = "smooth") => {
@@ -105,7 +122,7 @@ export function ProductImageCarousel({
       if (!el || images.length === 0) return;
       const i = ((index % images.length) + images.length) % images.length;
       const w = Math.max(el.clientWidth, 1);
-      beginProgrammaticScroll(behavior);
+      beginProgrammaticScroll(behavior, i);
       el.scrollTo({ left: i * w, behavior });
     },
     [beginProgrammaticScroll, images.length],
@@ -143,6 +160,14 @@ export function ProductImageCarousel({
     const w = Math.max(el.clientWidth, 1);
     const i = Math.round(el.scrollLeft / w);
     const next = Math.min(i, images.length - 1);
+    // Still settling toward a STYLE-driven target — don't publish a mid-scroll index.
+    if (
+      programmaticTargetRef.current != null &&
+      next !== programmaticTargetRef.current
+    ) {
+      return;
+    }
+    programmaticTargetRef.current = null;
     if (next === active) return;
     lastSyncedIndexRef.current = next;
     setActive(next);

@@ -4,7 +4,9 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -49,6 +51,9 @@ function findGalleryIndexForVariant(
   if (variantStyleNum != null) {
     const byStyleNum = gallerySlides.findIndex((slide) => {
       if (!slide.includes("/variants/")) return false;
+      const file = slide.split("/").pop() ?? "";
+      // Only treat style/color stills as the same style number.
+      if (!/(?:style|color)-\d{1,2}\.webp$/i.test(file)) return false;
       return styleNumFromR2VariantUrl(slide) === variantStyleNum;
     });
     if (byStyleNum >= 0) return byStyleNum;
@@ -69,8 +74,37 @@ export function ProductPdpGallerySyncProvider({
   const [galleryIndex, setGalleryIndexState] = useState(0);
   const [variantHeroSrc, setVariantHeroSrc] = useState<string | null>(null);
   const options = variantOptions ?? [];
+  /** While STYLE sync settles, ignore gallery scroll/thumb updates that clear the hero. */
+  const styleSyncLockRef = useRef(false);
+  const styleSyncUnlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const beginStyleSyncLock = useCallback(() => {
+    styleSyncLockRef.current = true;
+    if (styleSyncUnlockTimerRef.current) {
+      clearTimeout(styleSyncUnlockTimerRef.current);
+    }
+    styleSyncUnlockTimerRef.current = setTimeout(() => {
+      styleSyncLockRef.current = false;
+      styleSyncUnlockTimerRef.current = null;
+    }, 280);
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (styleSyncUnlockTimerRef.current) {
+        clearTimeout(styleSyncUnlockTimerRef.current);
+      }
+    },
+    [],
+  );
 
   const setGalleryIndex = useCallback((index: number) => {
+    // STYLE→gallery sync scrolls the carousel; those scroll events must not wipe
+    // the selected variant hero, or the big image snaps back to the wrong still.
+    if (styleSyncLockRef.current) {
+      setGalleryIndexState(index);
+      return;
+    }
     setVariantHeroSrc(null);
     setGalleryIndexState(index);
   }, []);
@@ -81,17 +115,15 @@ export function ProductPdpGallerySyncProvider({
       const img = option?.image?.trim();
       if (!img) return;
 
-      const idx = findGalleryIndexForVariant(option, gallerySlides);
-      if (idx >= 0) {
-        setVariantHeroSrc(null);
-        setGalleryIndexState(idx);
-        return;
-      }
-
+      beginStyleSyncLock();
+      // Always pin the hero to the selected style image. Gallery index is only a
+      // hint for which thumb to highlight; scroll races must not hide this.
       setVariantHeroSrc(img);
-      setGalleryIndexState(0);
+
+      const idx = findGalleryIndexForVariant(option, gallerySlides);
+      setGalleryIndexState(idx >= 0 ? idx : 0);
     },
-    [gallerySlides, options],
+    [beginStyleSyncLock, gallerySlides, options],
   );
 
   const value = useMemo(
