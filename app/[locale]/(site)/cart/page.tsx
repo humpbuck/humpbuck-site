@@ -38,7 +38,7 @@ export default function CartPage() {
         <div className="mt-10 rounded-2xl border border-line bg-white/60 p-10 text-center text-muted">
           <p>{t("empty")}</p>
           <Link
-            href="/watches"
+            href="/products"
             className="mt-4 inline-block text-sm font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4 hover:underline"
           >
             {t("continueShopping")}
@@ -69,7 +69,7 @@ export default function CartPage() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <Link
-                      href={`/product/${line.slug}`}
+                      href={`/products/${line.slug}`}
                       className="font-medium text-ink hover:underline"
                     >
                       {line.productName || line.variantLabel || line.slug}

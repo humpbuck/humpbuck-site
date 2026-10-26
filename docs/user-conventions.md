@@ -36,7 +36,7 @@
 - 桶内文件命名约定仍适用于「自动发现」兜底；在配置了 R2 S3 API 凭据时，用 **ListObjects** 列出（凭据同评论上传，见 `.env.example`）。  
 - 部署 **Vercel** 时需在项目环境变量中配置 `DATABASE_URL`、R2 相关变量及（若与默认不同）`NEXT_PUBLIC_R2_PUBLIC_BASE`；公网 R2 若用自有域名，需在 `next.config.ts` 的 `images.remotePatterns` 中允许该 `hostname`，否则 `next/image` 可能不显示。  
 - **前台图片**：凡展示 R2 公网 URL 的模块，应使用 `components/site/storefront-image.tsx` 的 **`StorefrontImage`**（不要用裸 `next/image` + 手写 `unoptimized`）。它会自动对 `isR2PublicObjectUrl` 为真的地址直连 R2，避免部分手机经 `/_next/image` 代理烂图。头像仍用 `ReviewerAvatar` / `HeaderUserAvatar` 等既有逻辑。  
-- 目录里的 **`slug` 为型号**（如 `2301`），公开 PDP 为 `/product/{category}/{slug}`（ANA-DIGI→`ana-digi`）；R2 文件夹名可与 slug 或旧复合名一致。
+- 目录里的 **`slug` 为型号**（如 `2301`），公开 PDP 为 `/products/{category}/{slug}`（ANA-DIGI→`ana-digi`）；R2 文件夹名可与 slug 或旧复合名一致。
 
 ## 3. 评论与头像
 
@@ -149,6 +149,8 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-10-25 | **PDP 变体缩略图**：PC / APP 都固定两行；每行独立左右滑并漏出半个，每行下方各有一条细滑杆；可拖缩略图区（`SubtleHorizontalScroll` + `dragToScroll`）。 |
 | 2026-10-25 | **PDP 选变体大图偶发不同步**：根因是画廊滚动余波/`onScroll` 清掉 `variantHeroSrc`。已拆成 `setGalleryIndex`（只改索引、保留变体主图）与 `browseGallery`（缩略图/箭头/用户拖画廊才清主图）；选 STYLE 始终钉住变体图。 |
 | 2026-10-25 | **PDP 刷新后先拖画廊再第一次点变体大图不变**：钉主图后短暂忽略残留 scroll 的 browse 清图；缩略图/箭头仍 `force` 清除；STYLE 钉定时把变体图画到全部 slide，避免 scroll 未跟上时仍显示旧图。 |
+| 2026-10-25 | **分类公开 URL 对齐 PDP**：规范路径改为 `/product/{category}`（如 `/product/analog`）；旧 `/analog-watches` 等 **301**；`/watches` 仍为全部商品。 |
+| 2026-10-25 | **全站复数 `/products`**：全部商品 `/products`；分类 `/products/{category}`；PDP `/products/{category}/{model}`。旧 `/watches`、`*-watches`、`/product`（及嵌套）**301**。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 
@@ -156,20 +158,20 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 
 - **固定四类（不可在后台增删）：** ANA-DIGI · Digital · Analog · Automatic  
 - **规范 categoryId：** `cat_ana-digi` · `cat_digital` · `cat_analog` · `cat_automatic`（旧 `cat_quartz` / `cat_mechanical` 自动迁到新 id）  
-- **公开路径：** `/watches`（全部）· `/ana-digi-watches` · `/digital-watches` · `/analog-watches` · `/automatic-watches`  
+- **公开路径：** `/products`（全部）· `/products/ana-digi` · `/products/digital` · `/products/analog` · `/products/automatic`  
 - **每页独立：** title、meta description、canonical、H1、subtitle、顶部简介、底部 SEO（ANA-DIGI 另有 FAQ）  
 - **文案源码：** `lib/storefront-watch-categories.ts`（结构）+ `messages/{locale}.json` 的 `WatchCollections`（13 语）；源批 `scripts/watch-collections-i18n.json`，应用 `node scripts/apply-watch-collections-i18n.mjs`  
-- **旧链：** `/product`、`/product?series=…`、`?category=cat_quartz|cat_mechanical|…`、legacy `/series/…` → 301 到上面对应路径  
-- **PDP URL：** `/product/{category}/{model}`，其中 category 路径段为 `ana-digi`（ANA-DIGI）/ `digital` / `analog` / `automatic`，model 为后台 Slug（如 `2301`）。例：`/product/ana-digi/2301`  
-- **旧 PDP：** `/product/{slug}`、误用的 `/product/digi-temp/{model}`（及改短 slug 前的复合 slug）→ **308** 到规范 `/product/{category}/{model}`  
-- **后台：** 无 Series 管理页；Products 表单只选上述四类；选 Digital 即写入 `cat_digital` 并出现在 `/digital-watches`；Slug 只填型号  
+- **旧链：** `/watches`、`/ana-digi-watches` 等 `*-watches`、`/product`（及 `/product/…` 嵌套）、`/product?series=…`、`?category=…`、legacy `/series/…`、`/shop` → **301** 到上面对应路径  
+- **PDP URL：** `/products/{category}/{model}`，其中 category 路径段为 `ana-digi`（ANA-DIGI）/ `digital` / `analog` / `automatic`，model 为后台 Slug（如 `2301`）。例：`/products/ana-digi/2301`  
+- **旧 PDP：** `/product/…` → **301** `/products/…`；`/products/{slug}`（非分类段）、误用的 `/products/digi-temp/{model}`（及改短 slug 前的复合 slug）→ **308** 到规范 `/products/{category}/{model}`  
+- **后台：** 无 Series 管理页；Products 表单只选上述四类；选 Digital 即写入 `cat_digital` 并出现在 `/products/digital`；Slug 只填型号  
 
 **SEO 品牌主线（2026-10-18 更新）**
 
 - **英文标题：** `HUMPBUCK - Automatic Watches | Sapphire Crystal & 316L`
 - **英文描述：** `Discover high-quality automatic watches in 316L stainless steel with sapphire crystal. Premium luxury timepieces made for lasting everyday wear.`
 - **维护方式：** 编辑 `scripts/seo-brand-i18n.json` → `node scripts/apply-seo-brand-messaging.mjs`（或直接改 `messages/en.json` 的 `SiteMetadata` / `Home` meta）
-- **适用范围：** 全站默认 meta / Open Graph（首页为主）；商品 PDP、ANA-DIGI / Digital / Analog 分类页、博客文章仍用各自产品/文章描述，不强行覆盖。 `/watches` 与 `/automatic-watches` 的 title/description 已对齐自动表 + 316L + 蓝宝石。
+- **适用范围：** 全站默认 meta / Open Graph（首页为主）；商品 PDP、ANA-DIGI / Digital / Analog 分类页、博客文章仍用各自产品/文章描述，不强行覆盖。 `/products` 与 `/products/automatic` 的 title/description 已对齐自动表 + 316L + 蓝宝石。
 
 **首页 Hero 文案（2026-10-18 更新：第 1 张 / H1 = 自动机械表）**
 
@@ -185,7 +187,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 - **第 1 张（MINBER 自动机械表，H1 / LCP）：**
   - PC：`Home/section1/Home-hero-MINBER Automatic-Skeleton-Watch-PC.webp`
   - 手机：`Home/section1/Home-hero-MINBER Automatic-Skeleton-Watch-APP.webp`
-  - 文案：品牌名 `MINBER` 不翻译；标题其余部分、导语、角标、AUTOMATIC/SAPPHIRE 标签按各语言翻译；`316L` 保持原样。Shop 进 `/automatic-watches`
+  - 文案：品牌名 `MINBER` 不翻译；标题其余部分、导语、角标、AUTOMATIC/SAPPHIRE 标签按各语言翻译；`316L` 保持原样。Shop 进 `/products/automatic`
 - **第 2 张（ANA-DIGI）：**
   - PC：`Home/section1/Home-hero-PC.webp`
   - 手机：`Home/section1/Home-hero-APP.webp`

@@ -44,7 +44,7 @@ export async function HomeMovementCategories() {
   const productCutout = content.spotlightProductImageUrl.trim();
   const productHref = product
     ? catalogProductHref(product)
-    : "/automatic-watches";
+    : "/products/automatic";
   const productImage =
     productCutout ||
     cover ||

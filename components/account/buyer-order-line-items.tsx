@@ -8,7 +8,7 @@ type Props = {
   lines: ValidatedLine[];
   /** Order history cards: smaller thumbs; avoid nested links inside outer order `<Link>`. */
   compact?: boolean;
-  /** When true, product name links to `/product/[slug]` (use on order detail only). */
+  /** When true, product name links to `/products/[slug]` (use on order detail only). */
   linkToProduct?: boolean;
   className?: string;
   /** Copy for review row (storefront i18n). */
@@ -89,7 +89,7 @@ export function BuyerOrderLineItems({
               <div className="min-w-0 pt-0.5">
                 {resolvedLink ? (
                   <Link
-                    href={`/product/${line.slug}`}
+                    href={`/products/${line.slug}`}
                     className="font-medium text-ink underline-offset-4 hover:underline"
                   >
                     {title}
@@ -111,7 +111,7 @@ export function BuyerOrderLineItems({
                   </span>
                 ) : reviewContext.hideWriteReviewLink ? null : (
                   <Link
-                    href={`/product/${line.slug}#buyer-reviews`}
+                    href={`/products/${line.slug}#buyer-reviews`}
                     className="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4 hover:underline"
                   >
                     {writeReview}

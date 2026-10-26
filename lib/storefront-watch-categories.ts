@@ -3,7 +3,11 @@
  * Localized SEO/copy lives in messages `WatchCollections` (see lib/watch-collection-copy.ts).
  */
 
-export const WATCHES_PATH = "/watches" as const;
+/** All-products catalog path. */
+export const PRODUCTS_PATH = "/products" as const;
+
+/** @deprecated Use {@link PRODUCTS_PATH}. */
+export const WATCHES_PATH = PRODUCTS_PATH;
 
 export type StorefrontWatchCategorySlug =
   | "ana-digi"
@@ -38,7 +42,7 @@ export const STOREFRONT_WATCH_CATEGORIES: readonly StorefrontWatchCategoryDef[] 
     {
       id: "cat_ana-digi",
       slug: "ana-digi",
-      path: "/ana-digi-watches",
+      path: "/products/ana-digi",
       name: "ANA-DIGI",
       sortOrder: 4,
       messageKey: "anaDigi",
@@ -46,7 +50,7 @@ export const STOREFRONT_WATCH_CATEGORIES: readonly StorefrontWatchCategoryDef[] 
     {
       id: "cat_digital",
       slug: "digital",
-      path: "/digital-watches",
+      path: "/products/digital",
       name: "Digital",
       sortOrder: 3,
       messageKey: "digital",
@@ -54,7 +58,7 @@ export const STOREFRONT_WATCH_CATEGORIES: readonly StorefrontWatchCategoryDef[] 
     {
       id: "cat_analog",
       slug: "analog",
-      path: "/analog-watches",
+      path: "/products/analog",
       name: "Analog",
       sortOrder: 2,
       messageKey: "analog",
@@ -62,7 +66,7 @@ export const STOREFRONT_WATCH_CATEGORIES: readonly StorefrontWatchCategoryDef[] 
     {
       id: "cat_automatic",
       slug: "automatic",
-      path: "/automatic-watches",
+      path: "/products/automatic",
       name: "Automatic",
       sortOrder: 1,
       messageKey: "automatic",
@@ -141,9 +145,9 @@ export function watchCategoryMessageKey(
   return getWatchCategoryBySlug(slug)?.messageKey ?? "all";
 }
 
-/** All public collection paths including `/watches`. */
+/** All public collection paths including `/products`. */
 export const STOREFRONT_WATCH_COLLECTION_PATHS = [
-  WATCHES_PATH,
+  PRODUCTS_PATH,
   ...STOREFRONT_WATCH_CATEGORIES.map((c) => c.path),
 ] as const;
 
@@ -156,4 +160,4 @@ export function isStorefrontWatchCollectionPath(pathname: string): boolean {
 }
 
 /** @deprecated Use localized WatchCollections; kept for path helper. */
-export const ALL_WATCHES_SEO = { path: WATCHES_PATH } as const;
+export const ALL_WATCHES_SEO = { path: PRODUCTS_PATH } as const;

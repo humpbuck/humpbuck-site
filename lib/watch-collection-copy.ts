@@ -68,7 +68,7 @@ function asFaqs(v: unknown): WatchCollectionFaq[] {
   return out;
 }
 
-/** Localized copy for `/watches` or a fixed collection path. */
+/** Localized copy for `/products` or a fixed collection path. */
 export async function getWatchCollectionLocalizedCopy(
   locale: string,
   categorySlug: string | null,
@@ -84,7 +84,7 @@ export async function getWatchCollectionLocalizedCopy(
   return {
     messageKey,
     category,
-    path: category?.path ?? "/watches",
+    path: category?.path ?? "/products",
     name: asString(block.name, category?.name ?? ""),
     metaTitle: asString(block.metaTitle),
     metaDescription: asString(block.metaDescription),

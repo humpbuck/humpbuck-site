@@ -34,7 +34,7 @@ export default async function ReviewAppendPage({
   if (!product) notFound();
 
   if (review._count.appends >= MAX_REVIEW_APPENDS) {
-    return redirectWithLocale(`/product/${review.productSlug}`);
+    return redirectWithLocale(`/products/${review.productSlug}`);
   }
 
   return (
@@ -46,7 +46,7 @@ export default async function ReviewAppendPage({
       <p className="mt-2 text-sm text-muted">
         {t("appendIntro")}{" "}
         <Link
-          href={`/product/${review.productSlug}`}
+          href={`/products/${review.productSlug}`}
           className="font-semibold underline-offset-4 hover:underline"
         >
           {t("backToProduct")}

@@ -50,7 +50,7 @@ export function ProductReviewForm({
       onSuccess?.();
       return;
     }
-    router.push(`/product/${productSlug}`);
+    router.push(`/products/${productSlug}`);
     router.refresh();
   }
 
@@ -60,7 +60,7 @@ export function ProductReviewForm({
 
     if (!session?.user?.id) {
       router.push(
-        `/auth/login?callbackUrl=${encodeURIComponent(`/product/${productSlug}#buyer-reviews`)}`,
+        `/auth/login?callbackUrl=${encodeURIComponent(`/products/${productSlug}#buyer-reviews`)}`,
       );
       return;
     }

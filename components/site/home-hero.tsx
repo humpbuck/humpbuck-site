@@ -58,7 +58,7 @@ async function HomeHeroForeground() {
         t("automaticHeroChipSapphire"),
       ],
       cta: t("automaticHeroCtaShop"),
-      ctaHref: "/automatic-watches",
+      ctaHref: "/products/automatic",
       alt: t("automaticHeroImageAlt"),
       headingAs: "h1",
     },
@@ -95,7 +95,7 @@ async function HomeHeroForeground() {
         content.heroCtaShop,
         t("mechanicalHeroCtaShop"),
       ),
-      ctaHref: "/watches",
+      ctaHref: "/products",
       alt: resolveHomeCmsText(
         locale,
         content.heroImageAlt,

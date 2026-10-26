@@ -108,7 +108,7 @@ export function ProductReviewsBuyerUi({
             embedded
             productSlug={productSlug}
             productName={productName}
-            cancelHref={`/product/${productSlug}`}
+            cancelHref={`/products/${productSlug}`}
             orderId={payload.access === "eligible" ? payload.orderId ?? undefined : undefined}
           />
         </div>

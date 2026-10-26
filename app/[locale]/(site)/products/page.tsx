@@ -6,22 +6,20 @@ import {
 
 export const revalidate = false;
 
-const SLUG = "analog" as const;
-
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  return buildWatchCollectionMetadata(locale, SLUG);
+  return buildWatchCollectionMetadata(locale, null);
 }
 
-export default async function AnalogWatchesPage({
+export default async function ProductsPage({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  return <WatchCollectionPage locale={locale} categorySlug={SLUG} />;
+  return <WatchCollectionPage locale={locale} categorySlug={null} />;
 }

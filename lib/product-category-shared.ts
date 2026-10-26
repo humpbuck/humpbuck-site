@@ -92,7 +92,7 @@ export function normalizeShopSeriesParam(raw: string): string {
   return LEGACY_CATALOG_SERIES_REDIRECT[v] ?? v;
 }
 
-/** Public path for a fixed collection slug, or `/watches` for all. */
+/** Public path for a fixed collection slug, or `/products` for all. */
 export function shopCategoryPath(
   seriesSlug: string | null | undefined,
 ): string {

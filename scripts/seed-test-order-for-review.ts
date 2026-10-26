@@ -144,7 +144,7 @@ async function main() {
   console.log(`  ${base}/account/orders/${order.id}`);
   console.log(`\n1) Click “Confirm received” on the order page`);
   console.log(`2) Then “Write review” or open PDP:`);
-  console.log(`  ${base}/product/${product.slug}#buyer-reviews\n`);
+  console.log(`  ${base}/products/${product.slug}#buyer-reviews\n`);
 }
 
 main()

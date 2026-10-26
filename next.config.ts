@@ -36,15 +36,42 @@ function r2PublicImagePatterns(): { protocol: "https"; hostname: string; pathnam
   }));
 }
 
-/** Old `/series/{slug}` landing pages → path-based watch collections. */
+/** Old `/series/{slug}` landing pages → `/products/…` collections. */
 const LEGACY_SERIES_PAGE_DEST: Record<string, string> = {
-  digitemp: "/ana-digi-watches",
-  "digi-temp": "/ana-digi-watches",
-  tonneau: "/watches",
-  "rm-tonneau": "/watches",
-  "rd-astral": "/watches",
-  astral: "/watches",
+  digitemp: "/products/ana-digi",
+  "digi-temp": "/products/ana-digi",
+  tonneau: "/products",
+  "rm-tonneau": "/products",
+  "rd-astral": "/products",
+  astral: "/products",
 };
+
+/** Former SEO collection URLs → `/products/{category}`. */
+const LEGACY_WATCH_COLLECTION_PATHS: Record<string, string> = {
+  "/ana-digi-watches": "/products/ana-digi",
+  "/digital-watches": "/products/digital",
+  "/analog-watches": "/products/analog",
+  "/automatic-watches": "/products/automatic",
+  "/watches": "/products",
+};
+
+const legacyWatchCollectionRedirects = Object.entries(
+  LEGACY_WATCH_COLLECTION_PATHS,
+).flatMap(([from, to]) =>
+  routing.locales.map((locale) =>
+    locale === routing.defaultLocale
+      ? {
+          source: from,
+          destination: to,
+          permanent: true as const,
+        }
+      : {
+          source: `/${locale}${from}`,
+          destination: `/${locale}${to}`,
+          permanent: true as const,
+        },
+  ),
+);
 
 const legacySeriesPageRedirects = Object.entries(LEGACY_SERIES_PAGE_DEST).flatMap(
   ([slug, destination]) =>
@@ -63,7 +90,7 @@ const legacySeriesPageRedirects = Object.entries(LEGACY_SERIES_PAGE_DEST).flatMa
     ),
 );
 
-/** Legacy `?series=` / `?category=` on /product|/shop → static collection paths. */
+/** Legacy `?series=` / `?category=` on /product|/shop → `/products/…`. */
 type LegacyQueryRedirect = {
   path: "/product" | "/shop";
   key: "series" | "category" | "movement" | "profile";
@@ -72,38 +99,38 @@ type LegacyQueryRedirect = {
 };
 
 const legacyShopQueryRedirects: LegacyQueryRedirect[] = [
-  { path: "/product", key: "series", value: "ana-digi", destPath: "/ana-digi-watches" },
-  { path: "/product", key: "series", value: "digitemp", destPath: "/ana-digi-watches" },
-  { path: "/product", key: "series", value: "quartz", destPath: "/ana-digi-watches" },
-  { path: "/product", key: "series", value: "digital", destPath: "/digital-watches" },
-  { path: "/product", key: "series", value: "analog", destPath: "/analog-watches" },
-  { path: "/product", key: "series", value: "automatic", destPath: "/automatic-watches" },
-  { path: "/product", key: "series", value: "mechanical", destPath: "/automatic-watches" },
-  { path: "/product", key: "series", value: "ultra-thin", destPath: "/watches" },
-  { path: "/product", key: "category", value: "cat_ana-digi", destPath: "/ana-digi-watches" },
-  { path: "/product", key: "category", value: "cat_quartz", destPath: "/ana-digi-watches" },
-  { path: "/product", key: "category", value: "quartz", destPath: "/ana-digi-watches" },
-  { path: "/product", key: "category", value: "ana-digi", destPath: "/ana-digi-watches" },
-  { path: "/product", key: "category", value: "digitemp", destPath: "/ana-digi-watches" },
-  { path: "/product", key: "category", value: "cat_ultra_thin", destPath: "/watches" },
-  { path: "/product", key: "category", value: "ultra-thin", destPath: "/watches" },
-  { path: "/product", key: "category", value: "cat_automatic", destPath: "/automatic-watches" },
-  { path: "/product", key: "category", value: "cat_mechanical", destPath: "/automatic-watches" },
-  { path: "/product", key: "category", value: "mechanical", destPath: "/automatic-watches" },
-  { path: "/product", key: "category", value: "automatic", destPath: "/automatic-watches" },
-  { path: "/product", key: "category", value: "cat_digital", destPath: "/digital-watches" },
-  { path: "/product", key: "category", value: "digital", destPath: "/digital-watches" },
-  { path: "/product", key: "category", value: "cat_analog", destPath: "/analog-watches" },
-  { path: "/product", key: "category", value: "analog", destPath: "/analog-watches" },
-  { path: "/product", key: "movement", value: "quartz", destPath: "/ana-digi-watches" },
-  { path: "/product", key: "movement", value: "mechanical", destPath: "/automatic-watches" },
-  { path: "/product", key: "profile", value: "ultra-thin", destPath: "/watches" },
-  { path: "/shop", key: "series", value: "astral", destPath: "/watches" },
-  { path: "/shop", key: "series", value: "digitemp", destPath: "/ana-digi-watches" },
-  { path: "/shop", key: "series", value: "rd-astral", destPath: "/watches" },
-  { path: "/shop", key: "series", value: "tonneau", destPath: "/watches" },
-  { path: "/shop", key: "series", value: "ana-digi", destPath: "/ana-digi-watches" },
-  { path: "/shop", key: "series", value: "mechanical", destPath: "/automatic-watches" },
+  { path: "/product", key: "series", value: "ana-digi", destPath: "/products/ana-digi" },
+  { path: "/product", key: "series", value: "digitemp", destPath: "/products/ana-digi" },
+  { path: "/product", key: "series", value: "quartz", destPath: "/products/ana-digi" },
+  { path: "/product", key: "series", value: "digital", destPath: "/products/digital" },
+  { path: "/product", key: "series", value: "analog", destPath: "/products/analog" },
+  { path: "/product", key: "series", value: "automatic", destPath: "/products/automatic" },
+  { path: "/product", key: "series", value: "mechanical", destPath: "/products/automatic" },
+  { path: "/product", key: "series", value: "ultra-thin", destPath: "/products" },
+  { path: "/product", key: "category", value: "cat_ana-digi", destPath: "/products/ana-digi" },
+  { path: "/product", key: "category", value: "cat_quartz", destPath: "/products/ana-digi" },
+  { path: "/product", key: "category", value: "quartz", destPath: "/products/ana-digi" },
+  { path: "/product", key: "category", value: "ana-digi", destPath: "/products/ana-digi" },
+  { path: "/product", key: "category", value: "digitemp", destPath: "/products/ana-digi" },
+  { path: "/product", key: "category", value: "cat_ultra_thin", destPath: "/products" },
+  { path: "/product", key: "category", value: "ultra-thin", destPath: "/products" },
+  { path: "/product", key: "category", value: "cat_automatic", destPath: "/products/automatic" },
+  { path: "/product", key: "category", value: "cat_mechanical", destPath: "/products/automatic" },
+  { path: "/product", key: "category", value: "mechanical", destPath: "/products/automatic" },
+  { path: "/product", key: "category", value: "automatic", destPath: "/products/automatic" },
+  { path: "/product", key: "category", value: "cat_digital", destPath: "/products/digital" },
+  { path: "/product", key: "category", value: "digital", destPath: "/products/digital" },
+  { path: "/product", key: "category", value: "cat_analog", destPath: "/products/analog" },
+  { path: "/product", key: "category", value: "analog", destPath: "/products/analog" },
+  { path: "/product", key: "movement", value: "quartz", destPath: "/products/ana-digi" },
+  { path: "/product", key: "movement", value: "mechanical", destPath: "/products/automatic" },
+  { path: "/product", key: "profile", value: "ultra-thin", destPath: "/products" },
+  { path: "/shop", key: "series", value: "astral", destPath: "/products" },
+  { path: "/shop", key: "series", value: "digitemp", destPath: "/products/ana-digi" },
+  { path: "/shop", key: "series", value: "rd-astral", destPath: "/products" },
+  { path: "/shop", key: "series", value: "tonneau", destPath: "/products" },
+  { path: "/shop", key: "series", value: "ana-digi", destPath: "/products/ana-digi" },
+  { path: "/shop", key: "series", value: "mechanical", destPath: "/products/automatic" },
 ];
 
 const legacyShopSeriesQueryRedirects = legacyShopQueryRedirects.flatMap(
@@ -121,17 +148,23 @@ const legacyShopSeriesQueryRedirects = legacyShopQueryRedirects.flatMap(
     }),
 );
 
-const legacyCatalogToWatchesRedirects = routing.locales.flatMap((locale) => {
+/** Singular `/product` (+ nested) and `/shop` → plural `/products`. */
+const legacyCatalogToProductsRedirects = routing.locales.flatMap((locale) => {
   const prefix = locale === routing.defaultLocale ? "" : `/${locale}`;
   return [
     {
+      source: `${prefix}/product/:path*`,
+      destination: `${prefix}/products/:path*`,
+      permanent: true as const,
+    },
+    {
       source: `${prefix}/product`,
-      destination: `${prefix}/watches`,
+      destination: `${prefix}/products`,
       permanent: true as const,
     },
     {
       source: `${prefix}/shop`,
-      destination: `${prefix}/watches`,
+      destination: `${prefix}/products`,
       permanent: true as const,
     },
   ];
@@ -171,9 +204,10 @@ const nextConfig: NextConfig = {
         destination: `${ADMIN_PATH}/:path*`,
         permanent: true,
       },
+      ...legacyWatchCollectionRedirects,
       ...legacySeriesPageRedirects,
       ...legacyShopSeriesQueryRedirects,
-      ...legacyCatalogToWatchesRedirects,
+      ...legacyCatalogToProductsRedirects,
     ];
   },
   images: {

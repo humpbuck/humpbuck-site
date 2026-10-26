@@ -51,11 +51,11 @@ export function revalidateStorefrontPath(
 /** Paths that share the storefront shell (announcement bar + header). */
 const STOREFRONT_SHELL_PATHS = [
   "/",
-  "/watches",
-  "/ana-digi-watches",
-  "/digital-watches",
-  "/analog-watches",
-  "/automatic-watches",
+  "/products",
+  "/products/ana-digi",
+  "/products/digital",
+  "/products/analog",
+  "/products/automatic",
   "/blog",
   "/video-tutorial",
 ] as const;

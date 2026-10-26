@@ -738,7 +738,7 @@ export function ProductManager({
                 <p className="mt-1 text-[11px] leading-relaxed text-muted">
                   Model id for{" "}
                   <span className="font-mono text-ink/80">
-                    /product/
+                    /products/
                     {productPathCategoryFromCategoryId(current.categoryId) ??
                       "…"}
                     /{current.slug.trim() || "your-model"}

@@ -7,5 +7,5 @@ export default async function AccountOrderProductReviewPage({
   params: Promise<{ id: string; slug: string }>;
 }) {
   const { slug: productSlug } = await params;
-  return redirectWithLocale(`/product/${encodeURIComponent(productSlug)}#buyer-reviews`);
+  return redirectWithLocale(`/products/${encodeURIComponent(productSlug)}#buyer-reviews`);
 }

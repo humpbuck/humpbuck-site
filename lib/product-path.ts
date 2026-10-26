@@ -5,7 +5,7 @@ import {
 } from "@/lib/storefront-watch-categories";
 
 /**
- * PDP URL middle segment: `/product/{category}/{model}`.
+ * PDP URL middle segment: `/products/{category}/{model}`.
  * Matches fixed storefront category slugs (ANA-DIGI → `ana-digi`).
  */
 export type ProductPathCategory =
@@ -110,7 +110,7 @@ export function productPathCategoryFromProduct(
   return "ana-digi";
 }
 
-/** Canonical storefront path: `/product/ana-digi/2301`. */
+/** Canonical storefront path: `/products/ana-digi/2301`. */
 export function productHref(
   product: Pick<Product, "slug"> &
     Partial<
@@ -122,14 +122,14 @@ export function productHref(
 ): string {
   const slug = product.slug.trim();
   const category = productPathCategoryFromProduct(product);
-  return `/product/${category}/${encodeURIComponent(slug)}`;
+  return `/products/${category}/${encodeURIComponent(slug)}`;
 }
 
 export function productHrefFromParts(
   category: ProductPathCategory,
   slug: string,
 ): string {
-  return `/product/${category}/${encodeURIComponent(slug.trim())}`;
+  return `/products/${category}/${encodeURIComponent(slug.trim())}`;
 }
 
 /**

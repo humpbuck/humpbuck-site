@@ -78,7 +78,7 @@ export default async function AdminReviewsPage() {
                     </td>
                     <td className="px-4 py-3">
                       <Link
-                        href={`/product/${encodeURIComponent(r.productSlug)}`}
+                        href={`/products/${encodeURIComponent(r.productSlug)}`}
                         className="font-medium text-ink underline-offset-4 hover:underline"
                         target="_blank"
                         rel="noopener noreferrer"

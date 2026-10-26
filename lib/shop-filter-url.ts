@@ -19,7 +19,7 @@ export function buildShopCatalogHref(params: ShopCatalogFilterParams): string {
   if (params.audience) sp.set("audience", params.audience);
   if (params.profile) sp.set("profile", params.profile);
   const q = sp.toString();
-  return q ? `/watches?${q}` : "/watches";
+  return q ? `/products?${q}` : "/products";
 }
 
 export function shopCatalogFiltersActive(params: ShopCatalogFilterParams): boolean {

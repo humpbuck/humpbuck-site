@@ -84,7 +84,7 @@ export function ReviewAppendForm({ reviewId, productSlug, productName }: Props) 
         const j = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(j.error || t("errGeneric"));
       }
-      router.push(`/product/${productSlug}`);
+      router.push(`/products/${productSlug}`);
       router.refresh();
     } catch (e) {
       setErr(e instanceof Error ? e.message : t("errGeneric"));
@@ -145,7 +145,7 @@ export function ReviewAppendForm({ reviewId, productSlug, productName }: Props) 
           {busy ? t("appendSubmitting") : t("appendSubmit")}
         </button>
         <Link
-          href={`/product/${productSlug}`}
+          href={`/products/${productSlug}`}
           className="inline-flex items-center rounded-full border border-line px-6 py-2.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink/80"
         >
           {t("cancel")}

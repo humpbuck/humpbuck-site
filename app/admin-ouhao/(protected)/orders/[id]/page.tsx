@@ -421,7 +421,7 @@ export default async function AdminOrderDetailPage({
                           </div>
                           <div className="min-w-0">
                             <Link
-                              href={`/product/${line.slug}`}
+                              href={`/products/${line.slug}`}
                               className="font-medium text-sky-800 underline-offset-2 hover:underline"
                             >
                               {line.name}

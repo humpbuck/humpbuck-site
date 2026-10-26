@@ -3,17 +3,17 @@ import { revalidateStorefrontPath, revalidateSitemap } from "@/lib/revalidate-st
 import { PRODUCT_PATH_CATEGORIES } from "@/lib/product-path";
 import { STOREFRONT_WATCH_COLLECTION_PATHS } from "@/lib/storefront-watch-categories";
 
-/** Bust legacy + `/product/{category}/{slug}` paths for one model slug. */
+/** Bust legacy + `/products/{category}/{slug}` paths for one model slug. */
 export function revalidateProductStorefrontPaths(slug: string): void {
   const trimmed = slug.trim();
   if (!trimmed) return;
   const enc = encodeURIComponent(trimmed);
-  revalidateStorefrontPath(`/product/${enc}`);
+  revalidateStorefrontPath(`/products/${enc}`);
   for (const category of PRODUCT_PATH_CATEGORIES) {
-    revalidateStorefrontPath(`/product/${category}/${enc}`);
+    revalidateStorefrontPath(`/products/${category}/${enc}`);
   }
   // Former ANA-DIGI path alias (now 308 → ana-digi).
-  revalidateStorefrontPath(`/product/digi-temp/${enc}`);
+  revalidateStorefrontPath(`/products/digi-temp/${enc}`);
 }
 
 /** Bust catalog cache and key storefront routes after admin catalog changes. */

@@ -24,7 +24,7 @@ export type HomeHeroSlide = {
   lead: string;
   chips: string[];
   cta: string;
-  ctaHref: "/watches" | "/automatic-watches";
+  ctaHref: "/products" | "/products/automatic";
   alt: string;
   mobileSrc?: string;
   desktopSrc?: string;
