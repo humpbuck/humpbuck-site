@@ -110,7 +110,9 @@ export function ProductStyleVariants({
 
   const selectedOpt = options[selected];
   const previewBroken = selectedOpt ? Boolean(imageErrorId[selectedOpt.id]) : true;
-  const splitAt = Math.ceil(options.length / 2);
+  // Fill row 1 first (max 18); only then spill into row 2. Applies to every PDP.
+  const MAX_VARIANTS_PER_ROW = 18;
+  const splitAt = Math.min(MAX_VARIANTS_PER_ROW, options.length);
   const row1: VariantRowItem[] = options
     .slice(0, splitAt)
     .map((opt, index) => ({ opt, index }));
@@ -128,8 +130,9 @@ export function ProductStyleVariants({
         {selectedOpt?.label}
       </p>
       {/*
-        Two independent rows (phone + desktop). Each row scrolls sideways with
-        its own rail, peeks half a thumb, and supports mouse drag.
+        Up to two rows (phone + desktop). Row 1 fills first (≤18 thumbs);
+        row 2 only appears after that. Each row scrolls sideways with its own
+        rail, peeks half a thumb, and supports mouse drag.
       */}
       <div className="mt-4 flex w-full min-w-0 flex-col gap-3">
         <VariantThumbRow
