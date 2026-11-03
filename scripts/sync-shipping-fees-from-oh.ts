@@ -1,10 +1,15 @@
 /**
- * Upsert humpbuck ShippingFeeRate rows from Cainiao OH tiers into local sqlite.
+ * Upsert humpbuck ShippingFeeRate rows from Cainiao OH tiers.
  * ¥/kg = freightRmbPerKg, 派送费 = registrationFeeRmb at WATCH_WEIGHT_KG; 税费% = 4.
  *
  *   npx tsx scripts/sync-shipping-fees-from-oh.ts
+ *   npx tsx scripts/sync-shipping-fees-from-oh.ts --target=sqlite
+ *   npx tsx scripts/sync-shipping-fees-from-oh.ts --target=d1-local
+ *   npx tsx scripts/sync-shipping-fees-from-oh.ts --target=d1-remote
  */
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
+import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { getShippingOhQuote } from "../lib/shipping-oh";
 import { SHIPPING_DEFAULTS, WATCH_WEIGHT_KG } from "../lib/shipping-fee";
@@ -14,6 +19,15 @@ import {
   countryNameForShippingRateKey,
   listShippingFeeCountryOptions,
 } from "../lib/shipping-fee-country-options";
+
+type Target = "sqlite" | "d1-local" | "d1-remote";
+
+function parseTarget(): Target {
+  const arg = process.argv.find((item) => item.startsWith("--target="));
+  const value = (arg?.slice("--target=".length) || "sqlite").trim().toLowerCase();
+  if (value === "sqlite" || value === "d1-local" || value === "d1-remote") return value;
+  throw new Error(`Unknown --target=${value}. Use sqlite | d1-local | d1-remote`);
+}
 
 const dbPath = path.resolve(process.cwd(), "prisma/dev.db");
 
@@ -82,8 +96,7 @@ function collectRows(): { rows: Row[]; skipped: number } {
   return { rows, skipped };
 }
 
-function main() {
-  const { rows, skipped } = collectRows();
+function buildSql(rows: Row[]): string {
   const statements: string[] = [];
   for (const row of rows) {
     statements.push(
@@ -97,22 +110,69 @@ function main() {
          updatedAt=CURRENT_TIMESTAMP;`,
     );
   }
-  const sql = statements.join("\n");
+  return statements.join("\n");
+}
+
+function applySqlite(sql: string) {
   execFileSync("sqlite3", [dbPath], { input: sql, stdio: ["pipe", "inherit", "inherit"] });
+}
 
-  const sample = execFileSync(
-    "sqlite3",
-    [
-      dbPath,
-      "SELECT countryCode, pricePerKg, deliveryFee, dutyPercent, printf('%.2f', pricePerKg*0.3+deliveryFee) AS oneWatch FROM ShippingFeeRate WHERE countryCode IN ('AL','AO','AR','US','GB','AU-Z1-2','AU-Z3-4') ORDER BY countryCode;",
-    ],
-    { encoding: "utf8" },
+function applyD1(sql: string, local: boolean) {
+  const tmp = path.join(os.tmpdir(), `humpbuck-oh-shipping-${Date.now()}.sql`);
+  fs.writeFileSync(tmp, sql, "utf8");
+  const flag = local ? "--local" : "--remote";
+  const result = spawnSync(
+    "npx",
+    ["wrangler", "d1", "execute", "humpbuck-site", flag, `--file=${tmp}`],
+    { encoding: "utf-8", shell: true },
   );
+  fs.unlinkSync(tmp);
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`.trim();
+  if (output) console.log(output);
+  if (result.status !== 0) {
+    throw new Error(
+      `wrangler d1 execute failed (${flag}). If remote says database not found, log wrangler into the humpbuck Cloudflare account (R2 account id in .env.local), then retry.`,
+    );
+  }
+}
 
+function sampleQuery(target: Target) {
+  const sql =
+    "SELECT countryCode, pricePerKg, deliveryFee, dutyPercent, printf('%.2f', pricePerKg*0.3+deliveryFee) AS oneWatch FROM ShippingFeeRate WHERE countryCode IN ('AL','AO','AR','US','GB','AU-Z1-2','AU-Z3-4') ORDER BY countryCode;";
+  if (target === "sqlite") {
+    return execFileSync("sqlite3", [dbPath, sql], { encoding: "utf8" });
+  }
+  const flag = target === "d1-local" ? "--local" : "--remote";
+  const tmp = path.join(os.tmpdir(), `humpbuck-oh-sample-${Date.now()}.sql`);
+  fs.writeFileSync(tmp, sql, "utf8");
+  try {
+    const result = spawnSync(
+      "npx",
+      ["wrangler", "d1", "execute", "humpbuck-site", flag, `--file=${tmp}`],
+      { encoding: "utf-8", shell: true },
+    );
+    return `${result.stdout ?? ""}
+${result.stderr ?? ""}`.trim();
+  } finally {
+    fs.unlinkSync(tmp);
+  }
+}
+
+function main() {
+  const target = parseTarget();
+  const { rows, skipped } = collectRows();
+  const sql = buildSql(rows);
+
+  if (target === "sqlite") applySqlite(sql);
+  else if (target === "d1-local") applyD1(sql, true);
+  else applyD1(sql, false);
+
+  const sample = sampleQuery(target);
   console.log(
     JSON.stringify(
       {
-        dbPath,
+        target,
+        dbPath: target === "sqlite" ? dbPath : `d1:${target}`,
         watchWeightKg: WATCH_WEIGHT_KG,
         upserted: rows.length,
         skippedNoOhTier: skipped,

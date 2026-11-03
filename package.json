@@ -28,7 +28,10 @@
     "preview": "node scripts/export-catalog-slugs-for-build.mjs && node scripts/export-blog-slugs-for-build.mjs && opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "node scripts/export-catalog-slugs-for-build.mjs && node scripts/export-blog-slugs-for-build.mjs && opennextjs-cloudflare build && opennextjs-cloudflare deploy -- --keep-vars",
     "upload": "node scripts/export-catalog-slugs-for-build.mjs && node scripts/export-blog-slugs-for-build.mjs && opennextjs-cloudflare build && opennextjs-cloudflare upload",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "db:sync-shipping-oh": "npx tsx scripts/sync-shipping-fees-from-oh.ts",
+    "db:sync-shipping-oh:d1-local": "npx tsx scripts/sync-shipping-fees-from-oh.ts --target=d1-local",
+    "db:sync-shipping-oh:d1-remote": "npx tsx scripts/sync-shipping-fees-from-oh.ts --target=d1-remote"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"

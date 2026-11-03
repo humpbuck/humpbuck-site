@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import {
   countryNameForShippingRateKey,
   listShippingFeeCountryOptions,
+  shippingRateMatchesQuery,
   type ShippingFeeCountryOption,
 } from "@/lib/shipping-fee-country-options";
 
@@ -12,6 +13,9 @@ type Props = {
   name: string;
   defaultValue?: string;
   className?: string;
+  /** ISO / rate keys already configured (hidden from add picker). */
+  excludeCodes?: readonly string[];
+  placeholder?: string;
 };
 
 type MenuPosition = {
@@ -20,27 +24,10 @@ type MenuPosition = {
   width: number;
 };
 
-function normalizeQuery(text: string): string {
-  return text.trim().toLowerCase();
-}
-
 function labelForRateKey(options: ShippingFeeCountryOption[], rateKey: string): string {
   const key = rateKey.trim().toUpperCase();
   if (!key) return "";
   return options.find((option) => option.value === key)?.label ?? countryNameForShippingRateKey(key);
-}
-
-function filterCountryOptions(options: ShippingFeeCountryOption[], query: string): ShippingFeeCountryOption[] {
-  if (!query) return options;
-  return options.filter((item) => {
-    const label = item.label.toLowerCase();
-    const value = item.value.toLowerCase();
-    return (
-      value.startsWith(query) ||
-      label.startsWith(query) ||
-      label.split(/\s+/).some((word) => word.startsWith(query))
-    );
-  });
 }
 
 function findExactMatch(
@@ -48,21 +35,33 @@ function findExactMatch(
   query: string,
 ): ShippingFeeCountryOption | null {
   if (!query) return null;
+  const q = query.trim().toLowerCase();
   return (
     options.find(
       (item) =>
-        item.value.toLowerCase() === query ||
-        item.label.toLowerCase() === query ||
-        item.label.toLowerCase().startsWith(`${query} (`),
+        item.value.toLowerCase() === q ||
+        item.englishName.toLowerCase() === q ||
+        item.zhLabel.toLowerCase() === q ||
+        item.label.toLowerCase() === q,
     ) ?? null
   );
 }
 
-export function ShippingFeeCountrySelect({ name, defaultValue, className }: Props) {
+export function ShippingFeeCountrySelect({
+  name,
+  defaultValue,
+  className,
+  excludeCodes,
+  placeholder = "输入中文、英文或代号",
+}: Props) {
   const inputId = useId();
   const listboxId = `${inputId}-listbox`;
   const anchorRef = useRef<HTMLDivElement>(null);
   const allOptions = useMemo(() => listShippingFeeCountryOptions(), []);
+  const excluded = useMemo(
+    () => new Set((excludeCodes ?? []).map((code) => code.trim().toUpperCase())),
+    [excludeCodes],
+  );
 
   const initialKey = defaultValue?.trim().toUpperCase() ?? "";
   const initialLabel = labelForRateKey(allOptions, initialKey);
@@ -74,8 +73,12 @@ export function ShippingFeeCountrySelect({ name, defaultValue, className }: Prop
   const [mounted, setMounted] = useState(false);
   const committedRef = useRef({ key: initialKey, label: initialLabel });
 
-  const query = normalizeQuery(text);
-  const filteredOptions = open ? filterCountryOptions(allOptions, query) : [];
+  const filteredOptions = open
+    ? allOptions.filter((item) => {
+        if (excluded.has(item.value) && item.value !== rateKey) return false;
+        return shippingRateMatchesQuery(item, text);
+      })
+    : [];
 
   useEffect(() => {
     setMounted(true);
@@ -120,7 +123,7 @@ export function ShippingFeeCountrySelect({ name, defaultValue, className }: Prop
   }
 
   const menu =
-    mounted && open && menuPosition && filteredOptions.length > 0
+    mounted && open && menuPosition
       ? createPortal(
           <div
             id={listboxId}
@@ -135,19 +138,24 @@ export function ShippingFeeCountrySelect({ name, defaultValue, className }: Prop
             className="overflow-hidden rounded-2xl border border-line bg-white shadow-lg"
           >
             <div className="max-h-60 overflow-auto py-2">
-              {filteredOptions.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  role="option"
-                  aria-selected={option.value === rateKey}
-                  className="flex w-full px-4 py-2.5 text-left text-sm text-ink hover:bg-[#f5f5f5]"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => commitOption(option)}
-                >
-                  {option.label}
-                </button>
-              ))}
+              {filteredOptions.length === 0 ? (
+                <p className="px-4 py-2.5 text-sm text-muted">没有匹配的国家</p>
+              ) : (
+                filteredOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    role="option"
+                    aria-selected={option.value === rateKey}
+                    className="flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-sm text-ink hover:bg-[#f5f5f5]"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => commitOption(option)}
+                  >
+                    <span className="min-w-0 truncate">{option.label}</span>
+                    <span className="shrink-0 text-muted">{option.value}</span>
+                  </button>
+                ))
+              )}
             </div>
           </div>,
           document.body,
@@ -161,11 +169,11 @@ export function ShippingFeeCountrySelect({ name, defaultValue, className }: Prop
         id={inputId}
         type="text"
         role="combobox"
-        aria-expanded={open && filteredOptions.length > 0}
-        aria-controls={open && filteredOptions.length > 0 ? listboxId : undefined}
+        aria-expanded={open}
+        aria-controls={open ? listboxId : undefined}
         aria-autocomplete="list"
         value={text}
-        placeholder="Select country / region"
+        placeholder={placeholder}
         autoComplete="off"
         onMouseDown={(e) => {
           if (e.button !== 0) return;
@@ -174,17 +182,18 @@ export function ShippingFeeCountrySelect({ name, defaultValue, className }: Prop
         onChange={(e) => {
           setText(e.target.value);
           setOpen(true);
+          if (!e.target.value.trim()) setRateKey("");
         }}
         onBlur={() => {
           window.setTimeout(() => {
             setOpen(false);
-            const typed = normalizeQuery(text);
+            const typed = text.trim().toLowerCase();
             if (!typed) {
               restoreCommitted();
               return;
             }
             const match = findExactMatch(allOptions, typed);
-            if (match) {
+            if (match && !(excluded.has(match.value) && match.value !== committedRef.current.key)) {
               commitOption(match);
               return;
             }
@@ -200,7 +209,7 @@ export function ShippingFeeCountrySelect({ name, defaultValue, className }: Prop
         }}
         className={
           className ??
-          "w-full rounded-xl border border-line bg-paper px-3 py-2.5 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
+          "h-10 w-full rounded-lg border border-line bg-white px-3 text-sm text-ink outline-none ring-ink/20 focus:ring-2"
         }
       />
       {menu}
