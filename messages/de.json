@@ -403,7 +403,8 @@
       "countryRequired": "Land / Region ist erforderlich",
       "postalInvalidFormat": "Geben Sie eine gültige Postleitzahl für das gewählte Land ein",
       "postalNotFound": "Diese Postleitzahl wurde nicht gefunden — bitte auf Tippfehler prüfen",
-      "postalStateMismatch": "Diese Postleitzahl passt nicht zum gewählten Bundesland / zur Provinz"
+      "postalStateMismatch": "Diese Postleitzahl passt nicht zum gewählten Bundesland / zur Provinz",
+      "taxIdRequired": "Steuer-/Zoll-ID ist für dieses Land erforderlich"
     },
     "stateOptional": "Bundesland / Provinz (optional)",
     "stateOptionalPlaceholder": "Landkreis, Region usw. (optional)"
@@ -508,8 +509,8 @@
       "placeholder": "Steuer-ID eingeben"
     },
     "BR": {
-      "label": "CPF",
-      "placeholder": "CPF eingeben (11 Ziffern)"
+      "label": "CPF/CNPJ",
+      "placeholder": "CPF oder CNPJ eingeben"
     },
     "KR": {
       "label": "PCCC",
@@ -530,6 +531,22 @@
     "CL": {
       "label": "RUT",
       "placeholder": "Format: 12345678-9 oder 1234567-K"
+    },
+    "PE": {
+      "label": "DNI / RUC",
+      "placeholder": "DNI (8 Ziffern) oder RUC (11 Ziffern)"
+    },
+    "EC": {
+      "label": "Personalausweis",
+      "placeholder": "10-stellige Ausweisnummer"
+    },
+    "VN": {
+      "label": "ID / Reisepass",
+      "placeholder": "Personalausweis oder Reisepassnummer"
+    },
+    "KZ": {
+      "label": "Personalausweis",
+      "placeholder": "Ausweisnummer des Empfängers"
     }
   },
   "Auth": {

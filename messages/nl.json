@@ -403,7 +403,8 @@
       "countryRequired": "Land / regio is verplicht",
       "postalInvalidFormat": "Voer een geldige postcode in voor het geselecteerde land",
       "postalNotFound": "Deze postcode is niet gevonden — controleer op typefouten",
-      "postalStateMismatch": "Deze postcode komt niet overeen met de geselecteerde provincie / staat"
+      "postalStateMismatch": "Deze postcode komt niet overeen met de geselecteerde provincie / staat",
+      "taxIdRequired": "Belasting-/douane-ID is verplicht voor dit land"
     },
     "stateOptional": "Provincie / staat (optioneel)",
     "stateOptionalPlaceholder": "Gemeente, regio, enz. (optioneel)"
@@ -508,8 +509,8 @@
       "placeholder": "Voer belasting-ID in"
     },
     "BR": {
-      "label": "CPF",
-      "placeholder": "Voer CPF in (11 cijfers)"
+      "label": "CPF/CNPJ",
+      "placeholder": "Voer CPF of CNPJ in"
     },
     "KR": {
       "label": "PCCC",
@@ -530,6 +531,22 @@
     "CL": {
       "label": "RUT",
       "placeholder": "Formaat: 12345678-9 of 1234567-K"
+    },
+    "PE": {
+      "label": "DNI / RUC",
+      "placeholder": "DNI (8 cijfers) of RUC (11 cijfers)"
+    },
+    "EC": {
+      "label": "Nationaal ID",
+      "placeholder": "Nationaal ID van 10 cijfers"
+    },
+    "VN": {
+      "label": "ID / paspoort",
+      "placeholder": "Nationaal ID of paspoortnummer"
+    },
+    "KZ": {
+      "label": "Nationaal ID",
+      "placeholder": "ID-nummer van de ontvanger"
     }
   },
   "Auth": {

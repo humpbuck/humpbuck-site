@@ -403,7 +403,8 @@
       "countryRequired": "Az ország / régió megadása kötelező",
       "postalInvalidFormat": "Adjon meg érvényes irányítószámot a kiválasztott országhoz",
       "postalNotFound": "Ez az irányítószám nem található — ellenőrizze az elírásokat",
-      "postalStateMismatch": "Az irányítószám nem egyezik a kiválasztott megyével / tartománnyal"
+      "postalStateMismatch": "Az irányítószám nem egyezik a kiválasztott megyével / tartománnyal",
+      "taxIdRequired": "Ehhez az országhoz adó-/vámazonosító kötelező"
     },
     "stateOptional": "Megye / tartomány (opcionális)",
     "stateOptionalPlaceholder": "Járás, régió stb. (opcionális)"
@@ -508,8 +509,8 @@
       "placeholder": "Adja meg az adóazonosítót"
     },
     "BR": {
-      "label": "CPF",
-      "placeholder": "Adja meg a CPF-et (11 számjegy)"
+      "label": "CPF/CNPJ",
+      "placeholder": "Adja meg a CPF-et vagy CNPJ-t"
     },
     "KR": {
       "label": "PCCC",
@@ -530,6 +531,22 @@
     "CL": {
       "label": "RUT",
       "placeholder": "Formátum: 12345678-9 vagy 1234567-K"
+    },
+    "PE": {
+      "label": "DNI / RUC",
+      "placeholder": "DNI (8 számjegy) vagy RUC (11 számjegy)"
+    },
+    "EC": {
+      "label": "Személyi igazolvány",
+      "placeholder": "10 számjegyű nemzeti ID"
+    },
+    "VN": {
+      "label": "ID / útlevél",
+      "placeholder": "Nemzeti ID vagy útlevélszám"
+    },
+    "KZ": {
+      "label": "Személyi igazolvány",
+      "placeholder": "Címzett azonosítószáma"
     }
   },
   "Auth": {

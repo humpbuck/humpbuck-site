@@ -403,7 +403,8 @@
       "countryRequired": "מדינה / אזור נדרשים",
       "postalInvalidFormat": "הזינו מיקוד תקין עבור המדינה / האזור שנבחר",
       "postalNotFound": "מיקוד זה לא נמצא — בדקו שגיאות הקלדה",
-      "postalStateMismatch": "המיקוד אינו תואם למחוז / המדינה שנבחרו"
+      "postalStateMismatch": "המיקוד אינו תואם למחוז / המדינה שנבחרו",
+      "taxIdRequired": "נדרש מזהה מס / מכס עבור מדינה זו"
     },
     "stateOptional": "מדינה / מחוז (אופציונלי)",
     "stateOptionalPlaceholder": "מחוז, אזור וכו' (אופציונלי)"
@@ -508,8 +509,8 @@
       "placeholder": "הזינו מזהה מס"
     },
     "BR": {
-      "label": "CPF",
-      "placeholder": "הזינו CPF (11 ספרות)"
+      "label": "CPF/CNPJ",
+      "placeholder": "הזינו CPF או CNPJ"
     },
     "KR": {
       "label": "PCCC",
@@ -530,6 +531,22 @@
     "CL": {
       "label": "RUT",
       "placeholder": "פורמט: 12345678-9 או 1234567-K"
+    },
+    "PE": {
+      "label": "DNI / RUC",
+      "placeholder": "DNI (8 ספרות) או RUC (11 ספרות)"
+    },
+    "EC": {
+      "label": "תעודת זהות",
+      "placeholder": "מספר זהות בן 10 ספרות"
+    },
+    "VN": {
+      "label": "ת״ז / דרכון",
+      "placeholder": "תעודת זהות או מספר דרכון"
+    },
+    "KZ": {
+      "label": "תעודת זהות",
+      "placeholder": "מספר זהות של הנמען"
     }
   },
   "Auth": {

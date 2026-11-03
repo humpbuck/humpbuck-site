@@ -412,7 +412,8 @@
       "countryRequired": "Country / Region is required",
       "postalInvalidFormat": "Enter a valid postcode / ZIP for the selected country",
       "postalNotFound": "This postcode / ZIP was not found — check for typos",
-      "postalStateMismatch": "This postcode / ZIP does not match the selected state / province"
+      "postalStateMismatch": "This postcode / ZIP does not match the selected state / province",
+      "taxIdRequired": "Tax / customs ID is required for this country"
     }
   },
   "CheckoutShippingMethod": {
@@ -535,8 +536,8 @@
       "placeholder": "Enter tax ID"
     },
     "BR": {
-      "label": "CPF",
-      "placeholder": "Enter CPF (11 digits)"
+      "label": "CPF/CNPJ",
+      "placeholder": "Enter CPF or CNPJ"
     },
     "KR": {
       "label": "PCCC",
@@ -557,6 +558,22 @@
     "CL": {
       "label": "RUT",
       "placeholder": "Format: 12345678-9 or 1234567-K"
+    },
+    "PE": {
+      "label": "DNI / RUC",
+      "placeholder": "DNI (8 digits) or RUC (11 digits)"
+    },
+    "EC": {
+      "label": "National ID",
+      "placeholder": "10-digit national ID"
+    },
+    "VN": {
+      "label": "ID / passport",
+      "placeholder": "National ID or passport number"
+    },
+    "KZ": {
+      "label": "National ID",
+      "placeholder": "Recipient ID number"
     }
   },
   "Auth": {

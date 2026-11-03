@@ -403,7 +403,8 @@
       "countryRequired": "El país o región es obligatorio",
       "postalInvalidFormat": "Introduzca un código postal válido para el país seleccionado",
       "postalNotFound": "No se encontró este código postal — compruebe si hay errores",
-      "postalStateMismatch": "Este código postal no coincide con la provincia o estado seleccionado"
+      "postalStateMismatch": "Este código postal no coincide con la provincia o estado seleccionado",
+      "taxIdRequired": "Se requiere el ID fiscal / aduanero para este país"
     },
     "stateOptional": "Provincia / estado (opcional)",
     "stateOptionalPlaceholder": "Condado, región, etc. (opcional)"
@@ -508,8 +509,8 @@
       "placeholder": "Introduzca la identificación fiscal"
     },
     "BR": {
-      "label": "CPF",
-      "placeholder": "Introduzca el CPF (11 dígitos)"
+      "label": "CPF/CNPJ",
+      "placeholder": "Introduzca el CPF o CNPJ"
     },
     "KR": {
       "label": "PCCC",
@@ -530,6 +531,22 @@
     "CL": {
       "label": "RUT",
       "placeholder": "Formato: 12345678-9 o 1234567-K"
+    },
+    "PE": {
+      "label": "DNI / RUC",
+      "placeholder": "DNI (8 dígitos) o RUC (11 dígitos)"
+    },
+    "EC": {
+      "label": "Cédula",
+      "placeholder": "Cédula de 10 dígitos"
+    },
+    "VN": {
+      "label": "ID / pasaporte",
+      "placeholder": "Documento nacional o pasaporte"
+    },
+    "KZ": {
+      "label": "ID nacional",
+      "placeholder": "Número de identificación del destinatario"
     }
   },
   "Auth": {

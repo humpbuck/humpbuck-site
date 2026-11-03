@@ -403,7 +403,8 @@
       "countryRequired": "Il paese / la regione è obbligatorio",
       "postalInvalidFormat": "Inserisci un CAP / codice postale valido per il paese selezionato",
       "postalNotFound": "CAP / codice postale non trovato — controlla eventuali errori",
-      "postalStateMismatch": "Il CAP / codice postale non corrisponde alla provincia / stato selezionato"
+      "postalStateMismatch": "Il CAP / codice postale non corrisponde alla provincia / stato selezionato",
+      "taxIdRequired": "L’ID fiscale / doganale è obbligatorio per questo Paese"
     },
     "stateOptional": "Stato / provincia (facoltativo)",
     "stateOptionalPlaceholder": "Contea, regione, ecc. (facoltativo)"
@@ -508,8 +509,8 @@
       "placeholder": "Inserisci il codice fiscale"
     },
     "BR": {
-      "label": "CPF",
-      "placeholder": "Inserisci il CPF (11 cifre)"
+      "label": "CPF/CNPJ",
+      "placeholder": "Inserisci CPF o CNPJ"
     },
     "KR": {
       "label": "PCCC",
@@ -530,6 +531,22 @@
     "CL": {
       "label": "RUT",
       "placeholder": "Formato: 12345678-9 o 1234567-K"
+    },
+    "PE": {
+      "label": "DNI / RUC",
+      "placeholder": "DNI (8 cifre) o RUC (11 cifre)"
+    },
+    "EC": {
+      "label": "Documento d’identità",
+      "placeholder": "ID nazionale a 10 cifre"
+    },
+    "VN": {
+      "label": "ID / passaporto",
+      "placeholder": "Documento nazionale o passaporto"
+    },
+    "KZ": {
+      "label": "Documento d’identità",
+      "placeholder": "Numero ID del destinatario"
     }
   },
   "Auth": {

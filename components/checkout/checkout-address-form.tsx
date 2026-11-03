@@ -476,11 +476,11 @@ export function CheckoutAddressForm({
         />
         <Field
           id={`${idPrefix}-taxId`}
-          label={tTax(`${taxIdRule.ruleKey}.label` as "fallback.label" | "BR.label" | "KR.label" | "MX.label" | "NO.label" | "AR.label" | "CL.label")}
+          label={tTax(`${taxIdRule.ruleKey}.label` as "fallback.label" | "BR.label" | "KR.label" | "MX.label" | "NO.label" | "AR.label" | "CL.label" | "PE.label" | "EC.label" | "VN.label" | "KZ.label")}
           required={taxIdRule.required}
           value={value.taxId}
           onChange={(v) => onChange({ ...value, taxId: v })}
-          placeholder={tTax(`${taxIdRule.ruleKey}.placeholder` as "fallback.placeholder" | "BR.placeholder" | "KR.placeholder" | "MX.placeholder" | "NO.placeholder" | "AR.placeholder" | "CL.placeholder")}
+          placeholder={tTax(`${taxIdRule.ruleKey}.placeholder` as "fallback.placeholder" | "BR.placeholder" | "KR.placeholder" | "MX.placeholder" | "NO.placeholder" | "AR.placeholder" | "CL.placeholder" | "PE.placeholder" | "EC.placeholder" | "VN.placeholder" | "KZ.placeholder")}
         />
       </div>
     </div>

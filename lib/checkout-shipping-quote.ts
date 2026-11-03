@@ -1,3 +1,5 @@
+import { getTaxIdRule, taxIdFieldLabel } from "@/lib/tax-id-rules";
+import { parseCheckoutCountryIso2 } from "@/lib/checkout-postal-validation";
 import { getShippingOhQuote } from "@/lib/shipping-oh";
 import { getShippingYanwen484Quote } from "@/lib/shipping-yanwen484";
 
@@ -34,13 +36,15 @@ function normalizeCountryIso2(countryLabel: string): string {
   return direct;
 }
 
-export function getTaxIdRequirement(countryIso2: string | null): { label: string; description: string } | null {
-  if (!countryIso2) return null;
-  const iso = countryIso2.trim().toUpperCase();
-  if (iso === "BR") return { label: "CPF/CNPJ", description: "Brazil tax ID is required." };
-  if (iso === "MX") return { label: "RFC/CURP", description: "Mexico tax ID is required." };
-  if (iso === "KR") return { label: "PCCC", description: "South Korea customs code may be required." };
-  return null;
+export function getTaxIdRequirement(country: string | null): { label: string; description: string } | null {
+  if (!country) return null;
+  const parsed = parseCheckoutCountryIso2(country).trim().toUpperCase();
+  const iso = /^[A-Z]{2}$/.test(parsed) ? parsed : "";
+  if (!iso) return null;
+  const rule = getTaxIdRule(iso);
+  if (!rule.required) return null;
+  const label = taxIdFieldLabel(iso);
+  return { label, description: `${label} is required for this destination.` };
 }
 
 export function isCheckoutCountryChina(countryLabel: string): boolean {

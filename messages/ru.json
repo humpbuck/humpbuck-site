@@ -403,7 +403,8 @@
       "countryRequired": "Укажите страну / регион",
       "postalInvalidFormat": "Введите действительный почтовый индекс для выбранной страны",
       "postalNotFound": "Почтовый индекс не найден — проверьте опечатки",
-      "postalStateMismatch": "Почтовый индекс не соответствует выбранной области / провинции"
+      "postalStateMismatch": "Почтовый индекс не соответствует выбранной области / провинции",
+      "taxIdRequired": "Для этой страны требуется налоговый / таможенный ID"
     },
     "stateOptional": "Область / провинция (необязательно)",
     "stateOptionalPlaceholder": "Район, регион и т. д. (необязательно)"
@@ -508,8 +509,8 @@
       "placeholder": "Введите Tax ID"
     },
     "BR": {
-      "label": "CPF",
-      "placeholder": "Введите CPF (11 цифр)"
+      "label": "CPF/CNPJ",
+      "placeholder": "Введите CPF или CNPJ"
     },
     "KR": {
       "label": "PCCC",
@@ -530,6 +531,22 @@
     "CL": {
       "label": "RUT",
       "placeholder": "Формат: 12345678-9 или 1234567-K"
+    },
+    "PE": {
+      "label": "DNI / RUC",
+      "placeholder": "DNI (8 цифр) или RUC (11 цифр)"
+    },
+    "EC": {
+      "label": "Удостоверение личности",
+      "placeholder": "10-значный национальный ID"
+    },
+    "VN": {
+      "label": "ID / паспорт",
+      "placeholder": "Национальный ID или номер паспорта"
+    },
+    "KZ": {
+      "label": "Удостоверение личности",
+      "placeholder": "ID номер получателя"
     }
   },
   "Auth": {

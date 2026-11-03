@@ -1,4 +1,5 @@
 import { isStateRequiredForCountry } from "@/lib/checkout-address-fields";
+import { getTaxIdRule } from "@/lib/tax-id-rules";
 import {
   parseCheckoutCountryIso2,
   validateCheckoutPostalCode,
@@ -30,6 +31,7 @@ export type CheckoutAddressValidationErrorKey =
   | "stateRequired"
   | "postalRequired"
   | "countryRequired"
+  | "taxIdRequired"
   | CheckoutPostalValidationErrorKey;
 
 const CHECKOUT_ADDRESS_VALIDATION_EN: Record<
@@ -43,6 +45,7 @@ const CHECKOUT_ADDRESS_VALIDATION_EN: Record<
   stateRequired: "State / Province is required",
   postalRequired: "Postcode / ZIP is required",
   countryRequired: "Country / Region is required",
+  taxIdRequired: "Tax / customs ID is required for this country",
   postalInvalidFormat: "Enter a valid postcode / ZIP for the selected country",
   postalNotFound: "This postcode / ZIP was not found — check for typos",
   postalStateMismatch: "This postcode / ZIP does not match the selected state / province",
@@ -58,6 +61,7 @@ export function formatCheckoutAddressValidationEnglish(
 export function isAddressRecordComplete(record: CheckoutAddressRecord): boolean {
   const countryIso2 = parseCheckoutCountryIso2(record.country ?? "");
   const stateOk = isStateRequiredForCountry(countryIso2) ? record.state?.trim() : true;
+  const taxOk = getTaxIdRule(countryIso2).required ? Boolean(record.taxId?.trim()) : true;
   return Boolean(
     record.firstName?.trim() &&
       record.lastName?.trim() &&
@@ -65,7 +69,8 @@ export function isAddressRecordComplete(record: CheckoutAddressRecord): boolean 
       record.city?.trim() &&
       stateOk &&
       record.postalCode?.trim() &&
-      record.country?.trim(),
+      record.country?.trim() &&
+      taxOk,
   );
 }
 
@@ -92,6 +97,9 @@ export function validateCheckoutAddressForm(
   }
   if (!form.postalCode.trim()) return { ok: false, errorKey: "postalRequired" };
   if (!form.country.trim()) return { ok: false, errorKey: "countryRequired" };
+  if (getTaxIdRule(countryIso2).required && !form.taxId.trim()) {
+    return { ok: false, errorKey: "taxIdRequired" };
+  }
 
   const postal = validateCheckoutPostalCode(form);
   if (!postal.ok) return postal;
@@ -123,6 +131,7 @@ export function addressFormToRecord(form: CheckoutAddressForm): CheckoutAddressR
 export function isCheckoutAddressComplete(form: CheckoutAddressForm): boolean {
   const countryIso2 = parseCheckoutCountryIso2(form.country);
   const stateOk = isStateRequiredForCountry(countryIso2) ? form.state.trim() : true;
+  const taxOk = getTaxIdRule(countryIso2).required ? Boolean(form.taxId.trim()) : true;
   return Boolean(
     form.firstName.trim() &&
       form.lastName.trim() &&
@@ -130,7 +139,8 @@ export function isCheckoutAddressComplete(form: CheckoutAddressForm): boolean {
       form.city.trim() &&
       stateOk &&
       form.postalCode.trim() &&
-      form.country.trim(),
+      form.country.trim() &&
+      taxOk,
   );
 }
 

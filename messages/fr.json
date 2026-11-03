@@ -403,7 +403,8 @@
       "countryRequired": "Le pays / la région est obligatoire",
       "postalInvalidFormat": "Saisissez un code postal valide pour le pays sélectionné",
       "postalNotFound": "Ce code postal est introuvable — vérifiez les fautes de frappe",
-      "postalStateMismatch": "Ce code postal ne correspond pas à la région / province sélectionnée"
+      "postalStateMismatch": "Ce code postal ne correspond pas à la région / province sélectionnée",
+      "taxIdRequired": "L’identifiant fiscal / douanier est obligatoire pour ce pays"
     },
     "stateOptional": "État / province (facultatif)",
     "stateOptionalPlaceholder": "Département, région, etc. (facultatif)"
@@ -508,8 +509,8 @@
       "placeholder": "Saisissez le numéro fiscal"
     },
     "BR": {
-      "label": "CPF",
-      "placeholder": "Saisissez le CPF (11 chiffres)"
+      "label": "CPF/CNPJ",
+      "placeholder": "Saisissez le CPF ou CNPJ"
     },
     "KR": {
       "label": "PCCC",
@@ -530,6 +531,22 @@
     "CL": {
       "label": "RUT",
       "placeholder": "Format : 12345678-9 ou 1234567-K"
+    },
+    "PE": {
+      "label": "DNI / RUC",
+      "placeholder": "DNI (8 chiffres) ou RUC (11 chiffres)"
+    },
+    "EC": {
+      "label": "Pièce d’identité",
+      "placeholder": "Identité nationale à 10 chiffres"
+    },
+    "VN": {
+      "label": "ID / passeport",
+      "placeholder": "Pièce d’identité ou numéro de passeport"
+    },
+    "KZ": {
+      "label": "Pièce d’identité",
+      "placeholder": "Numéro d’identité du destinataire"
     }
   },
   "Auth": {

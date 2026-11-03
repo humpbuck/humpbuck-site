@@ -403,7 +403,8 @@
       "countryRequired": "国 / 地域は必須です",
       "postalInvalidFormat": "選択した国に有効な郵便番号を入力してください",
       "postalNotFound": "この郵便番号は見つかりませんでした。入力ミスがないかご確認ください",
-      "postalStateMismatch": "この郵便番号は選択した都道府県 / 州と一致しません"
+      "postalStateMismatch": "この郵便番号は選択した都道府県 / 州と一致しません",
+      "taxIdRequired": "この国では税務 / 通関 ID が必須です"
     },
     "stateOptional": "都道府県（任意）",
     "stateOptionalPlaceholder": "郡、地域など（任意）"
@@ -508,8 +509,8 @@
       "placeholder": "税 ID を入力"
     },
     "BR": {
-      "label": "CPF",
-      "placeholder": "CPF を入力（11 桁）"
+      "label": "CPF/CNPJ",
+      "placeholder": "CPF または CNPJ を入力"
     },
     "KR": {
       "label": "PCCC",
@@ -530,6 +531,22 @@
     "CL": {
       "label": "RUT",
       "placeholder": "形式: 12345678-9 または 1234567-K"
+    },
+    "PE": {
+      "label": "DNI / RUC",
+      "placeholder": "DNI（8 桁）または RUC（11 桁）"
+    },
+    "EC": {
+      "label": "国民 ID",
+      "placeholder": "10 桁の国民 ID"
+    },
+    "VN": {
+      "label": "ID / パスポート",
+      "placeholder": "国民 ID またはパスポート番号"
+    },
+    "KZ": {
+      "label": "国民 ID",
+      "placeholder": "受取人の ID 番号"
     }
   },
   "Auth": {
