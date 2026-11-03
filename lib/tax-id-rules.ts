@@ -1,4 +1,4 @@
-/** Cainiao OH recipient tax / customs ID rules (aligned with WatchSourceGo). */
+/** Cainiao OH recipient tax / customs ID rules (from OH workbook notes). */
 export type TaxIdRuleKey =
   | "fallback"
   | "BR"
@@ -35,14 +35,18 @@ const TAX_ID_FIELD_LABELS: Record<TaxIdRuleKey, string> = {
 /**
  * Destinations where Cainiao 标准挂号-带电（OH） requires a recipient
  * tax / customs ID to create a waybill (not seller IOSS/VAT/VOEC).
- * Source: WatchSourceGo `recipient-tax-id.ts` / OH workbook notes.
+ *
+ * From OH workbook customs notes:
+ * - BR CPF/CNPJ, MX RFC/CURP, CL RUT, AR CUIT/CUIL, EC national ID,
+ *   KR PCCC, VN ID/passport, KZ national ID — explicit order/customs required.
+ * - PE is NOT listed as tax-ID required (channel bans phones/smartwatches with
+ *   call function; ordinary quartz watches do not need DNI/RUC at checkout).
  */
 const TAX_ID_REQUIRED: ReadonlySet<string> = new Set([
   "BR",
   "MX",
   "CL",
   "AR",
-  "PE",
   "EC",
   "KR",
   "VN",
@@ -51,6 +55,7 @@ const TAX_ID_REQUIRED: ReadonlySet<string> = new Set([
 
 const TAX_ID_KNOWN: ReadonlySet<string> = new Set([
   ...TAX_ID_REQUIRED,
+  "PE", // optional label only — OH does not require recipient tax ID for PE
   "NO", // kept for labels only; not OH-required on checkout
 ]);
 
