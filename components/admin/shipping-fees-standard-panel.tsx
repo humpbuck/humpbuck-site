@@ -9,10 +9,6 @@ import {
   shippingRateMatchesQuery,
 } from "@/lib/shipping-fee-country-options";
 import { SHIPPING_DEFAULTS, shippingFeeCny } from "@/lib/shipping-fee";
-import {
-  getOhStandardShippingCny,
-  isShippingOhFirstExtraCountry,
-} from "@/lib/shipping-oh";
 
 export type ShippingFeeRateRow = {
   id: string;
@@ -40,29 +36,8 @@ type Props = {
   deleteAction: (formData: FormData) => Promise<void>;
 };
 
-function rateIso(countryCode: string): string {
-  return countryCode.trim().toUpperCase().split("-")[0] ?? countryCode;
-}
-
-function oneWatchPreview(pricePerKg: number, deliveryFee: number, countryCode?: string) {
-  if (countryCode && isShippingOhFirstExtraCountry(rateIso(countryCode))) {
-    const oh = getOhStandardShippingCny({
-      countryCode: rateIso(countryCode),
-      weightKg: SHIPPING_DEFAULTS.watchWeightKg,
-      quantity: 1,
-    });
-    if (oh != null) return oh;
-  }
+function oneWatchPreview(pricePerKg: number, deliveryFee: number) {
   return shippingFeeCny({ pricePerKg, deliveryFee }, SHIPPING_DEFAULTS.watchWeightKg);
-}
-
-function nWatchOhPreview(countryCode: string, watchCount: number) {
-  const n = Math.max(1, Math.floor(watchCount));
-  return getOhStandardShippingCny({
-    countryCode: rateIso(countryCode),
-    weightKg: n * SHIPPING_DEFAULTS.watchWeightKg,
-    quantity: n,
-  });
 }
 
 function RateRow({
@@ -76,17 +51,12 @@ function RateRow({
 }) {
   const [pricePerKg, setPricePerKg] = useState(String(rate.pricePerKg));
   const [deliveryFee, setDeliveryFee] = useState(String(rate.deliveryFee));
-  const firstExtra = isShippingOhFirstExtraCountry(rateIso(rate.countryCode));
   const preview = useMemo(() => {
     const pkg = Number(pricePerKg);
     const fee = Number(deliveryFee);
     if (![pkg, fee].every((n) => Number.isFinite(n) && n >= 0)) return null;
-    return oneWatchPreview(pkg, fee, rate.countryCode);
-  }, [pricePerKg, deliveryFee, rate.countryCode]);
-  const twoWatchPreview = useMemo(
-    () => (firstExtra ? nWatchOhPreview(rate.countryCode, 2) : null),
-    [firstExtra, rate.countryCode],
-  );
+    return oneWatchPreview(pkg, fee);
+  }, [pricePerKg, deliveryFee]);
 
   const display = formatShippingRateDisplay(rate.countryCode, rate.countryName || undefined);
 
@@ -101,10 +71,8 @@ function RateRow({
         <p className="text-sm font-medium text-ink">
           {display}
           <span className="mt-1 block text-xs font-normal text-muted">
-            1只表 ¥{preview == null ? "—" : preview.toFixed(2)}
-            {firstExtra && twoWatchPreview != null
-              ? ` · 2只表 ¥${twoWatchPreview.toFixed(2)}（OH 首重续重）`
-              : ""}
+            1只表 ¥{preview == null ? "—" : preview.toFixed(2)} = {pricePerKg || "0"} ×{" "}
+            {SHIPPING_DEFAULTS.watchWeightKg} + {deliveryFee || "0"}
           </span>
         </p>
         <label className="block text-xs font-semibold uppercase tracking-wide text-muted">

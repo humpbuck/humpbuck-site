@@ -1,8 +1,8 @@
 /**
  * Upsert humpbuck ShippingFeeRate rows from Cainiao OH tiers.
  * ¥/kg = freightRmbPerKg, 派送费 = registrationFeeRmb at WATCH_WEIGHT_KG; 税费% = 4.
- * Note: JP/KZ (and any calculator countries) are first+extra — checkout uses live OH,
- * so stored ¥/kg may be 0 with 派送费 = first-weight fee for the 1-watch snapshot.
+ * Checkout uses these admin rows only (¥/kg × weight + 派送费). For JP/KZ OH
+ * calculator countries, review/edit ¥/kg and 派送费 after sync so multi-qty scales.
  *
  *   npx tsx scripts/sync-shipping-fees-from-oh.ts
  *   npx tsx scripts/sync-shipping-fees-from-oh.ts --target=sqlite
