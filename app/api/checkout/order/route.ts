@@ -16,6 +16,8 @@ import {
   computeCheckoutTotalCents,
   quoteCheckoutShippingMethod,
 } from "@/lib/shipping-fee-rates";
+import { WATCH_WEIGHT_KG } from "@/lib/shipping-fee";
+import { getCnyUsdExchangeRate } from "@/lib/cny-usd-exchange";
 import { isShippingMethodId } from "@/lib/shipping-express-methods";
 
 type CheckoutItem = {
@@ -184,10 +186,14 @@ export async function POST(req: Request) {
     );
   }
 
+  const totalUnits = normalizedItems.reduce((sum, item) => sum + item.qty, 0);
+  const fx = await getCnyUsdExchangeRate();
+  const goodsCny = (linesSubtotalCents / 100) * fx.cnyPerUsd;
   const shippingQuoteResult = await quoteCheckoutShippingMethod(
     shippingMethodIdRaw,
     countryLabel,
     postalCode,
+    { weightKg: Math.max(1, totalUnits) * WATCH_WEIGHT_KG, goodsCny },
   );
   if (!shippingQuoteResult.ok) {
     return NextResponse.json(

@@ -668,6 +668,8 @@ export default function CheckoutPage() {
             countryLabel={shipAddress.country}
             postalCode={shipAddress.postalCode}
             methodId={shippingMethodId}
+            totalUnits={itemCount}
+            goodsUsdCents={Math.round(subtotal * 100)}
             onMethodChange={setShippingMethodId}
             onSelectionChange={handleShippingSelectionChange}
           />

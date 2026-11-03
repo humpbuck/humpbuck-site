@@ -331,7 +331,15 @@ model ShippingFeeRate {
   id                 String   @id @default(cuid())
   countryCode        String   @unique
   countryName        String   @default("")
+  /// ¥ per kg (from Cainiao OH freight tier). Shipping = pricePerKg * weightKg + deliveryFee.
+  pricePerKg         Float    @default(150)
+  /// Flat 派送费 / registration fee in ¥.
+  deliveryFee        Float    @default(40)
+  /// 税费% applied to (goodsCny + shippingCny), same as WatchSourceGo wholesale.
+  dutyPercent        Float    @default(4)
+  /// Legacy flat shipping ¥ cents — kept for D1 backward compat; quotes use pricePerKg.
   shippingFeeCents   Int      @default(0)
+  /// Legacy flat duty ¥ cents — kept for D1 backward compat; quotes use dutyPercent.
   surchargeCents     Int      @default(0)
   deliveryDaysLabel  String   @default("7-14 Business Days")
   createdAt          DateTime @default(now())

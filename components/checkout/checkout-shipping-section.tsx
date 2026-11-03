@@ -3,6 +3,7 @@
 import { useDeferredValue, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { quoteCheckoutShipping, type ShippingMethodId } from "@/lib/checkout-shipping-quote";
+import { WATCH_WEIGHT_KG } from "@/lib/shipping-fee";
 
 type Props = {
   countryLabel: string;
@@ -38,7 +39,7 @@ export function CheckoutShippingSection({
   const deferredState = useDeferredValue(shippingState);
   const deferredPostal = useDeferredValue(shippingPostalCode);
   const deferredUnits = useDeferredValue(totalUnits);
-  const weightKg = deferredUnits * 0.2;
+  const weightKg = deferredUnits * WATCH_WEIGHT_KG;
 
   const quotes = useMemo(
     () => ({

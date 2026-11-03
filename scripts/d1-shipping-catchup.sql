@@ -31,3 +31,8 @@ VALUES
   ('seed-express-dhl', 'dhl', 0, '3-5 Business Days', CURRENT_TIMESTAMP),
   ('seed-express-fedex', 'fedex', 0, '3-5 Business Days', CURRENT_TIMESTAMP),
   ('seed-express-ups', 'ups', 0, '3-5 Business Days', CURRENT_TIMESTAMP);
+
+-- WatchSourceGo-style OH fields (2026-11-03). Ignore duplicate-column errors on re-run.
+ALTER TABLE "ShippingFeeRate" ADD COLUMN "pricePerKg" REAL NOT NULL DEFAULT 150;
+ALTER TABLE "ShippingFeeRate" ADD COLUMN "deliveryFee" REAL NOT NULL DEFAULT 40;
+ALTER TABLE "ShippingFeeRate" ADD COLUMN "dutyPercent" REAL NOT NULL DEFAULT 4;

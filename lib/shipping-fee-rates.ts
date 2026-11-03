@@ -13,14 +13,22 @@ import {
   isShippingMethodId,
   quoteAllExpressMethods,
 } from "@/lib/shipping-express-methods";
+import {
+  SHIPPING_DEFAULTS,
+  WATCH_WEIGHT_KG,
+  dutyCny,
+  roundCny,
+  shippingFeeCny,
+} from "@/lib/shipping-fee";
 
 export type ShippingFeeQuote = {
   ok: true;
   rateKey: string;
   countryCode: string;
   countryName: string;
-  /** Admin-configured amounts in CNY (stored in DB). */
+  /** Computed shipping in CNY cents: (¥/kg × weight + 派送费) × 100. */
   shippingFeeCnyCents: number;
+  /** Computed 税费 in CNY cents: ((goods + shipping) × duty%) × 100. */
   surchargeCnyCents: number;
   totalCnyCents: number;
   /** Buyer-facing amounts in USD (converted at cached FX rate). */
@@ -28,6 +36,10 @@ export type ShippingFeeQuote = {
   surchargeUsdCents: number;
   totalUsdCents: number;
   cnyPerUsd: number;
+  weightKg: number;
+  pricePerKg: number;
+  deliveryFee: number;
+  dutyPercent: number;
   postalZone?: string | null;
   deliveryDaysLabel: string;
 };
@@ -35,6 +47,16 @@ export type ShippingFeeQuote = {
 export type ShippingFeeQuoteResult =
   | ShippingFeeQuote
   | { ok: false; error: "country_required" | "postal_required" | "country_not_configured" };
+
+export type ShippingFeeQuoteInput = {
+  countryLabel: string;
+  postalCode?: string | null;
+  /** Total billable weight in kg. Defaults to one watch. */
+  weightKg?: number;
+  /** Goods amount in CNY (for 税费). Defaults to 0 → tax on shipping only. */
+  goodsCny?: number;
+  cnyPerUsd?: number;
+};
 
 export function normalizeShippingCountryCode(countryLabel: string): string {
   return parseCheckoutCountryIso2(countryLabel).trim().toUpperCase();
@@ -112,14 +134,41 @@ export async function listShippingFeeRates() {
   });
 }
 
+function ratePricePerKg(rate: { pricePerKg?: number | null }): number {
+  const n = Number(rate.pricePerKg);
+  return Number.isFinite(n) && n >= 0 ? n : SHIPPING_DEFAULTS.pricePerKg;
+}
+
+function rateDeliveryFee(rate: { deliveryFee?: number | null }): number {
+  const n = Number(rate.deliveryFee);
+  return Number.isFinite(n) && n >= 0 ? n : SHIPPING_DEFAULTS.deliveryFee;
+}
+
+function rateDutyPercent(rate: { dutyPercent?: number | null }): number {
+  const n = Number(rate.dutyPercent);
+  return Number.isFinite(n) && n >= 0 ? n : SHIPPING_DEFAULTS.dutyPercent;
+}
+
+/**
+ * WatchSourceGo wholesale formula:
+ * shippingCny = pricePerKg * weightKg + deliveryFee
+ * dutyCny = (goodsCny + shippingCny) * dutyPercent / 100
+ *
+ * China with all-zero rates → free shipping and no tax.
+ */
 export async function quoteShippingFeeForCheckout(
-  countryLabel: string,
+  countryLabelOrInput: string | ShippingFeeQuoteInput,
   postalCode?: string | null,
   cnyPerUsd?: number,
 ): Promise<ShippingFeeQuoteResult> {
-  const resolved = resolveShippingRateKey(countryLabel, postalCode);
+  const input: ShippingFeeQuoteInput =
+    typeof countryLabelOrInput === "string"
+      ? { countryLabel: countryLabelOrInput, postalCode, cnyPerUsd }
+      : countryLabelOrInput;
+
+  const resolved = resolveShippingRateKey(input.countryLabel, input.postalCode);
   if (!resolved) {
-    const countryCode = normalizeShippingCountryCode(countryLabel);
+    const countryCode = normalizeShippingCountryCode(input.countryLabel);
     if (countryCode === "AU") return { ok: false, error: "postal_required" };
     return { ok: false, error: "country_required" };
   }
@@ -127,18 +176,42 @@ export async function quoteShippingFeeForCheckout(
   const rate = await getShippingFeeRateByKey(resolved.rateKey);
   if (!rate) return { ok: false, error: "country_not_configured" };
 
-  const shippingFeeCnyCents = Math.max(0, rate.shippingFeeCents);
-  const surchargeCnyCents = Math.max(0, rate.surchargeCents);
+  const pricePerKg = ratePricePerKg(rate);
+  const deliveryFee = rateDeliveryFee(rate);
+  const dutyPercent = rateDutyPercent(rate);
+  const weightKg =
+    Number.isFinite(input.weightKg) && (input.weightKg as number) > 0
+      ? (input.weightKg as number)
+      : WATCH_WEIGHT_KG;
+  const goodsCny =
+    Number.isFinite(input.goodsCny) && (input.goodsCny as number) > 0
+      ? (input.goodsCny as number)
+      : 0;
+
+  const isChinaFree =
+    normalizeShippingCountryCode(input.countryLabel) === "CN" &&
+    pricePerKg === 0 &&
+    deliveryFee === 0 &&
+    dutyPercent === 0;
+
+  const shippingCny = isChinaFree ? 0 : shippingFeeCny({ pricePerKg, deliveryFee }, weightKg);
+  const taxCny = isChinaFree ? 0 : dutyCny(goodsCny, shippingCny, dutyPercent);
+
+  const shippingFeeCnyCents = Math.max(0, Math.round(shippingCny * 100));
+  const surchargeCnyCents = Math.max(0, Math.round(taxCny * 100));
   const totalCnyCents = shippingFeeCnyCents + surchargeCnyCents;
 
-  const fx = cnyPerUsd && cnyPerUsd > 0 ? { cnyPerUsd } : await getCnyUsdExchangeRate();
+  const fx =
+    input.cnyPerUsd && input.cnyPerUsd > 0
+      ? { cnyPerUsd: input.cnyPerUsd }
+      : await getCnyUsdExchangeRate();
   const shippingFeeUsdCents = convertCnyCentsToUsdCents(shippingFeeCnyCents, fx.cnyPerUsd);
   const surchargeUsdCents = convertCnyCentsToUsdCents(surchargeCnyCents, fx.cnyPerUsd);
 
   return {
     ok: true,
     rateKey: rate.countryCode,
-    countryCode: normalizeShippingCountryCode(countryLabel),
+    countryCode: normalizeShippingCountryCode(input.countryLabel),
     countryName: rate.countryName || countryNameForShippingRateKey(rate.countryCode),
     shippingFeeCnyCents,
     surchargeCnyCents,
@@ -147,8 +220,12 @@ export async function quoteShippingFeeForCheckout(
     surchargeUsdCents,
     totalUsdCents: shippingFeeUsdCents + surchargeUsdCents,
     cnyPerUsd: fx.cnyPerUsd,
+    weightKg: roundCny(weightKg),
+    pricePerKg,
+    deliveryFee,
+    dutyPercent,
     postalZone: resolved.postalZone ?? null,
-    deliveryDaysLabel: rate.deliveryDaysLabel?.trim() || "7-14 Business Days",
+    deliveryDaysLabel: rate.deliveryDaysLabel?.trim() || SHIPPING_DEFAULTS.deliveryTime,
   };
 }
 
@@ -171,6 +248,7 @@ export type CheckoutShippingMethodsResult =
 export async function listCheckoutShippingMethods(
   countryLabel: string,
   postalCode?: string | null,
+  opts?: { weightKg?: number; goodsCny?: number },
 ): Promise<CheckoutShippingMethodsResult> {
   const countryCode = normalizeShippingCountryCode(countryLabel);
   if (!countryCode) return { ok: false, error: "country_required" };
@@ -179,7 +257,13 @@ export async function listCheckoutShippingMethods(
   }
 
   const fx = await getCnyUsdExchangeRate();
-  const standardQuote = await quoteShippingFeeForCheckout(countryLabel, postalCode, fx.cnyPerUsd);
+  const standardQuote = await quoteShippingFeeForCheckout({
+    countryLabel,
+    postalCode,
+    weightKg: opts?.weightKg,
+    goodsCny: opts?.goodsCny,
+    cnyPerUsd: fx.cnyPerUsd,
+  });
   const expressQuotes = await quoteAllExpressMethods(fx.cnyPerUsd);
 
   const methods: CheckoutShippingMethodOption[] = [];
@@ -200,7 +284,7 @@ export async function listCheckoutShippingMethods(
     methods.push({
       methodId: "standard",
       label: "Standard Shipping",
-      deliveryDaysLabel: "7-14 Business Days",
+      deliveryDaysLabel: SHIPPING_DEFAULTS.deliveryTime,
       shippingFeeUsdCents: 0,
       surchargeUsdCents: 0,
       totalUsdCents: 0,
@@ -236,22 +320,32 @@ export async function quoteCheckoutShippingMethod(
   methodId: string,
   countryLabel: string,
   postalCode?: string | null,
+  opts?: { weightKg?: number; goodsCny?: number },
 ): Promise<CheckoutShippingMethodQuote> {
   if (!isShippingMethodId(methodId)) {
     return { ok: false, error: "invalid_method" };
   }
 
-  const listed = await listCheckoutShippingMethods(countryLabel, postalCode);
+  const listed = await listCheckoutShippingMethods(countryLabel, postalCode, opts);
   if (!listed.ok) return { ok: false, error: listed.error };
   const match = listed.methods.find((m) => m.methodId === methodId && m.available);
   if (!match) return { ok: false, error: "method_unavailable" };
 
   if (methodId === "standard") {
-    const standard = await quoteShippingFeeForCheckout(countryLabel, postalCode);
+    const standard = await quoteShippingFeeForCheckout({
+      countryLabel,
+      postalCode,
+      weightKg: opts?.weightKg,
+      goodsCny: opts?.goodsCny,
+      cnyPerUsd: listed.cnyPerUsd,
+    });
     if (!standard.ok) return { ok: false, error: standard.error };
     return {
       ok: true,
       ...match,
+      shippingFeeUsdCents: standard.shippingFeeUsdCents,
+      surchargeUsdCents: standard.surchargeUsdCents,
+      totalUsdCents: standard.totalUsdCents,
       shippingFeeCnyCents: standard.shippingFeeCnyCents,
       surchargeCnyCents: standard.surchargeCnyCents,
       cnyPerUsd: standard.cnyPerUsd,
@@ -272,14 +366,20 @@ export async function quoteCheckoutShippingMethod(
 
 export function parseDeliveryDaysLabel(raw: FormDataEntryValue | null): string {
   const text = String(raw ?? "").trim();
-  return text || "7-14 Business Days";
+  return text || SHIPPING_DEFAULTS.deliveryTime;
 }
 
 export async function quoteShippingFeeForCountryLabel(
   countryLabel: string,
   postalCode?: string | null,
+  opts?: { weightKg?: number; goodsCny?: number },
 ): Promise<ShippingFeeQuoteResult> {
-  return quoteShippingFeeForCheckout(countryLabel, postalCode);
+  return quoteShippingFeeForCheckout({
+    countryLabel,
+    postalCode,
+    weightKg: opts?.weightKg,
+    goodsCny: opts?.goodsCny,
+  });
 }
 
 export function computeCheckoutTotalCents(input: {
@@ -293,4 +393,10 @@ export function computeCheckoutTotalCents(input: {
   const surcharge = Math.max(0, input.surchargeUsdCents);
   const discount = Math.max(0, input.discountCents);
   return Math.max(0, subtotal + shipping + surcharge - discount);
+}
+
+/** Preview for admin: 1 watch = weight × ¥/kg + 派送费 (税费 shown separately at checkout). */
+export function previewOneWatchShippingCny(pricePerKg: number, deliveryFee: number): number | null {
+  if (![pricePerKg, deliveryFee].every((n) => Number.isFinite(n) && n >= 0)) return null;
+  return shippingFeeCny({ pricePerKg, deliveryFee }, WATCH_WEIGHT_KG);
 }

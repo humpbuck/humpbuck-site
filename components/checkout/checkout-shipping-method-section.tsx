@@ -22,6 +22,10 @@ type Props = {
   countryLabel: string;
   postalCode: string;
   methodId: ShippingMethodId;
+  /** Cart piece count — used as units × default watch weight when weightKg omitted. */
+  totalUnits?: number;
+  /** Goods subtotal in USD cents — used for 税费 on (goods + shipping). */
+  goodsUsdCents?: number;
   onMethodChange: (methodId: ShippingMethodId) => void;
   onSelectionChange: (selection: CheckoutShippingMethodSelection | null) => void;
 };
@@ -36,6 +40,8 @@ export function CheckoutShippingMethodSection({
   countryLabel,
   postalCode,
   methodId,
+  totalUnits = 1,
+  goodsUsdCents = 0,
   onMethodChange,
   onSelectionChange,
 }: Props) {
@@ -86,6 +92,8 @@ export function CheckoutShippingMethodSection({
       try {
         const params = new URLSearchParams({ country });
         if (needsPostal && debouncedPostal) params.set("postalCode", debouncedPostal);
+        params.set("units", String(Math.max(1, Math.floor(totalUnits) || 1)));
+        if (goodsUsdCents > 0) params.set("goodsUsdCents", String(Math.round(goodsUsdCents)));
         const res = await fetch(`/api/checkout/shipping-rate?${params.toString()}`, {
           signal: controller.signal,
         });
@@ -131,7 +139,7 @@ export function CheckoutShippingMethodSection({
       cancelled = true;
       controller.abort();
     };
-  }, [countryLabel, debouncedPostal, needsPostal, onMethodChange, onSelectionChange, t]);
+  }, [countryLabel, debouncedPostal, needsPostal, totalUnits, goodsUsdCents, onMethodChange, onSelectionChange, t]);
 
   const selected = useMemo(
     () => methods.find((m) => m.methodId === methodId && m.available) ?? null,

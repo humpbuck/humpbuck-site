@@ -33,7 +33,7 @@ type CountryRule = {
 
 type CountryRuleSet = CountryRule | CountryRule[];
 
-const DEFAULT_PRODUCT_WEIGHT_KG = 0.2;
+const DEFAULT_PRODUCT_WEIGHT_KG = 0.3;
 const DOMESTIC_TRANSPORT_FEE_RMB = 5;
 const CHECKOUT_DISCOUNT_RMB = 50;
 const t = (maxWeightKg: number, freightRmbPerKg: number, processingFeeRmb: number): Tier => ({ maxWeightKg, freightRmbPerKg, processingFeeRmb });

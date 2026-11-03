@@ -10,6 +10,7 @@ import {
 } from "@/lib/checkout-shipping-quote";
 import { getShippingOhQuote } from "@/lib/shipping-oh";
 import { getShippingYanwen484Quote } from "@/lib/shipping-yanwen484";
+import { WATCH_WEIGHT_KG } from "@/lib/shipping-fee";
 
 function checkoutMethodLabel(id: ShippingMethodId): string {
   switch (id) {
@@ -79,7 +80,7 @@ export function LogisticsReferencePanel({
     ? getShippingOhQuote({
         countryCode,
         postalCode: postalCode ?? undefined,
-        weightKg: totalUnits * 0.2,
+        weightKg: totalUnits * WATCH_WEIGHT_KG,
         quantity: totalUnits,
       })
     : null;
@@ -87,7 +88,7 @@ export function LogisticsReferencePanel({
     ? getShippingYanwen484Quote({
         countryCode,
         postalCode: postalCode ?? undefined,
-        weightKg: totalUnits * 0.2,
+        weightKg: totalUnits * WATCH_WEIGHT_KG,
         quantity: totalUnits,
       })
     : null;

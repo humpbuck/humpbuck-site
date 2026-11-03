@@ -40,7 +40,7 @@ export type ShippingOhQuote = {
 };
 
 const CHECKOUT_DISCOUNT_RMB = 50;
-const DEFAULT_UNIT_WEIGHT_KG = 0.2;
+const DEFAULT_UNIT_WEIGHT_KG = 0.3;
 const RMB_PER_USD = 6.8;
 
 const t = (maxWeightKg: number, freightRmbPerKg: number, registrationFeeRmb: number, note?: string): Tier => ({
