@@ -210,7 +210,7 @@ export default async function AdminShippingFeesPage({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <AdminBackLink />
+      <AdminBackLink href={adminPath()} label="Overview" />
       <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-serif text-3xl text-ink">Shipping fees</h1>
