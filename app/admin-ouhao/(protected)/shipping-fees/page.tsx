@@ -82,12 +82,12 @@ export default async function AdminShippingFeesPage({
           <p className="text-xs font-semibold uppercase tracking-widest text-muted">运费</p>
           <h1 className="mt-2 font-serif text-3xl text-ink">Shipping fees</h1>
           <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted">
-            Standard shipping matches WatchSourceGo wholesale / Cainiao OH style:{" "}
+            Standard shipping matches WatchSourceGo wholesale / Cainiao OH: most countries use{" "}
             <strong className="font-medium text-ink">运费 = ¥/kg × 重量 + 派送费</strong>
-            ，税费 = (商品 + 运费) × 税费%。Default watch weight is{" "}
-            <strong className="font-medium text-ink">{SHIPPING_DEFAULTS.watchWeightKg} kg</strong>.
-            Checkout multiplies by cart quantity. Express carriers (DHL / FedEx / UPS) stay fixed
-            global fees below.
+            ；日本 / 哈萨克斯坦等 OH 首重续重按重量档计算（件数越多可能越高）。税费 = (商品 + 运费) ×
+            税费%。Default watch weight is{" "}
+            <strong className="font-medium text-ink">{SHIPPING_DEFAULTS.watchWeightKg} kg</strong>
+            . Express carriers (DHL / FedEx / UPS) stay fixed global fees below.
           </p>
         </div>
         <AdminExchangeRateCard />

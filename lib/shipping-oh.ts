@@ -253,3 +253,21 @@ export function getShippingOhQuote(input: ShippingOhInput): ShippingOhQuote | nu
     currency: "RMB",
   };
 }
+
+/** ISO2 codes that use first-weight + additional-weight (not ¥/kg × W). */
+export function isShippingOhFirstExtraCountry(countryCode: string): boolean {
+  const code = normalizeCountryCode(countryCode);
+  return Boolean(RULES[code]?.calculator);
+}
+
+/**
+ * Carrier OH freight for Standard checkout (no retail -50 discount).
+ * Returns null when OH has no rule for the country.
+ */
+export function getOhStandardShippingCny(input: ShippingOhInput): number | null {
+  const q = getShippingOhQuote(input);
+  if (!q) return null;
+  const total = q.baseFreightRmb + q.surchargeRmb;
+  return Math.round(total * 100) / 100;
+}
+

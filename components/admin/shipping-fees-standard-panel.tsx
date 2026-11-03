@@ -9,6 +9,10 @@ import {
   shippingRateMatchesQuery,
 } from "@/lib/shipping-fee-country-options";
 import { SHIPPING_DEFAULTS, shippingFeeCny } from "@/lib/shipping-fee";
+import {
+  getOhStandardShippingCny,
+  isShippingOhFirstExtraCountry,
+} from "@/lib/shipping-oh";
 
 export type ShippingFeeRateRow = {
   id: string;
@@ -36,8 +40,29 @@ type Props = {
   deleteAction: (formData: FormData) => Promise<void>;
 };
 
-function oneWatchPreview(pricePerKg: number, deliveryFee: number) {
+function rateIso(countryCode: string): string {
+  return countryCode.trim().toUpperCase().split("-")[0] ?? countryCode;
+}
+
+function oneWatchPreview(pricePerKg: number, deliveryFee: number, countryCode?: string) {
+  if (countryCode && isShippingOhFirstExtraCountry(rateIso(countryCode))) {
+    const oh = getOhStandardShippingCny({
+      countryCode: rateIso(countryCode),
+      weightKg: SHIPPING_DEFAULTS.watchWeightKg,
+      quantity: 1,
+    });
+    if (oh != null) return oh;
+  }
   return shippingFeeCny({ pricePerKg, deliveryFee }, SHIPPING_DEFAULTS.watchWeightKg);
+}
+
+function nWatchOhPreview(countryCode: string, watchCount: number) {
+  const n = Math.max(1, Math.floor(watchCount));
+  return getOhStandardShippingCny({
+    countryCode: rateIso(countryCode),
+    weightKg: n * SHIPPING_DEFAULTS.watchWeightKg,
+    quantity: n,
+  });
 }
 
 function RateRow({
@@ -51,12 +76,17 @@ function RateRow({
 }) {
   const [pricePerKg, setPricePerKg] = useState(String(rate.pricePerKg));
   const [deliveryFee, setDeliveryFee] = useState(String(rate.deliveryFee));
+  const firstExtra = isShippingOhFirstExtraCountry(rateIso(rate.countryCode));
   const preview = useMemo(() => {
     const pkg = Number(pricePerKg);
     const fee = Number(deliveryFee);
     if (![pkg, fee].every((n) => Number.isFinite(n) && n >= 0)) return null;
-    return oneWatchPreview(pkg, fee);
-  }, [pricePerKg, deliveryFee]);
+    return oneWatchPreview(pkg, fee, rate.countryCode);
+  }, [pricePerKg, deliveryFee, rate.countryCode]);
+  const twoWatchPreview = useMemo(
+    () => (firstExtra ? nWatchOhPreview(rate.countryCode, 2) : null),
+    [firstExtra, rate.countryCode],
+  );
 
   const display = formatShippingRateDisplay(rate.countryCode, rate.countryName || undefined);
 
@@ -72,6 +102,9 @@ function RateRow({
           {display}
           <span className="mt-1 block text-xs font-normal text-muted">
             1只表 ¥{preview == null ? "—" : preview.toFixed(2)}
+            {firstExtra && twoWatchPreview != null
+              ? ` · 2只表 ¥${twoWatchPreview.toFixed(2)}（OH 首重续重）`
+              : ""}
           </span>
         </p>
         <label className="block text-xs font-semibold uppercase tracking-wide text-muted">
@@ -236,8 +269,9 @@ export function ShippingFeesStandardPanel({
               Standard shipping — country rates
             </h2>
             <p className="mt-2 max-w-3xl text-xs text-muted">
-              Preview ignores 税费%. At checkout, duty uses (goods + shipping) × 税费%. Rates should
-              come from Cainiao OH (¥/kg = freight tier, 派送费 = registration).
+              Preview ignores 税费%. Most countries: ¥/kg × weight + 派送费. Japan / Kazakhstan
+              (OH 首重续重) use live OH so 2+ watches can cost more than 1. Duty =
+              (goods + shipping) × 税费%.
             </p>
           </div>
           {rates.length > 0 ? (

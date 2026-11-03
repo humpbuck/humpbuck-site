@@ -1,6 +1,8 @@
 /**
  * Upsert humpbuck ShippingFeeRate rows from Cainiao OH tiers.
  * ¥/kg = freightRmbPerKg, 派送费 = registrationFeeRmb at WATCH_WEIGHT_KG; 税费% = 4.
+ * Note: JP/KZ (and any calculator countries) are first+extra — checkout uses live OH,
+ * so stored ¥/kg may be 0 with 派送费 = first-weight fee for the 1-watch snapshot.
  *
  *   npx tsx scripts/sync-shipping-fees-from-oh.ts
  *   npx tsx scripts/sync-shipping-fees-from-oh.ts --target=sqlite
@@ -138,7 +140,7 @@ function applyD1(sql: string, local: boolean) {
 
 function sampleQuery(target: Target) {
   const sql =
-    "SELECT countryCode, pricePerKg, deliveryFee, dutyPercent, printf('%.2f', pricePerKg*0.3+deliveryFee) AS oneWatch FROM ShippingFeeRate WHERE countryCode IN ('AL','AO','AR','US','GB','AU-Z1-2','AU-Z3-4') ORDER BY countryCode;";
+    "SELECT countryCode, pricePerKg, deliveryFee, dutyPercent, printf('%.2f', pricePerKg*0.3+deliveryFee) AS oneWatchFlat FROM ShippingFeeRate WHERE countryCode IN ('AL','JP','KZ','US','GB','AU-Z1-2','AU-Z3-4') ORDER BY countryCode;";
   if (target === "sqlite") {
     return execFileSync("sqlite3", [dbPath, sql], { encoding: "utf8" });
   }

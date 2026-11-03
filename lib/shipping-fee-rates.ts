@@ -20,13 +20,17 @@ import {
   roundCny,
   shippingFeeCny,
 } from "@/lib/shipping-fee";
+import {
+  getOhStandardShippingCny,
+  isShippingOhFirstExtraCountry,
+} from "@/lib/shipping-oh";
 
 export type ShippingFeeQuote = {
   ok: true;
   rateKey: string;
   countryCode: string;
   countryName: string;
-  /** Computed shipping in CNY cents: (¥/kg × weight + 派送费) × 100. */
+  /** Computed shipping in CNY cents (OH first+extra for JP/KZ etc., else ¥/kg × weight + 派送费). */
   shippingFeeCnyCents: number;
   /** Computed 税费 in CNY cents: ((goods + shipping) × duty%) × 100. */
   surchargeCnyCents: number;
@@ -188,13 +192,28 @@ export async function quoteShippingFeeForCheckout(
       ? (input.goodsCny as number)
       : 0;
 
+  const countryIso = normalizeShippingCountryCode(input.countryLabel);
   const isChinaFree =
-    normalizeShippingCountryCode(input.countryLabel) === "CN" &&
+    countryIso === "CN" &&
     pricePerKg === 0 &&
     deliveryFee === 0 &&
     dutyPercent === 0;
 
-  const shippingCny = isChinaFree ? 0 : shippingFeeCny({ pricePerKg, deliveryFee }, weightKg);
+  // JP/KZ (and any OH calculator country): first-weight + additional-weight.
+  // Flat ¥/kg × W cannot express that, so quote live OH for those only.
+  const ohShippingCny =
+    !isChinaFree && isShippingOhFirstExtraCountry(countryIso)
+      ? getOhStandardShippingCny({
+          countryCode: countryIso,
+          postalCode: input.postalCode ?? undefined,
+          weightKg,
+        })
+      : null;
+  const shippingCny = isChinaFree
+    ? 0
+    : ohShippingCny != null
+      ? ohShippingCny
+      : shippingFeeCny({ pricePerKg, deliveryFee }, weightKg);
   const taxCny = isChinaFree ? 0 : dutyCny(goodsCny, shippingCny, dutyPercent);
 
   const shippingFeeCnyCents = Math.max(0, Math.round(shippingCny * 100));
@@ -395,8 +414,34 @@ export function computeCheckoutTotalCents(input: {
   return Math.max(0, subtotal + shipping + surcharge - discount);
 }
 
-/** Preview for admin: 1 watch = weight × ¥/kg + 派送费 (税费 shown separately at checkout). */
-export function previewOneWatchShippingCny(pricePerKg: number, deliveryFee: number): number | null {
+/** Preview for admin: OH first+extra when available, else weight × ¥/kg + 派送费. */
+export function previewOneWatchShippingCny(
+  pricePerKg: number,
+  deliveryFee: number,
+  countryCode?: string,
+): number | null {
+  if (countryCode) {
+    const iso = countryCode.trim().toUpperCase().split("-")[0];
+    if (isShippingOhFirstExtraCountry(iso)) {
+      const oh = getOhStandardShippingCny({
+        countryCode: iso,
+        weightKg: WATCH_WEIGHT_KG,
+        quantity: 1,
+      });
+      if (oh != null) return oh;
+    }
+  }
   if (![pricePerKg, deliveryFee].every((n) => Number.isFinite(n) && n >= 0)) return null;
   return shippingFeeCny({ pricePerKg, deliveryFee }, WATCH_WEIGHT_KG);
+}
+
+/** Admin helper: N-watch OH freight (null if no OH rule). */
+export function previewNWatchOhShippingCny(countryCode: string, watchCount: number): number | null {
+  const iso = countryCode.trim().toUpperCase().split("-")[0];
+  const n = Math.max(1, Math.floor(watchCount));
+  return getOhStandardShippingCny({
+    countryCode: iso,
+    weightKg: n * WATCH_WEIGHT_KG,
+    quantity: n,
+  });
 }
