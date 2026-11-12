@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - Relojes automáticos | Zafiro y acero 316L",
-    "descriptionDefault": "Descubre relojes automáticos de alta calidad en acero inoxidable 316L con cristal de zafiro. Piezas de lujo para el día a día.",
-    "ogTitle": "HUMPBUCK - Relojes automáticos | Zafiro y acero 316L",
-    "ogDescription": "Descubre relojes automáticos de alta calidad en acero inoxidable 316L con cristal de zafiro. Piezas de lujo para el día a día."
+    "titleDefault": "HUMPBUCK - Relojes multifunción Analog-Digital TEMP",
+    "descriptionDefault": "Descubre relojes ana-digi retro que combinan precisión analógica, funciones digitales y diseño futurista. Piezas distintivas para el día a día.",
+    "ogTitle": "HUMPBUCK - Relojes multifunción Analog-Digital TEMP",
+    "ogDescription": "Descubre relojes ana-digi retro que combinan precisión analógica, funciones digitales y diseño futurista. Piezas distintivas para el día a día."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -53,7 +53,7 @@
     "shopUltraThin": "Ultra-thin"
   },
   "Footer": {
-    "tagline": "Relojes automáticos en acero inoxidable 316L con cristal de zafiro — piezas de lujo de alta calidad.",
+    "tagline": "Relojes ana-digi retro que combinan carácter analógico, función digital y diseño distintivo.",
     "highlights": "Pagos seguros · Envío global · Atención 24/7",
     "copyright": "© {year} HUMPBUCK. Todos los derechos reservados.",
     "disclaimer": "Precios, impuestos y envío se confirman al pagar. Para envíos, reembolsos, privacidad y condiciones, vea Soporte arriba. Consultas:",
@@ -79,10 +79,10 @@
     "linkUltraThin": "Ultra-thin"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - Relojes automáticos | Zafiro y acero 316L",
-    "metaDescription": "Descubre relojes automáticos de alta calidad en acero inoxidable 316L con cristal de zafiro. Piezas de lujo para el día a día.",
-    "ogTitle": "HUMPBUCK - Relojes automáticos | Zafiro y acero 316L",
-    "ogDescription": "Descubre relojes automáticos de alta calidad en acero inoxidable 316L con cristal de zafiro. Piezas de lujo para el día a día.",
+    "metaTitle": "HUMPBUCK - Relojes multifunción Analog-Digital TEMP",
+    "metaDescription": "Descubre relojes ana-digi retro que combinan precisión analógica, funciones digitales y diseño futurista. Piezas distintivas para el día a día.",
+    "ogTitle": "HUMPBUCK - Relojes multifunción Analog-Digital TEMP",
+    "ogDescription": "Descubre relojes ana-digi retro que combinan precisión analógica, funciones digitales y diseño futurista. Piezas distintivas para el día a día.",
     "heroBadge": "Serie · DIGI-TEMP",
     "heroLead1": "Reloj ana-dígital multifunción: doble pantalla y funciones completas.",
     "heroLead2": "Hora, fecha, alarma, temperatura exterior y cronómetro en una caja compacta de acero inoxidable — lectura clara para el día a día.",
@@ -120,7 +120,7 @@
     "trustLaunchBody": "Programas de fábrica para marcas que crecen.",
     "newsletterKicker": "Novedades",
     "newsletterTitle": "NUEVOS LANZAMIENTOS DE RELOJES",
-    "newsletterBody": "Descubre relojes automáticos de alta calidad en acero inoxidable 316L con cristal de zafiro. Piezas de lujo para el día a día.",
+    "newsletterBody": "Descubre relojes ana-digi retro que combinan precisión analógica, funciones digitales y diseño futurista.",
     "mechanicalHeroBadge": "ANA-DIGI · TEMP",
     "mechanicalHeroTitle": "ANA-DIGI Temperature",
     "mechanicalHeroLead": "Relojes ana-digi retro que unen precisión analógica, funciones digitales y diseño futurista.",
@@ -145,7 +145,7 @@
     "categoryQuartzImageAlt": "Reloj ana-digi de cuarzo HUMPBUCK en muñeca",
     "recommendedKicker": "Buscar por",
     "recommendedTitle": "Relojes recomendados",
-    "recommendedIntro": "Descubre relojes automáticos de alta calidad en acero inoxidable 316L con cristal de zafiro. Piezas de lujo para el día a día.",
+    "recommendedIntro": "Descubre relojes ana-digi retro que combinan precisión analógica, funciones digitales y diseño futurista.",
     "recommendedViewAll": "Ver todos",
     "mechanicalWatchesTitle": "Automatic watches",
     "mechanicalWatchesShop": "Comprar automatic",
@@ -269,9 +269,9 @@
     "successClose": "Cerrar"
   },
   "Shop": {
-    "metaTitle": "Comprar relojes automáticos | Zafiro y 316L | HUMPBUCK",
-    "metaDescription": "Compra relojes automáticos HUMPBUCK en acero inoxidable 316L con cristal de zafiro. Piezas de lujo para el día a día.",
-    "ogTitle": "Comprar relojes automáticos | Zafiro y 316L | HUMPBUCK",
+    "metaTitle": "Comprar relojes ANA-DIGI y Automatic",
+    "metaDescription": "Descubre relojes ana-digi retro que combinan precisión analógica, funciones digitales y diseño futurista. Piezas distintivas para el día a día.",
+    "ogTitle": "Comprar relojes ANA-DIGI y Automatic · HUMPBUCK",
     "kicker": "Catálogo",
     "title": "Descubre relojes ana-digi retro que combinan precisión analógica, funciones digitales y diseño futurista.",
     "intro": "Navegue por colección: DIGI-TEMP (buque insignia ana-dígital), RM-TONNEAU (cuarzo tonneau) y RD-ASTRAL. Los filtros se reflejan en la URL para compartir.",
@@ -279,7 +279,7 @@
     "showingSeries": "Mostrando {series} ({count, plural, one {# artículo} other {# artículos}})",
     "emptyCategory": "Aún no hay nada aquí.",
     "clearFilter": "Quitar filtro",
-    "ogDescription": "Compra relojes automáticos HUMPBUCK en acero inoxidable 316L con cristal de zafiro. Piezas de lujo para el día a día.",
+    "ogDescription": "Descubre relojes ana-digi retro que combinan precisión analógica, funciones digitales y diseño futurista. Piezas distintivas para el día a día.",
     "filterPanelTitle": "Filtrar",
     "filterGroupMovement": "Movimiento",
     "filterGroupAudience": "Público",
@@ -901,7 +901,7 @@
   },
   "AboutPage": {
     "metaTitle": "Nosotros — HUMPBUCK",
-    "metaDescription": "Descubre cómo un reloj ANA-DIGI de la infancia, regalo de su padre, inspiró la creación de HUMPBUCK, una marca dedicada a relojes ANA-DIGI retrofuturistas y distintivos.",
+    "metaDescription": "Descubre relojes ana-digi retro que combinan precisión analógica, funciones digitales y diseño futurista. Piezas distintivas para el día a día.",
     "kickerBrand": "Marca",
     "heroTitle": "HUMPBUCK — la utilidad primero, luego el espectáculo.",
     "heroLead": "Combinamos tienda directa y programas de fábrica para que un lanzamiento pueda crecer a producción repetible sin reabastecer cada temporada.",
@@ -958,8 +958,8 @@
     "emptyBackup": "Aún no hay enlace de YouTube de respaldo."
   },
   "BlogPage": {
-    "metaDescription": "Historias y notas de HUMPBUCK — relojes automáticos en acero 316L con cristal de zafiro.",
-    "intro": "Historias y notas de HUMPBUCK — relojes automáticos en acero 316L con cristal de zafiro.",
+    "metaDescription": "Historias y notas de HUMPBUCK — relojes ana-digi retro para el día a día.",
+    "intro": "Historias y notas de HUMPBUCK — relojes ana-digi retro para el día a día.",
     "metaTitle": "Blog — HUMPBUCK",
     "ogTitle": "Blog — HUMPBUCK",
     "kicker": "Diario",
@@ -1085,8 +1085,8 @@
   "WatchCollections": {
     "faqHeading": "Preguntas frecuentes",
     "all": {
-      "metaTitle": "Comprar relojes automáticos | Zafiro y 316L | HUMPBUCK",
-      "metaDescription": "Compra relojes automáticos HUMPBUCK en acero inoxidable 316L con cristal de zafiro. Piezas de lujo para el día a día.",
+      "metaTitle": "Comprar relojes ANA-DIGI y Automatic | HUMPBUCK",
+      "metaDescription": "Descubre relojes ana-digi retro que combinan precisión analógica, funciones digitales y diseño futurista. Piezas distintivas para el día a día.",
       "kicker": "RELOJES",
       "h1": "Relojes HUMPBUCK",
       "subtitle": "Explora relojes ANA-DIGI, digitales, analógicos y automáticos de HUMPBUCK.",

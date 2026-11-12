@@ -9,7 +9,12 @@ import {
   HomeHeroCarousel,
   type HomeHeroSlide,
 } from "@/components/site/home-hero-carousel";
-import { homeHeroDesktopWebpUrl, homeHeroMobileWebpUrl } from "@/lib/r2";
+import {
+  homeHeroAutomaticDesktopWebpUrl,
+  homeHeroAutomaticMobileWebpUrl,
+  homeHeroDesktopWebpUrl,
+  homeHeroMobileWebpUrl,
+} from "@/lib/r2";
 import { resolveHomeCmsText } from "@/lib/site-home-cms-locale";
 import { getSiteHomeContent } from "@/lib/site-home-content-queries";
 
@@ -48,21 +53,6 @@ async function HomeHeroForeground() {
 
   const slides: HomeHeroSlide[] = [
     {
-      id: "automatic",
-      badge: t("automaticHeroBadge"),
-      title: t("automaticHeroTitle"),
-      lead: t("automaticHeroLead"),
-      chips: [
-        t("automaticHeroChipAutomatic"),
-        t("automaticHeroChipSteel"),
-        t("automaticHeroChipSapphire"),
-      ],
-      cta: t("automaticHeroCtaShop"),
-      ctaHref: "/products/automatic",
-      alt: t("automaticHeroImageAlt"),
-      headingAs: "h1",
-    },
-    {
       id: "ana-digi",
       badge: resolveHomeCmsText(
         locale,
@@ -95,7 +85,7 @@ async function HomeHeroForeground() {
         content.heroCtaShop,
         t("mechanicalHeroCtaShop"),
       ),
-      ctaHref: "/products",
+      ctaHref: "/products/ana-digi",
       alt: resolveHomeCmsText(
         locale,
         content.heroImageAlt,
@@ -103,6 +93,23 @@ async function HomeHeroForeground() {
       ),
       mobileSrc: anaDigiCmsMobile || homeHeroMobileWebpUrl(),
       desktopSrc: anaDigiCmsDesktop || homeHeroDesktopWebpUrl(),
+      headingAs: "h1",
+    },
+    {
+      id: "automatic",
+      badge: t("automaticHeroBadge"),
+      title: t("automaticHeroTitle"),
+      lead: t("automaticHeroLead"),
+      chips: [
+        t("automaticHeroChipAutomatic"),
+        t("automaticHeroChipSteel"),
+        t("automaticHeroChipSapphire"),
+      ],
+      cta: t("automaticHeroCtaShop"),
+      ctaHref: "/products/automatic",
+      alt: t("automaticHeroImageAlt"),
+      mobileSrc: homeHeroAutomaticMobileWebpUrl(),
+      desktopSrc: homeHeroAutomaticDesktopWebpUrl(),
       headingAs: "h2",
     },
   ];

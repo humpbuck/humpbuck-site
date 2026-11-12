@@ -30,5 +30,5 @@ export const defaultOgImage = {
   url: DEFAULT_SITE_OG_IMAGE_PATH,
   width: 1200,
   height: 1200,
-  alt: "HUMPBUCK Watches — meaningful gifts of time and love",
+  alt: "HUMPBUCK Analog-Digital TEMP multifunctional watches",
 } as const;

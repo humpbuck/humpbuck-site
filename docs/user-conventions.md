@@ -152,6 +152,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-10-25 | **PDP 刷新后先拖画廊再第一次点变体大图不变**：钉主图后短暂忽略残留 scroll 的 browse 清图；缩略图/箭头仍 `force` 清除；STYLE 钉定时把变体图画到全部 slide，避免 scroll 未跟上时仍显示旧图。 |
 | 2026-10-25 | **分类公开 URL 对齐 PDP**：规范路径改为 `/product/{category}`（如 `/product/analog`）；旧 `/analog-watches` 等 **301**；`/watches` 仍为全部商品。 |
 | 2026-10-25 | **全站复数 `/products`**：全部商品 `/products`；分类 `/products/{category}`；PDP `/products/{category}/{model}`。旧 `/watches`、`*-watches`、`/product`（及嵌套）**301**。 |
+| 2026-11-11 | **全站 SEO 品牌主线改回 DIGITEMP / Analog-Digital TEMP**：标题 `HUMPBUCK - Analog-Digital TEMP Multifunctional Watches`；首页 Hero 第 1 张 / H1 改回 ANA-DIGI Temperature（DIGI-TEMP）；MINBER 自动表改为第 2 张。`/products` 商店 meta 不再用自动表主线。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 
@@ -167,31 +168,32 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 - **旧 PDP：** `/product/…` → **301** `/products/…`；`/products/{slug}`（非分类段）、误用的 `/products/digi-temp/{model}`（及改短 slug 前的复合 slug）→ **308** 到规范 `/products/{category}/{model}`  
 - **后台：** 无 Series 管理页；Products 表单只选上述四类；选 Digital 即写入 `cat_digital` 并出现在 `/products/digital`；Slug 只填型号  
 
-**SEO 品牌主线（2026-10-18 更新）**
+**SEO 品牌主线（2026-11-11 改回 DIGITEMP）**
 
-- **英文标题：** `HUMPBUCK - Automatic Watches | Sapphire Crystal & 316L`
-- **英文描述：** `Discover high-quality automatic watches in 316L stainless steel with sapphire crystal. Premium luxury timepieces made for lasting everyday wear.`
+- **英文标题：** `HUMPBUCK - Analog-Digital TEMP Multifunctional Watches`
+- **英文描述：** `Discover retro ana-digi watches combining analog precision, digital functions and futuristic design. Distinctive timepieces made for everyday wear.`
 - **维护方式：** 编辑 `scripts/seo-brand-i18n.json` → `node scripts/apply-seo-brand-messaging.mjs`（或直接改 `messages/en.json` 的 `SiteMetadata` / `Home` meta）
-- **适用范围：** 全站默认 meta / Open Graph（首页为主）；商品 PDP、ANA-DIGI / Digital / Analog 分类页、博客文章仍用各自产品/文章描述，不强行覆盖。 `/products` 与 `/products/automatic` 的 title/description 已对齐自动表 + 316L + 蓝宝石。
+- **适用范围：** 全站默认 meta / Open Graph / Twitter Card（首页为主）。Facebook、WhatsApp、LinkedIn、X、Discord、iMessage 预览都读这套 `og:title` / `og:description` / `og:image`（缩略图 `/share/og-whale.png`）。`/products` 商店 title 为 ANA-DIGI & Automatic。商品 PDP、ANA-DIGI / Digital / Analog / Automatic 分类页仍用各自描述。Automatic 分类页可继续写 316L / 蓝宝石，不作为全站主线。
 
-**首页 Hero 文案（2026-10-18 更新：第 1 张 / H1 = 自动机械表）**
+**首页 Hero 文案（2026-11-11 更新：第 1 张 / H1 = DIGITEMP / ANA-DIGI）**
 
-- **第 1 张 H1：** `MINBER Automatic Skeleton`（品牌名 MINBER 不翻译；其余按语言翻译）
-- **导语：** `Automatic movement in 316L stainless steel with sapphire crystal.`
-- **角标：** `AUTOMATIC · SKELETON`
-- **标签：** `AUTOMATIC` · `316L` · `SAPPHIRE`
-- **第 2 张：** 仍是 ANA-DIGI Temperature（CMS 可覆盖这张的文案/图）
-- **来源：** 第 1 张用 `Home.automaticHero*`；第 2 张英文优先 CMS，空字段回退 `Home.mechanicalHero*`。
+- **第 1 张 H1：** `ANA-DIGI Temperature`（DIGI-TEMP 旗舰；CMS 可覆盖这张的文案/图）
+- **导语：** `Retro ana-digi watches blending analog precision, digital functions, and futuristic design.`
+- **角标：** `ANA-DIGI · TEMP`
+- **标签：** `TIME` · `DATE` · `ALM` · `DU.T` · `ST.W`
+- **第 2 张：** MINBER Automatic Skeleton（品牌名 MINBER 不翻译）
+- **来源：** 第 1 张英文优先 CMS，空字段回退 `Home.mechanicalHero*`；第 2 张用 `Home.automaticHero*`。
 
-**首页 Hero 背景图（2026-10-18 更新为两张轮播）**
+**首页 Hero 背景图（2026-11-11 更新：DIGITEMP 在前）**
 
-- **第 1 张（MINBER 自动机械表，H1 / LCP）：**
+- **第 1 张（ANA-DIGI / DIGI-TEMP，H1 / LCP）：**
+  - PC：`Home/section1/Home-hero-PC.webp`
+  - 手机：`Home/section1/Home-hero-APP.webp`
+  - Shop 进 `/products/ana-digi`
+- **第 2 张（MINBER 自动机械表）：**
   - PC：`Home/section1/Home-hero-MINBER Automatic-Skeleton-Watch-PC.webp`
   - 手机：`Home/section1/Home-hero-MINBER Automatic-Skeleton-Watch-APP.webp`
   - 文案：品牌名 `MINBER` 不翻译；标题其余部分、导语、角标、AUTOMATIC/SAPPHIRE 标签按各语言翻译；`316L` 保持原样。Shop 进 `/products/automatic`
-- **第 2 张（ANA-DIGI）：**
-  - PC：`Home/section1/Home-hero-PC.webp`
-  - 手机：`Home/section1/Home-hero-APP.webp`
 - **换图：** 在 R2 同路径覆盖文件（对象用短 `Cache-Control`，勿设 1 年缓存）。可选：把对应 rev 加 1 以强制 URL 换新（`?v=`）：
   - `NEXT_PUBLIC_R2_HUMPBUCK_HERO_DESKTOP_REV`
   - `NEXT_PUBLIC_R2_HUMPBUCK_HERO_MOBILE_REV`

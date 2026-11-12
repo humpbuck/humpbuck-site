@@ -24,7 +24,7 @@ export type HomeHeroSlide = {
   lead: string;
   chips: string[];
   cta: string;
-  ctaHref: "/products" | "/products/automatic";
+  ctaHref: "/products" | "/products/ana-digi" | "/products/automatic";
   alt: string;
   mobileSrc?: string;
   desktopSrc?: string;

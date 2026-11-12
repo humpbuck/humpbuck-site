@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - 自動巻きウォッチ | サファイア＆316L",
-    "descriptionDefault": "316Lステンレススチールとサファイアクリスタルを備えた高品質な自動巻きウォッチ。日常に寄り添うプレミアムなタイムピース。",
-    "ogTitle": "HUMPBUCK - 自動巻きウォッチ | サファイア＆316L",
-    "ogDescription": "316Lステンレススチールとサファイアクリスタルを備えた高品質な自動巻きウォッチ。日常に寄り添うプレミアムなタイムピース。"
+    "titleDefault": "HUMPBUCK - Analog-Digital TEMP 多機能ウォッチ",
+    "descriptionDefault": "アナログの精度、デジタル機能、未来的デザインを融合したレトロ・アナデジウォッチ。日常に寄り添う個性的なタイムピース。",
+    "ogTitle": "HUMPBUCK - Analog-Digital TEMP 多機能ウォッチ",
+    "ogDescription": "アナログの精度、デジタル機能、未来的デザインを融合したレトロ・アナデジウォッチ。日常に寄り添う個性的なタイムピース。"
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -53,7 +53,7 @@
     "shopUltraThin": "Ultra-thin"
   },
   "Footer": {
-    "tagline": "316Lステンレスとサファイアクリスタルの自動巻きウォッチ — 高品質なラグジュアリータイムピース。",
+    "tagline": "アナログの個性、デジタル機能、独自のデザインを融合したレトロ・アナデジウォッチ。",
     "highlights": "安全な決済 · 世界配送 · 24時間サポート",
     "copyright": "© {year} HUMPBUCK. 無断転載を禁じます。",
     "disclaimer": "価格、税金、配送はチェックアウト時に確定します。配送、返金、プライバシー、利用規約については上記サポートをご覧ください。お問い合わせ：",
@@ -79,10 +79,10 @@
     "linkUltraThin": "Ultra-thin"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - 自動巻きウォッチ | サファイア＆316L",
-    "metaDescription": "316Lステンレススチールとサファイアクリスタルを備えた高品質な自動巻きウォッチ。日常に寄り添うプレミアムなタイムピース。",
-    "ogTitle": "HUMPBUCK - 自動巻きウォッチ | サファイア＆316L",
-    "ogDescription": "316Lステンレススチールとサファイアクリスタルを備えた高品質な自動巻きウォッチ。日常に寄り添うプレミアムなタイムピース。",
+    "metaTitle": "HUMPBUCK - Analog-Digital TEMP 多機能ウォッチ",
+    "metaDescription": "アナログの精度、デジタル機能、未来的デザインを融合したレトロ・アナデジウォッチ。日常に寄り添う個性的なタイムピース。",
+    "ogTitle": "HUMPBUCK - Analog-Digital TEMP 多機能ウォッチ",
+    "ogDescription": "アナログの精度、デジタル機能、未来的デザインを融合したレトロ・アナデジウォッチ。日常に寄り添う個性的なタイムピース。",
     "heroBadge": "シリーズ · DIGI-TEMP",
     "heroLead1": "アナデジ多機能時計 — デュアルディスプレイ、フル機能。",
     "heroLead2": "時刻、日付、アラーム、外気温、ストップウォッチモードをコンパクトなステンレスケースに — 日常使いに cockpit 級の視認性。",
@@ -120,7 +120,7 @@
     "trustLaunchBody": "成長中の時計ブランド向け工場プログラム。",
     "newsletterKicker": "最新情報",
     "newsletterTitle": "新作ウォッチ入荷",
-    "newsletterBody": "316Lステンレススチールとサファイアクリスタルを備えた高品質な自動巻きウォッチ。日常に寄り添うプレミアムなタイムピース。",
+    "newsletterBody": "アナログの精度、デジタル機能、未来的デザインを融合したレトロ・アナデジウォッチ。",
     "mechanicalHeroBadge": "ANA-DIGI · TEMP",
     "mechanicalHeroTitle": "ANA-DIGI Temperature",
     "mechanicalHeroLead": "アナログ精度・デジタル機能・未来的デザインを融合したレトロ・アナデジウォッチ。",
@@ -145,7 +145,7 @@
     "categoryQuartzImageAlt": "手首のHUMPBUCKクォーツアナデジウォッチ",
     "recommendedKicker": "検索",
     "recommendedTitle": "おすすめウォッチ",
-    "recommendedIntro": "316Lステンレススチールとサファイアクリスタルを備えた高品質な自動巻きウォッチ。日常に寄り添うプレミアムなタイムピース。",
+    "recommendedIntro": "アナログの精度、デジタル機能、未来的デザインを融合したレトロ・アナデジウォッチ。",
     "recommendedViewAll": "すべて見る",
     "mechanicalWatchesTitle": "Automatic watches",
     "mechanicalWatchesShop": "Automatic を見る",
@@ -269,9 +269,9 @@
     "successClose": "閉じる"
   },
   "Shop": {
-    "metaTitle": "自動巻きウォッチを購入 | サファイア＆316L | HUMPBUCK",
-    "metaDescription": "316Lステンレススチールとサファイアクリスタルを備えたHUMPBUCK自動巻きウォッチ。日常のための高品質なラグジュアリータイムピース。",
-    "ogTitle": "自動巻きウォッチを購入 | サファイア＆316L | HUMPBUCK",
+    "metaTitle": "ANA-DIGI & Automatic ウォッチを購入",
+    "metaDescription": "アナログの精度、デジタル機能、未来的デザインを融合したレトロ・アナデジウォッチ。日常に寄り添う個性的なタイムピース。",
+    "ogTitle": "ANA-DIGI & Automatic ウォッチを購入 · HUMPBUCK",
     "kicker": "カタログ",
     "title": "アナログの精度、デジタル機能、未来的デザインを融合したレトロ・アナデジウォッチ。",
     "intro": "コレクション別に閲覧：DIGI-TEMP（アナデジ フラッグシップ）、RM-TONNEAU（トノー クォーツ）、RD-ASTRAL。フィルターは URL と同期し共有可能。",
@@ -279,7 +279,7 @@
     "showingSeries": "{series} を表示（{count, plural, one {# 点} other {# 点}}）",
     "emptyCategory": "まだ商品がありません。",
     "clearFilter": "フィルターを解除",
-    "ogDescription": "316Lステンレススチールとサファイアクリスタルを備えたHUMPBUCK自動巻きウォッチ。日常のための高品質なラグジュアリータイムピース。",
+    "ogDescription": "アナログの精度、デジタル機能、未来的デザインを融合したレトロ・アナデジウォッチ。日常に寄り添う個性的なタイムピース。",
     "filterPanelTitle": "フィルター",
     "filterGroupMovement": "ムーブメント",
     "filterGroupAudience": "対象",
@@ -901,7 +901,7 @@
   },
   "AboutPage": {
     "metaTitle": "About — HUMPBUCK",
-    "metaDescription": "幼少期に父から贈られた ANA-DIGI ウォッチが、個性的なレトロフューチャー ANA-DIGI ウォッチに取り組むブランド HUMPBUCK の創造につながった物語をご紹介します。",
+    "metaDescription": "アナログの精度、デジタル機能、未来的デザインを融合したレトロ・アナデジウォッチ。日常に寄り添う個性的なタイムピース。",
     "kickerBrand": "ブランド",
     "heroTitle": "HUMPBUCK — 実用性を先に、見せ方はその次。",
     "heroLead": "ダイレクトストアと工場プログラムを運営し、1 回のローンチがシーズンごとに再調達せず繰り返し生産へ成長できるようにします。",
@@ -958,8 +958,8 @@
     "emptyBackup": "YouTube バックアップリンクは未設定です。"
   },
   "BlogPage": {
-    "metaDescription": "HUMPBUCKのストーリーとノート — 316Lスチールとサファイアの自動巻きウォッチ。",
-    "intro": "HUMPBUCKのストーリーとノート — 316Lスチールとサファイアの自動巻きウォッチ。",
+    "metaDescription": "HUMPBUCK のストーリーとノート — 日常のためのレトロ・アナデジウォッチ。",
+    "intro": "HUMPBUCK のストーリーとノート — 日常のためのレトロ・アナデジウォッチ。",
     "metaTitle": "ブログ — HUMPBUCK",
     "ogTitle": "ブログ — HUMPBUCK",
     "kicker": "ジャーナル",
@@ -1085,8 +1085,8 @@
   "WatchCollections": {
     "faqHeading": "よくある質問",
     "all": {
-      "metaTitle": "自動巻きウォッチを購入 | サファイア＆316L | HUMPBUCK",
-      "metaDescription": "316Lステンレススチールとサファイアクリスタルを備えたHUMPBUCK自動巻きウォッチ。日常のための高品質なラグジュアリータイムピース。",
+      "metaTitle": "ANA-DIGI & Automatic ウォッチを購入 | HUMPBUCK",
+      "metaDescription": "アナログの精度、デジタル機能、未来的デザインを融合したレトロ・アナデジウォッチ。日常に寄り添う個性的なタイムピース。",
       "kicker": "WATCHES",
       "h1": "HUMPBUCK 腕時計",
       "subtitle": "HUMPBUCKのANA-DIGI、デジタル、アナログ、オートマチック腕時計を探そう。",

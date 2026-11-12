@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - Automata órák | Zafírüveg és 316L acél",
-    "descriptionDefault": "Fedezze fel a 316L rozsdamentes acélból készült, zafírüveges, magas minőségű automata órákat. Prémium darabok a mindennapokra.",
-    "ogTitle": "HUMPBUCK - Automata órák | Zafírüveg és 316L acél",
-    "ogDescription": "Fedezze fel a 316L rozsdamentes acélból készült, zafírüveges, magas minőségű automata órákat. Prémium darabok a mindennapokra."
+    "titleDefault": "HUMPBUCK - Analog-Digital TEMP multifunkciós órák",
+    "descriptionDefault": "Fedezze fel a retro ana-digi órákat: analóg pontosság, digitális funkciók és futurisztikus dizájn. Jellegzetes darabok a mindennapokra.",
+    "ogTitle": "HUMPBUCK - Analog-Digital TEMP multifunkciós órák",
+    "ogDescription": "Fedezze fel a retro ana-digi órákat: analóg pontosság, digitális funkciók és futurisztikus dizájn. Jellegzetes darabok a mindennapokra."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -53,7 +53,7 @@
     "shopUltraThin": "Ultra-thin"
   },
   "Footer": {
-    "tagline": "Automata órák 316L rozsdamentes acélból, zafírüveggel — magas minőségű luxusórák.",
+    "tagline": "Retro ana-digi órák: analóg karakter, digitális funkció és jellegzetes dizájn.",
     "highlights": "Biztonságos fizetés · Globális szállítás · 24/7 támogatás",
     "copyright": "© {year} HUMPBUCK. Minden jog fenntartva.",
     "disclaimer": "Az árak, adók és szállítás a fizetéskor kerülnek véglegesítésre. Szállítás, visszatérítés, adatvédelem és feltételek: lásd a Támogatás szekciót fent. Kérdések:",
@@ -79,10 +79,10 @@
     "linkUltraThin": "Ultra-thin"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - Automata órák | Zafírüveg és 316L acél",
-    "metaDescription": "Fedezze fel a 316L rozsdamentes acélból készült, zafírüveges, magas minőségű automata órákat. Prémium darabok a mindennapokra.",
-    "ogTitle": "HUMPBUCK - Automata órák | Zafírüveg és 316L acél",
-    "ogDescription": "Fedezze fel a 316L rozsdamentes acélból készült, zafírüveges, magas minőségű automata órákat. Prémium darabok a mindennapokra.",
+    "metaTitle": "HUMPBUCK - Analog-Digital TEMP multifunkciós órák",
+    "metaDescription": "Fedezze fel a retro ana-digi órákat: analóg pontosság, digitális funkciók és futurisztikus dizájn. Jellegzetes darabok a mindennapokra.",
+    "ogTitle": "HUMPBUCK - Analog-Digital TEMP multifunkciós órák",
+    "ogDescription": "Fedezze fel a retro ana-digi órákat: analóg pontosság, digitális funkciók és futurisztikus dizájn. Jellegzetes darabok a mindennapokra.",
     "heroBadge": "Sorozat · DIGI-TEMP",
     "heroLead1": "Ana-digi multifunkciós óra — kettős kijelző, teljes funkciókészlet.",
     "heroLead2": "Idő, dátum, ébresztő, külső hőmérséklet és stopper módok kompakt rozsdamentes acél tokban — pilótafülkét idéző olvashatóság mindennapi viseléshez.",
@@ -120,7 +120,7 @@
     "trustLaunchBody": "Gyári programok növekvő óramárkáknak.",
     "newsletterKicker": "Hírek",
     "newsletterTitle": "ÚJ ÓRA MEGJELENÉSEK",
-    "newsletterBody": "Fedezze fel a 316L rozsdamentes acélból készült, zafírüveges, magas minőségű automata órákat. Prémium darabok a mindennapokra.",
+    "newsletterBody": "Fedezze fel a retro ana-digi órákat: analóg pontosság, digitális funkciók és futurisztikus dizájn.",
     "mechanicalHeroBadge": "ANA-DIGI · TEMP",
     "mechanicalHeroTitle": "ANA-DIGI Temperature",
     "mechanicalHeroLead": "Retro ana-digi órák: analóg pontosság, digitális funkciók és futurisztikus dizájn.",
@@ -145,7 +145,7 @@
     "categoryQuartzImageAlt": "HUMPBUCK kvarc ana-digi óra a csuklón",
     "recommendedKicker": "Keresés",
     "recommendedTitle": "Ajánlott órák",
-    "recommendedIntro": "Fedezze fel a 316L rozsdamentes acélból készült, zafírüveges, magas minőségű automata órákat. Prémium darabok a mindennapokra.",
+    "recommendedIntro": "Fedezze fel a retro ana-digi órákat: analóg pontosság, digitális funkciók és futurisztikus dizájn.",
     "recommendedViewAll": "Összes megtekintése",
     "mechanicalWatchesTitle": "Automatic watches",
     "mechanicalWatchesShop": "Automatic vásárlás",
@@ -269,9 +269,9 @@
     "successClose": "Bezárás"
   },
   "Shop": {
-    "metaTitle": "Automata órák vásárlása | Zafírüveg és 316L | HUMPBUCK",
-    "metaDescription": "Vásároljon HUMPBUCK automata órákat 316L rozsdamentes acélból, zafírüveggel. Magas minőségű luxusórák a mindennapokra.",
-    "ogTitle": "Automata órák vásárlása | Zafírüveg és 316L | HUMPBUCK",
+    "metaTitle": "ANA-DIGI és Automatic órák vásárlása",
+    "metaDescription": "Fedezze fel a retro ana-digi órákat: analóg pontosság, digitális funkciók és futurisztikus dizájn. Jellegzetes darabok a mindennapokra.",
+    "ogTitle": "ANA-DIGI és Automatic órák vásárlása · HUMPBUCK",
     "kicker": "Katalógus",
     "title": "Fedezze fel a retro ana-digi órákat: analóg pontosság, digitális funkciók és futurisztikus dizájn.",
     "intro": "Böngésszen kollekció szerint: DIGI-TEMP (ana-digi zászlóshajó), RM-TONNEAU (tonneau quartz) és RD-ASTRAL. A szűrők szinkronban vannak az URL-lel megosztáshoz.",
@@ -279,7 +279,7 @@
     "showingSeries": "{series} megjelenítése ({count, plural, one {# tétel} other {# tétel}})",
     "emptyCategory": "Itt még nincs termék.",
     "clearFilter": "Szűrő törlése",
-    "ogDescription": "Vásároljon HUMPBUCK automata órákat 316L rozsdamentes acélból, zafírüveggel. Magas minőségű luxusórák a mindennapokra.",
+    "ogDescription": "Fedezze fel a retro ana-digi órákat: analóg pontosság, digitális funkciók és futurisztikus dizájn. Jellegzetes darabok a mindennapokra.",
     "filterPanelTitle": "Szűrő",
     "filterGroupMovement": "Szerkezet",
     "filterGroupAudience": "Célközönség",
@@ -901,7 +901,7 @@
   },
   "AboutPage": {
     "metaTitle": "Rólunk — HUMPBUCK",
-    "metaDescription": "Ismerje meg, hogyan ihlette egy gyermekkori ANA-DIGI óra — az apja ajándéka — a HUMPBUCK létrehozását, egy jellegzetes retro-futurisztikus ANA-DIGI óráknak szentelt márkát.",
+    "metaDescription": "Fedezze fel a retro ana-digi órákat: analóg pontosság, digitális funkciók és futurisztikus dizájn. Jellegzetes darabok a mindennapokra.",
     "kickerBrand": "Márka",
     "heroTitle": "HUMPBUCK — először hasznosság, aztán látvány.",
     "heroLead": "Közvetlen webshopot és gyári programokat üzemeltetünk, hogy egy indulás ismétlhető gyártássá nőhessen anélkül, hogy minden szezonban újra forrást kellene keresni.",
@@ -958,8 +958,8 @@
     "emptyBackup": "A YouTube tartalék linkje még nincs beállítva."
   },
   "BlogPage": {
-    "metaDescription": "Történetek és jegyzetek a HUMPBUCK-tól — automata órák 316L acélból, zafírüveggel.",
-    "intro": "Történetek és jegyzetek a HUMPBUCK-tól — automata órák 316L acélból, zafírüveggel.",
+    "metaDescription": "Történetek és jegyzetek a HUMPBUCK-tól — retro ana-digi órák a mindennapokra.",
+    "intro": "Történetek és jegyzetek a HUMPBUCK-tól — retro ana-digi órák a mindennapokra.",
     "metaTitle": "Blog — HUMPBUCK",
     "ogTitle": "Blog — HUMPBUCK",
     "kicker": "Napló",
@@ -1085,8 +1085,8 @@
   "WatchCollections": {
     "faqHeading": "Gyakran ismételt kérdések",
     "all": {
-      "metaTitle": "Automata órák vásárlása | Zafírüveg és 316L | HUMPBUCK",
-      "metaDescription": "Vásároljon HUMPBUCK automata órákat 316L rozsdamentes acélból, zafírüveggel. Magas minőségű luxusórák a mindennapokra.",
+      "metaTitle": "ANA-DIGI és Automatic órák vásárlása | HUMPBUCK",
+      "metaDescription": "Fedezze fel a retro ana-digi órákat: analóg pontosság, digitális funkciók és futurisztikus dizájn. Jellegzetes darabok a mindennapokra.",
       "kicker": "ÓRÁK",
       "h1": "HUMPBUCK órák",
       "subtitle": "Fedezze fel a HUMPBUCK ANA-DIGI, digitális, analóg és automata óráit.",

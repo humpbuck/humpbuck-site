@@ -1,9 +1,9 @@
 {
   "SiteMetadata": {
-    "titleDefault": "HUMPBUCK - Orologi automatici | Zaffiro e acciaio 316L",
-    "descriptionDefault": "Scopri orologi automatici di alta qualità in acciaio inossidabile 316L con vetro zaffiro. Segnatempo di lusso per ogni giorno.",
-    "ogTitle": "HUMPBUCK - Orologi automatici | Zaffiro e acciaio 316L",
-    "ogDescription": "Scopri orologi automatici di alta qualità in acciaio inossidabile 316L con vetro zaffiro. Segnatempo di lusso per ogni giorno."
+    "titleDefault": "HUMPBUCK - Orologi multifunzione Analog-Digital TEMP",
+    "descriptionDefault": "Scopri orologi ana-digi retrò che uniscono precisione analogica, funzioni digitali e design futuristico. Segnatempo distintivi per ogni giorno.",
+    "ogTitle": "HUMPBUCK - Orologi multifunzione Analog-Digital TEMP",
+    "ogDescription": "Scopri orologi ana-digi retrò che uniscono precisione analogica, funzioni digitali e design futuristico. Segnatempo distintivi per ogni giorno."
   },
   "LocaleSwitcher": {
     "en": "English",
@@ -53,7 +53,7 @@
     "shopUltraThin": "Ultra-thin"
   },
   "Footer": {
-    "tagline": "Orologi automatici in acciaio inossidabile 316L con vetro zaffiro — segnatempo di lusso di alta qualità.",
+    "tagline": "Orologi ana-digi retrò che uniscono carattere analogico, funzione digitale e design distintivo.",
     "highlights": "Pagamenti sicuri · Spedizione globale · Assistenza 24/7",
     "copyright": "© {year} HUMPBUCK. Tutti i diritti riservati.",
     "disclaimer": "Prezzi, imposte e spedizione sono confermati al checkout. Per spedizione, rimborsi, privacy e condizioni, veda Assistenza sopra. Domande:",
@@ -79,10 +79,10 @@
     "linkUltraThin": "Ultra-thin"
   },
   "Home": {
-    "metaTitle": "HUMPBUCK - Orologi automatici | Zaffiro e acciaio 316L",
-    "metaDescription": "Scopri orologi automatici di alta qualità in acciaio inossidabile 316L con vetro zaffiro. Segnatempo di lusso per ogni giorno.",
-    "ogTitle": "HUMPBUCK - Orologi automatici | Zaffiro e acciaio 316L",
-    "ogDescription": "Scopri orologi automatici di alta qualità in acciaio inossidabile 316L con vetro zaffiro. Segnatempo di lusso per ogni giorno.",
+    "metaTitle": "HUMPBUCK - Orologi multifunzione Analog-Digital TEMP",
+    "metaDescription": "Scopri orologi ana-digi retrò che uniscono precisione analogica, funzioni digitali e design futuristico. Segnatempo distintivi per ogni giorno.",
+    "ogTitle": "HUMPBUCK - Orologi multifunzione Analog-Digital TEMP",
+    "ogDescription": "Scopri orologi ana-digi retrò che uniscono precisione analogica, funzioni digitali e design futuristico. Segnatempo distintivi per ogni giorno.",
     "heroBadge": "Serie · DIGI-TEMP",
     "heroLead1": "Orologio ana-digital multifunzione — doppio display, funzioni complete.",
     "heroLead2": "Ora, data, sveglia, temperatura esterna e cronometro in una cassa compatta in acciaio inox — leggibilità da cockpit per l'uso quotidiano.",
@@ -120,7 +120,7 @@
     "trustLaunchBody": "Programmi di fabbrica per brand orologieri in crescita.",
     "newsletterKicker": "Aggiornamenti",
     "newsletterTitle": "NUOVI LANCI DI OROLOGI",
-    "newsletterBody": "Scopri orologi automatici di alta qualità in acciaio inossidabile 316L con vetro zaffiro. Segnatempo di lusso per ogni giorno.",
+    "newsletterBody": "Scopri orologi ana-digi retrò che uniscono precisione analogica, funzioni digitali e design futuristico.",
     "mechanicalHeroBadge": "ANA-DIGI · TEMP",
     "mechanicalHeroTitle": "ANA-DIGI Temperature",
     "mechanicalHeroLead": "Orologi ana-digi retrò che uniscono precisione analogica, funzioni digitali e design futuristico.",
@@ -145,7 +145,7 @@
     "categoryQuartzImageAlt": "Orologio ana-digi al quarzo HUMPBUCK al polso",
     "recommendedKicker": "Cerca per",
     "recommendedTitle": "Orologi consigliati",
-    "recommendedIntro": "Scopri orologi automatici di alta qualità in acciaio inossidabile 316L con vetro zaffiro. Segnatempo di lusso per ogni giorno.",
+    "recommendedIntro": "Scopri orologi ana-digi retrò che uniscono precisione analogica, funzioni digitali e design futuristico.",
     "recommendedViewAll": "Vedi tutti",
     "mechanicalWatchesTitle": "Automatic watches",
     "mechanicalWatchesShop": "Acquista automatic",
@@ -269,9 +269,9 @@
     "successClose": "Chiudi"
   },
   "Shop": {
-    "metaTitle": "Acquista orologi automatici | Zaffiro e 316L | HUMPBUCK",
-    "metaDescription": "Acquista orologi automatici HUMPBUCK in acciaio inossidabile 316L con vetro zaffiro. Segnatempo di lusso per ogni giorno.",
-    "ogTitle": "Acquista orologi automatici | Zaffiro e 316L | HUMPBUCK",
+    "metaTitle": "Acquista orologi ANA-DIGI e Automatic",
+    "metaDescription": "Scopri orologi ana-digi retrò che uniscono precisione analogica, funzioni digitali e design futuristico. Segnatempo distintivi per ogni giorno.",
+    "ogTitle": "Acquista orologi ANA-DIGI e Automatic · HUMPBUCK",
     "kicker": "Catalogo",
     "title": "Scopri orologi ana-digi retrò che uniscono precisione analogica, funzioni digitali e design futuristico.",
     "intro": "Sfogli per collezione: DIGI-TEMP (ana-digital di punta), RM-TONNEAU (quarzo tonneau) e RD-ASTRAL. I filtri si sincronizzano con l'URL per la condivisione.",
@@ -279,7 +279,7 @@
     "showingSeries": "Visualizzazione: {series} ({count, plural, one {# articolo} other {# articoli}})",
     "emptyCategory": "Ancora nulla qui.",
     "clearFilter": "Rimuovi filtro",
-    "ogDescription": "Acquista orologi automatici HUMPBUCK in acciaio inossidabile 316L con vetro zaffiro. Segnatempo di lusso per ogni giorno.",
+    "ogDescription": "Scopri orologi ana-digi retrò che uniscono precisione analogica, funzioni digitali e design futuristico. Segnatempo distintivi per ogni giorno.",
     "filterPanelTitle": "Filtra",
     "filterGroupMovement": "Movimento",
     "filterGroupAudience": "Pubblico",
@@ -901,7 +901,7 @@
   },
   "AboutPage": {
     "metaTitle": "Chi siamo — HUMPBUCK",
-    "metaDescription": "Scopri come un orologio ANA-DIGI dell’infanzia, regalo di suo padre, abbia ispirato la creazione di HUMPBUCK, un marchio dedicato a orologi ANA-DIGI retro-futuristici e distintivi.",
+    "metaDescription": "Scopri orologi ana-digi retrò che uniscono precisione analogica, funzioni digitali e design futuristico. Segnatempo distintivi per ogni giorno.",
     "kickerBrand": "Marchio",
     "heroTitle": "HUMPBUCK — utilità prima, poi spettacolo.",
     "heroLead": "Gestiamo uno storefront diretto e programmi di fabbrica così un lancio può diventare produzione ripetibile senza dover riapprovvigionarsi ogni stagione.",
@@ -958,8 +958,8 @@
     "emptyBackup": "Link YouTube di backup non ancora impostato."
   },
   "BlogPage": {
-    "metaDescription": "Storie e note da HUMPBUCK — orologi automatici in acciaio 316L con vetro zaffiro.",
-    "intro": "Storie e note da HUMPBUCK — orologi automatici in acciaio 316L con vetro zaffiro.",
+    "metaDescription": "Storie e note da HUMPBUCK — orologi ana-digi retrò per ogni giorno.",
+    "intro": "Storie e note da HUMPBUCK — orologi ana-digi retrò per ogni giorno.",
     "metaTitle": "Blog — HUMPBUCK",
     "ogTitle": "Blog — HUMPBUCK",
     "kicker": "Diario",
@@ -1085,8 +1085,8 @@
   "WatchCollections": {
     "faqHeading": "Domande frequenti",
     "all": {
-      "metaTitle": "Acquista orologi automatici | Zaffiro e 316L | HUMPBUCK",
-      "metaDescription": "Acquista orologi automatici HUMPBUCK in acciaio inossidabile 316L con vetro zaffiro. Segnatempo di lusso per ogni giorno.",
+      "metaTitle": "Acquista orologi ANA-DIGI e Automatic | HUMPBUCK",
+      "metaDescription": "Scopri orologi ana-digi retrò che uniscono precisione analogica, funzioni digitali e design futuristico. Segnatempo distintivi per ogni giorno.",
       "kicker": "OROLOGI",
       "h1": "Orologi HUMPBUCK",
       "subtitle": "Esplora gli orologi ANA-DIGI, digitali, analogici e automatici HUMPBUCK.",

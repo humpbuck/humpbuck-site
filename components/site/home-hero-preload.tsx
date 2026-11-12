@@ -1,12 +1,9 @@
-import {
-  homeHeroAutomaticDesktopWebpUrl,
-  homeHeroAutomaticMobileWebpUrl,
-} from "@/lib/r2";
+import { homeHeroDesktopWebpUrl, homeHeroMobileWebpUrl } from "@/lib/r2";
 
 /** Hoisted to `<head>` — starts first-slide hero download before CMS copy resolves. */
 export function HomeHeroPreload() {
-  const mobile = homeHeroAutomaticMobileWebpUrl();
-  const desktop = homeHeroAutomaticDesktopWebpUrl();
+  const mobile = homeHeroMobileWebpUrl();
+  const desktop = homeHeroDesktopWebpUrl();
 
   return (
     <>
