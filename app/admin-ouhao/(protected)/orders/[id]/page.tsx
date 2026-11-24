@@ -566,10 +566,13 @@ export default async function AdminOrderDetailPage({
             shippingCountryLabel={logisticsCountry}
             postalCode={logisticsPostal}
             shippingRateKey={storedShippingRateKey}
+            itemsUsdCents={linesSubtotalCents}
             shippingFeeCnyCents={storedShippingFeeCnyCents}
             surchargeCnyCents={storedSurchargeCnyCents}
-            shippingFeeUsdCents={storedShippingFeeUsdCents}
-            surchargeUsdCents={storedSurchargeUsdCents}
+            shippingFeeUsdCents={shippingFeeUsdCents}
+            surchargeUsdCents={dutyUsdCents}
+            orderTotalUsdCents={order.totalCents}
+            adjustmentUsdCents={remainderCents < 0 ? remainderCents : null}
             cnyPerUsd={storedCnyPerUsd}
             postalZone={storedPostalZone}
           />

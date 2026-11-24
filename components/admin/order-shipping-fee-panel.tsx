@@ -1,4 +1,4 @@
-import { convertCnyCentsToUsdCents, formatCny } from "@/lib/cny-usd-exchange";
+import { convertCnyCentsToUsdCents } from "@/lib/cny-usd-exchange";
 import { countryNameForShippingRateKey } from "@/lib/shipping-fee-country-options";
 import { findPostalZone } from "@/lib/global-postal-zones";
 
@@ -18,20 +18,26 @@ export function OrderShippingFeePanel({
   shippingCountryLabel,
   postalCode,
   shippingRateKey,
+  itemsUsdCents,
   shippingFeeCnyCents,
   surchargeCnyCents,
   shippingFeeUsdCents,
   surchargeUsdCents,
+  orderTotalUsdCents,
+  adjustmentUsdCents,
   cnyPerUsd,
   postalZone,
 }: {
   shippingCountryLabel: string;
   postalCode?: string | null;
   shippingRateKey?: string | null;
+  itemsUsdCents?: number | null;
   shippingFeeCnyCents?: number | null;
   surchargeCnyCents?: number | null;
   shippingFeeUsdCents?: number | null;
   surchargeUsdCents?: number | null;
+  orderTotalUsdCents?: number | null;
+  adjustmentUsdCents?: number | null;
   cnyPerUsd?: number | null;
   postalZone?: string | null;
 }) {
@@ -58,8 +64,8 @@ export function OrderShippingFeePanel({
 
   return (
     <div className="rounded-2xl border border-line bg-white/60 p-5">
-      <h3 className="text-sm font-semibold text-ink">Shipping fee / Duty</h3>
-      <p className="mt-1 text-xs text-muted">Admin rates in ¥; buyer paid USD at checkout FX.</p>
+      <h3 className="text-sm font-semibold text-ink">Price breakdown</h3>
+      <p className="mt-1 text-xs text-muted">All amounts in USD as charged at checkout.</p>
       <dl className="mt-4 space-y-2 text-sm">
         <div className="flex justify-between gap-4">
           <dt className="text-muted">Destination</dt>
@@ -84,29 +90,41 @@ export function OrderShippingFeePanel({
           </div>
         ) : null}
         <div className="flex justify-between gap-4 border-t border-line pt-2">
-          <dt className="text-muted">Shipping fee</dt>
+          <dt className="text-muted">Items</dt>
           <dd className="text-right tabular-nums text-ink">
-            {shippingFeeCnyCents != null ? formatCny(shippingFeeCnyCents) : "—"}
-            {derivedShippingUsd != null ? (
-              <span className="mt-0.5 block text-[11px] text-muted">
-                Paid {formatUsd(derivedShippingUsd)}
-              </span>
-            ) : null}
+            {formatUsd(itemsUsdCents)}
           </dd>
         </div>
         <div className="flex justify-between gap-4">
-          <dt className="text-muted">Duty (¥)</dt>
+          <dt className="text-muted">Shipping fee</dt>
           <dd className="text-right tabular-nums text-ink">
-            {surchargeCnyCents != null ? formatCny(surchargeCnyCents) : "—"}
-            {derivedSurchargeUsd != null ? (
-              <span className="mt-0.5 block text-[11px] text-muted">
-                Paid {formatUsd(derivedSurchargeUsd)}
-              </span>
-            ) : null}
+            {formatUsd(derivedShippingUsd)}
+          </dd>
+        </div>
+        <div className="flex justify-between gap-4">
+          <dt className="text-muted">Duty</dt>
+          <dd className="text-right tabular-nums text-ink">
+            {formatUsd(derivedSurchargeUsd)}
+          </dd>
+        </div>
+        {adjustmentUsdCents != null && adjustmentUsdCents !== 0 ? (
+          <div className="flex justify-between gap-4">
+            <dt className="text-muted">Adjustments</dt>
+            <dd className="text-right tabular-nums text-ink">
+              {formatUsd(adjustmentUsdCents)}
+            </dd>
+          </div>
+        ) : null}
+        <div className="flex justify-between gap-4 border-t border-line pt-2 font-semibold">
+          <dt className="text-ink">Total</dt>
+          <dd className="text-right tabular-nums text-ink">
+            {formatUsd(orderTotalUsdCents)}
           </dd>
         </div>
         {fx ? (
-          <p className="text-[11px] text-muted">FX at checkout: 1 USD = ¥{fx.toFixed(4)}</p>
+          <p className="text-[11px] font-normal text-muted">
+            FX at checkout: 1 USD = ¥{fx.toFixed(4)}
+          </p>
         ) : null}
       </dl>
     </div>
