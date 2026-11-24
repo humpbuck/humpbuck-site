@@ -6,10 +6,16 @@ export const revalidate = 86400;
 const CACHE_CONTROL =
   "public, max-age=86400, s-maxage=86400, stale-while-revalidate=86400";
 
+/** Cloudflare Workers expose `caches.default`; DOM `CacheStorage` does not. */
+function workerDefaultCache(): Cache | undefined {
+  if (typeof caches === "undefined") return undefined;
+  const store = caches as CacheStorage & { default?: Cache };
+  return store.default;
+}
+
 async function cacheMatch(request: Request): Promise<Response | undefined> {
   try {
-    if (typeof caches === "undefined") return undefined;
-    return (await caches.default.match(request)) ?? undefined;
+    return (await workerDefaultCache()?.match(request)) ?? undefined;
   } catch {
     return undefined;
   }
@@ -17,8 +23,7 @@ async function cacheMatch(request: Request): Promise<Response | undefined> {
 
 async function cachePut(request: Request, response: Response): Promise<void> {
   try {
-    if (typeof caches === "undefined") return;
-    await caches.default.put(request, response);
+    await workerDefaultCache()?.put(request, response);
   } catch {
     /* Node local dev has no Cache API. */
   }
