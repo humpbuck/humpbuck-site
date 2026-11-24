@@ -6,6 +6,7 @@ import { ReviewAppendForm } from "@/components/account/review-append-form";
 import { MAX_REVIEW_APPENDS } from "@/lib/review-append-constants";
 import { getProductBySlug } from "@/lib/catalog-server";
 import { prisma } from "@/lib/prisma";
+import { productHref } from "@/lib/product-path";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 
 export default async function ReviewAppendPage({
@@ -34,7 +35,7 @@ export default async function ReviewAppendPage({
   if (!product) notFound();
 
   if (review._count.appends >= MAX_REVIEW_APPENDS) {
-    return redirectWithLocale(`/products/${review.productSlug}`);
+    return redirectWithLocale(productHref(product));
   }
 
   return (
@@ -46,7 +47,7 @@ export default async function ReviewAppendPage({
       <p className="mt-2 text-sm text-muted">
         {t("appendIntro")}{" "}
         <Link
-          href={`/products/${review.productSlug}`}
+          href={productHref(product)}
           className="font-semibold underline-offset-4 hover:underline"
         >
           {t("backToProduct")}

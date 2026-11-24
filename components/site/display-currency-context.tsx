@@ -11,6 +11,8 @@ import {
 } from "react";
 import { useLocale } from "next-intl";
 import {
+  DISPLAY_FX_STORAGE_KEY,
+  DISPLAY_FX_TTL_MS,
   formatConvertedAmount,
   inferDisplayCurrencyFromLocale,
   readDisplayCurrencyCookie,
@@ -27,6 +29,32 @@ type DisplayCurrencyContextValue = {
 };
 
 const DisplayCurrencyContext = createContext<DisplayCurrencyContextValue | null>(null);
+
+function readStoredRates(): UsdFxRates | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(DISPLAY_FX_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { rates?: UsdFxRates; fetchedAt?: number };
+    if (!parsed?.rates || typeof parsed.fetchedAt !== "number") return null;
+    if (Date.now() - parsed.fetchedAt >= DISPLAY_FX_TTL_MS) return null;
+    if (typeof parsed.rates.USD !== "number") return null;
+    return parsed.rates;
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredRates(rates: UsdFxRates) {
+  try {
+    window.localStorage.setItem(
+      DISPLAY_FX_STORAGE_KEY,
+      JSON.stringify({ rates, fetchedAt: Date.now() }),
+    );
+  } catch {
+    /* private mode / quota */
+  }
+}
 
 export function DisplayCurrencyProvider({ children }: { children: ReactNode }) {
   const locale = useLocale();
@@ -46,21 +74,31 @@ export function DisplayCurrencyProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
-    void fetch("/api/display-fx")
+    const stored = readStoredRates();
+    if (stored) {
+      setRates(stored);
+      return;
+    }
+    // Cookie may not have been applied yet; USD needs no Worker FX request.
+    const cookieCurrency = readDisplayCurrencyCookie();
+    const effective = cookieCurrency ?? currency;
+    if (effective === "USD") return;
+
+    void fetch("/api/display-fx", { cache: "force-cache" })
       .then(async (res) => {
         if (!res.ok) return null;
         return (await res.json()) as { rates?: UsdFxRates };
       })
       .then((data) => {
-        if (!cancelled && data?.rates) {
-          setRates(data.rates);
-        }
+        if (cancelled || !data?.rates) return;
+        writeStoredRates(data.rates);
+        setRates(data.rates);
       })
       .catch(() => {});
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [currency]);
 
   const setCurrency = useCallback((code: DisplayCurrencyCode) => {
     setCurrencyState(code);

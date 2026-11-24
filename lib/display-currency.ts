@@ -2,6 +2,10 @@
 
 export const DISPLAY_CURRENCY_COOKIE = "humpbuck-display-currency";
 
+/** Browser cache for `/api/display-fx` — match server 24h refresh. */
+export const DISPLAY_FX_STORAGE_KEY = "humpbuck-display-fx-v1";
+export const DISPLAY_FX_TTL_MS = 86_400_000;
+
 export const DISPLAY_CURRENCY_CODES = [
   "USD",
   "EUR",

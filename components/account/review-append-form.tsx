@@ -1,6 +1,7 @@
 "use client";
 
 import { compressReviewImageToWebP } from "@/lib/review-image-compress-webp";
+import { productHref } from "@/lib/product-path";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -84,7 +85,7 @@ export function ReviewAppendForm({ reviewId, productSlug, productName }: Props) 
         const j = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(j.error || t("errGeneric"));
       }
-      router.push(`/products/${productSlug}`);
+      router.push(productHref({ slug: productSlug }));
       router.refresh();
     } catch (e) {
       setErr(e instanceof Error ? e.message : t("errGeneric"));
@@ -145,7 +146,7 @@ export function ReviewAppendForm({ reviewId, productSlug, productName }: Props) 
           {busy ? t("appendSubmitting") : t("appendSubmit")}
         </button>
         <Link
-          href={`/products/${productSlug}`}
+          href={productHref({ slug: productSlug })}
           className="inline-flex items-center rounded-full border border-line px-6 py-2.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink/80"
         >
           {t("cancel")}

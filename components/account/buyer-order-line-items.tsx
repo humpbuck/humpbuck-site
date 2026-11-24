@@ -2,13 +2,14 @@ import { Link } from "@/i18n/navigation";
 import { OrderLineProductImage } from "@/components/account/order-line-product-image";
 import { formatPrice } from "@/lib/catalog";
 import type { ValidatedLine } from "@/lib/order-lines";
+import { productHref } from "@/lib/product-path";
 import { orderStatusAllowsReview } from "@/lib/review-eligibility";
 
 type Props = {
   lines: ValidatedLine[];
   /** Order history cards: smaller thumbs; avoid nested links inside outer order `<Link>`. */
   compact?: boolean;
-  /** When true, product name links to `/products/[slug]` (use on order detail only). */
+  /** When true, product name links to the canonical PDP (use on order detail only). */
   linkToProduct?: boolean;
   className?: string;
   /** Copy for review row (storefront i18n). */
@@ -89,7 +90,7 @@ export function BuyerOrderLineItems({
               <div className="min-w-0 pt-0.5">
                 {resolvedLink ? (
                   <Link
-                    href={`/products/${line.slug}`}
+                    href={productHref({ slug: line.slug })}
                     className="font-medium text-ink underline-offset-4 hover:underline"
                   >
                     {title}
@@ -111,7 +112,7 @@ export function BuyerOrderLineItems({
                   </span>
                 ) : reviewContext.hideWriteReviewLink ? null : (
                   <Link
-                    href={`/products/${line.slug}#buyer-reviews`}
+                    href={`${productHref({ slug: line.slug })}#buyer-reviews`}
                     className="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink underline-offset-4 hover:underline"
                   >
                     {writeReview}

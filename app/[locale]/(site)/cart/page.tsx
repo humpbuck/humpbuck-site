@@ -11,6 +11,7 @@ import { UsdChargeNotice } from "@/components/site/usd-charge-notice";
 import { runWhenIdle } from "@/lib/defer-non-critical";
 import { captureTrafficAttribution } from "@/lib/traffic-attribution";
 import { CartCheckoutActions } from "@/components/cart/cart-checkout-actions";
+import { productHref } from "@/lib/product-path";
 
 const CART_QTY_MAX = 9999;
 
@@ -69,7 +70,7 @@ export default function CartPage() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <Link
-                      href={`/products/${line.slug}`}
+                      href={productHref({ slug: line.slug })}
                       className="font-medium text-ink hover:underline"
                     >
                       {line.productName || line.variantLabel || line.slug}

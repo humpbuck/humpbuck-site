@@ -10,6 +10,7 @@ import { DisplayPrice } from "@/components/site/DisplayPrice";
 import { UsdChargeNotice } from "@/components/site/usd-charge-notice";
 import { CartCheckoutActions } from "@/components/cart/cart-checkout-actions";
 import { getCartLineImage } from "@/lib/catalog";
+import { productHref } from "@/lib/product-path";
 const CART_QTY_MAX = 9999;
 
 export function CartDrawer() {
@@ -128,7 +129,7 @@ export function CartDrawer() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <Link
-                        href={`/products/${line.slug}`}
+                        href={productHref({ slug: line.slug })}
                         onClick={closeCartDrawer}
                         className="text-sm font-medium text-ink hover:underline"
                       >

@@ -5,7 +5,10 @@ import {
   getMergedCatalogProducts,
 } from "@/lib/catalog-db";
 import type { Product } from "@/lib/catalog";
-import { matchProductByLegacyCompoundSlug } from "@/lib/product-path";
+import {
+  matchProductByLegacyCompoundSlug,
+  productHref,
+} from "@/lib/product-path";
 
 /** Resolve PDP product by current slug, or legacy compound slug after rename. */
 export async function resolveProductForPdpSlug(
@@ -21,4 +24,10 @@ export async function resolveProductForPdpSlug(
     console.error("[product-path] legacy slug resolve failed", err);
     return null;
   }
+}
+
+/** Canonical PDP path (`/products/{category}/{slug}`) for a catalog slug. */
+export async function productHrefForSlug(pathSlug: string): Promise<string> {
+  const product = await resolveProductForPdpSlug(pathSlug);
+  return productHref(product ?? { slug: pathSlug });
 }

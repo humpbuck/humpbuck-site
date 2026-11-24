@@ -3,6 +3,10 @@ import { unstable_cache } from "next/cache";
 /** Used when the live rate API is unavailable. */
 export const FALLBACK_CNY_PER_USD = 6.8;
 
+/** Checkout + display FX: refresh at most once per day. */
+export const FX_REVALIDATE_SECONDS = 86_400;
+export const FX_REVALIDATE_MS = FX_REVALIDATE_SECONDS * 1000;
+
 export type CnyUsdExchangeRate = {
   /** How many CNY for 1 USD (e.g. 7.24). */
   cnyPerUsd: number;
@@ -15,7 +19,7 @@ export type CnyUsdExchangeRate = {
 async function fetchFrankfurterCnyPerUsd(): Promise<number | null> {
   try {
     const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=CNY", {
-      next: { revalidate: 3600 },
+      next: { revalidate: FX_REVALIDATE_SECONDS },
     });
     if (!res.ok) return null;
     const data = (await res.json()) as { rates?: { CNY?: number } };
@@ -39,12 +43,23 @@ const getCachedExchangeRate = unstable_cache(
     };
   },
   ["cny-usd-exchange-rate"],
-  { revalidate: 3600, tags: ["cny-usd-exchange"] },
+  { revalidate: FX_REVALIDATE_SECONDS, tags: ["cny-usd-exchange"] },
 );
 
-/** Cached ~1 hour — not called on every checkout keystroke. */
+/** Same isolate: skip R2/Frankfurter on every checkout keystroke. */
+let isolateRate: CnyUsdExchangeRate | null = null;
+
+function isolateRateIsFresh(rate: CnyUsdExchangeRate): boolean {
+  const fetchedAt = Date.parse(rate.fetchedAt);
+  return Number.isFinite(fetchedAt) && Date.now() - fetchedAt < FX_REVALIDATE_MS;
+}
+
+/** Cached ~24h — isolate memory first, then Next data cache. */
 export async function getCnyUsdExchangeRate(): Promise<CnyUsdExchangeRate> {
-  return getCachedExchangeRate();
+  if (isolateRate && isolateRateIsFresh(isolateRate)) return isolateRate;
+  const value = await getCachedExchangeRate();
+  isolateRate = value;
+  return value;
 }
 
 export function convertCnyCentsToUsdCents(cnyCents: number, cnyPerUsd: number): number {

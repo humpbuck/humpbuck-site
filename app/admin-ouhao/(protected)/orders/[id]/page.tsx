@@ -19,11 +19,13 @@ import {
   paymentProviderLabel,
   trafficSourceLabel,
 } from "@/lib/admin/order-ui";
-import { formatCny } from "@/lib/cny-usd-exchange";
+import { convertCnyCentsToUsdCents } from "@/lib/cny-usd-exchange";
 import { OrderShippingFeePanel } from "@/components/admin/order-shipping-fee-panel";
 import { findPostalZone } from "@/lib/global-postal-zones";
 import { orderItemsFromOrder } from "@/lib/order-item-display";
 import { prisma } from "@/lib/prisma";
+import { productHref } from "@/lib/product-path";
+import { productHrefForSlug } from "@/lib/product-path-server";
 import { SITE_LOCALE } from "@/lib/site-locale";
 
 function customerHeading(order: {
@@ -146,6 +148,12 @@ export default async function AdminOrderDetailPage({
   if (!order) notFound();
 
   const lines = orderItemsFromOrder(order as { items?: Array<{ productSlug: string; productName: string; productImage: string | null; variantId: string | null; variantLabel: string | null; variantImage: string | null; qty: number; unitPriceCents: number; lineTotalCents: number; currency: string; productSnapshotJson: string | null; }>; itemsJson?: string | null });
+  const productHrefBySlug = new Map<string, string>();
+  for (const line of lines) {
+    const key = line.slug.trim().toLowerCase();
+    if (!key || productHrefBySlug.has(key)) continue;
+    productHrefBySlug.set(key, await productHrefForSlug(line.slug));
+  }
   /** Legacy orders only had `shippingJson`; treat as both billing & shipping. */
   const billingRaw = parseShippingRecord(
     order.billingJson ?? order.shippingJson,
@@ -225,6 +233,16 @@ export default async function AdminOrderDetailPage({
       ? findPostalZone("AU", logisticsPostal)?.zone ?? null
       : null);
   const remainderCents = order.totalCents - linesSubtotalCents;
+  const shippingFeeUsdCents =
+    storedShippingFeeUsdCents ??
+    (storedShippingFeeCnyCents != null && storedCnyPerUsd
+      ? convertCnyCentsToUsdCents(storedShippingFeeCnyCents, storedCnyPerUsd)
+      : null);
+  const dutyUsdCents =
+    storedSurchargeUsdCents ??
+    (storedSurchargeCnyCents != null && storedCnyPerUsd
+      ? convertCnyCentsToUsdCents(storedSurchargeCnyCents, storedCnyPerUsd)
+      : null);
   const displayId = orderDisplayCode(order);
   const placed = new Date(order.createdAt);
   const refundProviderOk =
@@ -421,7 +439,11 @@ export default async function AdminOrderDetailPage({
                           </div>
                           <div className="min-w-0">
                             <Link
-                              href={`/products/${line.slug}`}
+                              href={
+                                productHrefBySlug.get(
+                                  line.slug.trim().toLowerCase(),
+                                ) ?? productHref({ slug: line.slug })
+                              }
                               className="font-medium text-sky-800 underline-offset-2 hover:underline"
                             >
                               {line.name}
@@ -468,24 +490,20 @@ export default async function AdminOrderDetailPage({
                 {formatPrice(linesSubtotalCents / 100)}
               </dd>
             </div>
-            {remainderCents > 0 && (
+            {shippingFeeUsdCents != null ? (
               <div className="flex justify-between gap-4">
-                <dt className="text-muted">Shipping & fees (paid)</dt>
+                <dt className="text-muted">Shipping fee</dt>
                 <dd className="tabular-nums">
-                  {formatPrice(remainderCents / 100)}
+                  {formatPrice(shippingFeeUsdCents / 100)}
                 </dd>
               </div>
-            )}
-            {storedShippingFeeCnyCents != null ? (
-              <div className="flex justify-between gap-4 text-[13px]">
-                <dt className="text-muted">Shipping fee (¥ stored)</dt>
-                <dd className="tabular-nums text-ink">{formatCny(storedShippingFeeCnyCents)}</dd>
-              </div>
             ) : null}
-            {storedSurchargeCnyCents != null ? (
-              <div className="flex justify-between gap-4 text-[13px]">
-                <dt className="text-muted">Duty (¥ stored)</dt>
-                <dd className="tabular-nums text-ink">{formatCny(storedSurchargeCnyCents)}</dd>
+            {dutyUsdCents != null ? (
+              <div className="flex justify-between gap-4">
+                <dt className="text-muted">Duty</dt>
+                <dd className="tabular-nums">
+                  {formatPrice(dutyUsdCents / 100)}
+                </dd>
               </div>
             ) : null}
             {remainderCents < 0 && (

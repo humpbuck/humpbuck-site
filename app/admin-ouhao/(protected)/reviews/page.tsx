@@ -7,6 +7,8 @@ import { ReviewModerationButtons } from "@/components/admin/review-moderation-bu
 
 import { prisma } from "@/lib/prisma";
 import { parseReviewImageUrls } from "@/lib/product-reviews-queries";
+import { productHref } from "@/lib/product-path";
+import { productHrefForSlug } from "@/lib/product-path-server";
 
 export const metadata = {
   title: "Reviews — Admin",
@@ -20,6 +22,12 @@ export default async function AdminReviewsPage() {
       user: { select: { email: true, name: true, firstName: true, lastName: true } },
     },
   });
+  const productHrefBySlug = new Map<string, string>();
+  for (const r of rows) {
+    const key = r.productSlug.trim().toLowerCase();
+    if (!key || productHrefBySlug.has(key)) continue;
+    productHrefBySlug.set(key, await productHrefForSlug(r.productSlug));
+  }
 
   return (
     <div>
@@ -78,7 +86,11 @@ export default async function AdminReviewsPage() {
                     </td>
                     <td className="px-4 py-3">
                       <Link
-                        href={`/products/${encodeURIComponent(r.productSlug)}`}
+                        href={
+                          productHrefBySlug.get(
+                            r.productSlug.trim().toLowerCase(),
+                          ) ?? productHref({ slug: r.productSlug })
+                        }
                         className="font-medium text-ink underline-offset-4 hover:underline"
                         target="_blank"
                         rel="noopener noreferrer"

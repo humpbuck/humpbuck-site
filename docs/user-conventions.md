@@ -153,6 +153,7 @@ git@github.com-humpbuck:humpbuck/humpbuck-site.git
 | 2026-10-25 | **分类公开 URL 对齐 PDP**：规范路径改为 `/product/{category}`（如 `/product/analog`）；旧 `/analog-watches` 等 **301**；`/watches` 仍为全部商品。 |
 | 2026-10-25 | **全站复数 `/products`**：全部商品 `/products`；分类 `/products/{category}`；PDP `/products/{category}/{model}`。旧 `/watches`、`*-watches`、`/product`（及嵌套）**301**。 |
 | 2026-11-11 | **全站 SEO 品牌主线改回 DIGITEMP / Analog-Digital TEMP**：标题 `HUMPBUCK - Analog-Digital TEMP Multifunctional Watches`；首页 Hero 第 1 张 / H1 改回 ANA-DIGI Temperature（DIGI-TEMP）；MINBER 自动表改为第 2 张。`/products` 商店 meta 不再用自动表主线。 |
+| 2026-11-23 | **汇率一天同步一次**：结账 CNY/USD 与前台参考汇率 24h（isolate + data cache）；USD 访客不请求 `/api/display-fx`。后台订单商品跳转规范 PDP `/products/{category}/{slug}`；订单总额只显示美元运费/税费。 |
 
 ## 7. 附：你希望追加的个人要求（可编辑）
 

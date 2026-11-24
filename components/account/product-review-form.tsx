@@ -1,6 +1,7 @@
 "use client";
 
 import { Link, useRouter } from "@/i18n/navigation";
+import { productHref } from "@/lib/product-path";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -50,7 +51,7 @@ export function ProductReviewForm({
       onSuccess?.();
       return;
     }
-    router.push(`/products/${productSlug}`);
+    router.push(productHref({ slug: productSlug }));
     router.refresh();
   }
 
@@ -60,7 +61,7 @@ export function ProductReviewForm({
 
     if (!session?.user?.id) {
       router.push(
-        `/auth/login?callbackUrl=${encodeURIComponent(`/products/${productSlug}#buyer-reviews`)}`,
+        `/auth/login?callbackUrl=${encodeURIComponent(`${productHref({ slug: productSlug })}#buyer-reviews`)}`,
       );
       return;
     }

@@ -19,7 +19,9 @@ export async function AdminExchangeRateCard() {
       </p>
       <p className="mt-1 text-[11px] leading-relaxed text-muted">
         Checkout shipping is entered in ¥ and shown to buyers in USD at this rate.
-        {rate.source === "fallback" ? " Using fallback — live API unavailable." : " Cached ~1 hour."}
+        {rate.source === "fallback"
+          ? " Using fallback — live API unavailable."
+          : " Synced once per day."}
       </p>
       <p className="mt-1 text-[10px] text-muted">Updated {updated}</p>
     </div>

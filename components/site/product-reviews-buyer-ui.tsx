@@ -9,6 +9,7 @@ import {
   type ProductReviewCardModel,
 } from "@/components/site/product-reviews-masonry";
 import type { PdpReviewFormAccess } from "@/lib/pdp-review-form-access";
+import { productHref } from "@/lib/product-path";
 
 type ReviewAccessPayload = {
   access: PdpReviewFormAccess["kind"];
@@ -108,7 +109,7 @@ export function ProductReviewsBuyerUi({
             embedded
             productSlug={productSlug}
             productName={productName}
-            cancelHref={`/products/${productSlug}`}
+            cancelHref={productHref({ slug: productSlug })}
             orderId={payload.access === "eligible" ? payload.orderId ?? undefined : undefined}
           />
         </div>
