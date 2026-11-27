@@ -21,8 +21,12 @@ function schemaLanguage(locale: string): string {
 }
 
 /** WebSite + Organization JSON-LD for Google rich context (not a replacement for PDP Product schema). */
-export async function OrganizationJsonLd() {
-  const locale = await getLocale();
+export async function OrganizationJsonLd({
+  locale: explicitLocale,
+}: {
+  locale?: string;
+} = {}) {
+  const locale = explicitLocale ?? (await getLocale());
   const t = await getTranslations({ locale, namespace: "SiteMetadata" });
   const url = getSiteUrl();
   const description = t("descriptionDefault");

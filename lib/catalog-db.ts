@@ -5,7 +5,6 @@ import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import type { Product } from "@/lib/catalog";
 import { normalizeSeriesSlug } from "@/lib/catalog";
-import { ensureCatalogProductSchema } from "@/lib/catalog-product-schema";
 import { parseDetailBlocksJson } from "@/lib/product-detail-blocks";
 import { parseProductPromoVideo } from "@/lib/product-promo-video";
 
@@ -146,7 +145,6 @@ function toProduct(row: CatalogProductRow, inventory: InventoryRow[]): Product {
 
 async function loadMergedCatalogProductsUncached(): Promise<Product[]> {
   try {
-    await ensureCatalogProductSchema();
     const [dbRows, inventory] = await Promise.all([
       prisma.catalogProduct.findMany(),
       prisma.productInventory.findMany(),
@@ -166,7 +164,6 @@ export async function fetchMergedCatalogProducts(): Promise<Product[]> {
 
 async function fetchMergedCatalogProductBySlug(slug: string): Promise<Product | undefined> {
   try {
-    await ensureCatalogProductSchema();
     const [row, inventory] = await Promise.all([
       prisma.catalogProduct.findUnique({ where: { slug } }),
       prisma.productInventory.findMany({ where: { productSlug: slug } }),
@@ -178,7 +175,7 @@ async function fetchMergedCatalogProductBySlug(slug: string): Promise<Product | 
   return undefined;
 }
 
-const CATALOG_REVALIDATE_SECONDS = 60;
+const CATALOG_REVALIDATE_SECONDS = 3600;
 
 const getCachedMergedCatalogProducts = unstable_cache(
   loadMergedCatalogProductsUncached,
@@ -220,7 +217,6 @@ export async function getMergedCatalogProductsByIds(
   const unique = [...new Set(ids.map((id) => id.trim()).filter(Boolean))];
   if (unique.length === 0) return [];
   try {
-    await ensureCatalogProductSchema();
     const rows = await prisma.catalogProduct.findMany({
       where: { id: { in: unique }, status: { not: "archived" } },
     });

@@ -4,7 +4,6 @@ import { PreloadProductGridImages } from "@/components/site/preload-product-grid
 import { ShopCatalogClient } from "@/components/site/shop-catalog-client";
 import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import { getFixedStorefrontCategories } from "@/lib/product-categories";
-import { prisma } from "@/lib/prisma";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
 import { mapToStorefrontCardProducts } from "@/lib/storefront-card-product";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
@@ -37,15 +36,9 @@ export async function ShopCatalogAsyncSection({
   ]);
   void t;
 
-  const [all, categories, latestRow, messages] = await Promise.all([
+  const [all, categories, messages] = await Promise.all([
     getMergedCatalogProducts(),
     getFixedStorefrontCategories().catch(() => []),
-    prisma.catalogProduct
-      .findFirst({
-        orderBy: { updatedAt: "desc" },
-        select: { updatedAt: true },
-      })
-      .catch(() => null),
     getMessages({ locale }),
   ]);
 
@@ -64,8 +57,14 @@ export async function ShopCatalogAsyncSection({
   });
 
   const gridImageUrls = cardProducts.map((p) => p.image);
+  let latestUpdatedAt: Date | null = null;
+  for (const item of all) {
+    if (item.updatedAt instanceof Date && (!latestUpdatedAt || item.updatedAt > latestUpdatedAt)) {
+      latestUpdatedAt = item.updatedAt;
+    }
+  }
   const updatedDate = formatShopUpdatedDate(
-    latestRow?.updatedAt ?? new Date(),
+    latestUpdatedAt ?? new Date(),
     locale,
   );
 

@@ -5,11 +5,9 @@ import { getMessages, getTranslations, setRequestLocale } from "next-intl/server
 import { BlogArticleBody } from "@/components/site/blog-article-body";
 import { ProductCard } from "@/components/site/ProductCard";
 import { StorefrontImage } from "@/components/site/storefront-image";
-import { readBlogBuildSlugs } from "@/lib/blog-build-slugs";
 import {
   formatBlogPostDate,
   getPublishedBlogPostBySlug,
-  listPublishedBlogPosts,
 } from "@/lib/blog-posts";
 import { getMergedCatalogProductsByIds } from "@/lib/catalog-db";
 import { mapProductsToShopCardImages } from "@/lib/r2-card-image";
@@ -19,24 +17,11 @@ import { absoluteOgImageUrl, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { applyStorefrontProductLocale } from "@/lib/storefront-locale";
 
-/** Cached until admin blog saves or deploy; no time-based expiry. */
-export const revalidate = false;
+/** Cached via on-demand ISR (1h safety net) + admin blog save revalidation. */
+export const revalidate = 3600;
 
-export async function generateStaticParams() {
-  const slugSet = new Set<string>();
-  try {
-    for (const post of await listPublishedBlogPosts()) {
-      if (post.slug.trim()) slugSet.add(post.slug.trim());
-    }
-  } catch (e) {
-    console.error("[blog] generateStaticParams: DB unavailable during build.", e);
-  }
-  for (const slug of readBlogBuildSlugs()) {
-    slugSet.add(slug);
-  }
-  return routing.locales.flatMap((locale) =>
-    [...slugSet].map((slug) => ({ locale, slug })),
-  );
+export function generateStaticParams() {
+  return [];
 }
 
 export async function generateMetadata({

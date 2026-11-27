@@ -5,6 +5,8 @@ import { WHATSAPP_DISPLAY, WHATSAPP_URL } from "@/lib/whatsapp";
 import { routing } from "@/i18n/routing";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
+export const revalidate = 86400;
+
 const linkContact =
   "font-medium text-blue-700 underline decoration-blue-700/30 underline-offset-[3px] transition hover:text-blue-800 hover:decoration-blue-800/50";
 

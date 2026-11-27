@@ -9,6 +9,8 @@ import { sendUnsubscribeSuccessEmail } from "@/lib/unsubscribe-success-email";
 import { publicSupportEmail } from "@/lib/support-contact";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {

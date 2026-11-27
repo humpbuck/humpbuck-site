@@ -12,7 +12,11 @@ import {
 import { resolveProductForPdpSlug } from "@/lib/product-path-server";
 import { permanentRedirectWithLocale } from "@/lib/storefront-redirect";
 
-export const revalidate = false;
+export const revalidate = 3600;
+
+export function generateStaticParams() {
+  return [];
+}
 
 /**
  * `/products/{category}` — fixed collection landing (e.g. `/products/analog`).

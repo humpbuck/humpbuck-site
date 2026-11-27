@@ -5,6 +5,8 @@ import { routing } from "@/i18n/routing";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
+export const revalidate = 86400;
+
 export async function generateMetadata({
   params,
 }: {

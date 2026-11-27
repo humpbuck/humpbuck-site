@@ -4,7 +4,7 @@ import {
   WatchCollectionPage,
 } from "@/components/site/watch-collection-page";
 
-export const revalidate = false;
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,

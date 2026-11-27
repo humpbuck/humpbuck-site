@@ -134,7 +134,6 @@ function rowFromDb(row: DbBlogPostRow): BlogPostRow {
 
 async function queryBlogPosts(sql: string): Promise<BlogPostRow[]> {
   try {
-    await ensureBlogPostTable();
     const rows = (await prisma.$queryRawUnsafe(sql)) as DbBlogPostRow[];
     return rows.map(rowFromDb);
   } catch (e) {
@@ -202,7 +201,6 @@ export async function getPublishedBlogPostBySlug(
   const cleaned = cleanBlogPostSlug(slug);
   if (!cleaned) return null;
   try {
-    await ensureBlogPostTable();
     const rows = (await prisma.$queryRaw`
       SELECT "id", "slug", "title", "excerpt", "body", "coverImageUrl", "productIdsJson",
              "status", "sortOrder", "publishedAt", "createdAt", "updatedAt"

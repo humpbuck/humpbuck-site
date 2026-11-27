@@ -1,8 +1,12 @@
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { OemOdmFactorySection } from "@/components/site/oem-odm-factory-section";
 import { routing } from "@/i18n/routing";
+import { OEM_ODM_CLIENT_NAMESPACES, pickClientMessages } from "@/lib/client-messages";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -44,6 +48,12 @@ export default async function OemOdmPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const messages = await getMessages({ locale });
+  const clientMessages = pickClientMessages(messages, OEM_ODM_CLIENT_NAMESPACES);
 
-  return <OemOdmFactorySection />;
+  return (
+    <NextIntlClientProvider locale={locale} messages={clientMessages}>
+      <OemOdmFactorySection />
+    </NextIntlClientProvider>
+  );
 }

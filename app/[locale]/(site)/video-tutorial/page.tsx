@@ -7,7 +7,7 @@ import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { getSiteVideoTutorial } from "@/lib/site-video-tutorial-queries";
 
-export const revalidate = false;
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,

@@ -1,6 +1,6 @@
 "use client";
 
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { storefrontHomePath } from "@/lib/storefront-home-path";
@@ -15,6 +15,7 @@ type Profile = {
 };
 
 export function AccountDetailsForm({ initial }: { initial: Profile }) {
+  const { update } = useSession();
   const locale = useLocale();
   const t = useTranslations("Account");
   const signOutCallbackUrl = storefrontHomePath(locale);
@@ -50,6 +51,7 @@ export function AccountDetailsForm({ initial }: { initial: Profile }) {
       const data = (await res.json()) as { error?: string };
       if (!res.ok) throw new Error(data.error || t("profileSaveFailed"));
       setProfileMsg(t("profileUpdated"));
+      void update();
     } catch (e) {
       setProfileErr(e instanceof Error ? e.message : t("profileGenericError"));
     } finally {

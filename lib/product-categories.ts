@@ -47,12 +47,11 @@ type CachedProductCategoryRow = Omit<ProductCategoryRow, "createdAt"> & {
   createdAt: string;
 };
 
-const STOREFRONT_CATEGORIES_REVALIDATE_SECONDS = 60;
+const STOREFRONT_CATEGORIES_REVALIDATE_SECONDS = 86400;
 
 async function loadFixedStorefrontCategoriesUncached(): Promise<
   CachedProductCategoryRow[]
 > {
-  await ensureProductCategorySchema();
   const fixedIds = STOREFRONT_WATCH_CATEGORIES.map((c) => c.id);
   const rows = await prisma.productCategory.findMany({
     where: { id: { in: fixedIds } },

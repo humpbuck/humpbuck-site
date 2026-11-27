@@ -11,18 +11,22 @@ import {
 const DEFAULT_ID = "default";
 
 async function loadSiteHomeContentUncached(): Promise<SiteHomeContentData> {
-  if (!prisma.siteHomeContent) return EMPTY_SITE_HOME_CONTENT;
+  try {
+    if (!prisma.siteHomeContent) return EMPTY_SITE_HOME_CONTENT;
 
-  const row = await prisma.siteHomeContent
-    .findUnique({ where: { id: DEFAULT_ID } })
-    .catch(() => null);
+    const row = await prisma.siteHomeContent
+      .findUnique({ where: { id: DEFAULT_ID } })
+      .catch(() => null);
 
-  if (!row) return EMPTY_SITE_HOME_CONTENT;
-  const content = normalizeSiteHomeContent(row);
-  return applySiteHomeImageCacheRevision(content, row.updatedAt.toISOString());
+    if (!row) return EMPTY_SITE_HOME_CONTENT;
+    const content = normalizeSiteHomeContent(row);
+    return applySiteHomeImageCacheRevision(content, row.updatedAt.toISOString());
+  } catch {
+    return EMPTY_SITE_HOME_CONTENT;
+  }
 }
 
-const HOME_CONTENT_REVALIDATE_SECONDS = 60;
+const HOME_CONTENT_REVALIDATE_SECONDS = 3600;
 
 const getCachedSiteHomeContent = unstable_cache(
   loadSiteHomeContentUncached,

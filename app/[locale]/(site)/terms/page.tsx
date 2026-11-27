@@ -16,6 +16,8 @@ import { TermsBodyAr } from "@/components/site/terms-body-ar";
 import { routing } from "@/i18n/routing";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
+export const revalidate = 86400;
+
 export async function generateMetadata({
   params,
 }: {

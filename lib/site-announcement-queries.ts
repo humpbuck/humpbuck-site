@@ -49,30 +49,34 @@ function isBackgroundColorUnsupportedError(error: unknown): boolean {
 }
 
 async function loadSiteAnnouncementUncached(): Promise<SiteAnnouncementData> {
-  if (!prisma.siteAnnouncement) return EMPTY;
+  try {
+    if (!prisma.siteAnnouncement) return EMPTY;
 
-  const row = (await prisma.siteAnnouncement
-    .findUnique({ where: { id: DEFAULT_ID } })
-    .catch(() => null)) as AnnouncementRow | null;
-  if (!row) {
+    const row = (await prisma.siteAnnouncement
+      .findUnique({ where: { id: DEFAULT_ID } })
+      .catch(() => null)) as AnnouncementRow | null;
+    if (!row) {
+      return EMPTY;
+    }
+
+    const slides = parseAnnouncementSlidesJson(row.slidesJson, {
+      message: row.message,
+      href: row.href,
+    });
+
+    return {
+      enabled: row.enabled,
+      slides,
+      backgroundColor:
+        normalizeAnnouncementBackgroundColor(row.backgroundColor) ??
+        DEFAULT_ANNOUNCEMENT_BACKGROUND,
+    };
+  } catch {
     return EMPTY;
   }
-
-  const slides = parseAnnouncementSlidesJson(row.slidesJson, {
-    message: row.message,
-    href: row.href,
-  });
-
-  return {
-    enabled: row.enabled,
-    slides,
-    backgroundColor:
-      normalizeAnnouncementBackgroundColor(row.backgroundColor) ??
-      DEFAULT_ANNOUNCEMENT_BACKGROUND,
-  };
 }
 
-const ANNOUNCEMENT_REVALIDATE_SECONDS = 60;
+const ANNOUNCEMENT_REVALIDATE_SECONDS = 3600;
 
 const getCachedSiteAnnouncement = unstable_cache(
   loadSiteAnnouncementUncached,

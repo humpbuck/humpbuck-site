@@ -32,26 +32,24 @@ async function ensureSiteVideoTutorialTable(): Promise<void> {
 
 async function loadUncached(): Promise<SiteVideoTutorialData> {
   try {
-    await ensureSiteVideoTutorialTable();
+    if (!prisma.siteVideoTutorial) return EMPTY;
+
+    const row = await prisma.siteVideoTutorial
+      .findUnique({ where: { id: DEFAULT_ID } })
+      .catch(() => null);
+    if (!row) return EMPTY;
+
+    return {
+      title: row.title.trim(),
+      r2VideoUrl: row.r2VideoUrl.trim(),
+      youtubeUrl: row.youtubeUrl.trim(),
+    };
   } catch {
-    // table may already exist via Prisma migrate
+    return EMPTY;
   }
-
-  if (!prisma.siteVideoTutorial) return EMPTY;
-
-  const row = await prisma.siteVideoTutorial
-    .findUnique({ where: { id: DEFAULT_ID } })
-    .catch(() => null);
-  if (!row) return EMPTY;
-
-  return {
-    title: row.title.trim(),
-    r2VideoUrl: row.r2VideoUrl.trim(),
-    youtubeUrl: row.youtubeUrl.trim(),
-  };
 }
 
-const VIDEO_TUTORIAL_REVALIDATE_SECONDS = 60;
+const VIDEO_TUTORIAL_REVALIDATE_SECONDS = 3600;
 
 const getCachedSiteVideoTutorial = unstable_cache(
   loadUncached,

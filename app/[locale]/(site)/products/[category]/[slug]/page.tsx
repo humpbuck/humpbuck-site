@@ -3,8 +3,6 @@ import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
-import { readCatalogBuildSlugs } from "@/lib/catalog-build-slugs";
-import { getMergedCatalogProducts } from "@/lib/catalog-db";
 import {
   normalizeProductPathCategory,
   productHref,
@@ -31,31 +29,11 @@ import {
   ProductPdpReviewsFallback,
 } from "@/components/site/route-section-fallbacks";
 
-/** Cached until admin catalog saves or deploy; no time-based expiry. */
-export const revalidate = false;
+/** Cached via on-demand ISR (1h safety net) + admin/order revalidation. */
+export const revalidate = 3600;
 
-export async function generateStaticParams() {
-  const products: Array<{ category: string; slug: string }> = [];
-  try {
-    for (const product of await getMergedCatalogProducts()) {
-      const slug = product.slug.trim();
-      if (!slug) continue;
-      products.push({
-        category: productPathCategoryFromProduct(product),
-        slug,
-      });
-    }
-  } catch (err) {
-    console.error("[product] generateStaticParams: catalog load failed.", err);
-  }
-  // Build-time fallback when D1 is unavailable — assume ana-digi until hydrated.
-  for (const slug of readCatalogBuildSlugs()) {
-    if (products.some((p) => p.slug === slug)) continue;
-    products.push({ category: "ana-digi", slug });
-  }
-  return routing.locales.flatMap((locale) =>
-    products.map(({ category, slug }) => ({ locale, category, slug })),
-  );
+export function generateStaticParams() {
+  return [];
 }
 
 export async function generateMetadata({

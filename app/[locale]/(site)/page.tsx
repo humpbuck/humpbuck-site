@@ -23,8 +23,8 @@ import { routing } from "@/i18n/routing";
 import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
-/** Cached until admin catalog saves or deploy; no time-based expiry. */
-export const revalidate = false;
+/** Cached via ISR (1h safety net) + on-demand revalidation on admin saves. */
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,

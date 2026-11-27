@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
+import { CHECKOUT_CLIENT_NAMESPACES, pickClientMessages } from "@/lib/client-messages";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -22,12 +26,23 @@ export async function generateMetadata({
   };
 }
 
-export default function CheckoutLayout({ children }: { children: React.ReactNode }) {
+export default async function CheckoutLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const messages = await getMessages({ locale });
+  const clientMessages = pickClientMessages(messages, CHECKOUT_CLIENT_NAMESPACES);
+
   return (
-    <>
+    <NextIntlClientProvider locale={locale} messages={clientMessages}>
       <link rel="preconnect" href="https://js.stripe.com" />
       <link rel="preconnect" href="https://www.paypal.com" />
       {children}
-    </>
+    </NextIntlClientProvider>
   );
 }

@@ -9,9 +9,6 @@ import { defaultOgImage, getSiteUrl } from "@/lib/seo";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 import { getWatchCollectionLocalizedCopy } from "@/lib/watch-collection-copy";
 
-/** Cached until admin catalog saves or deploy; no time-based expiry. */
-export const revalidate = false;
-
 export async function buildWatchCollectionMetadata(
   locale: string,
   categorySlug: string | null,

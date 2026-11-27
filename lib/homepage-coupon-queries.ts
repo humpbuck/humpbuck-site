@@ -27,14 +27,18 @@ function isCouponCurrentlyValid(coupon: {
 }
 
 async function loadHomepageFeaturedCouponUncached(): Promise<HomepageFeaturedCoupon | null> {
-  const coupon = await prisma.coupon
-    .findFirst({ where: { homeFeatured: true } })
-    .catch(() => null);
-  if (!coupon || !isCouponCurrentlyValid(coupon)) return null;
-  return { code: coupon.code };
+  try {
+    const coupon = await prisma.coupon
+      .findFirst({ where: { homeFeatured: true } })
+      .catch(() => null);
+    if (!coupon || !isCouponCurrentlyValid(coupon)) return null;
+    return { code: coupon.code };
+  } catch {
+    return null;
+  }
 }
 
-const HOMEPAGE_COUPON_REVALIDATE_SECONDS = 60;
+const HOMEPAGE_COUPON_REVALIDATE_SECONDS = 3600;
 
 const getCachedHomepageFeaturedCoupon = unstable_cache(
   loadHomepageFeaturedCouponUncached,

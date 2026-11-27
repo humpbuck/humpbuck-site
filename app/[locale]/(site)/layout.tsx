@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { NavigationProgress } from "@/components/site/navigation-progress";
 import { SiteAnnouncementBarAsync } from "@/components/site/site-announcement-bar-async";
 import { SiteAnnouncementRootStyle } from "@/components/site/site-announcement-root-style";
@@ -19,9 +19,13 @@ import {
 
 export default async function SiteLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const tWatch = await getTranslations("WatchCollections");
 
   let shopCategoryLinks: {

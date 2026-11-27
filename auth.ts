@@ -44,19 +44,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: user.id,
           email: user.email!,
           name: userPublicDisplayName(user),
+          firstName: user.firstName,
+          lastName: user.lastName,
+          displayName: user.displayName,
         };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
-        token.id = user.id;
-        token.email = user.email;
-        token.name = user.name;
+        const u = user as {
+          id?: string;
+          email?: string | null;
+          name?: string | null;
+          firstName?: string | null;
+          lastName?: string | null;
+          displayName?: string | null;
+        };
+        token.id = u.id;
+        token.email = u.email;
+        token.name = u.name;
+        token.firstName = u.firstName ?? null;
+        token.lastName = u.lastName ?? null;
+        token.displayName = u.displayName ?? null;
       }
 
-      if (token.id) {
+      if (trigger === "update" && token.id) {
         try {
           const dbUser = await prisma.user.findUnique({
             where: { id: token.id as string },

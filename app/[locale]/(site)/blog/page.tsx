@@ -6,8 +6,8 @@ import { BlogPostsGridFallback } from "@/components/site/route-section-fallbacks
 import { routing } from "@/i18n/routing";
 import { storefrontHreflangLanguages } from "@/lib/storefront-hreflang";
 
-/** Cached until admin blog saves or deploy; no time-based expiry. */
-export const revalidate = false;
+/** Cached via ISR (1h safety net) + on-demand revalidation on admin blog saves. */
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,

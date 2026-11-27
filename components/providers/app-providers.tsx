@@ -5,7 +5,7 @@ import { CartProvider } from "@/components/cart/cart-context";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <SessionProvider>
+    <SessionProvider refetchOnWindowFocus={false} refetchWhenOffline={false}>
       <CartProvider>{children}</CartProvider>
     </SessionProvider>
   );
